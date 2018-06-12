@@ -1,5 +1,5 @@
 
-![English](https://mararsh.github.io/MyBox/English.png) [English Interface](https://mararsh.github.io/MyBox/english_interface.html)
+[English Interface](https://mararsh.github.io/MyBox/english_interface.html)
 
 # MyBox：简易工具集
 
@@ -11,6 +11,10 @@
 <PRE><CODE>     java   -jar   MyBox-1.0.jar</CODE></PRE>
 
 以下是程序的应用截图：
+
+![7](https://mararsh.github.io/MyBox/7.png)
+
+![8](https://mararsh.github.io/MyBox/8.png)
 
 ![1](https://mararsh.github.io/MyBox/1.png)
 
