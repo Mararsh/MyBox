@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="topPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="721.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.pdf.PdfConvertPicturesController">
+<BorderPane fx:id="topPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="728.0" prefWidth="1067.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.pdf.PdfConvertPicturesController">
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER">
             <children>
@@ -152,22 +152,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                  <children>
                                               <TitledPane text="%SourcePDF">
                                                   <content>
-                                                      <VBox fx:id="sourceBox">
+                                                      <VBox fx:id="sourceBox" prefHeight="104.0" prefWidth="800.0">
                                                           <children>
                                                               <HBox spacing="10.0" VBox.vgrow="NEVER">
                                                                   <children>
                                                                       <Label text="%SourceFile" HBox.hgrow="NEVER" />
-                                                                      <TextField fx:id="sourceFile" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="582.0" HBox.hgrow="ALWAYS">
+                                                                      <TextField fx:id="sourceFile" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
                                                                           <HBox.margin>
                                                                               <Insets />
                                                                           </HBox.margin>
                                                                       </TextField>
-                                                                      <Button fx:id="sourceSelectButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseClicked="#selectSourceFile" text="%Select...">
+                                                                      <Button fx:id="sourceSelectButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseClicked="#selectSourceFile" prefHeight="30.0" prefWidth="90.0" text="%Select...">
                                                                           <HBox.margin>
                                                                               <Insets />
                                                                           </HBox.margin>
                                                                       </Button>
-                                                      <Button fx:id="fileInformationButton" disable="true" mnemonicParsing="false" onMouseEntered="#showFileInformation" text="%FileInformation" />
+                                                      <Button fx:id="fileInformationButton" disable="true" mnemonicParsing="false" onMouseEntered="#showFileInformation" prefHeight="30.0" text="%FileInformation" />
                                                                   </children>
                                                                   <VBox.margin>
                                                                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -205,10 +205,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                       <Insets top="10.0" />
                                                   </VBox.margin>
                                                   <content>
-                                                      <GridPane alignment="CENTER">
+                                                      <GridPane alignment="CENTER_LEFT" prefHeight="114.0" prefWidth="1008.0">
                                                           <columnConstraints>
-                                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="157.0" />
-                                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="833.0" minWidth="10.0" prefWidth="787.0" />
+                                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="143.0" />
+                                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="905.0" minWidth="10.0" prefWidth="905.0" />
                                                           </columnConstraints>
                                                           <rowConstraints>
                                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -263,9 +263,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                       </GridPane>
                                                   </content>
                                               </TitledPane>
-                                              <TitledPane text="%TargetFiles" VBox.vgrow="NEVER">
+                                              <TitledPane prefHeight="182.0" prefWidth="962.0" text="%TargetFiles" VBox.vgrow="NEVER">
                                                   <content>
-                                                      <VBox>
+                                                      <VBox prefHeight="144.0" prefWidth="956.0">
                                                           <children>
                                                               <HBox spacing="10.0" VBox.vgrow="NEVER">
                                                                   <children>
@@ -275,8 +275,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                           </HBox.margin>
                                                                       </Label>
                                                                       <TextField fx:id="targetPath" prefHeight="30.0" prefWidth="682.0" HBox.hgrow="ALWAYS" />
-                                                                      <Button mnemonicParsing="false" onAction="#selectTargetPath" prefHeight="30.0" prefWidth="89.0" text="%Select..." />
-                                                      <Button mnemonicParsing="false" onAction="#openFileManager" text="%Open" />
+                                                                      <Button mnemonicParsing="false" onAction="#selectTargetPath" prefHeight="30.0" prefWidth="90.0" text="%Select..." />
+                                                      <Button mnemonicParsing="false" onAction="#openFileManager" prefHeight="30.0" prefWidth="70.0" text="%Open" />
                                                                   </children>
                                                                   <VBox.margin>
                                                                       <Insets left="10.0" right="10.0" top="10.0" />
@@ -302,7 +302,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                       </CheckBox>
                                                       <Label text="%FileName">
                                                          <HBox.margin>
-                                                            <Insets left="80.0" />
+                                                            <Insets left="20.0" />
                                                          </HBox.margin>
                                                       </Label>
                                                       <CheckBox fx:id="appendDensity" mnemonicParsing="false" selected="true" text="%AppendDensity">
@@ -328,7 +328,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startConvertion" prefHeight="30.0" prefWidth="80.0" text="%Start" />
-                                    <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseConversion" prefHeight="30.0" prefWidth="86.0" text="%Pause" visible="false" />
+                                    <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseConversion" prefHeight="30.0" prefWidth="100.0" text="%Pause" visible="false" />
                                                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="764.0" progress="0.0" HBox.hgrow="ALWAYS" />
                                     <Label fx:id="progressValue" prefHeight="20.0" prefWidth="108.0" />
                                             </children>

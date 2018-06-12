@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -106,6 +107,7 @@ public class MyBoxBaseController implements Initializable {
             stage.initModality(Modality.NONE);
             stage.initOwner(getStage());
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
+            stage.getIcons().add(new Image("img/mybox.png"));
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
@@ -122,6 +124,7 @@ public class MyBoxBaseController implements Initializable {
             stage.initModality(Modality.NONE);
             stage.initOwner(null);
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
+            stage.getIcons().add(new Image("img/mybox.png"));
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
