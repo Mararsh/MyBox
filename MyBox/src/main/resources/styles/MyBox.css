@@ -1,0 +1,14 @@
+.button {
+    -fx-font-weight: bold;
+}
+#MyBoxTopBar {
+    -fx-background-color: white;
+    -fx-font-size: 10px;
+}
+.copyable-label, .copyable-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+}
+
+
+

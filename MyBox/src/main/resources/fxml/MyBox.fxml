@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="topPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="722.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.MyBoxController">
+    <top>
+        <HBox id="MyBoxMenuBar" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER">
+            <children>
+                <ImageView fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                    <image>
+                        <Image url="@../img/mybox.png" />
+                    </image>
+                    <HBox.margin>
+                        <Insets right="20.0" />
+                    </HBox.margin>
+                </ImageView>
+                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
+                            <children>
+                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/English.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="English" />
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
+                            <children>
+                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/Chinese.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="中文" />
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
+                            <children>
+                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#about" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/About.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="%About" />
+                            </children>
+                        </VBox>
+                    </children>
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </HBox>
+            </children>
+            <padding>
+                <Insets left="5.0" right="5.0" />
+            </padding>
+            <BorderPane.margin>
+                <Insets bottom="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </top>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <center>
+        <GridPane BorderPane.alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#pdfTools" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/PdfTools.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="%PdfTools" />
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                    <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/ImageTools.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="%ImageTools" textFill="#00000080" />
+                        <Label text="%Developing..." />
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                    <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/FileTools.png" />
+                            </image>
+                        </ImageView>
+                        <Label text="%FileTools" textFill="#00000080" />
+                        <Label text="%Developing..." />
+                    </children>
+                </VBox>
+            </children>
+            <BorderPane.margin>
+                <Insets left="20.0" right="20.0" top="20.0" />
+            </BorderPane.margin>
+        </GridPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="topPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="156.0" prefWidth="357.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.LoadingController">
+   <children>
+      <ProgressIndicator fx:id="progressIndicator">
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin>
+      </ProgressIndicator>
+      <Label text="%Loading..." />
+   </children>
+</VBox>
