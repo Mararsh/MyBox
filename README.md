@@ -1,5 +1,5 @@
 
-[English Interface](https://mararsh.github.io/MyBox/english_interface.html)
+![English](https://mararsh.github.io/MyBox/English.png) [English Interface](https://mararsh.github.io/MyBox/english_interface.html)
 
 # MyBox：简易工具集
 
@@ -9,4 +9,19 @@
 编译好的jar包：[MyBox-1.0.jar](https://mararsh.github.io/MyBox/MyBox-1.0.jar) 
 在已安装JRE或者JDK的环境下执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-1.0.jar</CODE></PRE>
+
+以下是程序的应用截图：
+
+![1](https://mararsh.github.io/MyBox/1.png)
+
+![2](https://mararsh.github.io/MyBox/2.png)
+
+![3](https://mararsh.github.io/MyBox/3.png)
+
+![4](https://mararsh.github.io/MyBox/4.png)
+
+![5](https://mararsh.github.io/MyBox/5.png)
+
+![6](https://mararsh.github.io/MyBox/6.png)
+
 
