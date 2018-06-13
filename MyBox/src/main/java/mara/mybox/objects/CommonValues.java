@@ -7,13 +7,15 @@ import java.util.TimeZone;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:04:05
- * @Version 1.0
+
  * @Description
  * @License Apache License Version 2.0
  */
 public class CommonValues {
 
-    public static String UserConfigFile = System.getProperty("user.home") + "/conf.properties";
+    public static final double AppVersion = 1.1;
+
+    public static final String UserConfigFile = System.getProperty("user.home") + "/conf.properties";
     public static final String MyboxInterface = "/fxml/MyBox.fxml";
     public static final String PdfInterface = "/fxml/PdfConvertPicture.fxml";
     public static final String PdfInformation = "/fxml/PdfInformation.fxml";

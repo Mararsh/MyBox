@@ -5,21 +5,51 @@
  */
 package mara.mybox.tools;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * @Author mara
  * @CreateDate 2018-6-2 11:01:45
- * @Version 1.0
+ *
  * @Description
  */
 public class FileTools {
 
-    public static String getUrlFile(String url) {
-        if (url == null) {
+    private static final Logger logger = LogManager.getLogger();
+
+    // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
+    public static File getResourceFile(Class someClass, String resourceFile) {
+        if (someClass == null || resourceFile == null) {
             return null;
         }
-        String f = url;
-        f = f.replace("file:/", "");
-        return f.replace("MyBox-1.0.jar!", "classes");
+
+        File file = null;
+        URL url = someClass.getResource(resourceFile);
+        if (url.toString().startsWith("jar:")) {
+            try {
+                InputStream input = someClass.getResourceAsStream(resourceFile);
+                file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
+                OutputStream out = new FileOutputStream(file);
+                int read;
+                byte[] bytes = new byte[1024];
+                while ((read = input.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+                file.deleteOnExit();
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
+        } else {
+            //this will probably work in your IDE, but not from a JAR
+            file = new File(someClass.getResource(resourceFile).getFile());
+        }
+        return file;
     }
 
     public static String getFilePath(String filename) {

@@ -3,7 +3,7 @@ package mara.mybox.tools;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 17:43:53
- * @Version 1.0
+
  * @Description
  * @License Apache License Version 2.0
  */

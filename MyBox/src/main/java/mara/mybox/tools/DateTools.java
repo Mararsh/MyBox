@@ -8,7 +8,7 @@ import mara.mybox.objects.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 9:44:53
- * @Version 1.0
+
  * @Description
  * @License Apache License Version 2.0
  */

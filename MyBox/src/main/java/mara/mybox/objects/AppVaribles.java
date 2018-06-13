@@ -11,7 +11,7 @@ import static mara.mybox.objects.CommonValues.BundleZhCN;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:59:49
- * @Version 1.0
+
  * @Description
  * @License Apache License Version 2.0
  */

@@ -9,7 +9,7 @@ import mara.mybox.objects.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
- * @Version 1.0
+
  * @Description
  * @License Apache License Version 2.0
  */
