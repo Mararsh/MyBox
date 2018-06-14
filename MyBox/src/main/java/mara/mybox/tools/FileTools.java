@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import static mara.mybox.objects.CommonValues.UserFilePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +23,45 @@ import org.apache.logging.log4j.Logger;
 public class FileTools {
 
     private static final Logger logger = LogManager.getLogger();
+
+    public static File getHelpFile(String helpFile) {
+
+        String filepath = UserFilePath + "/" + helpFile;
+        File file = new File(UserFilePath + "/" + helpFile);
+        if (file.exists()) {
+            return file;
+        }
+        return null;
+    }
+
+    public static File getHelpFile(Class someClass, String resourceFile, String helpFile) {
+        if (someClass == null || resourceFile == null || helpFile == null) {
+            return null;
+        }
+        File file = new File(UserFilePath + "/" + helpFile);
+        if (file.exists()) {
+            return file;
+        }
+        URL url = someClass.getResource(resourceFile);
+        if (url.toString().startsWith("jar:")) {
+            try {
+                InputStream input = someClass.getResourceAsStream(resourceFile);
+                OutputStream out = new FileOutputStream(file);
+                int read;
+                byte[] bytes = new byte[1024];
+                while ((read = input.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+                file.deleteOnExit();
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
+        } else {
+            //this will probably work in your IDE, but not from a JAR
+            file = new File(someClass.getResource(resourceFile).getFile());
+        }
+        return file;
+    }
 
     // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
     public static File getResourceFile(Class someClass, String resourceFile) {

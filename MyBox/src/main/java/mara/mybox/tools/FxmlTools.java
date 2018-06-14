@@ -3,17 +3,49 @@ package mara.mybox.tools;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
-
+ *
  * @Description
  * @License Apache License Version 2.0
  */
 public class FxmlTools {
+
+    public static boolean setRadioFirstSelected(ToggleGroup group) {
+        if (group == null) {
+            return false;
+        }
+        ObservableList<Toggle> buttons = group.getToggles();
+        for (Toggle button : buttons) {
+            RadioButton radioButton = (RadioButton) button;
+            radioButton.setSelected(true);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean setRadioSelected(ToggleGroup group, String text) {
+        if (group == null || text == null) {
+            return false;
+        }
+        ObservableList<Toggle> buttons = group.getToggles();
+        for (Toggle button : buttons) {
+            RadioButton radioButton = (RadioButton) button;
+            if (text.equals(radioButton.getText())) {
+                button.setSelected(true);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static String getFxmlPath(String fullPath) {
         if (fullPath == null) {

@@ -1,25 +1,30 @@
 package mara.mybox.objects;
 
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import static mara.mybox.objects.CommonValues.BundleEnUS;
 import static mara.mybox.objects.CommonValues.BundleEsES;
 import static mara.mybox.objects.CommonValues.BundleFrFR;
 import static mara.mybox.objects.CommonValues.BundleRuRU;
 import static mara.mybox.objects.CommonValues.BundleZhCN;
+import mara.mybox.tools.ConfigTools;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:59:49
-
+ *
  * @Description
  * @License Apache License Version 2.0
  */
 public class AppVaribles {
 
+    private static final Logger logger = LogManager.getLogger();
+
     public static ResourceBundle CurrentBundle = CommonValues.BundleDefault;
-    public static String LastPath;
-    public static File configFile;
+    public static Map<String, String> configValues = new HashMap();
 
     public static String getMessage(String thestr) {
         try {
@@ -65,4 +70,29 @@ public class AppVaribles {
         }
     }
 
+    public static String getConfigValue(String key, String defaultValue) {
+        try {
+            if (configValues.containsKey(key)) {
+                return configValues.get(key);
+            }
+            String value = ConfigTools.readConfigValue(key);
+            if (value == null && defaultValue != null) {
+                value = defaultValue;
+                setConfigValue(key, value);
+            }
+            return value;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean setConfigValue(String key, String value) {
+        if (ConfigTools.writeConfigValue(key, value)) {
+            configValues.put(key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

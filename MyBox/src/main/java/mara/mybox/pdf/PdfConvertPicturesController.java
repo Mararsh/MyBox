@@ -38,7 +38,6 @@ import mara.mybox.MyBoxBaseController;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.ConfigTools;
 import mara.mybox.objects.PdfInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -63,15 +62,19 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
 
     private PdfInformation pdfInformation;
     private Stage infoStage;
-    private String lastSource;
-    private int density;
     private ImageType imageColor;
-    private int quality;
-    private String compressionType;
-    private String imageFormat;
-    private String status;
+    private int quality, threshold, density;
+    private String lastSource, imageFormat, compressionType, status;
+    private int colorConversion;
     private Date startTime;
     private int handlingPage, handlingNumber, totalHandling;
+
+    public static class ColorConversion {
+
+        public static int DEFAULT = 0;
+        public static int OTSU = 1;
+        public static int THRESHOLD = 9;
+    }
 
     final private String goodStyle;
     final private String badStyle;
@@ -92,6 +95,8 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
     private TextField densityInput;
     @FXML
     private TextField qualityInput;
+    @FXML
+    private TextField thresholdInput;
     @FXML
     private TextField acumFrom;
     @FXML
@@ -117,6 +122,8 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
     @FXML
     private ToggleGroup CompressionGroup;
     @FXML
+    private ToggleGroup ColorConversionGroup;
+    @FXML
     private RadioButton ARGB;
     @FXML
     private RadioButton RGB;
@@ -124,6 +131,8 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
     private HBox compressBox;
     @FXML
     private HBox qualityBox;
+    @FXML
+    private HBox colorBox;
     @FXML
     private Button startButton;
     @FXML
@@ -161,6 +170,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                         .or(acumFrom.styleProperty().isEqualTo(badStyle))
                         .or(densityInput.styleProperty().isEqualTo(badStyle))
                         .or(qualityBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(qualityInput.styleProperty().isEqualTo(badStyle)))
+                        .or(colorBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(thresholdInput.styleProperty().isEqualTo(badStyle)))
         );
 
         sourceFile.textProperty().addListener(new ChangeListener<String>() {
@@ -206,7 +216,6 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
         FxmlTools.setNonnegativeValidation(acumFrom, goodStyle, badStyle);
         FxmlTools.setNonnegativeValidation(densityInput, goodStyle, badStyle);
 
-        getImageFormat();
         ImageFormatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -214,8 +223,9 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 getImageFormat();
             }
         });
+        FxmlTools.setRadioSelected(ImageFormatGroup, AppVaribles.getConfigValue("imageFormat", null));
+        getImageFormat();
 
-        getDensity();
         DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -223,6 +233,9 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 getDensity();
             }
         });
+        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getConfigValue("density", null));
+        getDensity();
+
         densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -231,7 +244,6 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
             }
         });
 
-        getImageColor();
         ImageColorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -239,8 +251,9 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 getImageColor();
             }
         });
+        FxmlTools.setRadioSelected(ImageColorGroup, AppVaribles.getConfigValue("imageColor", null));
+        getImageColor();
 
-        getQuality();
         QualityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -248,11 +261,31 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 getQuality();
             }
         });
+        FxmlTools.setRadioSelected(QualityGroup, AppVaribles.getConfigValue("quality", null));
+        getQuality();
+
         qualityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 getQuality();
+            }
+        });
+
+        ColorConversionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                getColorConversion();
+            }
+        });
+        FxmlTools.setRadioSelected(ColorConversionGroup, AppVaribles.getConfigValue("colorConversion", null));
+
+        thresholdInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                getColorConversion();
             }
         });
     }
@@ -261,6 +294,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
         try {
             RadioButton selected = (RadioButton) ImageFormatGroup.getSelectedToggle();
             imageFormat = selected.getText();
+            AppVaribles.setConfigValue("imageFormat", imageFormat);
 
             String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, imageColor);
             showCompressionTypes(compressionTypes);
@@ -269,6 +303,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 qualityBox.setDisable(true);
             } else {
                 qualityBox.setDisable(false);
+                FxmlTools.setRadioFirstSelected(QualityGroup);
             }
 
             if ("jpg".equals(imageFormat) || "bmp".equals(imageFormat)) {
@@ -285,6 +320,42 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
         }
     }
 
+    private void getImageColor() {
+        try {
+            RadioButton selected = (RadioButton) ImageColorGroup.getSelectedToggle();
+            String s = selected.getText();
+            AppVaribles.setConfigValue("imageColor", s);
+            if (getMessage("Color").equals(s)) {
+                imageColor = ImageType.RGB;
+            } else if (getMessage("ColorAlpha").equals(s)) {
+                imageColor = ImageType.ARGB;
+            } else if (getMessage("ShadesOfGray").equals(s)) {
+                imageColor = ImageType.GRAY;
+            } else if (getMessage("BlackOrWhite").equals(s)) {
+                imageColor = ImageType.BINARY;
+            } else {
+                imageColor = ImageType.RGB;
+            }
+
+//            if ("tif".equals(imageFormat) || "bmp".equals(imageFormat)) {
+            String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, imageColor);
+            showCompressionTypes(compressionTypes);
+//            }
+
+            if (imageColor == ImageType.BINARY) {
+                colorBox.setDisable(false);
+                getColorConversion();
+            } else {
+                colorBox.setDisable(true);
+                FxmlTools.setRadioFirstSelected(ColorConversionGroup);
+            }
+
+//            logger.debug(imageColor);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     private void showCompressionTypes(String[] types) {
         compressBox.getChildren().removeAll(compressBox.getChildren());
         CompressionGroup = new ToggleGroup();
@@ -293,6 +364,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
             newv.setToggleGroup(CompressionGroup);
             compressBox.getChildren().add(newv);
             newv.setSelected(true);
+            qualityBox.setDisable(true);
         } else {
             boolean cSelected = false;
             for (String ctype : types) {
@@ -304,9 +376,9 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                     cSelected = true;
                 }
             }
+            qualityBox.setDisable(false);
         }
 
-        getCompressionType();
         CompressionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -314,6 +386,8 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 getCompressionType();
             }
         });
+        FxmlTools.setRadioSelected(CompressionGroup, AppVaribles.getConfigValue("compressionType", null));
+        getCompressionType();
     }
 
     private void getDensity() {
@@ -326,6 +400,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                     int v = Integer.parseInt(densityInput.getText());
                     if (v > 0) {
                         density = v;
+                        AppVaribles.setConfigValue("densityInput", density + "");
                     } else {
                         densityInput.setStyle(badStyle);
                     }
@@ -334,39 +409,8 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 }
             } else {
                 density = Integer.parseInt(s.substring(0, s.length() - 3));
+                AppVaribles.setConfigValue("density", s);
             }
-//            logger.debug(density);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void getImageColor() {
-        try {
-            RadioButton selected = (RadioButton) ImageColorGroup.getSelectedToggle();
-            switch (selected.getText()) {
-                case "RGB":
-                    imageColor = ImageType.RGB;
-                    break;
-                case "Alpha RGB":
-                    imageColor = ImageType.ARGB;
-                    break;
-                case "Gray":
-                    imageColor = ImageType.GRAY;
-                    break;
-                case "Binary":
-                    imageColor = ImageType.BINARY;
-                    break;
-                default:
-                    imageColor = ImageType.RGB;
-            }
-
-            if ("tif".equals(imageFormat) || "bmp".equals(imageFormat)) {
-                String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, imageColor);
-                showCompressionTypes(compressionTypes);
-            }
-
-//            logger.debug(imageColor);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -376,8 +420,44 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
         try {
             RadioButton selected = (RadioButton) CompressionGroup.getSelectedToggle();
             compressionType = selected.getText();
+            AppVaribles.setConfigValue("compressionType", compressionType);
         } catch (Exception e) {
             compressionType = null;
+        }
+    }
+
+    private void getColorConversion() {
+        threshold = -1;
+        thresholdInput.setStyle(goodStyle);
+        try {
+            RadioButton selected = (RadioButton) ColorConversionGroup.getSelectedToggle();
+            String s = selected.getText();
+
+            if (getMessage("Threshold").equals(s)) {
+                colorConversion = ColorConversion.THRESHOLD;
+            } else if (getMessage("OTSU").equals(s)) {
+                colorConversion = ColorConversion.OTSU;
+                AppVaribles.setConfigValue("colorConversion", s);
+            } else {
+                colorConversion = ColorConversion.DEFAULT;
+                AppVaribles.setConfigValue("colorConversion", s);
+            }
+
+            if (colorConversion == ColorConversion.THRESHOLD) {
+                try {
+                    int v = Integer.parseInt(thresholdInput.getText());
+                    if (v >= 0 && v <= 100) {
+                        threshold = v;
+                        AppVaribles.setConfigValue("thresholdInput", threshold + "");
+                    } else {
+                        thresholdInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    thresholdInput.setStyle(badStyle);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
@@ -389,8 +469,9 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
             if (getMessage("InputValue").equals(s)) {
                 try {
                     int v = Integer.parseInt(qualityInput.getText());
-                    if (v > 0) {
+                    if (v >= 0 && v <= 100) {
                         quality = v;
+                        AppVaribles.setConfigValue("qualityInput", quality + "");
                     } else {
                         qualityInput.setStyle(badStyle);
                     }
@@ -399,6 +480,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                 }
             } else {
                 quality = Integer.parseInt(s.substring(0, s.length() - 1));
+                AppVaribles.setConfigValue("quality", s);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -410,7 +492,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
         try {
             final FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("View Pictures");
-            fileChooser.setInitialDirectory(new File(ConfigTools.getLastPath()));
+            fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"))));
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("PDF", "*.pdf")
             );
@@ -427,7 +509,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
             return;
         }
         statusLabel.setText(getMessage("Loading..."));
-        ConfigTools.setLastPath(file.getParent());
+        AppVaribles.setConfigValue("LastPath", file.getParent());
         targetPath.setText(file.getParent());
         targetPrefix.setText(FileTools.getFilePrefix(file.getName()));
         toPage.setText("");
@@ -486,7 +568,7 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
     private void showHelp() {
 
         try {
-            File help = FileTools.getResourceFile(getClass(), "/docs/ImageHelp.html");
+            File help = FileTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
             Desktop.getDesktop().browse(help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());
@@ -497,10 +579,10 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
     private void selectTargetPath() {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setInitialDirectory(new File(ConfigTools.getLastPath()));
+            chooser.setInitialDirectory(new File(AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"))));
             File directory = chooser.showDialog(getStage());
             if (directory != null) {
-                ConfigTools.setLastPath(directory.getPath());
+                AppVaribles.setConfigValue("LastPath", directory.getPath());
                 targetPath.setText(directory.getPath());
             }
         } catch (Exception e) {
@@ -584,19 +666,28 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                             if (fill) {
                                 pn = ValueTools.fillNumber(pnumber, digit);
                             }
-                            fname = filePrefix + "-" + pn;
+                            fname = filePrefix + "_" + pn;
                             if (aColor) {
-                                fname += "-" + imageColor;
+                                if (colorConversion == ColorConversion.THRESHOLD) {
+                                    fname += "_" + "BINARY-Threshold";
+                                    if (threshold >= 0) {
+                                        fname += "-" + threshold + "%";
+                                    }
+                                } else if (colorConversion == ColorConversion.OTSU) {
+                                    fname += "_" + "BINARY-OTSU";
+                                } else {
+                                    fname += "_" + imageColor;
+                                }
                             }
                             if (aDensity) {
-                                fname += "-" + density + "dpi";
+                                fname += "_" + density + "dpi";
                             }
                             if (compressionType != null && !"none".equals(compressionType)) {
                                 if (aCompression) {
-                                    fname += "-" + compressionType.replace(" ", "_");
+                                    fname += "_" + compressionType.replace(" ", "_");
                                 }
                                 if (aQuality) {
-                                    fname += "-" + quality + "%";
+                                    fname += "_quality-" + quality + "%";
                                 }
                             }
                             fname += "." + imageFormat;
@@ -604,7 +695,16 @@ public class PdfConvertPicturesController extends MyBoxBaseController {
                             updateProgress(converted, total);
                             updateMessage(converted + "/" + total);
 
-                            BufferedImage image = renderer.renderImageWithDPI(i, density, imageColor);
+                            BufferedImage image;
+                            if (colorConversion == ColorConversion.THRESHOLD && threshold >= 0) {
+                                image = renderer.renderImageWithDPI(i, density, ImageType.RGB);
+                                image = ImageTools.color2BinaryWithPercentage(image, threshold);
+                            } else if (colorConversion == ColorConversion.OTSU) {
+                                image = renderer.renderImageWithDPI(i, density, ImageType.RGB);
+                                image = ImageTools.color2Binary(image);
+                            } else {
+                                image = renderer.renderImageWithDPI(i, density, imageColor);
+                            }
 
                             Map<String, Object> parameters = new HashMap();
                             parameters.put("density", density);

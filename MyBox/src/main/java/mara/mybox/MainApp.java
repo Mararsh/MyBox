@@ -1,5 +1,6 @@
 package mara.mybox;
 
+import java.io.File;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
@@ -29,6 +30,10 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            File userPath = new File(CommonValues.UserFilePath);
+            if (!userPath.exists()) {
+                userPath.mkdir();
+            }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
 
 //            ImageTools.checkImageFormats();
