@@ -5,8 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.controller.BaseController;
 import mara.mybox.tools.DateTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -16,8 +14,6 @@ import org.apache.logging.log4j.Logger;
  * @License Apache License Version 2.0
  */
 public class PdfInformationController extends BaseController {
-
-    private static final Logger logger = LogManager.getLogger();
 
     @FXML
     private TextField fileName;
