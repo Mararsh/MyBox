@@ -152,7 +152,7 @@ public class ImageTools {
                 if (null != imageColor) {
                     switch (imageColor) {
                         case BINARY: {
-                            String[] types = {"CCITT RLE", "CCITT T.4", "CCITT T.6", "ZLib", "Deflate", "LZW", "PackBits"};
+                            String[] types = {"CCITT T.6", "CCITT RLE", "CCITT T.4", "ZLib", "Deflate", "LZW", "PackBits"};
                             return types;
                         }
                         case GRAY: {
@@ -370,8 +370,9 @@ public class ImageTools {
             int[] grayNumber = new int[256];
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    int r = 0xFF & grayImage.getRGB(i, j);
-                    grayNumber[r]++;
+//                    int r = 0xFF & grayImage.getRGB(i, j);
+                    int gray = pixel2Gray(grayImage.getRGB(i, j));
+                    grayNumber[gray]++;
                 }
             }
 
@@ -411,7 +412,7 @@ public class ImageTools {
                     threshold = gray;
                 }
             }
-            logger.debug("threshold:" + threshold);
+//            logger.debug("threshold:" + threshold);
             return threshold;
 
         } catch (Exception e) {
@@ -427,7 +428,7 @@ public class ImageTools {
 
     public static BufferedImage color2BinaryWithThreshold(BufferedImage image, int threshold) {
         try {
-            logger.error("color2BinaryWithThreshold:" + threshold);
+//            logger.error("color2BinaryWithThreshold:" + threshold);
             int width = image.getWidth();
             int height = image.getHeight();
             BufferedImage binaryImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
@@ -464,7 +465,7 @@ public class ImageTools {
     public static BufferedImage gray2Binary(BufferedImage grayImage) {
         try {
             int threshold = calculateThresholdOnGary(grayImage);
-            logger.error("gray2Binary:" + threshold);
+//            logger.error("gray2Binary:" + threshold);
             int width = grayImage.getWidth();
             int height = grayImage.getHeight();
             BufferedImage binaryImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);

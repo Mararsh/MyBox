@@ -46,54 +46,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="topPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="722.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.MyBoxController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="722.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
     <top>
-        <HBox id="MyBoxMenuBar" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER">
+        <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
-                <ImageView fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-                    <image>
-                        <Image url="@../img/mybox.png" />
-                    </image>
-                    <HBox.margin>
-                        <Insets right="20.0" />
-                    </HBox.margin>
-                </ImageView>
-                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                <HBox prefWidth="400.0">
                     <children>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/English.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="English" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/Chinese.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="中文" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#about" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/About.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="%About" />
-                            </children>
-                        </VBox>
+                        <fx:include fx:id="titleBar" source="TitleBar.fxml" />
                     </children>
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="commonBar" source="CommonBar.fxml" />
+                    </children>
                 </HBox>
             </children>
             <padding>
@@ -132,18 +97,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </VBox>
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                     <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#imageTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/ImageTools.png" />
                             </image>
                         </ImageView>
-                        <Label text="%ImageTools" textFill="#00000080" />
-                        <Label text="%Developing..." />
+                        <Label text="%ImageTools" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
                     <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#fileTools"  opacity="0.5" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/FileTools.png" />
                             </image>

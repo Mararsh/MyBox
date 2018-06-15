@@ -2,6 +2,7 @@ package mara.mybox.objects;
 
 import java.io.File;
 import java.util.Date;
+import mara.mybox.controller.BaseController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,11 +11,11 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 /**
  * @Author Mara
  * @CreateDate 2018-6-9 12:18:38
-
+ *
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfInformation {
+public class PdfInformation extends BaseController {
 
     private static final Logger logger = LogManager.getLogger();
 

@@ -46,89 +46,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="topPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="814.0" prefWidth="1067.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.pdf.PdfConvertPicturesController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="818.0" prefWidth="1091.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfConvertPicturesController">
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER">
             <children>
-                <ImageView fitHeight="75.0" fitWidth="75.0" onMouseClicked="#mybox" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
-                    <image>
-                        <Image url="@../img/mybox.png" />
-                    </image>
-                    <HBox.margin>
-                        <Insets right="20.0" />
-                    </HBox.margin>
-                </ImageView>
-                <Label contentDisplay="CENTER" prefWidth="300.0" text="%PdfTools" HBox.hgrow="NEVER">
-                    <font>
-                        <Font name="System Bold Italic" size="18.0" />
-                    </font>
-                </Label>
-                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                <HBox prefWidth="400.0">
                     <children>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#newPdfTools" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/PdfTools.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#newPdfTools" text="%PdfTools" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#fileTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/FileTools.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#fileTools" opacity="0.5" text="%FileTools" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#imageTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/ImageTools.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#imageTools" opacity="0.5" text="%ImageTools" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/English.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#setEnglish" text="English" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/Chinese.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#setChinese" text="中文" />
-                            </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="80.0" prefWidth="100.0">
-                            <children>
-                                <ImageView fitHeight="50.0" fitWidth="50.0" onMouseClicked="#about" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/About.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#about" text="%About" />
-                            </children>
-                        </VBox>
+                        <fx:include fx:id="titleBar" source="TitleBar.fxml" />
                     </children>
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                    <children>
+                        <fx:include fx:id="functionsBar" source="FunctionsBar.fxml" />
+                        <fx:include fx:id="commonBar" source="CommonBar.fxml" />
+                    </children>
                 </HBox>
             </children>
             <padding>
@@ -140,19 +72,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </HBox>
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="663.0" prefWidth="1057.0" BorderPane.alignment="CENTER">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="685.0" prefWidth="1081.0" BorderPane.alignment="CENTER">
             <children>
-                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="660.0" prefWidth="1057.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab text="%ConvertPictures">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="619.0" prefWidth="1057.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="664.0" prefWidth="1106.0">
                                     <children>
-                                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="596.0" prefWidth="1037.0">
+                                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                             <children>
-                                                <TitledPane text="%SourcePDF">
+                                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF">
                                                     <content>
-                                                        <VBox fx:id="sourceBox" prefHeight="80.0" prefWidth="1035.0">
+                                                        <VBox fx:id="sourceBox">
                                                             <children>
                                                                 <HBox spacing="10.0" VBox.vgrow="NEVER">
                                                                     <children>
@@ -178,16 +110,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                         <Label text="%Read" />
                                                                         <Label text="%FromPage " />
                                                                         <TextField fx:id="fromPage" prefHeight="30.0" prefWidth="60.0" text="0" />
-                                                                        <Label text="%ToPage">
-                                                                            <HBox.margin>
-                                                                                <Insets />
-                                                                            </HBox.margin>
-                                                                        </Label>
-                                                                        <TextField fx:id="toPage" prefHeight="30.0" prefWidth="60.0">
-                                                                            <HBox.margin>
-                                                                                <Insets />
-                                                                            </HBox.margin>
-                                                                        </TextField>
+                                                                        <Label text="%ToPage" />
+                                                                        <TextField fx:id="toPage" prefHeight="30.0" prefWidth="60.0" />
+                                                                        <Label text="%Password" />
+                                                                        <PasswordField fx:id="passwordInput" />
                                                                     </children>
                                                                     <VBox.margin>
                                                                         <Insets left="10.0" right="10.0" />
@@ -200,130 +126,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets top="5.0" />
                                                     </VBox.margin>
                                                 </TitledPane>
-                                                <TitledPane prefHeight="270.0" prefWidth="1037.0" text="%TargetImages" VBox.vgrow="NEVER">
+                                                <TitledPane maxWidth="1.7976931348623157E308" text="%TargetImages">
+                                                    <content>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <fx:include fx:id="imageAttributes" source="ImageAttributes.fxml" />
+                                                            </children>
+                                                        </HBox>
+                                                    </content>
                                                     <VBox.margin>
                                                         <Insets top="10.0" />
                                                     </VBox.margin>
-                                                    <content>
-                                                        <GridPane alignment="CENTER_LEFT" prefHeight="216.0" prefWidth="1035.0">
-                                                            <columnConstraints>
-                                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="148.0" />
-                                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="905.0" minWidth="10.0" prefWidth="863.0" />
-                                                            </columnConstraints>
-                                                            <rowConstraints>
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                            </rowConstraints>
-                                                            <children>
-                                                                <Label text="%ImageFormat" />
-                                                                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
-                                                                    <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="png">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="ImageFormatGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$ImageFormatGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$ImageFormatGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$ImageFormatGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="Raw" toggleGroup="$ImageFormatGroup" />
-                                                                    </children>
-                                                                </HBox>
-
-                                                                <Label text="%ImageColor" GridPane.rowIndex="1" />
-                                                                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
-                                                                    <children>
-                                                                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Color">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="ImageColorGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton fx:id="ARGB" mnemonicParsing="false" text="%ColorAlpha" toggleGroup="$ImageColorGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$ImageColorGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$ImageColorGroup" />
-                                                                    </children>
-                                                                </HBox>
-
-                                                                <Label text="%ImageDensity" GridPane.rowIndex="2" />
-                                                                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2">
-                                                                    <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="DensityGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="300dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="350dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="160dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="400dpi" toggleGroup="$DensityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$DensityGroup" />
-                                                                        <TextField fx:id="densityInput" prefHeight="30.0" prefWidth="80.0" />
-                                                                        <Label text="dpi" />
-                                                                    </children>
-                                                                </HBox>
-
-                                                                <Label text="%ImageQuality" GridPane.rowIndex="4" />
-                                                                <HBox fx:id="qualityBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                                    <children>
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="100%">
-                                                                            <toggleGroup>
-                                                                                <ToggleGroup fx:id="QualityGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="90%" toggleGroup="$QualityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="70%" toggleGroup="$QualityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="50%" toggleGroup="$QualityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="30%" toggleGroup="$QualityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="20%" toggleGroup="$QualityGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$QualityGroup" />
-                                                                        <TextField fx:id="qualityInput" prefHeight="30.0" prefWidth="50.0" />
-                                                                        <Label text="\%" />
-                                                                    </children>
-                                                                </HBox>
-
-                                                                <HBox alignment="CENTER_RIGHT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                                                    <children>
-                                                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" text="%Preview" visible="false" />
-                                                                        <Button mnemonicParsing="false" onAction="#showHelp" text="%Help" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <Label text="%CompressionType" GridPane.rowIndex="3" />
-                                                                <HBox fx:id="compressBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                   <children>
-                                                      <RadioButton mnemonicParsing="false" selected="true" text="none">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="CompressionGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                   </children></HBox>
-                                                <Label text="%ColorConversion" GridPane.rowIndex="5" />
-                                                <HBox fx:id="colorBox" alignment="CENTER_LEFT" disable="true" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                                   <children>
-                                                      <RadioButton mnemonicParsing="false" selected="true" text="%Default">
-                                                         <toggleGroup>
-                                                            <ToggleGroup fx:id="ColorConversionGroup" />
-                                                         </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$ColorConversionGroup" />
-                                                      <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$ColorConversionGroup" />
-                                                      <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" text="60" />
-                                                      <Label text="\%" />
-                                                   </children>
-                                                </HBox>
-                                                            </children>
-                                                        </GridPane>
-                                                    </content>
                                                 </TitledPane>
-                                                <TitledPane prefHeight="193.0" prefWidth="1037.0" text="%TargetFiles" VBox.vgrow="NEVER">
+                                                <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles">
                                                     <content>
-                                                        <VBox prefHeight="163.0" prefWidth="1035.0">
+                                                        <VBox>
                                                             <children>
                                                                 <HBox spacing="10.0" VBox.vgrow="NEVER">
                                                                     <children>
@@ -363,8 +180,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                         <Insets left="10.0" right="10.0" top="5.0" />
                                                                     </VBox.margin>
                                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="991.0" spacing="10.0">
-                                                   <children>
+                                                                <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="991.0" spacing="10.0">
+                                                                    <children>
                                                                         <Label text="%FileName">
                                                                             <HBox.margin>
                                                                                 <Insets />
@@ -376,13 +193,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                 <Insets />
                                                                             </HBox.margin>
                                                                         </CheckBox>
-                                                      <CheckBox fx:id="appendCompressionType" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
-                                                      <CheckBox fx:id="appendQuality" mnemonicParsing="false" selected="true" text="%AppendQuality" />
-                                                   </children>
-                                                   <VBox.margin>
-                                                      <Insets left="10.0" right="10.0" top="5.0" />
-                                                   </VBox.margin>
-                                                </HBox>
+                                                                        <CheckBox fx:id="appendCompressionType" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
+                                                                        <CheckBox fx:id="appendQuality" mnemonicParsing="false" selected="true" text="%AppendQuality" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
                                                             </children>
                                                         </VBox>
                                                     </content>
@@ -394,7 +211,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </VBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startConvertion" prefHeight="30.0" prefWidth="80.0" text="%Start" />
+                                                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startConversion" prefHeight="30.0" prefWidth="80.0" text="%Start" />
                                                 <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseConversion" prefHeight="30.0" prefWidth="100.0" text="%Pause" visible="false" />
                                                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="764.0" progress="0.0" HBox.hgrow="ALWAYS" />
                                                 <Label fx:id="progressValue" prefHeight="20.0" prefWidth="108.0" />
@@ -421,7 +238,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <bottom>
         <HBox BorderPane.alignment="CENTER">
             <children>
-                <Label id="PdfStatus" fx:id="statusLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <TextField id="PdfStatus" fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
             </children>
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />

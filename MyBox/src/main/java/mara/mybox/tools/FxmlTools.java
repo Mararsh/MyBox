@@ -13,11 +13,12 @@ import mara.mybox.objects.CommonValues;
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
- *
  * @Description
  * @License Apache License Version 2.0
  */
 public class FxmlTools {
+
+    public static String badStyle = "-fx-text-box-border: red;";
 
     public static boolean setRadioFirstSelected(ToggleGroup group) {
         if (group == null) {
@@ -66,8 +67,7 @@ public class FxmlTools {
         }
     }
 
-    public static void setNonnegativeValidation(final TextField input,
-            final String goodStyle, final String badStyle) {
+    public static void setNonnegativeValidation(final TextField input) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -75,7 +75,7 @@ public class FxmlTools {
                 try {
                     int v = Integer.parseInt(newValue);
                     if (v >= 0) {
-                        input.setStyle(goodStyle);
+                        input.setStyle(null);
                     } else {
                         input.setStyle(badStyle);
                     }
@@ -86,8 +86,7 @@ public class FxmlTools {
         });
     }
 
-    public static void setFileValidation(final TextField input,
-            final String goodStyle, final String badStyle) {
+    public static void setFileValidation(final TextField input) {
         input.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -101,7 +100,7 @@ public class FxmlTools {
                     input.setStyle(badStyle);
                     return;
                 }
-                input.setStyle(goodStyle);
+                input.setStyle(null);
             }
         });
     }

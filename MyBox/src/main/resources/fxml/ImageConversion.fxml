@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="814.0" prefWidth="1067.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.pdf.PdfConvertPicturesController">
+    <top>
+        <fx:include fx:id="dialog" source="TopBar.fxml"/>
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="663.0" prefWidth="1057.0" BorderPane.alignment="CENTER">
+            <children>
+                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="660.0" prefWidth="1057.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab text="%ConvertPictures">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="619.0" prefWidth="1057.0">
+                                    <children>
+                                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="596.0" prefWidth="1037.0">
+                                            <children>
+                                                <TitledPane text="%SourcePDF">
+                                                    <content>
+                                                        <VBox fx:id="sourceBox" prefHeight="80.0" prefWidth="1035.0">
+                                                            <children>
+                                                                <HBox spacing="10.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="%SourceFile" HBox.hgrow="NEVER" />
+                                                                        <TextField fx:id="sourceFile" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </TextField>
+                                                                        <Button fx:id="sourceSelectButton" mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" prefWidth="90.0" text="%Select...">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </Button>
+                                                                        <Button fx:id="fileInformationButton" disable="true" mnemonicParsing="false" onMouseEntered="#showFileInformation" prefHeight="30.0" text="%FileInformation" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets bottom="5.0" left="10.0" right="10.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%Read" />
+                                                                        <Label text="%FromPage " />
+                                                                        <TextField fx:id="fromPage" prefHeight="30.0" prefWidth="60.0" text="0" />
+                                                                        <Label text="%ToPage">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </Label>
+                                                                        <TextField fx:id="toPage" prefHeight="30.0" prefWidth="60.0">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </TextField>
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                    <VBox.margin>
+                                                        <Insets top="5.0" />
+                                                    </VBox.margin>
+                                                </TitledPane>
+                                                <TitledPane prefHeight="270.0" prefWidth="1037.0" text="%TargetImages" VBox.vgrow="NEVER">
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                    <content>
+                                                        <fx:include fx:id="ImageAttributes" source="ImageAttributes.fxml"/>
+                                                    </content>
+                                                </TitledPane>
+                                                <TitledPane prefHeight="193.0" prefWidth="1037.0" text="%TargetFiles" VBox.vgrow="NEVER">
+                                                    <content>
+                                                        <VBox prefHeight="163.0" prefWidth="1035.0">
+                                                            <children>
+                                                                <HBox spacing="10.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="%FilesPath">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </Label>
+                                                                        <TextField fx:id="targetPath" prefHeight="30.0" prefWidth="682.0" HBox.hgrow="ALWAYS" />
+                                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" prefHeight="30.0" prefWidth="90.0" text="%Select..." />
+                                                                        <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openFileManager" prefHeight="30.0" prefWidth="70.0" text="%Open" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                                <HBox spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%FileNamePrefix" />
+                                                                        <TextField fx:id="targetPrefix" HBox.hgrow="ALWAYS" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%AccumulatingNumberFrom" />
+                                                                        <TextField fx:id="acumFrom" prefHeight="30.0" prefWidth="64.0" text="0" />
+                                                                        <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </CheckBox>
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                                <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="991.0" spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%FileName">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </Label>
+                                                                        <CheckBox fx:id="appendColor" mnemonicParsing="false" selected="true" text="%AppendImageColor" />
+                                                                        <CheckBox fx:id="appendDensity" mnemonicParsing="false" selected="true" text="%AppendDensity">
+                                                                            <HBox.margin>
+                                                                                <Insets />
+                                                                            </HBox.margin>
+                                                                        </CheckBox>
+                                                                        <CheckBox fx:id="appendCompressionType" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
+                                                                        <CheckBox fx:id="appendQuality" mnemonicParsing="false" selected="true" text="%AppendQuality" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </TitledPane>
+                                            </children>
+                                        </VBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startConvertion" prefHeight="30.0" prefWidth="80.0" text="%Start" />
+                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseConversion" prefHeight="30.0" prefWidth="100.0" text="%Pause" visible="false" />
+                                                <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="764.0" progress="0.0" HBox.hgrow="ALWAYS" />
+                                                <Label fx:id="progressValue" prefHeight="20.0" prefWidth="108.0" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets top="10.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets left="10.0" right="10.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <bottom>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <TextField id="PdfStatus" fx:id="statusLabel" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css"  maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            </children>
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

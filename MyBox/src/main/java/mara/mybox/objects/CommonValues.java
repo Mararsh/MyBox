@@ -13,10 +13,13 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.2;
+    public static final double AppVersion = 1.3;
+    public static final String AppVersionDate = "2018-06-15";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
+
+    public static final String AppIcon = "img/mybox.png";
 
     public static final String MyboxInterface = "/fxml/MyBox.fxml";
     public static final String PdfInterface = "/fxml/PdfConvertPicture.fxml";

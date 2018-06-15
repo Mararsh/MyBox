@@ -23,8 +23,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class MainApp extends Application {
 
-    private static final String fxml = CommonValues.MyboxInterface;
-
     private static final Logger logger = LogManager.getLogger();
 
     @Override
@@ -36,14 +34,9 @@ public class MainApp extends Application {
             }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
 
-//            ImageTools.checkImageFormats();
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-            Pane pane = FXMLLoader.load(getClass().getResource(fxml), AppVaribles.CurrentBundle);
+            Pane pane = FXMLLoader.load(getClass().getResource(CommonValues.MyboxInterface), AppVaribles.CurrentBundle);
             Scene scene = new Scene(pane);
-//        scene.getStylesheets().add("/styles/Styles.css");
-
-            stage.getIcons().add(new Image("img/mybox.png"));
+            stage.getIcons().add(new Image(CommonValues.AppIcon));
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.setScene(scene);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
