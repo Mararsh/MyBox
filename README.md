@@ -8,7 +8,7 @@
 
 当前是版本1.4，已实现功能：
 1) 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项，并且可以暂停/继续转换过程。
-2) 查看图片的元数据和属性。目前支持图像格式：png, jpg, bmp, tif, raw。
+2) 查看图片的元数据和属性。目前支持图像格式：png, jpg, bmp, tif。
 
 编译好的jar包：[MyBox-1.4.jar](https://mararsh.github.io/MyBox/MyBox-1.4.jar) 
 
