@@ -46,26 +46,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="722.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
-                <HBox prefWidth="400.0">
-                    <children>
-                        <fx:include fx:id="titleBar" source="TitleBar.fxml" />
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                    <children>
-                        <fx:include fx:id="commonBar" source="CommonBar.fxml" />
-                    </children>
-                </HBox>
+            <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/mybox.png" />
+               </image>
+            </ImageView>
+            <Label text="%AppTitle">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="24.0" />
+               </font></Label>
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
             </padding>
             <BorderPane.margin>
-                <Insets bottom="10.0" />
+                <Insets />
             </BorderPane.margin>
         </HBox>
     </top>
@@ -73,14 +75,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <center>
-        <GridPane BorderPane.alignment="CENTER">
+        <GridPane hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0" BorderPane.alignment="CENTER">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
@@ -92,7 +93,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Image url="@../img/PdfTools.png" />
                             </image>
                         </ImageView>
-                        <Label text="%PdfTools" />
+                        <Label onMouseClicked="#pdfTools" text="%PdfTools" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
@@ -102,23 +103,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Image url="@../img/ImageTools.png" />
                             </image>
                         </ImageView>
-                        <Label text="%ImageTools" />
+                        <Label onMouseClicked="#imageTools" text="%ImageTools" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
                     <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#fileTools"  opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#fileTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/FileTools.png" />
                             </image>
                         </ImageView>
                         <Label text="%FileTools" textFill="#00000080" />
-                        <Label text="%Developing..." />
+                        <Label onMouseClicked="#fileTools" text="%Developing..." />
                     </children>
                 </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/Chinese.png" />
+                     </image>
+                  </ImageView>
+                  <Label onMouseClicked="#setEnglish" text="中文" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/English.png" />
+                     </image>
+                  </ImageView>
+                  <Label onMouseClicked="#setEnglish" text="English" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <children>
+                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../img/About.png" />
+                     </image>
+                  </ImageView>
+                  <Label onMouseClicked="#showAbout" text="%About" />
+               </children>
+            </VBox>
             </children>
             <BorderPane.margin>
-                <Insets left="20.0" right="20.0" top="20.0" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </BorderPane.margin>
         </GridPane>
     </center>

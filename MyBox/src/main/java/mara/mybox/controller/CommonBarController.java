@@ -22,37 +22,37 @@ public class CommonBarController extends BaseController {
     @FXML
     protected Pane commonBarPane;
 
-    @Override
-    public Stage getThisStage() {
-        if (thisStage == null) {
-            if (commonBarPane != null && commonBarPane.getScene() != null) {
-                thisStage = (Stage) commonBarPane.getScene().getWindow();
-            }
-        }
-        return thisStage;
+    @FXML
+    void settings(MouseEvent event) {
+
+    }
+
+    @FXML
+    void help(MouseEvent event) {
+
     }
 
     @FXML
     private void setEnglish(MouseEvent event) {
         AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
-        reloadInterface(parentFxml);
+        reloadStage(parentFxml);
     }
 
     @FXML
     private void setChinese(MouseEvent event) {
         AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
-        reloadInterface(parentFxml);
+        reloadStage(parentFxml);
     }
 
     @FXML
     private void about(MouseEvent event) {
         try {
-            Pane aboutPane = FXMLLoader.load(getClass().getResource(CommonValues.AboutInterface), AppVaribles.CurrentBundle);
+            Pane aboutPane = FXMLLoader.load(getClass().getResource(CommonValues.AboutFxml), AppVaribles.CurrentBundle);
             Scene scene = new Scene(aboutPane);
 
             final Stage stage = new Stage();
             stage.initModality(Modality.NONE);
-            stage.initOwner(getThisStage());
+            stage.initOwner(getMyStage());
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.getIcons().add(new Image("img/mybox.png"));
             stage.setScene(scene);

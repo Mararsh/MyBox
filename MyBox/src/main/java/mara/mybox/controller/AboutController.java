@@ -25,7 +25,7 @@ public class AboutController extends BaseController {
     private Hyperlink sourceLink;
 
     @Override
-    protected void initStage2() {
+    protected void initializeNext() {
         version.setText(CommonValues.AppVersion + "");
         date.setText(CommonValues.AppVersionDate);
     }
@@ -33,7 +33,7 @@ public class AboutController extends BaseController {
     @FXML
     private void closeStage() {
         try {
-            getThisStage().close();
+            getMyStage().close();
         } catch (Exception e) {
             logger.error(e.toString());
         }

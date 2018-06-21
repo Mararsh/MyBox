@@ -18,11 +18,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FileTools;
+import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
 import mara.mybox.tools.ImageTools;
 import org.apache.pdfbox.rendering.ImageType;
@@ -68,11 +67,10 @@ public class ImageAttributesController extends BaseController {
     private ToggleGroup ColorConversionGroup;
     @FXML
     private TextField thresholdInput;
+    @FXML
+    private RadioButton rawSelect;
 
-    private ImageType imageColor;
-    private int quality, threshold, density;
-    private String imageFormat, compressionType;
-    private int colorConversion;
+    ImageAttributes attributes = new ImageAttributes();
 
     public static class ColorConversion {
 
@@ -82,7 +80,9 @@ public class ImageAttributesController extends BaseController {
     }
 
     @Override
-    protected void initStage2() {
+    protected void initializeNext() {
+
+        attributes = new ImageAttributes();
 
         FxmlTools.setNonnegativeValidation(densityInput);
 
@@ -166,7 +166,7 @@ public class ImageAttributesController extends BaseController {
     @FXML
     private void showHelp(ActionEvent event) {
         try {
-            File help = FileTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
+            File help = FxmlTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
             Desktop.getDesktop().browse(help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());
@@ -176,10 +176,11 @@ public class ImageAttributesController extends BaseController {
     private void checkImageFormat() {
         try {
             RadioButton selected = (RadioButton) ImageFormatGroup.getSelectedToggle();
-            imageFormat = selected.getText();
+            String imageFormat = selected.getText();
+            attributes.setImageFormat(imageFormat);
             AppVaribles.setConfigValue("imageFormat", imageFormat);
 
-            String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, imageColor);
+            String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 
             if (compressionTypes == null) {
@@ -211,23 +212,23 @@ public class ImageAttributesController extends BaseController {
             String s = selected.getText();
             AppVaribles.setConfigValue("imageColor", s);
             if (getMessage("Color").equals(s)) {
-                imageColor = ImageType.RGB;
+                attributes.setColorSpace(ImageType.RGB);
             } else if (getMessage("ColorAlpha").equals(s)) {
-                imageColor = ImageType.ARGB;
+                attributes.setColorSpace(ImageType.ARGB);
             } else if (getMessage("ShadesOfGray").equals(s)) {
-                imageColor = ImageType.GRAY;
+                attributes.setColorSpace(ImageType.GRAY);
             } else if (getMessage("BlackOrWhite").equals(s)) {
-                imageColor = ImageType.BINARY;
+                attributes.setColorSpace(ImageType.BINARY);
             } else {
-                imageColor = ImageType.RGB;
+                attributes.setColorSpace(ImageType.RGB);
             }
 
 //            if ("tif".equals(imageFormat) || "bmp".equals(imageFormat)) {
-            String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, imageColor);
+            String[] compressionTypes = ImageTools.getCompressionTypes(attributes.getImageFormat(), attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 //            }
 
-            if (imageColor == ImageType.BINARY) {
+            if (attributes.getColorSpace() == ImageType.BINARY) {
                 colorBox.setDisable(false);
                 checkColorConversion();
             } else {
@@ -277,6 +278,16 @@ public class ImageAttributesController extends BaseController {
         checkCompressionType();
     }
 
+    private void checkCompressionType() {
+        try {
+            RadioButton selected = (RadioButton) CompressionGroup.getSelectedToggle();
+            attributes.setCompressionType(selected.getText());
+            AppVaribles.setConfigValue("compressionType", selected.getText());
+        } catch (Exception e) {
+            attributes.setCompressionType(null);
+        }
+    }
+
     private void checkDensity() {
         try {
             RadioButton selected = (RadioButton) DensityGroup.getSelectedToggle();
@@ -295,14 +306,14 @@ public class ImageAttributesController extends BaseController {
             }
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
-                    density = inputValue;
+                    attributes.setDensity(inputValue);
                     AppVaribles.setConfigValue("density", s);
                 } else {
                     densityInput.setStyle(FxmlTools.badStyle);
                 }
 
             } else {
-                density = Integer.parseInt(s.substring(0, s.length() - 3));
+                attributes.setDensity(Integer.parseInt(s.substring(0, s.length() - 3)));
                 AppVaribles.setConfigValue("density", s);
             }
         } catch (Exception e) {
@@ -310,30 +321,19 @@ public class ImageAttributesController extends BaseController {
         }
     }
 
-    private void checkCompressionType() {
-        try {
-            RadioButton selected = (RadioButton) CompressionGroup.getSelectedToggle();
-            compressionType = selected.getText();
-            AppVaribles.setConfigValue("compressionType", compressionType);
-        } catch (Exception e) {
-            compressionType = null;
-        }
-    }
-
     private void checkColorConversion() {
-        threshold = -1;
         thresholdInput.setStyle(null);
         try {
             RadioButton selected = (RadioButton) ColorConversionGroup.getSelectedToggle();
             String s = selected.getText();
 
             if (getMessage("Threshold").equals(s)) {
-                colorConversion = PdfConvertPicturesController.ColorConversion.THRESHOLD;
+                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
             } else if (getMessage("OTSU").equals(s)) {
-                colorConversion = PdfConvertPicturesController.ColorConversion.OTSU;
+                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
                 AppVaribles.setConfigValue("colorConversion", s);
             } else {
-                colorConversion = PdfConvertPicturesController.ColorConversion.DEFAULT;
+                attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
                 AppVaribles.setConfigValue("colorConversion", s);
             }
 
@@ -349,9 +349,9 @@ public class ImageAttributesController extends BaseController {
                 inputValue = -1;
             }
 
-            if (colorConversion == PdfConvertPicturesController.ColorConversion.THRESHOLD) {
+            if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
                 if (inputValue >= 0) {
-                    threshold = inputValue;
+                    attributes.setThreshold(inputValue);
                     AppVaribles.setConfigValue("colorConversion", s);
                 } else {
                     thresholdInput.setStyle(FxmlTools.badStyle);
@@ -380,13 +380,13 @@ public class ImageAttributesController extends BaseController {
             }
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue >= 0) {
-                    quality = inputValue;
+                    attributes.setQuality(inputValue);
                     AppVaribles.setConfigValue("quality", s);
                 } else {
                     qualityInput.setStyle(FxmlTools.badStyle);
                 }
             } else {
-                quality = Integer.parseInt(s.substring(0, s.length() - 1));
+                attributes.setQuality(Integer.parseInt(s.substring(0, s.length() - 1)));
                 AppVaribles.setConfigValue("quality", s);
             }
         } catch (Exception e) {
@@ -522,69 +522,20 @@ public class ImageAttributesController extends BaseController {
         this.thresholdInput = thresholdInput;
     }
 
-    public ImageType getImageColor() {
-        return imageColor;
+    public ImageAttributes getAttributes() {
+        return attributes;
     }
 
-    public void setImageColor(ImageType imageColor) {
-        this.imageColor = imageColor;
+    public void setAttributes(ImageAttributes attributes) {
+        this.attributes = attributes;
     }
 
-    public int getQuality() {
-        return quality;
+    public RadioButton getRawSelect() {
+        return rawSelect;
     }
 
-    public void setQuality(int quality) {
-        this.quality = quality;
+    public void setRawSelect(RadioButton rawSelect) {
+        this.rawSelect = rawSelect;
     }
 
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(int threshold) {
-        this.threshold = threshold;
-    }
-
-    public int getDensity() {
-        return density;
-    }
-
-    public void setDensity(int density) {
-        this.density = density;
-    }
-
-    public String getImageFormat() {
-        return imageFormat;
-    }
-
-    public void setImageFormat(String imageFormat) {
-        this.imageFormat = imageFormat;
-    }
-
-    public String getCompressionType() {
-        return compressionType;
-    }
-
-    public void setCompressionType(String compressionType) {
-        this.compressionType = compressionType;
-    }
-
-    public int getColorConversion() {
-        return colorConversion;
-    }
-
-    public void setColorConversion(int colorConversion) {
-        this.colorConversion = colorConversion;
-    }
-
-    @Override
-    public Stage getThisStage() {
-        if (thisStage == null) {
-            if (imageAttributesPane != null && imageAttributesPane.getScene() != null) {
-                thisStage = (Stage) imageAttributesPane.getScene().getWindow();
-            }
-        }
-        return thisStage;
-    }
 }

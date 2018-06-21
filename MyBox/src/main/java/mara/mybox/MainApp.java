@@ -6,12 +6,13 @@ import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import mara.mybox.controller.BaseController;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.tools.ImageTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,12 +34,16 @@ public class MainApp extends Application {
                 userPath.mkdir();
             }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
+            ImageTools.registrySupportedImageFormats();
 
-            Pane pane = FXMLLoader.load(getClass().getResource(CommonValues.MyboxInterface), AppVaribles.CurrentBundle);
-            Scene scene = new Scene(pane);
-            stage.getIcons().add(new Image(CommonValues.AppIcon));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
+            Pane pane = fxmlLoader.load();
+            BaseController controller = fxmlLoader.getController();
+            controller.setMyStage(stage);
+
+            stage.getIcons().add(CommonValues.AppIcon);
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
-            stage.setScene(scene);
+            stage.setScene(new Scene(pane));
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {

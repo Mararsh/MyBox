@@ -3,6 +3,7 @@ package mara.mybox.objects;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -13,21 +14,24 @@ import java.util.TimeZone;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.3;
-    public static final String AppVersionDate = "2018-06-15";
+    public static final double AppVersion = 1.4;
+    public static final String AppVersionDate = "2018-06-21";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
 
-    public static final String AppIcon = "img/mybox.png";
+    public static final Image AppIcon = new Image("img/mybox.png");
 
-    public static final String MyboxInterface = "/fxml/MyBox.fxml";
-    public static final String PdfInterface = "/fxml/PdfConvertPicture.fxml";
-    public static final String PdfInformation = "/fxml/PdfInformation.fxml";
-    public static final String ImageInterface = "/fxml/PdfConvertPictures.fxml";
-    public static final String FileInterface = "/fxml/PdfConvertPictures.fxml";
-    public static final String AboutInterface = "/fxml/About.fxml";
-    public static final String LoadingInterface = "/fxml/Loading.fxml";
+    public static final String MyboxFxml = "/fxml/MyBox.fxml";
+    public static final String PdfConvertPictureFxml = "/fxml/PdfConvertPicture.fxml";
+    public static final String PdfConvertPictureBatchFxml = "/fxml/PdfConvertPictureBatch.fxml";
+    public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
+    public static final String FileFxml = "/fxml/PdfConvertPictures.fxml";
+    public static final String AboutFxml = "/fxml/About.fxml";
+    public static final String LoadingFxml = "/fxml/Loading.fxml";
+    public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
+    public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
+    public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

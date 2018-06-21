@@ -6,10 +6,10 @@
 package mara.mybox.tools;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,72 +24,13 @@ public class FileTools {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static File getHelpFile(String helpFile) {
-
-        String filepath = UserFilePath + "/" + helpFile;
-        File file = new File(UserFilePath + "/" + helpFile);
-        if (file.exists()) {
-            return file;
+    public static long getFileCreateTime(String filename) {
+        try {
+            FileTime t = Files.readAttributes(Paths.get(filename), BasicFileAttributes.class).creationTime();
+            return t.toMillis();
+        } catch (Exception e) {
+            return -1;
         }
-        return null;
-    }
-
-    public static File getHelpFile(Class someClass, String resourceFile, String helpFile) {
-        if (someClass == null || resourceFile == null || helpFile == null) {
-            return null;
-        }
-        File file = new File(UserFilePath + "/" + helpFile);
-        if (file.exists()) {
-            return file;
-        }
-        URL url = someClass.getResource(resourceFile);
-        if (url.toString().startsWith("jar:")) {
-            try {
-                InputStream input = someClass.getResourceAsStream(resourceFile);
-                OutputStream out = new FileOutputStream(file);
-                int read;
-                byte[] bytes = new byte[1024];
-                while ((read = input.read(bytes)) != -1) {
-                    out.write(bytes, 0, read);
-                }
-                file.deleteOnExit();
-            } catch (Exception e) {
-                logger.error(e.toString());
-            }
-        } else {
-            //this will probably work in your IDE, but not from a JAR
-            file = new File(someClass.getResource(resourceFile).getFile());
-        }
-        return file;
-    }
-
-    // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-    public static File getResourceFile(Class someClass, String resourceFile) {
-        if (someClass == null || resourceFile == null) {
-            return null;
-        }
-
-        File file = null;
-        URL url = someClass.getResource(resourceFile);
-        if (url.toString().startsWith("jar:")) {
-            try {
-                InputStream input = someClass.getResourceAsStream(resourceFile);
-                file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
-                OutputStream out = new FileOutputStream(file);
-                int read;
-                byte[] bytes = new byte[1024];
-                while ((read = input.read(bytes)) != -1) {
-                    out.write(bytes, 0, read);
-                }
-                file.deleteOnExit();
-            } catch (Exception e) {
-                logger.error(e.toString());
-            }
-        } else {
-            //this will probably work in your IDE, but not from a JAR
-            file = new File(someClass.getResource(resourceFile).getFile());
-        }
-        return file;
     }
 
     public static String getFilePath(String filename) {
@@ -160,4 +101,36 @@ public class FileTools {
         }
         return filename.substring(0, pos) + inStr + "." + filename.substring(pos + 1);
     }
+
+    public static File getHelpFile(String helpFile) {
+
+        String filepath = UserFilePath + "/" + helpFile;
+        File file = new File(UserFilePath + "/" + helpFile);
+        if (file.exists()) {
+            return file;
+        }
+        return null;
+    }
+
+    public static String showFileSize(long size) {
+        String s = size + "";
+        String t = "";
+        int count = 0;
+        for (int i = s.length() - 1; i >= 0; i--, count++) {
+            if (count > 0 && (count % 3 == 0)) {
+                t = "," + t;
+            }
+            t = s.charAt(i) + t;
+        }
+        return t;
+    }
+//            double size = (double) info.getFileSize();
+//            if (info.getFileSize() > 1000 * 1000) {
+//                FileSize.setText(ValueTools.roundDouble(size / (1000 * 1000)) + "GB");
+//            } else if (info.getFileSize() > 1000) {
+//                FileSize.setText(ValueTools.roundDouble(size / 1000) + "MB");
+//            } else {
+//                FileSize.setText(size + "KB");
+//            }
+
 }

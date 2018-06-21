@@ -87,6 +87,11 @@ public class AppVaribles {
         }
     }
 
+    public static boolean getConfigBoolean(String key) {
+        String v = getConfigValue(key, "true");
+        return (v != null) && v.equals("true");
+    }
+
     public static boolean setConfigValue(String key, String value) {
         if (ConfigTools.writeConfigValue(key, value)) {
             configValues.put(key, value);
@@ -94,5 +99,9 @@ public class AppVaribles {
         } else {
             return false;
         }
+    }
+
+    public static boolean setConfigValue(String key, boolean value) {
+        return setConfigValue(key, value ? "true" : "false");
     }
 }

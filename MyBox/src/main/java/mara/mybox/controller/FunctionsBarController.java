@@ -7,7 +7,8 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
+import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -20,14 +21,19 @@ public class FunctionsBarController extends BaseController {
     @FXML
     private Pane functionsBarPane;
 
-    @Override
-    public Stage getThisStage() {
-        if (thisStage == null) {
-            if (functionsBarPane != null && functionsBarPane.getScene() != null) {
-                thisStage = (Stage) functionsBarPane.getScene().getWindow();
-            }
-        }
-        return thisStage;
+    @FXML
+    private void pdfTools() {
+        reloadStage(CommonValues.PdfConvertPictureFxml);
+    }
+
+    @FXML
+    private void imageTools() {
+        popInformation(AppVaribles.getMessage("Developing..."));
+    }
+
+    @FXML
+    private void fileTools() {
+        popInformation(AppVaribles.getMessage("Developing..."));
     }
 
 }

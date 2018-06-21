@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="mainMenuPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MainMenuController">
+    <children>
+        <MenuBar prefHeight="32.0" prefWidth="605.0" HBox.hgrow="ALWAYS">
+            <menus>
+                <Menu fx:id="homeMenu" mnemonicParsing="false" text="%File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />
+                    </items>
+                </Menu>
+                <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertPictures" text="%PdfConvertPictures" />
+                    </items>
+                </Menu>
+                <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                    </items>
+                </Menu>
+                <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools" />
+                  <Menu mnemonicParsing="false" text="%Settings">
+                      <items>
+                          <Menu mnemonicParsing="false" text="%InterfaceLanguage">
+                              <items>
+                                  <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
+                                      <toggleGroup>
+                                          <ToggleGroup fx:id="langGroup" />
+                                      </toggleGroup>
+                                  </RadioMenuItem>
+                                  <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
+                              </items>
+                          </Menu>
+                      </items>
+                  </Menu>
+                <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showImageHelp" text="%ImageHelp" />
+                        <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </children>
+</HBox>

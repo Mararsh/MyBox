@@ -1,10 +1,12 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import mara.mybox.objects.PdfInformation;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.controller.BaseController;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.tools.FileTools.showFileSize;
 
 /**
  * @Author Mara
@@ -16,7 +18,11 @@ import mara.mybox.tools.DateTools;
 public class PdfInformationController extends BaseController {
 
     @FXML
-    private TextField fileName;
+    private TextField FilesPath;
+    @FXML
+    private TextField FileName;
+    @FXML
+    private TextField FileSize;
     @FXML
     private TextField title;
     @FXML
@@ -39,7 +45,7 @@ public class PdfInformationController extends BaseController {
     @FXML
     private void closeStage() {
         try {
-            getThisStage().close();
+            getMyStage().close();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -47,7 +53,10 @@ public class PdfInformationController extends BaseController {
 
     public void setInformation(PdfInformation info) {
         try {
-            fileName.setText(info.getFile().getName());
+            File file = info.getFile();
+            FilesPath.setText(file.getParent());
+            FileName.setText(file.getName());
+            FileSize.setText(showFileSize((long) (file.length() / 1024f + 0.5)) + "KB");
             title.setText(info.getTitle());
             subject.setText(info.getSubject());
             creator.setText(info.getCreator());

@@ -1,12 +1,11 @@
 package mara.mybox.controller;
 
-import mara.mybox.objects.PdfInformation;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -25,21 +24,25 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.ImageAttributes;
+import mara.mybox.objects.PdfInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.ImageTools;
+import mara.mybox.tools.ImageGrayTools;
+import mara.mybox.tools.ImageWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -53,365 +56,454 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class PdfConvertPicturesController extends BaseController {
 
-    private PdfInformation pdfInformation;
-    private Stage infoStage;
-    private String lastSource, status;
-    private Date startTime;
-    private int handlingPage, handlingNumber, totalHandling;
-
-    public static class ColorConversion {
-
-        public static int DEFAULT = 0;
-        public static int OTSU = 1;
-        public static int THRESHOLD = 9;
-    }
-
-    private Task convertTask;
+    protected Stage infoStage;
+    protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
+    private boolean isPreview;
 
     @FXML
-    private Pane titleBar;
+    protected TextField sourceFileInput;
     @FXML
-    private TitleBarController titleBarController;
+    protected TextField targetPathInput;
     @FXML
-    private Pane commonBar;
+    protected TextField targetPrefixInput;
     @FXML
-    private CommonBarController commonBarController;
+    protected Button openTargetButton;
     @FXML
-    private Pane functionsBar;
+    protected TextField statusLabel;
     @FXML
-    private FunctionsBarController functionsBarController;
+    protected Pane imageAttributes;
     @FXML
-    private Pane imageAttributes;
+    protected ImageAttributesController imageAttributesController;
     @FXML
-    private ImageAttributesController imageAttributesController;
-
+    protected CheckBox fillZero;
     @FXML
-    private TextField sourceFile;
+    protected CheckBox appendDensity;
     @FXML
-    private TextField fromPage;
+    protected CheckBox appendColor;
     @FXML
-    private TextField toPage;
+    protected CheckBox appendCompressionType;
+    @FXML
+    protected CheckBox appendQuality;
+    @FXML
+    protected Button startButton;
+    @FXML
+    protected Button pauseButton;
+    @FXML
+    protected Button previewButton;
+    @FXML
+    protected VBox paraBox;
+    @FXML
+    protected ProgressBar progressBar;
+    @FXML
+    protected Label progressValue;
+    @FXML
+    private TextField fromPageInput;
+    @FXML
+    private TextField toPageInput;
+    @FXML
+    private TextField previewInput;
     @FXML
     private PasswordField passwordInput;
-
     @FXML
-    private TextField targetPath;
-    @FXML
-    private TextField targetPrefix;
-    @FXML
-    private TextField acumFrom;
-    @FXML
-    private CheckBox fillZero;
-    @FXML
-    private CheckBox appendDensity;
-    @FXML
-    private CheckBox appendColor;
-    @FXML
-    private CheckBox appendCompressionType;
-    @FXML
-    private CheckBox appendQuality;
-    @FXML
-    private TextField statusLabel;
-
-    @FXML
-    private Button startButton;
-    @FXML
-    private Button pauseButton;
-    @FXML
-    private Button openTargetButton;
+    private TextField acumFromInput;
     @FXML
     private Button fileInformationButton;
-    @FXML
-    private VBox paraBox;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label progressValue;
+
+    protected class Conversion {
+
+        public File file;
+        public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
+        public String password, status, filePrefix, fileName;
+        public Date startTime, endTime;
+        public int currentPage, currentNameNumber;
+        public PdfInformation pdfInformation;
+        boolean fill, aDensity, aColor, aCompression, aQuality;
+    }
+
+    protected Conversion fileConversion, previewConversion, currentConversion;
 
     public PdfConvertPicturesController() {
     }
 
     @Override
-    protected void initStage2() {
-
-        commonBarController.setParentFxml(thisFxml);
-        titleBarController.setParentFxml(thisFxml);
-        functionsBarController.setParentFxml(thisFxml);
-        imageAttributesController.setParentFxml(thisFxml);
-
-        titleBarController.setTitle(AppVaribles.getMessage("PdfTools"));
-
-        startButton.disableProperty().bind(
-                Bindings.isEmpty(sourceFile.textProperty())
-                        .or(Bindings.isEmpty(targetPath.textProperty()))
-                        .or(Bindings.isEmpty(fromPage.textProperty()))
-                        .or(Bindings.isEmpty(toPage.textProperty()))
-                        .or(Bindings.isEmpty(acumFrom.textProperty()))
-                        .or(sourceFile.styleProperty().isEqualTo(badStyle))
-                        .or(targetPath.styleProperty().isEqualTo(badStyle))
-                        .or(fromPage.styleProperty().isEqualTo(badStyle))
-                        .or(toPage.styleProperty().isEqualTo(badStyle))
-                        .or(acumFrom.styleProperty().isEqualTo(badStyle))
-                        .or(imageAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
-                        .or(imageAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                        .or(imageAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
-        );
-
-        sourceFile.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null || newValue.isEmpty() || !FileTools.isPDF(newValue)) {
-                    sourceFile.setStyle(badStyle);
-                    return;
-                }
-                final File file = new File(newValue);
-                if (!file.exists()) {
-                    sourceFile.setStyle(badStyle);
-                    return;
-                }
-                sourceFile.setStyle(null);
-                if (newValue.trim().equals(lastSource)) {
-                    return;
-                }
-                sourceFileChanged(file);
-                lastSource = newValue.trim();
+    protected void initializeNext() {
+        try {
+            if (imageAttributesController != null) {
+                imageAttributesController.setParentFxml(myFxml);
             }
-        });
 
-        targetPath.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if (newValue == null || newValue.isEmpty()) {
-                    openTargetButton.setDisable(true);
-                    return;
-                }
-                final File file = new File(newValue);
-                if (!file.exists()) {
-                    openTargetButton.setDisable(true);
-                    return;
-                }
-                openTargetButton.setDisable(false);
-            }
-        });
+            fileExtensionFilter = new ArrayList();
+            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf"));
+            fileExtensionFilter.add(new FileChooser.ExtensionFilter("PDF", "*.PDF"));
 
-        FxmlTools.setFileValidation(targetPath);
-        FxmlTools.setNonnegativeValidation(fromPage);
-        FxmlTools.setNonnegativeValidation(toPage);
-        FxmlTools.setNonnegativeValidation(acumFrom);
+            fillZero.setSelected(AppVaribles.getConfigBoolean("pci_fill"));
+            appendDensity.setSelected(AppVaribles.getConfigBoolean("pci_aDensity"));
+            appendColor.setSelected(AppVaribles.getConfigBoolean("pci_aColor"));
+            appendCompressionType.setSelected(AppVaribles.getConfigBoolean("pci_aCompression"));
+            appendQuality.setSelected(AppVaribles.getConfigBoolean("pci_aQuality"));
 
+            initializeNext2();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
-    @FXML
-    private void selectSourceFile() {
+    protected void initializeNext2() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("View Pictures");
-            fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"))));
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("PDF", "*.pdf")
+            if (sourceFileInput != null) {
+                sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        if (newValue == null || newValue.isEmpty() || !FileTools.isPDF(newValue)) {
+                            sourceFileInput.setStyle(badStyle);
+                            return;
+                        }
+                        final File file = new File(newValue);
+                        if (!file.exists()) {
+                            sourceFileInput.setStyle(badStyle);
+                            return;
+                        }
+                        sourceFileInput.setStyle(null);
+                        sourceFileChanged(file);
+                        if (file.isDirectory()) {
+                            AppVaribles.setConfigValue("pdfSourcePath", file.getPath());
+//                            if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
+//                                targetPathInput.setText(file.getPath());
+//                            }
+
+                        } else {
+                            AppVaribles.setConfigValue("pdfSourcePath", file.getParent());
+                            if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
+                                targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+                            }
+                            if (targetPrefixInput != null) {
+                                targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (targetPathInput != null) {
+                targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        try {
+                            final File file = new File(newValue);
+                            if (file.isDirectory()) {
+                                AppVaribles.setConfigValue("pdfTargetPath", file.getPath());
+                            } else {
+                                AppVaribles.setConfigValue("pdfTargetPath", file.getParent());
+                            }
+                            if (openTargetButton != null) {
+                                if (!file.exists()) {
+                                    openTargetButton.setDisable(true);
+                                } else {
+                                    openTargetButton.setDisable(false);
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+                FxmlTools.setFileValidation(targetPathInput);
+            }
+
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(sourceFileInput.textProperty())
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(Bindings.isEmpty(fromPageInput.textProperty()))
+                            .or(Bindings.isEmpty(toPageInput.textProperty()))
+                            .or(Bindings.isEmpty(acumFromInput.textProperty()))
+                            .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(fromPageInput.styleProperty().isEqualTo(badStyle))
+                            .or(toPageInput.styleProperty().isEqualTo(badStyle))
+                            .or(acumFromInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
+                            .or(imageAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
+                            .or(imageAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
             );
-            final File file = fileChooser.showOpenDialog(getThisStage());
-            sourceFile.setText(file.getAbsolutePath());
+
+            previewButton.disableProperty().bind(
+                    Bindings.isEmpty(sourceFileInput.textProperty())
+                            .or(imageAttributesController.getRawSelect().selectedProperty())
+                            .or(startButton.disableProperty())
+                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(previewInput.styleProperty().isEqualTo(badStyle))
+            );
+            FxmlTools.setNonnegativeValidation(fromPageInput);
+            FxmlTools.setNonnegativeValidation(toPageInput);
+            FxmlTools.setNonnegativeValidation(acumFromInput);
+            FxmlTools.setNonnegativeValidation(previewInput);
+
+            previewInput.setText(AppVaribles.getConfigValue("pci_preview", "0"));
+            previewInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue == null || newValue.isEmpty()) {
+                        return;
+                    }
+                    AppVaribles.setConfigValue("pci_preview", newValue);
+                }
+            });
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     @FXML
-    private void sourceFileChanged(final File file) {
+    protected void selectSourceFile() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getConfigValue("pdfSourcePath", System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showOpenDialog(getMyStage());
+            if (file != null) {
+                sourceFileInput.setText(file.getAbsolutePath());
+            }
+        } catch (Exception e) {
+//            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void selectTargetPath() {
+        if (targetPathInput == null) {
+            return;
+        }
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory != null) {
+                targetPathInput.setText(directory.getPath());
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void openTargetPath() {
+        try {
+            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
+//            new ProcessBuilder("Explorer", targetPath.getText()).start();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void sourceFileChanged(final File file) {
         if (file == null) {
             return;
         }
-        statusLabel.setText(getMessage("Loading..."));
-        AppVaribles.setConfigValue("LastPath", file.getParent());
-        targetPath.setText(file.getParent());
-        targetPrefix.setText(FileTools.getFilePrefix(file.getName()));
-        toPage.setText("");
-        pdfInformation = null;
+        toPageInput.setText("");
         fileInformationButton.setDisable(true);
         imageAttributesController.getPreviewButton().setDisable(true);
+        statusLabel.setText(getMessage("Loading..."));
+        imageAttributesController.getPreviewButton().setDisable(true);
 
-        Task<Void> openPdfTask = new Task<Void>() {
+        fileConversion = new Conversion();
+        fileConversion.file = file;
+        fileConversion.pdfInformation = null;
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                pdfInformation = new PdfInformation(file);
-                pdfInformation.loadInformation();
+                fileConversion.pdfInformation = new PdfInformation(file);
+                fileConversion.pdfInformation.loadInformation();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        fileInformationButton.setDisable(false);
-                        imageAttributesController.getPreviewButton().setDisable(false);
-                        toPage.setText((pdfInformation.getNumberOfPages() - 1) + "");
                         statusLabel.setText("");
+                        if (fileConversion.pdfInformation != null) {
+                            toPageInput.setText((fileConversion.pdfInformation.getNumberOfPages() - 1) + "");
+                            fileInformationButton.setDisable(false);
+                        }
                     }
                 });
                 return null;
             }
         };
-        openLoadingStage(openPdfTask);
-        Thread thread = new Thread(openPdfTask);
+        openLoadingStage(task);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
 
     @FXML
-    private void showFileInformation() {
-        if (pdfInformation == null) {
-            return;
-        }
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PdfInformation), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            PdfInformationController controller = fxmlLoader.getController();
-            controller.setInformation(pdfInformation);
-
-            infoStage = new Stage();
-            infoStage.initModality(Modality.NONE);
-            infoStage.initStyle(StageStyle.DECORATED);
-            infoStage.initOwner(null);
-            infoStage.getIcons().add(new Image("img/mybox.png"));
-            infoStage.setScene(new Scene(root));
-            infoStage.show();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    protected void startConversion() {
+        isPreview = false;
+        makeFileConversion();
+        currentConversion = fileConversion;
+        convertCurrentFile();
     }
 
     @FXML
-    private void selectTargetPath() {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setInitialDirectory(new File(AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"))));
-            File directory = chooser.showDialog(getThisStage());
-            if (directory != null) {
-                AppVaribles.setConfigValue("LastPath", directory.getPath());
-                targetPath.setText(directory.getPath());
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
+    protected void preview() {
+        isPreview = true;
+        makeFileConversion();
+        previewConversion = copyConversion(fileConversion);
+        int page = FxmlTools.getInputInt(previewInput);
+        if (page > previewConversion.pdfInformation.getNumberOfPages()) {
+            page = 0;
         }
+        previewConversion.fromPage = page;
+        previewConversion.startPage = page;
+        previewConversion.toPage = page;
+        previewConversion.currentPage = 0;
+        previewConversion.status = "start";
+        currentConversion = previewConversion;
+        convertCurrentFile();
     }
 
-    @FXML
-    private void startConversion() {
-        if (pdfInformation == null) {
-            updateInterface("Invalid");
-            return;
+    protected void makeFileConversion() {
+        fileConversion.fromPage = FxmlTools.getInputInt(fromPageInput);
+        fileConversion.toPage = FxmlTools.getInputInt(toPageInput);
+        fileConversion.acumFrom = FxmlTools.getInputInt(acumFromInput);
+        fileConversion.password = passwordInput.getText();
+        if ("Paused".equals(fileConversion.status)) {
+            fileConversion.startPage = fileConversion.currentPage + 1;
+            fileConversion.acumStart = fileConversion.currentNameNumber + 1;
+        } else {
+            fileConversion.startPage = fileConversion.fromPage;
+            fileConversion.acumStart = fileConversion.acumFrom;
         }
+        fileConversion.fill = fillZero.isSelected();
+        fileConversion.aDensity = appendDensity.isSelected();
+        fileConversion.aColor = appendColor.isSelected();
+        fileConversion.aCompression = appendCompressionType.isSelected();
+        fileConversion.aQuality = appendQuality.isSelected();
+        fileConversion.acumDigit = (fileConversion.toPage + "").length();
+        fileConversion.filePrefix = targetPathInput.getText() + "/" + targetPrefixInput.getText();
+
+        AppVaribles.setConfigValue("pci_fill", fileConversion.fill);
+        AppVaribles.setConfigValue("pci_aDensity", fileConversion.aDensity);
+        AppVaribles.setConfigValue("pci_aColor", fileConversion.aColor);
+        AppVaribles.setConfigValue("pci_aCompression", fileConversion.aCompression);
+        AppVaribles.setConfigValue("pci_aQuality", fileConversion.aQuality);
+
+    }
+
+    protected Conversion copyConversion(Conversion theConversion) {
+        Conversion newConversion = new Conversion();
+        newConversion.aColor = theConversion.aColor;
+        newConversion.aCompression = theConversion.aCompression;
+        newConversion.aDensity = theConversion.aDensity;
+        newConversion.aQuality = theConversion.aQuality;
+        newConversion.acumDigit = theConversion.acumDigit;
+        newConversion.acumFrom = theConversion.acumFrom;
+        newConversion.acumStart = theConversion.acumStart;
+        newConversion.currentNameNumber = theConversion.currentNameNumber;
+        newConversion.currentPage = theConversion.currentPage;
+        newConversion.file = theConversion.file;
+        newConversion.filePrefix = theConversion.filePrefix;
+        newConversion.fill = theConversion.fill;
+        newConversion.fromPage = theConversion.fromPage;
+        newConversion.password = theConversion.password;
+        newConversion.pdfInformation = theConversion.pdfInformation;
+        newConversion.startPage = theConversion.startPage;
+        newConversion.status = theConversion.status;
+        newConversion.toPage = theConversion.toPage;
+        newConversion.startTime = theConversion.startTime;
+        return newConversion;
+    }
+
+    protected void convertCurrentFile() {
         try {
-            final File file = pdfInformation.getFile();
-            final int from = FxmlTools.getInputInt(fromPage);
-            final int start;
-            final int num;
-            if ("Paused".equals(status)) {
-                start = handlingPage + 1;
-                num = handlingNumber + 1;
-            } else {
-                start = from;
-                num = FxmlTools.getInputInt(acumFrom);
-            }
-            int toIn = FxmlTools.getInputInt(toPage);
-            final int to;
-            if (toIn >= pdfInformation.getNumberOfPages()) {
-                to = pdfInformation.getNumberOfPages() - 1;
-            } else {
-                to = toIn;
-            }
-            if (from > to) {
-                updateInterface("Invalid");
+            if (currentConversion == null) {
                 return;
             }
-            totalHandling = 0;
-            startTime = new Date();
-            final boolean fill = fillZero.isSelected();
-            final boolean aDensity = appendDensity.isSelected();
-            final boolean aColor = appendColor.isSelected();
-            final boolean aCompression = appendCompressionType.isSelected();
-            final boolean aQuality = appendQuality.isSelected();
-            final int digit = (pdfInformation.getNumberOfPages() + "").length();
-            final String filePrefix = targetPath.getText() + "/" + targetPrefix.getText();
-            final String password = passwordInput.getText();
-
+            currentConversion.startTime = new Date();
+            final ImageAttributes attributes = imageAttributesController.getAttributes();
             updateInterface("started");
-            convertTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() {
                     try {
-                        PDDocument doc = PDDocument.load(file, password);
+                        PDDocument doc = PDDocument.load(currentConversion.file, currentConversion.password);
                         PDFRenderer renderer = new PDFRenderer(doc);
-                        int pnumber = num;
-                        int total = to - from + 1;
-                        int converted;
-                        String fname;
-                        for (int i = start; i <= to; i++, pnumber++) {
+                        int nameNumber = currentConversion.acumStart;
+                        int total = currentConversion.toPage - currentConversion.fromPage + 1;
+                        for (int currentPage = currentConversion.startPage; currentPage <= currentConversion.toPage; currentPage++, nameNumber++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            handlingPage = i;
-                            handlingNumber = pnumber;
-                            totalHandling++;
-                            String pn = pnumber + "";
-                            if (fill) {
-                                pn = ValueTools.fillNumber(pnumber, digit);
-                            }
-                            fname = filePrefix + "_" + pn;
-                            if (aColor) {
-                                if (imageAttributesController.getColorConversion() == ColorConversion.THRESHOLD) {
-                                    fname += "_" + "BINARY-Threshold";
-                                    if (imageAttributesController.getThreshold() >= 0) {
-                                        fname += "-" + imageAttributesController.getThreshold() + "%";
-                                    }
-                                } else if (imageAttributesController.getColorConversion() == ColorConversion.OTSU) {
-                                    fname += "_" + "BINARY-OTSU";
-                                } else {
-                                    fname += "_" + imageAttributesController.getImageColor();
-                                }
-                            }
-                            if (aDensity) {
-                                fname += "_" + imageAttributesController.getDensity() + "dpi";
-                            }
-                            if (imageAttributesController.getCompressionType() != null && !"none".equals(imageAttributesController.getCompressionType())) {
-                                if (aCompression) {
-                                    fname += "_" + imageAttributesController.getCompressionType().replace(" ", "_");
-                                }
-                                if (aQuality) {
-                                    fname += "_quality-" + imageAttributesController.getQuality() + "%";
-                                }
-                            }
-                            fname += "." + imageAttributesController.getImageFormat();
-                            converted = i - from + 1;
-                            updateProgress(converted, total);
-                            updateMessage(converted + "/" + total);
-
+                            currentConversion.fileName = makeFilename(nameNumber);
                             BufferedImage image;
-                            if (imageAttributesController.getColorConversion() == ColorConversion.THRESHOLD && imageAttributesController.getThreshold() >= 0) {
-                                image = renderer.renderImageWithDPI(i, imageAttributesController.getDensity(), ImageType.RGB);
-                                image = ImageTools.color2BinaryWithPercentage(image, imageAttributesController.getThreshold());
-                            } else if (imageAttributesController.getColorConversion() == ColorConversion.OTSU) {
-                                image = renderer.renderImageWithDPI(i, imageAttributesController.getDensity(), ImageType.RGB);
-                                image = ImageTools.color2Binary(image);
+                            if (ImageType.BINARY == attributes.getColorSpace()) {
+                                if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
+                                        && attributes.getThreshold() >= 0) {
+                                    image = renderer.renderImageWithDPI(currentPage, attributes.getDensity(), ImageType.RGB);
+                                    image = ImageGrayTools.color2BinaryWithPercentage(image, attributes.getThreshold());
+                                } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                                    image = renderer.renderImageWithDPI(currentPage, attributes.getDensity(), ImageType.RGB);
+                                    image = ImageGrayTools.color2Binary(image);
+                                } else {
+                                    image = renderer.renderImageWithDPI(currentPage, attributes.getDensity(), attributes.getColorSpace());
+                                }
                             } else {
-                                image = renderer.renderImageWithDPI(i, imageAttributesController.getDensity(), imageAttributesController.getImageColor());
+                                image = renderer.renderImageWithDPI(currentPage, attributes.getDensity(), attributes.getColorSpace());
                             }
+                            ImageWriters.writeImageFile(image, attributes, currentConversion.fileName);
 
-                            Map<String, Object> parameters = new HashMap();
-                            parameters.put("density", imageAttributesController.getDensity());
-                            parameters.put("imageColor", imageAttributesController.getImageColor());
-                            if (imageAttributesController.getCompressionType() != null && !"none".equals(imageAttributesController.getCompressionType())) {
-                                parameters.put("compressionType", imageAttributesController.getCompressionType());
-                            }
-                            if (imageAttributesController.getQuality() > 0) {
-                                parameters.put("quality", imageAttributesController.getQuality());
-                            }
-                            ImageTools.writeImageFile(image, imageAttributesController.getImageFormat(), parameters, fname);
-
+                            currentConversion.currentPage = currentPage;
+                            currentConversion.currentNameNumber = nameNumber;
+                            int pages = currentConversion.currentPage - currentConversion.fromPage + 1;
+                            updateProgress(pages, total);
+                            updateMessage(pages + "/" + total);
                         }
                         doc.close();
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
                     return null;
+                }
+
+                private String makeFilename(int number) {
+                    String pageNumber = number + "";
+                    if (currentConversion.fill) {
+                        pageNumber = ValueTools.fillNumber(number, currentConversion.acumDigit);
+                    }
+                    String fname = currentConversion.filePrefix + "_" + pageNumber;
+                    if (currentConversion.aColor) {
+                        if (ImageType.BINARY == attributes.getColorSpace()) {
+                            if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
+                                fname += "_" + "BINARY-Threshold";
+                                if (attributes.getThreshold() >= 0) {
+                                    fname += "-" + attributes.getThreshold() + "%";
+                                }
+                            } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                                fname += "_" + "BINARY-OTSU";
+                            } else {
+                                fname += "_" + attributes.getColorSpace();
+                            }
+                        } else {
+                            fname += "_" + attributes.getColorSpace();
+                        }
+                    }
+                    if (currentConversion.aDensity) {
+                        fname += "_" + attributes.getDensity() + "dpi";
+                    }
+                    if (attributes.getCompressionType() != null && !"none".equals(attributes.getCompressionType())) {
+                        if (currentConversion.aCompression) {
+                            fname += "_" + attributes.getCompressionType().replace(" ", "_");
+                        }
+                        if (currentConversion.aQuality) {
+                            fname += "_quality-" + attributes.getQuality() + "%";
+                        }
+                    }
+                    fname += "." + attributes.getImageFormat();
+                    return fname;
                 }
 
                 @Override
@@ -432,9 +524,9 @@ public class PdfConvertPicturesController extends BaseController {
                     updateInterface("Failed");
                 }
             };
-            progressValue.textProperty().bind(convertTask.messageProperty());
-            progressBar.progressProperty().bind(convertTask.progressProperty());
-            Thread thread = new Thread(convertTask);
+            progressValue.textProperty().bind(task.messageProperty());
+            progressBar.progressProperty().bind(task.progressProperty());
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 
@@ -444,18 +536,19 @@ public class PdfConvertPicturesController extends BaseController {
         }
     }
 
-    private void updateInterface(String newStatus) {
-        status = newStatus;
+    protected void updateInterface(String newStatus) {
+        currentConversion.status = newStatus;
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
 
-                if (null != status) {
-                    switch (status) {
+                if (null != currentConversion.status) {
+                    switch (currentConversion.status) {
                         case "started":
-                            statusLabel.setText(getMessage("Handling...") + " " + getMessage("StartTime")
-                                    + ": " + DateTools.datetimeToString(startTime));
-
+                            statusLabel.setText(currentConversion.file.getName() + " "
+                                    + getMessage("Handling...") + " "
+                                    + getMessage("StartTime")
+                                    + ": " + DateTools.datetimeToString(currentConversion.startTime));
                             startButton.setText(AppVaribles.getMessage("Cancel"));
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -496,6 +589,11 @@ public class PdfConvertPicturesController extends BaseController {
                             showCost();
                             break;
 
+                        case "Done":
+                            if (isPreview) {
+                                showImage(currentConversion.fileName);
+                            }
+
                         default:
                             startButton.setText(AppVaribles.getMessage("Start"));
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -516,40 +614,59 @@ public class PdfConvertPicturesController extends BaseController {
         });
     }
 
-    private void showCost() {
-        long cost = (new Date().getTime() - startTime.getTime()) / 1000;
-        double avg = ValueTools.roundDouble((double) cost / totalHandling);
-        String s = getMessage(status) + ". "
+    protected void showCost() {
+        if (statusLabel == null) {
+            return;
+        }
+        long cost = (new Date().getTime() - currentConversion.startTime.getTime()) / 1000;
+        int pages = currentConversion.currentPage - currentConversion.startPage + 1;
+        double avg = ValueTools.roundDouble((double) cost / pages);
+        String s = getMessage(currentConversion.status) + ". "
+                + getMessage("HandledThisTime") + ": " + pages + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "
                 + getMessage("Average") + ": " + avg + " " + getMessage("SecondsPerItem") + ". "
-                + getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
+                + getMessage("StartTime") + ": " + DateTools.datetimeToString(currentConversion.startTime) + ", "
                 + getMessage("EndTime") + ": " + DateTools.datetimeToString(new Date());
         statusLabel.setText(s);
     }
 
     @FXML
-    private void openFileManager() {
-        try {
-            Desktop.getDesktop().browse(new File(targetPath.getText()).toURI());
-//            new ProcessBuilder("Explorer", targetPath.getText()).start();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    private void pauseConversion() {
-        if (convertTask != null && convertTask.isRunning()) {
-            convertTask.cancel();
+    protected void pauseConversion() {
+        if (task != null && task.isRunning()) {
+            task.cancel();
         }
         updateInterface("Paused");
     }
 
-    private void cancelConversion() {
-        if (convertTask != null && convertTask.isRunning()) {
-            convertTask.cancel();
+    protected void cancelConversion() {
+        if (task != null && task.isRunning()) {
+            task.cancel();
         }
         updateInterface("Canceled");
+    }
+
+    @FXML
+    private void showFileInformation() {
+        if (fileConversion == null || fileConversion.pdfInformation == null) {
+            return;
+        }
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PdfInformationFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            PdfInformationController controller = fxmlLoader.getController();
+            controller.setInformation(fileConversion.pdfInformation);
+
+            infoStage = new Stage();
+            infoStage.initModality(Modality.NONE);
+            infoStage.initStyle(StageStyle.DECORATED);
+            infoStage.initOwner(null);
+            infoStage.getIcons().add(new Image("img/mybox.png"));
+            infoStage.setScene(new Scene(root));
+            infoStage.show();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
 }
