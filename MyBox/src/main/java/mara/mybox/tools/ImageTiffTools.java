@@ -20,7 +20,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,32 +49,37 @@ public class ImageTiffTools {
             TIFFImageWriterSpi tiffspi = new TIFFImageWriterSpi();
             TIFFImageWriter writer = new TIFFImageWriter(tiffspi);
             TIFFImageWriteParam param = (TIFFImageWriteParam) writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType(attributes.getCompressionType());
-            param.setCompressionQuality(attributes.getQuality() / 100.0f);
+            if (attributes.getCompressionType() != null) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionType(attributes.getCompressionType());
+                param.setCompressionQuality(attributes.getQuality() / 100.0f);
+            }
 
             TIFFImageMetadata metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            long[] xRes = new long[]{attributes.getDensity(), 1};
-            long[] yRes = new long[]{attributes.getDensity(), 1};
-            Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
-            TIFFField fieldXRes = new TIFFField(
-                    BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
-                    TIFFTag.TIFF_RATIONAL, 1, new long[][]{xRes});
-            TIFFField fieldYRes = new TIFFField(
-                    BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
-                    TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
-            node.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
-            node.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
-            char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
-            TIFFField fieldResUnit = new TIFFField(
-                    BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
-                    TIFFTag.TIFF_SHORT, 1, fieldUnit);
-            node.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
-            metaData.mergeTree(metaData.getNativeMetadataFormatName(), node);
+            if (attributes.getDensity() > 0) {
+                long[] xRes = new long[]{attributes.getDensity(), 1};
+                long[] yRes = new long[]{attributes.getDensity(), 1};
+                Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
+                TIFFField fieldXRes = new TIFFField(
+                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
+                        TIFFTag.TIFF_RATIONAL, 1, new long[][]{xRes});
+                TIFFField fieldYRes = new TIFFField(
+                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
+                        TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
+                node.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
+                node.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
+                char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
+                TIFFField fieldResUnit = new TIFFField(
+                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
+                        TIFFTag.TIFF_SHORT, 1, fieldUnit);
+                node.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
+                metaData.mergeTree(metaData.getNativeMetadataFormatName(), node);
+            }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, metaData), param);
+                out.flush();
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -160,7 +165,7 @@ public class ImageTiffTools {
         return Integer.valueOf(vv);
     }
 
-    public static void explainTiffMetaData(String metaDataXml, ImageInformation info) {
+    public static void explainTiffMetaData(String metaDataXml, ImageFileInformation info) {
         try {
             Map<String, String> metaData = explainTiffMetaData(metaDataXml);
             if (metaData.containsKey("ImageWidth")) {

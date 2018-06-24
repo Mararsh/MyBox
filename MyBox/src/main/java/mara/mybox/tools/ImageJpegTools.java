@@ -12,7 +12,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,25 +46,29 @@ public class ImageJpegTools {
             param.setCompressionQuality(attributes.getQuality() / 100f);
 
             IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_jpeg_image_1.0"
-            Element tree = (Element) metaData.getAsTree(format);
-            Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
-            jfif.setAttribute("Xdensity", attributes.getDensity() + "");
-            jfif.setAttribute("Ydensity", attributes.getDensity() + "");
-            jfif.setAttribute("resUnits", "1"); // density is dots per inch
-            metaData.mergeTree(format, tree);
+            if (attributes.getDensity() > 0) {
+                String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_jpeg_image_1.0"
+                Element tree = (Element) metaData.getAsTree(format);
+                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                jfif.setAttribute("Xdensity", attributes.getDensity() + "");
+                jfif.setAttribute("Ydensity", attributes.getDensity() + "");
+                jfif.setAttribute("resUnits", "1"); // density is dots per inch
+                metaData.mergeTree(format, tree);
+            }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
+                out.flush();
             }
             writer.dispose();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public static void explainJpegMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageInformation info) {
+    public static void explainJpegMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_jpeg_image_1.0")) {
                 return;

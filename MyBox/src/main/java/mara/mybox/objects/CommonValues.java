@@ -14,8 +14,8 @@ import javafx.scene.image.Image;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.4;
-    public static final String AppVersionDate = "2018-06-21";
+    public static final double AppVersion = 1.5;
+    public static final String AppVersionDate = "2018-06-24";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -23,10 +23,12 @@ public class CommonValues {
     public static final Image AppIcon = new Image("img/mybox.png");
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
-    public static final String PdfConvertPictureFxml = "/fxml/PdfConvertPicture.fxml";
-    public static final String PdfConvertPictureBatchFxml = "/fxml/PdfConvertPictureBatch.fxml";
+    public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
+    public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
+    public static final String PdfConvertImagesFxml = "/fxml/PdfConvertImages.fxml";
+    public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
-    public static final String FileFxml = "/fxml/PdfConvertPictures.fxml";
+    public static final String FileFxml = "/fxml/PdfConvertImages.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";

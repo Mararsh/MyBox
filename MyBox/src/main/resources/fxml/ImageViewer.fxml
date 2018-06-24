@@ -53,7 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-            <HBox spacing="10.0">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                               <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
                                   <HBox.margin>
@@ -67,7 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                               </Button>
                </children>
             </HBox>
-            <HBox fx:id="toolBar">
+            <HBox fx:id="toolBar" alignment="CENTER_LEFT">
                <children>
                   <ToolBar prefHeight="44.0">
                     <items>
@@ -87,7 +87,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </HBox>
             <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <content>
-                  <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor></ImageView>
                </content>
             </ScrollPane>
             </children>

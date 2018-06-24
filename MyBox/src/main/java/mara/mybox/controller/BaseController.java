@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -10,8 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 public class BaseController implements Initializable {
 
     protected static final Logger logger = LogManager.getLogger();
+
+    protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
     protected String myFxml, parentFxml;
     protected Stage myStage, loadingStage;
@@ -156,10 +159,12 @@ public class BaseController implements Initializable {
             controller.loadImage(filename);
 
             Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
-            stage.getIcons().add(new Image("img/mybox.png"));
+            stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(root));
             stage.show();
 

@@ -8,7 +8,9 @@ import java.net.URL;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -29,6 +31,15 @@ public class FxmlTools {
     private static final Logger logger = LogManager.getLogger();
 
     public static String badStyle = "-fx-text-box-border: red;";
+
+    public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
+        final Bounds visibleBounds = scrollPane.getViewportBounds();
+        double scrollWidth = scrollPane.getContent().getBoundsInLocal().getWidth() - visibleBounds.getWidth();
+        double scrollHeight = scrollPane.getContent().getBoundsInLocal().getHeight() - visibleBounds.getHeight();
+
+        scrollPane.setHvalue(scrollPane.getHvalue() + xOffset / scrollWidth);
+        scrollPane.setVvalue(scrollPane.getVvalue() + yOffset / scrollHeight);
+    }
 
     public static boolean setRadioFirstSelected(ToggleGroup group) {
         if (group == null) {

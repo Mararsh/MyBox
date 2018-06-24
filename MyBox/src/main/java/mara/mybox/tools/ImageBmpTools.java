@@ -17,7 +17,7 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 import static mara.mybox.tools.ImageTools.dpi2dpm;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,24 +47,30 @@ public class ImageBmpTools {
             BMPImageWriterSpi spi = new BMPImageWriterSpi();
             BMPImageWriter writer = new BMPImageWriter(spi);
             BMPImageWriteParam param = (BMPImageWriteParam) writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionType(attributes.getCompressionType());
-            param.setCompressionQuality(attributes.getQuality() / 100.0f);
+            if (attributes.getCompressionType() != null) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionType(attributes.getCompressionType());
+                param.setCompressionQuality(attributes.getQuality() / 100.0f);
+            }
 
             BMPMetadata metaData = (BMPMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            String format = metaData.getNativeMetadataFormatName(); // "com_sun_media_imageio_plugins_bmp_image_1.0"
-            int dpm = dpi2dpm(attributes.getDensity());
-            // If set nodes' attributes in normal way, error will be popped about "Meta Data is read only"
-            // By setting its fields, the class will write resolution data under standard format "javax_imageio_1.0"
-            // but leave itself's section as empty~ Anyway, the data is record.
-            metaData.xPixelsPerMeter = dpm;
-            metaData.yPixelsPerMeter = dpm;
-            metaData.palette = null; // Error will happen if not define this for Black-white bmp.
-            IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
-            metaData.mergeTree(format, tree);
+            if (attributes.getDensity() > 0) {
+                String format = metaData.getNativeMetadataFormatName(); // "com_sun_media_imageio_plugins_bmp_image_1.0"
+                int dpm = dpi2dpm(attributes.getDensity());
+                // If set nodes' attributes in normal way, error will be popped about "Meta Data is read only"
+                // By setting its fields, the class will write resolution data under standard format "javax_imageio_1.0"
+                // but leave itself's section as empty~ Anyway, the data is record.
+                metaData.xPixelsPerMeter = dpm;
+                metaData.yPixelsPerMeter = dpm;
+                metaData.palette = null; // Error will happen if not define this for Black-white bmp.
+                IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
+                metaData.mergeTree(format, tree);
+            }
+
             try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
+                out.flush();
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -86,7 +92,7 @@ public class ImageBmpTools {
         }
     }
 
-    public static void explainBmpMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageInformation info) {
+    public static void explainBmpMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
         try {
             String format = "com_sun_media_imageio_plugins_bmp_image_1.0";
             if (!metaData.containsKey(format)) {

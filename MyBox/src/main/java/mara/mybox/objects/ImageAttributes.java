@@ -30,6 +30,7 @@ public class ImageAttributes {
         this.imageFormat = imageFormat;
         this.colorSpace = colorSpace;
         this.density = density;
+        this.quality = 100;
     }
 
     public String getImageFormat() {

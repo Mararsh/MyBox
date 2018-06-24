@@ -10,7 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 
 /**
  * FXML Controller class
@@ -33,7 +33,7 @@ public class ImageMetaDataController extends BaseController {
         }
     }
 
-    public void loadData(ImageInformation info) {
+    public void loadData(ImageFileInformation info) {
         try {
             if (info == null || info.getFile() == null) {
                 return;

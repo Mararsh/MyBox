@@ -12,7 +12,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 import static mara.mybox.tools.ImageTools.dpi2dpm;
 import static mara.mybox.tools.ImageTools.dpm2dpi;
 
@@ -38,19 +38,22 @@ public class ImagePngTools {
             ImageWriteParam param = writer.getDefaultWriteParam();
 
             IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
-            IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
-            IIOMetadataNode pHYs = new IIOMetadataNode("pHYs");
-            String dpm = dpi2dpm(attributes.getDensity()) + "";
-            pHYs.setAttribute("pixelsPerUnitXAxis", dpm);
-            pHYs.setAttribute("pixelsPerUnitYAxis", dpm);
-            pHYs.setAttribute("unitSpecifier", "meter");  // density is dots per !Meter!
-            tree.appendChild(pHYs);
-            metaData.mergeTree(format, tree);
+            if (attributes.getDensity() > 0) {
+                String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
+                IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
+                IIOMetadataNode pHYs = new IIOMetadataNode("pHYs");
+                String dpm = dpi2dpm(attributes.getDensity()) + "";
+                pHYs.setAttribute("pixelsPerUnitXAxis", dpm);
+                pHYs.setAttribute("pixelsPerUnitYAxis", dpm);
+                pHYs.setAttribute("unitSpecifier", "meter");  // density is dots per !Meter!
+                tree.appendChild(pHYs);
+                metaData.mergeTree(format, tree);
+            }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
+                out.flush();
             }
             writer.dispose();
         } catch (Exception e) {
@@ -59,7 +62,7 @@ public class ImagePngTools {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html#image
-    public static void explainPngMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageInformation info) {
+    public static void explainPngMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_png_1.0")) {
                 return;

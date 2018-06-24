@@ -113,7 +113,8 @@ public class FileTools {
     }
 
     public static String showFileSize(long size) {
-        String s = size + "";
+        long kb = (long) (size / 1024f + 0.5);
+        String s = kb + "";
         String t = "";
         int count = 0;
         for (int i = s.length() - 1; i >= 0; i--, count++) {
@@ -122,7 +123,7 @@ public class FileTools {
             }
             t = s.charAt(i) + t;
         }
-        return t;
+        return t + " KB";
     }
 //            double size = (double) info.getFileSize();
 //            if (info.getFileSize() > 1000 * 1000) {

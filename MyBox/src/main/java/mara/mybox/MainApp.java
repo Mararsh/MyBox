@@ -29,6 +29,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
                 userPath.mkdir();

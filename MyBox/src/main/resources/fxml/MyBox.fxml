@@ -74,83 +74,102 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <center>
-        <GridPane hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                    <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#pdfTools" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../img/PdfTools.png" />
-                            </image>
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+              <GridPane alignment="CENTER" hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0">
+                  <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                      <VBox fx:id="pdfBox" alignment="CENTER" onMouseClicked="#showPdfMenu" prefHeight="200.0" prefWidth="100.0">
+                          <children>
+                              <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../img/PdfTools.png" />
+                                  </image>
+                              </ImageView>
+                              <Label text="%PdfTools">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                          <children>
+                              <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../img/ImageTools.png" />
+                                  </image>
+                              </ImageView>
+                              <Label text="%ImageTools">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                          </children>
+                      </VBox>
+                      <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                          <children>
+                              <ImageView fitHeight="200.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../img/FileTools.png" />
+                                  </image>
+                              </ImageView>
+                              <Label text="%FileTools" textFill="#00000080">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                              <Label text="%Developing..." />
+                          </children>
+                      </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/Chinese.png" />
+                           </image>
                         </ImageView>
-                        <Label onMouseClicked="#pdfTools" text="%PdfTools" />
-                    </children>
-                </VBox>
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
-                    <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#imageTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../img/ImageTools.png" />
-                            </image>
+                        <Label onMouseClicked="#setEnglish" text="中文">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/English.png" />
+                           </image>
                         </ImageView>
-                        <Label onMouseClicked="#imageTools" text="%ImageTools" />
-                    </children>
-                </VBox>
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
-                    <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#fileTools" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../img/FileTools.png" />
-                            </image>
+                        <Label onMouseClicked="#setEnglish" text="English">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
+                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/About.png" />
+                           </image>
                         </ImageView>
-                        <Label text="%FileTools" textFill="#00000080" />
-                        <Label onMouseClicked="#fileTools" text="%Developing..." />
-                    </children>
-                </VBox>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <children>
-                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/Chinese.png" />
-                     </image>
-                  </ImageView>
-                  <Label onMouseClicked="#setEnglish" text="中文" />
-               </children>
-            </VBox>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-               <children>
-                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/English.png" />
-                     </image>
-                  </ImageView>
-                  <Label onMouseClicked="#setEnglish" text="English" />
-               </children>
-            </VBox>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <children>
-                  <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/About.png" />
-                     </image>
-                  </ImageView>
-                  <Label onMouseClicked="#showAbout" text="%About" />
-               </children>
-            </VBox>
-            </children>
-            <BorderPane.margin>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-            </BorderPane.margin>
-        </GridPane>
-    </center>
+                        <Label onMouseClicked="#showAbout" text="%About">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </children>
+                  </VBox>
+                  </children>
+              </GridPane>
+         </children>
+      </VBox>
+   </center>
 </BorderPane>

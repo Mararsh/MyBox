@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 import static mara.mybox.tools.FileTools.getFileCreateTime;
 
 import org.apache.logging.log4j.LogManager;
@@ -32,13 +32,13 @@ public class ImageReaders {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static ImageInformation readImageInformation(String fileName) {
+    public static ImageFileInformation readImageInformation(String fileName) {
         try {
             File file = new File(fileName);
             if (!file.exists() || !file.isFile()) {
                 return null;
             }
-            ImageInformation info = new ImageInformation();
+            ImageFileInformation info = new ImageFileInformation();
             info.setFile(file);
             info.setCreateTime(getFileCreateTime(fileName));
             info.setImageFormat(FileTools.getFileSuffix(fileName).toLowerCase());
@@ -53,7 +53,7 @@ public class ImageReaders {
         }
     }
 
-    public static void readImageFileInformation(ImageInformation info, File file) {
+    public static void readImageFileInformation(ImageFileInformation info, File file) {
         try {
             BufferedImage image = ImageIO.read(file);
             if (image == null) {
@@ -75,7 +75,7 @@ public class ImageReaders {
         }
     }
 
-    public static void readImageMetaData(ImageInformation info, File file) {
+    public static void readImageMetaData(ImageFileInformation info, File file) {
         try {
             String format = FileTools.getFileSuffix(file.getName());
 
@@ -209,7 +209,7 @@ public class ImageReaders {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
-    public static void explainCommonMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageInformation info) {
+    public static void explainCommonMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_1.0")) {
                 return;

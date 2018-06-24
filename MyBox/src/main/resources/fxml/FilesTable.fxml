@@ -4,24 +4,24 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="filesTablePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
+<HBox fx:id="filesTablePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
     <children>
-      <VBox prefHeight="200.0" prefWidth="1063.0">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
          <children>
-              <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                   <items>
-                      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addSourceFiles" prefHeight="30.0" prefWidth="73.0" text="%Add" />
-                      <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearSourceFiles" prefHeight="30.0" prefWidth="74.0" text="%Clear" />
+                      <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                      <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
                   </items>
               </ToolBar>
-              <TableView fx:id="filesTableView" prefHeight="226.0" prefWidth="1045.0" tableMenuButtonVisible="true">
+              <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                   <columns>
-                      <TableColumn maxWidth="1.7976931348623157E308" prefWidth="535.0" text="%FileName" />
-                      <TableColumn minWidth="0.0" prefWidth="85.0" text="%FileType" />
-                      <TableColumn prefWidth="135.0" text="%CreateTiime" />
-                      <TableColumn prefWidth="131.0" text="%ModifyTime" />
-                      <TableColumn prefWidth="84.0" text="%Size" />
-                      <TableColumn prefWidth="74.0" text="%NumberOfPages" />
+                      <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="800.0" text="%FileName" />
+                      <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
+                      <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
+                      <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
+                      <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
                   </columns>
               </TableView>
          </children>

@@ -5,11 +5,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="233.0" prefWidth="616.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="266.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
    <children>
-      <GridPane prefHeight="150.0" prefWidth="518.0">
+      <GridPane alignment="CENTER_LEFT" prefHeight="177.0" prefWidth="519.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="165.0" minWidth="10.0" prefWidth="147.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="165.0" minWidth="10.0" prefWidth="147.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="359.0" minWidth="10.0" prefWidth="359.0" />
         </columnConstraints>
         <rowConstraints>
@@ -21,7 +21,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <VBox.margin>
-            <Insets left="60.0" top="40.0" />
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
          </VBox.margin>
          <children>
             <Label text="%Author" />

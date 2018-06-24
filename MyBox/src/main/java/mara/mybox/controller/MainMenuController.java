@@ -77,8 +77,23 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openPdfConvertPictures(ActionEvent event) {
-        reloadStage(CommonValues.PdfConvertPictureFxml, AppVaribles.getMessage("PdfConvertPictures"));
+    private void openPdfConvertImages(ActionEvent event) {
+        reloadStage(CommonValues.PdfConvertImagesFxml, AppVaribles.getMessage("PdfConvertImages"));
+    }
+
+    @FXML
+    private void openPdfConvertImagesBatch(ActionEvent event) {
+        reloadStage(CommonValues.PdfConvertImagesBatchFxml, AppVaribles.getMessage("PdfConvertImagesBatch"));
+    }
+
+    @FXML
+    private void openPdfExtractImages(ActionEvent event) {
+        reloadStage(CommonValues.PdfExtractImagesFxml, AppVaribles.getMessage("PdfExtractImages"));
+    }
+
+    @FXML
+    private void openPdfExtractImagesBatch(ActionEvent event) {
+        reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
     }
 
     @FXML

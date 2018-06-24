@@ -8,7 +8,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -21,7 +20,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -34,8 +32,9 @@ import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.ImageReaders;
 
@@ -46,9 +45,8 @@ import mara.mybox.tools.ImageReaders;
  */
 public class ImageViewerController extends BaseController {
 
-    private String filename;
-    private ImageInformation info;
-    protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
+    private ImageFileInformation info;
+    private double mouseX, mouseY;
 
     @FXML
     private ScrollPane scrollPane;
@@ -63,12 +61,11 @@ public class ImageViewerController extends BaseController {
     protected void initializeNext() {
         try {
             fileExtensionFilter = new ArrayList();
-//            fileExtensionFilter.add(new FileChooser.ExtensionFilter("images", "*.*"));
+            fileExtensionFilter.add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.tif", "*.tiff"));
             fileExtensionFilter.add(new FileChooser.ExtensionFilter("png", "*.png"));
             fileExtensionFilter.add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
             fileExtensionFilter.add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
             fileExtensionFilter.add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("raw", "*.raw"));
 
             toolBar.disableProperty().bind(
                     Bindings.isEmpty(sourceFileInput.textProperty())
@@ -95,6 +92,20 @@ public class ImageViewerController extends BaseController {
                 });
             }
 
+//            imageView.setCursor(Cursor.HAND);
+//            imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+//                @Override
+//                public void handle(MouseEvent event) {
+//                    mouseX = event.getX();
+//                    mouseY = event.getY();
+//                }
+//            });
+//            imageView.setOnMouseReleased(new EventHandler<MouseEvent>() {
+//                @Override
+//                public void handle(MouseEvent event) {
+//                    FxmlTools.setScrollPane(scrollPane, mouseX - event.getX(), mouseY - event.getY());
+//                }
+//            });
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -136,8 +147,13 @@ public class ImageViewerController extends BaseController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        imageView.setFitHeight(info.getyPixels());
-                        imageView.setFitWidth(info.getxPixels());
+                        if (scrollPane.getHeight() < info.getyPixels()) {
+                            imageView.setFitHeight(scrollPane.getHeight() - 5);
+                            imageView.setFitWidth(scrollPane.getWidth() - 1);
+                        } else {
+                            imageView.setFitHeight(info.getyPixels());
+                            imageView.setFitWidth(info.getxPixels());
+                        }
                         try {
                             imageView.setImage(SwingFXUtils.toFXImage(image, null));
 //                        imageView.setImage(new Image("file:" + fileName, true));
@@ -154,6 +170,17 @@ public class ImageViewerController extends BaseController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    void imageMousePressed(MouseEvent event) {
+        mouseX = event.getX();
+        mouseY = event.getY();
+    }
+
+    @FXML
+    void imageMouseReleased(MouseEvent event) {
+        FxmlTools.setScrollPane(scrollPane, mouseX - event.getX(), mouseY - event.getY());
     }
 
     @FXML
@@ -197,12 +224,16 @@ public class ImageViewerController extends BaseController {
 
     @FXML
     void windowSize(ActionEvent event) {
-        imageView.setFitHeight(scrollPane.getHeight() - 1);
+        imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
     }
 
     public void loadImage(final String fileName) {
-        sourceFileInput.setText(fileName);
+        try {
+            sourceFileInput.setText(new File(fileName).getAbsolutePath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void showImageInformation() {
@@ -216,10 +247,12 @@ public class ImageViewerController extends BaseController {
             controller.loadInformation(info);
 
             Stage infoStage = new Stage();
+            controller.setMyStage(infoStage);
+            infoStage.setTitle(AppVaribles.getMessage("AppTitle"));
             infoStage.initModality(Modality.NONE);
             infoStage.initStyle(StageStyle.DECORATED);
             infoStage.initOwner(null);
-            infoStage.getIcons().add(new Image("img/mybox.png"));
+            infoStage.getIcons().add(CommonValues.AppIcon);
             infoStage.setScene(new Scene(root));
             infoStage.show();
 
@@ -239,10 +272,12 @@ public class ImageViewerController extends BaseController {
             controller.loadData(info);
 
             Stage infoStage = new Stage();
+            controller.setMyStage(infoStage);
+            infoStage.setTitle(AppVaribles.getMessage("AppTitle"));
             infoStage.initModality(Modality.NONE);
             infoStage.initStyle(StageStyle.DECORATED);
             infoStage.initOwner(null);
-            infoStage.getIcons().add(new Image("img/mybox.png"));
+            infoStage.getIcons().add(CommonValues.AppIcon);
             infoStage.setScene(new Scene(root));
             infoStage.show();
 

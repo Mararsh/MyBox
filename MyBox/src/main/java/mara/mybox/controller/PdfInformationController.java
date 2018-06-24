@@ -56,7 +56,7 @@ public class PdfInformationController extends BaseController {
             File file = info.getFile();
             FilesPath.setText(file.getParent());
             FileName.setText(file.getName());
-            FileSize.setText(showFileSize((long) (file.length() / 1024f + 0.5)) + "KB");
+            FileSize.setText(showFileSize(file.length()));
             title.setText(info.getTitle());
             subject.setText(info.getSubject());
             creator.setText(info.getCreator());

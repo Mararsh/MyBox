@@ -43,6 +43,7 @@ public class ImageRawTools {
             try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, metaData), param);
+                out.flush();
             }
         } catch (Exception e) {
             logger.error(e.toString());

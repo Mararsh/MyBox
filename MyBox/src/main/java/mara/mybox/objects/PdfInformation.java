@@ -108,22 +108,22 @@ public class PdfInformation {
         this.modifyTime = modifyTime;
     }
 
-    public void loadInformation() {
+    public void loadDocument(String password) {
         try {
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
-            try (PDDocument doc = PDDocument.load(file)) {
-                PDDocumentInformation info = doc.getDocumentInformation();
-                if (info.getCreationDate() != null) {
-                    createTime = info.getCreationDate().getTime();
+            try (PDDocument doc = PDDocument.load(file, password)) {
+                PDDocumentInformation docInfo = doc.getDocumentInformation();
+                if (docInfo.getCreationDate() != null) {
+                    createTime = docInfo.getCreationDate().getTime();
                 }
-                if (info.getModificationDate() != null) {
-                    modifyTime = info.getModificationDate().getTime();
+                if (docInfo.getModificationDate() != null) {
+                    modifyTime = docInfo.getModificationDate().getTime();
                 }
-                creator = info.getCreator();
-                producer = info.getProducer();
-                title = info.getTitle();
-                subject = info.getSubject();
-                author = info.getAuthor();
+                creator = docInfo.getCreator();
+                producer = docInfo.getProducer();
+                title = docInfo.getTitle();
+                subject = docInfo.getSubject();
+                author = docInfo.getAuthor();
                 numberOfPages = doc.getNumberOfPages();
                 version = doc.getVersion();
             }
