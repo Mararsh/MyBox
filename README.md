@@ -12,7 +12,7 @@
 3) 查看图片的元数据和属性。目前支持图像格式：png, jpg, bmp, tif。
 4) 支持PDF批量转换和提取。
 5) 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。
-6）提供像素计算器。
+6) 提供像素计算器。
 
 编译好的jar包：[MyBox-1.6.jar](https://mararsh.github.io/MyBox/MyBox-1.6.jar) 
 
