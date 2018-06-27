@@ -6,20 +6,24 @@
 
 这是利用JavaFx开发的桌面程序，目标是提供简单易用的功能。
 
-当前是版本1.5，已实现功能：
+当前是版本1.6，已实现功能：
 1) 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项，并且可以暂停/继续转换过程。
 2) 将PDF文件中的图片提取出来保存为原格式。
 3) 查看图片的元数据和属性。目前支持图像格式：png, jpg, bmp, tif。
-4) 支持批量转换和提取。
+4) 支持PDF批量转换和提取。
+5) 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。
+6）提供像素计算器。
 
-编译好的jar包：[MyBox-1.5.jar](https://mararsh.github.io/MyBox/MyBox-1.5.jar) 
+编译好的jar包：[MyBox-1.6.jar](https://mararsh.github.io/MyBox/MyBox-1.6.jar) 
 
 在已安装JRE或者JDK的环境下执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-1.5.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-1.6.jar</CODE></PRE>
 
 ## 开发日志
 
-2018-06-24 版本1.5  提取PDF中的图片保存为原格式。支持批量转换和批量提取。
+2018-06-27 版本1.6  将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。提供像素计算器。
+
+2018-06-24 版本1.5  提取PDF中的图片保存为原格式。支持批量转换和批量提取。感谢 “https://shuge.org/” 的帮助：书格提出提取PDF中图片的需求。
 
 2018-06-21 版本1.4  读写图像的元数据,目前支持图像格式：png, jpg, bmp, tif。感谢 “https://shuge.org/” 的帮助：书格提出图像元数据读写的需求。
 
@@ -36,6 +40,18 @@
 
 
 ![1](https://mararsh.github.io/MyBox/1.png)
+
+
+
+![7](https://mararsh.github.io/MyBox/10.png)
+
+
+
+![8](https://mararsh.github.io/MyBox/11.png)
+
+
+
+![8](https://mararsh.github.io/MyBox/12.png)
 
 
 

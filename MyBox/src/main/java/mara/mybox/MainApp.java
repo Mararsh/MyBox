@@ -12,7 +12,7 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.ImageTools;
+import mara.mybox.image.ImageTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,6 +33,10 @@ public class MainApp extends Application {
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
                 userPath.mkdir();
+            }
+            File configFile = new File(CommonValues.UserConfigFile);
+            if (!configFile.exists()) {
+                configFile.createNewFile();
             }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
             ImageTools.registrySupportedImageFormats();

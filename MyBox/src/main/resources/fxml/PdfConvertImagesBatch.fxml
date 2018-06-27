@@ -75,7 +75,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                                     <children>
-                                        <fx:include fx:id="imageAttributes" source="ImageAttributes.fxml" />
+                                        <fx:include fx:id="pdfConvertAttributes" source="PdfConvertAttributes.fxml" />
                                     </children>
                                 </HBox>
                             </content>
@@ -96,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </Label>
                                                 <TextField fx:id="targetPathInput" prefHeight="30.0" prefWidth="682.0" HBox.hgrow="ALWAYS" />
                                                 <Button mnemonicParsing="false" onAction="#selectTargetPath" prefHeight="30.0" text="%Select..." />
-                                    <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectory" />
+                                                <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectory" />
                                             </children>
                                             <VBox.margin>
                                                 <Insets left="10.0" right="10.0" />
@@ -148,8 +148,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startProcess" prefHeight="30.0" text="%Start" />
                         <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseProcess" prefHeight="30.0" text="%Pause" visible="false" />
-                  <ProgressBar fx:id="fileProgressBar" prefWidth="100.0" progress="0.0" />
-                  <Label fx:id="fileProgressValue" prefWidth="60.0" />
+                        <ProgressBar fx:id="fileProgressBar" prefWidth="100.0" progress="0.0" />
+                        <Label fx:id="fileProgressValue" prefWidth="60.0" />
                         <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                         <Label fx:id="progressValue" prefWidth="110.0" />
                         <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTargetPath" prefHeight="30.0" text="%Open" />

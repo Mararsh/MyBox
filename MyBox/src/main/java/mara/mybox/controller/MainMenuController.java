@@ -19,9 +19,10 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-20
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class MainMenuController extends BaseController {
 
@@ -99,6 +100,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageViewer(ActionEvent event) {
         reloadStage(CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
+    }
+
+    @FXML
+    private void openImageConverter(ActionEvent event) {
+        reloadStage(CommonValues.ImageConverterFxml, AppVaribles.getMessage("ImageConverter"));
+    }
+
+    @FXML
+    private void openPixelsCalculator(ActionEvent event) {
+        openStage(CommonValues.PixelsCalculator, AppVaribles.getMessage("PixelsCalculator"), false);
     }
 
     @FXML

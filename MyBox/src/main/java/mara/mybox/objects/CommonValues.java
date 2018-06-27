@@ -8,14 +8,13 @@ import javafx.scene.image.Image;
 /**
  * @Author Mara
  * @CreateDate 2018-6-4 16:04:05
- *
  * @Description
  * @License Apache License Version 2.0
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.5;
-    public static final String AppVersionDate = "2018-06-24";
+    public static final double AppVersion = 1.6;
+    public static final String AppVersionDate = "2018-06-27";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -33,7 +32,9 @@ public class CommonValues {
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
+    public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
+    public static final String PixelsCalculator = "/fxml/PixelsCalculator.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

@@ -12,23 +12,23 @@ import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-22
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class PdfExtractImagesController extends PdfBaseController {
 
@@ -137,7 +137,6 @@ public class PdfExtractImagesController extends PdfBaseController {
                             if (!isPreview && currentParameters.isBatch) {
                                 currentParameters.toPage = doc.getNumberOfPages() - 1;
                             }
-                            PDPageTree pageTree = doc.getPages();
                             currentParameters.currentNameNumber = currentParameters.acumStart;
                             int total = currentParameters.toPage - currentParameters.fromPage + 1;
                             for (currentParameters.currentPage = currentParameters.startPage;
@@ -145,7 +144,7 @@ public class PdfExtractImagesController extends PdfBaseController {
                                 if (isCancelled()) {
                                     break;
                                 }
-                                PDPage page = pageTree.get(currentParameters.currentPage);
+                                PDPage page = doc.getPage(currentParameters.currentPage);
                                 extractCurrentPage(page);
 
                                 currentParameters.currentTotalHandled++;
@@ -176,7 +175,8 @@ public class PdfExtractImagesController extends PdfBaseController {
                                 }
                                 PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                                 currentParameters.finalTargetName = makeFilename(pdxObject.getSuffix(), currentParameters.currentPage, index++);
-                                ImageIO.write(pdxObject.getImage(), pdxObject.getSuffix(), new File(currentParameters.finalTargetName));
+                                ImageFileWriters.writeImageFile(pdxObject.getImage(), pdxObject.getSuffix(), currentParameters.finalTargetName);
+//                                ImageIO.write(pdxObject.getImage(), pdxObject.getSuffix(), new File(currentParameters.finalTargetName));
                                 currentParameters.currentNameNumber++;
                             }
                         }

@@ -13,9 +13,10 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-24
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class PdfExtractImagesBatchController extends PdfExtractImagesController {
 

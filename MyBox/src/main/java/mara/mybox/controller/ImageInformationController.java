@@ -15,9 +15,10 @@ import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-20
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class ImageInformationController extends BaseController {
 

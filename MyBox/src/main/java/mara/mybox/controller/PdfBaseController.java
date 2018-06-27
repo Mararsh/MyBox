@@ -72,9 +72,9 @@ public abstract class PdfBaseController extends BaseController {
     @FXML
     protected TextField statusLabel;
     @FXML
-    protected Pane imageAttributes;
+    protected Pane pdfConvertAttributes;
     @FXML
-    protected ImageAttributesController imageAttributesController;
+    protected PdfConvertAttributesController pdfConvertAttributesController;
     @FXML
     protected CheckBox fillZero;
     @FXML
@@ -121,7 +121,7 @@ public abstract class PdfBaseController extends BaseController {
         public String password, status, targetPath, targetPrefix, targetRootPath, finalTargetName;
         public Date startTime, endTime;
         public int currentPage, currentNameNumber, currentFileIndex, currentTotalHandled;
-        boolean fill, aDensity, aColor, aCompression, aQuality, isBatch;
+        boolean fill, aDensity, aColor, aCompression, aQuality, isBatch, createSubDir;
     }
 
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
@@ -195,6 +195,7 @@ public abstract class PdfBaseController extends BaseController {
             }
 
             fillZero.setSelected(AppVaribles.getConfigBoolean("pci_fill"));
+            subdirCheck.setSelected(AppVaribles.getConfigBoolean("pci_creatSubdir"));
 
             if (fromPageInput != null) {
                 FxmlTools.setNonnegativeValidation(fromPageInput);
@@ -305,7 +306,7 @@ public abstract class PdfBaseController extends BaseController {
                 return null;
             }
         };
-        openLoadingStage(task);
+        openLoadingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
@@ -357,7 +358,10 @@ public abstract class PdfBaseController extends BaseController {
         actualParameters.targetRootPath = targetPathInput.getText();
         actualParameters.targetPath = targetPathInput.getText();
 
-        if (imageAttributesController != null) {
+        actualParameters.createSubDir = subdirCheck.isSelected();
+        AppVaribles.setConfigValue("pci_creatSubdir", actualParameters.createSubDir);
+
+        if (pdfConvertAttributesController != null) {
             actualParameters.aDensity = appendDensity.isSelected();
             actualParameters.aColor = appendColor.isSelected();
             actualParameters.aCompression = appendCompressionType.isSelected();
@@ -445,6 +449,7 @@ public abstract class PdfBaseController extends BaseController {
         newConversion.targetPath = theConversion.targetPath;
         newConversion.targetPrefix = theConversion.targetPrefix;
         newConversion.fill = theConversion.fill;
+        newConversion.createSubDir = theConversion.createSubDir;
         newConversion.fromPage = theConversion.fromPage;
         newConversion.password = theConversion.password;
         newConversion.startPage = theConversion.startPage;
@@ -570,7 +575,7 @@ public abstract class PdfBaseController extends BaseController {
             return;
         }
         long cost = (new Date().getTime() - currentParameters.startTime.getTime()) / 1000;
-        double avg = ValueTools.roundDouble((double) cost / currentParameters.currentTotalHandled);
+        double avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
         String s = getMessage(currentParameters.status) + ". "
                 + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "

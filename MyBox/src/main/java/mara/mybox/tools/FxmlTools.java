@@ -111,6 +111,21 @@ public class FxmlTools {
         });
     }
 
+    public static void setFloatValidation(final TextField input) {
+        input.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    float v = Float.valueOf(newValue);
+                    input.setStyle(null);
+                } catch (Exception e) {
+                    input.setStyle(badStyle);
+                }
+            }
+        });
+    }
+
     public static void setFileValidation(final TextField input) {
         if (input == null) {
             return;

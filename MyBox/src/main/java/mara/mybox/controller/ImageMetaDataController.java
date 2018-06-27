@@ -13,9 +13,10 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.ImageFileInformation;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-21
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class ImageMetaDataController extends BaseController {
 

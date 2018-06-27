@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 /**
  * @Author mara
  * @CreateDate 2018-6-2 11:01:45
- *
  * @Description
  */
 public class FileTools {

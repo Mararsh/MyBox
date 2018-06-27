@@ -23,6 +23,8 @@ public class AboutController extends BaseController {
     private Hyperlink licenseLink;
     @FXML
     private Hyperlink sourceLink;
+    @FXML
+    private Hyperlink issuesLink;
 
     @Override
     protected void initializeNext() {
@@ -52,6 +54,15 @@ public class AboutController extends BaseController {
     private void linkSource() {
         try {
             Desktop.getDesktop().browse(new URI(sourceLink.getText()));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    private void linkIssues() {
+        try {
+            Desktop.getDesktop().browse(new URI(issuesLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }

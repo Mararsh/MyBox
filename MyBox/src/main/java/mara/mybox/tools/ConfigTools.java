@@ -30,7 +30,7 @@ public class ConfigTools {
             }
             return value;
         } catch (Exception e) {
-//            logger.error(e.toString());
+            logger.error(e.toString());
             return null;
         }
     }

@@ -173,7 +173,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void openLoadingStage(final Task<?> task) {
+    public void openLoadingStage(final Task<?> task, Modality block) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -181,7 +181,7 @@ public class BaseController implements Initializable {
             controller.init(task);
 
             loadingStage = new Stage();
-            loadingStage.initModality(Modality.NONE);
+            loadingStage.initModality(block);
             loadingStage.initStyle(StageStyle.UNDECORATED);
             loadingStage.initStyle(StageStyle.TRANSPARENT);
             loadingStage.initOwner(getMyStage());

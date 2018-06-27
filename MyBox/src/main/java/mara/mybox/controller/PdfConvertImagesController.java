@@ -11,8 +11,8 @@ import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.ImageGrayTools;
-import mara.mybox.tools.ImageWriters;
+import mara.mybox.image.ImageGrayTools;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -32,7 +32,7 @@ public class PdfConvertImagesController extends PdfBaseController {
     @Override
     protected void initializeNext2() {
         try {
-            imageAttributesController.setParentFxml(myFxml);
+            pdfConvertAttributesController.setParentFxml(myFxml);
             appendDensity.setSelected(AppVaribles.getConfigBoolean("pci_aDensity"));
             appendColor.setSelected(AppVaribles.getConfigBoolean("pci_aColor"));
             appendCompressionType.setSelected(AppVaribles.getConfigBoolean("pci_aCompression"));
@@ -49,14 +49,14 @@ public class PdfConvertImagesController extends PdfBaseController {
                             .or(fromPageInput.styleProperty().isEqualTo(badStyle))
                             .or(toPageInput.styleProperty().isEqualTo(badStyle))
                             .or(acumFromInput.styleProperty().isEqualTo(badStyle))
-                            .or(imageAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                            .or(imageAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
+                            .or(pdfConvertAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
             );
 
             previewButton.disableProperty().bind(
                     Bindings.isEmpty(sourceFileInput.textProperty())
-                            .or(imageAttributesController.getRawSelect().selectedProperty())
+                            .or(pdfConvertAttributesController.getRawSelect().selectedProperty())
                             .or(startButton.disableProperty())
                             .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
@@ -95,7 +95,7 @@ public class PdfConvertImagesController extends PdfBaseController {
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
                                 currentParameters.targetPrefix = FileTools.getFilePrefix(file.getName());
-                                if (subdirCheck.isSelected()) {
+                                if (currentParameters.createSubDir) {
                                     currentParameters.targetPath = currentParameters.targetRootPath + "/" + currentParameters.targetPrefix;
                                     File Path = new File(currentParameters.targetPath + "/");
                                     if (!Path.exists()) {
@@ -186,7 +186,7 @@ public class PdfConvertImagesController extends PdfBaseController {
 
     protected void convertCurrentPage(PDFRenderer renderer) {
         try {
-            ImageAttributes attributes = imageAttributesController.getAttributes();
+            ImageAttributes attributes = pdfConvertAttributesController.getAttributes();
             BufferedImage image;
             if (ImageType.BINARY == attributes.getColorSpace()) {
                 if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
@@ -202,14 +202,14 @@ public class PdfConvertImagesController extends PdfBaseController {
             } else {
                 image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());
             }
-            ImageWriters.writeImageFile(image, attributes, currentParameters.finalTargetName);
+            ImageFileWriters.writeImageFile(image, attributes, currentParameters.finalTargetName);
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     protected String makeFilename() {
-        ImageAttributes attributes = imageAttributesController.getAttributes();
+        ImageAttributes attributes = pdfConvertAttributesController.getAttributes();
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
             pageNumber = ValueTools.fillNumber(currentParameters.currentNameNumber, currentParameters.acumDigit);
@@ -234,11 +234,12 @@ public class PdfConvertImagesController extends PdfBaseController {
         if (currentParameters.aDensity) {
             fname += "_" + attributes.getDensity() + "dpi";
         }
-        if (attributes.getCompressionType() != null && !"none".equals(attributes.getCompressionType())) {
+        if (attributes.getCompressionType() != null
+                && !AppVaribles.getMessage("None").equals(attributes.getCompressionType())) {
             if (currentParameters.aCompression) {
                 fname += "_" + attributes.getCompressionType().replace(" ", "_");
             }
-            if (currentParameters.aQuality) {
+            if (currentParameters.aQuality && "jpg".equals(attributes.getImageFormat())) {
                 fname += "_quality-" + attributes.getQuality() + "%";
             }
         }

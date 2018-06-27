@@ -41,6 +41,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesFxml, AppVaribles.getMessage("PdfExtractImages"));
             }
         });
+        pdfMenus.getItems().add(pdfExtractImages);
         MenuItem pdfExtractImagesBatch = new MenuItem(AppVaribles.getMessage("PdfExtractImagesBatch"));
         pdfExtractImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -48,6 +49,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
             }
         });
+        pdfMenus.getItems().add(pdfExtractImagesBatch);
         MenuItem pdfConvertImages = new MenuItem(AppVaribles.getMessage("PdfConvertImages"));
         pdfConvertImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -55,6 +57,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesFxml, AppVaribles.getMessage("PdfConvertImages"));
             }
         });
+        pdfMenus.getItems().add(pdfConvertImages);
         MenuItem pdfConvertImagesBatch = new MenuItem(AppVaribles.getMessage("PdfConvertImagesBatch"));
         pdfConvertImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -62,9 +65,6 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesBatchFxml, AppVaribles.getMessage("PdfConvertImagesBatch"));
             }
         });
-        pdfMenus.getItems().add(pdfExtractImages);
-        pdfMenus.getItems().add(pdfExtractImagesBatch);
-        pdfMenus.getItems().add(pdfConvertImages);
         pdfMenus.getItems().add(pdfConvertImagesBatch);
 
         imageMenu = new ContextMenu();
@@ -76,6 +76,22 @@ public class MyBoxController extends BaseController {
             }
         });
         imageMenu.getItems().add(imageViewer);
+        MenuItem imageConverter = new MenuItem(AppVaribles.getMessage("ImageConverter"));
+        imageConverter.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageConverterFxml, AppVaribles.getMessage("ImageConverter"));
+            }
+        });
+        imageMenu.getItems().add(imageConverter);
+        MenuItem pixelsCalculator = new MenuItem(AppVaribles.getMessage("PixelsCalculator"));
+        pixelsCalculator.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                openStage(CommonValues.PixelsCalculator, AppVaribles.getMessage("PixelsCalculator"), false);
+            }
+        });
+        imageMenu.getItems().add(pixelsCalculator);
 
     }
 

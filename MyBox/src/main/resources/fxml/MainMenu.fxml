@@ -25,6 +25,8 @@
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
+                  <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                     </items>
                 </Menu>
                 <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools" />

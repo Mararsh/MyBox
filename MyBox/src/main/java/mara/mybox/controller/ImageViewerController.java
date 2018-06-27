@@ -5,47 +5,35 @@
  */
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.ImageReaders;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-6-20
+ * @Description
+ * @License Apache License Version 2.0
  */
-public class ImageViewerController extends BaseController {
+public class ImageViewerController extends ImageBaseController {
 
-    private ImageFileInformation info;
     private double mouseX, mouseY;
 
     @FXML
@@ -54,122 +42,42 @@ public class ImageViewerController extends BaseController {
     private ImageView imageView;
     @FXML
     private HBox toolBar;
-    @FXML
-    protected TextField sourceFileInput;
 
     @Override
-    protected void initializeNext() {
+    protected void initializeNext2() {
         try {
-            fileExtensionFilter = new ArrayList();
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.tif", "*.tiff"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("png", "*.png"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
 
             toolBar.disableProperty().bind(
                     Bindings.isEmpty(sourceFileInput.textProperty())
                             .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
             );
 
-            if (sourceFileInput != null) {
-                sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        if (newValue == null || newValue.isEmpty()) {
-                            sourceFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        final File file = new File(newValue);
-                        if (!file.exists() || file.isDirectory()) {
-                            sourceFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        sourceFileInput.setStyle(null);
-                        sourceFileChanged(file);
-                        AppVaribles.setConfigValue("imageSourcePath", file.getParent());
-                    }
-                });
-            }
-
-//            imageView.setCursor(Cursor.HAND);
-//            imageView.setOnMousePressed(new EventHandler<MouseEvent>() {
-//                @Override
-//                public void handle(MouseEvent event) {
-//                    mouseX = event.getX();
-//                    mouseY = event.getY();
-//                }
-//            });
-//            imageView.setOnMouseReleased(new EventHandler<MouseEvent>() {
-//                @Override
-//                public void handle(MouseEvent event) {
-//                    FxmlTools.setScrollPane(scrollPane, mouseX - event.getX(), mouseY - event.getY());
-//                }
-//            });
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    @FXML
-    protected void selectSourceFile() {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue("imageSourcePath", System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showOpenDialog(myStage);
-            if (file != null) {
-                sourceFileInput.setText(file.getAbsolutePath());
-            }
-        } catch (Exception e) {
-//            logger.error(e.toString());
-        }
+    @Override
+    protected void sourceFileChanged(final File file) {
+        loadImage(file, false);
     }
 
-    protected void sourceFileChanged(final File file) {
-        final String fileName = file.getPath();
-        task = new Task<Void>() {
-            private BufferedImage image;
-
-            @Override
-            protected Void call() throws Exception {
-                info = ImageReaders.readImageInformation(fileName);
-                String format = FileTools.getFileSuffix(fileName);
-                if ("raw".equals(format.toLowerCase())) {
-                    image = null;
-                } else {
-                    image = ImageIO.read(file);
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (scrollPane.getHeight() < info.getyPixels()) {
-                            imageView.setFitHeight(scrollPane.getHeight() - 5);
-                            imageView.setFitWidth(scrollPane.getWidth() - 1);
-                        } else {
-                            imageView.setFitHeight(info.getyPixels());
-                            imageView.setFitWidth(info.getxPixels());
-                        }
-                        try {
-                            imageView.setImage(SwingFXUtils.toFXImage(image, null));
+    @Override
+    protected void afterImageLoaded() {
+        if (scrollPane.getHeight() < imageInformation.getyPixels()) {
+            imageView.setFitHeight(scrollPane.getHeight() - 5);
+            imageView.setFitWidth(scrollPane.getWidth() - 1);
+        } else {
+            imageView.setFitHeight(imageInformation.getyPixels());
+            imageView.setFitWidth(imageInformation.getxPixels());
+        }
+        try {
+            imageView.setImage(SwingFXUtils.toFXImage(image, null));
 //                        imageView.setImage(new Image("file:" + fileName, true));
-                        } catch (Exception e) {
-                            imageView.setImage(null);
-                            popInformation(AppVaribles.getMessage("NotSupported"));
-                        }
-                    }
-                });
-                return null;
-            }
-        };
-        openLoadingStage(task);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        } catch (Exception e) {
+            imageView.setImage(null);
+            popInformation(AppVaribles.getMessage("NotSupported"));
+        }
     }
 
     @FXML
@@ -218,8 +126,8 @@ public class ImageViewerController extends BaseController {
 
     @FXML
     void originalSize(ActionEvent event) {
-        imageView.setFitHeight(info.getyPixels());
-        imageView.setFitWidth(info.getxPixels());
+        imageView.setFitHeight(imageInformation.getyPixels());
+        imageView.setFitWidth(imageInformation.getxPixels());
     }
 
     @FXML
@@ -238,23 +146,23 @@ public class ImageViewerController extends BaseController {
 
     public void showImageInformation() {
         try {
-            if (info == null) {
+            if (imageInformation == null) {
                 return;
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageInformationFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
             ImageInformationController controller = fxmlLoader.getController();
-            controller.loadInformation(info);
+            controller.loadInformation(imageInformation);
 
-            Stage infoStage = new Stage();
-            controller.setMyStage(infoStage);
-            infoStage.setTitle(AppVaribles.getMessage("AppTitle"));
-            infoStage.initModality(Modality.NONE);
-            infoStage.initStyle(StageStyle.DECORATED);
-            infoStage.initOwner(null);
-            infoStage.getIcons().add(CommonValues.AppIcon);
-            infoStage.setScene(new Scene(root));
-            infoStage.show();
+            Stage imageInformationStage = new Stage();
+            controller.setMyStage(imageInformationStage);
+            imageInformationStage.setTitle(AppVaribles.getMessage("AppTitle"));
+            imageInformationStage.initModality(Modality.NONE);
+            imageInformationStage.initStyle(StageStyle.DECORATED);
+            imageInformationStage.initOwner(null);
+            imageInformationStage.getIcons().add(CommonValues.AppIcon);
+            imageInformationStage.setScene(new Scene(root));
+            imageInformationStage.show();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -263,23 +171,23 @@ public class ImageViewerController extends BaseController {
 
     public void showImageMetaData() {
         try {
-            if (info == null) {
+            if (imageInformation == null) {
                 return;
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageMetaDataFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
             ImageMetaDataController controller = fxmlLoader.getController();
-            controller.loadData(info);
+            controller.loadData(imageInformation);
 
-            Stage infoStage = new Stage();
-            controller.setMyStage(infoStage);
-            infoStage.setTitle(AppVaribles.getMessage("AppTitle"));
-            infoStage.initModality(Modality.NONE);
-            infoStage.initStyle(StageStyle.DECORATED);
-            infoStage.initOwner(null);
-            infoStage.getIcons().add(CommonValues.AppIcon);
-            infoStage.setScene(new Scene(root));
-            infoStage.show();
+            Stage imageInformationStage = new Stage();
+            controller.setMyStage(imageInformationStage);
+            imageInformationStage.setTitle(AppVaribles.getMessage("AppTitle"));
+            imageInformationStage.initModality(Modality.NONE);
+            imageInformationStage.initStyle(StageStyle.DECORATED);
+            imageInformationStage.initOwner(null);
+            imageInformationStage.getIcons().add(CommonValues.AppIcon);
+            imageInformationStage.setScene(new Scene(root));
+            imageInformationStage.show();
 
         } catch (Exception e) {
             logger.error(e.toString());

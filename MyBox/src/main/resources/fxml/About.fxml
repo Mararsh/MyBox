@@ -5,9 +5,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="266.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="281.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
    <children>
-      <GridPane alignment="CENTER_LEFT" prefHeight="177.0" prefWidth="519.0">
+      <GridPane alignment="CENTER_LEFT" prefHeight="204.0" prefWidth="519.0">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="165.0" minWidth="10.0" prefWidth="147.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="359.0" minWidth="10.0" prefWidth="359.0" />
@@ -17,6 +17,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
@@ -35,6 +36,8 @@
             <Label fx:id="version" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Hyperlink fx:id="licenseLink" onAction="#linkLicense" text="http://www.apache.org/licenses/LICENSE-2.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Hyperlink fx:id="sourceLink" onAction="#linkSource" text="https://github.com/Mararsh/MyBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="%KnownIssues" GridPane.rowIndex="6" />
+            <Hyperlink fx:id="issuesLink" onAction="#linkIssues" text="https://github.com/Mararsh/MyBox/issues" GridPane.columnIndex="1" GridPane.rowIndex="6" />
          </children>
       </GridPane>
    </children>

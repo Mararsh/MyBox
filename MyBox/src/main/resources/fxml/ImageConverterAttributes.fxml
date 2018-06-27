@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<HBox fx:id="imageConvertAttributesPane" alignment="CENTER" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageConverterAttributesController">
+    <children>
+        <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="200.0" HBox.hgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="152.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="939.0" minWidth="10.0" prefWidth="775.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="%ImageFormat" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <RadioButton mnemonicParsing="false" selected="true" text="png">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="ImageFormatGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton fx:id="pcxSelect" mnemonicParsing="false" text="pcx" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton fx:id="rawSelect" mnemonicParsing="false" text="Raw" toggleGroup="$ImageFormatGroup" />
+                            </children>
+                        </HBox>
+                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" text="%Preview" visible="false" />
+                    </children>
+                </HBox>
+
+                <Label text="%ImageColor" GridPane.rowIndex="1" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
+                    <children>
+                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Color">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="ImageColorGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="ARGB" mnemonicParsing="false" text="%ColorAlpha" toggleGroup="$ImageColorGroup" />
+                        <RadioButton fx:id="Gray" mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$ImageColorGroup" />
+                        <RadioButton fx:id="Binary" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$ImageColorGroup" />
+                    </children>
+                </HBox>
+
+                <Label text="%ColorScheme" GridPane.rowIndex="6" />
+                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                    <children>
+                        <HBox fx:id="colorBox" alignment="CENTER_LEFT" disable="true" prefHeight="100.0" prefWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <RadioButton mnemonicParsing="false" selected="true" text="%Default">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="ColorConversionGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$ColorConversionGroup" />
+                                <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$ColorConversionGroup" />
+                                <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" />
+                                <Label text="\%" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+
+                <Label text="%ImageSize" GridPane.rowIndex="2" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2">
+                    <children>
+                        <Label text="%PixelsWidth" />
+                        <TextField prefHeight="30.0" prefWidth="120.0" fx:id="xInput" />
+                        <Label text="%PixelsHeight" />
+                        <TextField fx:id="yInput" prefWidth="120.0" />
+                        <Button fx:id="originalButton" disable="true" mnemonicParsing="false" onAction="#setOriginalSize" text="%OriginalSize" />
+                        <Button mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
+                    </children>
+                </HBox>
+
+                <Label text="%CompressionType" GridPane.rowIndex="4" />
+                <HBox fx:id="compressBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <children>
+                        <RadioButton mnemonicParsing="false" selected="true" text="%None">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="CompressionGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                    </children>
+                </HBox>
+
+
+                <Label text="%ImageQuality" GridPane.rowIndex="5" />
+                <HBox fx:id="qualityBox" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <children>
+                        <RadioButton fx:id="fullQuality" mnemonicParsing="false" selected="true" text="100%">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="QualityGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="90%" toggleGroup="$QualityGroup" />
+                        <RadioButton mnemonicParsing="false" text="70%" toggleGroup="$QualityGroup" />
+                        <RadioButton mnemonicParsing="false" text="50%" toggleGroup="$QualityGroup" />
+                        <RadioButton mnemonicParsing="false" text="30%" toggleGroup="$QualityGroup" />
+                        <RadioButton mnemonicParsing="false" text="20%" toggleGroup="$QualityGroup" />
+                        <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$QualityGroup" />
+                        <TextField fx:id="qualityInput" prefHeight="30.0" prefWidth="50.0" />
+                        <Label text="\%" />
+                    </children>
+                </HBox>
+                <HBox fx:id="ratioBox" alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <children>
+                        <CheckBox fx:id="keepCheck" mnemonicParsing="false" selected="true" text="%KeepRatio" />
+                        <HBox fx:id="ratioBaseBox" alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="668.0" spacing="10.0">
+                            <children>
+                                <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="ratioGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
+                                <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
+                                <RadioButton mnemonicParsing="false" text="%BaseOnSamller" toggleGroup="$ratioGroup" />
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+            </children>
+        </GridPane>
+    </children>
+</HBox>

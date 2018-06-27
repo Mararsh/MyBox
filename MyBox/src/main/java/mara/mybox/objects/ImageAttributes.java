@@ -19,8 +19,10 @@ public class ImageAttributes {
     }
 
     private String imageFormat, compressionType;
-    private int density, threshold, quality, width, height, binaryConversion;
+    private int density, threshold, quality, binaryConversion, ratioAdjustion;
     private ImageType colorSpace;
+    private boolean keepRatio;
+    private int sourceWidth, sourceHeight, targetWidth, targetHeight;
 
     public ImageAttributes() {
     }
@@ -57,20 +59,20 @@ public class ImageAttributes {
         this.compressionType = compressionType;
     }
 
-    public int getWidth() {
-        return width;
+    public int getTargetWidth() {
+        return targetWidth;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
+    public void setTargetWidth(int targetWidth) {
+        this.targetWidth = targetWidth;
     }
 
-    public int getHeight() {
-        return height;
+    public int getTargetHeight() {
+        return targetHeight;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
+    public void setTargetHeight(int targetHeight) {
+        this.targetHeight = targetHeight;
     }
 
     public ImageType getColorSpace() {
@@ -103,6 +105,38 @@ public class ImageAttributes {
 
     public void setBinaryConversion(int binaryConversion) {
         this.binaryConversion = binaryConversion;
+    }
+
+    public int getRatioAdjustion() {
+        return ratioAdjustion;
+    }
+
+    public void setRatioAdjustion(int ratioAdjustion) {
+        this.ratioAdjustion = ratioAdjustion;
+    }
+
+    public boolean isKeepRatio() {
+        return keepRatio;
+    }
+
+    public void setKeepRatio(boolean keepRatio) {
+        this.keepRatio = keepRatio;
+    }
+
+    public int getSourceWidth() {
+        return sourceWidth;
+    }
+
+    public void setSourceWidth(int sourceWidth) {
+        this.sourceWidth = sourceWidth;
+    }
+
+    public int getSourceHeight() {
+        return sourceHeight;
+    }
+
+    public void setSourceHeight(int sourceHeight) {
+        this.sourceHeight = sourceHeight;
     }
 
 }

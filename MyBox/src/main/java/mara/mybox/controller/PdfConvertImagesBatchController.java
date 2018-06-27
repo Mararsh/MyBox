@@ -27,13 +27,13 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(imageAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                            .or(imageAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
+                            .or(pdfConvertAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
             );
 
             previewButton.disableProperty().bind(
-                    imageAttributesController.getRawSelect().selectedProperty()
+                    pdfConvertAttributesController.getRawSelect().selectedProperty()
                             .or(startButton.disableProperty())
                             .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
