@@ -47,11 +47,11 @@
 
 
 
-![13](https://mararsh.github.io/MyBox/13.png)
+![13](https://mararsh.github.io/MyBox/13.jpg)
 
 
 
-![14](https://mararsh.github.io/MyBox/14.png)
+![14](https://mararsh.github.io/MyBox/14.jpg)
 
 
 
