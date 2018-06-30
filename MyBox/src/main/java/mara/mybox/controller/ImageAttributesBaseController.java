@@ -8,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
@@ -36,7 +37,7 @@ public class ImageAttributesBaseController extends BaseController {
     @FXML
     protected Button previewButton;
     @FXML
-    protected RadioButton rawSelect;
+    protected RadioButton rawSelect, pcxSelect;
 
     protected ImageAttributes attributes = new ImageAttributes();
 
@@ -108,6 +109,10 @@ public class ImageAttributesBaseController extends BaseController {
         });
         thresholdInput.setText(AppVaribles.getConfigValue("thresholdInput", null));
 
+        if (pcxSelect != null) {
+            FxmlTools.quickTooltip(pcxSelect, new Tooltip(getMessage("PcxComments")));
+        }
+
         initializeNext2();
     }
 
@@ -140,29 +145,23 @@ public class ImageAttributesBaseController extends BaseController {
                 case "wbmp":
                     Binary.setDisable(false);
                     RGB.setDisable(true);
-                    if (ARGB != null) {
-                        ARGB.setDisable(true);
-                    }
+                    ARGB.setDisable(true);
                     Gray.setDisable(true);
                     Binary.setSelected(true);
                     break;
                 case "jpg":
                 case "bmp":
                 case "pnm":
-                    if (ARGB != null) {
-                        ARGB.setDisable(true);
-                    }
+                    ARGB.setDisable(true);
                     Binary.setDisable(false);
                     RGB.setDisable(false);
                     Gray.setDisable(false);
-                    if (ARGB != null && ARGB.isSelected()) {
+                    if (ARGB.isSelected()) {
                         RGB.setSelected(true);
                     }
                     break;
                 default:
-                    if (ARGB != null) {
-                        ARGB.setDisable(false);
-                    }
+                    ARGB.setDisable(false);
                     Binary.setDisable(false);
                     RGB.setDisable(false);
                     Gray.setDisable(false);

@@ -1,9 +1,12 @@
 package mara.mybox.objects;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 
 /**
  * @Author Mara
@@ -13,8 +16,8 @@ import javafx.scene.image.Image;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.6;
-    public static final String AppVersionDate = "2018-06-27";
+    public static final double AppVersion = 1.7;
+    public static final String AppVersionDate = "2018-06-30";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -32,6 +35,8 @@ public class CommonValues {
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
+    public static final String ImageViewerIFxml = "/fxml/ImageViewerI.fxml";
+    public static final String ImagesViewerFxml = "/fxml/ImagesViewer.fxml";
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String PixelsCalculator = "/fxml/PixelsCalculator.fxml";
@@ -56,5 +61,20 @@ public class CommonValues {
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
 
     public static final int InvalidValue = -9999999;
+
+    public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
+                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
+            add(new FileChooser.ExtensionFilter("png", "*.png"));
+            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
+            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
+            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
+            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
+            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
+            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
+            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
+        }
+    };
 
 }

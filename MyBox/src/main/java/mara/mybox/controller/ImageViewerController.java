@@ -12,7 +12,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -34,14 +37,18 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageViewerController extends ImageBaseController {
 
-    private double mouseX, mouseY;
+    protected double mouseX, mouseY;
 
     @FXML
-    private ScrollPane scrollPane;
+    protected ScrollPane scrollPane;
     @FXML
-    private ImageView imageView;
+    protected ImageView imageView;
     @FXML
-    private HBox toolBar;
+    private Label imageFile;
+    @FXML
+    protected HBox toolBar;
+    @FXML
+    protected Button iButton, mButton, oButton, wButton, inButton, outButton, lButton, rButton, tButton, bButton;
 
     @Override
     protected void initializeNext2() {
@@ -51,6 +58,7 @@ public class ImageViewerController extends ImageBaseController {
                     Bindings.isEmpty(sourceFileInput.textProperty())
                             .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
             );
+            setTips();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -58,12 +66,12 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @Override
-    protected void sourceFileChanged(final File file) {
+    public void sourceFileChanged(final File file) {
         loadImage(file, false);
     }
 
     @Override
-    protected void afterImageLoaded() {
+    public void afterImageLoaded() {
         if (scrollPane.getHeight() < imageInformation.getyPixels()) {
             imageView.setFitHeight(scrollPane.getHeight() - 5);
             imageView.setFitWidth(scrollPane.getWidth() - 1);
@@ -74,6 +82,9 @@ public class ImageViewerController extends ImageBaseController {
         try {
             imageView.setImage(SwingFXUtils.toFXImage(image, null));
 //                        imageView.setImage(new Image("file:" + fileName, true));
+            if (imageFile != null) {
+                imageFile.setText(sourceFile.getName());
+            }
         } catch (Exception e) {
             imageView.setImage(null);
             popInformation(AppVaribles.getMessage("NotSupported"));
@@ -81,59 +92,96 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    void imageMousePressed(MouseEvent event) {
+    public void imageMousePressed(MouseEvent event) {
         mouseX = event.getX();
         mouseY = event.getY();
     }
 
     @FXML
-    void imageMouseReleased(MouseEvent event) {
+    public void imageMouseReleased(MouseEvent event) {
         FxmlTools.setScrollPane(scrollPane, mouseX - event.getX(), mouseY - event.getY());
     }
 
     @FXML
-    void popImageInformation(ActionEvent event) {
+    public void popImageInformation(ActionEvent event) {
         showImageInformation();
     }
 
     @FXML
-    void popImageInformation2(MouseEvent event) {
+    public void popImageInformation2(MouseEvent event) {
         showImageInformation();
     }
 
     @FXML
-    void popMetaData(ActionEvent event) {
+    public void popMetaData(ActionEvent event) {
         showImageMetaData();
     }
 
     @FXML
-    void popMetaData2(MouseEvent event) {
+    public void popMetaData2(MouseEvent event) {
         showImageMetaData();
     }
 
     @FXML
-    void zoomIn(ActionEvent event) {
-        imageView.setFitHeight(imageView.getFitHeight() * 1.2);
-        imageView.setFitWidth(imageView.getFitWidth() * 1.2);
+    public void zoomIn(ActionEvent event) {
+        imageView.setFitHeight(imageView.getFitHeight() * 1.1);
+        imageView.setFitWidth(imageView.getFitWidth() * 1.1);
     }
 
     @FXML
-    void zoomOut(ActionEvent event) {
-        imageView.setFitHeight(imageView.getFitHeight() * 0.8);
-        imageView.setFitWidth(imageView.getFitWidth() * 0.8);
+    public void zoomOut(ActionEvent event) {
+        imageView.setFitHeight(imageView.getFitHeight() * 0.9);
+        imageView.setFitWidth(imageView.getFitWidth() * 0.9);
 
     }
 
     @FXML
-    void originalSize(ActionEvent event) {
+    public void originalSize(ActionEvent event) {
         imageView.setFitHeight(imageInformation.getyPixels());
         imageView.setFitWidth(imageInformation.getxPixels());
     }
 
     @FXML
-    void windowSize(ActionEvent event) {
+    public void windowSize(ActionEvent event) {
         imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
+    }
+
+    @FXML
+    public void rotateRight(ActionEvent event) {
+        imageView.setRotate(90);
+    }
+
+    @FXML
+    public void rotateLeft(ActionEvent event) {
+        imageView.setRotate(270);
+    }
+
+    @FXML
+    public void turnOver(ActionEvent event) {
+        imageView.setRotate(180);
+    }
+
+    @FXML
+    public void back(ActionEvent event) {
+        imageView.setRotate(0);
+    }
+
+    public void setTips() {
+        if (iButton != null) {
+            FxmlTools.quickTooltip(iButton, new Tooltip(AppVaribles.getMessage("ImageInformation")));
+            FxmlTools.quickTooltip(mButton, new Tooltip(AppVaribles.getMessage("ImageMetaData")));
+        }
+        if (wButton != null) {
+            FxmlTools.quickTooltip(wButton, new Tooltip(AppVaribles.getMessage("WindowSize")));
+            FxmlTools.quickTooltip(oButton, new Tooltip(AppVaribles.getMessage("OriginalSize")));
+            FxmlTools.quickTooltip(inButton, new Tooltip(AppVaribles.getMessage("ZoomIn")));
+            FxmlTools.quickTooltip(outButton, new Tooltip(AppVaribles.getMessage("ZoomOut")));
+            FxmlTools.quickTooltip(lButton, new Tooltip(AppVaribles.getMessage("RotateLeft")));
+            FxmlTools.quickTooltip(rButton, new Tooltip(AppVaribles.getMessage("RotateRight")));
+            FxmlTools.quickTooltip(tButton, new Tooltip(AppVaribles.getMessage("TurnOver")));
+            FxmlTools.quickTooltip(bButton, new Tooltip(AppVaribles.getMessage("Back")));
+        }
     }
 
     public void loadImage(final String fileName) {
@@ -192,6 +240,110 @@ public class ImageViewerController extends ImageBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
+    }
+
+    public ScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(ScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
+    }
+
+    public HBox getToolBar() {
+        return toolBar;
+    }
+
+    public void setToolBar(HBox toolBar) {
+        this.toolBar = toolBar;
+    }
+
+    public Button getiButton() {
+        return iButton;
+    }
+
+    public void setiButton(Button iButton) {
+        this.iButton = iButton;
+    }
+
+    public Button getmButton() {
+        return mButton;
+    }
+
+    public void setmButton(Button mButton) {
+        this.mButton = mButton;
+    }
+
+    public Button getoButton() {
+        return oButton;
+    }
+
+    public void setoButton(Button oButton) {
+        this.oButton = oButton;
+    }
+
+    public Button getwButton() {
+        return wButton;
+    }
+
+    public void setwButton(Button wButton) {
+        this.wButton = wButton;
+    }
+
+    public Button getInButton() {
+        return inButton;
+    }
+
+    public void setInButton(Button inButton) {
+        this.inButton = inButton;
+    }
+
+    public Button getOutButton() {
+        return outButton;
+    }
+
+    public void setOutButton(Button outButton) {
+        this.outButton = outButton;
+    }
+
+    public Button getlButton() {
+        return lButton;
+    }
+
+    public void setlButton(Button lButton) {
+        this.lButton = lButton;
+    }
+
+    public Button getrButton() {
+        return rButton;
+    }
+
+    public void setrButton(Button rButton) {
+        this.rButton = rButton;
     }
 
 }

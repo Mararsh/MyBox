@@ -164,8 +164,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </HBox>
                 <HBox fx:id="ratioBox" alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                     <children>
-                        <CheckBox fx:id="keepCheck" mnemonicParsing="false" selected="true" text="%KeepRatio" />
-                        <HBox fx:id="ratioBaseBox" alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="668.0" spacing="10.0">
+                        <CheckBox fx:id="keepCheck" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%KeepRatio" />
+                        <HBox fx:id="ratioBaseBox" alignment="CENTER_LEFT" prefHeight="30.0" prefWidth="614.0" spacing="10.0">
                             <children>
                                 <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
                                     <toggleGroup>

@@ -30,7 +30,6 @@ import mara.mybox.objects.FileInformation;
  */
 public class FilesTableController extends BaseController {
 
-    protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
     protected ObservableList<FileInformation> tableData = FXCollections.observableArrayList();
     protected String configPathName;
 

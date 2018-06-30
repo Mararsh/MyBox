@@ -52,7 +52,7 @@ public class MainApp extends Application {
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
-                    System.exit(0); // Close the background threads
+//                    System.exit(0); // Close the background threads
                 }
             });
             stage.show();

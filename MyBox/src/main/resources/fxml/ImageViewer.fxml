@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -77,10 +77,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   </ToolBar>
                   <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                     <items>
-                      <Button mnemonicParsing="false" onAction="#originalSize" prefHeight="30.0" text="%OriginalSize" />
-                        <Button mnemonicParsing="false" onAction="#windowSize" text="%WindowSize" />
-                        <Button mnemonicParsing="false" onAction="#zoomIn" prefHeight="30.0" text="%ZoomIn" />
-                        <Button mnemonicParsing="false" onAction="#zoomOut" prefHeight="30.0" text="%ZoomOut" />
+                      <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="30.0" text="%OriginalSize" />
+                        <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" text="%WindowSize" />
+                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="30.0" text="%ZoomIn" />
+                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="30.0" text="%ZoomOut" />
+                        <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                        <Button fx:id="lButton" layoutX="588.0" layoutY="10.0" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                        <Button fx:id="bButton" mnemonicParsing="false" onAction="#back" text="%Back" />
                     </items>
                   </ToolBar>
                </children>

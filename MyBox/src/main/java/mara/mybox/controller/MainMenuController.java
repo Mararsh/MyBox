@@ -103,6 +103,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openMultipleImagesViewer(ActionEvent event) {
+        reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
+    }
+
+    @FXML
     private void openImageConverter(ActionEvent event) {
         reloadStage(CommonValues.ImageConverterFxml, AppVaribles.getMessage("ImageConverter"));
     }

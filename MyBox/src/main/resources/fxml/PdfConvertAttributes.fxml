@@ -76,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$ImageFormatGroup" />
                                 <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$ImageFormatGroup" />
                                 <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$ImageFormatGroup" />
-                                <RadioButton mnemonicParsing="false" text="pcx" toggleGroup="$ImageFormatGroup" />
+                                <RadioButton fx:id="pcxSelect" mnemonicParsing="false" text="pcx" toggleGroup="$ImageFormatGroup" />
                                 <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$ImageFormatGroup" />
                                 <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$ImageFormatGroup" />
                                 <RadioButton fx:id="rawSelect" mnemonicParsing="false" text="Raw" toggleGroup="$ImageFormatGroup" />

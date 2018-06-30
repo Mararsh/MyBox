@@ -67,7 +67,6 @@ public class MyBoxController extends BaseController {
         });
         pdfMenus.getItems().add(pdfConvertImagesBatch);
 
-        imageMenu = new ContextMenu();
         MenuItem imageViewer = new MenuItem(AppVaribles.getMessage("ImageViewer"));
         imageViewer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -75,7 +74,13 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
             }
         });
-        imageMenu.getItems().add(imageViewer);
+        MenuItem imagesViewer = new MenuItem(AppVaribles.getMessage("MultipleImagesViewer"));
+        imagesViewer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
+            }
+        });
         MenuItem imageConverter = new MenuItem(AppVaribles.getMessage("ImageConverter"));
         imageConverter.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -83,7 +88,6 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImageConverterFxml, AppVaribles.getMessage("ImageConverter"));
             }
         });
-        imageMenu.getItems().add(imageConverter);
         MenuItem pixelsCalculator = new MenuItem(AppVaribles.getMessage("PixelsCalculator"));
         pixelsCalculator.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -91,7 +95,8 @@ public class MyBoxController extends BaseController {
                 openStage(CommonValues.PixelsCalculator, AppVaribles.getMessage("PixelsCalculator"), false);
             }
         });
-        imageMenu.getItems().add(pixelsCalculator);
+        imageMenu = new ContextMenu();
+        imageMenu.getItems().addAll(imageViewer, imagesViewer, imageConverter, pixelsCalculator);
 
     }
 

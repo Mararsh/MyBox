@@ -17,14 +17,14 @@ public class ValueTools {
     }
 
     public static double roundDouble3(double invalue) {
-        return (double) Math.round(invalue * 1000) / 1000;
+        return (double) Math.round(invalue * 1000.0) / 1000.0;
     }
 
     public static double roundDouble2(double invalue) {
-        return (double) Math.round(invalue * 100) / 100;
+        return (double) Math.round(invalue * 100.0) / 100.0;
     }
 
     public static double roundDouble4(double invalue) {
-        return (double) Math.round(invalue * 10000) / 10000;
+        return (double) Math.round(invalue * 10000.0) / 10000.0;
     }
 }

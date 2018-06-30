@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -19,6 +18,7 @@ import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -53,44 +53,36 @@ public abstract class ImageBaseController extends BaseController {
     @Override
     protected void initializeNext() {
         try {
-            fileExtensionFilter = new ArrayList();
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("png", "*.png"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-
-            sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue == null || newValue.isEmpty()) {
-                        sourceFileInput.setStyle(badStyle);
-                        return;
-                    }
-                    final File file = new File(newValue);
-                    if (!file.exists()) {
-                        sourceFileInput.setStyle(badStyle);
-                        return;
-                    }
-                    sourceFileInput.setStyle(null);
-                    sourceFileChanged(file);
-                    if (file.isDirectory()) {
-                        AppVaribles.setConfigValue("imageSourcePath", file.getPath());
-                    } else {
-                        AppVaribles.setConfigValue("imageSourcePath", file.getParent());
-                        if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                            targetPathInput.setText(AppVaribles.getConfigValue("imageTargetPath", System.getProperty("user.home")));
+            fileExtensionFilter = CommonValues.ImageExtensionFilter;
+            if (sourceFileInput != null) {
+                sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        if (newValue == null || newValue.isEmpty()) {
+                            sourceFileInput.setStyle(badStyle);
+                            return;
                         }
-                        if (targetPrefixInput != null) {
-                            targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
+                        final File file = new File(newValue);
+                        if (!file.exists()) {
+                            sourceFileInput.setStyle(badStyle);
+                            return;
+                        }
+                        sourceFileInput.setStyle(null);
+                        sourceFileChanged(file);
+                        if (file.isDirectory()) {
+                            AppVaribles.setConfigValue("imageSourcePath", file.getPath());
+                        } else {
+                            AppVaribles.setConfigValue("imageSourcePath", file.getParent());
+                            if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
+                                targetPathInput.setText(AppVaribles.getConfigValue("imageTargetPath", System.getProperty("user.home")));
+                            }
+                            if (targetPrefixInput != null) {
+                                targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
 
             initializeNext2();
         } catch (Exception e) {
@@ -123,7 +115,8 @@ public abstract class ImageBaseController extends BaseController {
 
     }
 
-    protected void loadImage(final File file, final boolean onlyInformation) {
+    public void loadImage(final File file, final boolean onlyInformation) {
+        sourceFile = file;
         final String fileName = file.getPath();
         task = new Task<Void>() {
             @Override
@@ -151,6 +144,62 @@ public abstract class ImageBaseController extends BaseController {
 
     protected void afterImageLoaded() {
 
+    }
+
+    public ImageFileInformation getImageInformation() {
+        return imageInformation;
+    }
+
+    public void setImageInformation(ImageFileInformation imageInformation) {
+        this.imageInformation = imageInformation;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
+    public void setSourceFile(File sourceFile) {
+        this.sourceFile = sourceFile;
+    }
+
+    public TextField getSourceFileInput() {
+        return sourceFileInput;
+    }
+
+    public void setSourceFileInput(TextField sourceFileInput) {
+        this.sourceFileInput = sourceFileInput;
+    }
+
+    public TextField getTargetPathInput() {
+        return targetPathInput;
+    }
+
+    public void setTargetPathInput(TextField targetPathInput) {
+        this.targetPathInput = targetPathInput;
+    }
+
+    public TextField getTargetPrefixInput() {
+        return targetPrefixInput;
+    }
+
+    public void setTargetPrefixInput(TextField targetPrefixInput) {
+        this.targetPrefixInput = targetPrefixInput;
+    }
+
+    public TextField getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(TextField statusLabel) {
+        this.statusLabel = statusLabel;
     }
 
 }

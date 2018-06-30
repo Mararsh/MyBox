@@ -12,12 +12,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.controller.ImageConverterAttributesController.RatioAdjustion;
 import mara.mybox.objects.AppVaribles;
@@ -25,6 +29,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -38,268 +43,119 @@ public class PixelsCalculationController extends BaseController {
 
     private ImageAttributes parentAttributes;
     private TextField parentXInput, parentYInput;
-    private int x, y, density;
-    private float inchX, inchY, cmX, cmY;
-    private boolean useInch;
+    private int finalX, finalY, cp_density, cs_density, sourceX, sourceY, selectX, selectY, cs_X, cs_Y, cd_X, cd_Y;
+    private float cp_inchX, cp_inchY, cp_cmX, cp_cmY;
+    private float cd_inchX, cd_inchY, cd_cmX, cd_cmY;
+    private boolean fromSource, cp_useInch, cd_useInch;
 
     @FXML
-    private ToggleGroup sizeGroup, DensityGroup, predefinedGroup;
+    private ToggleGroup cp_sizeGroup, cp_DensityGroup, predefinedGroup, ratioGroup, cs_DensityGroup, cd_sizeGroup;
     @FXML
-    private Label sourceLabel, targetLabel, adjustLabel;
+    private TextField targetLabel, adjustLabel;
     @FXML
-    private TextField widthInches, heightInches, widthCM, heightCM, densityInput;
+    private TextField cp_widthInches, cp_heightInches, cp_widthCM, cp_heightCM, cp_densityInput;
     @FXML
     private ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
     @FXML
     private Button useButton;
+    @FXML
+    private HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
+    @FXML
+    private TextField cs_width, cs_height, cs_densityInput;
+    @FXML
+    private TextField source_width, source_height;
+    @FXML
+    private TextField cd_width, cd_height, cd_heightInches, cd_widthInches, cd_widthCM, cd_heightCM;
+    @FXML
+    private CheckBox sourceCheck, radioCheck;
+    @FXML
+    private Label ratioLabel;
+    @FXML
+    private TabPane tabPane;
 
     @Override
     protected void initializeNext() {
         try {
-            sourceLabel.setText("");
+            fromSource = false;
             targetLabel.setText("");
+            adjustLabel.setText("");
+            ratioLabel.setText("");
 
-            predefinedGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            init_source();
+            initPredefined();
+            init_cp();
+            init_cs();
+            init_cd();
+
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
-                    if (selected.getText().equals(AppVaribles.getMessage("Display"))) {
-                        determineValues(predeinfedDisplayList.getSelectionModel().getSelectedItem());
-                    } else if (selected.getText().equals(AppVaribles.getMessage("Photo"))) {
-                        determineValues(predeinfedPhotoList.getSelectionModel().getSelectedItem());
-                    } else if (selected.getText().equals(AppVaribles.getMessage("Icon"))) {
-                        determineValues(predeinfedIconList.getSelectionModel().getSelectedItem());
-                    } else if (selected.getText().equals(AppVaribles.getMessage("Print"))) {
-                        determineValues(predeinfedPrintList.getSelectionModel().getSelectedItem());
+                public void changed(ObservableValue<? extends Tab> ov, Tab oldValue, Tab newValue) {
+                    String tab = newValue.getText();
+                    if (AppVaribles.getMessage("PredefinedPixelsNumber").equals(tab)) {
+                        predefined_determineValues();
+                    } else if (AppVaribles.getMessage("CalculatePixelsNumber").equals(tab)) {
+                        cp_calculateValues();
+                    } else if (AppVaribles.getMessage("CalculateOutputSize").equals(tab)) {
+                        cs_calculateValues();
+                    } else if (AppVaribles.getMessage("CalculateOutputDensity").equals(tab)) {
+                        cd_calculateValues();
                     }
                 }
             });
-
-            definePredefinedDisplayValues();
-            predeinfedDisplayList.getItems().addAll(predefinedDiaplayValues);
-            predeinfedDisplayList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
-                    if (selected.getText().equals(AppVaribles.getMessage("Display"))) {
-                        determineValues((String) newValue);
-                    }
-                }
-            });
-            predeinfedDisplayList.getSelectionModel().select(3);
-
-            definePredefinedPhotoValues();
-            predeinfedPhotoList.getItems().addAll(predeinfedPhotoValues);
-            predeinfedPhotoList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
-                    if (selected.getText().equals(AppVaribles.getMessage("Photo"))) {
-                        determineValues((String) newValue);
-                    }
-                }
-            });
-            predeinfedPhotoList.getSelectionModel().select(1);
-
-            definePredefinedIconValues();
-            predeinfedIconList.getItems().addAll(predeinfedIconValues);
-            predeinfedIconList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
-                    if (selected.getText().equals(AppVaribles.getMessage("Icon"))) {
-                        determineValues((String) newValue);
-                    }
-                }
-            });
-            predeinfedIconList.getSelectionModel().select(2);
-
-            definePredefinedPrintValues();
-            predeinfedPrintList.getItems().addAll(predeinfedPrintValues);
-            predeinfedPrintList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                    RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
-                    if (selected.getText().equals(AppVaribles.getMessage("Print"))) {
-                        determineValues((String) newValue);
-                    }
-                }
-            });
-            predeinfedPrintList.getSelectionModel().select(1);
-
-            DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkDensity();
-                }
-            });
-            FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getConfigValue("density", null));
-            checkDensity();
-            densityInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkDensity();
-                }
-            });
-            densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
-            FxmlTools.setNonnegativeValidation(densityInput);
-
-            sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-                    useInch = selected.getText().equals(AppVaribles.getMessage("Inches"));
-                    if (useInch) {
-                        if (inchX > 0) {
-                            widthCM.setText(Math.round(inchX * 254.0f) / 100.0f + "");
-                            widthCM.setStyle(null);
-                        }
-                        if (inchY > 0) {
-                            heightCM.setText(Math.round(inchY * 254.0f) / 100.0f + "");
-                            heightCM.setStyle(null);
-                        }
-                    } else {
-                        if (cmX > 0) {
-                            widthInches.setText(Math.round(cmX * 100 / 2.54f) / 100.0f + "");
-                            widthInches.setStyle(null);
-                        }
-                        if (cmY > 0) {
-                            heightInches.setText(Math.round(cmY * 100 / 2.54f) / 100.0f + "");
-                            heightInches.setStyle(null);
-                        }
-                    }
-                    calculateValues();
-                }
-            });
-
-            widthInches.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        inchX = Float.valueOf(newValue);
-                        widthInches.setStyle(null);
-                        AppVaribles.setConfigValue("widthInches", inchX + "");
-                        if (useInch) {
-                            widthCM.setText(Math.round(inchX * 254.0f) / 100.0f + "");
-                            widthCM.setStyle(null);
-                        }
-                    } catch (Exception e) {
-                        inchX = 0;
-                        widthInches.setStyle(badStyle);
-                    }
-                    calculateValues();
-                }
-            });
-            widthInches.setText(AppVaribles.getConfigValue("widthInches", "1"));
-
-            heightInches.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        inchY = Float.valueOf(newValue);
-                        heightInches.setStyle(null);
-                        AppVaribles.setConfigValue("heightInches", inchY + "");
-                        if (useInch) {
-                            heightCM.setText(Math.round(inchY * 254.0f) / 100.0f + "");
-                            heightCM.setStyle(null);
-                        }
-                    } catch (Exception e) {
-                        inchY = 0;
-                        heightInches.setStyle(badStyle);
-                    }
-                    calculateValues();
-                }
-            });
-            heightInches.setText(AppVaribles.getConfigValue("heightInches", "1.5"));
-
-            widthCM.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        cmX = Float.valueOf(newValue);
-                        widthCM.setStyle(null);
-                        AppVaribles.setConfigValue("widthCM", cmX + "");
-                        if (!useInch) {
-                            widthInches.setText(Math.round(cmX * 100 / 2.54f) / 100.0f + "");
-                            widthInches.setStyle(null);
-                        }
-                    } catch (Exception e) {
-                        cmX = 0;
-                        widthCM.setStyle(badStyle);
-                    }
-                    calculateValues();
-                }
-            });
-            widthCM.setText(AppVaribles.getConfigValue("widthCM", "21.0"));
-
-            heightCM.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        cmY = Float.valueOf(newValue);
-                        heightCM.setStyle(null);
-                        AppVaribles.setConfigValue("heightCM", cmY + "");
-                        if (!useInch) {
-                            heightInches.setText(Math.round(cmY * 100 / 2.54f) / 100.0f + "");
-                            heightInches.setStyle(null);
-                        }
-                    } catch (Exception e) {
-                        cmY = 0;
-                        heightCM.setStyle(badStyle);
-                    }
-                    calculateValues();
-                }
-            });
-            heightCM.setText(AppVaribles.getConfigValue("heightCM", "29.7"));
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void checkDensity() {
-        try {
-            RadioButton selected = (RadioButton) DensityGroup.getSelectedToggle();
-            String s = selected.getText();
-            densityInput.setStyle(null);
-            int inputValue;
-            try {
-                inputValue = Integer.parseInt(densityInput.getText());
-                if (inputValue > 0) {
-                    AppVaribles.setConfigValue("densityInput", inputValue + "");
-                } else {
-                    inputValue = -1;
-                }
-            } catch (Exception e) {
-                inputValue = -1;
+    private void initPredefined() {
+        predefinedGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                predefined_determineValues();
             }
-            if (getMessage("InputValue").equals(s)) {
-                if (inputValue > 0) {
-                    density = inputValue;
-                    AppVaribles.setConfigValue("density", s);
-                } else {
-                    density = 0;
-                    densityInput.setStyle(FxmlTools.badStyle);
-                }
+        });
 
-            } else {
-                density = Integer.parseInt(s.substring(0, s.length() - 3));
-                AppVaribles.setConfigValue("density", s);
+        definePredefinedDisplayValues();
+        predeinfedDisplayList.getItems().addAll(predefinedDiaplayValues);
+        predeinfedDisplayList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                predefined_determineValues();
             }
-            calculateValues();
+        });
+        predeinfedDisplayList.getSelectionModel().select(3);
 
-        } catch (Exception e) {
-            density = 0;
-            logger.error(e.toString());
-        }
+        definePredefinedPhotoValues();
+        predeinfedPhotoList.getItems().addAll(predeinfedPhotoValues);
+        predeinfedPhotoList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                predefined_determineValues();
+            }
+        });
+        predeinfedPhotoList.getSelectionModel().select(1);
+
+        definePredefinedIconValues();
+        predeinfedIconList.getItems().addAll(predeinfedIconValues);
+        predeinfedIconList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                predefined_determineValues();
+            }
+        });
+        predeinfedIconList.getSelectionModel().select(2);
+
+        definePredefinedPrintValues();
+        predeinfedPrintList.getItems().addAll(predeinfedPrintValues);
+        predeinfedPrintList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                predefined_determineValues();
+            }
+        });
+        predeinfedPrintList.getSelectionModel().select(1);
     }
 
     private void definePredefinedDisplayValues() {
@@ -416,6 +272,404 @@ public class PixelsCalculationController extends BaseController {
 
     }
 
+    private void init_source() {
+        sourceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                if (!fromSource) {
+                    sourcePixelsBox.setDisable(!sourceCheck.isSelected());
+                    ratioBox.setDisable(!sourceCheck.isSelected());
+                    adjustValues();
+                }
+            }
+        });
+
+        radioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                if (!fromSource) {
+                    adjustBox.setDisable(!newValue);
+                    adjustValues();
+                }
+            }
+        });
+
+        ratioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                adjustValues();
+            }
+        });
+
+        source_width.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    sourceX = Integer.valueOf(newValue);
+                    if (sourceY > 0) {
+                        ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
+                                + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
+                        adjustValues();
+                    }
+                } catch (Exception e) {
+                    sourceX = 0;
+                    ratioLabel.setText("");
+                }
+            }
+        });
+        FxmlTools.setNonnegativeValidation(source_width);
+
+        source_height.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    sourceY = Integer.valueOf(newValue);
+                    if (sourceX > 0) {
+                        ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
+                                + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
+                        adjustValues();
+                    }
+                } catch (Exception e) {
+                    sourceY = 0;
+                    ratioLabel.setText("");
+                }
+            }
+        });
+        FxmlTools.setNonnegativeValidation(source_height);
+
+    }
+
+    private void init_cp() {
+        cp_DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                cp_checkDensity();
+            }
+        });
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getConfigValue("density", null));
+        cp_checkDensity();
+        cp_densityInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                cp_checkDensity();
+            }
+        });
+//        cp_densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
+        FxmlTools.setNonnegativeValidation(cp_densityInput);
+
+        cp_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) cp_sizeGroup.getSelectedToggle();
+                cp_useInch = selected.getText().equals(AppVaribles.getMessage("Inches"));
+                if (cp_useInch) {
+                    if (cp_inchX > 0) {
+                        cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
+                        cp_widthCM.setStyle(null);
+                    }
+                    if (cp_inchY > 0) {
+                        cp_heightCM.setText(Math.round(cp_inchY * 254.0f) / 100.0f + "");
+                        cp_heightCM.setStyle(null);
+                    }
+                } else {
+                    if (cp_cmX > 0) {
+                        cp_widthInches.setText(Math.round(cp_cmX * 100 / 2.54f) / 100.0f + "");
+                        cp_widthInches.setStyle(null);
+                    }
+                    if (cp_cmY > 0) {
+                        cp_heightInches.setText(Math.round(cp_cmY * 100 / 2.54f) / 100.0f + "");
+                        cp_heightInches.setStyle(null);
+                    }
+                }
+                cp_calculateValues();
+            }
+        });
+
+        cp_widthInches.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cp_inchX = Float.valueOf(newValue);
+                    cp_widthInches.setStyle(null);
+                    AppVaribles.setConfigValue("widthInches", cp_inchX + "");
+                    if (cp_useInch) {
+                        cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
+                        cp_widthCM.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cp_inchX = 0;
+                    cp_widthInches.setStyle(badStyle);
+                }
+                cp_calculateValues();
+            }
+        });
+//        cp_widthInches.setText(AppVaribles.getConfigValue("widthInches", "1"));
+
+        cp_heightInches.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cp_inchY = Float.valueOf(newValue);
+                    cp_heightInches.setStyle(null);
+                    AppVaribles.setConfigValue("heightInches", cp_inchY + "");
+                    if (cp_useInch) {
+                        cp_heightCM.setText(Math.round(cp_inchY * 254.0f) / 100.0f + "");
+                        cp_heightCM.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cp_inchY = 0;
+                    cp_heightInches.setStyle(badStyle);
+                }
+                cp_calculateValues();
+            }
+        });
+//        cp_heightInches.setText(AppVaribles.getConfigValue("heightInches", "1.5"));
+
+        cp_widthCM.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cp_cmX = Float.valueOf(newValue);
+                    cp_widthCM.setStyle(null);
+                    AppVaribles.setConfigValue("widthCM", cp_cmX + "");
+                    if (!cp_useInch) {
+                        cp_widthInches.setText(Math.round(cp_cmX * 100 / 2.54f) / 100.0f + "");
+                        cp_widthInches.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cp_cmX = 0;
+                    cp_widthCM.setStyle(badStyle);
+                }
+                cp_calculateValues();
+            }
+        });
+//        cp_widthCM.setText(AppVaribles.getConfigValue("widthCM", "21.0"));
+
+        cp_heightCM.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cp_cmY = Float.valueOf(newValue);
+                    cp_heightCM.setStyle(null);
+                    AppVaribles.setConfigValue("heightCM", cp_cmY + "");
+                    if (!cp_useInch) {
+                        cp_heightInches.setText(Math.round(cp_cmY * 100 / 2.54f) / 100.0f + "");
+                        cp_heightInches.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cp_cmY = 0;
+                    cp_heightCM.setStyle(badStyle);
+                }
+                cp_calculateValues();
+            }
+        });
+//        cp_heightCM.setText(AppVaribles.getConfigValue("heightCM", "29.7"));
+    }
+
+    private void init_cs() {
+        cs_width.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cs_X = Integer.valueOf(newValue);
+                } catch (Exception e) {
+                    cs_X = 0;
+                }
+                cs_calculateValues();
+            }
+        });
+        FxmlTools.setNonnegativeValidation(cs_width);
+
+        cs_height.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cs_Y = Integer.valueOf(newValue);
+                } catch (Exception e) {
+                    cs_Y = 0;
+                }
+                cs_calculateValues();
+            }
+        });
+        FxmlTools.setNonnegativeValidation(cs_height);
+
+        cs_DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                cs_checkDensity();
+            }
+        });
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getConfigValue("density", null));
+        cs_checkDensity();
+        cs_densityInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                cs_checkDensity();
+            }
+        });
+//        cp_densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
+        FxmlTools.setNonnegativeValidation(cs_densityInput);
+
+    }
+
+    private void init_cd() {
+        cd_width.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_X = Integer.valueOf(newValue);
+                } catch (Exception e) {
+                    cd_X = 0;
+                }
+                cd_calculateValues();
+            }
+        });
+        FxmlTools.setNonnegativeValidation(cs_width);
+
+        cd_height.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_Y = Integer.valueOf(newValue);
+                } catch (Exception e) {
+                    cd_Y = 0;
+                }
+                cd_calculateValues();
+            }
+        });
+        FxmlTools.setNonnegativeValidation(cs_height);
+
+        cd_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) cd_sizeGroup.getSelectedToggle();
+                cd_useInch = selected.getText().equals(AppVaribles.getMessage("Inches"));
+                if (cd_useInch) {
+                    if (cd_inchX > 0) {
+                        cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
+                        cd_widthCM.setStyle(null);
+                    }
+                    if (cd_inchY > 0) {
+                        cd_heightCM.setText(Math.round(cd_inchY * 254.0f) / 100.0f + "");
+                        cd_heightCM.setStyle(null);
+                    }
+                } else {
+                    if (cd_cmX > 0) {
+                        cd_widthInches.setText(Math.round(cd_cmX * 100 / 2.54f) / 100.0f + "");
+                        cd_widthInches.setStyle(null);
+                    }
+                    if (cd_cmY > 0) {
+                        cd_heightInches.setText(Math.round(cd_cmY * 100 / 2.54f) / 100.0f + "");
+                        cd_heightInches.setStyle(null);
+                    }
+                }
+                cd_calculateValues();
+            }
+        });
+
+        cd_widthInches.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_inchX = Float.valueOf(newValue);
+                    cd_widthInches.setStyle(null);
+                    AppVaribles.setConfigValue("widthInches", cd_inchX + "");
+                    if (cd_useInch) {
+                        cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
+                        cd_widthCM.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cd_inchX = 0;
+                    cd_widthInches.setStyle(badStyle);
+                }
+                cd_calculateValues();
+            }
+        });
+//        cd_widthInches.setText(AppVaribles.getConfigValue("widthInches", "1"));
+
+        cd_heightInches.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_inchY = Float.valueOf(newValue);
+                    cd_heightInches.setStyle(null);
+                    AppVaribles.setConfigValue("heightInches", cd_inchY + "");
+                    if (cd_useInch) {
+                        cd_heightCM.setText(Math.round(cd_inchY * 254.0f) / 100.0f + "");
+                        cd_heightCM.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cd_inchY = 0;
+                    cd_heightInches.setStyle(badStyle);
+                }
+                cd_calculateValues();
+            }
+        });
+//        cd_heightInches.setText(AppVaribles.getConfigValue("heightInches", "1.5"));
+
+        cd_widthCM.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_cmX = Float.valueOf(newValue);
+                    cd_widthCM.setStyle(null);
+                    AppVaribles.setConfigValue("widthCM", cd_cmX + "");
+                    if (!cd_useInch) {
+                        cd_widthInches.setText(Math.round(cd_cmX * 100 / 2.54f) / 100.0f + "");
+                        cd_widthInches.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cd_cmX = 0;
+                    cd_widthCM.setStyle(badStyle);
+                }
+                cd_calculateValues();
+            }
+        });
+//        cd_widthCM.setText(AppVaribles.getConfigValue("widthCM", "21.0"));
+
+        cd_heightCM.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    cd_cmY = Float.valueOf(newValue);
+                    cd_heightCM.setStyle(null);
+                    AppVaribles.setConfigValue("heightCM", cd_cmY + "");
+                    if (!cd_useInch) {
+                        cd_heightInches.setText(Math.round(cd_cmY * 100 / 2.54f) / 100.0f + "");
+                        cd_heightInches.setStyle(null);
+                    }
+                } catch (Exception e) {
+                    cd_cmY = 0;
+                    cd_heightCM.setStyle(badStyle);
+                }
+                cd_calculateValues();
+            }
+        });
+//        cd_heightCM.setText(AppVaribles.getConfigValue("heightCM", "29.7"));
+
+    }
+
     @FXML
     private void close(ActionEvent event) {
         getMyStage().close();
@@ -423,46 +677,76 @@ public class PixelsCalculationController extends BaseController {
 
     @FXML
     private void useResult(ActionEvent event) {
-        if (x <= 0 || y <= 0) {
+        if (finalX <= 0 || finalY <= 0) {
             popInformation(AppVaribles.getMessage("Invalid"));
             return;
         }
         if (parentXInput != null && parentYInput != null) {
-            parentXInput.setText(x + "");
-            parentYInput.setText(y + "");
+            parentXInput.setText(finalX + "");
+            parentYInput.setText(finalY + "");
         }
         getMyStage().close();
     }
 
     public void setSource(ImageAttributes parentAttributes, TextField parentXInput, TextField parentYInput) {
+        fromSource = true;
         this.parentAttributes = parentAttributes;
         this.parentXInput = parentXInput;
         this.parentYInput = parentYInput;
-        if (parentAttributes.getSourceWidth() <= 0 && parentAttributes.getSourceHeight() <= 0) {
-            return;
-        }
-        String label = AppVaribles.getMessage("SourceImagePixelsNumber") + ": "
-                + parentAttributes.getSourceWidth() + "x" + parentAttributes.getSourceHeight()
-                + "         "
-                + AppVaribles.getMessage("KeepRatio") + ": " + AppVaribles.getMessage(parentAttributes.isKeepRatio() + "");
-        if (parentAttributes.isKeepRatio()) {
-            int rd = parentAttributes.getRatioAdjustion();
-            if (rd == RatioAdjustion.BaseOnWidth) {
-                label += "  " + AppVaribles.getMessage("BaseOnWidth");
-            } else if (rd == RatioAdjustion.BaseOnHeight) {
-                label += "  " + AppVaribles.getMessage("BaseOnHeight");
-            } else if (rd == RatioAdjustion.BaseOnLarger) {
-                label += "  " + AppVaribles.getMessage("BaseOnLarger");
-            } else if (rd == RatioAdjustion.BaseOnSmaller) {
-                label += "  " + AppVaribles.getMessage("BaseOnSamller");
+
+        sourceCheck.setSelected(true);
+        sourceCheck.setDisable(true);
+        sourcePixelsBox.setDisable(true);
+        ratioBox.setDisable(true);
+
+        if (parentAttributes.getSourceWidth() > 0 && parentAttributes.getSourceHeight() > 0) {
+            source_width.setText(parentAttributes.getSourceWidth() + "");
+            source_height.setText(parentAttributes.getSourceHeight() + "");
+            radioCheck.setSelected(parentAttributes.isKeepRatio());
+            if (parentAttributes.isKeepRatio()) {
+                int rd = parentAttributes.getRatioAdjustion();
+                if (rd == RatioAdjustion.BaseOnWidth) {
+                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
+                } else if (rd == RatioAdjustion.BaseOnHeight) {
+                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
+                } else if (rd == RatioAdjustion.BaseOnLarger) {
+                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
+                } else if (rd == RatioAdjustion.BaseOnSmaller) {
+                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                }
             }
+
+            cs_width.setText(parentAttributes.getSourceWidth() + "");
+            cs_height.setText(parentAttributes.getSourceHeight() + "");
+
+            cd_width.setText(parentAttributes.getSourceWidth() + "");
+            cd_height.setText(parentAttributes.getSourceHeight() + "");
+
+        } else {
+            radioCheck.setSelected(false);
         }
-        sourceLabel.setText(label);
+
         useButton.setVisible(true);
-        adjustValues();
+        useButton.setDisable(true);
+
     }
 
-    private void determineValues(String v) {
+    private void predefined_determineValues() {
+        RadioButton selected = (RadioButton) predefinedGroup.getSelectedToggle();
+        if (selected == null) {
+            return;
+        }
+        String v = null;
+        if (selected.getText().equals(AppVaribles.getMessage("Photo"))) {
+            v = predeinfedPhotoList.getSelectionModel().getSelectedItem();
+        } else if (selected.getText().equals(AppVaribles.getMessage("Display"))) {
+            v = predeinfedDisplayList.getSelectionModel().getSelectedItem();
+        } else if (selected.getText().equals(AppVaribles.getMessage("Print"))) {
+            v = predeinfedPrintList.getSelectionModel().getSelectedItem();
+        } else if (selected.getText().equals(AppVaribles.getMessage("Icon"))) {
+            v = predeinfedIconList.getSelectionModel().getSelectedItem();
+        }
+
         if (v == null || v.isEmpty() || v.startsWith("--")) {
             return;
         }
@@ -471,85 +755,220 @@ public class PixelsCalculationController extends BaseController {
         if (vs.length != 2) {
             return;
         }
-        x = Integer.valueOf(vs[0]);
-        y = Integer.valueOf(vs[1]);
-        String label = AppVaribles.getMessage("SelectedPixelsNumber") + ": " + v;
+        selectX = Integer.valueOf(vs[0]);
+        selectY = Integer.valueOf(vs[1]);
+        String label = AppVaribles.getMessage("SelectedPixelsNumber") + ": " + v + "  "
+                + AppVaribles.getMessage("Ratio") + ": "
+                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+        targetLabel.setText(label);
+        useButton.setDisable(false);
+        adjustValues();
+    }
+
+    private void cp_checkDensity() {
+        try {
+            RadioButton selected = (RadioButton) cp_DensityGroup.getSelectedToggle();
+            String s = selected.getText();
+            cp_densityInput.setStyle(null);
+            int inputValue;
+            try {
+                inputValue = Integer.parseInt(cp_densityInput.getText());
+                if (inputValue > 0) {
+                    AppVaribles.setConfigValue("densityInput", inputValue + "");
+                } else {
+                    inputValue = -1;
+                }
+            } catch (Exception e) {
+                inputValue = -1;
+            }
+            if (getMessage("InputValue").equals(s)) {
+                if (inputValue > 0) {
+                    cp_density = inputValue;
+                    AppVaribles.setConfigValue("density", s);
+                } else {
+                    cp_density = 0;
+                    cp_densityInput.setStyle(FxmlTools.badStyle);
+                }
+
+            } else {
+                cp_density = Integer.parseInt(s.substring(0, s.length() - 3));
+                AppVaribles.setConfigValue("density", s);
+            }
+            cp_calculateValues();
+
+        } catch (Exception e) {
+            cp_density = 0;
+            logger.error(e.toString());
+        }
+    }
+
+    private void cp_calculateValues() {
+        selectX = Math.round(cp_cmX * cp_density / 2.54f);
+        selectY = Math.round(cp_cmY * cp_density / 2.54f);
+        if (selectX <= 0 || selectY <= 0) {
+            useButton.setDisable(true);
+            targetLabel.setText("");
+            adjustLabel.setText("");
+            return;
+        }
+        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+                + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
+                + cp_density + "dpi" + "   "
+                + AppVaribles.getMessage("Ratio") + ": "
+                + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
     }
 
-    private void calculateValues() {
-        x = Math.round(cmX * density / 2.54f);
-        y = Math.round(cmY * density / 2.54f);
-        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
-                + x + "x" + y + "       " + cmX + "cm x " + cmY + " cm   "
-                + density + "dpi";
-        if (x <= 0 || y <= 0) {
-            label += "   " + AppVaribles.getMessage("Invalid");
-        } else {
-            adjustValues();
+    private void cs_checkDensity() {
+        try {
+            RadioButton selected = (RadioButton) cs_DensityGroup.getSelectedToggle();
+            String s = selected.getText();
+            cs_densityInput.setStyle(null);
+            int inputValue;
+            try {
+                inputValue = Integer.parseInt(cs_densityInput.getText());
+                if (inputValue > 0) {
+                    AppVaribles.setConfigValue("densityInput", inputValue + "");
+                } else {
+                    inputValue = -1;
+                }
+            } catch (Exception e) {
+                inputValue = -1;
+            }
+            if (getMessage("InputValue").equals(s)) {
+                if (inputValue > 0) {
+                    cs_density = inputValue;
+                    AppVaribles.setConfigValue("density", s);
+                } else {
+                    cs_density = 0;
+                    cs_densityInput.setStyle(FxmlTools.badStyle);
+                }
+
+            } else {
+                cs_density = Integer.parseInt(s.substring(0, s.length() - 3));
+                AppVaribles.setConfigValue("density", s);
+            }
+            cs_calculateValues();
+
+        } catch (Exception e) {
+            cs_density = 0;
+            logger.error(e.toString());
         }
+    }
+
+    private void cs_calculateValues() {
+        selectX = cs_X;
+        selectY = cs_Y;
+        if (cs_X <= 0 || cs_Y <= 0 || cs_density <= 0) {
+            useButton.setDisable(true);
+            targetLabel.setText("");
+            adjustLabel.setText("");
+            return;
+        }
+        double cmX = ValueTools.roundDouble2(selectX * 2.54f / cs_density);
+        double cmY = ValueTools.roundDouble2(selectY * 2.54f / cs_density);
+        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+                + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
+                + cs_density + "dpi" + "   "
+                + AppVaribles.getMessage("Ratio") + ": "
+                + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
+        adjustValues();
+    }
+
+    private void cd_calculateValues() {
+        selectX = cd_X;
+        selectY = cd_Y;
+        if (!cd_useInch) {
+            cd_inchX = cd_cmX / 2.54f;
+            cd_inchY = cd_cmY / 2.54f;
+        }
+        if (cd_X <= 0 || cd_Y <= 0
+                || (cd_useInch && (cd_inchX <= 0 || cd_inchY <= 0))
+                || (!cd_useInch && (cd_cmX <= 0 || cd_cmY <= 0))) {
+            useButton.setDisable(true);
+            targetLabel.setText("");
+            adjustLabel.setText("");
+            return;
+        }
+        int densityX = Math.round(cd_X / cd_inchX);
+        int densityY = Math.round(cd_Y / cd_inchY);
+        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+                + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
+                + densityX + "dpi x " + densityY + "dpi   "
+                + AppVaribles.getMessage("Ratio") + ": "
+                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+        targetLabel.setText(label);
+        adjustValues();
+
     }
 
     private void adjustValues() {
         adjustLabel.setText("");
-        if (x <= 0 || y <= 0
-                || parentAttributes == null || !parentAttributes.isKeepRatio()) {
+        finalX = selectX;
+        finalY = selectY;
+        if (selectX <= 0 || selectY <= 0) {
+            useButton.setDisable(true);
+            targetLabel.setText("");
+            return;
+        }
+        useButton.setDisable(false);
+
+        if (!sourceCheck.isSelected() || !radioCheck.isSelected() || sourceX <= 0 || sourceY <= 0) {
+            adjustLabel.setText("");
             return;
         }
 
-        int sourceX = parentAttributes.getSourceWidth();
-        int sourceY = parentAttributes.getSourceHeight();
-        if (sourceX <= 0 || sourceY <= 0) {
+        long ratioX = Math.round(selectX * 1000 / sourceX);
+        long ratioY = Math.round(selectY * 1000 / sourceY);
+        if (ratioX <= 0 || ratioY <= 0 || ratioX == ratioY) {
             return;
         }
 
-        long ratioX = Math.round(x * 1000 / sourceX);
-        long ratioY = Math.round(y * 1000 / sourceY);
-        if (ratioX <= 0 || ratioY <= 0) {
+        RadioButton selected = (RadioButton) ratioGroup.getSelectedToggle();
+        String s = selected.getText();
+        if (getMessage("BaseOnWidth").equals(s)) {
+            finalY = Math.round(sourceY * selectX / sourceX);
+        } else if (getMessage("BaseOnHeight").equals(s)) {
+            finalX = Math.round(sourceX * selectY / sourceY);
+        } else if (getMessage("BaseOnLarger").equals(s)) {
+            if (ratioX > ratioY) {
+                finalY = Math.round(sourceY * selectX / sourceX);
+            } else {
+                finalX = Math.round(sourceX * selectY / sourceY);
+            }
+        } else if (getMessage("BaseOnSamller").equals(s)) {
+            if (ratioX > ratioY) {
+                finalX = Math.round(sourceX * selectY / sourceY);
+            } else {
+                finalY = Math.round(sourceY * selectX / sourceX);
+            }
+        } else {
             return;
         }
-        if (ratioX == ratioY) {
-            return;
-        }
-        int rd = parentAttributes.getRatioAdjustion();
-        if (rd == RatioAdjustion.BaseOnWidth) {
-            y = Math.round(x * sourceY / sourceX);
-        } else if (rd == RatioAdjustion.BaseOnHeight) {
-            x = Math.round(y * sourceX / sourceY);
-        } else if (rd == RatioAdjustion.BaseOnLarger) {
-            if (ratioX > ratioY) {
-                y = Math.round(x * sourceY / sourceX);
-            } else {
-                x = Math.round(y * sourceX / sourceY);
-            }
-        } else if (rd == RatioAdjustion.BaseOnSmaller) {
-            if (ratioX > ratioY) {
-                x = Math.round(y * sourceX / sourceY);
-            } else {
-                y = Math.round(x * sourceY / sourceX);
-            }
-        }
+
         String label = AppVaribles.getMessage("AdjustedPixelsNumber") + ": "
-                + x + "x" + y;
+                + finalX + "x" + finalY + "   "
+                + AppVaribles.getMessage("Ratio") + ": "
+                + ValueTools.roundDouble3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }
 
-    public int getX() {
-        return x;
+    public int getFinalX() {
+        return finalX;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setFinalX(int finalX) {
+        this.finalX = finalX;
     }
 
-    public int getY() {
-        return y;
+    public int getFinalY() {
+        return finalY;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setFinalY(int finalY) {
+        this.finalY = finalY;
     }
 
     public TextField getParentXInput() {

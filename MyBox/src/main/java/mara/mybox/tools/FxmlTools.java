@@ -8,12 +8,16 @@ import java.net.URL;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
@@ -67,6 +71,25 @@ public class FxmlTools {
             }
         }
         return false;
+    }
+
+    // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay
+    public static void quickTooltip(final Node node, final Tooltip tooltip) {
+        node.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // +15 moves the tooltip 15 pixels below the mouse cursor;
+                // if you don't change the y coordinate of the tooltip, you
+                // will see constant screen flicker
+                tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
+            }
+        });
+        node.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                tooltip.hide();
+            }
+        });
     }
 
     public static String getFxmlPath(String fullPath) {

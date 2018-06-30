@@ -7,107 +7,56 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PixelsCalculationController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PixelsCalculationController">
     <children>
-          <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefWidth="850.0" text="%PixelsCalculator" textAlignment="CENTER">
-              <font>
-                  <Font name="System Bold" size="24.0" />
-              </font>
-         <VBox.margin>
-            <Insets bottom="20.0" />
-         </VBox.margin>
-          </Label>
-      <Label maxWidth="1.7976931348623157E308" prefHeight="111.0" prefWidth="760.0" text="%pixelsCalculatorComments" wrapText="true" />
-        <TabPane maxHeight="1.7976931348623157E308" prefHeight="337.0" prefWidth="756.0" tabClosingPolicy="UNAVAILABLE">
+        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefWidth="850.0" text="%PixelsCalculator" textAlignment="CENTER">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+            <VBox.margin>
+                <Insets bottom="20.0" />
+            </VBox.margin>
+        </Label>
+        <HBox fx:id="sourceBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+                <CheckBox fx:id="sourceCheck" mnemonicParsing="false" text="%SourceImage" />
+                <HBox fx:id="sourcePixelsBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="NEVER">
+                    <children>
+                        <Label text="%PixelsWidth" />
+                        <TextField fx:id="source_width" prefHeight="30.0" prefWidth="80.0" />
+                        <Label text="%PixelsHeight" />
+                        <TextField fx:id="source_height" prefWidth="80.0" />
+                  <Label fx:id="ratioLabel" prefWidth="200.0" text="Ratio" />
+                    </children>
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </HBox>
+            </children>
+        </HBox>
+        <HBox fx:id="ratioBox" alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+                <CheckBox fx:id="radioCheck" mnemonicParsing="false" selected="true" text="%KeepRatio">
+                    <HBox.margin>
+                        <Insets left="40.0" />
+                    </HBox.margin>
+                </CheckBox>
+            <HBox fx:id="adjustBox" alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                      <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
+                          <toggleGroup>
+                              <ToggleGroup fx:id="ratioGroup" />
+                          </toggleGroup>
+                      </RadioButton>
+                      <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
+                      <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
+                      <RadioButton mnemonicParsing="false" text="%BaseOnSamller" toggleGroup="$ratioGroup" />
+               </children>
+            </HBox>
+            </children>
+        </HBox>
+        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="%CalculatePixelsNumber">
-                    <content>
-                        <GridPane alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="287.0" prefWidth="850.0" vgap="30.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="161.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints maxHeight="207.0" minHeight="10.0" />
-                                <RowConstraints maxHeight="184.0" minHeight="10.0" prefHeight="118.0" />
-                            </rowConstraints>
-                            <children>
-                                <Label text="%OutputSize" />
-                                <Label text="%OutputQuality" GridPane.rowIndex="1" />
-                                <VBox spacing="5.0" GridPane.columnIndex="1">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" selected="true" text="%Centimetres">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="sizeGroup" />
-                                       </toggleGroup></RadioButton>
-                                                <Label text="%Width">
-                                                    <HBox.margin>
-                                                        <Insets left="20.0" />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="widthCM" prefWidth="100.0" />
-                                                <Label text="%Height" />
-                                                <TextField fx:id="heightCM" prefWidth="100.0" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" prefHeight="9.0" prefWidth="666.0" spacing="10.0">
-                                            <children>
-                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" text="%Inches" toggleGroup="$sizeGroup" />
-                                                <Label text="%Width">
-                                                    <HBox.margin>
-                                                        <Insets left="20.0" />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="widthInches" prefWidth="100.0" />
-                                                <Label text="%Height" />
-                                                <TextField fx:id="heightInches" prefWidth="100.0" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                                <VBox prefHeight="104.0" prefWidth="666.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                            <children>
-                                                <Label prefWidth="100.0" text="%Display" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="DensityGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="160dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="240dpi" toggleGroup="$DensityGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label prefWidth="100.0" text="%Print" />
-                                                <RadioButton mnemonicParsing="false" text="300dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="350dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="400dpi" toggleGroup="$DensityGroup" />
-                                                <RadioButton mnemonicParsing="false" text="600dpi" toggleGroup="$DensityGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$DensityGroup" />
-                                                <TextField fx:id="densityInput" prefHeight="30.0" prefWidth="80.0" />
-                                                <Label text="dpi" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </children>
-                            <padding>
-                                <Insets left="10.0" right="10.0" />
-                            </padding>
-                        </GridPane>
-                    </content>
-                </Tab>
                 <Tab text="%PredefinedPixelsNumber">
                     <content>
                         <VBox alignment="CENTER_LEFT" spacing="20.0">
@@ -115,7 +64,7 @@
                                 <Label text="%PixelsNumberHV" />
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
-                                        <RadioButton mnemonicParsing="false" prefWidth="100.0" selected="true" text="%Display">
+                                        <RadioButton mnemonicParsing="false" prefWidth="100.0" text="%Display">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="predefinedGroup" />
                                             </toggleGroup>
@@ -138,12 +87,12 @@
                                         </ComboBox>
                                     </children>
                                 </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <RadioButton mnemonicParsing="false" prefWidth="100.0" text="%Icon" toggleGroup="$predefinedGroup" />
-                              <ComboBox fx:id="predeinfedIconList" prefWidth="600.0" />
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <RadioButton mnemonicParsing="false" prefWidth="100.0" text="%Icon" toggleGroup="$predefinedGroup" />
+                                        <ComboBox fx:id="predeinfedIconList" prefWidth="600.0" />
+                                    </children>
+                                </HBox>
                             </children>
                             <padding>
                                 <Insets left="40.0" right="10.0" />
@@ -151,28 +100,247 @@
                         </VBox>
                     </content>
                 </Tab>
+                <Tab text="%CalculatePixelsNumber">
+                    <content>
+                        <GridPane alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="30.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="161.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="207.0" minHeight="10.0" />
+                                <RowConstraints maxHeight="184.0" minHeight="10.0" prefHeight="118.0" />
+                            </rowConstraints>
+                            <children>
+                                <Label text="%OutputSize" />
+                                <Label text="%OutputDensity" GridPane.rowIndex="1" />
+                                <VBox spacing="5.0" GridPane.columnIndex="1">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" selected="true" text="%Centimetres">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="cp_sizeGroup" />
+                                       </toggleGroup>
+                                                </RadioButton>
+                                                <Label text="%Width">
+                                                    <HBox.margin>
+                                                        <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="cp_widthCM" prefWidth="100.0" />
+                                                <Label text="%Height" />
+                                                <TextField fx:id="cp_heightCM" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="9.0" prefWidth="666.0" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" text="%Inches" toggleGroup="$cp_sizeGroup" />
+                                                <Label text="%Width">
+                                                    <HBox.margin>
+                                                        <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="cp_widthInches" prefWidth="100.0" />
+                                                <Label text="%Height" />
+                                                <TextField fx:id="cp_heightInches" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <VBox prefHeight="104.0" prefWidth="666.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label prefWidth="100.0" text="%Display" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="cp_DensityGroup" />
+                                       </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="160dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="240dpi" toggleGroup="$cp_DensityGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label prefWidth="100.0" text="%Print" />
+                                                <RadioButton mnemonicParsing="false" text="300dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="350dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="400dpi" toggleGroup="$cp_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="600dpi" toggleGroup="$cp_DensityGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$cp_DensityGroup" />
+                                                <TextField fx:id="cp_densityInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <Label text="dpi" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                        </GridPane>
+                    </content>
+                </Tab>
+                <Tab text="%CalculateOutputSize">
+                    <content>
+                        <GridPane alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="242.0" prefWidth="856.0" vgap="30.0">
+                            <children>
+                                <Label text="%OutputPixels" />
+                                <Label text="%OutputDensity" GridPane.rowIndex="1" />
+                                <VBox spacing="5.0" GridPane.columnIndex="1">
+                                    <children>
+                                        <HBox fx:id="cs_pixelsBox" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%PixelsWidth" />
+                                                <TextField fx:id="cs_width" prefHeight="30.0" prefWidth="80.0" />
+                                                <Label text="%PixelsHeight" />
+                                                <TextField fx:id="cs_height" prefWidth="80.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <VBox prefHeight="104.0" prefWidth="666.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Label prefWidth="100.0" text="%Display" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="cs_DensityGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="160dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="240dpi" toggleGroup="$cs_DensityGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label prefWidth="100.0" text="%Print" />
+                                                <RadioButton mnemonicParsing="false" text="300dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="350dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="400dpi" toggleGroup="$cs_DensityGroup" />
+                                                <RadioButton mnemonicParsing="false" text="600dpi" toggleGroup="$cs_DensityGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$cs_DensityGroup" />
+                                                <TextField fx:id="cs_densityInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <Label text="dpi" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="161.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                            </columnConstraints>
+                            <padding>
+                                <Insets left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="207.0" minHeight="10.0" prefHeight="39.0" />
+                                <RowConstraints maxHeight="184.0" minHeight="10.0" prefHeight="95.0" />
+                            </rowConstraints>
+                        </GridPane>
+                    </content>
+                </Tab>
+                <Tab text="%CalculateOutputDensity">
+                    <content>
+                        <GridPane alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="30.0">
+                            <children>
+                                <Label text="%OutputSize" GridPane.rowIndex="1" />
+                                <Label text="%OutputPixels" />
+                                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" selected="true" text="%Centimetres">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="cd_sizeGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <Label text="%Width">
+                                                    <HBox.margin>
+                                                        <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="cd_widthCM" prefWidth="100.0" />
+                                                <Label text="%Height" />
+                                                <TextField fx:id="cd_heightCM" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" prefHeight="9.0" prefWidth="666.0" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" prefWidth="150.0" text="%Inches" toggleGroup="$cd_sizeGroup" />
+                                                <Label text="%Width">
+                                                    <HBox.margin>
+                                                        <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="cd_widthInches" prefWidth="100.0" />
+                                                <Label text="%Height" />
+                                                <TextField fx:id="cd_heightInches" prefWidth="100.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <VBox spacing="10.0" GridPane.columnIndex="1">
+                                    <children>
+                                        <HBox fx:id="cd_pixelsBox" alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%PixelsWidth" />
+                                                <TextField fx:id="cd_width" prefHeight="30.0" prefWidth="80.0" />
+                                                <Label text="%PixelsHeight" />
+                                                <TextField fx:id="cd_height" prefWidth="80.0" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.0" minWidth="10.0" prefWidth="161.0" />
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                            </columnConstraints>
+                            <padding>
+                                <Insets left="10.0" right="10.0" />
+                            </padding>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="184.0" minHeight="10.0" />
+                                <RowConstraints maxHeight="207.0" minHeight="10.0" prefHeight="80.0" />
+                            </rowConstraints>
+                        </GridPane>
+                    </content>
+                </Tab>
             </tabs>
             <VBox.margin>
-                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                <Insets bottom="2.0" left="2.0" right="2.0" top="10.0" />
             </VBox.margin>
         </TabPane>
-        <Label fx:id="sourceLabel" maxWidth="1.7976931348623157E308" text="label" textFill="#942828">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <Label fx:id="targetLabel" text="Label" textFill="#2e598a">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="adjustLabel" text="Label" textFill="#2e598a">
-         <font>
-            <Font size="18.0" />
-         </font>
-      </Label>
+        <TextField fx:id="targetLabel" editable="false" styleClass="copyable-blue-label" stylesheets="@../styles/MyBox.css" text="Label">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </TextField>
+        <TextField fx:id="adjustLabel" editable="false" styleClass="copyable-blue-label" stylesheets="@../styles/MyBox.css" text="Label">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </TextField>
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
-                <Button fx:id="useButton" mnemonicParsing="false" onAction="#useResult" prefWidth="80.0" text="%Use" visible="false" />
+                <Button fx:id="useButton" disable="true" mnemonicParsing="false" onAction="#useResult" prefWidth="80.0" text="%Use" visible="false" />
                 <Button mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
             </children>
         </HBox>

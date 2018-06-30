@@ -35,8 +35,6 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     @FXML
     protected ToggleGroup ratioGroup;
     @FXML
-    private RadioButton pcxSelect;
-    @FXML
     protected TextField xInput, yInput;
     @FXML
     protected Button originalButton;
