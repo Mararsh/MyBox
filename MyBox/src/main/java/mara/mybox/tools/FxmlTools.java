@@ -17,7 +17,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
@@ -227,6 +233,53 @@ public class FxmlTools {
             file = new File(someClass.getResource(resourceFile).getFile());
         }
         return file;
+    }
+
+    public class ImageManufactureType {
+
+        public static final int Brighter = 0;
+        public static final int Darker = 1;
+        public static final int Gray = 2;
+        public static final int Invert = 3;
+        public static final int Saturate = 4;
+        public static final int Desaturate = 5;
+    }
+
+    public static void manufactureImage(ImageView imageView, int manuType) {
+        Image image = imageView.getImage();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                switch (manuType) {
+                    case ImageManufactureType.Brighter:
+                        color = color.brighter();
+                        break;
+                    case ImageManufactureType.Darker:
+                        color = color.darker();
+                        break;
+                    case ImageManufactureType.Gray:
+                        color = color.grayscale();
+                        break;
+                    case ImageManufactureType.Invert:
+                        color = color.invert();
+                        break;
+                    case ImageManufactureType.Saturate:
+                        color = color.saturate();
+                        break;
+                    case ImageManufactureType.Desaturate:
+                        color = color.desaturate();
+                        break;
+                    default:
+                        break;
+                }
+                pixelWriter.setColor(x, y, color);
+            }
+        }
+        imageView.setImage(newImage);
     }
 
 }

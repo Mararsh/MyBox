@@ -150,16 +150,16 @@ public class ImageConverterController extends ImageBaseController {
                 @Override
                 protected Void call() {
                     try {
-                        image = ImageIO.read(sourceFile);
+                        bufferImage = ImageIO.read(sourceFile);
                         targetFile = makeFilename();
 
 //                        logger.debug("gray:" + BufferedImage.TYPE_BYTE_GRAY + "  binary: " + BufferedImage.TYPE_BYTE_BINARY);
 //                        logger.debug("argb:" + BufferedImage.TYPE_INT_ARGB + "  rgb: " + BufferedImage.TYPE_INT_RGB);
-                        int color = ImageTools.getColorType(image);
-                        BufferedImage newImage = image;
+                        int color = ImageTools.getColorType(bufferImage);
+                        BufferedImage newImage = bufferImage;
                         if (attributes.getSourceWidth() != attributes.getTargetWidth()
                                 || attributes.getSourceHeight() != attributes.getTargetHeight()) {
-                            Image scaledImage = image.getScaledInstance(attributes.getTargetWidth(), attributes.getTargetHeight(), BufferedImage.SCALE_DEFAULT);
+                            Image scaledImage = bufferImage.getScaledInstance(attributes.getTargetWidth(), attributes.getTargetHeight(), BufferedImage.SCALE_DEFAULT);
                             newImage = ImageConverter.toBufferedImage(scaledImage, color);
 //                            logger.debug("newImage color:" + ImageTools.getColorType(newImage));
                         }

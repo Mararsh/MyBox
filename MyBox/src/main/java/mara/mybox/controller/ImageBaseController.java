@@ -6,6 +6,7 @@ import java.util.Date;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -29,7 +30,8 @@ import mara.mybox.objects.CommonValues;
 public abstract class ImageBaseController extends BaseController {
 
     protected ImageFileInformation imageInformation;
-    protected BufferedImage image;
+    protected BufferedImage bufferImage;
+    protected Image image;
     protected File sourceFile;
 
     protected class ProcessParameters {
@@ -122,10 +124,10 @@ public abstract class ImageBaseController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 imageInformation = ImageFileReaders.readImageMetaData(fileName);
-                image = null;
+                bufferImage = null;
                 String format = FileTools.getFileSuffix(fileName).toLowerCase();
                 if (!"raw".equals(format) && !onlyInformation) {
-                    image = ImageIO.read(file);
+                    bufferImage = ImageIO.read(file);
                 }
                 Platform.runLater(new Runnable() {
                     @Override
@@ -154,12 +156,12 @@ public abstract class ImageBaseController extends BaseController {
         this.imageInformation = imageInformation;
     }
 
-    public BufferedImage getImage() {
-        return image;
+    public BufferedImage getBufferImage() {
+        return bufferImage;
     }
 
-    public void setImage(BufferedImage image) {
-        this.image = image;
+    public void setBufferImage(BufferedImage bufferImage) {
+        this.bufferImage = bufferImage;
     }
 
     public File getSourceFile() {

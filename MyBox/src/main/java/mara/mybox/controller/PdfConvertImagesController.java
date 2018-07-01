@@ -38,16 +38,16 @@ public class PdfConvertImagesController extends PdfBaseController {
             appendCompressionType.setSelected(AppVaribles.getConfigBoolean("pci_aCompression"));
             appendQuality.setSelected(AppVaribles.getConfigBoolean("pci_aQuality"));
 
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(sourceFileInput.textProperty())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(Bindings.isEmpty(fromPageInput.textProperty()))
-                            .or(Bindings.isEmpty(toPageInput.textProperty()))
+            operationBarController.startButton.disableProperty().bind(
+                    Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
+                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
+                            .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
+                            .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))
                             .or(Bindings.isEmpty(acumFromInput.textProperty()))
-                            .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(fromPageInput.styleProperty().isEqualTo(badStyle))
-                            .or(toPageInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourceSelectionController.sourceFileInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourceSelectionController.fromPageInput.styleProperty().isEqualTo(badStyle))
+                            .or(sourceSelectionController.toPageInput.styleProperty().isEqualTo(badStyle))
                             .or(acumFromInput.styleProperty().isEqualTo(badStyle))
                             .or(pdfConvertAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
                             .or(pdfConvertAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
@@ -55,10 +55,10 @@ public class PdfConvertImagesController extends PdfBaseController {
             );
 
             previewButton.disableProperty().bind(
-                    Bindings.isEmpty(sourceFileInput.textProperty())
+                    Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(pdfConvertAttributesController.getRawSelect().selectedProperty())
-                            .or(startButton.disableProperty())
-                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(operationBarController.startButton.disableProperty())
+                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
             );
 
@@ -172,8 +172,8 @@ public class PdfConvertImagesController extends PdfBaseController {
                     updateInterface("Failed");
                 }
             };
-            progressValue.textProperty().bind(task.messageProperty());
-            progressBar.progressProperty().bind(task.progressProperty());
+            operationBarController.progressValue.textProperty().bind(task.messageProperty());
+            operationBarController.progressBar.progressProperty().bind(task.progressProperty());
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

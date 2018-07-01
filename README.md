@@ -6,24 +6,29 @@
 
 这是利用JavaFx开发的桌面程序，目标是提供简单易用的功能。
 
-当前是版本1.7，已实现功能：
+当前是版本1.8，已实现功能：
 1) 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项，并且可以暂停/继续转换过程。
 2) 将PDF文件中的图片提取出来保存为原格式。
 3) PDF批量转换和批量提取。
-4) 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。目前支持图像格式：png, jpg, bmp, tif, gif, wbmp, pnm, pcx。
-5) 查看图片的元数据和属性。
-6) 同屏查看最多九张图，可以分别或者同步旋转和缩放。
-7) 像素计算器。
+4) 将PDF文件中的文字提取出来。
+5) 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。目前支持图像格式：png, jpg, bmp, tif, gif, wbmp, pnm, pcx。
+6) 处理图片：调整饱和度、明暗，或者转换为灰色、反色。
+7) 查看图片的元数据和属性。
+8) 同屏查看最多十张图，可以分别或者同步旋转和缩放。
+9) 像素计算器。
+
 
 每个版本编译好的jar包已发布在Release目录下（点击上面的releases页签）
-最新版本是： [MyBox-1.7.jar](https://github.com/Mararsh/MyBox/releases/download/v1.7/MyBox-1.7.jar) 
+最新版本是： [MyBox-1.8.jar](https://github.com/Mararsh/MyBox/releases/download/v1.8/MyBox-1.8.jar) 
 在已安装JRE或者JDK的环境下执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
-也可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-1.7-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v1.7/MyBox-1.7-exe.zip) 
+也可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-1.8-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v1.8/MyBox-1.8-exe.zip) 
 
 
 ## 开发日志
+
+2018-07-01 版本1.8  将PDF文件中的文字提取出来。处理图片：调整饱和度、明暗，或者转换为灰色、反色。
 
 2018-06-30 版本1.7  完善像素计算器。支持同屏查看最多九张图，可以分别或者同步旋转和缩放。
 
@@ -46,6 +51,14 @@
 
 
 ![1](https://mararsh.github.io/MyBox/1.png)
+
+
+
+![15](https://mararsh.github.io/MyBox/15.png)
+
+
+
+![16](https://mararsh.github.io/MyBox/16.jpg)
 
 
 

@@ -126,19 +126,39 @@ public class ImageFileReaders {
             case "jpeg":
                 return getIIOMetadata(file);
             case "bmp":
-                return ImageBmpFile.getBmpIIOMetadata(file);
+                IIOMetadata bm = ImageBmpFile.getBmpIIOMetadata(file);
+                if (bm != null) {
+                    return bm;
+                }
+                return getIIOMetadata(file);
             case "gif":
                 return getIIOMetadata(file);
             //                return ImageGifTools.getGifMetadata(file);
             case "tif":
             case "tiff":
-                return ImageTiffFile.getTiffIIOMetadata(file);
+                IIOMetadata tm = ImageTiffFile.getTiffIIOMetadata(file);
+                if (tm != null) {
+                    return tm;
+                }
+                return getIIOMetadata(file);
             case "pcx":
-                return ImagePcxFile.getPcxMetadata(file);
+                IIOMetadata pm = ImagePcxFile.getPcxMetadata(file);
+                if (pm != null) {
+                    return pm;
+                }
+                return getIIOMetadata(file);
             case "pnm":
-                return ImagePnmFile.getPnmMetadata(file);
+                IIOMetadata pnm = ImagePnmFile.getPnmMetadata(file);
+                if (pnm != null) {
+                    return pnm;
+                }
+                return getIIOMetadata(file);
             case "wbmp":
-                return ImageWbmpFile.getWbmpMetadata(file);
+                IIOMetadata wm = ImageWbmpFile.getWbmpMetadata(file);
+                if (wm != null) {
+                    return wm;
+                }
+                return getIIOMetadata(file);
             default:
                 return getIIOMetadata(file);
         }

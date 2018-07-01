@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.objects.AppVaribles;
@@ -33,7 +34,6 @@ public class MyBoxController extends BaseController {
     @Override
     protected void initializeNext() {
 
-        pdfMenus = new ContextMenu();
         MenuItem pdfExtractImages = new MenuItem(AppVaribles.getMessage("PdfExtractImages"));
         pdfExtractImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -41,7 +41,6 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesFxml, AppVaribles.getMessage("PdfExtractImages"));
             }
         });
-        pdfMenus.getItems().add(pdfExtractImages);
         MenuItem pdfExtractImagesBatch = new MenuItem(AppVaribles.getMessage("PdfExtractImagesBatch"));
         pdfExtractImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -49,7 +48,13 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
             }
         });
-        pdfMenus.getItems().add(pdfExtractImagesBatch);
+        MenuItem pdfExtractTexts = new MenuItem(AppVaribles.getMessage("PdfExtractTexts"));
+        pdfExtractTexts.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.PdfExtractTextsFxml, AppVaribles.getMessage("pdfExtractTexts"));
+            }
+        });
         MenuItem pdfConvertImages = new MenuItem(AppVaribles.getMessage("PdfConvertImages"));
         pdfConvertImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -57,7 +62,6 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesFxml, AppVaribles.getMessage("PdfConvertImages"));
             }
         });
-        pdfMenus.getItems().add(pdfConvertImages);
         MenuItem pdfConvertImagesBatch = new MenuItem(AppVaribles.getMessage("PdfConvertImagesBatch"));
         pdfConvertImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -65,7 +69,10 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesBatchFxml, AppVaribles.getMessage("PdfConvertImagesBatch"));
             }
         });
-        pdfMenus.getItems().add(pdfConvertImagesBatch);
+        pdfMenus = new ContextMenu();
+        pdfMenus.getItems().addAll(pdfExtractImages, pdfExtractImagesBatch, new SeparatorMenuItem(),
+                pdfExtractTexts, new SeparatorMenuItem(),
+                pdfConvertImages, pdfConvertImagesBatch);
 
         MenuItem imageViewer = new MenuItem(AppVaribles.getMessage("ImageViewer"));
         imageViewer.setOnAction(new EventHandler<ActionEvent>() {
@@ -79,6 +86,13 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
+            }
+        });
+        MenuItem ImageManufacture = new MenuItem(AppVaribles.getMessage("ImageManufacture"));
+        ImageManufacture.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
             }
         });
         MenuItem imageConverter = new MenuItem(AppVaribles.getMessage("ImageConverter"));
@@ -96,7 +110,9 @@ public class MyBoxController extends BaseController {
             }
         });
         imageMenu = new ContextMenu();
-        imageMenu.getItems().addAll(imageViewer, imagesViewer, imageConverter, pixelsCalculator);
+        imageMenu.getItems().addAll(imageViewer, imagesViewer, new SeparatorMenuItem(),
+                ImageManufacture, imageConverter, new SeparatorMenuItem(),
+                pixelsCalculator);
 
     }
 

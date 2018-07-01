@@ -22,11 +22,12 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
         try {
             filesTableController.setParentFxml(myFxml);
             filesTableController.setConfigPathName("pdfSourcePath");
+            logger.debug("filesTableController");
 
-            startButton.disableProperty().bind(
+            operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
+                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(pdfConvertAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
                             .or(pdfConvertAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
                             .or(pdfConvertAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
@@ -34,12 +35,12 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
 
             previewButton.disableProperty().bind(
                     pdfConvertAttributesController.getRawSelect().selectedProperty()
-                            .or(startButton.disableProperty())
-                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(operationBarController.startButton.disableProperty())
+                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
 
-            if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+            if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
+                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
             }
         } catch (Exception e) {
             logger.error(e.toString());

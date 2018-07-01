@@ -50,7 +50,20 @@ public class ImageFileWriters {
         }
         ImageAttributes attributes = new ImageAttributes();
         attributes.setImageFormat(format);
-        attributes.setCompressionType(null);
+        switch (format) {
+            case "jpg":
+//                attributes.setCompressionType("JPEG");
+                break;
+            case "gif":
+                attributes.setCompressionType("LZW");
+                break;
+            case "tif":
+                attributes.setCompressionType("Deflate");
+                break;
+            case "bmp":
+                attributes.setCompressionType("BI_JPEG");
+                break;
+        }
         attributes.setQuality(100);
         writeImageFile(image, attributes, outFile);
     }

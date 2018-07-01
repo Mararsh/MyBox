@@ -79,94 +79,94 @@ public class ImagesViewerController extends ImageViewerController {
 
     @FXML
     @Override
-    public void windowSize(ActionEvent event) {
+    public void windowSize() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.windowSize(event);
+            c.windowSize();
         }
     }
 
     @FXML
     @Override
-    public void originalSize(ActionEvent event) {
+    public void originalSize() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.originalSize(event);
+            c.originalSize();
         }
     }
 
     @FXML
     @Override
-    public void zoomIn(ActionEvent event) {
+    public void zoomIn() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.zoomIn(event);
-        }
-
-    }
-
-    @FXML
-    @Override
-    public void zoomOut(ActionEvent event) {
-        if (imageControllerList == null) {
-            return;
-        }
-        for (ImageViewerIController c : imageControllerList) {
-            c.zoomOut(event);
+            c.zoomIn();
         }
 
     }
 
     @FXML
     @Override
-    public void rotateLeft(ActionEvent event) {
+    public void zoomOut() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.rotateLeft(event);
+            c.zoomOut();
         }
 
     }
 
     @FXML
     @Override
-    public void rotateRight(ActionEvent event) {
+    public void rotateLeft() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.rotateRight(event);
+            c.rotateLeft();
         }
 
     }
 
     @FXML
     @Override
-    public void turnOver(ActionEvent event) {
+    public void rotateRight() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.turnOver(event);
+            c.rotateRight();
         }
 
     }
 
     @FXML
     @Override
-    public void back(ActionEvent event) {
+    public void turnOver() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.back(event);
+            c.turnOver();
+        }
+
+    }
+
+    @FXML
+    @Override
+    public void back() {
+        if (imageControllerList == null) {
+            return;
+        }
+        for (ImageViewerIController c : imageControllerList) {
+            c.back();
         }
 
     }

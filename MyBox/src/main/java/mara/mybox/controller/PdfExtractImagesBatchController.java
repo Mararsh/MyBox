@@ -32,19 +32,19 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
             appendPageNumber.setSelected(AppVaribles.getConfigBoolean("pei_appendPageNumber"));
             appendIndex.setSelected(AppVaribles.getConfigBoolean("pei_appendIndex"));
 
-            startButton.disableProperty().bind(
+            operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
+                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
             );
 
             previewButton.disableProperty().bind(
-                    startButton.disableProperty()
-                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                    operationBarController.startButton.disableProperty()
+                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
 
-            if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+            if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
+                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
             }
         } catch (Exception e) {
             logger.error(e.toString());

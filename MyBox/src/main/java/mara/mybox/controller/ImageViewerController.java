@@ -8,7 +8,6 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -72,6 +71,7 @@ public class ImageViewerController extends ImageBaseController {
 
     @Override
     public void afterImageLoaded() {
+        imageView.setPreserveRatio(true);
         if (scrollPane.getHeight() < imageInformation.getyPixels()) {
             imageView.setFitHeight(scrollPane.getHeight() - 5);
             imageView.setFitWidth(scrollPane.getWidth() - 1);
@@ -80,7 +80,8 @@ public class ImageViewerController extends ImageBaseController {
             imageView.setFitWidth(imageInformation.getxPixels());
         }
         try {
-            imageView.setImage(SwingFXUtils.toFXImage(image, null));
+            image = SwingFXUtils.toFXImage(bufferImage, null);
+            imageView.setImage(image);
 //                        imageView.setImage(new Image("file:" + fileName, true));
             if (imageFile != null) {
                 imageFile.setText(sourceFile.getName());
@@ -103,67 +104,67 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void popImageInformation(ActionEvent event) {
+    public void popImageInformation() {
         showImageInformation();
     }
 
     @FXML
-    public void popImageInformation2(MouseEvent event) {
+    public void popImageInformation2() {
         showImageInformation();
     }
 
     @FXML
-    public void popMetaData(ActionEvent event) {
+    public void popMetaData() {
         showImageMetaData();
     }
 
     @FXML
-    public void popMetaData2(MouseEvent event) {
+    public void popMetaData2() {
         showImageMetaData();
     }
 
     @FXML
-    public void zoomIn(ActionEvent event) {
+    public void zoomIn() {
         imageView.setFitHeight(imageView.getFitHeight() * 1.1);
         imageView.setFitWidth(imageView.getFitWidth() * 1.1);
     }
 
     @FXML
-    public void zoomOut(ActionEvent event) {
+    public void zoomOut() {
         imageView.setFitHeight(imageView.getFitHeight() * 0.9);
         imageView.setFitWidth(imageView.getFitWidth() * 0.9);
 
     }
 
     @FXML
-    public void originalSize(ActionEvent event) {
+    public void originalSize() {
         imageView.setFitHeight(imageInformation.getyPixels());
         imageView.setFitWidth(imageInformation.getxPixels());
     }
 
     @FXML
-    public void windowSize(ActionEvent event) {
+    public void windowSize() {
         imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
     }
 
     @FXML
-    public void rotateRight(ActionEvent event) {
+    public void rotateRight() {
         imageView.setRotate(90);
     }
 
     @FXML
-    public void rotateLeft(ActionEvent event) {
+    public void rotateLeft() {
         imageView.setRotate(270);
     }
 
     @FXML
-    public void turnOver(ActionEvent event) {
+    public void turnOver() {
         imageView.setRotate(180);
     }
 
     @FXML
-    public void back(ActionEvent event) {
+    public void back() {
         imageView.setRotate(0);
     }
 
