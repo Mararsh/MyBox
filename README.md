@@ -17,9 +17,11 @@
 
 每个版本编译好的jar包已发布在Release目录下（点击上面的releases页签）
 最新版本是： [MyBox-1.7.jar](https://github.com/Mararsh/MyBox/releases/download/v1.7/MyBox-1.7.jar) 
-
 在已安装JRE或者JDK的环境下执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
+
+也可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-1.7-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v1.7/MyBox-1.7-exe.zip) 
+
 
 ## 开发日志
 
