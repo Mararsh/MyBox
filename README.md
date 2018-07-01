@@ -19,7 +19,7 @@
 
 
 每个版本编译好的jar包已发布在Release目录下（点击上面的releases页签）
-最新版本是： [MyBox-1.8.jar](https://github.com/Mararsh/MyBox/releases/download/v1.8/MyBox-1.8.jar) 
+最新版本是： [MyBox-1.8-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v1.8/MyBox-1.8-jar.zip) 
 在已安装JRE或者JDK的环境下执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
