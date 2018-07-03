@@ -44,15 +44,15 @@ public class ImageFileWriters {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static void writeImageFile(BufferedImage image, String format, String outFile) {
+    public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
         if (image == null || outFile == null || format == null) {
-            return;
+            return false;
         }
         ImageAttributes attributes = new ImageAttributes();
         attributes.setImageFormat(format);
         switch (format) {
             case "jpg":
-//                attributes.setCompressionType("JPEG");
+                attributes.setCompressionType("JPEG");
                 break;
             case "gif":
                 attributes.setCompressionType("LZW");
@@ -61,17 +61,17 @@ public class ImageFileWriters {
                 attributes.setCompressionType("Deflate");
                 break;
             case "bmp":
-                attributes.setCompressionType("BI_JPEG");
+                attributes.setCompressionType("BI_RGB");
                 break;
         }
         attributes.setQuality(100);
-        writeImageFile(image, attributes, outFile);
+        return writeImageFile(image, attributes, outFile);
     }
 
-    public static void writeImageFile(BufferedImage image,
+    public static boolean writeImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {
         if (image == null || attributes == null || outFile == null) {
-            return;
+            return false;
         }
         File file = new File(outFile);
         try {
@@ -79,33 +79,29 @@ public class ImageFileWriters {
                 file.delete();
             }
         } catch (Exception e) {
-            return;
+            return false;
         }
 
         String format = attributes.getImageFormat().toLowerCase();
         try {
             switch (format) {
                 case "png":
-                    writePNGImageFile(image, attributes, file);
+                    return writePNGImageFile(image, attributes, file);
 //                    displayMetadata(outFile);
-                    break;
                 case "tif":
-                    writeTiffImageFile(image, attributes, file);
+                    return writeTiffImageFile(image, attributes, file);
 //                    displayTiffMetadata(outFile);
 //                    displayMetadata(outFile);
-                    break;
                 case "raw":
-                    writeRawImageFile(image, attributes, file);
-                    break;
+                    return writeRawImageFile(image, attributes, file);
+
                 case "jpg":
-                    writeJPEGImageFile(image, attributes, file);
+                    return writeJPEGImageFile(image, attributes, file);
 //                    displayMetadata(outFile);
-                    break;
                 case "bmp":
-                    writeBmpImageFile(image, attributes, file);
+                    return writeBmpImageFile(image, attributes, file);
 //                    displayBmpMetadata(outFile);
 //                    displayMetadata(outFile);
-                    break;
 //                case "gif":
 //                    writeGifImageFile(image, attributes, outFile);
 //                    displayMetadata(outFile);
@@ -116,11 +112,12 @@ public class ImageFileWriters {
 //                    break;
 
                 default:
-                    writeCommonImageFile(image, attributes, file);
+                    return writeCommonImageFile(image, attributes, file);
             }
 
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -185,7 +182,7 @@ public class ImageFileWriters {
 
     // This standard mothod does not write density into meta data of the image.
     // If density data need be written, then use methods defined for different image format but not this method.
-    public static void writeCommonImageFile(BufferedImage image,
+    public static boolean writeCommonImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             String imageFormat = attributes.getImageFormat().toLowerCase();
@@ -201,14 +198,12 @@ public class ImageFileWriters {
                 }
             }
             if (writer == null || param == null || metaData == null) {
-                return;
+                return false;
             }
-            if (param.canWriteCompressed()) {
+            if (param.canWriteCompressed() && attributes.getCompressionType() != null) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                if (attributes != null && attributes.getCompressionType() != null) {
-                    param.setCompressionType(attributes.getCompressionType());
-                }
-                if (attributes != null && attributes.getQuality() > 0) {
+                param.setCompressionType(attributes.getCompressionType());
+                if (attributes.getQuality() > 0) {
                     param.setCompressionQuality(attributes.getQuality() / 100.0f);
                 } else {
                     param.setCompressionQuality(1.0f);
@@ -216,7 +211,7 @@ public class ImageFileWriters {
             }
 
             if (!metaData.isReadOnly() && metaData.isStandardMetadataFormatSupported()
-                    && attributes != null && attributes.getDensity() > 0) {
+                    && attributes.getDensity() > 0) {
                 try {
                     float pixelSizeMm = 25.4f / attributes.getDensity();
                     String metaFormat = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
@@ -232,7 +227,7 @@ public class ImageFileWriters {
 
                     metaData.mergeTree(metaFormat, tree);
                 } catch (Exception e) {
-                    logger.error(e.toString());
+//                    logger.error(e.toString());
                 }
             }
 
@@ -242,8 +237,10 @@ public class ImageFileWriters {
                 out.flush();
             }
             writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 //                Element tree = (Element) metaData.getAsTree(format);

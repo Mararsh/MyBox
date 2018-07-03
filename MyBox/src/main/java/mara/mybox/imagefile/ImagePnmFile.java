@@ -31,9 +31,18 @@ public class ImagePnmFile {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static void writePnmImageFile(BufferedImage image,
+    public static boolean writePnmImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {
         try {
+            File file = new File(outFile);
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+            } catch (Exception e) {
+                return false;
+            }
+
             PNMImageWriter writer = new PNMImageWriter(new PNMImageWriterSpi());
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
@@ -60,13 +69,16 @@ public class ImagePnmFile {
                 metaData.mergeTree(format, tree);
             }
 
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
+            writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 

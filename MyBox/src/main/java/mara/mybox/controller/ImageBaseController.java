@@ -107,7 +107,11 @@ public abstract class ImageBaseController extends BaseController {
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             sourceFile = fileChooser.showOpenDialog(getMyStage());
-            sourceFileInput.setText(sourceFile.getAbsolutePath());
+            if (sourceFileInput != null) {
+                sourceFileInput.setText(sourceFile.getAbsolutePath());
+            } else {
+                sourceFileChanged(sourceFile);
+            }
         } catch (Exception e) {
 //            logger.error(e.toString());
         }

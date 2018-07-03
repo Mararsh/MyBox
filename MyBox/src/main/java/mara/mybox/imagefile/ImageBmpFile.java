@@ -1,6 +1,6 @@
 package mara.mybox.imagefile;
 
-import mara.mybox.image.ImageTools;
+import mara.mybox.image.ImageValueTools;
 import com.github.jaiimageio.impl.plugins.bmp.BMPImageReader;
 import com.github.jaiimageio.impl.plugins.bmp.BMPImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.bmp.BMPImageWriter;
@@ -19,7 +19,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageFileInformation;
-import static mara.mybox.image.ImageTools.dpi2dpm;
+import static mara.mybox.image.ImageValueTools.dpi2dpm;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,7 @@ public class ImageBmpFile {
         return new BMPImageWriteParam(null).getCompressionTypes();
     }
 
-    public static void writeBmpImageFile(BufferedImage image,
+    public static boolean writeBmpImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             try {
@@ -47,7 +47,7 @@ public class ImageBmpFile {
                     file.delete();
                 }
             } catch (Exception e) {
-                return;
+                return false;
             }
             // BMP's meta data can not be modified and read correctly if standard classes are used.
             // So classes in plugins are used.
@@ -56,10 +56,10 @@ public class ImageBmpFile {
             BMPImageWriteParam param = (BMPImageWriteParam) writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                if (attributes != null && attributes.getCompressionType() != null) {
+                if (attributes.getCompressionType() != null) {
                     param.setCompressionType(attributes.getCompressionType());
                 }
-                if (attributes != null && attributes.getQuality() > 0) {
+                if (attributes.getQuality() > 0) {
                     param.setCompressionQuality(attributes.getQuality() / 100.0f);
                 } else {
                     param.setCompressionQuality(1.0f);
@@ -67,7 +67,7 @@ public class ImageBmpFile {
             }
 
             BMPMetadata metaData = (BMPMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (attributes != null && attributes.getDensity() > 0) {
+            if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
                 String format = metaData.getNativeMetadataFormatName(); // "com_sun_media_imageio_plugins_bmp_image_1.0"
                 int dpm = dpi2dpm(attributes.getDensity());
                 // If set nodes' attributes in normal way, error will be popped about "Meta Data is read only"
@@ -82,11 +82,17 @@ public class ImageBmpFile {
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
-                writer.write(metaData, new IIOImage(image, null, metaData), param);
+                writer.write(null, new IIOImage(image, null, null), param);
                 out.flush();
             }
+            writer.dispose();
+            return true;
         } catch (Exception e) {
-            logger.error(e.toString());
+            try {
+                return ImageIO.write(image, attributes.getImageFormat(), file);
+            } catch (Exception e2) {
+                return false;
+            }
         }
     }
 
@@ -99,7 +105,7 @@ public class ImageBmpFile {
                 return metadata;
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return null;
         }
     }
@@ -126,13 +132,13 @@ public class ImageBmpFile {
             if (javax_imageio_bmp.containsKey("X")) {    // PixelsPerMeter
                 Map<String, String> X = javax_imageio_bmp.get("X");
                 if (X.containsKey("value")) {
-                    info.setxDensity(ImageTools.dpm2dpi(Integer.valueOf(X.get("value"))));
+                    info.setxDensity(ImageValueTools.dpm2dpi(Integer.valueOf(X.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("Y")) {   // PixelsPerMeter
                 Map<String, String> Y = javax_imageio_bmp.get("Y");
                 if (Y.containsKey("value")) {
-                    info.setyDensity(ImageTools.dpm2dpi(Integer.valueOf(Y.get("value"))));
+                    info.setyDensity(ImageValueTools.dpm2dpi(Integer.valueOf(Y.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("BitsPerPixel")) {

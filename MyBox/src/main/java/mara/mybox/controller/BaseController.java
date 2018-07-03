@@ -173,6 +173,28 @@ public class BaseController implements Initializable {
         }
     }
 
+    public void showImageManufacture(String filename) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            ImageManufactureController controller = fxmlLoader.getController();
+            controller.loadImage(filename);
+
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.setTitle(AppVaribles.getMessage("AppTitle"));
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.initOwner(null);
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     public void openLoadingStage(final Task<?> task, Modality block) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);

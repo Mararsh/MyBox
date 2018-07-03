@@ -32,7 +32,7 @@ public class ImageRawFile {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static void writeRawImageFile(BufferedImage image,
+    public static boolean writeRawImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             try {
@@ -40,7 +40,7 @@ public class ImageRawFile {
                     file.delete();
                 }
             } catch (Exception e) {
-                return;
+                return false;
             }
             RawImageWriterSpi spi = new RawImageWriterSpi();
             RawImageWriter writer = new RawImageWriter(spi);
@@ -63,8 +63,11 @@ public class ImageRawFile {
                 writer.write(null, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
+            writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 

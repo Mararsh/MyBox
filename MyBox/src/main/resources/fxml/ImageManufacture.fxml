@@ -46,58 +46,53 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </TextField>
-                        <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select...">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </Button>
-                    </children>
-                </HBox>
-                <HBox fx:id="toolBar" alignment="CENTER_LEFT">
-                    <children>
-                        <ToolBar prefHeight="44.0">
+                        <ToolBar HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" prefHeight="35.0" prefWidth="35.0" text="i" />
-                                <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="35.0" prefWidth="35.0" text="m" />
-                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="35.0" prefWidth="35.0" text="o" />
-                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" prefHeight="35.0" prefWidth="35.0" text="w" />
-                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="35.0" text="+" />
-                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="35.0" text="-" />
-                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" prefHeight="35.0" prefWidth="35.0" text="r" />
-                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" prefHeight="35.0" prefWidth="35.0" text="l" />
-                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" prefHeight="35.0" prefWidth="35.0" text="t" />
-                                <Button fx:id="bButton" mnemonicParsing="false" onAction="#back" prefHeight="35.0" prefWidth="35.0" text="b" />
+                                <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
                             </items>
                         </ToolBar>
-                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                        <ToolBar fx:id="fileBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                     <items>
+                                <Button mnemonicParsing="false" onAction="#save" text="%Save" />
+                                <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
+                                <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
+                                <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                     </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar fx:id="operationBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                             <items>
-                        <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
-                        <Button mnemonicParsing="false" onAction="#save" text="%Save" />
-                        <Button mnemonicParsing="false" onAction="#recovery" text="%Recovery" />
-                        <Button mnemonicParsing="false" onAction="#setSaturate" text="%Saturate" />
-                        <Button mnemonicParsing="false" onAction="#setDesaturate" text="%Desaturate" />
-                        <Button mnemonicParsing="false" onAction="#setInvert" text="%Invert" />
-                        <Button mnemonicParsing="false" onAction="#setGray" text="%Gray" />
-                        <Button mnemonicParsing="false" onAction="#setBrighter" text="%Brighter" />
-                        <Button mnemonicParsing="false" onAction="#setDarker" text="%Darker" />
+                                <Button fx:id="zoomButton" mnemonicParsing="false" onAction="#opZoom" text="%Zoom" />
+                                <Button fx:id="rorateButton" mnemonicParsing="false" onAction="#opRotate" text="%Rotate" />
+                                <Button fx:id="hueButton" mnemonicParsing="false" onAction="#opHue" text="%Hue" />
+                                <Button fx:id="saturateButton" mnemonicParsing="false" onAction="#opSaturate" text="%Saturate" />
+                                <Button fx:id="brightnessButton" mnemonicParsing="false" onAction="#opBrighterness" text="%Brightness" />
+                        <Button fx:id="filtersButton" mnemonicParsing="false" onAction="#opFilters" text="%Filters" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
+            <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+               <children>
+                  <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                    <items>
+                                <Button maxWidth="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="0.0" text="B" visible="false" />
+                    </items>
+                  </ToolBar>
+               </children>
+            </HBox>
                 <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <content>
                         <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">
@@ -112,7 +107,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Insets />
             </BorderPane.margin>
             <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                <Insets bottom="5.0" top="5.0" />
             </padding>
         </VBox>
     </center>

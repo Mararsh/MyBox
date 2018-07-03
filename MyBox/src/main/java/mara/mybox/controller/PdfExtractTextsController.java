@@ -10,6 +10,9 @@ import java.io.FileWriter;
 import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
@@ -23,6 +26,13 @@ import org.apache.pdfbox.text.PDFTextStripper;
  * @author mara
  */
 public class PdfExtractTextsController extends PdfBaseController {
+
+    private String separator;
+
+    @FXML
+    protected CheckBox separatorCheck;
+    @FXML
+    protected TextField separatorInput;
 
     @Override
     protected void initializeNext2() {
@@ -64,17 +74,6 @@ public class PdfExtractTextsController extends PdfBaseController {
         targetSelectionController.targetFileInput.setText(FileTools.getFilePrefix(filename) + ".txt");
 
     }
-//
-//    @FXML
-//    @Override
-//    protected void openTarget(ActionEvent event) {
-//        try {
-//            File txtFile = new File(currentParameters.finalTargetName);
-//            Desktop.getDesktop().browse(txtFile.toURI());
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//        }
-//    }
 
     @Override
     protected void makeMoreParameters() {
@@ -92,6 +91,10 @@ public class PdfExtractTextsController extends PdfBaseController {
 
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
+            separator = separatorInput.getText();
+            if (!separatorCheck.isSelected() || separator == null || separator.isEmpty()) {
+                separator = null;
+            }
             updateInterface("Started");
             task = new Task<Void>() {
 
@@ -156,6 +159,12 @@ public class PdfExtractTextsController extends PdfBaseController {
                                 String text = stripper.getText(doc);
                                 if (text != null && !text.trim().isEmpty()) {
                                     writer.write(text);
+                                    if (separator != null) {
+                                        String s = separator.replace("<Page Number>", currentParameters.currentPage + " ");
+                                        s = s.replace("<Total Number>", doc.getNumberOfPages() + "");
+                                        writer.write(s);
+                                        writer.write(System.getProperty("line.separator"));
+                                    }
                                     writer.flush();
                                 }
 

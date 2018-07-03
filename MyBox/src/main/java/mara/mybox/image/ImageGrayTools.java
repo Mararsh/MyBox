@@ -2,7 +2,6 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import mara.mybox.tools.ColorTools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

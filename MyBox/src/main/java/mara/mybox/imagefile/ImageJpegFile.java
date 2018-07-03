@@ -1,6 +1,6 @@
 package mara.mybox.imagefile;
 
-import mara.mybox.image.ImageTools;
+import mara.mybox.image.ImageValueTools;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class ImageJpegFile {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html#image
-    public static void writeJPEGImageFile(BufferedImage image,
+    public static boolean writeJPEGImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             try {
@@ -43,7 +43,7 @@ public class ImageJpegFile {
                     file.delete();
                 }
             } catch (Exception e) {
-                return;
+                return false;
             }
             ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
             ImageWriteParam param = writer.getDefaultWriteParam();
@@ -77,9 +77,10 @@ public class ImageJpegFile {
                 out.flush();
             }
             writer.dispose();
-
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -97,7 +98,7 @@ public class ImageJpegFile {
                     if (app0JFIF.containsKey("Xdensity")) {
                         int v = Integer.valueOf(app0JFIF.get("Xdensity"));
                         if (!isDpi) {
-                            info.setxDensity(ImageTools.dpi2dpcm(v));  // density value should be dpi
+                            info.setxDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
                         } else {
                             info.setxDensity(v);
                         }
@@ -105,7 +106,7 @@ public class ImageJpegFile {
                     if (app0JFIF.containsKey("Ydensity")) {
                         int v = Integer.valueOf(app0JFIF.get("Ydensity"));
                         if (!isDpi) {
-                            info.setyDensity(ImageTools.dpi2dpcm(v));  // density value should be dpi
+                            info.setyDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
                         } else {
                             info.setyDensity(v);
                         }

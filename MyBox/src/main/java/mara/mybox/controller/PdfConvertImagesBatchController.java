@@ -22,7 +22,6 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
         try {
             filesTableController.setParentFxml(myFxml);
             filesTableController.setConfigPathName("pdfSourcePath");
-            logger.debug("filesTableController");
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())

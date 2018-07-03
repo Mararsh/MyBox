@@ -15,7 +15,7 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
-import mara.mybox.image.ImageTools;
+import mara.mybox.image.ImageValueTools;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -127,7 +127,7 @@ public class ImageAttributesBaseController extends BaseController {
             attributes.setImageFormat(imageFormat);
             AppVaribles.setConfigValue("imageFormat", imageFormat);
 
-            String[] compressionTypes = ImageTools.getCompressionTypes(imageFormat, attributes.getColorSpace());
+            String[] compressionTypes = ImageValueTools.getCompressionTypes(imageFormat, attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 
             if (compressionTypes != null && "jpg".equals(imageFormat)) {
@@ -191,7 +191,7 @@ public class ImageAttributesBaseController extends BaseController {
             }
 
 //            if ("tif".equals(imageFormat) || "bmp".equals(imageFormat)) {
-            String[] compressionTypes = ImageTools.getCompressionTypes(attributes.getImageFormat(), attributes.getColorSpace());
+            String[] compressionTypes = ImageValueTools.getCompressionTypes(attributes.getImageFormat(), attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 //            }
 

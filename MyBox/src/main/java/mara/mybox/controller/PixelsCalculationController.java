@@ -23,7 +23,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.controller.ImageConverterAttributesController.RatioAdjustion;
+import mara.mybox.image.ImageConverter.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
@@ -90,21 +90,25 @@ public class PixelsCalculationController extends BaseController {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue<? extends Tab> ov, Tab oldValue, Tab newValue) {
-                    String tab = newValue.getText();
-                    if (AppVaribles.getMessage("PredefinedPixelsNumber").equals(tab)) {
-                        predefined_determineValues();
-                    } else if (AppVaribles.getMessage("CalculatePixelsNumber").equals(tab)) {
-                        cp_calculateValues();
-                    } else if (AppVaribles.getMessage("CalculateOutputSize").equals(tab)) {
-                        cs_calculateValues();
-                    } else if (AppVaribles.getMessage("CalculateOutputDensity").equals(tab)) {
-                        cd_calculateValues();
-                    }
+                    recalculate();
                 }
             });
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    private void recalculate() {
+        String tab = tabPane.getSelectionModel().getSelectedItem().getText();
+        if (AppVaribles.getMessage("PredefinedPixelsNumber").equals(tab)) {
+            predefined_determineValues();
+        } else if (AppVaribles.getMessage("CalculatePixelsNumber").equals(tab)) {
+            cp_calculateValues();
+        } else if (AppVaribles.getMessage("CalculateOutputSize").equals(tab)) {
+            cs_calculateValues();
+        } else if (AppVaribles.getMessage("CalculateOutputDensity").equals(tab)) {
+            cd_calculateValues();
         }
     }
 
@@ -279,8 +283,8 @@ public class PixelsCalculationController extends BaseController {
                 if (!fromSource) {
                     sourcePixelsBox.setDisable(!sourceCheck.isSelected());
                     ratioBox.setDisable(!sourceCheck.isSelected());
-                    adjustValues();
                 }
+                recalculate();
             }
         });
 
@@ -289,8 +293,8 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
                 if (!fromSource) {
                     adjustBox.setDisable(!newValue);
-                    adjustValues();
                 }
+                recalculate();
             }
         });
 
@@ -298,7 +302,7 @@ public class PixelsCalculationController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
-                adjustValues();
+                recalculate();
             }
         });
 
@@ -311,8 +315,8 @@ public class PixelsCalculationController extends BaseController {
                     if (sourceY > 0) {
                         ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
                                 + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
-                        adjustValues();
                     }
+                    recalculate();
                 } catch (Exception e) {
                     sourceX = 0;
                     ratioLabel.setText("");
@@ -330,8 +334,8 @@ public class PixelsCalculationController extends BaseController {
                     if (sourceX > 0) {
                         ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
                                 + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
-                        adjustValues();
                     }
+                    recalculate();
                 } catch (Exception e) {
                     sourceY = 0;
                     ratioLabel.setText("");
@@ -705,14 +709,21 @@ public class PixelsCalculationController extends BaseController {
             radioCheck.setSelected(parentAttributes.isKeepRatio());
             if (parentAttributes.isKeepRatio()) {
                 int rd = parentAttributes.getRatioAdjustion();
-                if (rd == RatioAdjustion.BaseOnWidth) {
-                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
-                } else if (rd == RatioAdjustion.BaseOnHeight) {
-                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
-                } else if (rd == RatioAdjustion.BaseOnLarger) {
-                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
-                } else if (rd == RatioAdjustion.BaseOnSmaller) {
-                    FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                switch (rd) {
+                    case KeepRatioType.BaseOnWidth:
+                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
+                        break;
+                    case KeepRatioType.BaseOnHeight:
+                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
+                        break;
+                    case KeepRatioType.BaseOnLarger:
+                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
+                        break;
+                    case KeepRatioType.BaseOnSmaller:
+                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                        break;
+                    default:
+                        break;
                 }
             }
 

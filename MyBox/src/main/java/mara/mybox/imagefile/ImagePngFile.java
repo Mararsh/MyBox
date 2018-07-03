@@ -13,8 +13,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageFileInformation;
-import static mara.mybox.image.ImageTools.dpi2dpm;
-import static mara.mybox.image.ImageTools.dpm2dpi;
+import static mara.mybox.image.ImageValueTools.dpi2dpm;
+import static mara.mybox.image.ImageValueTools.dpm2dpi;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,7 +31,7 @@ public class ImagePngFile {
     private static final Logger logger = LogManager.getLogger();
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html#image
-    public static void writePNGImageFile(BufferedImage image,
+    public static boolean writePNGImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             try {
@@ -39,7 +39,7 @@ public class ImagePngFile {
                     file.delete();
                 }
             } catch (Exception e) {
-                return;
+                return false;
             }
             ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
             ImageWriteParam param = writer.getDefaultWriteParam();
@@ -56,7 +56,7 @@ public class ImagePngFile {
             }
 
             IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (attributes.getDensity() > 0) {
+            if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
                 String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
                 IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
                 IIOMetadataNode pHYs = new IIOMetadataNode("pHYs");
@@ -74,8 +74,10 @@ public class ImagePngFile {
                 out.flush();
             }
             writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 

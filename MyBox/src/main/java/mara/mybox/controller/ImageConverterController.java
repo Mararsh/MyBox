@@ -6,7 +6,6 @@
 package mara.mybox.controller;
 
 import java.awt.Desktop;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.application.Platform;
@@ -27,12 +26,11 @@ import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConverter;
 import mara.mybox.image.ImageGrayTools;
-import mara.mybox.image.ImageTools;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.imagefile.ImageFileWriters;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -116,7 +114,7 @@ public class ImageConverterController extends ImageBaseController {
 
     @FXML
     private void showImage(ActionEvent event) {
-        showImage(sourceFile.getAbsolutePath());
+        showImageManufacture(sourceFile.getAbsolutePath());
     }
 
     @FXML
@@ -153,16 +151,8 @@ public class ImageConverterController extends ImageBaseController {
                         bufferImage = ImageIO.read(sourceFile);
                         targetFile = makeFilename();
 
-//                        logger.debug("gray:" + BufferedImage.TYPE_BYTE_GRAY + "  binary: " + BufferedImage.TYPE_BYTE_BINARY);
-//                        logger.debug("argb:" + BufferedImage.TYPE_INT_ARGB + "  rgb: " + BufferedImage.TYPE_INT_RGB);
-                        int color = ImageTools.getColorType(bufferImage);
-                        BufferedImage newImage = bufferImage;
-                        if (attributes.getSourceWidth() != attributes.getTargetWidth()
-                                || attributes.getSourceHeight() != attributes.getTargetHeight()) {
-                            Image scaledImage = bufferImage.getScaledInstance(attributes.getTargetWidth(), attributes.getTargetHeight(), BufferedImage.SCALE_DEFAULT);
-                            newImage = ImageConverter.toBufferedImage(scaledImage, color);
-//                            logger.debug("newImage color:" + ImageTools.getColorType(newImage));
-                        }
+                        BufferedImage newImage = ImageConverter.resizeImage(bufferImage, attributes.getTargetWidth(), attributes.getTargetHeight());
+                        int color = bufferImage.getType();
                         if (ImageType.BINARY == attributes.getColorSpace()) {
                             if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
                                     && attributes.getThreshold() >= 0) {
@@ -173,8 +163,8 @@ public class ImageConverterController extends ImageBaseController {
                         } else if (color != BufferedImage.TYPE_BYTE_GRAY && ImageType.GRAY == attributes.getColorSpace()) {
                             newImage = ImageGrayTools.color2Gray(newImage);
                         }
-//                        logger.debug("Colored converted:" + ImageTools.getColorType(newImage));
 
+//                        ImageIO.write(newImage, attributes.getImageFormat(), new File(targetFile));
                         ImageFileWriters.writeImageFile(newImage, attributes, targetFile);
 
                     } catch (Exception e) {
@@ -189,7 +179,7 @@ public class ImageConverterController extends ImageBaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            showImage(targetFile);
+                            showImageManufacture(targetFile);
                             try {
                             } catch (Exception e) {
                                 logger.error(e.toString());

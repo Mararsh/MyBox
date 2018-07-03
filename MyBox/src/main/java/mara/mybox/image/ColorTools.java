@@ -1,4 +1,4 @@
-package mara.mybox.tools;
+package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
@@ -165,5 +165,42 @@ public class ColorTools {
 
         }
 
+    }
+
+    // https://en.wikipedia.org/wiki/Color_difference
+    public static double calculateColorDistance(Color color1, Color color2) {
+        double v = 2 * Math.pow(color1.getRed() - color2.getRed(), 2)
+                + 4 * Math.pow(color1.getGreen() - color2.getGreen(), 2)
+                + 3 * Math.pow(color1.getBlue() - color2.getBlue(), 2);
+        return Math.sqrt(v);
+    }
+
+    public static double calculateColorDistance2(Color color1, Color color2) {
+        double v = 2 * Math.pow(color1.getRed() - color2.getRed(), 2)
+                + 4 * Math.pow(color1.getGreen() - color2.getGreen(), 2)
+                + 3 * Math.pow(color1.getBlue() - color2.getBlue(), 2);
+        return v;
+    }
+
+    public static boolean isColorMatch(Color color1, Color color2, int threshold) {
+        double v = 2 * Math.pow(color1.getRed() - color2.getRed(), 2)
+                + 4 * Math.pow(color1.getGreen() - color2.getGreen(), 2)
+                + 3 * Math.pow(color1.getBlue() - color2.getBlue(), 2);
+        return calculateColorDistance2(color1, color2) <= Math.pow(threshold, 2);
+    }
+
+    public static int getHue(Color color) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        return (int) (hsb[0] * 360);
+    }
+
+    public static float getSaturate(Color color) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        return hsb[1];
+    }
+
+    public static Color scaleSaturate(Color color, float scale) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        return Color.getHSBColor(hsb[0], hsb[1] * scale, hsb[2]);
     }
 }

@@ -28,7 +28,7 @@ public class ImageConverter {
         return bimage;
     }
 
-    public static Image scaleImage(BufferedImage image, int width, int height) {
+    public static Image toScaledImage(BufferedImage image, int width, int height) {
         try {
             return image.getScaledInstance(width, height, BufferedImage.SCALE_DEFAULT);
         } catch (Exception e) {
@@ -37,7 +37,66 @@ public class ImageConverter {
         }
     }
 
-    public static BufferedImage setAlpha(BufferedImage src, int alpha) {
+    public static class KeepRatioType {
+
+        public static final int BaseOnWidth = 0;
+        public static final int BaseOnHeight = 1;
+        public static final int BaseOnLarger = 2;
+        public static final int BaseOnSmaller = 3;
+        public static final int None = 9;
+
+    }
+
+    public static BufferedImage resizeImage(BufferedImage source,
+            int targetW, int targetH) {
+        return resizeImage(source, targetW, targetH, false, KeepRatioType.None);
+    }
+
+    public static BufferedImage resizeImage(BufferedImage source,
+            int targetW, int targetH,
+            boolean keepRatio, int keepType) {
+
+        double ratioW = (double) targetW / source.getWidth();
+        double ratioH = (double) targetH / source.getHeight();
+        if (keepRatio && ratioW != ratioH) {
+            switch (keepType) {
+                case KeepRatioType.BaseOnWidth:
+                    targetH = (int) (ratioW * source.getWidth());
+                    break;
+                case KeepRatioType.BaseOnHeight:
+                    targetW = (int) (ratioH * source.getWidth());
+                    break;
+                case KeepRatioType.BaseOnLarger:
+                    if (ratioW > ratioH) {
+                        targetH = (int) (ratioW * source.getWidth());
+                    } else {
+                        targetW = (int) (ratioH * source.getWidth());
+                    }
+                    break;
+                case KeepRatioType.BaseOnSmaller:
+                    if (ratioW < ratioH) {
+                        targetH = (int) (ratioW * source.getWidth());
+                    } else {
+                        targetW = (int) (ratioH * source.getWidth());
+                    }
+                    break;
+            }
+        }
+        int imageType = source.getType();
+        BufferedImage target = new BufferedImage(targetW, targetH, imageType);
+        Graphics2D g = target.createGraphics();
+        if (imageType == BufferedImage.TYPE_INT_ARGB) {
+            g.setBackground(new Color(0, 0, 0, 0));
+        } else {
+            g.setBackground(Color.WHITE);
+        }
+//        g.clearRect(0, 0, targetW, targetH);
+        g.drawImage(source, 0, 0, targetW, targetH, null);
+        g.dispose();
+        return target;
+    }
+
+    public static BufferedImage addAlpha(BufferedImage src, int alpha) {
         try {
             int width = src.getWidth();
             int height = src.getHeight();

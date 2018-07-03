@@ -1,6 +1,6 @@
 package mara.mybox.imagefile;
 
-import mara.mybox.image.ImageTools;
+import mara.mybox.image.ImageValueTools;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageMetadata;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReader;
 import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
@@ -43,7 +43,7 @@ public class ImageTiffFile {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html#image
-    public static void writeTiffImageFile(BufferedImage image,
+    public static boolean writeTiffImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
             try {
@@ -51,7 +51,7 @@ public class ImageTiffFile {
                     file.delete();
                 }
             } catch (Exception e) {
-                return;
+                return false;
             }
             // tiff is not supported by standard classes, so classes in plugins are used.
             TIFFImageWriterSpi tiffspi = new TIFFImageWriterSpi();
@@ -70,7 +70,7 @@ public class ImageTiffFile {
             }
 
             TIFFImageMetadata metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (attributes != null && attributes.getDensity() > 0) {
+            if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
                 long[] xRes = new long[]{attributes.getDensity(), 1};
                 long[] yRes = new long[]{attributes.getDensity(), 1};
                 Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
@@ -95,8 +95,11 @@ public class ImageTiffFile {
                 writer.write(null, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
+            writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            return false;
         }
     }
 
@@ -203,8 +206,8 @@ public class ImageTiffFile {
                     y = getRationalValue(metaData.get("YResolution"));
                 }
                 if (BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER == unit) {
-                    info.setxDensity(ImageTools.dpcm2dpi(x));
-                    info.setyDensity(ImageTools.dpcm2dpi(y));
+                    info.setxDensity(ImageValueTools.dpcm2dpi(x));
+                    info.setyDensity(ImageValueTools.dpcm2dpi(y));
                 } else {
                     info.setxDensity(x);
                     info.setyDensity(y);

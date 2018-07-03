@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Label fx:id="fileProgressValue" prefWidth="60.0" />
                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="650.0" progress="0.0" HBox.hgrow="ALWAYS" />
                 <Label fx:id="progressValue" prefHeight="20.0" prefWidth="110.0" />
-                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTargetPath" prefHeight="30.0" text="%Open" />
+                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget" prefHeight="30.0" text="%Open" />
             </children>
             <VBox.margin>
                 <Insets top="10.0" />

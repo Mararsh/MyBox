@@ -11,7 +11,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.tools.ColorTools;
+import mara.mybox.image.ColorTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileCreateTime;
 
@@ -19,7 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import static mara.mybox.image.ImageTools.pixelSizeMm2dpi;
+import static mara.mybox.image.ImageValueTools.pixelSizeMm2dpi;
 
 /**
  * @Author Mara
@@ -44,8 +44,12 @@ public class ImageFileReaders {
             info.setCreateTime(getFileCreateTime(fileName));
             info.setImageFormat(FileTools.getFileSuffix(fileName).toLowerCase());
 
-            readImageInfo(info, file);
-            readImageMetaData(info, file);
+            try {
+                readImageInfo(info, file);
+                readImageMetaData(info, file);
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
 //            displayMetadata(fileName);
             return info;
         } catch (Exception e) {

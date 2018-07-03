@@ -14,9 +14,6 @@ import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
 import com.github.jaiimageio.impl.plugins.wbmp.WBMPImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.wbmp.WBMPImageWriterSpi;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
@@ -33,7 +30,7 @@ import org.apache.pdfbox.rendering.ImageType;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageTools {
+public class ImageValueTools {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -186,14 +183,14 @@ public class ImageTools {
         return getCompressionTypes(imageFormat) != null;
     }
 
-    public static int getColorType(BufferedImage image) {
-        try {
-            ColorModel cm = image.getColorModel();
-            ColorSpace cs = cm.getColorSpace();
-            return cs.getType();
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return BufferedImage.TYPE_INT_RGB;
-        }
-    }
+//    public static int getColorType(BufferedImage image) {
+//        try {
+//            ColorModel cm = image.getColorModel();
+//            ColorSpace cs = cm.getColorSpace();
+//            return cs.getType();
+//        } catch (Exception e) {
+//            logger.error(e.toString());
+//            return BufferedImage.TYPE_INT_ARGB;
+//        }
+//    }
 }

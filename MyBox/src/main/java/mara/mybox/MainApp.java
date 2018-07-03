@@ -12,7 +12,7 @@ import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.image.ImageTools;
+import mara.mybox.image.ImageValueTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +39,7 @@ public class MainApp extends Application {
                 configFile.createNewFile();
             }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
-            ImageTools.registrySupportedImageFormats();
+            ImageValueTools.registrySupportedImageFormats();
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();

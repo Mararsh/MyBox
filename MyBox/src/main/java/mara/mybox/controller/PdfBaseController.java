@@ -173,9 +173,9 @@ public abstract class PdfBaseController extends BaseController {
     }
 
     protected void targetPathChanged() {
-        if (operationBarController == null || operationBarController.openTargetButton == null) {
-            return;
-        }
+//        if (operationBarController == null || operationBarController.openTargetButton == null) {
+//            return;
+//        }
     }
 
     @FXML
@@ -424,7 +424,7 @@ public abstract class PdfBaseController extends BaseController {
                                         File txtFile = new File(currentParameters.finalTargetName);
                                         Desktop.getDesktop().browse(txtFile.toURI());
                                     } else {
-                                        showImage(currentParameters.finalTargetName);
+                                        showImageManufacture(currentParameters.finalTargetName);
                                     }
                                 }
 

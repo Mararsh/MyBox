@@ -8,7 +8,7 @@
     <children>
         <MenuBar prefHeight="32.0" prefWidth="605.0" HBox.hgrow="ALWAYS">
             <menus>
-                <Menu fx:id="homeMenu" mnemonicParsing="false" text="%File">
+                <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
                         <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />

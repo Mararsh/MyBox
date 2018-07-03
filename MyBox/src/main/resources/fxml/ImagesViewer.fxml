@@ -55,12 +55,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <children>
             <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                <children>
-                      <ToolBar maxWidth="1.7976931348623157E308">
+                      <ToolBar prefHeight="50.0" HBox.hgrow="NEVER">
                           <items>
-                              <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectImages" prefHeight="35.0" text="%Select..." />
+                              <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectImages" text="%Select..." />
                           </items>
                       </ToolBar>
-                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" prefHeight="32.0" prefWidth="893.0" HBox.hgrow="ALWAYS">
+                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" HBox.hgrow="ALWAYS">
                     <items>
                         <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="35.0" prefWidth="35.0" text="o" />
                       <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" prefHeight="35.0" prefWidth="35.0" text="w" />

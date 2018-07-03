@@ -65,9 +65,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </TitledPane>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles">
                             <content>
-                                <VBox>
+                                <VBox spacing="10.0">
                                     <children>
                                         <fx:include fx:id="targetSelection" source="TargetFileSelection.fxml" />
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                 <children>
+                                    <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" />
+                                    <TextField fx:id="separatorInput" prefHeight="30.0" prefWidth="918.0" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                              <Label text="%InsertPageSeparatorComments" VBox.vgrow="NEVER">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
                                         <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="242.0" spacing="10.0">
                                             <children>
                                                 <Label text="%PreviewPage">

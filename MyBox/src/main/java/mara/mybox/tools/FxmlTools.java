@@ -1,5 +1,7 @@
 package mara.mybox.tools;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -8,6 +10,7 @@ import java.net.URL;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -282,4 +285,103 @@ public class FxmlTools {
         imageView.setImage(newImage);
     }
 
+    // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
+    public static BufferedImage readImage(ImageView imageView) {
+        BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+        // Remove alpha-channel from buffered image:
+        BufferedImage imageRGB = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.OPAQUE);
+        Graphics2D graphics = imageRGB.createGraphics();
+        graphics.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        return imageRGB;
+    }
+
+    public static void changeSaturate(ImageView imageView, float change) {
+        Image image = imageView.getImage();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                double v = color.getSaturation() + change;
+                if (v > 1.0) {
+                    v = 1.0;
+                }
+                if (v < 0.0) {
+                    v = 0.0;
+                }
+                Color newColor = Color.hsb(color.getHue(), v, color.getBrightness());
+                pixelWriter.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(newImage);
+    }
+
+    public static void changeBrightness(ImageView imageView, float change) {
+        Image image = imageView.getImage();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                double v = color.getBrightness() + change;
+                if (v > 1.0) {
+                    v = 1.0;
+                }
+                if (v < 0.0) {
+                    v = 0.0;
+                }
+                Color newColor = Color.hsb(color.getHue(), color.getSaturation(), v);
+                pixelWriter.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(newImage);
+    }
+
+    public static void changeHue(ImageView imageView, int change) {
+        Image image = imageView.getImage();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                double v = color.getHue() + change;
+                if (v > 360.0) {
+                    v = v - 360.0;
+                }
+                if (v < 0.0) {
+                    v = v + 360.0;
+                }
+                Color newColor = Color.hsb(v, color.getSaturation(), color.getBrightness());
+                pixelWriter.setColor(x, y, newColor);
+            }
+        }
+        imageView.setImage(newImage);
+    }
+
+    public static void makeBinary(ImageView imageView, int precent) {
+        int threshold = 256 * precent / 100;
+        Image image = imageView.getImage();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                double gray = 0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue();
+                if (gray * 255 < threshold) {
+                    pixelWriter.setColor(x, y, Color.BLACK);
+                } else {
+                    pixelWriter.setColor(x, y, Color.WHITE);
+                }
+            }
+        }
+        imageView.setImage(newImage);
+    }
 }

@@ -37,6 +37,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 public class ImageViewerController extends ImageBaseController {
 
     protected double mouseX, mouseY;
+    protected int zoomStep = 10;
+    protected int currentAngle = 0, rotateAngle = 90;
 
     @FXML
     protected ScrollPane scrollPane;
@@ -57,7 +59,7 @@ public class ImageViewerController extends ImageBaseController {
                     Bindings.isEmpty(sourceFileInput.textProperty())
                             .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
             );
-            setTips();
+//            setTips();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -66,6 +68,11 @@ public class ImageViewerController extends ImageBaseController {
 
     @Override
     public void sourceFileChanged(final File file) {
+        if (file.isDirectory()) {
+            AppVaribles.setConfigValue("imageSourcePath", file.getPath());
+        } else {
+            AppVaribles.setConfigValue("imageSourcePath", file.getParent());
+        }
         loadImage(file, false);
     }
 
@@ -86,6 +93,7 @@ public class ImageViewerController extends ImageBaseController {
             if (imageFile != null) {
                 imageFile.setText(sourceFile.getName());
             }
+            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
             imageView.setImage(null);
             popInformation(AppVaribles.getMessage("NotSupported"));
@@ -125,14 +133,14 @@ public class ImageViewerController extends ImageBaseController {
 
     @FXML
     public void zoomIn() {
-        imageView.setFitHeight(imageView.getFitHeight() * 1.1);
-        imageView.setFitWidth(imageView.getFitWidth() * 1.1);
+        imageView.setFitHeight(imageView.getFitHeight() * (1 + zoomStep / 100.0f));
+        imageView.setFitWidth(imageView.getFitWidth() * (1 + zoomStep / 100.0f));
     }
 
     @FXML
     public void zoomOut() {
-        imageView.setFitHeight(imageView.getFitHeight() * 0.9);
-        imageView.setFitWidth(imageView.getFitWidth() * 0.9);
+        imageView.setFitHeight(imageView.getFitHeight() * (1 - zoomStep / 100.0f));
+        imageView.setFitWidth(imageView.getFitWidth() * (1 - zoomStep / 100.0f));
 
     }
 
@@ -150,25 +158,29 @@ public class ImageViewerController extends ImageBaseController {
 
     @FXML
     public void rotateRight() {
-        imageView.setRotate(90);
+        currentAngle = (currentAngle + rotateAngle) % 360;
+        imageView.setRotate(currentAngle);
     }
 
     @FXML
     public void rotateLeft() {
-        imageView.setRotate(270);
+        currentAngle = (360 - rotateAngle + currentAngle) % 360;
+        imageView.setRotate(currentAngle);
     }
 
     @FXML
     public void turnOver() {
-        imageView.setRotate(180);
+        currentAngle = (180 + currentAngle) % 360;
+        imageView.setRotate(currentAngle);
     }
 
     @FXML
     public void back() {
-        imageView.setRotate(0);
+        currentAngle = 0;
+        imageView.setRotate(currentAngle);
     }
 
-    public void setTips() {
+    public void setQuickTips() {
         if (iButton != null) {
             FxmlTools.quickTooltip(iButton, new Tooltip(AppVaribles.getMessage("ImageInformation")));
             FxmlTools.quickTooltip(mButton, new Tooltip(AppVaribles.getMessage("ImageMetaData")));
@@ -185,9 +197,30 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
+    public void setTips() {
+        if (iButton != null) {
+            iButton.setTooltip(new Tooltip(AppVaribles.getMessage("ImageInformation")));
+            mButton.setTooltip(new Tooltip(AppVaribles.getMessage("ImageMetaData")));
+        }
+        if (wButton != null) {
+            wButton.setTooltip(new Tooltip(AppVaribles.getMessage("WindowSize")));
+            oButton.setTooltip(new Tooltip(AppVaribles.getMessage("OriginalSize")));
+            inButton.setTooltip(new Tooltip(AppVaribles.getMessage("ZoomIn")));
+            outButton.setTooltip(new Tooltip(AppVaribles.getMessage("ZoomOut")));
+            lButton.setTooltip(new Tooltip(AppVaribles.getMessage("RotateRight")));
+            rButton.setTooltip(new Tooltip(AppVaribles.getMessage("RotateRight")));
+            tButton.setTooltip(new Tooltip(AppVaribles.getMessage("TurnOver")));
+            bButton.setTooltip(new Tooltip(AppVaribles.getMessage("Back")));
+        }
+    }
+
     public void loadImage(final String fileName) {
         try {
-            sourceFileInput.setText(new File(fileName).getAbsolutePath());
+            if (sourceFileInput != null) {
+                sourceFileInput.setText(new File(fileName).getAbsolutePath());
+            } else {
+                loadImage(new File(fileName), false);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }

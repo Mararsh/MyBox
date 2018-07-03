@@ -17,7 +17,7 @@ import javafx.scene.control.TextField;
  *
  * @author mara
  */
-public class PdfOperationController extends BaseController {
+public class PdfOperationController extends PdfBaseController {
 
     protected PdfBaseController parentController;
 
@@ -44,6 +44,7 @@ public class PdfOperationController extends BaseController {
     }
 
     @FXML
+    @Override
     protected void startProcess(ActionEvent event) {
         if (parentController != null) {
             parentController.startProcess(event);
@@ -51,6 +52,7 @@ public class PdfOperationController extends BaseController {
     }
 
     @FXML
+    @Override
     protected void pauseProcess(ActionEvent event) {
         if (parentController != null) {
             parentController.startProcess(event);
@@ -58,6 +60,7 @@ public class PdfOperationController extends BaseController {
     }
 
     @FXML
+    @Override
     protected void openTarget(ActionEvent event) {
         if (parentController != null) {
             parentController.openTarget(event);

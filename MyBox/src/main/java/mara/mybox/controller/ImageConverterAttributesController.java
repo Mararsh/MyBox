@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.image.ImageConverter.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -42,15 +43,6 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     protected CheckBox keepCheck;
     @FXML
     protected HBox ratioBox, ratioBaseBox;
-
-    public static class RatioAdjustion {
-
-        public static int BaseOnWidth = 0;
-        public static int BaseOnHeight = 1;
-        public static int BaseOnLarger = 2;
-        public static int BaseOnSmaller = 3;
-        public static int None = 9;
-    }
 
     @Override
     protected void initializeNext2() {
@@ -123,15 +115,15 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             String s = selected.getText();
             AppVaribles.setConfigValue("ic_ratioAdjustion", s);
             if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(RatioAdjustion.BaseOnWidth);
+                attributes.setRatioAdjustion(KeepRatioType.BaseOnWidth);
             } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(RatioAdjustion.BaseOnHeight);
+                attributes.setRatioAdjustion(KeepRatioType.BaseOnHeight);
             } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(RatioAdjustion.BaseOnLarger);
+                attributes.setRatioAdjustion(KeepRatioType.BaseOnLarger);
             } else if (getMessage("BaseOnSamller").equals(s)) {
-                attributes.setRatioAdjustion(RatioAdjustion.BaseOnSmaller);
+                attributes.setRatioAdjustion(KeepRatioType.BaseOnSmaller);
             } else {
-                attributes.setRatioAdjustion(RatioAdjustion.None);
+                attributes.setRatioAdjustion(KeepRatioType.None);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -154,22 +146,29 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             if (ratioX == ratioY) {
                 return;
             }
-            if (attributes.getRatioAdjustion() == RatioAdjustion.BaseOnWidth) {
-                yInput.setText(Math.round(x * sourceY / sourceX) + "");
-            } else if (attributes.getRatioAdjustion() == RatioAdjustion.BaseOnHeight) {
-                xInput.setText(Math.round(y * sourceX / sourceY) + "");
-            } else if (attributes.getRatioAdjustion() == RatioAdjustion.BaseOnLarger) {
-                if (ratioX > ratioY) {
+            switch (attributes.getRatioAdjustion()) {
+                case KeepRatioType.BaseOnWidth:
                     yInput.setText(Math.round(x * sourceY / sourceX) + "");
-                } else {
+                    break;
+                case KeepRatioType.BaseOnHeight:
                     xInput.setText(Math.round(y * sourceX / sourceY) + "");
-                }
-            } else if (attributes.getRatioAdjustion() == RatioAdjustion.BaseOnSmaller) {
-                if (ratioX > ratioY) {
-                    xInput.setText(Math.round(y * sourceX / sourceY) + "");
-                } else {
-                    yInput.setText(Math.round(x * sourceY / sourceX) + "");
-                }
+                    break;
+                case KeepRatioType.BaseOnLarger:
+                    if (ratioX > ratioY) {
+                        yInput.setText(Math.round(x * sourceY / sourceX) + "");
+                    } else {
+                        xInput.setText(Math.round(y * sourceX / sourceY) + "");
+                    }
+                    break;
+                case KeepRatioType.BaseOnSmaller:
+                    if (ratioX > ratioY) {
+                        xInput.setText(Math.round(y * sourceX / sourceY) + "");
+                    } else {
+                        yInput.setText(Math.round(x * sourceY / sourceX) + "");
+                    }
+                    break;
+                default:
+                    break;
             }
         } catch (Exception e) {
 //            logger.error(e.toString());
