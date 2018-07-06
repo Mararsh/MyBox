@@ -1,32 +1,31 @@
-## English Interface
-
-[English Interface](https://mararsh.github.io/MyBox/english_interface.html)
+## English Interface [English Interface](https://mararsh.github.io/MyBox/english_interface.html)
 
 ## MyBox：简易工具集
 
-这是利用JavaFx开发的桌面程序，目标是提供简单易用的功能。
+这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
-当前是版本1.9，已实现功能： 
-1) 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项，并且可以暂停/继续转换过程。
-2) 将PDF文件中的图片提取出来保存为原格式。
-3) PDF批量转换和批量提取。
-4) 将PDF文件中的文字提取出来，可以定制页分割行。
-5) 将图片转换为其它格式，支持色彩、长宽、压缩、质量等选项。目前支持图像格式：png, jpg, bmp, tif, gif, wbmp, pnm, pcx。
-6) 处理图片：参数化调整饱和度、明暗、色相；提供滤镜：灰色、反色、黑白色。
-7) 查看图片的元数据和属性。
-8) 同屏查看最多十张图，可以分别或者同步旋转和缩放。
-9) 像素计算器。
-
-
-每个版本编译好的jar包已发布在Release目录下（点击上面的releases页签）
-最新版本是： [MyBox-1.9-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v1.9/MyBox-1.9-jar.zip) 
-在已安装JRE或者JDK的环境下执行以下命令来启动程序：
+每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
+可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.0-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.0/MyBox-2.0-exe.zip) 
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.0-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.0/MyBox-2.0-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
-也可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-1.9-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v1.9/MyBox-1.9-exe.zip) 
+当前是版本2.0，已实现功能： 
+1) 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项
+2) 将PDF文件中的图片提取出来保存为原格式。
+3) 将PDF文件中的文字提取出来，可以定制页的分割行。
+4) 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
+6) 以上功能支持批量处理， 可以暂停/继续处理过程。
+6) 支持图像格式：png, jpg, bmp, tif, gif, wbmp, pnm, pcx。
+7) 处理图片：参数化调整饱和度、明暗、色相；提供滤镜：灰色、反色、黑白色。
+8) 查看图片的元数据和属性。
+9) 同屏查看最多十张图，可以分别或者同步旋转和缩放。
+10) 像素计算器。
+11) 目录文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 
 
 ## 开发日志
+
+2018-07-06 版本2.0  批量提取PDF文字、批量转换图片。目录文件重命名，包含文件名和排序的选项，被重命名的文件可以全部恢复或者指定恢复原来的名字。
 
 2018-07-03 版本1.9  修正问题。提取PDF文字时可以定制页分割行。完善图像处理：参数化调整饱和度、明暗、色相；滤镜：灰色、反色、黑白色。
 
@@ -53,6 +52,14 @@
 
 
 ![1](https://mararsh.github.io/MyBox/1.png)
+
+
+
+![19](https://mararsh.github.io/MyBox/19.jpg)
+
+
+
+![20](https://mararsh.github.io/MyBox/20.jpg)
 
 
 

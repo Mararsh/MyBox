@@ -1,8 +1,11 @@
 package mara.mybox.objects;
 
 import java.io.File;
+import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -13,56 +16,84 @@ import mara.mybox.tools.FileTools;
  */
 public final class FileInformation {
 
-    private String fileName, fileType, createTime, modifyTime, fileSize;
+    protected static final Logger logger = LogManager.getLogger();
+
+    private SimpleStringProperty fileName, newName, fileType, createTime, modifyTime, fileSize, handled;
+
+    public FileInformation() {
+
+    }
 
     public FileInformation(File file) {
 
         String filename = file.getAbsolutePath();
-        this.fileName = file.getAbsolutePath();
-        this.fileType = FileTools.getFileSuffix(filename);
-        this.createTime = DateTools.datetimeToString(FileTools.getFileCreateTime(filename));
-        this.modifyTime = DateTools.datetimeToString(file.lastModified());
-        this.fileSize = FileTools.showFileSize(file.length());
+        this.handled = new SimpleStringProperty("");
+        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
+        this.newName = new SimpleStringProperty("");
+        if (file.isFile()) {
+            this.fileType = new SimpleStringProperty(FileTools.getFileSuffix(filename));
+        } else {
+            this.fileType = new SimpleStringProperty("");
+        }
+        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
+        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
+        this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
     }
 
     public String getFileName() {
-        return fileName;
+        return fileName.get();
     }
 
     public void setFileName(String fileName) {
-        this.fileName = fileName;
+        this.fileName.set(fileName);
+    }
+
+    public String getNewName() {
+        return newName.get();
+    }
+
+    public void setNewName(String newName) {
+        this.newName.set(newName);
     }
 
     public String getFileType() {
-        return fileType;
+        return fileType.get();
     }
 
     public void setFileType(String fileType) {
-        this.fileType = fileType;
+        this.fileType.set(fileType);
     }
 
     public String getCreateTime() {
-        return createTime;
+        return createTime.get();
     }
 
     public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+        this.createTime.set(createTime);
     }
 
     public String getModifyTime() {
-        return modifyTime;
+        return modifyTime.get();
     }
 
     public void setModifyTime(String modifyTime) {
-        this.modifyTime = modifyTime;
+        this.modifyTime.set(modifyTime);
     }
 
     public String getFileSize() {
-        return fileSize;
+        return fileSize.get();
     }
 
     public void setFileSize(String fileSize) {
-        this.fileSize = fileSize;
+        this.fileSize.set(fileSize);
+    }
+
+    public String getHandled() {
+        return handled.get();
+    }
+
+    public void setHandled(String handled) {
+        this.handled.set(handled);
     }
 
 }

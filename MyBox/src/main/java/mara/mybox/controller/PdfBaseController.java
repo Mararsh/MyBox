@@ -4,20 +4,11 @@ import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
@@ -26,7 +17,6 @@ import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -37,96 +27,49 @@ import mara.mybox.tools.ValueTools;
  */
 public abstract class PdfBaseController extends BaseController {
 
-    protected boolean isPreview, isTxt;
+    protected boolean isTxt;
 
-    protected List<File> sourceFiles;
-    protected ObservableList<FileInformation> sourceFilesInformation;
-
-    @FXML
-    protected Pane sourceSelection;
     @FXML
     protected PdfSourceSelectionController sourceSelectionController;
-    @FXML
-    protected Pane targetSelection;
-    @FXML
-    protected TargetSelectionController targetSelectionController;
-    @FXML
-    protected Pane filesTable;
-    @FXML
-    protected FilesTableController filesTableController;
     @FXML
     protected Pane pdfConvertAttributes;
     @FXML
     protected PdfConvertAttributesController pdfConvertAttributesController;
-    @FXML
-    protected Pane operationBar;
-    @FXML
-    protected PdfOperationController operationBarController;
-    @FXML
-    protected CheckBox fillZero, appendDensity, appendColor, appendCompressionType, appendQuality;
-    @FXML
-    protected Button previewButton;
-    @FXML
-    protected VBox paraBox;
-    @FXML
-    protected TextField previewInput, acumFromInput;
 
     protected class ProcessParameters {
 
-        public File sourceFile;
-        public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
-        public String password, status, targetPath, targetPrefix, targetRootPath, finalTargetName;
-        public Date startTime, endTime;
-        public int currentPage, currentNameNumber, currentFileIndex, currentTotalHandled;
-        boolean fill, aDensity, aColor, aCompression, aQuality, isBatch, createSubDir;
+        protected File sourceFile;
+        protected int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
+        protected String password, status, targetPath, targetPrefix, targetRootPath;
+        protected Date startTime, endTime;
+        protected int currentPage, currentNameNumber, currentFileIndex, currentTotalHandled;
+        protected boolean fill, aDensity, aColor, aCompression, aQuality, isBatch, createSubDir;
     }
 
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
 
     public PdfBaseController() {
+        targetPathKey = "PdfTargetPath";
+        creatSubdirKey = "PdfCreatSubdir";
+        fillZeroKey = "PdfFillZero";
+        previewKey = "PdfPreview";
+        sourcePathKey = "PdfSourcePath";
+        appendColorKey = "PdfAppendColor";
+        appendCompressionTypeKey = "PdfAppendCompressionType";
+        appendDensityKey = "PdfAppendDensity";
+        appendQualityKey = "PdfAppendQuality";
+        appendSizeKey = "PdfAppendSize";
+
+        fileExtensionFilter = new ArrayList();
+        fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
     }
 
     @Override
     protected void initializeNext() {
         try {
-            fileExtensionFilter = new ArrayList();
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
 
             if (sourceSelectionController != null) {
                 sourceSelectionController.setParentController(this);
-            }
-            if (targetSelectionController != null) {
-                targetSelectionController.setParentController(this);
-            }
-            if (operationBarController != null) {
-                operationBarController.setParentController(this);
-                if (targetSelectionController != null) {
-                    operationBarController.openTargetButton.disableProperty().bind(
-                            Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty())
-                                    .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
-                    );
-                }
-            }
-
-            if (fillZero != null) {
-                fillZero.setSelected(AppVaribles.getConfigBoolean("pci_fill"));
-            }
-
-            if (acumFromInput != null) {
-                FxmlTools.setNonnegativeValidation(acumFromInput);
-            }
-            if (previewInput != null) {
-                previewInput.setText(AppVaribles.getConfigValue("pci_preview", "0"));
-                FxmlTools.setNonnegativeValidation(previewInput);
-                previewInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        AppVaribles.setConfigValue("pci_preview", newValue);
-                    }
-                });
             }
 
             initializeNext2();
@@ -139,46 +82,19 @@ public abstract class PdfBaseController extends BaseController {
 
     }
 
-    @FXML
-    protected void openTarget(ActionEvent event) {
-        try {
-            if (targetSelectionController == null || targetSelectionController.targetPath == null) {
-                return;
-            }
-            if (targetSelectionController.targetFileInput != null) {
-                File txtFile = new File(currentParameters.finalTargetName);
-                Desktop.getDesktop().browse(txtFile.toURI());
-            } else if (targetSelectionController.targetPathInput != null) {
-                Desktop.getDesktop().browse(targetSelectionController.targetPath.toURI());
-            }
-//            new ProcessBuilder("Explorer", targetPath.getText()).start();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void sourceFileChanged() {
-        if (sourceSelectionController == null || sourceSelectionController.sourceFile == null
-                || targetSelectionController == null) {
-            return;
-        }
+    @Override
+    protected void sourceFileChanged(final File file) {
         if (targetSelectionController.targetPrefixInput != null) {
-            String filename = sourceSelectionController.sourceFile.getName();
+            String filename = file.getName();
             targetSelectionController.targetPrefixInput.setText(FileTools.getFilePrefix(filename));
         }
         if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-            targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+            targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
         }
-
-    }
-
-    protected void targetPathChanged() {
-//        if (operationBarController == null || operationBarController.openTargetButton == null) {
-//            return;
-//        }
     }
 
     @FXML
+    @Override
     protected void startProcess(ActionEvent event) {
         isPreview = false;
         makeActualParameters();
@@ -220,15 +136,15 @@ public abstract class PdfBaseController extends BaseController {
 
         if (fillZero != null) {
             actualParameters.fill = fillZero.isSelected();
-            AppVaribles.setConfigValue("pci_fill", actualParameters.fill);
+            AppVaribles.setConfigValue(fillZeroKey, actualParameters.fill);
         }
 
         if (targetSelectionController != null) {
-            actualParameters.targetRootPath = targetSelectionController.targetPath.getAbsolutePath();
-            actualParameters.targetPath = targetSelectionController.targetPath.getAbsolutePath();
+            actualParameters.targetRootPath = targetSelectionController.targetPathInput.getText();
+            actualParameters.targetPath = actualParameters.targetRootPath;
             if (targetSelectionController.subdirCheck != null) {
                 actualParameters.createSubDir = targetSelectionController.subdirCheck.isSelected();
-                AppVaribles.setConfigValue("pci_creatSubdir", actualParameters.createSubDir);
+                AppVaribles.setConfigValue(creatSubdirKey, actualParameters.createSubDir);
             }
         }
 
@@ -238,10 +154,10 @@ public abstract class PdfBaseController extends BaseController {
             actualParameters.aCompression = appendCompressionType.isSelected();
             actualParameters.aQuality = appendQuality.isSelected();
 
-            AppVaribles.setConfigValue("pci_aDensity", actualParameters.aDensity);
-            AppVaribles.setConfigValue("pci_aColor", actualParameters.aColor);
-            AppVaribles.setConfigValue("pci_aCompression", actualParameters.aCompression);
-            AppVaribles.setConfigValue("pci_aQuality", actualParameters.aQuality);
+            AppVaribles.setConfigValue(appendDensityKey, actualParameters.aDensity);
+            AppVaribles.setConfigValue(appendColorKey, actualParameters.aColor);
+            AppVaribles.setConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
+            AppVaribles.setConfigValue(appendQualityKey, actualParameters.aQuality);
         }
 
         makeMoreParameters();
@@ -272,6 +188,9 @@ public abstract class PdfBaseController extends BaseController {
         if (targetSelectionController != null) {
             if (targetSelectionController.targetPrefixInput != null) {
                 actualParameters.targetPrefix = targetSelectionController.targetPrefixInput.getText();
+            }
+            if (targetSelectionController.targetFileInput != null) {
+                actualParameters.targetPrefix = targetSelectionController.targetFileInput.getText();
             }
             if (targetSelectionController.subdirCheck != null && targetSelectionController.subdirCheck.isSelected()) {
                 File finalPath = new File(actualParameters.targetPath + "/" + actualParameters.targetPrefix + "/");
@@ -417,14 +336,14 @@ public abstract class PdfBaseController extends BaseController {
 
                             case "Done":
                                 if (isPreview) {
-                                    if (currentParameters.finalTargetName == null
-                                            || !new File(currentParameters.finalTargetName).exists()) {
+                                    if (finalTargetName == null
+                                            || !new File(finalTargetName).exists()) {
                                         popInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                     } else if (isTxt) {
-                                        File txtFile = new File(currentParameters.finalTargetName);
+                                        File txtFile = new File(finalTargetName);
                                         Desktop.getDesktop().browse(txtFile.toURI());
                                     } else {
-                                        showImageManufacture(currentParameters.finalTargetName);
+                                        showImageManufacture(finalTargetName);
                                     }
                                 }
 
@@ -438,6 +357,7 @@ public abstract class PdfBaseController extends BaseController {
                                 });
                                 operationBarController.pauseButton.setVisible(false);
                                 operationBarController.pauseButton.setDisable(true);
+//                                operationBarController.openTargetButton.setDisable(false);
                                 paraBox.setDisable(false);
                                 showCost();
 
@@ -469,6 +389,7 @@ public abstract class PdfBaseController extends BaseController {
     }
 
     @FXML
+    @Override
     protected void pauseProcess(ActionEvent event) {
         if (task != null && task.isRunning()) {
             task.cancel();

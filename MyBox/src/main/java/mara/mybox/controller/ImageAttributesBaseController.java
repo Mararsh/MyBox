@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -34,8 +33,6 @@ public class ImageAttributesBaseController extends BaseController {
     protected TextField qualityInput, thresholdInput;
     @FXML
     protected HBox qualityBox, compressBox, colorBox;
-    @FXML
-    protected Button previewButton;
     @FXML
     protected RadioButton rawSelect, pcxSelect;
 
@@ -390,14 +387,6 @@ public class ImageAttributesBaseController extends BaseController {
 
     public void setQualityInput(TextField qualityInput) {
         this.qualityInput = qualityInput;
-    }
-
-    public Button getPreviewButton() {
-        return previewButton;
-    }
-
-    public void setPreviewButton(Button previewButton) {
-        this.previewButton = previewButton;
     }
 
     public HBox getCompressBox() {

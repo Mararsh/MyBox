@@ -38,12 +38,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class PdfSourceSelectionController extends BaseController {
 
-    protected File sourceFile;
     protected PdfInformation pdfInformation;
-    protected PdfBaseController parentController;
 
-    @FXML
-    protected TextField sourceFileInput;
     @FXML
     protected Button sourceSelectButton;
     @FXML
@@ -55,9 +51,14 @@ public class PdfSourceSelectionController extends BaseController {
     @FXML
     protected PasswordField passwordInput;
 
+    public PdfSourceSelectionController() {
+
+    }
+
     @Override
     protected void initializeNext() {
         try {
+
             fileExtensionFilter = new ArrayList();
             fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
 
@@ -74,11 +75,11 @@ public class PdfSourceSelectionController extends BaseController {
                         return;
                     }
                     sourceFileInput.setStyle(null);
-                    sourceFile = file;
+                    parentController.sourceFile = file;
                     if (file.isDirectory()) {
-                        AppVaribles.setConfigValue("pdfSourcePath", file.getPath());
+                        AppVaribles.setConfigValue(parentController.sourcePathKey, file.getPath());
                     } else {
-                        AppVaribles.setConfigValue("pdfSourcePath", file.getParent());
+                        AppVaribles.setConfigValue(parentController.sourcePathKey, file.getParent());
                     }
                     loadPdfInformation();
                 }
@@ -96,19 +97,30 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     @FXML
+    @Override
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue("pdfSourcePath", System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, System.getProperty("user.home")));
             if (!path.isDirectory()) {
                 path = new File(System.getProperty("user.home"));
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
-            if (file != null) {
+            File file = fileChooser.showOpenDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            parentController.sourceFile = file;
+            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(parentController.sourcePathKey, file.getParent());
+
+            if (sourceFileInput != null) {
                 sourceFileInput.setText(file.getAbsolutePath());
             }
+
+            parentController.sourceFileChanged(file);
+
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -141,6 +153,7 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     public void loadPdfInformation() {
+
         if (sourceFile == null) {
             return;
         }
@@ -159,7 +172,7 @@ public class PdfSourceSelectionController extends BaseController {
                             toPageInput.setText((pdfInformation.getNumberOfPages() - 1) + "");
                             fileInformationButton.setDisable(false);
                         }
-                        parentController.sourceFileChanged();
+                        parentController.sourceFileChanged(sourceFile);
                     }
                 });
                 return null;
@@ -183,36 +196,12 @@ public class PdfSourceSelectionController extends BaseController {
         return passwordInput.getText();
     }
 
-    public File getSourceFile() {
-        return sourceFile;
-    }
-
-    public void setSourceFile(File sourceFile) {
-        this.sourceFile = sourceFile;
-    }
-
     public PdfInformation getPdfInformation() {
         return pdfInformation;
     }
 
     public void setPdfInformation(PdfInformation pdfInformation) {
         this.pdfInformation = pdfInformation;
-    }
-
-    public PdfBaseController getParentController() {
-        return parentController;
-    }
-
-    public void setParentController(PdfBaseController parentController) {
-        this.parentController = parentController;
-    }
-
-    public TextField getSourceFileInput() {
-        return sourceFileInput;
-    }
-
-    public void setSourceFileInput(TextField sourceFileInput) {
-        this.sourceFileInput = sourceFileInput;
     }
 
     public Button getSourceSelectButton() {

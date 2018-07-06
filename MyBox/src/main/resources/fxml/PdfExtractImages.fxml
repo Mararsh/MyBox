@@ -67,7 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <VBox prefHeight="172.0" prefWidth="1104.0">
                                     <children>
-                                        <fx:include fx:id="targetSelection" source="TargetPrefixSelection.fxml" />
+                                        <fx:include fx:id="targetSelection" source="TargetPrefixSubdirSelection.fxml" />
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%AccumulatingNumberFrom" />
@@ -115,7 +115,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </TitledPane>
                     </children>
                 </VBox>
-                <fx:include fx:id="operationBar" source="PdfOperation.fxml" />
+                <fx:include fx:id="operationBar" source="Operation.fxml" />
             </children>
         </VBox>
     </center>

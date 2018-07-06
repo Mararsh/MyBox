@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,52 +13,53 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.FileInformation;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-7-6
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class FilesTableController extends BaseController {
 
     protected ObservableList<FileInformation> tableData = FXCollections.observableArrayList();
-    protected String configPathName;
 
     @FXML
-    private Pane filesTablePane;
+    protected Pane filesTablePane;
     @FXML
-    private Button addButton;
+    protected Button addButton, clearButton, deleteButton, recoveryAllButton, recoverySelectedButton;
     @FXML
-    private Button clearButton;
+    protected TableView<FileInformation> filesTableView;
     @FXML
-    private Button deleteButton;
+    protected TableColumn<FileInformation, String> handledColumn;
     @FXML
-    private TableView<FileInformation> filesTableView;
+    protected TableColumn<FileInformation, String> fileColumn;
     @FXML
-    private TableColumn<FileInformation, String> fileColumn;
+    protected TableColumn<FileInformation, String> newColumn;
     @FXML
-    private TableColumn<FileInformation, String> modifyTimeColumn;
+    protected TableColumn<FileInformation, String> modifyTimeColumn;
     @FXML
-    private TableColumn<FileInformation, String> createTimeColumn;
+    protected TableColumn<FileInformation, String> createTimeColumn;
     @FXML
-    private TableColumn<FileInformation, String> typeColumn;
+    protected TableColumn<FileInformation, String> typeColumn;
     @FXML
-    private TableColumn<FileInformation, Long> sizeColumn;
+    protected TableColumn<FileInformation, Long> sizeColumn;
 
     @Override
     protected void initializeNext() {
         try {
-            fileExtensionFilter = new ArrayList();
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
 
-            fileColumn.setCellValueFactory(new PropertyValueFactory("fileName"));
-            modifyTimeColumn.setCellValueFactory(new PropertyValueFactory("modifyTime"));
-            createTimeColumn.setCellValueFactory(new PropertyValueFactory("createTime"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory("fileType"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory("fileSize"));
+            handledColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("handled"));
+            fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
+            if (newColumn != null) {
+                newColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("newName"));
+            }
+            modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("modifyTime"));
+            createTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("createTime"));
+            typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileType"));
+            sizeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Long>("fileSize"));
 
             filesTableView.setItems(tableData);
             filesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -78,20 +73,20 @@ public class FilesTableController extends BaseController {
     void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"));
-            if (configPathName != null) {
-                defaultPath = AppVaribles.getConfigValue(configPathName, defaultPath);
+            File defaultPath = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, System.getProperty("user.home")));
+            if (!defaultPath.isDirectory()) {
+                defaultPath = new File(System.getProperty("user.home"));
             }
-            fileChooser.setInitialDirectory(new File(defaultPath));
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.setInitialDirectory(defaultPath);
+            fileChooser.getExtensionFilters().addAll(parentController.fileExtensionFilter);
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
-            if (files.size() > 0) {
-                String path = files.get(0).getParent();
-                AppVaribles.setConfigValue("LastPath", path);
-                if (configPathName != null) {
-                    AppVaribles.setConfigValue(configPathName, path);
-                }
+            if (files == null || files.isEmpty()) {
+                return;
             }
+
+            String path = files.get(0).getParent();
+            AppVaribles.setConfigValue("LastPath", path);
+            AppVaribles.setConfigValue(parentController.sourcePathKey, path);
             for (File file : files) {
                 if (findData(file.getAbsolutePath()) != null) {
                     continue;
@@ -108,6 +103,10 @@ public class FilesTableController extends BaseController {
     @FXML
     void clearAction(ActionEvent event) {
         tableData.clear();
+        addButton.setDisable(false);
+        deleteButton.setDisable(false);
+        recoveryAllButton.setDisable(true);
+        recoverySelectedButton.setDisable(true);
     }
 
     @FXML
@@ -121,7 +120,54 @@ public class FilesTableController extends BaseController {
         }
     }
 
-    private FileInformation findData(String filename) {
+    @FXML
+    void recoveryAllAction(ActionEvent event) {
+        if (tableData == null || tableData.isEmpty()) {
+            return;
+        }
+        for (FileInformation f : tableData) {
+            String originalName = f.getFileName();
+            File newName = new File(f.getNewName());
+            if (newName.exists()) {
+                if (newName.renameTo(new File(originalName))) {
+                    f.setHandled(AppVaribles.getMessage("Recovered"));
+                    f.setFileName(originalName);
+                    f.setNewName("");
+                } else {
+                    f.setHandled(AppVaribles.getMessage("FailRecovered"));
+                }
+            }
+        }
+        filesTableView.refresh();
+        addButton.setDisable(false);
+        deleteButton.setDisable(false);
+    }
+
+    @FXML
+    void recoverySelectedAction(ActionEvent event) {
+        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
+        if (selected == null || selected.isEmpty()) {
+            return;
+        }
+        for (FileInformation f : selected) {
+            String originalName = f.getFileName();
+            File newName = new File(f.getNewName());
+            if (newName.exists()) {
+                if (newName.renameTo(new File(originalName))) {
+                    f.setHandled(AppVaribles.getMessage("Recovered"));
+                    f.setFileName(originalName);
+                    f.setNewName("");
+                } else {
+                    f.setHandled(AppVaribles.getMessage("FailRecovered"));
+                }
+            }
+        }
+        filesTableView.refresh();
+        addButton.setDisable(true);
+        deleteButton.setDisable(true);
+    }
+
+    public FileInformation findData(String filename) {
         for (FileInformation d : tableData) {
             if (d.getFileName().equals(filename)) {
                 return d;
@@ -136,14 +182,6 @@ public class FilesTableController extends BaseController {
 
     public void setTableData(ObservableList<FileInformation> tableData) {
         this.tableData = tableData;
-    }
-
-    public List<FileChooser.ExtensionFilter> getFileExtensionFilter() {
-        return fileExtensionFilter;
-    }
-
-    public void setFileExtensionFilter(List<FileChooser.ExtensionFilter> fileExtensionFilter) {
-        this.fileExtensionFilter = fileExtensionFilter;
     }
 
     public Pane getFilesTablePane() {
@@ -224,14 +262,6 @@ public class FilesTableController extends BaseController {
 
     public void setSizeColumn(TableColumn<FileInformation, Long> sizeColumn) {
         this.sizeColumn = sizeColumn;
-    }
-
-    public String getConfigPathName() {
-        return configPathName;
-    }
-
-    public void setConfigPathName(String configPathName) {
-        this.configPathName = configPathName;
     }
 
 }

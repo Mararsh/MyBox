@@ -17,38 +17,40 @@
                 <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImages" text="%PdfExtractImages" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTexts" text="%PdfExtractTexts" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
+                  <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
                     </items>
                 </Menu>
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                         <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                     </items>
                 </Menu>
-                <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools" />
+                <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
+                  <MenuItem mnemonicParsing="false" onAction="#openDirsRename" text="%DirectoriesRename" />
+               </items></Menu>
                 <Menu mnemonicParsing="false" text="%Settings">
                     <items>
-                        <Menu mnemonicParsing="false" text="%InterfaceLanguage">
-                            <items>
-                                <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="langGroup" />
-                                    </toggleGroup>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
-                            </items>
-                        </Menu>
+                          <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
+                              <toggleGroup>
+                                  <ToggleGroup fx:id="langGroup" />
+                              </toggleGroup>
+                          </RadioMenuItem>
+                          <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
                     </items>
                 </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">

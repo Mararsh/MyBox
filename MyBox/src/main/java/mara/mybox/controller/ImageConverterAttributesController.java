@@ -21,6 +21,7 @@ import mara.mybox.image.ImageConverter.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
 
 /**
@@ -89,7 +90,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     @FXML
     protected void openPixelsCalculator(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculator), AppVaribles.CurrentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
             PixelsCalculationController controller = fxmlLoader.getController();
             Stage stage = new Stage();
@@ -248,6 +249,12 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
 
     public void setRatioBox(HBox ratioBox) {
         this.ratioBox = ratioBox;
+    }
+
+    @Override
+    public ImageAttributes getAttributes() {
+        getFinalXY();
+        return attributes;
     }
 
 }

@@ -166,10 +166,6 @@ public class FxmlTools {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
-                if (newValue == null || newValue.isEmpty()) {
-                    input.setStyle(badStyle);
-                    return;
-                }
                 final File file = new File(newValue);
                 if (!file.exists()) {
                     input.setStyle(badStyle);

@@ -90,11 +90,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   <children>
                       <VBox fx:id="pdfBox" alignment="CENTER" onMouseClicked="#showPdfMenu" prefHeight="200.0" prefWidth="100.0">
                           <children>
-                              <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../img/PdfTools.png" />
-                                  </image>
-                              </ImageView>
+                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                                    <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/PdfTools.png" />
+                                        </image>
+                                    </ImageView>
+                           </children>
+                        </HBox>
                               <Label text="%PdfTools">
                            <font>
                               <Font size="18.0" />
@@ -103,11 +107,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                       </VBox>
                       <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
                           <children>
-                              <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../img/ImageTools.png" />
-                                  </image>
-                              </ImageView>
+                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                           <children>
+                                    <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/ImageTools.png" />
+                                        </image>
+                                    </ImageView>
+                           </children>
+                        </HBox>
                               <Label text="%ImageTools">
                            <font>
                               <Font size="18.0" />
@@ -116,16 +124,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                       </VBox>
                       <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
                           <children>
-                              <ImageView fitHeight="200.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../img/FileTools.png" />
-                                  </image>
-                              </ImageView>
-                              <Label text="%FileTools" textFill="#00000080">
+                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                           <children>
+                                    <ImageView fitHeight="171.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/FileTools.png" />
+                                        </image>
+                                    </ImageView>
+                           </children>
+                        </HBox>
+                              <Label text="%FileTools">
                            <font>
                               <Font size="18.0" />
                            </font></Label>
-                              <Label text="%Developing..." />
                           </children>
                       </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">

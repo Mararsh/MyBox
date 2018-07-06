@@ -113,6 +113,9 @@ public class FileTools {
 
     public static String showFileSize(long size) {
         long kb = (long) (size / 1024f + 0.5);
+        if (kb == 0) {
+            kb = 1;
+        }
         String s = kb + "";
         String t = "";
         int count = 0;

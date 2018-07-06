@@ -13,12 +13,15 @@
                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                  <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoveryAll" />
+                  <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverySelected" />
                     </items>
                 </ToolBar>
-                <TableView fx:id="filesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="handledColumn" prefWidth="150.0" text="%Handled" />
-                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="600.0" text="%FileName" />
+                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%OriginalFileName" />
+                        <TableColumn fx:id="newColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%NewFileName" />
                         <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
                         <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
                         <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />

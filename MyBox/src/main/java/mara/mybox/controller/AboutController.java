@@ -20,11 +20,7 @@ public class AboutController extends BaseController {
     @FXML
     private Label date;
     @FXML
-    private Hyperlink licenseLink;
-    @FXML
-    private Hyperlink sourceLink;
-    @FXML
-    private Hyperlink issuesLink;
+    private Hyperlink licenseLink, sourceLink, issuesLink, releasesLink;
 
     @Override
     protected void initializeNext() {
@@ -63,6 +59,15 @@ public class AboutController extends BaseController {
     private void linkIssues() {
         try {
             Desktop.getDesktop().browse(new URI(issuesLink.getText()));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    private void linkReleases() {
+        try {
+            Desktop.getDesktop().browse(new URI(releasesLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }

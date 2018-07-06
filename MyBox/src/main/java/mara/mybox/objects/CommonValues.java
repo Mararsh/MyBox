@@ -16,8 +16,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 1.9;
-    public static final String AppVersionDate = "2018-07-03";
+    public static final double AppVersion = 2.0;
+    public static final String AppVersionDate = "2018-07-06";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -28,6 +28,7 @@ public class CommonValues {
     public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
     public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
     public static final String PdfExtractTextsFxml = "/fxml/PdfExtractTexts.fxml";
+    public static final String PdfExtractTextsBatchFxml = "/fxml/PdfExtractTextsBatch.fxml";
     public static final String PdfConvertImagesFxml = "/fxml/PdfConvertImages.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
@@ -39,9 +40,12 @@ public class CommonValues {
     public static final String ImageViewerIFxml = "/fxml/ImageViewerI.fxml";
     public static final String ImagesViewerFxml = "/fxml/ImagesViewer.fxml";
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
+    public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
-    public static final String PixelsCalculator = "/fxml/PixelsCalculator.fxml";
+    public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
+    public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
+    public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

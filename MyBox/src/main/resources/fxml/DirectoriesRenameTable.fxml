@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="filesTablePane" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DirectoriesTableController">
+    <children>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+            <children>
+                <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                    <items>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                        <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoveryAll" />
+                        <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverySelected" />
+                    </items>
+                </ToolBar>
+                <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="handledColumn" prefWidth="250.0" text="%Handled" />
+                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="600.0" text="%Directory" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</HBox>

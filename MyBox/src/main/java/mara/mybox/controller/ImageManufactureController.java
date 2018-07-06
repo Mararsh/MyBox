@@ -43,7 +43,7 @@ public class ImageManufactureController extends ImageViewerController {
     protected int saturateOffset = 0, brightnessOffset = 0, hueOffset = 0;
 
     @FXML
-    protected ToolBar fileBar, operationBar, setBar;
+    protected ToolBar fileBar, setBar, typeBar;
 
     @Override
     protected void initializeNext2() {
@@ -59,7 +59,7 @@ public class ImageManufactureController extends ImageViewerController {
         super.afterImageLoaded();
         if (image != null) {
             fileBar.setDisable(false);
-            operationBar.setDisable(false);
+            typeBar.setDisable(false);
             setBar.setDisable(false);
         }
     }

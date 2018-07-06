@@ -10,16 +10,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
  *
  * @author mara
  */
-public class PdfOperationController extends PdfBaseController {
-
-    protected PdfBaseController parentController;
+public class OperationController extends BaseController {
 
     @FXML
     protected Button startButton;
@@ -31,8 +28,6 @@ public class PdfOperationController extends PdfBaseController {
     protected Label progressValue;
     @FXML
     protected Button openTargetButton;
-    @FXML
-    protected TextField statusLabel;
     @FXML
     protected ProgressBar fileProgressBar;
     @FXML
@@ -107,20 +102,20 @@ public class PdfOperationController extends PdfBaseController {
         this.openTargetButton = openTargetButton;
     }
 
-    public TextField getStatusLabel() {
-        return statusLabel;
+    public ProgressBar getFileProgressBar() {
+        return fileProgressBar;
     }
 
-    public void setStatusLabel(TextField statusLabel) {
-        this.statusLabel = statusLabel;
+    public void setFileProgressBar(ProgressBar fileProgressBar) {
+        this.fileProgressBar = fileProgressBar;
     }
 
-    public PdfBaseController getParentController() {
-        return parentController;
+    public Label getFileProgressValue() {
+        return fileProgressValue;
     }
 
-    public void setParentController(PdfBaseController parentController) {
-        this.parentController = parentController;
+    public void setFileProgressValue(Label fileProgressValue) {
+        this.fileProgressValue = fileProgressValue;
     }
 
 }

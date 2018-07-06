@@ -61,7 +61,7 @@ public class ImagesViewerController extends ImageViewerController {
         try {
             final FileChooser fileChooser = new FileChooser();
             String defaultPath = AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"));
-            fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue("imageSourcePath", defaultPath)));
+            fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue(sourcePathKey, defaultPath)));
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             imageFileList = fileChooser.showOpenMultipleDialog(getMyStage());
             makeImagesPane();
@@ -70,7 +70,7 @@ public class ImagesViewerController extends ImageViewerController {
             }
             String path = imageFileList.get(0).getParent();
             AppVaribles.setConfigValue("LastPath", path);
-            AppVaribles.setConfigValue("imageSourcePath", path);
+            AppVaribles.setConfigValue(sourcePathKey, path);
 
         } catch (Exception e) {
 //            logger.error(e.toString());

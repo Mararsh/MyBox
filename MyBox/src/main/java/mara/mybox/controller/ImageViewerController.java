@@ -13,9 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -41,11 +39,7 @@ public class ImageViewerController extends ImageBaseController {
     protected int currentAngle = 0, rotateAngle = 90;
 
     @FXML
-    protected ScrollPane scrollPane;
-    @FXML
-    protected ImageView imageView;
-    @FXML
-    private Label imageFile;
+    protected Label imageFile;
     @FXML
     protected HBox toolBar;
     @FXML
@@ -69,9 +63,9 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void sourceFileChanged(final File file) {
         if (file.isDirectory()) {
-            AppVaribles.setConfigValue("imageSourcePath", file.getPath());
+            AppVaribles.setConfigValue(sourcePathKey, file.getPath());
         } else {
-            AppVaribles.setConfigValue("imageSourcePath", file.getParent());
+            AppVaribles.setConfigValue(sourcePathKey, file.getParent());
         }
         loadImage(file, false);
     }
@@ -216,10 +210,11 @@ public class ImageViewerController extends ImageBaseController {
 
     public void loadImage(final String fileName) {
         try {
+            sourceFile = new File(fileName);
             if (sourceFileInput != null) {
-                sourceFileInput.setText(new File(fileName).getAbsolutePath());
+                sourceFileInput.setText(sourceFile.getAbsolutePath());
             } else {
-                loadImage(new File(fileName), false);
+                loadImage(sourceFile, false);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -290,22 +285,6 @@ public class ImageViewerController extends ImageBaseController {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
-    }
-
-    public ScrollPane getScrollPane() {
-        return scrollPane;
-    }
-
-    public void setScrollPane(ScrollPane scrollPane) {
-        this.scrollPane = scrollPane;
-    }
-
-    public ImageView getImageView() {
-        return imageView;
-    }
-
-    public void setImageView(ImageView imageView) {
-        this.imageView = imageView;
     }
 
     public HBox getToolBar() {

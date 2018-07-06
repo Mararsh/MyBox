@@ -98,6 +98,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openPdfExtractTextsBatch(ActionEvent event) {
+        reloadStage(CommonValues.PdfExtractTextsBatchFxml, AppVaribles.getMessage("PdfExtractTextsBatch"));
+    }
+
+    @FXML
     private void openPdfExtractImagesBatch(ActionEvent event) {
         reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
     }
@@ -118,13 +123,28 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageConverterBatch(ActionEvent event) {
+        reloadStage(CommonValues.ImageConverterBatchFxml, AppVaribles.getMessage("ImageConverterBatch"));
+    }
+
+    @FXML
     private void openImageManufacture(ActionEvent event) {
         reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
     }
 
     @FXML
     private void openPixelsCalculator(ActionEvent event) {
-        openStage(CommonValues.PixelsCalculator, AppVaribles.getMessage("PixelsCalculator"), false);
+        openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false);
+    }
+
+    @FXML
+    private void openFilesRename(ActionEvent event) {
+        reloadStage(CommonValues.FilesRenameFxml, AppVaribles.getMessage("FilesRename"));
+    }
+
+    @FXML
+    private void openDirsRename(ActionEvent event) {
+        reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
     }
 
     @FXML

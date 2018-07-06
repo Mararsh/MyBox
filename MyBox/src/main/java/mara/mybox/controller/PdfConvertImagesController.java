@@ -27,16 +27,12 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfConvertImagesController extends PdfBaseController {
 
     public PdfConvertImagesController() {
+
     }
 
     @Override
     protected void initializeNext2() {
         try {
-            pdfConvertAttributesController.setParentFxml(myFxml);
-            appendDensity.setSelected(AppVaribles.getConfigBoolean("pci_aDensity"));
-            appendColor.setSelected(AppVaribles.getConfigBoolean("pci_aColor"));
-            appendCompressionType.setSelected(AppVaribles.getConfigBoolean("pci_aCompression"));
-            appendQuality.setSelected(AppVaribles.getConfigBoolean("pci_aQuality"));
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
@@ -105,6 +101,7 @@ public class PdfConvertImagesController extends PdfBaseController {
                             }
 
                             handleCurrentFile();
+                            markFileHandled(currentParameters.currentFileIndex);
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -139,7 +136,7 @@ public class PdfConvertImagesController extends PdfBaseController {
                                 if (isCancelled()) {
                                     break;
                                 }
-                                currentParameters.finalTargetName = makeFilename();
+                                finalTargetName = makeFilename();
                                 convertCurrentPage(renderer);
                                 currentParameters.currentTotalHandled++;
                                 currentParameters.currentNameNumber++;
@@ -202,7 +199,7 @@ public class PdfConvertImagesController extends PdfBaseController {
             } else {
                 image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());
             }
-            ImageFileWriters.writeImageFile(image, attributes, currentParameters.finalTargetName);
+            ImageFileWriters.writeImageFile(image, attributes, finalTargetName);
         } catch (Exception e) {
             logger.error(e.toString());
         }

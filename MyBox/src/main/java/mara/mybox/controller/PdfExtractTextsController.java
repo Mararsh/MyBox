@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
 import java.io.File;
@@ -21,9 +16,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
- * FXML Controller class
- *
- * @author mara
+ * @Author Mara
+ * @CreateDate 2018-7-1
+ * @Description
+ * @License Apache License Version 2.0
  */
 public class PdfExtractTextsController extends PdfBaseController {
 
@@ -37,7 +33,7 @@ public class PdfExtractTextsController extends PdfBaseController {
     @Override
     protected void initializeNext2() {
         try {
-
+            targetIsFile = true;
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
@@ -57,21 +53,15 @@ public class PdfExtractTextsController extends PdfBaseController {
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
             );
 
-            operationBarController.openTargetButton.disableProperty().bind(
-                    Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty())
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
-            );
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     @Override
-    protected void sourceFileChanged() {
-        super.sourceFileChanged();
-        String filename = sourceSelectionController.sourceFile.getName();
-        targetSelectionController.targetFileInput.setText(FileTools.getFilePrefix(filename) + ".txt");
+    protected void sourceFileChanged(final File file) {
+        super.sourceFileChanged(file);
+        targetSelectionController.targetFileInput.setText(FileTools.getFilePrefix(file.getName()) + ".txt");
 
     }
 
@@ -113,6 +103,7 @@ public class PdfExtractTextsController extends PdfBaseController {
                             }
 
                             handleCurrentFile();
+                            markFileHandled(currentParameters.currentFileIndex);
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -133,9 +124,9 @@ public class PdfExtractTextsController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        currentParameters.finalTargetName = currentParameters.targetPath + "/"
-                                + targetSelectionController.targetFileInput.getText();
-                        FileWriter writer = new FileWriter(currentParameters.finalTargetName, false);
+                        finalTargetName = currentParameters.targetPath + "/"
+                                + currentParameters.targetPrefix + ".txt";
+                        FileWriter writer = new FileWriter(finalTargetName, false);
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
@@ -147,7 +138,6 @@ public class PdfExtractTextsController extends PdfBaseController {
                             int total = currentParameters.toPage - currentParameters.fromPage + 1;
 
                             PDFTextStripper stripper = new PDFTextStripper();
-
                             for (currentParameters.currentPage = currentParameters.startPage;
                                     currentParameters.currentPage <= currentParameters.toPage; currentParameters.currentPage++) {
                                 if (isCancelled()) {

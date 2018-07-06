@@ -61,38 +61,38 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="fileBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                     <items>
+                            <items>
                                 <Button mnemonicParsing="false" onAction="#save" text="%Save" />
                                 <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
                                 <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
                                 <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
-                     </items>
+                            </items>
                         </ToolBar>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar fx:id="operationBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                        <ToolBar fx:id="typeBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                             <items>
                                 <Button fx:id="zoomButton" mnemonicParsing="false" onAction="#opZoom" text="%Zoom" />
                                 <Button fx:id="rorateButton" mnemonicParsing="false" onAction="#opRotate" text="%Rotate" />
                                 <Button fx:id="hueButton" mnemonicParsing="false" onAction="#opHue" text="%Hue" />
                                 <Button fx:id="saturateButton" mnemonicParsing="false" onAction="#opSaturate" text="%Saturate" />
                                 <Button fx:id="brightnessButton" mnemonicParsing="false" onAction="#opBrighterness" text="%Brightness" />
-                        <Button fx:id="filtersButton" mnemonicParsing="false" onAction="#opFilters" text="%Filters" />
+                                <Button fx:id="filtersButton" mnemonicParsing="false" onAction="#opFilters" text="%Filters" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
-            <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-               <children>
-                  <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                    <items>
+                <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                            <items>
                                 <Button maxWidth="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="0.0" text="B" visible="false" />
-                    </items>
-                  </ToolBar>
-               </children>
-            </HBox>
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
                 <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <content>
                         <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">

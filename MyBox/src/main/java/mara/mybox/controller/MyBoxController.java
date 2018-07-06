@@ -55,6 +55,13 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractTextsFxml, AppVaribles.getMessage("pdfExtractTexts"));
             }
         });
+        MenuItem pdfExtractTextsBatch = new MenuItem(AppVaribles.getMessage("PdfExtractTextsBatch"));
+        pdfExtractTextsBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.PdfExtractTextsBatchFxml, AppVaribles.getMessage("PdfExtractTextsBatch"));
+            }
+        });
         MenuItem pdfConvertImages = new MenuItem(AppVaribles.getMessage("PdfConvertImages"));
         pdfConvertImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -70,9 +77,8 @@ public class MyBoxController extends BaseController {
             }
         });
         pdfMenus = new ContextMenu();
-        pdfMenus.getItems().addAll(pdfExtractImages, pdfExtractImagesBatch, new SeparatorMenuItem(),
-                pdfExtractTexts, new SeparatorMenuItem(),
-                pdfConvertImages, pdfConvertImagesBatch);
+        pdfMenus.getItems().addAll(pdfExtractImages, pdfExtractTexts, pdfConvertImages, new SeparatorMenuItem(),
+                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfConvertImagesBatch);
 
         MenuItem imageViewer = new MenuItem(AppVaribles.getMessage("ImageViewer"));
         imageViewer.setOnAction(new EventHandler<ActionEvent>() {
@@ -102,18 +108,42 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImageConverterFxml, AppVaribles.getMessage("ImageConverter"));
             }
         });
+        MenuItem imageConverterBatch = new MenuItem(AppVaribles.getMessage("ImageConverterBatch"));
+        imageConverterBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageConverterBatchFxml, AppVaribles.getMessage("ImageConverterBatch"));
+            }
+        });
         MenuItem pixelsCalculator = new MenuItem(AppVaribles.getMessage("PixelsCalculator"));
         pixelsCalculator.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                openStage(CommonValues.PixelsCalculator, AppVaribles.getMessage("PixelsCalculator"), false);
+                openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false);
             }
         });
         imageMenu = new ContextMenu();
-        imageMenu.getItems().addAll(imageViewer, imagesViewer, new SeparatorMenuItem(),
-                ImageManufacture, imageConverter, new SeparatorMenuItem(),
+        imageMenu.getItems().addAll(ImageManufacture, new SeparatorMenuItem(),
+                imageConverter, imageConverterBatch, new SeparatorMenuItem(),
+                imageViewer, imagesViewer, new SeparatorMenuItem(),
                 pixelsCalculator);
 
+        MenuItem filesRename = new MenuItem(AppVaribles.getMessage("FilesRename"));
+        filesRename.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.FilesRenameFxml, AppVaribles.getMessage("FilesRename"));
+            }
+        });
+        MenuItem dirsRename = new MenuItem(AppVaribles.getMessage("DirectoriesRename"));
+        dirsRename.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
+            }
+        });
+        fileMenu = new ContextMenu();
+        fileMenu.getItems().addAll(filesRename, dirsRename);
     }
 
     @FXML
@@ -148,7 +178,11 @@ public class MyBoxController extends BaseController {
 
     @FXML
     void showFileMenu(MouseEvent event) {
-
+        if (fileMenu.isShowing()) {
+            return;
+        }
+        Bounds bounds = fileBox.localToScreen(fileBox.getBoundsInLocal());
+        fileMenu.show(fileBox, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
     }
 
     @FXML

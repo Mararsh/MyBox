@@ -37,12 +37,16 @@ public class PdfExtractImagesController extends PdfBaseController {
     @FXML
     protected CheckBox appendIndex;
 
+    public PdfExtractImagesController() {
+
+    }
+
     @Override
     protected void initializeNext2() {
         try {
 
-            appendPageNumber.setSelected(AppVaribles.getConfigBoolean("pei_appendPageNumber"));
-            appendIndex.setSelected(AppVaribles.getConfigBoolean("pei_appendIndex"));
+            appendPageNumber.setSelected(AppVaribles.getConfigBoolean("PdfAppendPageNumber"));
+            appendIndex.setSelected(AppVaribles.getConfigBoolean("PdfAppendIndex"));
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
@@ -110,6 +114,7 @@ public class PdfExtractImagesController extends PdfBaseController {
                             }
 
                             handleCurrentFile();
+                            markFileHandled(currentParameters.currentFileIndex);
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -174,8 +179,8 @@ public class PdfExtractImagesController extends PdfBaseController {
                                     continue;
                                 }
                                 PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
-                                currentParameters.finalTargetName = makeFilename(pdxObject.getSuffix(), currentParameters.currentPage, index++);
-                                ImageFileWriters.writeImageFile(pdxObject.getImage(), pdxObject.getSuffix(), currentParameters.finalTargetName);
+                                finalTargetName = makeFilename(pdxObject.getSuffix(), currentParameters.currentPage, index++);
+                                ImageFileWriters.writeImageFile(pdxObject.getImage(), pdxObject.getSuffix(), finalTargetName);
 //                                ImageIO.write(pdxObject.getImage(), pdxObject.getSuffix(), new File(currentParameters.finalTargetName));
                                 currentParameters.currentNameNumber++;
                                 if (isPreview) {

@@ -9,11 +9,11 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
  * @Author Mara
- * @CreateDate 2018-6-24
+ * @CreateDate 2018-7-4
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractImagesBatchController extends PdfExtractImagesController {
+public class PdfExtractTextsBatchController extends PdfExtractTextsController {
 
     @FXML
     private ScrollPane scrollPane;
@@ -21,9 +21,6 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
     @Override
     protected void initializeNext2() {
         try {
-
-            appendPageNumber.setSelected(AppVaribles.getConfigBoolean("pei_appendPageNumber"));
-            appendIndex.setSelected(AppVaribles.getConfigBoolean("pei_appendIndex"));
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())

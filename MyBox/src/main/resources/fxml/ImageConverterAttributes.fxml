@@ -124,9 +124,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2">
                     <children>
                         <Label text="%PixelsWidth" />
-                        <TextField prefHeight="30.0" prefWidth="120.0" fx:id="xInput" />
+                        <TextField prefHeight="30.0" prefWidth="140.0" promptText="%OriginalSize" fx:id="xInput" />
                         <Label text="%PixelsHeight" />
-                        <TextField fx:id="yInput" prefWidth="120.0" />
+                        <TextField fx:id="yInput" prefWidth="140.0" promptText="%OriginalSize" />
                         <Button fx:id="originalButton" disable="true" mnemonicParsing="false" onAction="#setOriginalSize" text="%OriginalSize" />
                         <Button mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                     </children>

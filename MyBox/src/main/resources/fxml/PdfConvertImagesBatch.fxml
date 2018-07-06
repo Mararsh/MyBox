@@ -130,7 +130,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </TitledPane>
                     </children>
                 </VBox>
-                <fx:include fx:id="operationBar" source="PdfOperationBatch.fxml" />
+                <fx:include fx:id="operationBar" source="OperationBatch.fxml" />
             </children>
         </VBox>
     </center>

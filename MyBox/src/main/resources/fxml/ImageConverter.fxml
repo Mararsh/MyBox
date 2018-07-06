@@ -105,30 +105,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <VBox>
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%FilesPath">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="targetPathInput" prefHeight="30.0" prefWidth="682.0" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" prefHeight="30.0" text="%Select..." />
-                                          <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTargetPath" prefHeight="30.0" text="%Open" />
-                                            </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" />
-                                            </VBox.margin>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FileNamePrefix" />
-                                                <TextField fx:id="targetPrefixInput" HBox.hgrow="ALWAYS" />
-                                            </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
-                                            </VBox.margin>
-                                        </HBox>
+                                        <fx:include fx:id="targetSelection" source="TargetPrefixSelection.fxml" />
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%FileName">
@@ -158,22 +135,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </TitledPane>
                     </children>
                 </VBox>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
-                    <children>
-                        <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startProcess" prefHeight="30.0" text="%Start" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin>
-                </HBox>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
-                    <children>
-                        <TextField id="PdfStatus" fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" prefHeight="14.0" prefWidth="1061.0" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                    </children>
-                    <VBox.margin>
-                        <Insets top="5.0" />
-                    </VBox.margin>
-                </HBox>
+                <fx:include fx:id="operationBar" source="Operation.fxml" />
             </children>
         </VBox>
     </center>
