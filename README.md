@@ -6,6 +6,7 @@
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.0-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.0/MyBox-2.0-exe.zip) 
+
 在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.0-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.0/MyBox-2.0-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
