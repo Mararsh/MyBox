@@ -8,9 +8,15 @@ package mara.mybox.tools;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
+import mara.mybox.objects.FileSynchronizeAttributes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -127,13 +133,190 @@ public class FileTools {
         }
         return t + " KB";
     }
-//            double size = (double) info.getFileSize();
-//            if (info.getFileSize() > 1000 * 1000) {
-//                FileSize.setText(ValueTools.roundDouble(size / (1000 * 1000)) + "GB");
-//            } else if (info.getFileSize() > 1000) {
-//                FileSize.setText(ValueTools.roundDouble(size / 1000) + "MB");
-//            } else {
-//                FileSize.setText(size + "KB");
-//            }
+
+    public static String showFileSize2(long size) {
+        double kb = size * 1.0f / 1024;
+        if (kb < 1024) {
+            return ValueTools.roundDouble3(kb) + " KB";
+        } else {
+            double mb = size * 1.0f / (1024 * 1024);
+            if (mb < 1024) {
+                return ValueTools.roundDouble3(mb) + " MB";
+            } else {
+                double gb = size * 1.0f / (1024 * 1024 * 1024);
+                return ValueTools.roundDouble3(gb) + " GB";
+            }
+        }
+    }
+
+    public static class FileSortType {
+
+        public static final int FileName = 0;
+        public static final int ModifyTime = 1;
+        public static final int CreateTime = 2;
+        public static final int Size = 3;
+
+    }
+
+    public static void sortFiles(List<File> files, int sortTpye) {
+        switch (sortTpye) {
+            case FileSortType.FileName:
+                Collections.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return f1.getAbsolutePath().compareTo(f1.getAbsolutePath());
+                    }
+                });
+                break;
+
+            case FileSortType.ModifyTime:
+                Collections.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        long t1 = f1.lastModified();
+                        long t2 = f2.lastModified();
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+            case FileSortType.CreateTime:
+                Collections.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
+                        long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+            case FileSortType.Size:
+                Collections.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        long t1 = f1.length();
+                        long t2 = f2.length();
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+        }
+    }
+
+    public static boolean isSupportedImage(File file) {
+        if (file == null || !file.isFile()) {
+            return false;
+        }
+        String suffix = getFileSuffix(file.getName()).toLowerCase();
+        return CommonValues.SupportedImages.contains(suffix);
+    }
+
+    public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath, File targetPath) {
+        FileSynchronizeAttributes attr = new FileSynchronizeAttributes();
+        copyWholeDirectory(sourcePath, targetPath, attr);
+        return attr;
+    }
+
+    public static boolean copyWholeDirectory(File sourcePath, File targetPath, FileSynchronizeAttributes attr) {
+        try {
+            if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
+                return false;
+            }
+            if (attr == null) {
+                attr = new FileSynchronizeAttributes();
+            }
+            if (targetPath.exists()) {
+                if (!deleteDir(targetPath)) {
+                    return false;
+                }
+            }
+            targetPath.mkdir();
+            File[] files = sourcePath.listFiles();
+            for (File file : files) {
+                File targetFile = new File(targetPath + File.separator + file.getName());
+                if (file.isFile()) {
+                    if (copyFile(file, targetFile, attr)) {
+                        attr.setCopiedFilesNumber(attr.getCopiedFilesNumber() + 1);
+                    } else if (!attr.isContinueWhenError()) {
+                        return false;
+                    }
+                } else {
+                    if (copyWholeDirectory(file, targetFile, attr)) {
+                        attr.setCopiedDirectoriesNumber(attr.getCopiedDirectoriesNumber() + 1);
+                    } else if (!attr.isContinueWhenError()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean copyFile(File sourceFile, File targetFile, FileSynchronizeAttributes attr) {
+        try {
+            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+                return false;
+            }
+            if (attr == null) {
+                attr = new FileSynchronizeAttributes();
+            }
+            if (!targetFile.exists()) {
+                if (attr.isCopyAttrinutes()) {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                            StandardCopyOption.COPY_ATTRIBUTES);
+                } else {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()));
+                }
+            } else if (!attr.isCanReplace() || targetFile.isDirectory()) {
+                return false;
+            } else if (attr.isCopyAttrinutes()) {
+                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                        StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+            } else {
+                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                boolean success = deleteDir(file);
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
 
 }

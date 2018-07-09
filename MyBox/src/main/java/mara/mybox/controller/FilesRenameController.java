@@ -4,7 +4,6 @@ import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
@@ -27,6 +26,7 @@ import mara.mybox.objects.FileInformation;
 
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FileTools.FileSortType;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -110,62 +110,17 @@ public class FilesRenameController extends BaseController {
     protected void sortFiles(List<File> files) {
         RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
         if (getMessage("OriginalFileName").equals(sort.getText())) {
-            Collections.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    return f1.getAbsolutePath().compareTo(f1.getAbsolutePath());
-                }
-            });
+            FileTools.sortFiles(files, FileSortType.FileName);
         } else if (getMessage("CreateTime").equals(sort.getText())) {
-            Collections.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    long t1 = FileTools.getFileCreateTime(f1.getAbsolutePath());
-                    long t2 = FileTools.getFileCreateTime(f2.getAbsolutePath());
-                    if (t1 == t2) {
-                        return 0;
-                    }
-                    if (t1 > t2) {
-                        return 1;
-                    }
-                    return -1;
-                }
-            });
+            FileTools.sortFiles(files, FileSortType.CreateTime);
         } else if (getMessage("ModifyTime").equals(sort.getText())) {
-            Collections.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    long t1 = f1.lastModified();
-                    long t2 = f2.lastModified();
-                    if (t1 == t2) {
-                        return 0;
-                    }
-                    if (t1 > t2) {
-                        return 1;
-                    }
-                    return -1;
-                }
-            });
+            FileTools.sortFiles(files, FileSortType.ModifyTime);
         } else if (getMessage("Size").equals(sort.getText())) {
-            Collections.sort(files, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    long t1 = f1.length();
-                    long t2 = f2.length();
-                    if (t1 == t2) {
-                        return 0;
-                    }
-                    if (t1 > t2) {
-                        return 1;
-                    }
-                    return -1;
-                }
-            });
+            FileTools.sortFiles(files, FileSortType.Size);
         }
         if (descentCheck.isSelected()) {
             Collections.reverse(files);
         }
-
     }
 
     @FXML
@@ -326,6 +281,9 @@ public class FilesRenameController extends BaseController {
                     if (null != newStatus) {
                         switch (newStatus) {
                             case "Started":
+                                operationBarController.statusLabel.setText(getMessage("Handling...") + " "
+                                        + getMessage("StartTime")
+                                        + ": " + DateTools.datetimeToString(startTime));
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -402,7 +360,10 @@ public class FilesRenameController extends BaseController {
             return;
         }
         long cost = (new Date().getTime() - startTime.getTime()) / 1000;
-        double avg = ValueTools.roundDouble3((double) cost / currentTotalHandled);
+        double avg = 0;
+        if (currentTotalHandled != 0) {
+            avg = ValueTools.roundDouble3((double) cost / currentTotalHandled);
+        }
         String s = getMessage(currentStatus) + ". "
                 + getMessage("HandledThisTime") + ": " + currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "

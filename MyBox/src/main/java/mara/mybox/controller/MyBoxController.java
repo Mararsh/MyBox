@@ -123,9 +123,8 @@ public class MyBoxController extends BaseController {
             }
         });
         imageMenu = new ContextMenu();
-        imageMenu.getItems().addAll(ImageManufacture, new SeparatorMenuItem(),
+        imageMenu.getItems().addAll(ImageManufacture, imagesViewer, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                imageViewer, imagesViewer, new SeparatorMenuItem(),
                 pixelsCalculator);
 
         MenuItem filesRename = new MenuItem(AppVaribles.getMessage("FilesRename"));
@@ -142,8 +141,15 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
             }
         });
+        MenuItem dirSynchronize = new MenuItem(AppVaribles.getMessage("DirectorySynchronize"));
+        dirSynchronize.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.DirectorySynchronizeFxml, AppVaribles.getMessage("DirectorySynchronize"));
+            }
+        });
         fileMenu = new ContextMenu();
-        fileMenu.getItems().addAll(filesRename, dirsRename);
+        fileMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(), dirSynchronize);
     }
 
     @FXML

@@ -149,15 +149,17 @@ public class ImageConverterController extends ImageBaseController {
                 private void handleCurrentFile() {
                     try {
                         bufferImage = ImageIO.read(currentParameters.sourceFile);
-                        currentParameters.finalTargetName = makeFilename();
-                        if (currentParameters.finalTargetName == null) {
-                            return;
-                        }
                         int w = attributes.getTargetWidth();
                         int h = attributes.getTargetHeight();
-                        if (currentParameters.isBatch) {
+                        if (w <= 0 && currentParameters.isBatch) {
                             w = bufferImage.getWidth();
+                        }
+                        if (h <= 0 && currentParameters.isBatch) {
                             h = bufferImage.getHeight();
+                        }
+                        currentParameters.finalTargetName = makeFilename(w, h);
+                        if (currentParameters.finalTargetName == null) {
+                            return;
                         }
                         BufferedImage newImage = ImageConverter.resizeImage(bufferImage, w, h);
                         int color = bufferImage.getType();
@@ -209,7 +211,7 @@ public class ImageConverterController extends ImageBaseController {
         }
     }
 
-    protected String makeFilename() {
+    protected String makeFilename(int w, int h) {
         try {
             String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix;
             if (appendColor.isSelected()) {
@@ -238,7 +240,7 @@ public class ImageConverterController extends ImageBaseController {
                 }
             }
             if (appendSize.isSelected()) {
-                fname += "_" + attributes.getTargetWidth() + "x" + attributes.getTargetHeight();
+                fname += "_" + w + "x" + h;
             }
             fname += "." + attributes.getImageFormat();
             return fname;

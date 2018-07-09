@@ -148,6 +148,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openDirectorySynchronize(ActionEvent event) {
+        reloadStage(CommonValues.DirectorySynchronizeFxml, AppVaribles.getMessage("DirectorySynchronize"));
+    }
+
+    @FXML
     private void showImageHelp(ActionEvent event) {
         try {
             File help = FxmlTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");

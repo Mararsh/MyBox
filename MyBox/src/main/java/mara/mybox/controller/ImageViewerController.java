@@ -43,7 +43,9 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     protected HBox toolBar;
     @FXML
-    protected Button iButton, mButton, oButton, wButton, inButton, outButton, lButton, rButton, tButton, bButton;
+    protected Button iButton, mButton, oButton, wButton, inButton, outButton, lButton, rButton;
+    @FXML
+    protected Button tButton, sButton, mrButton, mlButton, upButton, downButton;
 
     @Override
     protected void initializeNext2() {
@@ -151,6 +153,26 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
+    public void moveRight() {
+        FxmlTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
+    }
+
+    @FXML
+    public void moveLeft() {
+        FxmlTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
+    }
+
+    @FXML
+    public void moveUp() {
+        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
+    }
+
+    @FXML
+    public void moveDown() {
+        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
+    }
+
+    @FXML
     public void rotateRight() {
         currentAngle = (currentAngle + rotateAngle) % 360;
         imageView.setRotate(currentAngle);
@@ -169,7 +191,7 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void back() {
+    public void straighten() {
         currentAngle = 0;
         imageView.setRotate(currentAngle);
     }
@@ -187,7 +209,13 @@ public class ImageViewerController extends ImageBaseController {
             FxmlTools.quickTooltip(lButton, new Tooltip(AppVaribles.getMessage("RotateLeft")));
             FxmlTools.quickTooltip(rButton, new Tooltip(AppVaribles.getMessage("RotateRight")));
             FxmlTools.quickTooltip(tButton, new Tooltip(AppVaribles.getMessage("TurnOver")));
-            FxmlTools.quickTooltip(bButton, new Tooltip(AppVaribles.getMessage("Back")));
+            FxmlTools.quickTooltip(sButton, new Tooltip(AppVaribles.getMessage("Straighten")));
+        }
+        if (mrButton != null) {
+            FxmlTools.quickTooltip(mrButton, new Tooltip(AppVaribles.getMessage("MoveRight")));
+            FxmlTools.quickTooltip(mlButton, new Tooltip(AppVaribles.getMessage("MoveLeft")));
+            FxmlTools.quickTooltip(upButton, new Tooltip(AppVaribles.getMessage("MoveUp")));
+            FxmlTools.quickTooltip(downButton, new Tooltip(AppVaribles.getMessage("MoveDown")));
         }
     }
 
@@ -204,7 +232,13 @@ public class ImageViewerController extends ImageBaseController {
             lButton.setTooltip(new Tooltip(AppVaribles.getMessage("RotateRight")));
             rButton.setTooltip(new Tooltip(AppVaribles.getMessage("RotateRight")));
             tButton.setTooltip(new Tooltip(AppVaribles.getMessage("TurnOver")));
-            bButton.setTooltip(new Tooltip(AppVaribles.getMessage("Back")));
+            sButton.setTooltip(new Tooltip(AppVaribles.getMessage("Straighten")));
+        }
+        if (mrButton != null) {
+            mrButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveRight")));
+            mlButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveLeft")));
+            upButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveUp")));
+            downButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveDown")));
         }
     }
 

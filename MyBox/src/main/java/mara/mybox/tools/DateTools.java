@@ -1,6 +1,10 @@
 package mara.mybox.tools;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.TimeZone;
 import mara.mybox.objects.CommonValues;
@@ -29,6 +33,28 @@ public class DateTools {
         formatter.setTimeZone(theZone);
         String dateString = formatter.format(theDate);
         return dateString;
+    }
+
+    public static Date localDate2Date(LocalDate localDate) {
+        try {
+            ZoneId zoneId = ZoneId.systemDefault();
+            ZonedDateTime zdt = localDate.atStartOfDay(zoneId);
+            Date date = Date.from(zdt.toInstant());
+            return date;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static LocalDate date2LocalDate(Date date) {
+        try {
+            Instant instant = date.toInstant();
+            ZoneId zoneId = ZoneId.systemDefault();
+            LocalDate localDate = instant.atZone(zoneId).toLocalDate();
+            return localDate;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

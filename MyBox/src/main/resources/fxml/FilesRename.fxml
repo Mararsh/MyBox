@@ -87,25 +87,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <CheckBox fx:id="accumCheck" mnemonicParsing="false" selected="true" text="%AppendAccumulatingNumber">
                                                     <HBox.margin>
-                                                        <Insets left="80.0" />
+                                                        <Insets left="20.0" />
                                                     </HBox.margin>
                                                 </CheckBox>
-                                                <Label text="%AccumulatingNumberFrom">
+                                                <Label text="%From">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="60.0" text="0" />
+                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="40.0" text="0" />
                                                 <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero" />
                                                 <Label text="%Digit" />
-                                                <TextField fx:id="digitInput" prefHeight="30.0" prefWidth="60.0" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FileNameSuffix" />
-                                                <CheckBox fx:id="suffixCheck" mnemonicParsing="false" text="%ModifyAs" />
-                                                <TextField fx:id="suffixInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="digitInput" prefHeight="30.0" prefWidth="40.0" />
+                                    <Label text="%AccumDigitComments" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -114,9 +108,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </VBox.margin>
                                             <children>
                                                 <Label text="%Sort">
-                                                    <padding>
-                                                        <Insets right="40.0" />
-                                                    </padding>
+                                       <HBox.margin>
+                                          <Insets left="60.0" />
+                                       </HBox.margin>
                                                 </Label>
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%AddedSequence">
                                                     <toggleGroup>
@@ -132,6 +126,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets left="20.0" />
                                                     </HBox.margin>
                                                 </CheckBox>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%FileNameSuffix" />
+                                                <CheckBox fx:id="suffixCheck" mnemonicParsing="false" text="%ModifyAs" />
+                                                <TextField fx:id="suffixInput" prefHeight="30.0" prefWidth="80.0" />
                                             </children>
                                         </HBox>
                                     </children>

@@ -51,49 +51,166 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" BorderPane.alignment="CENTER">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar HBox.hgrow="NEVER">
-                            <items>
-                                <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="fileBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" onAction="#save" text="%Save" />
-                                <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
-                                <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
-                                <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
-                            </items>
-                        </ToolBar>
+                        <TabPane maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                            <tabs>
+                                <Tab fx:id="fileTab" text="%File">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <ToolBar fx:id="fileBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" onAction="#save" text="%Save" />
+                                                        <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
+                                                        <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
+                                                        <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                                                        <CheckBox fx:id="openCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenAfterSaveAs" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar fx:id="navBar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="44.0" prefWidth="557.0" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%Last" />
+                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%Next" />
+                                                        <Label text="%Sort">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="sortGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
+                                                        <Label prefWidth="40.0" text=" " />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="zoomTab" text="%View">
+                                    <content>
+                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" text="%OriginalSize" />
+                                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" text="%WindowSize" />
+                                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%MoveRight" />
+                                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%MoveLeft" />
+                                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%MoveUp" />
+                                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%MoveDown" />
+                                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                                                <Button mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                                                <Label fx:id="zoomValue" text="10%">
+                                                    <padding>
+                                                        <Insets left="20.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="zoomSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="10.0" />
+                                                <Label text="%ZoomStep" />
+                                                <Label fx:id="rotateValue" text="90">
+                                                    <padding>
+                                                        <Insets left="20.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="rotateSlider" blockIncrement="5.0" max="355.0" min="5.0" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="90.0" />
+                                                <Label text="%RotateAngle" />
+                                            </items>
+                                        </ToolBar>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="hueTab" text="%Hue">
+                                    <content>
+                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recovery" />
+                                                <Button mnemonicParsing="false" onAction="#increaseHue" text="%Increase" />
+                                                <Button mnemonicParsing="false" onAction="#decreaseHue" text="%Decrease" />
+                                                <Label fx:id="hueValue" text="5">
+                                                    <padding>
+                                                        <Insets left="40.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="hueSlider" blockIncrement="5.0" max="359.0" min="1.0" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="5.0" />
+                                                <Label text="%AdjustmentStep" />
+                                            </items>
+                                        </ToolBar>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="saturateTab" text="%Saturate">
+                                    <content>
+                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recovery" />
+                                                <Button mnemonicParsing="false" onAction="#increaseSaturate" text="%Increase" />
+                                                <Button mnemonicParsing="false" onAction="#decreaseSaturate" text="%Decrease" />
+                                                <Label fx:id="saturateValue" text="5%">
+                                                    <padding>
+                                                        <Insets left="40.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="saturateSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="5.0" />
+                                                <Label text="%AdjustmentStep" />
+                                            </items>
+                                        </ToolBar>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="brightnessTab" text="%Brightness">
+                                    <content>
+                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recovery" />
+                                                <Button mnemonicParsing="false" onAction="#increaseBrightness" text="%Increase" />
+                                                <Button mnemonicParsing="false" onAction="#decreaseBrightness" text="%Decrease" />
+                                                <Label fx:id="brightnessValue" text="5%">
+                                                    <padding>
+                                                        <Insets left="40.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="brightnessSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="5.0" />
+                                                <Label text="%AdjustmentStep" />
+                                            </items>
+                                        </ToolBar>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="filtersTab" text="%Filters">
+                                    <content>
+                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                            <items>
+                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recovery" />
+                                                <Button mnemonicParsing="false" onAction="#setInvert" text="%InvertColor" />
+                                                <Button mnemonicParsing="false" onAction="#setGray" text="%Gray" />
+                                                <Button mnemonicParsing="false" onAction="#setBinary" text="%BlackOrWhite" />
+                                                <Label fx:id="binaryValue" text="50%">
+                                                    <padding>
+                                                        <Insets left="40.0" />
+                                                    </padding>
+                                                </Label>
+                                                <Slider fx:id="binarySlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="50.0" />
+                                                <Label text="%BinaryThreshold" />
+                                                <Button mnemonicParsing="false" onAction="#calculateThreshold" text="%CalculateThreshold" />
+                                            </items>
+                                        </ToolBar>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar fx:id="typeBar" disable="true" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button fx:id="zoomButton" mnemonicParsing="false" onAction="#opZoom" text="%Zoom" />
-                                <Button fx:id="rorateButton" mnemonicParsing="false" onAction="#opRotate" text="%Rotate" />
-                                <Button fx:id="hueButton" mnemonicParsing="false" onAction="#opHue" text="%Hue" />
-                                <Button fx:id="saturateButton" mnemonicParsing="false" onAction="#opSaturate" text="%Saturate" />
-                                <Button fx:id="brightnessButton" mnemonicParsing="false" onAction="#opBrighterness" text="%Brightness" />
-                                <Button fx:id="filtersButton" mnemonicParsing="false" onAction="#opFilters" text="%Filters" />
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button maxWidth="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="0.0" text="B" visible="false" />
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <content>
                         <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">
                             <cursor>

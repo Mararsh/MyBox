@@ -8,37 +8,42 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerIController">
-   <children>
-      <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-         <children>
-            <ToolBar maxWidth="1.7976931348623157E308">
-              <items>
-                <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" prefHeight="35.0" prefWidth="35.0" text="i" />
-                  <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="35.0" prefWidth="35.0" text="m" />
-              </items>
-            </ToolBar>
-            <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-              <items>
-                <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="35.0" prefWidth="35.0" text="o" />
-                  <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" prefHeight="35.0" prefWidth="35.0" text="w" />
-                  <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="35.0" text="+" />
-                  <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="35.0" text="-" />
-                  <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" prefHeight="35.0" prefWidth="35.0" text="r" />
-                  <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" prefHeight="35.0" prefWidth="35.0" text="l" />
-                  <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="t" />
-                  <Button fx:id="bButton" mnemonicParsing="false" onAction="#back" text="b" />
-              </items>
-            </ToolBar>
-         </children>
-      </HBox>
-      <Label fx:id="imageFile" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER" />
-      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" VBox.vgrow="ALWAYS">
-         <content>
-            <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor></ImageView>
-         </content>
-      </ScrollPane>
-   </children>
+    <children>
+        <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+            <children>
+                <ToolBar maxWidth="1.7976931348623157E308">
+                    <items>
+                        <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" prefHeight="35.0" prefWidth="35.0" text="i" />
+                        <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="35.0" prefWidth="35.0" text="m" />
+                    </items>
+                </ToolBar>
+                <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                    <items>
+                        <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="35.0" prefWidth="35.0" text="o" />
+                        <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" prefHeight="35.0" prefWidth="35.0" text="w" />
+                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="35.0" text="+" />
+                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="35.0" text="-" />
+                        <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" prefHeight="35.0" prefWidth="35.0" text="&gt;" />
+                        <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" prefHeight="35.0" prefWidth="35.0" text="&lt;" />
+                        <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" prefHeight="35.0" prefWidth="35.0" text="^" />
+                        <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" prefHeight="35.0" prefWidth="35.0" text="v" />
+                        <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" prefHeight="35.0" prefWidth="35.0" text="r" />
+                        <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" prefHeight="35.0" prefWidth="35.0" text="l" />
+                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="t" />
+                        <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="s" />
+                    </items>
+                </ToolBar>
+            </children>
+        </HBox>
+        <Label fx:id="imageFile" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER" />
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" VBox.vgrow="ALWAYS">
+            <content>
+                <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </ImageView>
+            </content>
+        </ScrollPane>
+    </children>
 </VBox>

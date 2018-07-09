@@ -2,6 +2,8 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +35,17 @@ public class ImageGrayTools {
             logger.error(e.toString());
             return image;
         }
+    }
+
+    public static int calculateThreshold(File file) {
+        try {
+            BufferedImage bufferImage = ImageIO.read(file);
+            return calculateThresholdOnGary(color2Gray(bufferImage));
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return -1;
+        }
+
     }
 
     //  OTSU algorithm: ICV=PA∗(MA−M)2+PB∗(MB−M)2

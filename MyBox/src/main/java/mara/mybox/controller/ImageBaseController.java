@@ -351,7 +351,10 @@ public abstract class ImageBaseController extends BaseController {
             return;
         }
         long cost = (new Date().getTime() - currentParameters.startTime.getTime()) / 1000;
-        double avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
+        double avg = 0;
+        if (currentParameters.currentTotalHandled != 0) {
+            avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
+        }
         String s = getMessage(currentParameters.status) + ". "
                 + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "

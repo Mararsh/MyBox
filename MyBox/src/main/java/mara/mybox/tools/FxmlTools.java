@@ -167,7 +167,43 @@ public class FxmlTools {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 final File file = new File(newValue);
-                if (!file.exists()) {
+                if (!file.exists() || !file.isFile()) {
+                    input.setStyle(badStyle);
+                    return;
+                }
+                input.setStyle(null);
+            }
+        });
+    }
+
+    public static void setPathValidation(final TextField input) {
+        if (input == null) {
+            return;
+        }
+        input.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                final File file = new File(newValue);
+                if (!file.isDirectory()) {
+                    input.setStyle(badStyle);
+                    return;
+                }
+                input.setStyle(null);
+            }
+        });
+    }
+
+    public static void setPathExistedValidation(final TextField input) {
+        if (input == null) {
+            return;
+        }
+        input.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                final File file = new File(newValue);
+                if (!file.exists() || !file.isDirectory()) {
                     input.setStyle(badStyle);
                     return;
                 }

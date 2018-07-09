@@ -16,8 +16,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.0;
-    public static final String AppVersionDate = "2018-07-06";
+    public static final double AppVersion = 2.1;
+    public static final String AppVersionDate = "2018-07-07";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -46,6 +46,7 @@ public class CommonValues {
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
+    public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -80,6 +81,21 @@ public class CommonValues {
             add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
             add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
+        }
+    };
+
+    public static List<String> SupportedImages = new ArrayList() {
+        {
+            add("png");
+            add("jpg");
+            add("jpeg");
+            add("bmp");
+            add("tif");
+            add("tiff");
+            add("gif");
+            add("pcx");
+            add("pnm");
+            add("wbmp");
         }
     };
 

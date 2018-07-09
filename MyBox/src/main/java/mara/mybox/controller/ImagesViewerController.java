@@ -125,6 +125,50 @@ public class ImagesViewerController extends ImageViewerController {
 
     @FXML
     @Override
+    public void moveRight() {
+        if (imageControllerList == null) {
+            return;
+        }
+        for (ImageViewerIController c : imageControllerList) {
+            c.moveRight();
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveLeft() {
+        if (imageControllerList == null) {
+            return;
+        }
+        for (ImageViewerIController c : imageControllerList) {
+            c.moveLeft();
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveUp() {
+        if (imageControllerList == null) {
+            return;
+        }
+        for (ImageViewerIController c : imageControllerList) {
+            c.moveUp();
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveDown() {
+        if (imageControllerList == null) {
+            return;
+        }
+        for (ImageViewerIController c : imageControllerList) {
+            c.moveDown();
+        }
+    }
+
+    @FXML
+    @Override
     public void rotateLeft() {
         if (imageControllerList == null) {
             return;
@@ -161,12 +205,12 @@ public class ImagesViewerController extends ImageViewerController {
 
     @FXML
     @Override
-    public void back() {
+    public void straighten() {
         if (imageControllerList == null) {
             return;
         }
         for (ImageViewerIController c : imageControllerList) {
-            c.back();
+            c.straighten();
         }
 
     }
