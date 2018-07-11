@@ -99,6 +99,7 @@ public abstract class PdfBaseController extends BaseController {
         isPreview = false;
         makeActualParameters();
         currentParameters = actualParameters;
+        paused = false;
         doCurrentProcess();
     }
 
@@ -126,7 +127,7 @@ public abstract class PdfBaseController extends BaseController {
     }
 
     protected void makeActualParameters() {
-        if (actualParameters != null && "Paused".equals(actualParameters.status)) {
+        if (actualParameters != null && paused) {
             actualParameters.startPage = actualParameters.currentPage;
             actualParameters.acumStart = actualParameters.currentNameNumber + 1;
             return;
@@ -195,7 +196,7 @@ public abstract class PdfBaseController extends BaseController {
             if (targetSelectionController.subdirCheck != null && targetSelectionController.subdirCheck.isSelected()) {
                 File finalPath = new File(actualParameters.targetPath + "/" + actualParameters.targetPrefix + "/");
                 if (!finalPath.exists()) {
-                    finalPath.mkdir();
+                    finalPath.mkdirs();
                 }
                 actualParameters.targetPath += "/" + actualParameters.targetPrefix;
             }
@@ -261,6 +262,7 @@ public abstract class PdfBaseController extends BaseController {
 
     }
 
+    @Override
     protected void updateInterface(final String newStatus) {
         currentParameters.status = newStatus;
         Platform.runLater(new Runnable() {
@@ -272,40 +274,62 @@ public abstract class PdfBaseController extends BaseController {
                         operationBarController.fileProgressBar.setProgress(currentParameters.currentFileIndex / sourceFiles.size());
                         operationBarController.fileProgressValue.setText(currentParameters.currentFileIndex + " / " + sourceFiles.size());
                     }
-                    if (null != newStatus) {
-                        switch (newStatus) {
-                            case "StartFile":
-                                operationBarController.statusLabel.setText(currentParameters.sourceFile.getName() + " "
-                                        + getMessage("Handling...") + " "
-                                        + getMessage("StartTime")
-                                        + ": " + DateTools.datetimeToString(currentParameters.startTime));
-                                if (operationBarController.fileProgressBar != null) {
-                                    operationBarController.fileProgressBar.setProgress(currentParameters.currentFileIndex / sourceFiles.size());
-                                    operationBarController.fileProgressValue.setText(currentParameters.currentFileIndex + " / " + sourceFiles.size());
+
+                    switch (newStatus) {
+                        case "StartFile":
+                            operationBarController.statusLabel.setText(currentParameters.sourceFile.getName() + " "
+                                    + getMessage("Handling...") + " "
+                                    + getMessage("StartTime")
+                                    + ": " + DateTools.datetimeToString(currentParameters.startTime));
+                            if (operationBarController.fileProgressBar != null) {
+                                operationBarController.fileProgressBar.setProgress(currentParameters.currentFileIndex / sourceFiles.size());
+                                operationBarController.fileProgressValue.setText(currentParameters.currentFileIndex + " / " + sourceFiles.size());
+                            }
+                            break;
+
+                        case "Started":
+                            operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
+                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    cancelProcess(event);
                                 }
-                                break;
+                            });
+                            operationBarController.pauseButton.setVisible(true);
+                            operationBarController.pauseButton.setDisable(false);
+                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
+                            operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    pauseProcess(event);
+                                }
+                            });
+                            paraBox.setDisable(true);
+                            break;
 
-                            case "Started":
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        cancelProcess(event);
-                                    }
-                                });
-                                operationBarController.pauseButton.setVisible(true);
-                                operationBarController.pauseButton.setDisable(false);
-                                operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
-                                operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        pauseProcess(event);
-                                    }
-                                });
-                                paraBox.setDisable(true);
-                                break;
+                        case "CompleteFile":
+                            showCost();
+                            if (operationBarController.fileProgressBar != null) {
+                                operationBarController.fileProgressBar.setProgress(currentParameters.currentFileIndex / sourceFiles.size());
+                                operationBarController.fileProgressValue.setText(currentParameters.currentFileIndex + " / " + sourceFiles.size());
+                            }
+                            break;
 
-                            case "Paused":
+                        case "Done":
+                            if (isPreview) {
+                                if (finalTargetName == null
+                                        || !new File(finalTargetName).exists()) {
+                                    popInformation(AppVaribles.getMessage("NoDataNotSupported"));
+                                } else if (isTxt) {
+                                    File txtFile = new File(finalTargetName);
+                                    Desktop.getDesktop().browse(txtFile.toURI());
+                                } else {
+                                    showImageManufacture(finalTargetName);
+                                }
+                            }
+
+                        default:
+                            if (paused) {
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -323,31 +347,7 @@ public abstract class PdfBaseController extends BaseController {
                                     }
                                 });
                                 paraBox.setDisable(true);
-                                showCost();
-                                break;
-
-                            case "CompleteFile":
-                                showCost();
-                                if (operationBarController.fileProgressBar != null) {
-                                    operationBarController.fileProgressBar.setProgress(currentParameters.currentFileIndex / sourceFiles.size());
-                                    operationBarController.fileProgressValue.setText(currentParameters.currentFileIndex + " / " + sourceFiles.size());
-                                }
-                                break;
-
-                            case "Done":
-                                if (isPreview) {
-                                    if (finalTargetName == null
-                                            || !new File(finalTargetName).exists()) {
-                                        popInformation(AppVaribles.getMessage("NoDataNotSupported"));
-                                    } else if (isTxt) {
-                                        File txtFile = new File(finalTargetName);
-                                        Desktop.getDesktop().browse(txtFile.toURI());
-                                    } else {
-                                        showImageManufacture(finalTargetName);
-                                    }
-                                }
-
-                            default:
+                            } else {
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -359,9 +359,8 @@ public abstract class PdfBaseController extends BaseController {
                                 operationBarController.pauseButton.setDisable(true);
 //                                operationBarController.openTargetButton.setDisable(false);
                                 paraBox.setDisable(false);
-                                showCost();
-
-                        }
+                            }
+                            showCost();
                     }
 
                 } catch (Exception e) {
@@ -389,22 +388,6 @@ public abstract class PdfBaseController extends BaseController {
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(currentParameters.startTime) + ", "
                 + getMessage("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.statusLabel.setText(s);
-    }
-
-    @FXML
-    @Override
-    protected void pauseProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Paused");
-    }
-
-    protected void cancelProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Canceled");
     }
 
 }

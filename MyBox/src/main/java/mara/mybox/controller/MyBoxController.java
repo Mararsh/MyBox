@@ -148,8 +148,16 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.DirectorySynchronizeFxml, AppVaribles.getMessage("DirectorySynchronize"));
             }
         });
+        MenuItem filesArrangement = new MenuItem(AppVaribles.getMessage("FilesArrangement"));
+        filesArrangement.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.FilesArrangementFxml, AppVaribles.getMessage("FilesArrangement"));
+            }
+        });
         fileMenu = new ContextMenu();
-        fileMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(), dirSynchronize);
+        fileMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
+                dirSynchronize, filesArrangement);
     }
 
     @FXML

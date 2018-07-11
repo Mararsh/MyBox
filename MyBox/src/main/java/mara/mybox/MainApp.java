@@ -32,7 +32,7 @@ public class MainApp extends Application {
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
-                userPath.mkdir();
+                userPath.mkdirs();
             }
             File configFile = new File(CommonValues.UserConfigFile);
             if (!configFile.exists()) {

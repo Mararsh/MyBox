@@ -8,12 +8,12 @@
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
-可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.1-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.1/MyBox-2.1-exe.zip) 
+可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.2/MyBox-2.2-exe.zip) 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.1-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.1/MyBox-2.1-jar.zip) ，执行以下命令来启动程序：
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.2/MyBox-2.2-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
-当前是版本2.1，已实现的特点：
+当前是版本2.2，已实现的特点：
 1. 随时切换中英文界面 
 2. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项
 3. 将PDF文件中的图片提取出来保存为原格式。
@@ -27,9 +27,12 @@
 11. 像素计算器。
 12. 目录文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 13. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项
+14. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
 
 
 ## 开发日志
+
+2018-07-11 版本2.2  修正线程处理逻辑的漏洞。整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
 
 2018-07-09 版本2.1  完善图片处理的界面，支持导览。目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项
 
@@ -59,6 +62,14 @@
 ## 应用截图
 
 ![1](https://mararsh.github.io/MyBox/1.png)
+
+
+
+![22](https://mararsh.github.io/MyBox/22.jpg)
+
+
+
+![23](https://mararsh.github.io/MyBox/23.jpg)
 
 
 

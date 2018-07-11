@@ -250,7 +250,7 @@ public class FileTools {
                     return false;
                 }
             }
-            targetPath.mkdir();
+            targetPath.mkdirs();
             File[] files = sourcePath.listFiles();
             for (File file : files) {
                 File targetFile = new File(targetPath + File.separator + file.getName());

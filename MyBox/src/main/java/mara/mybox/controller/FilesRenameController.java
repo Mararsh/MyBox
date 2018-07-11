@@ -15,7 +15,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
@@ -38,14 +37,11 @@ import mara.mybox.tools.ValueTools;
 public class FilesRenameController extends BaseController {
 
     protected List<String> targetNames;
-    protected String currentStatus;
     protected Date startTime;
     protected int currentIndex, currentAccum, currentTotalHandled;
     protected int total, success, fail, digit;
     protected FilesTableController tableController;
 
-    @FXML
-    protected ScrollPane scrollPane;
     @FXML
     protected CheckBox originalCheck, stringCheck, accumCheck, suffixCheck, descentCheck;
     @FXML
@@ -132,9 +128,8 @@ public class FilesRenameController extends BaseController {
                 return;
             }
 
-            handleSourceFiles();
-
-            if (!"Paused".equals(currentStatus)) {
+            if (!paused) {
+                handleSourceFiles();
                 currentIndex = 0;
                 try {
                     currentAccum = Integer.valueOf(acumFromInput.getText());
@@ -144,6 +139,7 @@ public class FilesRenameController extends BaseController {
                 success = fail = 0;
             }
 
+            paused = false;
             startTime = new Date();
             currentTotalHandled = 0;
             updateInterface("Started");
@@ -237,22 +233,6 @@ public class FilesRenameController extends BaseController {
 
     @FXML
     @Override
-    protected void pauseProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Paused");
-    }
-
-    protected void cancelProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Canceled");
-    }
-
-    @FXML
-    @Override
     protected void openTarget(ActionEvent event) {
         try {
             sourceFilesInformation = tableController.getTableData();
@@ -270,6 +250,7 @@ public class FilesRenameController extends BaseController {
         }
     }
 
+    @Override
     protected void updateInterface(final String newStatus) {
         currentStatus = newStatus;
         Platform.runLater(new Runnable() {
@@ -278,32 +259,33 @@ public class FilesRenameController extends BaseController {
 
                 try {
                     tableController.filesTableView.refresh();
-                    if (null != newStatus) {
-                        switch (newStatus) {
-                            case "Started":
-                                operationBarController.statusLabel.setText(getMessage("Handling...") + " "
-                                        + getMessage("StartTime")
-                                        + ": " + DateTools.datetimeToString(startTime));
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        cancelProcess(event);
-                                    }
-                                });
-                                operationBarController.pauseButton.setVisible(true);
-                                operationBarController.pauseButton.setDisable(false);
-                                operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
-                                operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        pauseProcess(event);
-                                    }
-                                });
-                                paraBox.setDisable(true);
-                                break;
+                    switch (newStatus) {
+                        case "Started":
+                            operationBarController.statusLabel.setText(getMessage("Handling...") + " "
+                                    + getMessage("StartTime")
+                                    + ": " + DateTools.datetimeToString(startTime));
+                            operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
+                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    cancelProcess(event);
+                                }
+                            });
+                            operationBarController.pauseButton.setVisible(true);
+                            operationBarController.pauseButton.setDisable(false);
+                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
+                            operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    pauseProcess(event);
+                                }
+                            });
+                            paraBox.setDisable(true);
+                            break;
 
-                            case "Paused":
+                        case "Done":
+                        default:
+                            if (paused) {
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -321,11 +303,7 @@ public class FilesRenameController extends BaseController {
                                     }
                                 });
                                 paraBox.setDisable(true);
-                                showCost();
-                                break;
-
-                            case "Done":
-                            default:
+                            } else {
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
@@ -341,9 +319,9 @@ public class FilesRenameController extends BaseController {
                                 tableController.recoveryAllButton.setDisable(false);
                                 tableController.recoverySelectedButton.setDisable(false);
                                 paraBox.setDisable(false);
-                                showCost();
+                            }
+                            showCost();
 
-                        }
                     }
 
                 } catch (Exception e) {

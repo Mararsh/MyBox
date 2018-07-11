@@ -46,35 +46,36 @@ import mara.mybox.tools.ValueTools;
  */
 public class DirectorySynchronizeController extends BaseController {
 
-    private boolean isConditional;
-    protected String currentStatus, lastFileName;
+    protected boolean isConditional, startHandle;
+    protected String lastFileName;
     protected Date startTime;
     protected FileSynchronizeAttributes copyAttr;
     protected StringBuffer newLogs;
     protected int newlines, maxLines, totalLines, cacheLines = 200;
-    protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
+    protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strFailedDelete;
+    protected String strDeleteSuccessfully, strFileDeleteSuccessfully, strDirectoryDeleteSuccessfully;
     protected File sourcePath;
 
     @FXML
-    private VBox dirsBox, conditionsBox, condBox, logsBox;
+    protected VBox dirsBox, conditionsBox, condBox, logsBox;
     @FXML
-    private TextField sourcePathInput, maxLinesinput, notCopyInput;
+    protected TextField sourcePathInput, maxLinesinput, notCopyInput;
     @FXML
-    private ToggleGroup copyGroup;
+    protected ToggleGroup copyGroup;
     @FXML
-    private CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck;
+    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck;
     @FXML
-    private CheckBox copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck;
+    protected CheckBox copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck;
     @FXML
-    private DatePicker modifyAfterInput;
+    protected DatePicker modifyAfterInput;
     @FXML
-    private TextArea logsTextArea;
+    protected TextArea logsTextArea;
     @FXML
-    private Button clearButton;
+    protected Button clearButton;
 
     public DirectorySynchronizeController() {
-        targetPathKey = "FileTargetPath";
-        sourcePathKey = "FileSourcePath";
+        targetPathKey = "DirectorySynchronizeTargetPath";
+        sourcePathKey = "DirectorySynchronizeSourcePath";
 
         fileExtensionFilter = new ArrayList();
         fileExtensionFilter.add(new FileChooser.ExtensionFilter("*", "*.*"));
@@ -84,7 +85,38 @@ public class DirectorySynchronizeController extends BaseController {
     protected void initializeNext() {
         try {
 
-            FxmlTools.setPathExistedValidation(sourcePathInput);
+            sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    final File file = new File(newValue);
+                    if (!file.exists() || !file.isDirectory()) {
+                        sourcePathInput.setStyle(badStyle);
+                        return;
+                    }
+                    sourcePathInput.setStyle(null);
+                    AppVaribles.setConfigValue("LastPath", newValue);
+                    AppVaribles.setConfigValue(sourcePathKey, newValue);
+                }
+            });
+
+            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    final File file = new File(newValue);
+                    if (!file.isDirectory()) {
+                        targetPathInput.setStyle(badStyle);
+                        return;
+                    }
+                    targetPathInput.setStyle(null);
+                    AppVaribles.setConfigValue("LastPath", newValue);
+                    AppVaribles.setConfigValue(targetPathKey, newValue);
+                }
+            });
+
             FxmlTools.setNonnegativeValidation(maxLinesinput);
 
             checkIsConditional();
@@ -176,11 +208,10 @@ public class DirectorySynchronizeController extends BaseController {
         logsTextArea.setText("");
     }
 
-    private boolean initAttributes() {
+    protected boolean initAttributes() {
         try {
             sourcePath = new File(sourcePathInput.getText());
-
-            if (!"Paused".equals(currentStatus)) {
+            if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
                 copyAttr.setContinueWhenError(continueCheck.isSelected());
                 copyAttr.setCopyAttrinutes(copyAttrCheck.isSelected());
@@ -205,48 +236,59 @@ public class DirectorySynchronizeController extends BaseController {
                 }
                 copyAttr.setDeleteNotExisteds(deleteNonExistedCheck.isSelected());
 
+                if (!copyAttr.isCopyNew() && !copyAttr.isCopyExisted() && !copyAttr.isCopySubdir()) {
+                    popInformation(getMessage("NothingCopy"));
+                    return false;
+                }
+                // In case that the source path itself is in blacklist
+                if (copyAttr.isNotCopySome()) {
+                    List<String> keys = copyAttr.getNotCopyNames();
+                    String srcName = sourcePath.getName();
+                    for (String key : keys) {
+                        if (srcName.contains(key)) {
+                            popInformation(getMessage("NothingCopy"));
+                            return false;
+                        }
+                    }
+                }
+
                 logsTextArea.setText(AppVaribles.getMessage("SourcePath") + ": " + sourcePathInput.getText() + "\n");
                 logsTextArea.appendText(AppVaribles.getMessage("TargetPath") + ": " + targetPathInput.getText() + "\n");
                 newLogs = new StringBuffer();
                 newlines = 0;
                 totalLines = 0;
+
                 try {
                     maxLines = Integer.parseInt(maxLinesinput.getText());
                 } catch (Exception e) {
                     maxLines = 5000;
                 }
-                lastFileName = null;
-            }
 
-            if (!copyAttr.isCopyNew() && !copyAttr.isCopyExisted() && !copyAttr.isCopySubdir()) {
-                popInformation(getMessage("NothingCopy"));
-                return false;
-            }
-            // In case that the source path itself is in blacklist
-            if (copyAttr.isNotCopySome()) {
-                List<String> keys = copyAttr.getNotCopyNames();
-                String srcName = sourcePath.getName();
-                for (String key : keys) {
-                    if (srcName.contains(key)) {
-                        popInformation(getMessage("NothingCopy"));
-                        return false;
-                    }
+                strFailedCopy = AppVaribles.getMessage("FailedCopy") + ": ";
+                strCreatedSuccessfully = AppVaribles.getMessage("CreatedSuccessfully") + ": ";
+                strCopySuccessfully = AppVaribles.getMessage("CopySuccessfully") + ": ";
+                strDeleteSuccessfully = AppVaribles.getMessage("DeletedSuccessfully") + ": ";
+                strFailedDelete = AppVaribles.getMessage("FailedDelete") + ": ";
+                strFileDeleteSuccessfully = AppVaribles.getMessage("FileDeletedSuccessfully") + ": ";
+                strDirectoryDeleteSuccessfully = AppVaribles.getMessage("DirectoryDeletedSuccessfully") + ": ";
+
+                targetPath = new File(targetPathInput.getText());
+                if (!targetPath.exists()) {
+                    targetPath.mkdirs();
+                    updateLogs(strCreatedSuccessfully + targetPath.getAbsolutePath(), true);
                 }
+                targetPath.setWritable(true);
+                targetPath.setExecutable(true);
+
+                startHandle = true;
+                lastFileName = null;
+
+            } else {
+                startHandle = false;
+                updateLogs(getMessage("LastHanldedFile") + " " + lastFileName, true);
             }
 
-            strFailedCopy = AppVaribles.getMessage("FailedCopy") + ": ";
-            strCreatedSuccessfully = AppVaribles.getMessage("CreatedSuccessfully") + ": ";
-            strCopySuccessfully = AppVaribles.getMessage("CopySuccessfully") + ": ";
-            strDeleteSuccessfully = AppVaribles.getMessage("DeletedSuccessfully") + ": ";
-            strFailedDelete = AppVaribles.getMessage("FailedDelete") + ": ";
-
-            targetPath = new File(targetPathInput.getText());
-            if (!targetPath.exists()) {
-                targetPath.mkdir();
-                logsTextArea.appendText(strCreatedSuccessfully + targetPath.getAbsolutePath() + "\n");
-            }
-            targetPath.setWritable(true);
-            targetPath.setExecutable(true);
+            startTime = new Date();
 
             return true;
 
@@ -264,22 +306,26 @@ public class DirectorySynchronizeController extends BaseController {
                 return;
             }
 
-            startTime = new Date();
             updateInterface("Started");
             task = new Task<Void>() {
 
                 @Override
                 protected Void call() {
                     if (copyAttr.isConditionalCopy()) {
+                        paused = false;
                         conditionalCopy(sourcePath, targetPath);
                     } else {
-                        updateLogs(AppVaribles.getMessage("ClearingTarget"));
-                        if (!clearDir(targetPath, false)) {
-                            updateLogs(AppVaribles.getMessage("FailClearTarget"));
-                        } else {
-                            updateLogs(AppVaribles.getMessage("TargetCleared"));
-                            copyWholeDirectory(sourcePath, targetPath);
+                        if (!paused && targetPath.exists()) {
+                            updateLogs(AppVaribles.getMessage("ClearingTarget"), true);
+                            if (clearDir(targetPath, false)) {
+                                updateLogs(AppVaribles.getMessage("TargetCleared"), true);
+                            } else if (!copyAttr.isContinueWhenError()) {
+                                updateLogs(AppVaribles.getMessage("FailClearTarget"), true);
+                                return null;
+                            }
                         }
+                        paused = false;
+                        copyWholeDirectory(sourcePath, targetPath);
                     }
                     return null;
                 }
@@ -313,29 +359,18 @@ public class DirectorySynchronizeController extends BaseController {
 
     }
 
-    @FXML
     @Override
-    protected void pauseProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Paused");
-    }
-
-    protected void cancelProcess(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        updateInterface("Canceled");
-    }
-
     protected void updateInterface(final String newStatus) {
         currentStatus = newStatus;
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 try {
-                    updateLogs(AppVaribles.getMessage(newStatus));
+                    if (paused) {
+                        updateLogs(AppVaribles.getMessage("Paused"), true);
+                    } else {
+                        updateLogs(AppVaribles.getMessage(newStatus), true);
+                    }
                     switch (newStatus) {
                         case "Started":
                             operationBarController.statusLabel.setText(getMessage("Handling...") + " "
@@ -362,55 +397,50 @@ public class DirectorySynchronizeController extends BaseController {
                             conditionsBox.setDisable(true);
                             break;
 
-                        case "Paused":
-                            operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    cancelProcess(event);
-                                }
-                            });
-                            operationBarController.pauseButton.setVisible(true);
-                            operationBarController.pauseButton.setDisable(false);
-                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Continue"));
-                            operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    startProcess(event);
-                                }
-                            });
-                            showCost();
-                            dirsBox.setDisable(false);
-                            conditionsBox.setDisable(false);
-                            condBox.setDisable(false);
-                            break;
-
                         case "Done":
                         default:
-                            operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
-                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    startProcess(event);
-                                }
-                            });
-                            operationBarController.pauseButton.setVisible(false);
-                            operationBarController.pauseButton.setDisable(true);
+                            if (paused) {
+                                operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
+                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent event) {
+                                        cancelProcess(event);
+                                    }
+                                });
+                                operationBarController.pauseButton.setVisible(true);
+                                operationBarController.pauseButton.setDisable(false);
+                                operationBarController.pauseButton.setText(AppVaribles.getMessage("Continue"));
+                                operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent event) {
+                                        startProcess(event);
+                                    }
+                                });
+                            } else {
+                                operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
+                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent event) {
+                                        startProcess(event);
+                                    }
+                                });
+                                operationBarController.pauseButton.setVisible(false);
+                                operationBarController.pauseButton.setDisable(true);
+                                operationBarController.progressBar.setProgress(1);
+                                dirsBox.setDisable(false);
+                                conditionsBox.setDisable(false);
+                            }
                             showCost();
-                            operationBarController.progressBar.setProgress(1);
-                            dirsBox.setDisable(false);
-                            conditionsBox.setDisable(false);
-                            logsTextArea.appendText(newLogs.toString());
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   ");
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   ");
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize2(copyAttr.getTotalSize()) + "\n");
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   ");
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   ");
-                            logsTextArea.appendText(AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize2(copyAttr.getCopiedSize()) + "\n");
+                            updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                                    + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                                    + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize2(copyAttr.getTotalSize()), false, true);
+                            updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                                    + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                                    + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize2(copyAttr.getCopiedSize()), false, true);
                             if (copyAttr.isConditionalCopy() && copyAttr.isDeleteNotExisteds()) {
-                                logsTextArea.appendText(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   ");
-                                logsTextArea.appendText(AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   ");
-                                logsTextArea.appendText(AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize2(copyAttr.getDeletedSize()) + "\n");
+                                updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                                        + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                                        + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize2(copyAttr.getDeletedSize()), false, true);
                             }
 
                     }
@@ -441,26 +471,41 @@ public class DirectorySynchronizeController extends BaseController {
         operationBarController.statusLabel.setText(s);
     }
 
-    private void updateLogs(final String line) {
-        newLogs.append(DateTools.datetimeToString(new Date())).append("  ").append(line).append("\n");
-        long past = new Date().getTime() - startTime.getTime();
-        if (newlines++ > cacheLines || past > 5000) {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    logsTextArea.appendText(newLogs.toString());
-                    totalLines += newlines;
-                    if (totalLines > maxLines + cacheLines) {
-                        logsTextArea.deleteText(0, newLogs.length());
+    protected void updateLogs(final String line) {
+        updateLogs(line, true, false);
+    }
+
+    protected void updateLogs(final String line, boolean immediate) {
+        updateLogs(line, true, false);
+    }
+
+    protected void updateLogs(final String line, boolean showTime, boolean immediate) {
+        try {
+            if (showTime) {
+                newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+            }
+            newLogs.append(line).append("\n");
+            long past = new Date().getTime() - startTime.getTime();
+            if (immediate || newlines++ > cacheLines || past > 5000) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        logsTextArea.appendText(newLogs.toString());
+                        totalLines += newlines;
+                        if (totalLines > maxLines + cacheLines) {
+                            logsTextArea.deleteText(0, newLogs.length());
+                        }
+                        newLogs = new StringBuffer();
+                        newlines = 0;
                     }
-                    newLogs = new StringBuffer();
-                    newlines = 0;
-                }
-            });
+                });
+            }
+        } catch (Exception e) {
+
         }
     }
 
-    private void checkIsConditional() {
+    protected void checkIsConditional() {
         RadioButton sort = (RadioButton) copyGroup.getSelectedToggle();
         if (!getMessage("CopyConditionally").equals(sort.getText())) {
             condBox.setDisable(true);
@@ -471,7 +516,7 @@ public class DirectorySynchronizeController extends BaseController {
         }
     }
 
-    private boolean conditionalCopy(File sourcePath, File targetPath) {
+    protected boolean conditionalCopy(File sourcePath, File targetPath) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
                 return false;
@@ -481,15 +526,29 @@ public class DirectorySynchronizeController extends BaseController {
                 return false;
             }
             File[] files = sourcePath.listFiles();
+            String srcFileName;
+            long len;
             for (File srcFile : files) {
                 if (task.isCancelled()) {
                     return false;
                 }
-                copyAttr.setTotalSize(copyAttr.getTotalSize() + srcFile.length());
-                if (srcFile.isFile()) {
-                    copyAttr.setTotalFilesNumber(copyAttr.getTotalFilesNumber() + 1);
+                srcFileName = srcFile.getAbsolutePath();
+                len = srcFile.length();
+                if (!startHandle) {
+                    if (lastFileName.equals(srcFileName)) {
+                        startHandle = true;
+                        updateLogs(getMessage("ReachFile") + " " + lastFileName, true);
+                    }
+                    if (srcFile.isFile()) {
+                        continue;
+                    }
                 } else {
-                    copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
+                    if (srcFile.isFile()) {
+                        copyAttr.setTotalFilesNumber(copyAttr.getTotalFilesNumber() + 1);
+                    } else {
+                        copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
+                    }
+                    copyAttr.setTotalSize(copyAttr.getTotalSize() + srcFile.length());
                 }
                 if (srcFile.isHidden() && !copyAttr.isCopyHidden()) {
                     continue;
@@ -532,23 +591,30 @@ public class DirectorySynchronizeController extends BaseController {
                     }
                     if (copyFile(srcFile, targetFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
-                        copyAttr.setCopiedSize(copyAttr.getCopiedSize() + srcFile.length());
-                        updateLogs(strCopySuccessfully + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
+                        updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
+                                + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
                         return false;
                     }
                 } else if (copyAttr.isCopySubdir()) {
+                    updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
                     if (srcFile.listFiles() == null && !copyAttr.isCopyEmpty()) {
                         continue;
                     }
-                    if (!targetFile.exists()) {
-                        targetFile.mkdir();
+                    if (startHandle && !targetFile.exists()) {
+                        targetFile.mkdirs();
                         updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
                     }
                     if (conditionalCopy(srcFile, targetFile)) {
-                        copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
-                        copyAttr.setCopiedSize(copyAttr.getCopiedSize() + srcFile.length());
+                        if (startHandle) {
+                            copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
+                            copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
+                            updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
+                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                     } else if (!copyAttr.isContinueWhenError()) {
                         updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
                         return false;
@@ -558,60 +624,87 @@ public class DirectorySynchronizeController extends BaseController {
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            updateLogs(strFailedCopy + sourcePath.getAbsolutePath() + "\n" + e.toString());
             return false;
         }
     }
 
-    private boolean copyWholeDirectory(File sourcePath, File targetPath) {
+    protected boolean copyWholeDirectory(File sourcePath, File targetPath) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
                 return false;
             }
             File[] files = sourcePath.listFiles();
-            for (File file : files) {
+            String srcFileName;
+            long len;
+            for (File srcFile : files) {
                 if (task.isCancelled()) {
                     return false;
                 }
-                copyAttr.setTotalSize(copyAttr.getTotalSize() + file.length());
-                File targetFile = new File(targetPath + File.separator + file.getName());
-                if (file.isFile()) {
-                    copyAttr.setTotalFilesNumber(copyAttr.getTotalFilesNumber() + 1);
-                    if (copyFile(file, targetFile)) {
+                srcFileName = srcFile.getAbsolutePath();
+                len = srcFile.length();
+                if (!startHandle) {
+                    if (lastFileName.equals(srcFileName)) {
+                        startHandle = true;
+                        updateLogs(getMessage("ReachFile") + " " + lastFileName, true);
+                    }
+                    if (srcFile.isFile()) {
+                        continue;
+                    }
+                } else {
+                    if (srcFile.isFile()) {
+                        copyAttr.setTotalFilesNumber(copyAttr.getTotalFilesNumber() + 1);
+                    } else {
+                        copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
+                    }
+                    copyAttr.setTotalSize(copyAttr.getTotalSize() + srcFile.length());
+                }
+                File targetFile = new File(targetPath + File.separator + srcFile.getName());
+                if (srcFile.isFile()) {
+                    if (copyFile(srcFile, targetFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
+                        copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
+                        updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
+                                + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + file.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
                         return false;
                     }
                 } else {
-                    copyAttr.setTotalDirectoriesNumber(copyAttr.getTotalDirectoriesNumber() + 1);
-                    targetFile.mkdir();
-                    updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
-                    if (copyWholeDirectory(file, targetFile)) {
-                        copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
+                    updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    if (startHandle) {
+                        targetFile.mkdirs();
+                        updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
+                    }
+                    if (copyWholeDirectory(srcFile, targetFile)) {
+                        if (startHandle) {
+                            copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
+                            copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
+                            updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
+                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + file.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
                         return false;
                     }
                 }
-                updateLogs(strCopySuccessfully + file.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
-                copyAttr.setCopiedSize(copyAttr.getCopiedSize() + file.length());
             }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
+            updateLogs(strFailedCopy + sourcePath.getAbsolutePath() + "\n" + e.toString());
             return false;
         }
     }
 
-    private boolean clearDir(File dir, boolean record) {
-        if (task.isCancelled() || dir.isFile()) {
-            return false;
-        }
+    // clearDir can not be paused to avoid logic messed.
+    protected boolean clearDir(File dir, boolean record) {
         File[] files = dir.listFiles();
+        if (files == null) {
+            return true;
+        }
         for (File file : files) {
-            if (task.isCancelled()) {
-                return false;
-            }
             long len = file.length();
             String filename = file.getAbsolutePath();
             if (file.isDirectory()) {
@@ -621,7 +714,7 @@ public class DirectorySynchronizeController extends BaseController {
                         if (record) {
                             copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                             copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                            updateLogs(strDeleteSuccessfully + filename);
+                            updateLogs(copyAttr.getDeletedDirectories() + "  " + strDirectoryDeleteSuccessfully + filename);
                         }
                     } catch (Exception e) {
                         if (record) {
@@ -649,7 +742,7 @@ public class DirectorySynchronizeController extends BaseController {
                 if (record) {
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    updateLogs(strDeleteSuccessfully + filename);
+                    updateLogs(copyAttr.getDeletedFiles() + "  " + strFileDeleteSuccessfully + filename);
                 }
             } catch (Exception e) {
                 if (record) {
@@ -665,9 +758,9 @@ public class DirectorySynchronizeController extends BaseController {
         return true; // When return true, it is not necessary that the dir is cleared.
     }
 
-    private boolean copyFile(File sourceFile, File targetFile) {
+    protected boolean copyFile(File sourceFile, File targetFile) {
         try {
-            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+            if (task.isCancelled() || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
                 return false;
             }
             if (!targetFile.exists()) {
@@ -693,7 +786,7 @@ public class DirectorySynchronizeController extends BaseController {
         }
     }
 
-    private boolean deleteNonExisted(File sourcePath, File targetPath) {
+    protected boolean deleteNonExisted(File sourcePath, File targetPath) {
         if (!copyAttr.isDeleteNotExisteds() || !targetPath.isDirectory()) {
             return true;
         }
@@ -702,6 +795,9 @@ public class DirectorySynchronizeController extends BaseController {
             return true;
         }
         for (File targetFile : files) {
+            if (task.isCancelled()) {
+                return false;
+            }
             File srcFile = new File(sourcePath + File.separator + targetFile.getName());
             if (srcFile.exists()) {
                 continue;
@@ -714,7 +810,7 @@ public class DirectorySynchronizeController extends BaseController {
                         targetFile.delete();
                         copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        updateLogs(strDeleteSuccessfully + filename);
+                        updateLogs(strDirectoryDeleteSuccessfully + filename);
                     } catch (Exception e) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
@@ -736,7 +832,7 @@ public class DirectorySynchronizeController extends BaseController {
                     targetFile.delete();
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    updateLogs(strDeleteSuccessfully + filename);
+                    updateLogs(strFileDeleteSuccessfully + filename);
                 } catch (Exception e) {
                     copyAttr.setFailedDeletedFiles(copyAttr.getFailedDeletedFiles() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);

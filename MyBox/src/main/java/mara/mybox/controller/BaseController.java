@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -19,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -28,6 +30,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -50,13 +53,13 @@ public class BaseController implements Initializable {
 
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
-    protected String myFxml, parentFxml;
+    protected String myFxml, parentFxml, currentStatus;
     protected Stage myStage, loadingStage;
     protected Alert loadingAlert;
     protected Task<Void> task;
     protected BaseController parentController;
 
-    protected boolean isPreview, targetIsFile;
+    protected boolean isPreview, targetIsFile, paused;
     protected File sourceFile, targetPath;
     protected List<File> sourceFiles;
     protected ObservableList<FileInformation> sourceFilesInformation;
@@ -336,6 +339,25 @@ public class BaseController implements Initializable {
 
     @FXML
     protected void pauseProcess(ActionEvent event) {
+        paused = true;
+        if (task != null && task.isRunning()) {
+            task.cancel();
+        } else {
+            updateInterface("Canceled");
+        }
+    }
+
+    protected void cancelProcess(ActionEvent event) {
+        paused = false;
+        if (task != null && task.isRunning()) {
+            task.cancel();
+        } else {
+            updateInterface("Canceled");
+        }
+    }
+
+    protected void updateInterface(final String newStatus) {
+
     }
 
     protected void markFileHandled(int index) {
@@ -360,6 +382,12 @@ public class BaseController implements Initializable {
                 openStage(newFxml, title, false);
                 return;
             }
+            if (parentController != null) {
+                if (parentController.task != null && parentController.task.isRunning()) {
+                    openStage(newFxml, title, false);
+                    return;
+                }
+            }
             getMyStage();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -371,6 +399,12 @@ public class BaseController implements Initializable {
             } else if (getMyStage().getTitle() == null) {
                 myStage.setTitle(AppVaribles.getMessage("AppTitle"));
             }
+            myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    stageClosing(event);
+                }
+            });
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -402,9 +436,33 @@ public class BaseController implements Initializable {
             }
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    stageClosing(event);
+                }
+            });
             stage.show();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    // Looks task has been destoryed before this is called.
+    public void stageClosing(WindowEvent event) {
+        if ((task != null && task.isRunning())
+                || (parentController != null && parentController.task != null && parentController.task.isRunning())) {
+            logger.debug("isRunning");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setContentText(AppVaribles.getMessage("SureCloseWindow"));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                task.cancel();
+            } else {
+                event.consume();
+            }
         }
     }
 

@@ -108,7 +108,7 @@ public class PdfExtractImagesController extends PdfBaseController {
                                     currentParameters.targetPath = currentParameters.targetRootPath + "/" + currentParameters.targetPrefix;
                                     File Path = new File(currentParameters.targetPath + "/");
                                     if (!Path.exists()) {
-                                        Path.mkdir();
+                                        Path.mkdirs();
                                     }
                                 }
                             }

@@ -16,8 +16,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.1;
-    public static final String AppVersionDate = "2018-07-07";
+    public static final double AppVersion = 2.2;
+    public static final String AppVersionDate = "2018-07-11";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -47,6 +47,7 @@ public class CommonValues {
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
+    public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

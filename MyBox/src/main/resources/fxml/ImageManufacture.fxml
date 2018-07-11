@@ -72,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="navBar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="44.0" prefWidth="557.0" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%Last" />
+                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%Previous" />
                                                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%Next" />
                                                         <Label text="%Sort">
                                                             <padding>

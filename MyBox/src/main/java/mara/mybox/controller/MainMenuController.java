@@ -153,6 +153,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openFilesArrangement(ActionEvent event) {
+        reloadStage(CommonValues.FilesArrangementFxml, AppVaribles.getMessage("FilesArrangement"));
+    }
+
+    @FXML
     private void showImageHelp(ActionEvent event) {
         try {
             File help = FxmlTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
