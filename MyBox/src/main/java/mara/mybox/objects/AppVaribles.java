@@ -3,6 +3,11 @@ package mara.mybox.objects;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import javafx.concurrent.Task;
+import mara.mybox.controller.AlarmClockController;
+import mara.mybox.controller.BaseController;
 import static mara.mybox.objects.CommonValues.BundleEnUS;
 import static mara.mybox.objects.CommonValues.BundleEsES;
 import static mara.mybox.objects.CommonValues.BundleFrFR;
@@ -24,6 +29,11 @@ public class AppVaribles {
 
     public static ResourceBundle CurrentBundle = CommonValues.BundleDefault;
     public static Map<String, String> configValues = new HashMap();
+    public static Task alarmClockTask;
+    public static ScheduledExecutorService executorService;
+    public static Map<Long, ScheduledFuture<?>> scheduledTasks;
+    public static BaseController currentController;
+    public static AlarmClockController alarmClockController;
 
     public static String getMessage(String thestr) {
         try {

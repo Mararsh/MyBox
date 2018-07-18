@@ -212,25 +212,26 @@ public class FxmlTools {
         });
     }
 
-    public static File getHelpFile(Class someClass, String resourceFile, String helpFile) {
-        if (someClass == null || resourceFile == null || helpFile == null) {
+    public static File getUserFile(Class someClass, String resourceFile, String userFile) {
+        if (someClass == null || resourceFile == null || userFile == null) {
             return null;
         }
-        File file = new File(UserFilePath + "/" + helpFile);
+        File file = new File(UserFilePath + "/" + userFile);
         if (file.exists()) {
             return file;
         }
         URL url = someClass.getResource(resourceFile);
         if (url.toString().startsWith("jar:")) {
             try {
-                InputStream input = someClass.getResourceAsStream(resourceFile);
-                OutputStream out = new FileOutputStream(file);
-                int read;
-                byte[] bytes = new byte[1024];
-                while ((read = input.read(bytes)) != -1) {
-                    out.write(bytes, 0, read);
+                try (InputStream input = someClass.getResourceAsStream(resourceFile);
+                        OutputStream out = new FileOutputStream(file)) {
+                    int read;
+                    byte[] bytes = new byte[1024];
+                    while ((read = input.read(bytes)) != -1) {
+                        out.write(bytes, 0, read);
+                    }
                 }
-                file.deleteOnExit();
+//                file.desleteOnExit();
             } catch (Exception e) {
                 logger.error(e.toString());
             }

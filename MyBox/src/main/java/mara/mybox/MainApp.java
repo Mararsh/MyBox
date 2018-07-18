@@ -3,6 +3,7 @@ package mara.mybox;
 import java.io.File;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         try {
+
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
@@ -38,12 +40,16 @@ public class MainApp extends Application {
             if (!configFile.exists()) {
                 configFile.createNewFile();
             }
+            File alarmFile = new File(CommonValues.AlarmClocksFile);
+            if (!alarmFile.exists()) {
+                alarmFile.createNewFile();
+            }
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
             ImageValueTools.registrySupportedImageFormats();
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
-            BaseController controller = fxmlLoader.getController();
+            final BaseController controller = fxmlLoader.getController();
             controller.setMyStage(stage);
 
             stage.getIcons().add(CommonValues.AppIcon);
@@ -52,10 +58,13 @@ public class MainApp extends Application {
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
-//                    System.exit(0); // Close the background threads
+                    controller.stageClosing(event);
                 }
             });
             stage.show();
+
+            // https://stackoverflow.com/questions/23527679/trying-to-open-a-javafx-stage-after-calling-platform-exit
+            Platform.setImplicitExit(false);
         } catch (Exception e) {
             logger.error(e.toString());
         }

@@ -33,17 +33,7 @@ public class FilesTableController extends BaseController {
     @FXML
     protected TableView<FileInformation> filesTableView;
     @FXML
-    protected TableColumn<FileInformation, String> handledColumn;
-    @FXML
-    protected TableColumn<FileInformation, String> fileColumn;
-    @FXML
-    protected TableColumn<FileInformation, String> newColumn;
-    @FXML
-    protected TableColumn<FileInformation, String> modifyTimeColumn;
-    @FXML
-    protected TableColumn<FileInformation, String> createTimeColumn;
-    @FXML
-    protected TableColumn<FileInformation, String> typeColumn;
+    protected TableColumn<FileInformation, String> handledColumn, fileColumn, newColumn, modifyTimeColumn, createTimeColumn, typeColumn;
     @FXML
     protected TableColumn<FileInformation, Long> sizeColumn;
 

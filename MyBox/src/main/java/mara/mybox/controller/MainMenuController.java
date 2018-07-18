@@ -7,8 +7,11 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
@@ -17,6 +20,8 @@ import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
+import javax.sound.sampled.Clip;
+import static mara.mybox.controller.BaseController.logger;
 
 /**
  * @Author Mara
@@ -29,21 +34,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
-    private Menu homeMenu;
-    @FXML
     private ToggleGroup langGroup;
     @FXML
-    private RadioMenuItem chineseMenuItem;
+    private RadioMenuItem chineseMenuItem, englishMenuItem;
     @FXML
-    private RadioMenuItem englishMenuItem;
-    @FXML
-    private Menu pdfMenu;
-    @FXML
-    private Menu imageMenu;
-    @FXML
-    private Menu fileMenu;
-    @FXML
-    private Menu helpMenu;
+    private Menu homeMenu, pdfMenu, imageMenu, fileMenu, deskstopMenu, helpMenu;
 
     @Override
     protected void initializeNext() {
@@ -57,7 +52,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void showHome(ActionEvent event) {
-        openStage(CommonValues.MyboxFxml, false);
+        openStage(CommonValues.MyboxFxml, false, true);
     }
 
     @FXML
@@ -134,7 +129,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openPixelsCalculator(ActionEvent event) {
-        openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false);
+        openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false, false);
     }
 
     @FXML
@@ -158,9 +153,14 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openAlarmClock(ActionEvent event) {
+        reloadStage(CommonValues.AlarmClockFxml, AppVaribles.getMessage("AlarmClock"));
+    }
+
+    @FXML
     private void showImageHelp(ActionEvent event) {
         try {
-            File help = FxmlTools.getHelpFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
+            File help = FxmlTools.getUserFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
             Desktop.getDesktop().browse(help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());
@@ -181,6 +181,39 @@ public class MainMenuController extends BaseController {
             }
         }
         return myStage;
+    }
+
+    @Override
+    public boolean stageReloading() {
+        try {
+            if (parentController.getClass().equals(mara.mybox.controller.AlarmClockController.class)) {
+                AlarmClockController p = (AlarmClockController) parentController;
+                Clip player = p.getPlayer();
+                if (p.getPlayer() != null) {
+                    player.stop();
+                    player.drain();
+                    player.close();
+                    player = null;
+                }
+            }
+
+            if (parentController.task != null && parentController.task.isRunning()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(AppVaribles.getMessage("AppTitle"));
+                alert.setContentText(AppVaribles.getMessage("TaskRunning"));
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK && parentController.task != null) {
+                    parentController.task.cancel();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
 }

@@ -3,9 +3,12 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ScheduledFuture;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -112,6 +115,8 @@ public class BaseController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             myFxml = FxmlTools.getFxmlPath(url.getPath());
+            AppVaribles.currentController = this;
+            AppVaribles.alarmClockController = null;
             if (mainMenuController != null) {
                 mainMenuController.setParentFxml(myFxml);
                 mainMenuController.setParentController(this);
@@ -378,20 +383,23 @@ public class BaseController implements Initializable {
 
     public void reloadStage(String newFxml, String title) {
         try {
-            if (task != null && task.isRunning()) {
-                openStage(newFxml, title, false);
+            getMyStage();
+//            if (task != null && task.isRunning()) {
+//                openStage(newFxml, title, false);
+//                return;
+//            }
+//            if (parentController != null) {
+//                if (parentController.task != null && parentController.task.isRunning()) {
+//                    openStage(newFxml, title, false);
+//                    return;
+//                }
+//            }
+            if (!stageReloading()) {
                 return;
             }
-            if (parentController != null) {
-                if (parentController.task != null && parentController.task.isRunning()) {
-                    openStage(newFxml, title, false);
-                    return;
-                }
-            }
-            getMyStage();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
-            BaseController controller = fxmlLoader.getController();
+            final BaseController controller = fxmlLoader.getController();
             controller.setMyStage(myStage);
             myStage.setScene(new Scene(pane));
             if (title != null) {
@@ -399,26 +407,38 @@ public class BaseController implements Initializable {
             } else if (getMyStage().getTitle() == null) {
                 myStage.setTitle(AppVaribles.getMessage("AppTitle"));
             }
-            myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    stageClosing(event);
-                }
-            });
+//            myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//                @Override
+//                public void handle(WindowEvent event) {
+//                    controller.stageClosing(event);
+//                }
+//            });
+//            if (!newFxml.equals(CommonValues.AlarmClockFxml)) {
+//                AppVaribles.alarmClockController = null;
+//            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void openStage(String newFxml, boolean isOwned) {
-        openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned);
+    public boolean stageReloading() {
+        return true;
     }
 
-    public void openStage(String newFxml, String title, boolean isOwned) {
+    public void openStage(String newFxml, boolean isOwned) {
+        openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, false);
+    }
+
+    public void openStage(String newFxml, boolean isOwned, boolean monitorClosing) {
+        openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, monitorClosing);
+    }
+
+    public void openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
-            BaseController controller = fxmlLoader.getController();
+            final BaseController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
 
@@ -436,34 +456,76 @@ public class BaseController implements Initializable {
             }
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    stageClosing(event);
-                }
-            });
+            if (monitorClosing) {
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        controller.stageClosing(event);
+                    }
+                });
+            }
             stage.show();
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    // Looks task has been destoryed before this is called.
     public void stageClosing(WindowEvent event) {
-        if ((task != null && task.isRunning())
-                || (parentController != null && parentController.task != null && parentController.task.isRunning())) {
-            logger.debug("isRunning");
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
-            alert.setContentText(AppVaribles.getMessage("SureCloseWindow"));
+        try {
+//            logger.debug("stageClosing");
+//            logger.debug(Platform.isImplicitExit());
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                task.cancel();
-            } else {
-                event.consume();
+            if (task != null && task.isRunning()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(AppVaribles.getMessage("AppTitle"));
+                alert.setContentText(AppVaribles.getMessage("TaskRunning"));
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK && task != null) {
+                    task.cancel();
+                } else {
+                    event.consume();
+                    return;
+                }
             }
+            if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(AppVaribles.getMessage("AppTitle"));
+                alert.setContentText(MessageFormat.format(AppVaribles.getMessage("AlarmClocksStillRunning"), AppVaribles.scheduledTasks.size()));
+                ButtonType buttonYes = new ButtonType(AppVaribles.getMessage("Yes"));
+                ButtonType buttonNo = new ButtonType(AppVaribles.getMessage("No"));
+                alert.getButtonTypes().setAll(buttonYes, buttonNo);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonYes) {
+                    for (Long key : AppVaribles.scheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
+                        future.cancel(true);
+                    }
+                    AppVaribles.scheduledTasks = null;
+                    if (AppVaribles.executorService != null) {
+                        AppVaribles.executorService.shutdownNow();
+                        AppVaribles.executorService = null;
+                    }
+                }
+            } else {
+                if (AppVaribles.scheduledTasks != null) {
+                    AppVaribles.scheduledTasks = null;
+                }
+                if (AppVaribles.executorService != null) {
+                    AppVaribles.executorService.shutdownNow();
+                    AppVaribles.executorService = null;
+                }
+            }
+
+            if (AppVaribles.scheduledTasks == null) {
+                Platform.setImplicitExit(true);
+            }
+//            logger.debug(Platform.isImplicitExit());
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
+
     }
 
     public void popInformation(String information) {
@@ -960,6 +1022,8 @@ public class BaseController implements Initializable {
     }
 
     public void setParentController(BaseController parentController) {
+//        logger.debug(this.getClass());
+//        logger.debug(parentController.getClass());
         this.parentController = parentController;
     }
 

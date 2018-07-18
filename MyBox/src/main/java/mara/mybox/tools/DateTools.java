@@ -1,10 +1,12 @@
 package mara.mybox.tools;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import mara.mybox.objects.CommonValues;
@@ -16,6 +18,10 @@ import mara.mybox.objects.CommonValues;
  * @License Apache License Version 2.0
  */
 public class DateTools {
+
+    public static String nowString() {
+        return datetimeToString(new Date());
+    }
 
     public static String datetimeToString(long dvalue) {
         return datetimeToString(new Date(dvalue));
@@ -55,6 +61,40 @@ public class DateTools {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Date stringToDatetime(String strDate) {
+        return DateTools.stringToDatetime(strDate, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static Date stringToDatetime(String strDate, String format) {
+        if (strDate == null || strDate.isEmpty()
+                || format == null || format.isEmpty()) {
+            return null;
+        }
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(format);
+//            formatter.setTimeZone(theZone);
+            ParsePosition pos = new ParsePosition(0);
+            return formatter.parse(strDate, pos);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean isWeekend(long time) {
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date(time));
+            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
 }

@@ -16,11 +16,12 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.2;
-    public static final String AppVersionDate = "2018-07-11";
+    public static final double AppVersion = 2.3;
+    public static final String AppVersionDate = "2018-07-18";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
+    public static final String AlarmClocksFile = UserFilePath + "/.alarmClocks";
 
     public static final Image AppIcon = new Image("img/mybox.png");
 
@@ -48,6 +49,8 @@ public class CommonValues {
     public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
+    public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
+    public static final String AlarmClockRunFxml = "/fxml/AlarmClockRun.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -97,6 +100,14 @@ public class CommonValues {
             add("pcx");
             add("pnm");
             add("wbmp");
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> SoundExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
+            add(new FileChooser.ExtensionFilter("wav", "*.wav"));
+            add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
         }
     };
 

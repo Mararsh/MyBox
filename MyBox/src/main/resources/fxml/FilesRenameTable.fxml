@@ -13,8 +13,8 @@
                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                        <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoveryAll" />
-                        <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverySelected" />
+                        <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoverAll" />
+                        <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverSelected" />
                     </items>
                 </ToolBar>
                 <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <children>
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                            <children>
+                                                <fx:include fx:id="alertClockTable" source="AlarmClockTable.fxml" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </TitledPane>
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Edit" VBox.vgrow="NEVER">
+                            <content>
+                                <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Label text="%Description" />
+                                                <TextField fx:id="descInput" prefHeight="30.0" prefWidth="347.0" />
+                                                <Label text="%StartTime">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="startInput" prefHeight="30.0" prefWidth="190.0" promptText="2018-07-12 11:30:55" text="2018-07-12 11:30:55" />
+                                                <CheckBox fx:id="activeCheck" mnemonicParsing="false" selected="true" text="%Active" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%TimeRepeat" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%WorkingDays">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="typeGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%EveryDay" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Weekend" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%NotRepeat" toggleGroup="$typeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Every" toggleGroup="$typeGroup" />
+                                                <TextField fx:id="everyInput" prefHeight="30.0" prefWidth="76.0" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%Days">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="unitGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%Hours" toggleGroup="$unitGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Minutes" toggleGroup="$unitGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Seconds" toggleGroup="$unitGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Label text="%Sound" />
+                                                <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true" text="%meow">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="soundGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="wavButton" mnemonicParsing="false" text="%SystemSounds" toggleGroup="$soundGroup" />
+                                                <TextField fx:id="wavInput" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectSound" text="%Select..." />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <RadioButton fx:id="mp3Button" mnemonicParsing="false" text="%LocalMusic" toggleGroup="$soundGroup" />
+                                                <TextField fx:id="mp3Input" promptText="" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectMusic" text="%Select..." />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets left="40.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                 <children>
+                                    <RadioButton fx:id="internetButton" mnemonicParsing="false" text="%InternetMusic" toggleGroup="$soundGroup" />
+                                    <TextField fx:id="urlInput" promptText="%InternetMusicComments" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" />
+                                 </padding></HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%SoundLoop">
+                                                    <HBox.margin>
+                                                        <Insets left="40.0" />
+                                                    </HBox.margin>
+                                                </CheckBox>
+                                                <RadioButton fx:id="continuallyButton" mnemonicParsing="false" selected="true" text="%Continually">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="loopGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="loopButton" mnemonicParsing="false" text="%LoopTimes" toggleGroup="$loopGroup" />
+                                                <TextField fx:id="loopInput" prefHeight="30.0" prefWidth="78.0" text="3" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="playButton" disable="true" mnemonicParsing="false" onAction="#playSound" text="%Play">
+                                                    <HBox.margin>
+                                                        <Insets left="40.0" />
+                                                    </HBox.margin>
+                                                </Button>
+                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseSound" text="%Pause" />
+                                                <Label text="%Volume">
+                                                    <HBox.margin>
+                                                        <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <Slider fx:id="volumeSlider" blockIncrement="5.0" max="65.0" min="-60.0" prefHeight="44.0" prefWidth="255.0" showTickLabels="true" showTickMarks="true" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAlarm" text="%Add" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </TitledPane>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

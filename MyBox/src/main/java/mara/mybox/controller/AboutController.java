@@ -1,11 +1,16 @@
 package mara.mybox.controller;
 
 import java.awt.Desktop;
+import java.io.File;
 import java.net.URI;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javax.sound.sampled.FloatControl;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.tools.FxmlTools;
+import mara.mybox.tools.SoundTools;
 
 /**
  * @Author Mara
@@ -26,6 +31,23 @@ public class AboutController extends BaseController {
     protected void initializeNext() {
         version.setText(CommonValues.AppVersion + "");
         date.setText(CommonValues.AppVersionDate);
+
+        task = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    File miao = FxmlTools.getUserFile(getClass(), "/sound/miao3.mp3", "miao3.mp3");
+                    FloatControl control = SoundTools.getControl(miao);
+                    SoundTools.playback(miao, control.getMaximum() * 0.6f);
+                } catch (Exception e) {
+                }
+                return null;
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
     @FXML

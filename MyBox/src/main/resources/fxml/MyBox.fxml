@@ -50,18 +50,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
-            <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../img/mybox.png" />
-               </image>
-            </ImageView>
-            <Label text="%AppTitle">
-               <HBox.margin>
-                  <Insets left="20.0" />
-               </HBox.margin>
-               <font>
-                  <Font size="24.0" />
-               </font></Label>
+                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/mybox.png" />
+                    </image>
+                </ImageView>
+                <Label text="%AppTitle">
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Label>
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -74,113 +75,120 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-   <center>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-              <GridPane alignment="CENTER" hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0">
-                  <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  </columnConstraints>
-                  <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  </rowConstraints>
-                  <children>
-                      <VBox fx:id="pdfBox" alignment="CENTER" onMouseClicked="#showPdfMenu" prefHeight="200.0" prefWidth="100.0">
-                          <children>
-                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                                    <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../img/PdfTools.png" />
-                                        </image>
-                                    </ImageView>
-                           </children>
-                        </HBox>
-                              <Label text="%PdfTools">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                          </children>
-                      </VBox>
-                      <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
-                          <children>
-                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                           <children>
-                                    <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../img/ImageTools.png" />
-                                        </image>
-                                    </ImageView>
-                           </children>
-                        </HBox>
-                              <Label text="%ImageTools">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                          </children>
-                      </VBox>
-                      <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
-                          <children>
-                        <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
-                           <children>
-                                    <ImageView fitHeight="171.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../img/FileTools.png" />
-                                        </image>
-                                    </ImageView>
-                           </children>
-                        </HBox>
-                              <Label text="%FileTools">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                          </children>
-                      </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setChinese" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/Chinese.png" />
-                           </image>
-                        </ImageView>
-                        <Label onMouseClicked="#setEnglish" text="中文">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#setEnglish" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/English.png" />
-                           </image>
-                        </ImageView>
-                        <Label onMouseClicked="#setEnglish" text="English">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                     </children>
-                  </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                     <children>
-                        <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/About.png" />
-                           </image>
-                        </ImageView>
-                        <Label onMouseClicked="#showAbout" text="%About">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                     </children>
-                  </VBox>
-                  </children>
-              </GridPane>
-         </children>
-      </VBox>
-   </center>
+    <center>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <GridPane alignment="CENTER" hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <VBox fx:id="pdfBox" alignment="CENTER" onMouseClicked="#showPdfMenu" prefHeight="200.0" prefWidth="100.0">
+                            <children>
+                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                    <children>
+                                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/PdfTools.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <Label text="%PdfTools">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                            <children>
+                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/ImageTools.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <Label text="%ImageTools">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                            <children>
+                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <ImageView fitHeight="171.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/FileTools.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <Label text="%FileTools">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="languageBox" alignment="CENTER" onMouseClicked="#showLanguageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <children>
+                                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/language.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="Language/语言">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="desktopBox" alignment="CENTER" onMouseClicked="#showDesktopMenu" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                            <children>
+                                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/DesktopTools.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="%DesktopTools">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <children>
+                                <ImageView fitHeight="200.0" fitWidth="200.0" onMouseClicked="#showAbout" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/About.png" />
+                                    </image>
+                                </ImageView>
+                                <Label onMouseClicked="#showAbout" text="%About">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </GridPane>
+            <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
+            </children>
+        </VBox>
+    </center>
 </BorderPane>

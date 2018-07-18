@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox fx:id="alarmClocksPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockTableController">
+    <children>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+            <children>
+                <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                    <items>
+                  <Button fx:id="editButton" disable="true" mnemonicParsing="false" onAction="#editAction" text="%Edit" />
+                  <Button fx:id="activeButton" disable="true" mnemonicParsing="false" onAction="#activeAction" text="%Active" />
+                        <Button fx:id="inactiveButton" disable="true" mnemonicParsing="false" onAction="#inactiveAction" text="%Inactive" />
+                        <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
+                    </items>
+                </ToolBar>
+                <TableView fx:id="alarmClocksView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="statusColumn" text="%Status" />
+                        <TableColumn fx:id="descriptionColumn" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="%Description" />
+                        <TableColumn fx:id="repeatColumn" prefWidth="150.0" text="%Repeat" />
+                        <TableColumn fx:id="nextTimeColumn" prefWidth="180.0" text="%NextTime" />
+                  <TableColumn fx:id="lastTimeColumn" prefWidth="180.0" text="%LastTime" />
+                        <TableColumn fx:id="startTimeColumn" maxWidth="1.7976931348623157E308" prefWidth="180.0" text="%StartTime" />
+                        <TableColumn fx:id="soundColumn" prefWidth="300.0" text="%Sound" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</HBox>

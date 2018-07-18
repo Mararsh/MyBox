@@ -38,17 +38,17 @@ public class ConfigTools {
     public static boolean writeConfigValue(String key, String value) {
         try {
             Properties conf = new Properties();
-            InputStream in = new FileInputStream(CommonValues.UserConfigFile);
-            conf.load(in);
-            in.close();
-            OutputStream out = new FileOutputStream(CommonValues.UserConfigFile);
-            if (value == null) {
-                conf.remove(key);
-            } else {
-                conf.setProperty(key, value);
+            try (InputStream in = new FileInputStream(CommonValues.UserConfigFile)) {
+                conf.load(in);
             }
-            conf.store(out, "Update " + key);
-            out.close();
+            try (OutputStream out = new FileOutputStream(CommonValues.UserConfigFile)) {
+                if (value == null) {
+                    conf.remove(key);
+                } else {
+                    conf.setProperty(key, value);
+                }
+                conf.store(out, "Update " + key);
+            }
             return true;
         } catch (Exception e) {
 //            logger.error(e.toStsring());
