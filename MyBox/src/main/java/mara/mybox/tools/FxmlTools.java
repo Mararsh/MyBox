@@ -21,7 +21,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -281,8 +280,7 @@ public class FxmlTools {
         public static final int Desaturate = 5;
     }
 
-    public static void manufactureImage(ImageView imageView, int manuType) {
-        Image image = imageView.getImage();
+    public static WritableImage manufactureImage(Image image, int manuType) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -315,21 +313,20 @@ public class FxmlTools {
                 pixelWriter.setColor(x, y, color);
             }
         }
-        imageView.setImage(newImage);
+        return newImage;
     }
 
     // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
-    public static BufferedImage readImage(ImageView imageView) {
-        BufferedImage image = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+    public static BufferedImage readImage(Image image) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         // Remove alpha-channel from buffered image:
-        BufferedImage imageRGB = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.OPAQUE);
+        BufferedImage imageRGB = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.OPAQUE);
         Graphics2D graphics = imageRGB.createGraphics();
-        graphics.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        graphics.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
         return imageRGB;
     }
 
-    public static void changeSaturate(ImageView imageView, float change) {
-        Image image = imageView.getImage();
+    public static WritableImage changeSaturate(Image image, float change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -348,11 +345,10 @@ public class FxmlTools {
                 pixelWriter.setColor(x, y, newColor);
             }
         }
-        imageView.setImage(newImage);
+        return newImage;
     }
 
-    public static void changeBrightness(ImageView imageView, float change) {
-        Image image = imageView.getImage();
+    public static WritableImage changeBrightness(Image image, float change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -371,11 +367,10 @@ public class FxmlTools {
                 pixelWriter.setColor(x, y, newColor);
             }
         }
-        imageView.setImage(newImage);
+        return newImage;
     }
 
-    public static void changeHue(ImageView imageView, int change) {
-        Image image = imageView.getImage();
+    public static WritableImage changeHue(Image image, int change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -394,12 +389,11 @@ public class FxmlTools {
                 pixelWriter.setColor(x, y, newColor);
             }
         }
-        imageView.setImage(newImage);
+        return newImage;
     }
 
-    public static void makeBinary(ImageView imageView, int precent) {
+    public static WritableImage makeBinary(Image image, int precent) {
         int threshold = 256 * precent / 100;
-        Image image = imageView.getImage();
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -415,6 +409,72 @@ public class FxmlTools {
                 }
             }
         }
-        imageView.setImage(newImage);
+        return newImage;
     }
+
+    public static Image changeScale(Image image, float scale) {
+        BufferedImage source = readImage(image);
+        int targetW = (int) Math.round(source.getWidth() * scale);
+        int targetH = (int) Math.round(source.getHeight() * scale);
+//        Image newImage = new Image(file, w, h, true, true);
+        int imageType = source.getType();
+        BufferedImage target = new BufferedImage(targetW, targetH, imageType);
+        Graphics2D g = target.createGraphics();
+        if (imageType == BufferedImage.TYPE_INT_ARGB) {
+            g.setBackground(new java.awt.Color(0, 0, 0, 0));
+        } else {
+            g.setBackground(java.awt.Color.WHITE);
+        }
+//        g.clearRect(0, 0, targetW, targetH);
+        g.drawImage(source, 0, 0, targetW, targetH, null);
+        g.dispose();
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image changePixels(Image image, int width, int height) {
+        BufferedImage source = readImage(image);
+//        Image newImage = new Image(file, w, h, true, true);
+        int imageType = source.getType();
+        BufferedImage target = new BufferedImage(width, height, imageType);
+        Graphics2D g = target.createGraphics();
+        if (imageType == BufferedImage.TYPE_INT_ARGB) {
+            g.setBackground(new java.awt.Color(0, 0, 0, 0));
+        } else {
+            g.setBackground(java.awt.Color.WHITE);
+        }
+//        g.clearRect(0, 0, targetW, targetH);
+        g.drawImage(source, 0, 0, width, height, null);
+        g.dispose();
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    private Image resample(Image input, int scaleFactor) {
+        final int W = (int) input.getWidth();
+        final int H = (int) input.getHeight();
+        final int S = scaleFactor;
+
+        WritableImage output = new WritableImage(
+                W * S,
+                H * S
+        );
+
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+                final int argb = reader.getArgb(x, y);
+                for (int dy = 0; dy < S; dy++) {
+                    for (int dx = 0; dx < S; dx++) {
+                        writer.setArgb(x * S + dx, y * S + dy, argb);
+                    }
+                }
+            }
+        }
+
+        return output;
+    }
+
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
 import java.awt.Desktop;
@@ -34,9 +29,9 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
-    private ToggleGroup langGroup;
+    private ToggleGroup langGroup, alarmGroup;
     @FXML
-    private RadioMenuItem chineseMenuItem, englishMenuItem;
+    private RadioMenuItem chineseMenuItem, englishMenuItem, keepAlarmMenuItem, stopAlarmMenuItem;
     @FXML
     private Menu homeMenu, pdfMenu, imageMenu, fileMenu, deskstopMenu, helpMenu;
 
@@ -48,6 +43,13 @@ public class MainMenuController extends BaseController {
         } else {
             englishMenuItem.setSelected(true);
         }
+
+        if (AppVaribles.getConfigBoolean("StopAlarmsWhenExit")) {
+            stopAlarmMenuItem.setSelected(true);
+        } else {
+            keepAlarmMenuItem.setSelected(true);
+        }
+
     }
 
     @FXML
@@ -58,18 +60,31 @@ public class MainMenuController extends BaseController {
     @FXML
     private void setChinese(ActionEvent event) {
         AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
-        reloadStage(parentFxml);
+        reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
     }
 
     @FXML
     private void setEnglish(ActionEvent event) {
         AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
-        reloadStage(parentFxml);
+        reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+    }
+
+    @FXML
+    private void setKeepAlarm(ActionEvent event) {
+        AppVaribles.setConfigValue("StopAlarmsWhenExit", false);
+    }
+
+    @FXML
+    private void setStopAlarm(ActionEvent event) {
+        AppVaribles.setConfigValue("StopAlarmsWhenExit", true);
     }
 
     @FXML
     private void exit(ActionEvent event) {
-        getMyStage().close();
+        if (stageClosing()) {
+            // This statement is internel call to close the stage, so itself can not tigger stageClosing()
+            getMyStage().close();
+        }
     }
 
     @FXML

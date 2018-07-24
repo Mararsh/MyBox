@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConverter.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
@@ -23,6 +25,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FxmlTools;
+import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -31,6 +34,8 @@ import mara.mybox.tools.FxmlTools;
  * @License Apache License Version 2.0
  */
 public class ImageConverterAttributesController extends ImageAttributesBaseController {
+
+    private boolean noRatio;
 
     @FXML
     private HBox imageConvertAttributesPane;
@@ -48,8 +53,41 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     @Override
     protected void initializeNext2() {
 
-        FxmlTools.setNonnegativeValidation(xInput);
-        FxmlTools.setNonnegativeValidation(yInput);
+        xInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    long v = Long.valueOf(xInput.getText());
+                    if (v >= 0) {
+                        xInput.setStyle(null);
+                        checkRatio();
+                    } else {
+                        xInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    xInput.setStyle(badStyle);
+                }
+            }
+        });
+
+        yInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    long v = Long.valueOf(yInput.getText());
+                    if (v >= 0) {
+                        yInput.setStyle(null);
+                        checkRatio();
+                    } else {
+                        yInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    yInput.setStyle(badStyle);
+                }
+            }
+        });
 
         keepCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -79,12 +117,14 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
 
     @FXML
     protected void setOriginalSize() {
+        noRatio = true;
         if (attributes.getSourceWidth() > 0) {
             xInput.setText(attributes.getSourceWidth() + "");
         }
         if (attributes.getSourceHeight() > 0) {
             yInput.setText(attributes.getSourceHeight() + "");
         }
+        noRatio = false;
     }
 
     @FXML
@@ -104,6 +144,13 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
             stage.show();
+            noRatio = true;
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    noRatio = false;
+                }
+            });
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -121,7 +168,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                 attributes.setRatioAdjustion(KeepRatioType.BaseOnHeight);
             } else if (getMessage("BaseOnLarger").equals(s)) {
                 attributes.setRatioAdjustion(KeepRatioType.BaseOnLarger);
-            } else if (getMessage("BaseOnSamller").equals(s)) {
+            } else if (getMessage("BaseOnSmaller").equals(s)) {
                 attributes.setRatioAdjustion(KeepRatioType.BaseOnSmaller);
             } else {
                 attributes.setRatioAdjustion(KeepRatioType.None);
@@ -139,7 +186,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             attributes.setTargetHeight((int) y);
             int sourceX = attributes.getSourceWidth();
             int sourceY = attributes.getSourceHeight();
-            if (!attributes.isKeepRatio() || sourceX <= 0 || sourceY <= 0) {
+            if (noRatio || !attributes.isKeepRatio() || sourceX <= 0 || sourceY <= 0) {
                 return;
             }
             long ratioX = Math.round(x * 1000 / sourceX);
@@ -171,6 +218,10 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                 default:
                     break;
             }
+            x = Long.valueOf(xInput.getText());
+            y = Long.valueOf(yInput.getText());
+            attributes.setTargetWidth((int) x);
+            attributes.setTargetHeight((int) y);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }

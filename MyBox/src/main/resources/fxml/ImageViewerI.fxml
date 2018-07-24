@@ -19,8 +19,8 @@
                 </ToolBar>
                 <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                     <items>
-                        <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="35.0" prefWidth="35.0" text="o" />
-                        <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" prefHeight="35.0" prefWidth="35.0" text="w" />
+                        <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" prefHeight="35.0" prefWidth="35.0" text="g" />
+                        <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" prefHeight="35.0" prefWidth="35.0" text="p" />
                         <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="35.0" text="+" />
                         <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="35.0" text="-" />
                         <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" prefHeight="35.0" prefWidth="35.0" text="&gt;" />
@@ -29,18 +29,18 @@
                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" prefHeight="35.0" prefWidth="35.0" text="v" />
                         <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" prefHeight="35.0" prefWidth="35.0" text="r" />
                         <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" prefHeight="35.0" prefWidth="35.0" text="l" />
-                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="t" />
-                        <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="s" />
+                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" prefHeight="35.0" prefWidth="35.0" text="t" />
+                        <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" prefHeight="35.0" prefWidth="35.0" text="s" />
                     </items>
                 </ToolBar>
             </children>
         </HBox>
         <Label fx:id="imageFile" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER" />
-        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" VBox.vgrow="ALWAYS">
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
             <content>
-                <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="imageView" cache="true" onMouseClicked="#imageClicked" onMouseEntered="#imageEntered" pickOnBounds="true" preserveRatio="true">
                     <cursor>
-                        <Cursor fx:constant="HAND" />
+                        <Cursor fx:constant="OPEN_HAND" />
                     </cursor>
                 </ImageView>
             </content>

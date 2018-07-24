@@ -7,7 +7,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
@@ -29,8 +28,6 @@ public class MyBoxController extends BaseController {
 
     @FXML
     private VBox imageBox, pdfBox, fileBox, desktopBox, languageBox;
-    @FXML
-    private Label bottomLabel;
 
     @Override
     protected void initializeNext() {
@@ -167,7 +164,7 @@ public class MyBoxController extends BaseController {
                 @Override
                 public void handle(ActionEvent event) {
                     AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
-                    reloadStage(myFxml);
+                    reloadStage(myFxml, AppVaribles.getMessage("AppTitle"));
                 }
             });
             MenuItem setChinese = new MenuItem("中文");
@@ -175,7 +172,7 @@ public class MyBoxController extends BaseController {
                 @Override
                 public void handle(ActionEvent event) {
                     AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
-                    reloadStage(myFxml);
+                    reloadStage(myFxml, AppVaribles.getMessage("AppTitle"));
                 }
             });
             languageMenu = new ContextMenu();

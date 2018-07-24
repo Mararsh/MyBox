@@ -55,43 +55,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="NEVER">
                     <children>
-                        <TabPane maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
                             <tabs>
                                 <Tab fx:id="fileTab" text="%File">
                                     <content>
-                                        <HBox alignment="CENTER_LEFT">
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                                             <children>
-                                                <ToolBar fx:id="fileBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                                                <ToolBar fx:id="fileBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#save" text="%Save" />
                                                         <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
                                                         <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
                                                         <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                                                        <CheckBox fx:id="saveCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
                                                         <CheckBox fx:id="openCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenAfterSaveAs" />
-                                                    </items>
-                                                </ToolBar>
-                                                <ToolBar fx:id="navBar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="44.0" prefWidth="557.0" HBox.hgrow="ALWAYS">
-                                                    <items>
-                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%Previous" />
-                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%Next" />
-                                                        <Label text="%Sort">
-                                                            <padding>
-                                                                <Insets left="20.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="sortGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
-                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
                                                         <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
-                                                        <Label prefWidth="40.0" text=" " />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -100,12 +81,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Tab>
                                 <Tab fx:id="zoomTab" text="%View">
                                     <content>
-                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                        <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
-                                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" text="%OriginalSize" />
-                                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" text="%WindowSize" />
-                                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                                 <Label fx:id="zoomValue" text="10%" />
                                                 <Slider fx:id="zoomSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="10.0" />
                                                 <Label text="%ZoomStep" />
@@ -124,11 +101,73 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ToolBar>
                                     </content>
                                 </Tab>
+                                <Tab fx:id="browseTab" text="%Browse">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" onAction="#browseAction" text="%MultipleImagesViewer" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar fx:id="navBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%NextImage" />
+                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%PreviousImage" />
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="sortGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName" toggleGroup="$sortGroup" />
+                                                        <Label text="%Sort" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="pixelsTab" text="%Pixels">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                                            <children>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button fx:id="pixelsOkButton" mnemonicParsing="false" onAction="#pixelsAction" text="%OK" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar fx:id="scaleBar" disable="true" HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" onAction="#pixelsCalculator" text="%PixelsCalculator" />
+                                                        <Button mnemonicParsing="false" onAction="#setOriginalSize" text="%OriginalSize" />
+                                                        <ChoiceBox fx:id="ratioBox" prefHeight="30.0" prefWidth="171.0" />
+                                                        <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepRatio" />
+                                                        <TextField fx:id="heightInput" prefHeight="30.0" prefWidth="80.0" />
+                                                        <Label text="%Height" />
+                                                        <TextField fx:id="widthInput" prefHeight="30.0" prefWidth="80.0" />
+                                                        <Label text="%Width" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Pixels">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="pixelsGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <TextField fx:id="scaleInput" prefWidth="80.0" text="1" />
+                                                        <RadioButton contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%Scale" toggleGroup="$pixelsGroup" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
                                 <Tab fx:id="hueTab" text="%Hue">
                                     <content>
-                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                        <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
-                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recover" />
                                                 <Button mnemonicParsing="false" onAction="#increaseHue" text="%Increase" />
                                                 <Button mnemonicParsing="false" onAction="#decreaseHue" text="%Decrease" />
                                                 <Label fx:id="hueValue" text="5">
@@ -144,9 +183,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Tab>
                                 <Tab fx:id="saturateTab" text="%Saturate">
                                     <content>
-                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                        <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
-                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recover" />
                                                 <Button mnemonicParsing="false" onAction="#increaseSaturate" text="%Increase" />
                                                 <Button mnemonicParsing="false" onAction="#decreaseSaturate" text="%Decrease" />
                                                 <Label fx:id="saturateValue" text="5%">
@@ -162,9 +200,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Tab>
                                 <Tab fx:id="brightnessTab" text="%Brightness">
                                     <content>
-                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                        <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
-                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recover" />
                                                 <Button mnemonicParsing="false" onAction="#increaseBrightness" text="%Increase" />
                                                 <Button mnemonicParsing="false" onAction="#decreaseBrightness" text="%Decrease" />
                                                 <Label fx:id="brightnessValue" text="5%">
@@ -180,9 +217,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Tab>
                                 <Tab fx:id="filtersTab" text="%Filters">
                                     <content>
-                                        <ToolBar prefHeight="40.0" prefWidth="200.0">
+                                        <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
-                                                <Button mnemonicParsing="false" onAction="#recovery" text="%Recover" />
                                                 <Button mnemonicParsing="false" onAction="#setInvert" text="%InvertColor" />
                                                 <Button mnemonicParsing="false" onAction="#setGray" text="%Gray" />
                                                 <Button mnemonicParsing="false" onAction="#setBinary" text="%BlackOrWhite" />
@@ -198,19 +234,66 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ToolBar>
                                     </content>
                                 </Tab>
+                                <Tab fx:id="refTab" text="%Reference">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT">
+                                            <children>
+                                                <ToolBar fx:id="refBar" disable="true" HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Button fx:id="selectRefButton" mnemonicParsing="false" onAction="#selectReference" text="%Select..." />
+                                                        <Button fx:id="origImageButton" mnemonicParsing="false" onAction="#originalImage" text="%OriginalImage" />
+                                                        <Button mnemonicParsing="false" onAction="#popRefInformation" text="%ImageInformation" />
+                                                        <Button mnemonicParsing="false" onAction="#popRefMeta" text="%ImageMetaData" />
+                                                        <CheckBox fx:id="refSyncCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%SychronizeViewOriginal" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="1.0" visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
                             </tabs>
                         </TabPane>
                     </children>
                 </HBox>
-                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <content>
-                        <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">
-                            <cursor>
-                                <Cursor fx:constant="HAND" />
-                            </cursor>
-                        </ImageView>
-                    </content>
-                </ScrollPane>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <ToolBar HBox.hgrow="NEVER">
+                            <items>
+                                <Label fx:id="tipsLabel" prefHeight="20.0" text="%Tips" />
+                                <Button mnemonicParsing="false" visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                            <items>
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%Save" />
+                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
+                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <CheckBox fx:id="displayRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%DisplayReference" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <SplitPane fx:id="splitPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseEntered="#showLabel" pickOnBounds="true" preserveRatio="true">
+                                    <cursor>
+                                        <Cursor fx:constant="OPEN_HAND" />
+                                    </cursor>
+                                </ImageView>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
             </children>
             <BorderPane.margin>
                 <Insets />
@@ -223,4 +306,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
+    <bottom>
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER_LEFT" />
+    </bottom>
 </BorderPane>

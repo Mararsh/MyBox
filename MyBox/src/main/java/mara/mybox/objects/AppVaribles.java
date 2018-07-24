@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import javafx.concurrent.Task;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.controller.BaseController;
 import static mara.mybox.objects.CommonValues.BundleEnUS;
@@ -29,7 +28,6 @@ public class AppVaribles {
 
     public static ResourceBundle CurrentBundle = CommonValues.BundleDefault;
     public static Map<String, String> configValues = new HashMap();
-    public static Task alarmClockTask;
     public static ScheduledExecutorService executorService;
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
     public static BaseController currentController;
@@ -94,6 +92,11 @@ public class AppVaribles {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static boolean getConfigBoolean(String key, boolean defaultValue) {
+        String v = getConfigValue(key, defaultValue + "");
+        return (v != null) && v.equals("true");
     }
 
     public static boolean getConfigBoolean(String key) {

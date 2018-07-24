@@ -397,14 +397,14 @@ public class FilesArrangeController extends BaseController {
                             showCost();
                             updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize2(copyAttr.getTotalSize()), false, true);
+                                    + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
                             updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize2(copyAttr.getCopiedSize()), false, true);
+                                    + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
                             if (!isCopy) {
                                 updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
                                         + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                                        + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize2(copyAttr.getDeletedSize()), false, true);
+                                        + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
                             }
                     }
 

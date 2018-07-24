@@ -56,6 +56,12 @@
                               </toggleGroup>
                           </RadioMenuItem>
                           <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="stopAlarmMenuItem" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="alarmGroup" />
+                     </toggleGroup></RadioMenuItem>
+                  <RadioMenuItem fx:id="keepAlarmMenuItem" mnemonicParsing="false" onAction="#setKeepAlarm" text="%KeepAlarmsExit" toggleGroup="$alarmGroup" />
                     </items>
                 </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">

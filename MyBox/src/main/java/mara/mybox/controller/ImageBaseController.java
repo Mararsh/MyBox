@@ -7,6 +7,7 @@ import java.util.Date;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -124,6 +125,7 @@ public abstract class ImageBaseController extends BaseController {
                 String format = FileTools.getFileSuffix(fileName).toLowerCase();
                 if (!"raw".equals(format) && !onlyInformation) {
                     bufferImage = ImageIO.read(file);
+                    image = SwingFXUtils.toFXImage(bufferImage, null);
                 }
                 Platform.runLater(new Runnable() {
                     @Override
@@ -134,7 +136,7 @@ public abstract class ImageBaseController extends BaseController {
                 return null;
             }
         };
-        openLoadingStage(task, Modality.WINDOW_MODAL);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();

@@ -117,7 +117,7 @@ public class FileTools {
         return null;
     }
 
-    public static String showFileSize(long size) {
+    public static String showFileSizeKB(long size) {
         long kb = (long) (size / 1024f + 0.5);
         if (kb == 0) {
             kb = 1;
@@ -134,7 +134,7 @@ public class FileTools {
         return t + " KB";
     }
 
-    public static String showFileSize2(long size) {
+    public static String showFileSize(long size) {
         double kb = size * 1.0f / 1024;
         if (kb < 1024) {
             return ValueTools.roundDouble3(kb) + " KB";

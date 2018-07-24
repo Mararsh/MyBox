@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -25,6 +24,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -95,6 +95,8 @@ public class BaseController implements Initializable {
     protected TextField previewInput, acumFromInput, digitInput;
     @FXML
     protected CheckBox fillZero, subdirCheck, appendDensity, appendColor, appendCompressionType, appendQuality, appendSize;
+    @FXML
+    protected Label bottomLabel;
 
     public BaseController() {
 
@@ -460,7 +462,9 @@ public class BaseController implements Initializable {
                 stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(WindowEvent event) {
-                        controller.stageClosing(event);
+                        if (!controller.stageClosing()) {
+                            event.consume();
+                        }
                     }
                 });
             }
@@ -470,9 +474,9 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void stageClosing(WindowEvent event) {
+    public boolean stageClosing() {
         try {
-//            logger.debug("stageClosing");
+//            logger.debug("stageClosing:" + getMyStage().getWidth() + "," + myStage.getHeight());
 //            logger.debug(Platform.isImplicitExit());
 
             if (task != null && task.isRunning()) {
@@ -483,20 +487,22 @@ public class BaseController implements Initializable {
                 if (result.get() == ButtonType.OK && task != null) {
                     task.cancel();
                 } else {
-                    event.consume();
-                    return;
+                    return false;
                 }
             }
             if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(AppVaribles.getMessage("AppTitle"));
-                alert.setContentText(MessageFormat.format(AppVaribles.getMessage("AlarmClocksStillRunning"), AppVaribles.scheduledTasks.size()));
-                ButtonType buttonYes = new ButtonType(AppVaribles.getMessage("Yes"));
-                ButtonType buttonNo = new ButtonType(AppVaribles.getMessage("No"));
-                alert.getButtonTypes().setAll(buttonYes, buttonNo);
+//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+//                alert.setTitle(AppVaribles.getMessage("AppTitle"));
+//                alert.setContentText(MessageFormat.format(AppVaribles.getMessage("AlarmClocksRunning"), AppVaribles.scheduledTasks.size()));
+//                ButtonType buttonStopAlarmsExit = new ButtonType(AppVaribles.getMessage("StopAlarmsExit"));
+//                ButtonType buttonKeepAlarmsExit = new ButtonType(AppVaribles.getMessage("KeepAlarmsExit"));
+//                ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+//                alert.getButtonTypes().setAll(buttonStopAlarmsExit, buttonKeepAlarmsExit, buttonCancel);
+//
+//                Optional<ButtonType> result = alert.showAndWait();
+//                if (result.get() == buttonStopAlarmsExit) {
 
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonYes) {
+                if (AppVaribles.getConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVaribles.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
                         future.cancel(true);
@@ -507,6 +513,7 @@ public class BaseController implements Initializable {
                         AppVaribles.executorService = null;
                     }
                 }
+
             } else {
                 if (AppVaribles.scheduledTasks != null) {
                     AppVaribles.scheduledTasks = null;
@@ -521,9 +528,11 @@ public class BaseController implements Initializable {
                 Platform.setImplicitExit(true);
             }
 //            logger.debug(Platform.isImplicitExit());
+            return true;
 
         } catch (Exception e) {
             logger.debug(e.toString());
+            return false;
         }
 
     }
@@ -598,7 +607,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void openLoadingStage(final Task<?> task, Modality block) {
+    public void openHandlingStage(final Task<?> task, Modality block) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -607,7 +616,7 @@ public class BaseController implements Initializable {
 
             loadingStage = new Stage();
             loadingStage.initModality(block);
-            loadingStage.initStyle(StageStyle.UNDECORATED);
+//            loadingStage.initStyle(StageStyle.UNDECORATED);
             loadingStage.initStyle(StageStyle.TRANSPARENT);
             loadingStage.initOwner(getMyStage());
             loadingStage.setScene(new Scene(pane));
@@ -1041,6 +1050,46 @@ public class BaseController implements Initializable {
 
     public void setTargetIsFile(boolean targetIsFile) {
         this.targetIsFile = targetIsFile;
+    }
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
+    public Label getBottomLabel() {
+        return bottomLabel;
+    }
+
+    public void setBottomLabel(Label bottomLabel) {
+        this.bottomLabel = bottomLabel;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public Pane getDirsTable() {
+        return dirsTable;
+    }
+
+    public void setDirsTable(Pane dirsTable) {
+        this.dirsTable = dirsTable;
+    }
+
+    public DirectoriesTableController getDirsTableController() {
+        return dirsTableController;
+    }
+
+    public void setDirsTableController(DirectoriesTableController dirsTableController) {
+        this.dirsTableController = dirsTableController;
     }
 
 }

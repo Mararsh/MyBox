@@ -11,9 +11,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.image.ImageValueTools;
+import mara.mybox.tools.FileTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 public class MainApp extends Application {
 
     private static final Logger logger = LogManager.getLogger();
+    private static String imageFile;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -47,20 +50,41 @@ public class MainApp extends Application {
             AppVaribles.CurrentBundle = CommonValues.BundleDefault;
             ImageValueTools.registrySupportedImageFormats();
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final BaseController controller = fxmlLoader.getController();
-            controller.setMyStage(stage);
+            FXMLLoader fxmlLoader;
+            Pane pane;
+            if (imageFile != null) {
+                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+                pane = fxmlLoader.load();
+                final ImageManufactureController imageController = (ImageManufactureController) fxmlLoader.getController();
+                imageController.loadImage(imageFile);
+                imageController.setMyStage(stage);
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        if (!imageController.stageClosing()) {
+                            event.consume();
+                        }
+                    }
+                });
+
+            } else {
+                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
+                pane = fxmlLoader.load();
+                final BaseController controller = fxmlLoader.getController();
+                controller.setMyStage(stage);
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        if (!controller.stageClosing()) {
+                            event.consume();
+                        }
+                    }
+                });
+            }
 
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.setScene(new Scene(pane));
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    controller.stageClosing(event);
-                }
-            });
             stage.show();
 
             // https://stackoverflow.com/questions/23527679/trying-to-open-a-javafx-stage-after-calling-platform-exit
@@ -79,6 +103,11 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        if (args.length > 0) {
+            if (CommonValues.SupportedImages.contains(FileTools.getFileSuffix(args[0]))) {
+                imageFile = args[0];
+            }
+        }
         launch(args);
     }
 

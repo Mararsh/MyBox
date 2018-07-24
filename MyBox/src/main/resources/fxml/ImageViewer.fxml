@@ -89,9 +89,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   </ToolBar>
                </children>
             </HBox>
-            <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                <content>
-                  <ImageView fx:id="imageView" fitHeight="546.0" fitWidth="1067.0" onMousePressed="#imageMousePressed" onMouseReleased="#imageMouseReleased" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" pickOnBounds="true" preserveRatio="true">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor></ImageView>

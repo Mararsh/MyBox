@@ -1,11 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -15,6 +19,8 @@ import static mara.mybox.controller.BaseController.logger;
  */
 public class ImageViewerIController extends ImageViewerController {
 
+    protected boolean isRefer;
+
     @Override
     protected void initializeNext2() {
         try {
@@ -22,6 +28,43 @@ public class ImageViewerIController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    void imageClicked(MouseEvent event) {
+        if (!isRefer && event.getClickCount() > 1) {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+                Pane pane = fxmlLoader.load();
+                ImageManufactureController controller = fxmlLoader.getController();
+                controller.loadImage(sourceFile.getAbsolutePath());
+
+                controller.setMyStage(getMyStage());
+                myStage.setScene(new Scene(pane));
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
+        }
+    }
+
+    @FXML
+    void imageEntered(MouseEvent event) {
+        String str = AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  "
+                + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getxPixels() + "x" + imageInformation.getyPixels() + "  "
+                + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(imageInformation.getFile().length()) + "  "
+                + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(imageInformation.getFile().lastModified());
+        if (!isRefer) {
+            str += "  " + AppVaribles.getMessage("ImagesComments");
+        }
+        parentController.bottomLabel.setText(str);
+    }
+
+    public boolean isIsRefer() {
+        return isRefer;
+    }
+
+    public void setIsRefer(boolean isRefer) {
+        this.isRefer = isRefer;
     }
 
 }

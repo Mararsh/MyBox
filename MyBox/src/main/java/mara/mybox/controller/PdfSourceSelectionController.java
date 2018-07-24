@@ -178,7 +178,7 @@ public class PdfSourceSelectionController extends BaseController {
                 return null;
             }
         };
-        openLoadingStage(task, Modality.WINDOW_MODAL);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();

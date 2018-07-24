@@ -174,7 +174,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </RadioButton>
                                 <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
                                 <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
-                                <RadioButton mnemonicParsing="false" text="%BaseOnSamller" toggleGroup="$ratioGroup" />
+                                <RadioButton mnemonicParsing="false" text="%BaseOnSmaller" toggleGroup="$ratioGroup" />
                             </children>
                         </HBox>
                     </children>
