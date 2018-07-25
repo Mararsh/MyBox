@@ -2,18 +2,18 @@
 
 ## MyBox：简易工具集
 
-![About](https://mararsh.github.io/MyBox/7.png)
+![About](https://mararsh.github.io/MyBox/7.jpg)
 
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
-可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.4/MyBox-2.4-exe.zip) 
+可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.5-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.5/MyBox-2.5-exe.zip) 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.4-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.4/MyBox-2.4-jar.zip) ，执行以下命令来启动程序：
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.5-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.5/MyBox-2.5-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
-当前是版本2.4，已实现的特点：
+当前是版本2.5，已实现的特点：
 1. 随时切换中英文界面 
 2. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项
 3. 将PDF文件中的图片提取出来保存为原格式。
@@ -21,16 +21,18 @@
 5. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
 6. 以上功能支持批量处理， 可以暂停/继续处理过程。
 7. 支持图像格式：png, jpg, bmp, tif, gif, wbmp, pnm, pcx。
-8. 处理图片：参数化调整像素、饱和度、明暗、色相；提供滤镜：灰色、反色、黑白色。支持导览和对照图。
+8. 处理图片：参数化调整像素、饱和度、明暗、色相；提供滤镜：灰色、反色、黑白色；实现换色。支持导览和对照图。
 9. 查看图片的元数据和属性。
 10. 同屏查看最多十张图，可以分别或者同步旋转和缩放。支持多图导览。
-11. 像素计算器。
+11. 调色盘、像素计算器。
 12. 目录文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 13. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项
 14. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
 15. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 
 ## 开发日志
+
+2018-07-25 版本2.5  调色盘。图像的换色：可以精确匹配颜色、或者设置色距，此功能可以替换图像背景色、或者清除色彩噪声。
 
 2018-07-24 版本2.4  完善图像处理和多图查看：平滑切换、对照图、像素调整。
 
@@ -66,6 +68,18 @@
 ## 应用截图
 
 ![1](https://mararsh.github.io/MyBox/1.png)
+
+
+
+![27](https://mararsh.github.io/MyBox/28.jpg)
+
+
+
+![27](https://mararsh.github.io/MyBox/29.jpg)
+
+
+
+![27](https://mararsh.github.io/MyBox/30.jpg)
 
 
 
