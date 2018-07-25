@@ -11,7 +11,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.image.ColorTools;
+import mara.mybox.tools.ColorTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileCreateTime;
 

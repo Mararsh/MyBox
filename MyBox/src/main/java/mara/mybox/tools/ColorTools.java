@@ -1,4 +1,4 @@
-package mara.mybox.image;
+package mara.mybox.tools;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;

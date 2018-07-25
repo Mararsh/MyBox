@@ -122,10 +122,17 @@ public class MyBoxController extends BaseController {
                     openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false, false);
                 }
             });
+            MenuItem colorPalette = new MenuItem(AppVaribles.getMessage("ColorPalette"));
+            colorPalette.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openStage(CommonValues.ColorPaletteFxml, AppVaribles.getMessage("ColorPalette"), false, false);
+                }
+            });
             imageMenu = new ContextMenu();
             imageMenu.getItems().addAll(ImageManufacture, imagesViewer, new SeparatorMenuItem(),
                     imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                    pixelsCalculator);
+                    colorPalette, pixelsCalculator);
 
             MenuItem filesRename = new MenuItem(AppVaribles.getMessage("FilesRename"));
             filesRename.setOnAction(new EventHandler<ActionEvent>() {

@@ -280,7 +280,7 @@ public class FxmlTools {
         public static final int Desaturate = 5;
     }
 
-    public static WritableImage manufactureImage(Image image, int manuType) {
+    public static Image manufactureImage(Image image, int manuType) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -326,7 +326,7 @@ public class FxmlTools {
         return imageRGB;
     }
 
-    public static WritableImage changeSaturate(Image image, float change) {
+    public static Image changeSaturate(Image image, float change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -348,7 +348,7 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static WritableImage changeBrightness(Image image, float change) {
+    public static Image changeBrightness(Image image, float change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -370,7 +370,7 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static WritableImage changeHue(Image image, int change) {
+    public static Image changeHue(Image image, int change) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -392,7 +392,7 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static WritableImage makeBinary(Image image, int precent) {
+    public static Image makeBinary(Image image, int precent) {
         int threshold = 256 * precent / 100;
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
@@ -412,7 +412,38 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static Image changeScale(Image image, float scale) {
+    public static Image replaceColor(Image image, Color originalColor, Color newColor, int distance) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (distance <= 0 && color.equals(originalColor)
+                        || isColorMatch(color, originalColor, distance)) {
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    // https://en.wikipedia.org/wiki/Color_difference
+    public static double calculateColorDistance2(Color color1, Color color2) {
+        double v = 2 * Math.pow(color1.getRed() * 255 - color2.getRed() * 255, 2)
+                + 4 * Math.pow(color1.getGreen() * 255 - color2.getGreen() * 255, 2)
+                + 3 * Math.pow(color1.getBlue() * 255 - color2.getBlue() * 255, 2);
+        return v;
+    }
+
+    public static boolean isColorMatch(Color color1, Color color2, int distance) {
+        return calculateColorDistance2(color1, color2) <= Math.pow(distance, 2);
+    }
+
+    public static Image scaleImage(Image image, float scale) {
         BufferedImage source = readImage(image);
         int targetW = (int) Math.round(source.getWidth() * scale);
         int targetH = (int) Math.round(source.getHeight() * scale);
@@ -432,7 +463,7 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static Image changePixels(Image image, int width, int height) {
+    public static Image scaleImage(Image image, int width, int height) {
         BufferedImage source = readImage(image);
 //        Image newImage = new Image(file, w, h, true, true);
         int imageType = source.getType();
@@ -450,31 +481,19 @@ public class FxmlTools {
         return newImage;
     }
 
-    private Image resample(Image input, int scaleFactor) {
-        final int W = (int) input.getWidth();
-        final int H = (int) input.getHeight();
-        final int S = scaleFactor;
+    public static String rgb2Hex(Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+    }
 
-        WritableImage output = new WritableImage(
-                W * S,
-                H * S
-        );
-
-        PixelReader reader = input.getPixelReader();
-        PixelWriter writer = output.getPixelWriter();
-
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-                final int argb = reader.getArgb(x, y);
-                for (int dy = 0; dy < S; dy++) {
-                    for (int dx = 0; dx < S; dx++) {
-                        writer.setArgb(x * S + dx, y * S + dy, argb);
-                    }
-                }
-            }
-        }
-
-        return output;
+    public static String rgb2AlphaHex(Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                (int) (color.getOpacity() * 255),
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
     }
 
 }

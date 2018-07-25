@@ -16,8 +16,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.4;
-    public static final String AppVersionDate = "2018-07-24";
+    public static final double AppVersion = 2.5;
+    public static final String AppVersionDate = "2018-07-25";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -45,6 +45,7 @@ public class CommonValues {
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
+    public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";

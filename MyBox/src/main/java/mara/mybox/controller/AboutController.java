@@ -7,6 +7,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
@@ -38,7 +39,8 @@ public class AboutController extends BaseController {
                 try {
                     File miao = FxmlTools.getUserFile(getClass(), "/sound/miao3.mp3", "miao3.mp3");
                     FloatControl control = SoundTools.getControl(miao);
-                    SoundTools.playback(miao, control.getMaximum() * 0.6f);
+                    Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
+                    player.start();
                 } catch (Exception e) {
                 }
                 return null;

@@ -1,5 +1,6 @@
 package mara.mybox.image;
 
+import mara.mybox.tools.ColorTools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;

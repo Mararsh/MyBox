@@ -33,6 +33,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                   <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
                         <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                     </items>
                 </Menu>

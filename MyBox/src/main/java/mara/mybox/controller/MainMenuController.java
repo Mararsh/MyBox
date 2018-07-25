@@ -143,6 +143,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openColorPalette(ActionEvent event) {
+        openStage(CommonValues.ColorPaletteFxml, AppVaribles.getMessage("ColorPalette"), false, false);
+    }
+
+    @FXML
     private void openPixelsCalculator(ActionEvent event) {
         openStage(CommonValues.PixelsCalculatorFxml, AppVaribles.getMessage("PixelsCalculator"), false, false);
     }
