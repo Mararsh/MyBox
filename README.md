@@ -11,7 +11,11 @@
 在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-2.6-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.6/MyBox-2.6-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
-[用户手册](https://mararsh.github.io/MyBox/snapshots.html)
+## 用户手册
+
+[在线网页](https://mararsh.github.io/MyBox/snapshots.html)
+
+[PDF](https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf)
 
 ![About](https://mararsh.github.io/MyBox/intro.jpg)
 
