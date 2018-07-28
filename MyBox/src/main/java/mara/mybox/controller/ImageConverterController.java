@@ -146,9 +146,9 @@ public class ImageConverterController extends ImageBaseController {
                     return null;
                 }
 
-                private void handleCurrentFile() {
+                private boolean handleCurrentFile() {
                     try {
-                        bufferImage = ImageIO.read(currentParameters.sourceFile);
+                        BufferedImage bufferImage = ImageIO.read(currentParameters.sourceFile);
                         int w = attributes.getTargetWidth();
                         int h = attributes.getTargetHeight();
                         if (w <= 0 && currentParameters.isBatch) {
@@ -159,10 +159,11 @@ public class ImageConverterController extends ImageBaseController {
                         }
                         currentParameters.finalTargetName = makeFilename(w, h);
                         if (currentParameters.finalTargetName == null) {
-                            return;
+                            return false;
                         }
                         BufferedImage newImage = ImageConverter.resizeImage(bufferImage, w, h);
                         int color = bufferImage.getType();
+                        logger.debug(color);
                         if (ImageType.BINARY == attributes.getColorSpace()) {
                             if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
                                     && attributes.getThreshold() >= 0) {
@@ -176,8 +177,10 @@ public class ImageConverterController extends ImageBaseController {
 
 //                        ImageIO.write(newImage, attributes.getImageFormat(), new File(targetFile));
                         ImageFileWriters.writeImageFile(newImage, attributes, currentParameters.finalTargetName);
+                        return true;
                     } catch (Exception e) {
                         logger.error(e.toString());
+                        return false;
                     }
                 }
 

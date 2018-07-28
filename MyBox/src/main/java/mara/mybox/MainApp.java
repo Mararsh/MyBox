@@ -15,6 +15,7 @@ import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.image.ImageValueTools;
+import static mara.mybox.objects.AppVaribles.setCurrentBundle;
 import mara.mybox.tools.FileTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +48,7 @@ public class MainApp extends Application {
             if (!alarmFile.exists()) {
                 alarmFile.createNewFile();
             }
-            AppVaribles.CurrentBundle = CommonValues.BundleDefault;
+            setCurrentBundle();
             ImageValueTools.registrySupportedImageFormats();
 
             FXMLLoader fxmlLoader;

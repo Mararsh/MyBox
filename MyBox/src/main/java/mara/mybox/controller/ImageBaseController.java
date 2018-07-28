@@ -37,7 +37,6 @@ import mara.mybox.tools.ValueTools;
 public abstract class ImageBaseController extends BaseController {
 
     protected ImageFileInformation imageInformation;
-    protected BufferedImage bufferImage;
     protected Image image;
     protected ImageAttributes attributes;
 
@@ -121,7 +120,7 @@ public abstract class ImageBaseController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 imageInformation = ImageFileReaders.readImageMetaData(fileName);
-                bufferImage = null;
+                BufferedImage bufferImage = null;
                 String format = FileTools.getFileSuffix(fileName).toLowerCase();
                 if (!"raw".equals(format) && !onlyInformation) {
                     bufferImage = ImageIO.read(file);
@@ -356,8 +355,13 @@ public abstract class ImageBaseController extends BaseController {
         if (currentParameters.currentTotalHandled != 0) {
             avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
         }
-        String s = getMessage(currentParameters.status) + ". "
-                + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
+        String s;
+        if (paused) {
+            s = getMessage("Paused");
+        } else {
+            s = getMessage(currentParameters.status);
+        }
+        s += ". " + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "
                 + getMessage("Average") + ": " + avg + " " + getMessage("SecondsPerItem") + ". "
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(currentParameters.startTime) + ", "
@@ -371,14 +375,6 @@ public abstract class ImageBaseController extends BaseController {
 
     public void setImageInformation(ImageFileInformation imageInformation) {
         this.imageInformation = imageInformation;
-    }
-
-    public BufferedImage getBufferImage() {
-        return bufferImage;
-    }
-
-    public void setBufferImage(BufferedImage bufferImage) {
-        this.bufferImage = bufferImage;
     }
 
     public Image getImage() {

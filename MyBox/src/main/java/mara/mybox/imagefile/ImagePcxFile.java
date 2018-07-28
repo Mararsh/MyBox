@@ -3,9 +3,15 @@ package mara.mybox.imagefile;
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageReader;
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi;
 import com.github.jaiimageio.impl.plugins.pcx.PCXMetadata;
+import com.github.jaiimageio.impl.plugins.pcx.PCXImageWriter;
+import com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.objects.ImageAttributes;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +26,33 @@ import org.apache.logging.log4j.Logger;
 public class ImagePcxFile {
 
     private static final Logger logger = LogManager.getLogger();
+
+    public static boolean writePcxImageFile(BufferedImage image,
+            ImageAttributes attributes, File file) {
+        try {
+            logger.debug("writePcxImageFile");
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+            } catch (Exception e) {
+                return false;
+            }
+
+            PCXImageWriter writer = new PCXImageWriter(new PCXImageWriterSpi());
+
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+                writer.setOutput(out);
+                writer.write(null, new IIOImage(image, null, null), null);
+                out.flush();
+            }
+            writer.dispose();
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
 
     public static PCXMetadata getPcxMetadata(File file) {
         try {

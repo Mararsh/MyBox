@@ -409,12 +409,14 @@ public class BaseController implements Initializable {
             } else if (getMyStage().getTitle() == null) {
                 myStage.setTitle(AppVaribles.getMessage("AppTitle"));
             }
-//            myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-//                @Override
-//                public void handle(WindowEvent event) {
-//                    controller.stageClosing(event);
-//                }
-//            });
+            myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
 //            if (!newFxml.equals(CommonValues.AlarmClockFxml)) {
 //                AppVaribles.alarmClockController = null;
 //            }
@@ -478,6 +480,7 @@ public class BaseController implements Initializable {
         try {
 //            logger.debug("stageClosing:" + getMyStage().getWidth() + "," + myStage.getHeight());
 //            logger.debug(Platform.isImplicitExit());
+//            logger.debug("stageClosing:" + getClass());
 
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -594,7 +597,6 @@ public class BaseController implements Initializable {
 
             Stage stage = new Stage();
             controller.setMyStage(stage);
-            stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);

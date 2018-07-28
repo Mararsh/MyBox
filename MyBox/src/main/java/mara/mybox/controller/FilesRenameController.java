@@ -342,8 +342,13 @@ public class FilesRenameController extends BaseController {
         if (currentTotalHandled != 0) {
             avg = ValueTools.roundDouble3((double) cost / currentTotalHandled);
         }
-        String s = getMessage(currentStatus) + ". "
-                + getMessage("HandledThisTime") + ": " + currentTotalHandled + " "
+        String s;
+        if (paused) {
+            s = getMessage("Paused");
+        } else {
+            s = getMessage(currentStatus);
+        }
+        s += ". " + getMessage("HandledThisTime") + ": " + currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "
                 + getMessage("Average") + ": " + avg + " " + getMessage("SecondsPerItem") + ". "
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "

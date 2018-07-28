@@ -1,6 +1,7 @@
 package mara.mybox.objects;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
@@ -116,4 +117,26 @@ public class AppVaribles {
     public static boolean setConfigValue(String key, boolean value) {
         return setConfigValue(key, value ? "true" : "false");
     }
+
+    public static void setCurrentBundle() {
+        String lang = getConfigValue("language", null);
+        setCurrentBundle(lang);
+    }
+
+    public static void setCurrentBundle(String lang) {
+        if (lang == null) {
+            lang = Locale.getDefault().getLanguage().toLowerCase();
+        }
+        setConfigValue("language", lang);
+        switch (lang.toLowerCase()) {
+            case "zh":
+                AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
+                break;
+            case "en":
+            default:
+                AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
+                break;
+        }
+    }
+
 }

@@ -13,6 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
@@ -81,6 +82,18 @@ public class FileTools {
         int pos = filename.lastIndexOf(".");
         if (pos >= 0) {
             fname = fname.substring(pos + 1);
+        }
+        return fname;
+    }
+
+    public static String getTempFile(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        String fname = filename;
+        int pos = filename.lastIndexOf(".");
+        if (pos >= 0) {
+            fname = fname.substring(0, pos) + new Date().getTime() + "." + fname.substring(pos + 1);
         }
         return fname;
     }

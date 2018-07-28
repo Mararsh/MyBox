@@ -425,8 +425,13 @@ public class FilesArrangeController extends BaseController {
         if (copyAttr.getCopiedFilesNumber() != 0) {
             avg = ValueTools.roundDouble3((double) cost / copyAttr.getCopiedFilesNumber());
         }
-        String s = getMessage(currentStatus) + ". "
-                + getMessage("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
+        String s;
+        if (paused) {
+            s = getMessage("Paused");
+        } else {
+            s = getMessage(currentStatus);
+        }
+        s += ". " + getMessage("HandledThisTime") + ": " + copyAttr.getCopiedFilesNumber() + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "
                 + getMessage("Average") + ": " + avg + " " + getMessage("SecondsPerItem") + ". "
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "

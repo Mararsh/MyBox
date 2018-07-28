@@ -48,7 +48,7 @@ public class ColorPaletteController extends BaseController {
         hsbValue.setText(getMessage("Hue") + ": " + Math.round(color.getHue()) + "    "
                 + getMessage("Saturation") + ": " + Math.round(color.getSaturation() * 100) + "%    "
                 + getMessage("Brightness") + ": " + Math.round(color.getBrightness() * 100) + "%");
-        hexValue.setText(FxmlTools.rgb2AlphaHex(color) + "    " + FxmlTools.rgb2Hex(color));
+        hexValue.setText("ARGB: " + FxmlTools.rgb2AlphaHex(color) + "    RGB: " + FxmlTools.rgb2Hex(color));
     }
 
     @FXML

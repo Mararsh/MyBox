@@ -59,13 +59,13 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void setChinese(ActionEvent event) {
-        AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
+        AppVaribles.setCurrentBundle("zh");
         reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
     }
 
     @FXML
     private void setEnglish(ActionEvent event) {
-        AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
+        AppVaribles.setCurrentBundle("en");
         reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
     }
 
@@ -206,6 +206,8 @@ public class MainMenuController extends BaseController {
     @Override
     public boolean stageReloading() {
         try {
+//            logger.debug("stageReloading");
+
             if (parentController.getClass().equals(mara.mybox.controller.AlarmClockController.class)) {
                 AlarmClockController p = (AlarmClockController) parentController;
                 Clip player = p.getPlayer();
@@ -214,6 +216,13 @@ public class MainMenuController extends BaseController {
                     player.drain();
                     player.close();
                     player = null;
+                }
+            }
+
+            if (parentController.getClass().equals(mara.mybox.controller.ImageManufactureController.class)) {
+                ImageManufactureController p = (ImageManufactureController) parentController;
+                if (!p.stageReloading()) {
+                    return false;
                 }
             }
 
@@ -230,6 +239,7 @@ public class MainMenuController extends BaseController {
                 }
             }
             return true;
+
         } catch (Exception e) {
             return false;
         }

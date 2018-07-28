@@ -16,8 +16,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.5;
-    public static final String AppVersionDate = "2018-07-25";
+    public static final double AppVersion = 2.6;
+    public static final String AppVersionDate = "2018-07-28";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -100,6 +100,17 @@ public class CommonValues {
             add("gif");
             add("pcx");
             add("pnm");
+            add("wbmp");
+        }
+    };
+
+    public static List<String> NoAlphaImages = new ArrayList() {
+        {
+            add("jpg");
+            add("jpeg");
+            add("bmp");
+            add("pnm");
+            add("gif");
             add("wbmp");
         }
     };

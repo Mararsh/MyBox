@@ -170,7 +170,7 @@ public class MyBoxController extends BaseController {
             setEnglish.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
+                    AppVaribles.setCurrentBundle("en");
                     reloadStage(myFxml, AppVaribles.getMessage("AppTitle"));
                 }
             });
@@ -178,7 +178,7 @@ public class MyBoxController extends BaseController {
             setChinese.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
+                    AppVaribles.setCurrentBundle("zh");
                     reloadStage(myFxml, AppVaribles.getMessage("AppTitle"));
                 }
             });

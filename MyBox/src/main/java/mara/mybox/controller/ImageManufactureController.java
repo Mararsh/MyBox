@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -45,11 +50,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConverter;
@@ -83,35 +90,47 @@ public class ImageManufactureController extends ImageViewerController {
     protected ImageView refView;
     protected Image refImage;
     protected ImageFileInformation refInfo;
-    private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor, isColorAccurateMatch;
+    private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor;
     private float scale = 1.0f;
-    private int width, height, colorDistance;
-    private SimpleBooleanProperty changed;
+    private int width, height, colorDistance, opacity = 100, colorMatchType, hueDistance;
+    public SimpleBooleanProperty imageChanged;
 
     @FXML
     protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar;
     @FXML
-    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, replaceColorTab, pixelsTab, refTab, browseTab;
+    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, replaceColorTab, pixelsTab, refTab, browseTab, opacityTab;
     @FXML
-    protected Slider zoomSlider, rotateSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider;
+    protected Slider zoomSlider, rotateSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider, opacitySlider;
     @FXML
-    protected Label zoomValue, rotateValue, hueValue, saturateValue, brightnessValue, binaryValue, tipsLabel;
+    protected Label zoomValue, rotateValue, hueValue, saturateValue, brightnessValue, binaryValue, tipsLabel, promptLabel, opacityValue;
     @FXML
     protected ToggleGroup sortGroup, pixelsGroup, colorMatchGroup;
     @FXML
-    protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton, recoverButton, colorOkButton;
+    protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton;
     @FXML
-    protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck;
+    protected Button pickOldColorButton, pickNewColorButton, recoverButton, colorOkButton, opacityOkButton;
+    @FXML
+    protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck, excludedCheck;
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput;
+    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput;
     @FXML
     protected ChoiceBox ratioBox;
     @FXML
     private TabPane tabPane;
     @FXML
-    protected ColorPicker originalColorPicker, newColorPicker;
+    protected ColorPicker newColorPicker;
+    @FXML
+    protected ComboBox originalColorsBox;
+
+    public static class ColorMatchType {
+
+        public static int AccurateMatch = 0;
+        public static int ColorDistance = 1;
+        public static int HueDistance = 2;
+
+    }
 
     public ImageManufactureController() {
         ImageSortTypeKey = "ImageSortType";
@@ -123,20 +142,84 @@ public class ImageManufactureController extends ImageViewerController {
     @Override
     protected void initializeNext2() {
         try {
+            initCommon();
+            initFileTab();
+            initViewTab();
+            initBrowseTab();
+            initPixelsTab();
+            initHueTab();
+            initSaturateTab();
+            initBrightnessTab();
+            initOpacityTab();
+            initFiltersTab();
+            initReplaceColorTab();
+            initReferenceTab();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initCommon() {
+        try {
             attributes = new ImageAttributes();
 
             fileBar.setDisable(true);
+            browseTab.setDisable(true);
             navBar.setDisable(true);
             zoomTab.setDisable(true);
             hueTab.setDisable(true);
             saturateTab.setDisable(true);
             brightnessTab.setDisable(true);
+            opacityTab.setDisable(true);
             filtersTab.setDisable(true);
             replaceColorTab.setDisable(true);
             pixelsTab.setDisable(true);
             refTab.setDisable(true);
             hotBar.setDisable(true);
-            browseTab.setDisable(true);
+
+            Tooltip tips = new Tooltip(getMessage("ImageManufactureTips"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(tipsLabel, tips);
+
+            imageChanged = new SimpleBooleanProperty(false);
+            imageChanged.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (imageChanged.getValue()) {
+                        saveButton.setDisable(false);
+                        recoverButton.setDisable(false);
+                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath() + "*");
+                    } else {
+                        saveButton.setDisable(true);
+                        recoverButton.setDisable(true);
+                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initFileTab() {
+        try {
+            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    AppVaribles.setConfigValue(ImageOpenAfterSaveAsKey, openCheck.isSelected());
+                }
+            });
+            openCheck.setSelected(AppVaribles.getConfigBoolean(ImageOpenAfterSaveAsKey));
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initViewTab() {
+        try {
 
             zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -154,38 +237,13 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            saturateSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    saturateStep = newValue.intValue();
-                    saturateValue.setText(saturateStep + "%");
-                }
-            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
-            hueSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    hueStep = newValue.intValue();
-                    hueValue.setText(hueStep + "");
-                }
-            });
-
-            brightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    brightnessStep = newValue.intValue();
-                    brightnessValue.setText(brightnessStep + "%");
-                }
-            });
-
-            binarySlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    percent = newValue.intValue();
-                    binaryValue.setText(percent + "%");
-                }
-            });
-
+    protected void initBrowseTab() {
+        try {
             sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -197,13 +255,46 @@ public class ImageManufactureController extends ImageViewerController {
             });
             FxmlTools.setRadioSelected(sortGroup, AppVaribles.getConfigValue(ImageSortTypeKey, getMessage("FileName")));
 
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initPixelsTab() {
+        try {
+
+            widthInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setConfigValue(ImageOpenAfterSaveAsKey, openCheck.isSelected());
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkPixelsWidth();
                 }
             });
-            openCheck.setSelected(AppVaribles.getConfigBoolean(ImageOpenAfterSaveAsKey));
+            checkPixelsWidth();
+
+            heightInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkPixelsHeight();
+                }
+            });
+            checkPixelsHeight();
+
+            keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                    if (keepRatioCheck.isSelected()) {
+                        checkRatio();
+                    }
+                }
+            });
+
+            pixelsOkButton.disableProperty().bind(
+                    widthInput.styleProperty().isEqualTo(badStyle)
+                            .or(heightInput.styleProperty().isEqualTo(badStyle))
+                            .or(scaleInput.styleProperty().isEqualTo(badStyle))
+            );
 
             pixelsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -239,113 +330,258 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    try {
-                        scale = Float.valueOf(scaleInput.getText());
-                        if (scale > 0) {
-                            scaleInput.setStyle(null);
-                            noRatio = true;
-                            final Image currentImage = imageView.getImage();
-                            widthInput.setText(Math.round(currentImage.getWidth() * scale) + "");
-                            heightInput.setText(Math.round(currentImage.getHeight() * scale) + "");
-                            noRatio = false;
-                        } else {
-                            scaleInput.setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        scaleInput.setStyle(badStyle);
-                    }
+                    checkPixelsScale();
+                }
+            });
+            checkPixelsScale();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void checkPixelsWidth() {
+        try {
+            width = Integer.valueOf(widthInput.getText());
+            if (width > 0) {
+                widthInput.setStyle(null);
+                checkRatio();
+            } else {
+                widthInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            widthInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkPixelsHeight() {
+        try {
+            height = Integer.valueOf(heightInput.getText());
+            if (height > 0) {
+                heightInput.setStyle(null);
+                checkRatio();
+            } else {
+                heightInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            heightInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkPixelsScale() {
+        try {
+            scale = Float.valueOf(scaleInput.getText());
+            if (scale > 0) {
+                scaleInput.setStyle(null);
+                final Image currentImage = imageView.getImage();
+                if (currentImage != null) {
+                    noRatio = true;
+                    widthInput.setText(Math.round(currentImage.getWidth() * scale) + "");
+                    heightInput.setText(Math.round(currentImage.getHeight() * scale) + "");
+                    noRatio = false;
+                }
+            } else {
+                scaleInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            scaleInput.setStyle(badStyle);
+        }
+    }
+
+    protected void initHueTab() {
+        try {
+            hueSlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    hueStep = newValue.intValue();
+                    hueValue.setText(hueStep + "");
                 }
             });
 
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initSaturateTab() {
+        try {
+            saturateSlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    saturateStep = newValue.intValue();
+                    saturateValue.setText(saturateStep + "%");
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initBrightnessTab() {
+        try {
+            brightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    brightnessStep = newValue.intValue();
+                    brightnessValue.setText(brightnessStep + "%");
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initOpacityTab() {
+        try {
+            opacitySlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    opacity = newValue.intValue();
+                    opacityValue.setText(opacity + "");
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initFiltersTab() {
+        try {
+            binarySlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    percent = newValue.intValue();
+                    binaryValue.setText(percent + "%");
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initReplaceColorTab() {
+        try {
             colorMatchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    RadioButton selected = (RadioButton) pixelsGroup.getSelectedToggle();
-                    if (getMessage("AccurateMatch").equals(selected.getText())) {
-                        colorDistanceInput.setDisable(true);
-                        colorDistanceInput.setStyle(null);
-                        isColorAccurateMatch = true;
-                    } else {
-                        colorDistanceInput.setDisable(false);
-                        isColorAccurateMatch = false;
-                    }
+                    checkMatchType();
                 }
             });
-            isColorAccurateMatch = true;
+            checkMatchType();
+
+            FxmlTools.quickTooltip(colorDistanceInput, new Tooltip("0 ~ 255"));
+            FxmlTools.quickTooltip(hueDistanceInput, new Tooltip("0 ~ 360"));
+            FxmlTools.quickTooltip(excludedCheck, new Tooltip(getMessage("ReplaceColorExcludedComments")));
 
             colorDistanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    try {
-                        colorDistance = Integer.valueOf(colorDistanceInput.getText());
-                        if (colorDistance >= 0 && colorDistance <= 255) {
-                            colorDistanceInput.setStyle(null);
-                        } else {
-                            colorDistanceInput.setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        colorDistanceInput.setStyle(badStyle);
-                    }
+                    checkColorDistance();
                 }
             });
+            checkColorDistance();
 
-            widthInput.textProperty().addListener(new ChangeListener<String>() {
+            hueDistanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    try {
-                        width = Integer.valueOf(widthInput.getText());
-                        if (width > 0) {
-                            widthInput.setStyle(null);
-                            checkRatio();
-                        } else {
-                            widthInput.setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        widthInput.setStyle(badStyle);
-                    }
+                    checkHueDistance();
                 }
             });
+            checkHueDistance();
 
-            heightInput.textProperty().addListener(new ChangeListener<String>() {
+            originalColorsBox.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        height = Integer.valueOf(heightInput.getText());
-                        if (height > 0) {
-                            heightInput.setStyle(null);
-                            checkRatio();
-                        } else {
-                            heightInput.setStyle(badStyle);
+                public ListCell<Color> call(ListView<Color> p) {
+                    return new ListCell<Color>() {
+                        private final Rectangle rectangle;
+
+                        {
+                            setContentDisplay(ContentDisplay.LEFT);
+                            rectangle = new Rectangle(10, 10);
                         }
-                    } catch (Exception e) {
-                        heightInput.setStyle(badStyle);
-                    }
+
+                        @Override
+                        protected void updateItem(Color item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if (item == null || empty) {
+                                setGraphic(null);
+                            } else {
+                                rectangle.setFill(item);
+                                setGraphic(rectangle);
+                                setText(item.toString());
+                            }
+                        }
+                    };
                 }
             });
-
-            keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    if (keepRatioCheck.isSelected()) {
-                        checkRatio();
-                    }
-                }
-            });
-
-            pixelsOkButton.disableProperty().bind(
-                    widthInput.styleProperty().isEqualTo(badStyle)
-                            .or(heightInput.styleProperty().isEqualTo(badStyle))
-                            .or(scaleInput.styleProperty().isEqualTo(badStyle))
-            );
 
             colorOkButton.disableProperty().bind(
                     colorDistanceInput.styleProperty().isEqualTo(badStyle)
             );
 
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void checkMatchType() {
+        RadioButton selected = (RadioButton) colorMatchGroup.getSelectedToggle();
+        if (getMessage("ColorDistance").equals(selected.getText())) {
+            colorMatchType = ColorMatchType.ColorDistance;
+            colorDistanceInput.setDisable(false);
+            hueDistanceInput.setDisable(true);
+            hueDistanceInput.setStyle(null);
+
+        } else if (getMessage("HueDistance").equals(selected.getText())) {
+            colorMatchType = ColorMatchType.HueDistance;
+            hueDistanceInput.setDisable(false);
+            colorDistanceInput.setDisable(true);
+            colorDistanceInput.setStyle(null);
+
+        } else {
+            colorMatchType = ColorMatchType.AccurateMatch;
+            colorDistanceInput.setDisable(true);
+            colorDistanceInput.setStyle(null);
+            hueDistanceInput.setDisable(true);
+            hueDistanceInput.setStyle(null);
+
+        }
+
+    }
+
+    private void checkColorDistance() {
+        try {
+            colorDistance = Integer.valueOf(colorDistanceInput.getText());
+            if (colorDistance >= 0 && colorDistance <= 255) {
+                colorDistanceInput.setStyle(null);
+            } else {
+                colorDistanceInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            colorDistanceInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkHueDistance() {
+        try {
+            hueDistance = Integer.valueOf(hueDistanceInput.getText());
+            if (hueDistance >= 0 && hueDistance <= 255) {
+                hueDistanceInput.setStyle(null);
+            } else {
+                hueDistanceInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            hueDistanceInput.setStyle(badStyle);
+        }
+    }
+
+    protected void initReferenceTab() {
+        try {
             displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -353,29 +589,20 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            Tooltip tips = new Tooltip(AppVaribles.getMessage("ImageManufactureTips"));
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(tipsLabel, tips);
-
-            changed = new SimpleBooleanProperty(false);
-            changed.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    if (changed.getValue()) {
-                        saveButton.setDisable(false);
-                        recoverButton.setDisable(false);
-                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath() + "*");
-                    } else {
-                        saveButton.setDisable(true);
-                        recoverButton.setDisable(true);
-                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
-                    }
-                }
-            });
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    protected void selectSourceFile(ActionEvent event) {
+        if (image != null && imageChanged.getValue()) {
+            if (!checkSavingBeforeExit()) {
+                return;
+            }
+        }
+        super.selectSourceFile(event);
     }
 
     @Override
@@ -394,6 +621,11 @@ public class ImageManufactureController extends ImageViewerController {
             refTab.setDisable(false);
             hotBar.setDisable(false);
             browseTab.setDisable(false);
+            if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat().toLowerCase())) {
+                opacityTab.setDisable(true);
+            } else {
+                opacityTab.setDisable(false);
+            }
 
             widthInput.setText(imageInformation.getxPixels() + "");
             heightInput.setText(imageInformation.getyPixels() + "");
@@ -404,14 +636,15 @@ public class ImageManufactureController extends ImageViewerController {
             straighten();
             showLabel();
 
-            changed.set(false);
+            imageChanged.set(false);
+            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
         }
     }
 
     @FXML
     public void recovery() {
         imageView.setImage(image);
-        changed.set(false);
+        imageChanged.set(false);
         showLabel();
     }
 
@@ -430,7 +663,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -455,7 +688,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -478,7 +711,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -501,7 +734,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -524,7 +757,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -547,7 +780,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -570,7 +803,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -593,7 +826,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -616,7 +849,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -696,15 +929,16 @@ public class ImageManufactureController extends ImageViewerController {
             Task saveTask = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    String format = imageInformation.getImageFormat();
-                    final BufferedImage changedImage = FxmlTools.readImage(currentImage);
-                    ImageIO.write(changedImage, format, sourceFile);
+                    String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath());
+                    final BufferedImage bufferedImage = FxmlTools.readImage(currentImage, format);
+                    ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+//                    ImageIO.write(changedImage, format, sourceFile);
                     imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
                     image = currentImage;
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            changed.set(false);
+                            imageChanged.set(false);
                             showLabel();
                         }
                     });
@@ -739,7 +973,7 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlTools.readImage(currentImage);
+                    final BufferedImage bufferedImage = FxmlTools.readImage(currentImage, imageInformation.getImageFormat());
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                     Platform.runLater(new Runnable() {
                         @Override
@@ -801,6 +1035,7 @@ public class ImageManufactureController extends ImageViewerController {
         isPickingOriginalColor = true;
         isPickingNewColor = false;
         imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickColorComments"));
     }
 
     @FXML
@@ -808,6 +1043,7 @@ public class ImageManufactureController extends ImageViewerController {
         isPickingOriginalColor = false;
         isPickingNewColor = true;
         imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickColorComments"));
     }
 
     @FXML
@@ -996,30 +1232,26 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     public void clickImage(MouseEvent event) {
         if (isPickingOriginalColor || isPickingNewColor) {
-//            logger.debug("event.getX:  " + event.getX() + ", " + event.getY());
-//            logger.debug("event.getSceneX:  " + event.getSceneX() + ", " + event.getSceneY());
-//            logger.debug("event.getScreenX:  " + event.getScreenX() + ", " + event.getScreenY());
-//            logger.debug("scrollPane.getHvalue:  " + scrollPane.getHvalue() + ", " + scrollPane.getVvalue());
-//            logger.debug("scrollPane.getWidth():  " + scrollPane.getWidth() + ", " + scrollPane.getHeight());
-//            logger.debug("imageView.getFitWidth():  " + imageView.getFitWidth() + ", " + imageView.getFitHeight());
-//            logger.debug("imageView.getBoundsInLocal().getWidth():  " + imageView.getBoundsInLocal().getWidth() + ", " + imageView.getBoundsInLocal().getHeight());
-//            logger.debug("image.getWidth():  " + image.getWidth() + ", " + image.getHeight());
+            if (event.getClickCount() > 1) {
+                isPickingOriginalColor = false;
+                isPickingNewColor = false;
+                imageView.setCursor(Cursor.OPEN_HAND);
+                promptLabel.setText("");
 
-            double imageX = event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth();
-            double imageY = event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight();
-//            logger.debug("event.getX():  " + event.getX() + ", " + event.getY());
-//            logger.debug("imageX:  " + imageX + ", " + imageY);
-
-            PixelReader pixelReader = image.getPixelReader();
-            Color color = pixelReader.getColor((int) Math.round(imageX), (int) Math.round(imageY));
-            if (isPickingOriginalColor) {
-                originalColorPicker.setValue(color);
             } else {
-                newColorPicker.setValue(color);
+                double imageX = event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth();
+                double imageY = event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight();
+
+                PixelReader pixelReader = image.getPixelReader();
+                Color color = pixelReader.getColor((int) Math.round(imageX), (int) Math.round(imageY));
+                if (isPickingOriginalColor) {
+                    originalColorsBox.getItems().add(color);
+                    originalColorsBox.getSelectionModel().select(color);
+                } else {
+                    newColorPicker.setValue(color);
+                }
             }
-            isPickingOriginalColor = false;
-            isPickingNewColor = false;
-            imageView.setCursor(Cursor.OPEN_HAND);
+
         }
         try {
 
@@ -1035,17 +1267,67 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                int distance = 0;
-                if (!isColorAccurateMatch) {
-                    distance = colorDistance;
+                List<Color> colors = originalColorsBox.getItems();
+                final Image newImage;
+                if (colorMatchType == ColorMatchType.ColorDistance) {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceColorsExcluded(currentImage, colors, newColorPicker.getValue(), colorDistance);
+                    } else {
+                        newImage = FxmlTools.replaceColorsIncluded(currentImage, colors, newColorPicker.getValue(), colorDistance);
+                    }
+
+                } else if (colorMatchType == ColorMatchType.HueDistance) {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceHuesExcluded(currentImage, colors, newColorPicker.getValue(), hueDistance);
+                    } else {
+                        newImage = FxmlTools.replaceHuesIncluded(currentImage, colors, newColorPicker.getValue(), hueDistance);
+                    }
+
+                } else {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceColorsUnMatched(currentImage, colors, newColorPicker.getValue());
+                    } else {
+                        newImage = FxmlTools.replaceColorsMatched(currentImage, colors, newColorPicker.getValue());
+                    }
+
                 }
-                final Image newImage = FxmlTools.replaceColor(currentImage,
-                        originalColorPicker.getValue(), newColorPicker.getValue(), distance);
+
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void clearOriginalColorsAction() {
+        originalColorsBox.getItems().clear();
+    }
+
+    @FXML
+    public void opacityAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.opcityImage(currentImage, opacity);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
                     }
                 });
                 return null;
@@ -1282,12 +1564,12 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, scale);
+                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), scale);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                         showLabel();
                     }
                 });
@@ -1308,12 +1590,12 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, width, height);
+                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), width, height);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        changed.set(true);
+                        imageChanged.set(true);
                         showLabel();
                     }
                 });
@@ -1326,4 +1608,42 @@ public class ImageManufactureController extends ImageViewerController {
         thread.start();
     }
 
+    @Override
+    public boolean stageReloading() {
+//        logger.debug("stageReloading");
+        return checkSavingBeforeExit();
+    }
+
+    @Override
+    public boolean stageClosing() {
+//        logger.debug("stageClosing");
+        if (!checkSavingBeforeExit()) {
+            return false;
+        }
+        return super.stageClosing();
+    }
+
+    public boolean checkSavingBeforeExit() {
+        if (imageChanged.getValue()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setContentText(AppVaribles.getMessage("ImageChanged"));
+            ButtonType buttonSaveAndContinue = new ButtonType(AppVaribles.getMessage("SaveAndContinue"));
+            ButtonType buttonDiscardModification = new ButtonType(AppVaribles.getMessage("DiscardModification"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            alert.getButtonTypes().setAll(buttonSaveAndContinue, buttonDiscardModification, buttonCancel);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonSaveAndContinue) {
+                save();
+                return true;
+            } else if (result.get() == buttonDiscardModification) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 }

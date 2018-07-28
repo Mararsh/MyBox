@@ -28,6 +28,7 @@ import static mara.mybox.imagefile.ImageJpegFile.writeJPEGImageFile;
 import static mara.mybox.imagefile.ImagePngFile.writePNGImageFile;
 import static mara.mybox.imagefile.ImageRawFile.writeRawImageFile;
 import static mara.mybox.imagefile.ImageTiffFile.writeTiffImageFile;
+import static mara.mybox.imagefile.ImagePcxFile.writePcxImageFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -110,6 +111,8 @@ public class ImageFileWriters {
 //                    writePnmImageFile(image, attributes, outFile);
 ////                    displayMetadata(outFile);
 //                    break;
+                case "pcx":
+                    return writePcxImageFile(image, attributes, file);
 
                 default:
                     return writeCommonImageFile(image, attributes, file);

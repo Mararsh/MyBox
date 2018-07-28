@@ -149,6 +149,7 @@ public class ImageAttributesBaseController extends BaseController {
                 case "jpg":
                 case "bmp":
                 case "pnm":
+                case "gif":
                     ARGB.setDisable(true);
                     Binary.setDisable(false);
                     RGB.setDisable(false);

@@ -381,8 +381,13 @@ public abstract class PdfBaseController extends BaseController {
         if (currentParameters.currentTotalHandled != 0) {
             avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
         }
-        String s = getMessage(currentParameters.status) + ". "
-                + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
+        String s;
+        if (paused) {
+            s = getMessage("Paused");
+        } else {
+            s = getMessage(currentParameters.status);
+        }
+        s += ". " + getMessage("HandledThisTime") + ": " + currentParameters.currentTotalHandled + " "
                 + getMessage("Cost") + ": " + cost + " " + getMessage("Seconds") + ". "
                 + getMessage("Average") + ": " + avg + " " + getMessage("SecondsPerItem") + ". "
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(currentParameters.startTime) + ", "
