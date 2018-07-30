@@ -45,7 +45,29 @@ public class ColorTools {
             -1 对应 0xffffffff
             0xffffff 的值 16777215
      */
+ /*
+    new Color(255, 255, 255, 0): 16777215
+    new Color(255, 255, 255, 255): -1
+    Color.WHITE: -1
+    new Color(0, 0, 0, 0): 0
+    new Color(0, 0, 0, 255): -16777216
+    Color.BLACK: -16777216
+    new Color(255, 0, 0, 0): 16711680
+    new Color(255, 0, 0, 255): -65536
+    Color.RED: -65536
+    Color.BLUE: -16776961
+     */
     public static int adjustPixelColor(int pixelColor) {
+        logger.debug("new Color(255, 255, 255, 0): " + new Color(255, 255, 255, 0).getRGB());
+        logger.debug("new Color(255, 255, 255, 255): " + new Color(255, 255, 255, 255).getRGB());
+        logger.debug("Color.WHITE: " + Color.WHITE.getRGB());
+        logger.debug("new Color(0, 0, 0, 0): " + new Color(0, 0, 0, 0).getRGB());
+        logger.debug("new Color(0, 0, 0, 255): " + new Color(0, 0, 0, 255).getRGB());
+        logger.debug("Color.BLACK: " + Color.BLACK.getRGB());
+        logger.debug("new Color(255, 0, 0, 0): " + new Color(255, 0, 0, 0).getRGB());
+        logger.debug("new Color(255, 0, 0, 255): " + new Color(255, 0, 0, 255).getRGB());
+        logger.debug("Color.RED: " + Color.RED.getRGB());
+        logger.debug("Color.BLUE: " + Color.BLUE.getRGB());
         return 16777216 + pixelColor;
 //        if (pixelColor > 8388608) {
 //            return pixelColor - 16777216;

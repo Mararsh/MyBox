@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -85,28 +86,28 @@ public class ImageManufactureController extends ImageViewerController {
     protected int saturateStep = 5, brightnessStep = 5, hueStep = 5, percent = 50;
     protected int saturateOffset = 0, brightnessOffset = 0, hueOffset = 0;
     protected File nextFile, lastFile, refFile;
-    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey;
+    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey;
     protected ScrollPane refPane;
     protected ImageView refView;
     protected Image refImage;
     protected ImageFileInformation refInfo;
     private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor;
-    private float scale = 1.0f;
+    private float scale = 1.0f, shearX, shearY = 0;
     private int width, height, colorDistance, opacity = 100, colorMatchType, hueDistance;
     public SimpleBooleanProperty imageChanged;
 
     @FXML
-    protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar;
+    protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar, replaceColorBar;
     @FXML
-    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, replaceColorTab, pixelsTab, refTab, browseTab, opacityTab;
+    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, replaceColorTab, pixelsTab, refTab, browseTab, opacityTab, transformTab;
     @FXML
-    protected Slider zoomSlider, rotateSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider, opacitySlider;
+    protected Slider zoomSlider, angleSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider, opacitySlider;
     @FXML
-    protected Label zoomValue, rotateValue, hueValue, saturateValue, brightnessValue, binaryValue, tipsLabel, promptLabel, opacityValue;
+    protected Label zoomValue, hueValue, saturateValue, brightnessValue, binaryValue, tipsLabel, promptLabel, opacityValue;
     @FXML
     protected ToggleGroup sortGroup, pixelsGroup, colorMatchGroup;
     @FXML
-    protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton;
+    protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
     @FXML
     protected Button pickOldColorButton, pickNewColorButton, recoverButton, colorOkButton, opacityOkButton;
     @FXML
@@ -114,7 +115,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput;
+    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput, shearXInput, shearYInput;
     @FXML
     protected ChoiceBox ratioBox;
     @FXML
@@ -122,7 +123,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ColorPicker newColorPicker;
     @FXML
-    protected ComboBox originalColorsBox;
+    protected ComboBox originalColorsBox, angleBox;
 
     public static class ColorMatchType {
 
@@ -135,6 +136,7 @@ public class ImageManufactureController extends ImageViewerController {
     public ImageManufactureController() {
         ImageSortTypeKey = "ImageSortType";
         ImageOpenAfterSaveAsKey = "ImageOpenAfterSaveAs";
+        ImageSaveConfirmKey = "ImageSaveConfirmKey";
         ImageReferenceDisplayKey = "ImageReferenceDisplay";
 
     }
@@ -152,6 +154,7 @@ public class ImageManufactureController extends ImageViewerController {
             initBrightnessTab();
             initOpacityTab();
             initFiltersTab();
+            initTransformTab();
             initReplaceColorTab();
             initReferenceTab();
 
@@ -176,11 +179,18 @@ public class ImageManufactureController extends ImageViewerController {
             replaceColorTab.setDisable(true);
             pixelsTab.setDisable(true);
             refTab.setDisable(true);
+            transformTab.setDisable(true);
             hotBar.setDisable(true);
 
             Tooltip tips = new Tooltip(getMessage("ImageManufactureTips"));
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(tipsLabel, tips);
+
+            if (AppVaribles.showComments) {
+                tips = new Tooltip(getMessage("ImageRefTips"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(displayRefCheck, tips);
+            }
 
             imageChanged = new SimpleBooleanProperty(false);
             imageChanged.addListener(new ChangeListener<Boolean>() {
@@ -213,6 +223,14 @@ public class ImageManufactureController extends ImageViewerController {
             });
             openCheck.setSelected(AppVaribles.getConfigBoolean(ImageOpenAfterSaveAsKey));
 
+            saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    AppVaribles.setConfigValue(ImageSaveConfirmKey, saveCheck.isSelected());
+                }
+            });
+            saveCheck.setSelected(AppVaribles.getConfigBoolean(ImageSaveConfirmKey));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -226,14 +244,6 @@ public class ImageManufactureController extends ImageViewerController {
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                     zoomStep = newValue.intValue();
                     zoomValue.setText(zoomStep + "%");
-                }
-            });
-
-            rotateSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    rotateValue.setText(newValue.intValue() + "");
-                    rotateAngle = newValue.intValue();
                 }
             });
 
@@ -460,6 +470,91 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
+    protected void initTransformTab() {
+        try {
+
+            shearXInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkShearX();
+                }
+            });
+            checkShearX();
+
+//            shearYInput.textProperty().addListener(new ChangeListener<String>() {
+//                @Override
+//                public void changed(ObservableValue<? extends String> observable,
+//                        String oldValue, String newValue) {
+//                    checkShearY();
+//                }
+//            });
+//            checkShearY();
+            angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    rotateAngle = newValue.intValue();
+                    angleBox.getEditor().setText(rotateAngle + "");
+                    leftButton.setDisable(false);
+                    rightButton.setDisable(false);
+                }
+            });
+
+            ObservableList<String> angles = FXCollections.observableArrayList(
+                    "90", "0", "180", "45", "30", "60", "75", "120", "135");
+            angleBox.getItems().addAll(angles);
+            angleBox.getSelectionModel().select(0);
+            angleBox.setVisibleRowCount(angles.size());
+            angleBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        rotateAngle = Integer.valueOf(newValue);
+                        angleSlider.setValue(rotateAngle);
+                        angleBox.getEditor().setStyle(null);
+                        leftButton.setDisable(false);
+                        rightButton.setDisable(false);
+                    } catch (Exception e) {
+                        rotateAngle = 0;
+                        angleBox.getEditor().setStyle(badStyle);
+                        leftButton.setDisable(true);
+                        rightButton.setDisable(true);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void checkShearX() {
+        try {
+            shearX = Float.valueOf(shearXInput.getText());
+            shearXInput.setStyle(null);
+//            if (shearX >= -1.0 && shearX <= 1.0) {
+//                shearXInput.setStyle(null);
+//            } else {
+//                shearXInput.setStyle(badStyle);
+//            }
+        } catch (Exception e) {
+            shearXInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkShearY() {
+//        try {
+//            shearY = Float.valueOf(shearYInput.getText());
+//            if (shearY >= -1.0 && shearY <= 1.0) {
+//                shearYInput.setStyle(null);
+//            } else {
+//                shearYInput.setStyle(badStyle);
+//            }
+//        } catch (Exception e) {
+//            shearYInput.setStyle(badStyle);
+//        }
+    }
+
     protected void initReplaceColorTab() {
         try {
             colorMatchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -473,7 +568,11 @@ public class ImageManufactureController extends ImageViewerController {
 
             FxmlTools.quickTooltip(colorDistanceInput, new Tooltip("0 ~ 255"));
             FxmlTools.quickTooltip(hueDistanceInput, new Tooltip("0 ~ 360"));
-            FxmlTools.quickTooltip(excludedCheck, new Tooltip(getMessage("ReplaceColorExcludedComments")));
+            if (AppVaribles.showComments) {
+                Tooltip tips = new Tooltip(getMessage("ReplaceColorComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(replaceColorBar, tips);
+            }
 
             colorDistanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -520,8 +619,10 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
+            originalColorsBox.setVisibleRowCount(0);
             colorOkButton.disableProperty().bind(
                     colorDistanceInput.styleProperty().isEqualTo(badStyle)
+                            .or(originalColorsBox.visibleRowCountProperty().isEqualTo(0))
             );
 
         } catch (Exception e) {
@@ -570,7 +671,7 @@ public class ImageManufactureController extends ImageViewerController {
     private void checkHueDistance() {
         try {
             hueDistance = Integer.valueOf(hueDistanceInput.getText());
-            if (hueDistance >= 0 && hueDistance <= 255) {
+            if (hueDistance >= 0 && hueDistance <= 360) {
                 hueDistanceInput.setStyle(null);
             } else {
                 hueDistanceInput.setStyle(badStyle);
@@ -621,11 +722,12 @@ public class ImageManufactureController extends ImageViewerController {
             refTab.setDisable(false);
             hotBar.setDisable(false);
             browseTab.setDisable(false);
-            if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat().toLowerCase())) {
+            if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat())) {
                 opacityTab.setDisable(true);
             } else {
                 opacityTab.setDisable(false);
             }
+            transformTab.setDisable(false);
 
             widthInput.setText(imageInformation.getxPixels() + "");
             heightInput.setText(imageInformation.getyPixels() + "");
@@ -637,6 +739,10 @@ public class ImageManufactureController extends ImageViewerController {
             showLabel();
 
             imageChanged.set(false);
+            isPickingOriginalColor = false;
+            isPickingNewColor = false;
+            imageView.setCursor(Cursor.OPEN_HAND);
+            promptLabel.setText("");
             getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
         }
     }
@@ -924,35 +1030,31 @@ public class ImageManufactureController extends ImageViewerController {
                 return;
             }
         }
-        try {
-            final Image currentImage = imageView.getImage();
-            Task saveTask = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath());
-                    final BufferedImage bufferedImage = FxmlTools.readImage(currentImage, format);
-                    ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
-//                    ImageIO.write(changedImage, format, sourceFile);
-                    imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
-                    image = currentImage;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageChanged.set(false);
-                            showLabel();
-                        }
-                    });
-                    return null;
-                }
-            };
-            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(saveTask);
-            thread.setDaemon(true);
-            thread.start();
 
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        final Image currentImage = imageView.getImage();
+        Task saveTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String format = imageInformation.getImageFormat();
+                final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, format);
+                ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+                imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
+                image = currentImage;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageChanged.set(false);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(saveTask);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
     @FXML
@@ -973,7 +1075,7 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlTools.readImage(currentImage, imageInformation.getImageFormat());
+                    final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, imageInformation.getImageFormat());
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                     Platform.runLater(new Runnable() {
                         @Override
@@ -999,6 +1101,9 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void next() {
+        if (!checkSavingBeforeExit()) {
+            return;
+        }
         if (nextFile != null) {
             loadImage(nextFile.getAbsoluteFile(), false);
         }
@@ -1006,6 +1111,9 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void last() {
+        if (!checkSavingBeforeExit()) {
+            return;
+        }
         if (lastFile != null) {
             loadImage(lastFile.getAbsoluteFile(), false);
         }
@@ -1135,43 +1243,51 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void rotateRight() {
-        currentAngle = (currentAngle + rotateAngle) % 360;
-        imageView.setRotate(currentAngle);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setRotate(currentAngle);
-        }
+    public void rightRotate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.rotateImage(currentImage, rotateAngle);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
-    @Override
-    public void rotateLeft() {
-        currentAngle = (360 - rotateAngle + currentAngle) % 360;
-        imageView.setRotate(currentAngle);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setRotate(currentAngle);
-        }
-    }
-
-    @FXML
-    @Override
-    public void turnOver() {
-        currentAngle = (180 + currentAngle) % 360;
-        imageView.setRotate(currentAngle);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setRotate(currentAngle);
-        }
-    }
-
-    @FXML
-    @Override
-    public void straighten() {
-        currentAngle = 0;
-        imageView.setRotate(currentAngle);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setRotate(currentAngle);
-        }
+    public void leftRotate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.rotateImage(currentImage, 360 - rotateAngle);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
@@ -1245,6 +1361,7 @@ public class ImageManufactureController extends ImageViewerController {
                 PixelReader pixelReader = image.getPixelReader();
                 Color color = pixelReader.getColor((int) Math.round(imageX), (int) Math.round(imageY));
                 if (isPickingOriginalColor) {
+                    originalColorsBox.setVisibleRowCount(20);
                     originalColorsBox.getItems().add(color);
                     originalColorsBox.getSelectionModel().select(color);
                 } else {
@@ -1300,6 +1417,7 @@ public class ImageManufactureController extends ImageViewerController {
                     public void run() {
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        showLabel();
                     }
                 });
                 return null;
@@ -1314,6 +1432,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     public void clearOriginalColorsAction() {
         originalColorsBox.getItems().clear();
+        originalColorsBox.setVisibleRowCount(0);
     }
 
     @FXML
@@ -1328,6 +1447,79 @@ public class ImageManufactureController extends ImageViewerController {
                     public void run() {
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void horizontalAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.horizontalImage(currentImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void verticalAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.verticalImage(currentImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void shearAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.shearImage(currentImage, shearX, 0);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
                     }
                 });
                 return null;
@@ -1628,16 +1820,16 @@ public class ImageManufactureController extends ImageViewerController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(AppVaribles.getMessage("AppTitle"));
             alert.setContentText(AppVaribles.getMessage("ImageChanged"));
-            ButtonType buttonSaveAndContinue = new ButtonType(AppVaribles.getMessage("SaveAndContinue"));
-            ButtonType buttonDiscardModification = new ButtonType(AppVaribles.getMessage("DiscardModification"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
-            alert.getButtonTypes().setAll(buttonSaveAndContinue, buttonDiscardModification, buttonCancel);
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonSaveAndContinue) {
+            if (result.get() == buttonSave) {
                 save();
                 return true;
-            } else if (result.get() == buttonDiscardModification) {
+            } else if (result.get() == buttonNotSave) {
                 return true;
             } else {
                 return false;

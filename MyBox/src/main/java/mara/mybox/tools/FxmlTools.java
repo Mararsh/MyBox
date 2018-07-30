@@ -1,6 +1,5 @@
 package mara.mybox.tools;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +26,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.image.ImageConverter;
+import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
@@ -87,9 +88,6 @@ public class FxmlTools {
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                // +15 moves the tooltip 15 pixels below the mouse cursor;
-                // if you don't change the y coordinate of the tooltip, you
-                // will see constant screen flicker
                 tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
             }
         });
@@ -99,6 +97,30 @@ public class FxmlTools {
                 tooltip.hide();
             }
         });
+    }
+
+    public static void setComments(final Node node, final Tooltip tooltip) {
+        node.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (AppVaribles.showComments) {
+                    tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
+                }
+            }
+        });
+        node.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (AppVaribles.showComments) {
+                    tooltip.hide();
+                }
+            }
+        });
+    }
+
+    public static void removeTooltip(final Node node) {
+        node.setOnMouseMoved(null);
+        node.setOnMouseExited(null);
     }
 
     public static String getFxmlPath(String fullPath) {
@@ -318,24 +340,15 @@ public class FxmlTools {
     }
 
     // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
-    public static BufferedImage readImage(Image image, String format) {
+    public static BufferedImage getWritableData(Image image, String format) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        if (CommonValues.NoAlphaImages.contains(format.toLowerCase())) {
-            // Remove alpha-channel from buffered image:
-            BufferedImage imageRGB = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.OPAQUE);
-            Graphics2D graphics = imageRGB.createGraphics();
-            graphics.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
-            return imageRGB;
+        if (!CommonValues.NoAlphaImages.contains(format.toLowerCase()) || !bufferedImage.isAlphaPremultiplied()) {
+            return bufferedImage;
+        }
+        if (AppVaribles.alphaAsBlack) {
+            return ImageConverter.RemoveAlpha(bufferedImage);
         } else {
-            PixelReader pixelReader = image.getPixelReader();
-            if (pixelReader.getColor(0, 0).getOpacity() < 1.0) {
-                BufferedImage imageARGB = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TRANSLUCENT);
-                Graphics2D graphics = imageARGB.createGraphics();
-                graphics.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
-                return imageARGB;
-            } else {
-                return bufferedImage;
-            }
+            return ImageConverter.ReplaceAlphaAsWhite(bufferedImage);
         }
     }
 
@@ -347,6 +360,9 @@ public class FxmlTools {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    continue;
+                }
                 double v = color.getSaturation() + change;
                 if (v > 1.0) {
                     v = 1.0;
@@ -369,6 +385,9 @@ public class FxmlTools {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    continue;
+                }
                 double v = color.getBrightness() + change;
                 if (v > 1.0) {
                     v = 1.0;
@@ -391,6 +410,9 @@ public class FxmlTools {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    continue;
+                }
                 double v = color.getHue() + change;
                 if (v > 360.0) {
                     v = v - 360.0;
@@ -414,6 +436,9 @@ public class FxmlTools {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    continue;
+                }
                 double gray = 0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue();
                 if (gray * 255 < threshold) {
                     pixelWriter.setColor(x, y, Color.BLACK);
@@ -610,20 +635,8 @@ public class FxmlTools {
     }
 
     public static Image scaleImage(Image image, String format, int width, int height) {
-
-        BufferedImage source = readImage(image, format);
-//        Image newImage = new Image(file, w, h, true, true);
-        int imageType = source.getType();
-        BufferedImage target = new BufferedImage(width, height, imageType);
-        Graphics2D g = target.createGraphics();
-        if (imageType == BufferedImage.TYPE_INT_ARGB) {
-            g.setBackground(new java.awt.Color(0, 0, 0, 0));
-        } else {
-            g.setBackground(java.awt.Color.WHITE);
-        }
-//        g.clearRect(0, 0, targetW, targetH);
-        g.drawImage(source, 0, 0, width, height, null);
-        g.dispose();
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.scaleImage(source, width, height);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -644,7 +657,6 @@ public class FxmlTools {
     }
 
     public static Image opcityImage(Image image, int opacity) {
-
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -652,10 +664,41 @@ public class FxmlTools {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    continue;
+                }
                 Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity / 100.0);
                 pixelWriter.setColor(x, y, newcolor);
             }
         }
+        return newImage;
+    }
+
+    public static Image rotateImage(Image image, int angle) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.rotateImage(source, angle);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image horizontalImage(Image image) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.horizontalImage(source);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image verticalImage(Image image) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.verticalImage(source);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image shearImage(Image image, float shearX, float shearY) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.shearImage(source, shearX, shearY);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 

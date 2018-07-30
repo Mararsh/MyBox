@@ -313,7 +313,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceX = Integer.valueOf(newValue);
                     if (sourceY > 0) {
-                        ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
+                        ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
                                 + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -332,7 +332,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceY = Integer.valueOf(newValue);
                     if (sourceX > 0) {
-                        ratioLabel.setText(AppVaribles.getMessage("Ratio") + ": "
+                        ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
                                 + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -769,7 +769,7 @@ public class PixelsCalculationController extends BaseController {
         selectX = Integer.valueOf(vs[0]);
         selectY = Integer.valueOf(vs[1]);
         String label = AppVaribles.getMessage("SelectedPixelsNumber") + ": " + v + "  "
-                + AppVaribles.getMessage("Ratio") + ": "
+                + AppVaribles.getMessage("AspectRatio") + ": "
                 + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         useButton.setDisable(false);
@@ -825,7 +825,7 @@ public class PixelsCalculationController extends BaseController {
         String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
                 + cp_density + "dpi" + "   "
-                + AppVaribles.getMessage("Ratio") + ": "
+                + AppVaribles.getMessage("AspectRatio") + ": "
                 + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -882,7 +882,7 @@ public class PixelsCalculationController extends BaseController {
         String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
                 + cs_density + "dpi" + "   "
-                + AppVaribles.getMessage("Ratio") + ": "
+                + AppVaribles.getMessage("AspectRatio") + ": "
                 + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -908,7 +908,7 @@ public class PixelsCalculationController extends BaseController {
         String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
                 + densityX + "dpi x " + densityY + "dpi   "
-                + AppVaribles.getMessage("Ratio") + ": "
+                + AppVaribles.getMessage("AspectRatio") + ": "
                 + ValueTools.roundDouble3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -961,7 +961,7 @@ public class PixelsCalculationController extends BaseController {
 
         String label = AppVaribles.getMessage("AdjustedPixelsNumber") + ": "
                 + finalX + "x" + finalY + "   "
-                + AppVaribles.getMessage("Ratio") + ": "
+                + AppVaribles.getMessage("AspectRatio") + ": "
                 + ValueTools.roundDouble3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }

@@ -29,9 +29,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
-    private ToggleGroup langGroup, alarmGroup;
+    private ToggleGroup langGroup, alarmGroup, alphaGroup;
     @FXML
-    private RadioMenuItem chineseMenuItem, englishMenuItem, keepAlarmMenuItem, stopAlarmMenuItem;
+    private RadioMenuItem chineseMenuItem, englishMenuItem, keepAlarmMenuItem, stopAlarmMenuItem, showCommentsMenu, hideCommentsMenu;
+    @FXML
+    private RadioMenuItem replaceWhiteMenu, replaceBlackMenu;
     @FXML
     private Menu homeMenu, pdfMenu, imageMenu, fileMenu, deskstopMenu, helpMenu;
 
@@ -50,6 +52,17 @@ public class MainMenuController extends BaseController {
             keepAlarmMenuItem.setSelected(true);
         }
 
+        if (AppVaribles.showComments) {
+            showCommentsMenu.setSelected(true);
+        } else {
+            hideCommentsMenu.setSelected(true);
+        }
+
+        if (AppVaribles.alphaAsBlack) {
+            replaceBlackMenu.setSelected(true);
+        } else {
+            replaceWhiteMenu.setSelected(true);
+        }
     }
 
     @FXML
@@ -77,6 +90,30 @@ public class MainMenuController extends BaseController {
     @FXML
     private void setStopAlarm(ActionEvent event) {
         AppVaribles.setConfigValue("StopAlarmsWhenExit", true);
+    }
+
+    @FXML
+    private void showCommentsAction(ActionEvent event) {
+        AppVaribles.setConfigValue("ShowComments", true);
+        AppVaribles.showComments = true;
+    }
+
+    @FXML
+    private void hideCommentsAction(ActionEvent event) {
+        AppVaribles.setConfigValue("ShowComments", false);
+        AppVaribles.showComments = false;
+    }
+
+    @FXML
+    private void replaceWhiteAction(ActionEvent event) {
+        AppVaribles.setConfigValue("AlphaAsBlack", false);
+        AppVaribles.alphaAsBlack = false;
+    }
+
+    @FXML
+    private void replaceBlackAction(ActionEvent event) {
+        AppVaribles.setConfigValue("AlphaAsBlack", true);
+        AppVaribles.alphaAsBlack = true;
     }
 
     @FXML

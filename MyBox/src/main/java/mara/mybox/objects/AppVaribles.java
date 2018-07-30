@@ -33,6 +33,14 @@ public class AppVaribles {
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
     public static BaseController currentController;
     public static AlarmClockController alarmClockController;
+    public static boolean showComments = true;
+    public static boolean alphaAsBlack = false;
+
+    public AppVaribles() {
+        setCurrentBundle();
+        showComments = getConfigBoolean("ShowComments", true);
+        alphaAsBlack = getConfigBoolean("AlphaAsBlack", false);
+    }
 
     public static String getMessage(String thestr) {
         try {

@@ -67,7 +67,9 @@ public class ImageFileReaders {
                     reader.setInput(iis, false);
                     info.setxPixels(reader.getWidth(0));
                     info.setyPixels(reader.getHeight(0));
-                    info.setImageFormat(reader.getFormatName());
+                    if (!info.getImageFormat().equals(reader.getFormatName())) {
+                        info.setExtraFormat(reader.getFormatName());
+                    }
                     try {
                         ColorModel cm = reader.getImageTypes(0).next().getColorModel();
                         ColorSpace cs = cm.getColorSpace();
@@ -301,13 +303,20 @@ public class ImageFileReaders {
 //                    logger.debug("VerticalPixelSize:" + info.getvResolution());
                 }
             }
-            if (javax_imageio.containsKey("FormatVersion")) { // The height of a pixel, in millimeters
+            if (javax_imageio.containsKey("FormatVersion")) {
                 Map<String, String> FormatVersion = javax_imageio.get("FormatVersion");
                 if (FormatVersion.containsKey("value")) {
-                    info.setImageFormat(FormatVersion.get("value"));
+                    if (!info.getImageFormat().equals(FormatVersion.get("value"))) {
+                        String extra = info.getExtraFormat();
+                        if (extra == null) {
+                            info.setExtraFormat(FormatVersion.get("value"));
+                        } else if (!FormatVersion.get("value").equals(extra)) {
+                            info.setExtraFormat(extra + " " + FormatVersion.get("value"));
+                        }
+                    }
                 }
             }
-            if (javax_imageio.containsKey("BitsPerSample")) { // The height of a pixel, in millimeters
+            if (javax_imageio.containsKey("BitsPerSample")) {
                 Map<String, String> BitsPerSample = javax_imageio.get("BitsPerSample");
                 if (BitsPerSample.containsKey("value")) {
                     info.setBitDepth(BitsPerSample.get("value"));

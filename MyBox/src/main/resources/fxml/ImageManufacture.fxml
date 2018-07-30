@@ -85,18 +85,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <items>
                                                 <Label fx:id="zoomValue" text="10%" />
                                                 <Slider fx:id="zoomSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="10.0" />
-                                                <Label text="%ZoomStep" />
+                                                <Label text="%ZoomStep">
+                                       <padding>
+                                          <Insets right="30.0" />
+                                       </padding></Label>
                                                 <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%MoveRight" />
                                                 <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%MoveLeft" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%MoveDown" />
-                                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
-                                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
-                                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                                                <Button mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
-                                                <Label fx:id="rotateValue" text="90" />
-                                                <Slider fx:id="rotateSlider" blockIncrement="5.0" max="355.0" min="5.0" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="90.0" />
-                                                <Label text="%RotateStep" />
+                                    <Label text="%Move">
+                                       <padding>
+                                          <Insets right="30.0" />
+                                       </padding>
+                                    </Label>
                                             </items>
                                         </ToolBar>
                                     </content>
@@ -235,12 +236,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Label text="%BinaryThreshold" />
+                                                        <Label text="%BlackOrWhite" />
                                                         <Slider fx:id="binarySlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="50.0" />
                                                         <Label fx:id="binaryValue" text="50%" />
-                                                        <Button mnemonicParsing="false" onAction="#calculateThreshold" text="%CalculateThreshold" />
-                                                        <Button mnemonicParsing="false" onAction="#setBinary" text="%BlackOrWhite" />
-                                                        <Label text="     " />
+                                                        <Button mnemonicParsing="false" onAction="#calculateThreshold" text="%Calculate" />
+                                                        <Button mnemonicParsing="false" onAction="#setBinary" text="%OK" />
+                                                        <Label prefWidth="30.0" text="     " />
                                                         <Button mnemonicParsing="false" onAction="#setGray" text="%Gray" />
                                                         <Button mnemonicParsing="false" onAction="#setInvert" text="%InvertColor" />
                                                     </items>
@@ -282,7 +283,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button mnemonicParsing="false" text="  " visible="false" />
                                                     </items>
                                                 </ToolBar>
-                                                <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
+                                                <ToolBar fx:id="replaceColorBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                                     <items>
                                                         <Label text="%NewColor">
                                                             <padding>
@@ -300,16 +301,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="pickOldColorButton" mnemonicParsing="false" onAction="#pickColorForOriginal" text="%PickColorOnImage" />
                                           <Button mnemonicParsing="false" onAction="#clearOriginalColorsAction" text="%Clear" />
                                           <CheckBox fx:id="excludedCheck" mnemonicParsing="false" text="%Excluded" />
-                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%Match">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="colorMatchGroup" />
-                                                            </toggleGroup>
+                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ColorDistance">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="colorMatchGroup" />
+                                             </toggleGroup>
                                              <padding>
-                                                <Insets left="40.0" />
-                                             </padding>
-                                                        </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ColorDistance" toggleGroup="$colorMatchGroup" />
-                                                        <TextField fx:id="colorDistanceInput" disable="true" prefWidth="45.0" text="40" />
+                                                <Insets left="30.0" />
+                                             </padding></RadioButton>
+                                                        <TextField fx:id="colorDistanceInput" prefWidth="45.0" text="0" />
                                           <RadioButton mnemonicParsing="false" text="%HueDistance" toggleGroup="$colorMatchGroup" />
                                           <TextField fx:id="hueDistanceInput" disable="true" prefWidth="45.0" text="5" />
                                                         <Label prefWidth="10.0" text=" " />
@@ -320,6 +319,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
+                        <Tab fx:id="transformTab" text="%Transform">
+                           <content>
+                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                 <children>
+                                    <ToolBar HBox.hgrow="ALWAYS">
+                                      <items>
+                                          <Slider blockIncrement="1.0" max="1.0" prefWidth="1.0" showTickLabels="true" showTickMarks="true" visible="false" />
+                                      </items>
+                                    </ToolBar>
+                                    <ToolBar>
+                                      <items>
+                                          <TextField fx:id="shearXInput" prefWidth="60.0" text="0.5" />
+                                          <Button mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
+                                          <Label text="%Mirror">
+                                             <padding>
+                                                <Insets left="30.0" />
+                                             </padding></Label>
+                                          <Button mnemonicParsing="false" onAction="#horizontalAction" text="%Horizontal" />
+                                          <Button mnemonicParsing="false" onAction="#verticalAction" text="%Vertical" />
+                                          <Label text="%RotateAngle">
+                                             <padding>
+                                                <Insets left="30.0" />
+                                             </padding></Label>
+                                          <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" value="90.0" />
+                                          <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+                                        <Button fx:id="leftButton" mnemonicParsing="false" onAction="#leftRotate" text="%Left" />
+                                          <Button fx:id="rightButton" mnemonicParsing="false" onAction="#rightRotate" text="%Right" />
+                                      </items>
+                                    </ToolBar>
+                                 </children>
+                              </HBox>
+                           </content>
+                        </Tab>
                                 <Tab fx:id="refTab" text="%Reference">
                                     <content>
                                         <HBox alignment="CENTER_LEFT">

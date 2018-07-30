@@ -183,14 +183,4 @@ public class ImageValueTools {
         return getCompressionTypes(imageFormat) != null;
     }
 
-//    public static int getColorType(BufferedImage image) {
-//        try {
-//            ColorModel cm = image.getColorModel();
-//            ColorSpace cs = cm.getColorSpace();
-//            return cs.getType();
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            return BufferedImage.TYPE_INT_ARGB;
-//        }
-//    }
 }

@@ -58,6 +58,20 @@
                           </RadioMenuItem>
                           <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="showCommentsMenu" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="commentsGroup" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem fx:id="hideCommentsMenu" mnemonicParsing="false" onAction="#hideCommentsAction" text="%HideComments" toggleGroup="$commentsGroup" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="alphaGroup" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem fx:id="replaceBlackMenu" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <RadioMenuItem fx:id="stopAlarmMenuItem" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit">
                      <toggleGroup>
                         <ToggleGroup fx:id="alarmGroup" />

@@ -161,7 +161,7 @@ public class ImageConverterController extends ImageBaseController {
                         if (currentParameters.finalTargetName == null) {
                             return false;
                         }
-                        BufferedImage newImage = ImageConverter.resizeImage(bufferImage, w, h);
+                        BufferedImage newImage = ImageConverter.scaleImage(bufferImage, w, h);
                         int color = bufferImage.getType();
                         logger.debug(color);
                         if (ImageType.BINARY == attributes.getColorSpace()) {

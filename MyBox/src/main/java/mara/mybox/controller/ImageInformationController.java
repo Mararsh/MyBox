@@ -99,7 +99,7 @@ public class ImageInformationController extends BaseController {
             compressionType.setText(info.getCompressionType());
             lossless.setText(AppVaribles.getMessage(info.isIsLossless() + ""));
             ImageOrientation.setText(info.getImageRotation());
-            ImageFormat.setText(info.getImageFormat());
+            ImageFormat.setText(info.getImageFormat() + " " + info.getExtraFormat());
 
         } catch (Exception e) {
             logger.error(e.toString());

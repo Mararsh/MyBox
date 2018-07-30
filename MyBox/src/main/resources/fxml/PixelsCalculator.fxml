@@ -26,7 +26,7 @@
                         <TextField fx:id="source_width" prefHeight="30.0" prefWidth="80.0" />
                         <Label text="%PixelsHeight" />
                         <TextField fx:id="source_height" prefWidth="80.0" />
-                  <Label fx:id="ratioLabel" prefWidth="200.0" text="Ratio" />
+                  <Label fx:id="ratioLabel" prefWidth="200.0" text="%AspectRatio" />
                     </children>
                     <padding>
                         <Insets left="20.0" />

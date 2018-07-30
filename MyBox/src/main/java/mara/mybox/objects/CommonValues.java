@@ -1,5 +1,6 @@
 package mara.mybox.objects;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -16,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final double AppVersion = 2.6;
-    public static final String AppVersionDate = "2018-07-28";
+    public static final double AppVersion = 2.7;
+    public static final String AppVersionDate = "2018-07-30";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -122,5 +123,7 @@ public class CommonValues {
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
         }
     };
+
+    public static Color AlphaColor = new Color(0, 0, 0, 0);
 
 }

@@ -12,7 +12,7 @@ import java.io.File;
 public class ImageFileInformation {
 
     private File file;
-    private String imageFormat, colorSpace, compressionType, imageRotation, bitDepth;
+    private String imageFormat, colorSpace, compressionType, imageRotation, bitDepth, extraFormat = "";
     private int xPixels, yPixels, colorChannels;
     private int yDensity, xDensity;  // dpi
     private long createTime;
@@ -142,6 +142,14 @@ public class ImageFileInformation {
 
     public void setMetaData(String metaData) {
         this.metaData = metaData;
+    }
+
+    public String getExtraFormat() {
+        return extraFormat;
+    }
+
+    public void setExtraFormat(String extraFormat) {
+        this.extraFormat = extraFormat;
     }
 
 }
