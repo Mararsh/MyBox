@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -702,4 +703,30 @@ public class FxmlTools {
         return newImage;
     }
 
+    public static Image addWatermark(Image image, String text,
+            Font font, Color color, int x, int y, float transparent) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.addWatermarkText(source, text,
+                font, FxmlTools.colorConvert(color), x, y, transparent);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static java.awt.Color colorConvert(javafx.scene.paint.Color color) {
+        java.awt.Color newColor = new java.awt.Color((int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255),
+                (int) (color.getOpacity() * 255));
+        return newColor;
+    }
+
+    public static Image cutEdges(Image image, Color color,
+            boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        java.awt.Color cutColor = FxmlTools.colorConvert(color);
+        BufferedImage target = ImageConverter.cutEdges(source, FxmlTools.colorConvert(color),
+                cutTop, cutBottom, cutLeft, cutRight);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
 }

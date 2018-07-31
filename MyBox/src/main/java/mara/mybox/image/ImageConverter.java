@@ -1,6 +1,8 @@
 package mara.mybox.image;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -200,84 +202,93 @@ public class ImageConverter {
         }
         g.dispose();
 //        logger.debug("Rotated: " + newWidth + ", " + newHeight);
-        target = cutEdge(target);
+        Color alphaColor;
+        if (source.isAlphaPremultiplied() || source.getType() == BufferedImage.TYPE_INT_ARGB) {
+            alphaColor = AlphaColor;
+        } else {
+            alphaColor = Color.WHITE;
+        }
+        target = cutEdges(target, alphaColor, true, true, true, true);
         return target;
     }
 
-    public static BufferedImage cutEdge(BufferedImage source) {
+    public static BufferedImage cutEdges(BufferedImage source, Color cutColor,
+            boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
-            Color alphaColor;
-            if (source.isAlphaPremultiplied() || source.getType() == BufferedImage.TYPE_INT_ARGB) {
-                alphaColor = AlphaColor;
-            } else {
-                alphaColor = Color.WHITE;
-            }
             int width = source.getWidth();
             int height = source.getHeight();
-            int top = -1, bottom = -1, left = -1, right = -1;
-            int alpha = alphaColor.getRGB();
-            for (int j = 0; j < height; j++) {
-                boolean hasValue = false;
-                for (int i = 0; i < width; i++) {
-                    if (source.getRGB(i, j) != alpha) {
-                        hasValue = true;
+            int top = 0, bottom = height - 1, left = 0, right = width - 1;
+            int cutValue = cutColor.getRGB();
+            if (cutTop) {
+                for (int j = 0; j < height; j++) {
+                    boolean hasValue = false;
+                    for (int i = 0; i < width; i++) {
+                        if (source.getRGB(i, j) != cutValue) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        top = j;
                         break;
                     }
-                }
-                if (hasValue) {
-                    top = j;
-                    break;
                 }
             }
 //            logger.debug("top: " + top);
             if (top < 0) {
                 return null;
             }
-            for (int j = height - 1; j >= 0; j--) {
-                boolean hasValue = false;
-                for (int i = 0; i < width; i++) {
-                    if (source.getRGB(i, j) != alpha) {
-                        hasValue = true;
+            if (cutBottom) {
+                for (int j = height - 1; j >= 0; j--) {
+                    boolean hasValue = false;
+                    for (int i = 0; i < width; i++) {
+                        if (source.getRGB(i, j) != cutValue) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        bottom = j;
                         break;
                     }
-                }
-                if (hasValue) {
-                    bottom = j;
-                    break;
                 }
             }
 //            logger.debug("bottom: " + bottom);
             if (bottom < 0) {
                 return null;
             }
-            for (int i = 0; i < width; i++) {
-                boolean hasValue = false;
-                for (int j = 0; j < height; j++) {
-                    if (source.getRGB(i, j) != alpha) {
-                        hasValue = true;
+            if (cutLeft) {
+                for (int i = 0; i < width; i++) {
+                    boolean hasValue = false;
+                    for (int j = 0; j < height; j++) {
+                        if (source.getRGB(i, j) != cutValue) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        left = i;
                         break;
                     }
-                }
-                if (hasValue) {
-                    left = i;
-                    break;
                 }
             }
 //            logger.debug("left: " + left);
             if (left < 0) {
                 return null;
             }
-            for (int i = width - 1; i >= 0; i--) {
-                boolean hasValue = false;
-                for (int j = 0; j < height; j++) {
-                    if (source.getRGB(i, j) != alpha) {
-                        hasValue = true;
+            if (cutRight) {
+                for (int i = width - 1; i >= 0; i--) {
+                    boolean hasValue = false;
+                    for (int j = 0; j < height; j++) {
+                        if (source.getRGB(i, j) != cutValue) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        right = i;
                         break;
                     }
-                }
-                if (hasValue) {
-                    right = i;
-                    break;
                 }
             }
 //            logger.debug("right: " + right);
@@ -294,6 +305,13 @@ public class ImageConverter {
                     target.setRGB(w, h, rgb);
                 }
             }
+
+//            int w = right + 1 - left;
+//            int h = bottom + 1 - top;
+//            BufferedImage target = new BufferedImage(w, h, source.getType());
+//            Graphics2D g = target.createGraphics();
+//            g.drawImage(source, left, top, w, h, null);
+//            g.dispose();
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -355,7 +373,11 @@ public class ImageConverter {
             if (scale <= 1) {
                 scale = 2;
             }
-            int width = source.getWidth() * scale * scale;
+            scale = scale * scale;
+//            if (scale > 64) {
+//                scale = 64;
+//            }
+            int width = source.getWidth() * scale;
             int height = source.getHeight();
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
@@ -365,7 +387,13 @@ public class ImageConverter {
             g.shear(shearX, shearY);
             g.drawImage(source, 0, 0, null);
             g.dispose();
-            target = cutEdge(target);
+            Color alphaColor;
+            if (source.isAlphaPremultiplied() || source.getType() == BufferedImage.TYPE_INT_ARGB) {
+                alphaColor = AlphaColor;
+            } else {
+                alphaColor = Color.WHITE;
+            }
+            target = cutEdges(target, alphaColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -373,4 +401,45 @@ public class ImageConverter {
         }
     }
 
+    public static BufferedImage addWatermarkText(BufferedImage source, String text,
+            Font font, Color color, int x, int y, float transparent) {
+        try {
+            if (transparent > 1.0f || transparent < 0) {
+                transparent = 1.0f;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent);
+            g.setComposite(ac);
+            g.setColor(color);
+            g.setFont(font);
+            g.drawString(text, x, y);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage addWatermarkImage(BufferedImage source, BufferedImage water, int x, int y) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            g.drawImage(water, x, y, null);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
 }

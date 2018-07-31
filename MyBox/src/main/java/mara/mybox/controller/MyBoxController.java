@@ -162,9 +162,24 @@ public class MyBoxController extends BaseController {
                     reloadStage(CommonValues.FilesArrangementFxml, AppVaribles.getMessage("FilesArrangement"));
                 }
             });
+            MenuItem htmlEditor = new MenuItem(AppVaribles.getMessage("HtmlEditor"));
+            htmlEditor.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+                }
+            });
+            MenuItem textEditor = new MenuItem(AppVaribles.getMessage("TextEditor"));
+            textEditor.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
+                }
+            });
             fileMenu = new ContextMenu();
-            fileMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
-                    dirSynchronize, filesArrangement);
+            fileMenu.getItems().addAll(htmlEditor, textEditor, new SeparatorMenuItem(),
+                    filesRename, filesArrangement, new SeparatorMenuItem(),
+                    dirSynchronize, dirsRename);
 
             MenuItem setEnglish = new MenuItem("English");
             setEnglish.setOnAction(new EventHandler<ActionEvent>() {

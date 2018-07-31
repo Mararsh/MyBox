@@ -5,12 +5,12 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="347.0" prefWidth="727.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
+<VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseExited="#closeStage" prefHeight="420.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
     <children>
         <GridPane alignment="CENTER_LEFT">
             <columnConstraints>
-                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="165.0" minWidth="10.0" prefWidth="38.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="486.0" minWidth="10.0" prefWidth="486.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="236.0" minWidth="10.0" prefWidth="149.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="572.0" minWidth="10.0" prefWidth="571.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -21,7 +21,9 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <VBox.margin>
                 <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
@@ -42,7 +44,11 @@
                 <Hyperlink fx:id="releasesLink" onAction="#linkReleases" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label text="%KnownIssues" GridPane.rowIndex="7" />
                 <Hyperlink fx:id="issuesLink" onAction="#linkIssues" text="https://github.com/Mararsh/MyBox/issues" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <Label text="%WelcomePR" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Label text="%WelcomePR" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Label text="%UserGuide" GridPane.rowIndex="9" />
+                <Hyperlink fx:id="userGuideLink" onAction="#linkUserGuide" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Label text="%CloudStorage" GridPane.rowIndex="10" />
+                <Hyperlink fx:id="cloudLink" onAction="#linkCloud" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             </children>
         </GridPane>
     </children>

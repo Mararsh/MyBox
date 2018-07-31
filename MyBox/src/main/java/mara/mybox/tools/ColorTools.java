@@ -58,16 +58,16 @@ public class ColorTools {
     Color.BLUE: -16776961
      */
     public static int adjustPixelColor(int pixelColor) {
-        logger.debug("new Color(255, 255, 255, 0): " + new Color(255, 255, 255, 0).getRGB());
-        logger.debug("new Color(255, 255, 255, 255): " + new Color(255, 255, 255, 255).getRGB());
-        logger.debug("Color.WHITE: " + Color.WHITE.getRGB());
-        logger.debug("new Color(0, 0, 0, 0): " + new Color(0, 0, 0, 0).getRGB());
-        logger.debug("new Color(0, 0, 0, 255): " + new Color(0, 0, 0, 255).getRGB());
-        logger.debug("Color.BLACK: " + Color.BLACK.getRGB());
-        logger.debug("new Color(255, 0, 0, 0): " + new Color(255, 0, 0, 0).getRGB());
-        logger.debug("new Color(255, 0, 0, 255): " + new Color(255, 0, 0, 255).getRGB());
-        logger.debug("Color.RED: " + Color.RED.getRGB());
-        logger.debug("Color.BLUE: " + Color.BLUE.getRGB());
+//        logger.debug("new Color(255, 255, 255, 0): " + new Color(255, 255, 255, 0).getRGB());
+//        logger.debug("new Color(255, 255, 255, 255): " + new Color(255, 255, 255, 255).getRGB());
+//        logger.debug("Color.WHITE: " + Color.WHITE.getRGB());
+//        logger.debug("new Color(0, 0, 0, 0): " + new Color(0, 0, 0, 0).getRGB());
+//        logger.debug("new Color(0, 0, 0, 255): " + new Color(0, 0, 0, 255).getRGB());
+//        logger.debug("Color.BLACK: " + Color.BLACK.getRGB());
+//        logger.debug("new Color(255, 0, 0, 0): " + new Color(255, 0, 0, 0).getRGB());
+//        logger.debug("new Color(255, 0, 0, 255): " + new Color(255, 0, 0, 255).getRGB());
+//        logger.debug("Color.RED: " + Color.RED.getRGB());
+//        logger.debug("Color.BLUE: " + Color.BLUE.getRGB());
         return 16777216 + pixelColor;
 //        if (pixelColor > 8388608) {
 //            return pixelColor - 16777216;

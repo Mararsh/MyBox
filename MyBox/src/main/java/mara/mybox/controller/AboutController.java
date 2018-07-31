@@ -26,7 +26,7 @@ public class AboutController extends BaseController {
     @FXML
     private Label date;
     @FXML
-    private Hyperlink licenseLink, sourceLink, issuesLink, releasesLink;
+    private Hyperlink licenseLink, sourceLink, issuesLink, releasesLink, userGuideLink, cloudLink;
 
     @Override
     protected void initializeNext() {
@@ -97,4 +97,21 @@ public class AboutController extends BaseController {
         }
     }
 
+    @FXML
+    private void linkUserGuide() {
+        try {
+            Desktop.getDesktop().browse(new URI(userGuideLink.getText()));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    private void linkCloud() {
+        try {
+            Desktop.getDesktop().browse(new URI(cloudLink.getText()));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 }

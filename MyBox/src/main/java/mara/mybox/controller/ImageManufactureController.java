@@ -1,11 +1,14 @@
 package mara.mybox.controller;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -86,20 +89,22 @@ public class ImageManufactureController extends ImageViewerController {
     protected int saturateStep = 5, brightnessStep = 5, hueStep = 5, percent = 50;
     protected int saturateOffset = 0, brightnessOffset = 0, hueOffset = 0;
     protected File nextFile, lastFile, refFile;
-    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey;
+    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey, FontSizeKey, FontFamilyKey;
     protected ScrollPane refPane;
     protected ImageView refView;
-    protected Image refImage;
+    protected Image refImage, undoImage, redoImage;
     protected ImageFileInformation refInfo;
-    private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor;
-    private float scale = 1.0f, shearX, shearY = 0;
-    private int width, height, colorDistance, opacity = 100, colorMatchType, hueDistance;
+    private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor, isPickingPosition;
+    private float scale = 1.0f, shearX, shearY = 0, waterTransparent = 0.5f;
+    private int width, height, colorDistance, opacity = 100, colorMatchType, hueDistance, waterX, waterY, waterSize;
     public SimpleBooleanProperty imageChanged;
 
     @FXML
-    protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar, replaceColorBar;
+    protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar, replaceColorBar, watermarkBar, transformBar;
     @FXML
-    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, replaceColorTab, pixelsTab, refTab, browseTab, opacityTab, transformTab;
+    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, watermarkTab;
+    @FXML
+    protected Tab replaceColorTab, pixelsTab, refTab, browseTab, opacityTab, transformTab, edgesTab;
     @FXML
     protected Slider zoomSlider, angleSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider, opacitySlider;
     @FXML
@@ -109,21 +114,27 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
     @FXML
-    protected Button pickOldColorButton, pickNewColorButton, recoverButton, colorOkButton, opacityOkButton;
+    protected Button pickOldColorButton, pickNewColorButton, transparentForNewButton, recoverButton, colorOkButton, opacityOkButton;
+    @FXML
+    protected Button waterPositionButton, waterAddButton, undoButton, redoButton;
     @FXML
     protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck, excludedCheck;
     @FXML
+    protected CheckBox edgesTopCheck, edgesBottomCheck, edgesLeftCheck, edgesRightCheck;
+    @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput, shearXInput, shearYInput;
+    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput;
     @FXML
-    protected ChoiceBox ratioBox;
+    protected TextField shearXInput, shearYInput, waterInput, waterXInput, waterYInput;
+    @FXML
+    protected ChoiceBox ratioBox, waterStyleBox, waterFamilyBox;
     @FXML
     private TabPane tabPane;
     @FXML
-    protected ColorPicker newColorPicker;
+    protected ColorPicker newColorPicker, waterColorPicker, edgesColorPicker;
     @FXML
-    protected ComboBox originalColorsBox, angleBox;
+    protected ComboBox originalColorsBox, angleBox, waterSizeBox, waterTransparentBox;
 
     public static class ColorMatchType {
 
@@ -138,7 +149,8 @@ public class ImageManufactureController extends ImageViewerController {
         ImageOpenAfterSaveAsKey = "ImageOpenAfterSaveAs";
         ImageSaveConfirmKey = "ImageSaveConfirmKey";
         ImageReferenceDisplayKey = "ImageReferenceDisplay";
-
+        FontSizeKey = "FontSizeKey";
+        FontFamilyKey = "FontFamilyKey";
     }
 
     @Override
@@ -156,7 +168,9 @@ public class ImageManufactureController extends ImageViewerController {
             initFiltersTab();
             initTransformTab();
             initReplaceColorTab();
+            initWatermarkTab();
             initReferenceTab();
+            initEdgesTab();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -180,6 +194,8 @@ public class ImageManufactureController extends ImageViewerController {
             pixelsTab.setDisable(true);
             refTab.setDisable(true);
             transformTab.setDisable(true);
+            watermarkTab.setDisable(true);
+            edgesTab.setDisable(true);
             hotBar.setDisable(true);
 
             Tooltip tips = new Tooltip(getMessage("ImageManufactureTips"));
@@ -199,6 +215,8 @@ public class ImageManufactureController extends ImageViewerController {
                     if (imageChanged.getValue()) {
                         saveButton.setDisable(false);
                         recoverButton.setDisable(false);
+                        undoButton.setDisable(false);
+                        redoButton.setDisable(true);
                         getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath() + "*");
                     } else {
                         saveButton.setDisable(true);
@@ -473,6 +491,12 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initTransformTab() {
         try {
 
+            if (AppVaribles.showComments) {
+                Tooltip tips = new Tooltip(getMessage("transformComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(transformBar, tips);
+            }
+
             shearXInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -681,7 +705,144 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
+    protected void initWatermarkTab() {
+        try {
+
+            if (AppVaribles.showComments) {
+                Tooltip tips = new Tooltip(getMessage("watermarkComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(watermarkBar, tips);
+            }
+
+            waterXInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkWaterX();
+                }
+            });
+            checkWaterX();
+
+            waterYInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkWaterY();
+                }
+            });
+            checkWaterY();
+
+            ObservableList<String> sizes = FXCollections.observableArrayList(
+                    "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
+            waterSizeBox.getItems().addAll(sizes);
+            waterSizeBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        waterSize = Integer.valueOf(newValue);
+                        waterSizeBox.getEditor().setStyle(null);
+                    } catch (Exception e) {
+                        waterSize = 15;
+                        waterSizeBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            waterSizeBox.getSelectionModel().select(0);
+
+            ObservableList<String> transparents = FXCollections.observableArrayList(
+                    "0.5", "1.0", "0.3", "0.1", "0.8");
+            waterTransparentBox.getItems().addAll(transparents);
+            waterTransparentBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        waterTransparent = Float.valueOf(newValue);
+                        if (waterTransparent >= 0.0f && waterTransparent <= 1.0f) {
+                            waterSizeBox.getEditor().setStyle(null);
+                        } else {
+                            waterTransparent = 0.5f;
+                            waterSizeBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        waterTransparent = 0.5f;
+                        waterSizeBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            waterTransparentBox.getSelectionModel().select(0);
+
+            ObservableList<String> styles = FXCollections.observableArrayList(
+                    getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
+            waterStyleBox.getItems().addAll(styles);
+            waterStyleBox.getSelectionModel().select(0);
+
+            GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            String[] fontNames = e.getAvailableFontFamilyNames();
+            waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
+            waterFamilyBox.getSelectionModel().select(AppVaribles.getConfigValue(FontFamilyKey, fontNames[0]));
+            waterFamilyBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    AppVaribles.setConfigValue(FontFamilyKey, newValue);
+                }
+            });
+
+            waterAddButton.disableProperty().bind(
+                    waterXInput.styleProperty().isEqualTo(badStyle)
+                            .or(waterYInput.styleProperty().isEqualTo(badStyle))
+                            .or(waterSizeBox.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(waterTransparentBox.getEditor().styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(waterInput.textProperty()))
+            );
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void checkWaterX() {
+        try {
+            waterX = Integer.valueOf(waterXInput.getText());
+            waterXInput.setStyle(null);
+            if (waterX >= 0 && waterX <= imageInformation.getxPixels()) {
+                waterXInput.setStyle(null);
+            } else {
+                waterXInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            waterXInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkWaterY() {
+        try {
+            waterY = Integer.valueOf(waterYInput.getText());
+            waterYInput.setStyle(null);
+            if (waterY >= 0 && waterY <= imageInformation.getyPixels()) {
+                waterYInput.setStyle(null);
+            } else {
+                waterYInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            waterYInput.setStyle(badStyle);
+        }
+    }
+
     protected void initReferenceTab() {
+        try {
+            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    checkReferenceImage();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initEdgesTab() {
         try {
             displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -724,21 +885,30 @@ public class ImageManufactureController extends ImageViewerController {
             browseTab.setDisable(false);
             if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat())) {
                 opacityTab.setDisable(true);
+//                transparentForNewButton.setDisable(true);
             } else {
                 opacityTab.setDisable(false);
+                transparentForNewButton.setDisable(false);
             }
             transformTab.setDisable(false);
+            watermarkTab.setDisable(false);
+            edgesTab.setDisable(false);
 
             widthInput.setText(imageInformation.getxPixels() + "");
             heightInput.setText(imageInformation.getyPixels() + "");
             attributes.setSourceWidth(imageInformation.getxPixels());
             attributes.setSourceHeight(imageInformation.getyPixels());
 
+            waterXInput.setText(imageInformation.getxPixels() / 2 + "");
+            waterYInput.setText(imageInformation.getyPixels() / 2 + "");
+
             checkNevigator();
             straighten();
             showLabel();
 
             imageChanged.set(false);
+            undoButton.setDisable(true);
+            redoButton.setDisable(true);
             isPickingOriginalColor = false;
             isPickingNewColor = false;
             imageView.setCursor(Cursor.OPEN_HAND);
@@ -749,8 +919,11 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void recovery() {
+        undoImage = imageView.getImage();
         imageView.setImage(image);
         imageChanged.set(false);
+        undoButton.setDisable(false);
+        redoButton.setDisable(true);
         showLabel();
     }
 
@@ -768,6 +941,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -793,6 +967,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -816,6 +991,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -839,6 +1015,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -862,6 +1039,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -885,6 +1063,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -908,6 +1087,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -931,6 +1111,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -954,6 +1135,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                     }
@@ -1142,6 +1324,7 @@ public class ImageManufactureController extends ImageViewerController {
     public void pickColorForOriginal() {
         isPickingOriginalColor = true;
         isPickingNewColor = false;
+        isPickingPosition = false;
         imageView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickColorComments"));
     }
@@ -1150,8 +1333,14 @@ public class ImageManufactureController extends ImageViewerController {
     public void pickColorForNew() {
         isPickingOriginalColor = false;
         isPickingNewColor = true;
+        isPickingPosition = false;
         imageView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickColorComments"));
+    }
+
+    @FXML
+    public void transparentForNew() {
+        newColorPicker.setValue(new Color(0, 0, 0, 0));
     }
 
     @FXML
@@ -1252,6 +1441,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1276,6 +1466,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1369,11 +1560,16 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             }
 
-        }
-        try {
+        } else if (isPickingPosition) {
 
-        } catch (Exception e) {
-            logger.error(e.toString());
+            waterXInput.setText((int) (event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth()) + "");
+            waterYInput.setText((int) (event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight()) + "");
+
+            isPickingOriginalColor = false;
+            isPickingNewColor = false;
+            isPickingPosition = false;
+            imageView.setCursor(Cursor.OPEN_HAND);
+            promptLabel.setText("");
         }
 
     }
@@ -1415,6 +1611,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1445,6 +1642,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1469,6 +1667,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1493,6 +1692,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1517,6 +1717,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1529,6 +1730,123 @@ public class ImageManufactureController extends ImageViewerController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    public void waterPositionAction() {
+        isPickingOriginalColor = false;
+        isPickingNewColor = false;
+        isPickingPosition = true;
+        imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickPositionComments"));
+    }
+
+    @FXML
+    public void waterAddAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
+                java.awt.Font font;
+                String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
+                if (AppVaribles.getMessage("Bold").equals(fontStyle)) {
+                    font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, waterSize);
+                } else if (AppVaribles.getMessage("Italic").equals(fontStyle)) {
+                    font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, waterSize);
+                } else if (AppVaribles.getMessage("Bold Italic").equals(fontStyle)) {
+                    font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, waterSize);
+                } else {
+                    font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, waterSize);
+                }
+                final Image newImage = FxmlTools.addWatermark(currentImage, waterInput.getText(),
+                        font, waterColorPicker.getValue(), waterX, waterY, waterTransparent);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void edgesTransparentAction() {
+        edgesColorPicker.setValue(Color.TRANSPARENT);
+    }
+
+    @FXML
+    public void edgesBlackAction() {
+        edgesColorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void edgesWhiteAction() {
+        edgesColorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    public void edgesOkAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    final Image newImage = FxmlTools.cutEdges(currentImage, waterColorPicker.getValue(),
+                            edgesTopCheck.isSelected(), edgesBottomCheck.isSelected(),
+                            edgesLeftCheck.isSelected(), edgesRightCheck.isSelected());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            undoImage = currentImage;
+                            imageView.setImage(newImage);
+                            imageChanged.set(true);
+                            showLabel();
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void undoAction() {
+        if (undoImage == null) {
+            undoButton.setDisable(true);
+        }
+        redoImage = imageView.getImage();
+        imageView.setImage(undoImage);
+        imageChanged.set(true);
+        undoButton.setDisable(true);
+        redoButton.setDisable(false);
+    }
+
+    @FXML
+    public void redoAction() {
+        if (redoImage == null) {
+            redoButton.setDisable(true);
+        }
+        undoImage = imageView.getImage();
+        imageView.setImage(redoImage);
+        imageChanged.set(true);
+        undoButton.setDisable(false);
+        redoButton.setDisable(true);
     }
 
     private void checkNevigator() {
@@ -1760,6 +2078,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();
@@ -1786,6 +2105,7 @@ public class ImageManufactureController extends ImageViewerController {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        undoImage = currentImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
                         showLabel();

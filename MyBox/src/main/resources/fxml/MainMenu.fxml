@@ -39,10 +39,14 @@
                 </Menu>
                 <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools">
                <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
+                  <MenuItem mnemonicParsing="false" onAction="#openTextEditor" text="%TextEditor" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
+                  <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openDirsRename" text="%DirectoriesRename" />
                   <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
-                  <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                </items></Menu>
             <Menu mnemonicParsing="false" text="%DesktopTools">
               <items>

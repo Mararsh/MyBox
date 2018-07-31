@@ -285,12 +285,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="replaceColorBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Label text="%NewColor">
-                                                            <padding>
-                                                                <Insets left="20.0" />
-                                                            </padding>
-                                                        </Label>
+                                                        <Label text="%NewColor" />
                                                         <ColorPicker fx:id="newColorPicker" />
+                                          <Button fx:id="transparentForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
                                                         <Button fx:id="pickNewColorButton" mnemonicParsing="false" onAction="#pickColorForNew" text="%PickColorOnImage" />
                                                         <Label text="%OriginalColors">
                                                             <padding>
@@ -306,12 +303,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToggleGroup fx:id="colorMatchGroup" />
                                              </toggleGroup>
                                              <padding>
-                                                <Insets left="30.0" />
+                                                <Insets left="20.0" />
                                              </padding></RadioButton>
                                                         <TextField fx:id="colorDistanceInput" prefWidth="45.0" text="0" />
                                           <RadioButton mnemonicParsing="false" text="%HueDistance" toggleGroup="$colorMatchGroup" />
                                           <TextField fx:id="hueDistanceInput" disable="true" prefWidth="45.0" text="5" />
-                                                        <Label prefWidth="10.0" text=" " />
                                                         <Button fx:id="colorOkButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
@@ -328,10 +324,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <Slider blockIncrement="1.0" max="1.0" prefWidth="1.0" showTickLabels="true" showTickMarks="true" visible="false" />
                                       </items>
                                     </ToolBar>
-                                    <ToolBar>
+                                    <ToolBar fx:id="transformBar">
                                       <items>
                                           <TextField fx:id="shearXInput" prefWidth="60.0" text="0.5" />
-                                          <Button mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
+                                          <Button fx:id="shearButton" mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
                                           <Label text="%Mirror">
                                              <padding>
                                                 <Insets left="30.0" />
@@ -346,6 +342,62 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
                                         <Button fx:id="leftButton" mnemonicParsing="false" onAction="#leftRotate" text="%Left" />
                                           <Button fx:id="rightButton" mnemonicParsing="false" onAction="#rightRotate" text="%Right" />
+                                      </items>
+                                    </ToolBar>
+                                 </children>
+                              </HBox>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="edgesTab" text="%CutEdges">
+                           <content>
+                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                 <children>
+                                    <ToolBar HBox.hgrow="ALWAYS">
+                                      <items>
+                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                      </items>
+                                    </ToolBar>
+                                    <ToolBar>
+                                      <items>
+                                          <Label text="%Edges" />
+                                          <ColorPicker fx:id="edgesColorPicker" />
+                                          <Button mnemonicParsing="false" onAction="#edgesTransparentAction" text="%Transparent" />
+                                          <Button mnemonicParsing="false" onAction="#edgesWhiteAction" text="%White" />
+                                          <Button mnemonicParsing="false" onAction="#edgesBlackAction" text="%Black" />
+                                          <CheckBox fx:id="edgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
+                                          <CheckBox fx:id="edgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
+                                          <CheckBox fx:id="edgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
+                                          <CheckBox fx:id="edgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
+                                        <Button fx:id="edgesOkButton" mnemonicParsing="false" onAction="#edgesOkAction" text="%OK" />
+                                      </items>
+                                    </ToolBar>
+                                 </children>
+                              </HBox>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="watermarkTab" text="%Watermark">
+                           <content>
+                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                 <children>
+                                    <ToolBar HBox.hgrow="ALWAYS">
+                                      <items>
+                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                      </items>
+                                    </ToolBar>
+                                    <ToolBar fx:id="watermarkBar">
+                                      <items>
+                                          <Label text="%Text" />
+                                          <TextField fx:id="waterInput" prefHeight="30.0" prefWidth="271.0" />
+                                          <ComboBox fx:id="waterSizeBox" editable="true" prefWidth="80.0" />
+                                          <ChoiceBox fx:id="waterStyleBox" prefWidth="100.0" />
+                                          <ChoiceBox fx:id="waterFamilyBox" prefWidth="100.0" />
+                                          <ColorPicker fx:id="waterColorPicker" />
+                                          <TextField fx:id="waterXInput" prefWidth="60.0" />
+                                          <TextField fx:id="waterYInput" prefWidth="60.0" />
+                                          <Button fx:id="waterPositionButton" mnemonicParsing="false" onAction="#waterPositionAction" text="%Position" />
+                                          <Label text="%Transparent" />
+                                          <ComboBox fx:id="waterTransparentBox" editable="true" prefWidth="80.0" />
+                                        <Button fx:id="waterAddButton" mnemonicParsing="false" onAction="#waterAddAction" text="%Add" />
                                       </items>
                                     </ToolBar>
                                  </children>
@@ -391,6 +443,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <items>
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%Save" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
+                        <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
+                        <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />

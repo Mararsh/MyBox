@@ -215,6 +215,16 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openHtmlEditor(ActionEvent event) {
+        reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+    }
+
+    @FXML
+    private void openTextEditor(ActionEvent event) {
+        reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
+    }
+
+    @FXML
     private void showImageHelp(ActionEvent event) {
         try {
             File help = FxmlTools.getUserFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
