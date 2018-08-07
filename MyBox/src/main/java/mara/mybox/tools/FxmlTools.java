@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -27,10 +26,13 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javax.imageio.ImageIO;
 import mara.mybox.image.ImageConverter;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
+import mara.mybox.objects.ImageScope;
+import mara.mybox.objects.ImageScope.AreaScopeType;
 import static mara.mybox.tools.FileTools.getFileSuffix;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -353,7 +355,7 @@ public class FxmlTools {
         }
     }
 
-    public static Image changeSaturate(Image image, float change) {
+    public static Image changeSaturate(Image image, float change, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -362,113 +364,20 @@ public class FxmlTools {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
                 if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
                     continue;
                 }
-                double v = color.getSaturation() + change;
-                if (v > 1.0) {
-                    v = 1.0;
-                }
-                if (v < 0.0) {
-                    v = 0.0;
-                }
-                Color newColor = Color.hsb(color.getHue(), v, color.getBrightness());
-                pixelWriter.setColor(x, y, newColor);
-            }
-        }
-        return newImage;
-    }
-
-    public static Image changeBrightness(Image image, float change) {
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                if (color == Color.TRANSPARENT) {
-                    continue;
-                }
-                double v = color.getBrightness() + change;
-                if (v > 1.0) {
-                    v = 1.0;
-                }
-                if (v < 0.0) {
-                    v = 0.0;
-                }
-                Color newColor = Color.hsb(color.getHue(), color.getSaturation(), v);
-                pixelWriter.setColor(x, y, newColor);
-            }
-        }
-        return newImage;
-    }
-
-    public static Image changeHue(Image image, int change) {
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                if (color == Color.TRANSPARENT) {
-                    continue;
-                }
-                double v = color.getHue() + change;
-                if (v > 360.0) {
-                    v = v - 360.0;
-                }
-                if (v < 0.0) {
-                    v = v + 360.0;
-                }
-                Color newColor = Color.hsb(v, color.getSaturation(), color.getBrightness());
-                pixelWriter.setColor(x, y, newColor);
-            }
-        }
-        return newImage;
-    }
-
-    public static Image makeBinary(Image image, int precent) {
-        int threshold = 256 * precent / 100;
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                if (color == Color.TRANSPARENT) {
-                    continue;
-                }
-                double gray = 0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue();
-                if (gray * 255 < threshold) {
-                    pixelWriter.setColor(x, y, Color.BLACK);
+                if (scope.inScope(x, y, color)) {
+                    double v = color.getSaturation() + change;
+                    if (v > 1.0) {
+                        v = 1.0;
+                    }
+                    if (v < 0.0) {
+                        v = 0.0;
+                    }
+                    Color newColor = Color.hsb(color.getHue(), v, color.getBrightness(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
                 } else {
-                    pixelWriter.setColor(x, y, Color.WHITE);
-                }
-            }
-        }
-        return newImage;
-    }
-
-    public static Image replaceColorsMatched(Image image, List<Color> originalColors, Color newColor) {
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        boolean matched;
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (color.equals(oColor)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, newColor);
-                        break;
-                    }
-                }
-                if (!matched) {
                     pixelWriter.setColor(x, y, color);
                 }
             }
@@ -476,52 +385,29 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static Image replaceColorsUnMatched(Image image, List<Color> originalColors, Color newColor) {
+    public static Image changeBrightness(Image image, float change, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
-        boolean matched;
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (color.equals(oColor)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, color);
-                        break;
-                    }
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
                 }
-                if (!matched) {
+                if (scope.inScope(x, y, color)) {
+                    double v = color.getBrightness() + change;
+                    if (v > 1.0) {
+                        v = 1.0;
+                    }
+                    if (v < 0.0) {
+                        v = 0.0;
+                    }
+                    Color newColor = Color.hsb(color.getHue(), color.getSaturation(), v, color.getOpacity());
                     pixelWriter.setColor(x, y, newColor);
-                }
-            }
-        }
-        return newImage;
-    }
-
-    public static Image replaceColorsIncluded(Image image, List<Color> originalColors, Color newColor, int distance) {
-        if (distance <= 0) {
-            return replaceColorsMatched(image, originalColors, newColor);
-        }
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        boolean matched;
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (isColorMatch(color, oColor, distance)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, newColor);
-                        break;
-                    }
-                }
-                if (!matched) {
+                } else {
                     pixelWriter.setColor(x, y, color);
                 }
             }
@@ -529,55 +415,29 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static Image replaceColorsExcluded(Image image, List<Color> originalColors, Color newColor, int distance) {
-        if (distance <= 0) {
-            return replaceColorsUnMatched(image, originalColors, newColor);
-        }
+    public static Image changeHue(Image image, int change, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
-        boolean matched;
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (isColorMatch(color, oColor, distance)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, color);
-                        break;
-                    }
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
                 }
-                if (!matched) {
+                if (scope.inScope(x, y, color)) {
+                    double v = color.getHue() + change;
+                    if (v > 360.0) {
+                        v = v - 360.0;
+                    }
+                    if (v < 0.0) {
+                        v = v + 360.0;
+                    }
+                    Color newColor = Color.hsb(v, color.getSaturation(), color.getBrightness(), color.getOpacity());
                     pixelWriter.setColor(x, y, newColor);
-                }
-            }
-        }
-        return newImage;
-    }
-
-    public static Image replaceHuesIncluded(Image image, List<Color> originalColors, Color newColor, int distance) {
-        if (distance <= 0) {
-            return replaceColorsMatched(image, originalColors, newColor);
-        }
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        boolean matched;
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (isHueMatch(color, oColor, distance)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, newColor);
-                        break;
-                    }
-                }
-                if (!matched) {
+                } else {
                     pixelWriter.setColor(x, y, color);
                 }
             }
@@ -585,28 +445,117 @@ public class FxmlTools {
         return newImage;
     }
 
-    public static Image replaceHuesExcluded(Image image, List<Color> originalColors, Color newColor, int distance) {
-        if (distance <= 0) {
-            return replaceColorsUnMatched(image, originalColors, newColor);
-        }
+    public static Image setOpacity(Image image, int opacity, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
 
-        boolean matched;
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = pixelReader.getColor(x, y);
-                matched = false;
-                for (Color oColor : originalColors) {
-                    if (isHueMatch(color, oColor, distance)) {
-                        matched = true;
-                        pixelWriter.setColor(x, y, color);
-                        break;
-                    }
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
                 }
-                if (!matched) {
+                if (scope.inScope(x, y, color)) {
+                    Color newColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity / 100.0);
                     pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image replaceColors(Image image, Color newColor, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image makeInvert(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    pixelWriter.setColor(x, y, color.invert());
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image makeGray(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    pixelWriter.setColor(x, y, color.grayscale());
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image makeBinary(Image image, int precent, ImageScope scope) {
+        double threshold = precent / 100.0;
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    double gray = 0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue();
+                    if (gray < threshold) {
+                        pixelWriter.setColor(x, y, Color.BLACK);
+                    } else {
+                        pixelWriter.setColor(x, y, Color.WHITE);
+                    }
+                } else {
+                    pixelWriter.setColor(x, y, color);
                 }
             }
         }
@@ -615,6 +564,9 @@ public class FxmlTools {
 
     // https://en.wikipedia.org/wiki/Color_difference
     public static double calculateColorDistance2(Color color1, Color color2) {
+        if (color1 == color2) {
+            return 0;
+        }
         double v = 2 * Math.pow(color1.getRed() * 255 - color2.getRed() * 255, 2)
                 + 4 * Math.pow(color1.getGreen() * 255 - color2.getGreen() * 255, 2)
                 + 3 * Math.pow(color1.getBlue() * 255 - color2.getBlue() * 255, 2);
@@ -622,6 +574,9 @@ public class FxmlTools {
     }
 
     public static boolean isColorMatch(Color color1, Color color2, int distance) {
+        if (color1 == color2) {
+            return true;
+        }
         return calculateColorDistance2(color1, color2) <= Math.pow(distance, 2);
     }
 
@@ -657,24 +612,6 @@ public class FxmlTools {
                 (int) (color.getBlue() * 255));
     }
 
-    public static Image opcityImage(Image image, int opacity) {
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                Color color = pixelReader.getColor(x, y);
-                if (color == Color.TRANSPARENT) {
-                    continue;
-                }
-                Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity / 100.0);
-                pixelWriter.setColor(x, y, newcolor);
-            }
-        }
-        return newImage;
-    }
-
     public static Image rotateImage(Image image, int angle) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageConverter.rotateImage(source, angle);
@@ -683,16 +620,43 @@ public class FxmlTools {
     }
 
     public static Image horizontalImage(Image image) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConverter.horizontalImage(source);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int j = 0; j < height; j++) {
+            int l = 0, r = width - 1;
+            while (l <= r) {
+                Color cl = pixelReader.getColor(l, j);
+                Color cr = pixelReader.getColor(r, j);
+                pixelWriter.setColor(l, j, cr);
+                pixelWriter.setColor(r, j, cl);
+                l++;
+                r--;
+            }
+        }
         return newImage;
     }
 
     public static Image verticalImage(Image image) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConverter.verticalImage(source);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage(width, height);
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        for (int i = 0; i < width; i++) {
+            int t = 0, b = height - 1;
+            while (t <= b) {
+                Color ct = pixelReader.getColor(i, t);
+                Color cb = pixelReader.getColor(i, b);
+                pixelWriter.setColor(i, t, cb);
+                pixelWriter.setColor(i, b, ct);
+                t++;
+                b--;
+            }
+        }
         return newImage;
     }
 
@@ -729,4 +693,60 @@ public class FxmlTools {
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
+
+    public static Image cropImage(Image image, int x1, int y1, int x2, int y2) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.cropImage(source, x1, y1, x2, y2);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image positionImage(Image image, File icon, int x, int y) {
+        try {
+            BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+            BufferedImage iconImage = ImageIO.read(icon);
+            BufferedImage target = ImageConverter.addWatermarkImage(source, iconImage, x, y);
+            Image newImage = SwingFXUtils.toFXImage(target, null);
+            return newImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return image;
+        }
+    }
+
+    public static Image showArea(Image image, Color color, int lineWidth, int x1, int y1, int x2, int y2) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConverter.showArea(source, FxmlTools.colorConvert(color), lineWidth, x1, y1, x2, y2);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image indicateScope(Image image, ImageScope scope) {
+        if ((scope.getAreaScopeType() == AreaScopeType.AllArea) && scope.isAllColors()) {
+            return image;
+        }
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        double opacity = scope.getOpacity();
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                Color opacityColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
+                if (scope.indicateOpacity(x, y, color)) {
+                    pixelWriter.setColor(x, y, opacityColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+
+        return newImage;
+    }
+
 }
