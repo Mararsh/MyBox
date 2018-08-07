@@ -20,7 +20,7 @@
 
 ## 用户手册
 
-[PDF](https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf)
+[PDF](https://github.com/Mararsh/MyBox/releases/download/v2.9/MyBox-UserGuide-2.9.pdf)
 
 
 ## 最新修改
