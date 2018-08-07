@@ -1,7 +1,6 @@
 package mara.mybox.image;
 
 import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -9,7 +8,6 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import static mara.mybox.objects.CommonValues.AlphaColor;
-import mara.mybox.objects.ImageScope;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -298,9 +296,22 @@ public class ImageConverter {
                 return null;
             }
 
-            int w = right + 1 - left;
-            int h = bottom + 1 - top;
-            BufferedImage target = source.getSubimage(left, top, w, h);
+            BufferedImage target = new BufferedImage(right - left + 1, bottom - top + 1, source.getType());
+            int w, h = 0;
+            for (int j = top; j <= bottom; j++, h++) {
+                w = 0;
+                for (int i = left; i <= right; i++, w++) {
+                    int rgb = source.getRGB(i, j);
+                    target.setRGB(w, h, rgb);
+                }
+            }
+
+//            int w = right + 1 - left;
+//            int h = bottom + 1 - top;
+//            BufferedImage target = new BufferedImage(w, h, source.getType());
+//            Graphics2D g = target.createGraphics();
+//            g.drawImage(source, left, top, w, h, null);
+//            g.dispose();
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -308,7 +319,7 @@ public class ImageConverter {
         }
     }
 
-    public static BufferedImage horizontalMirrorImage(BufferedImage source) {
+    public static BufferedImage horizontalImage(BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -331,7 +342,7 @@ public class ImageConverter {
         }
     }
 
-    public static BufferedImage verticalMirrorImage(BufferedImage source) {
+    public static BufferedImage verticalImage(BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -431,80 +442,4 @@ public class ImageConverter {
             return null;
         }
     }
-
-    public static BufferedImage cropImage(BufferedImage source,
-            int x1, int y1, int x2, int y2) {
-        try {
-
-            int width = source.getWidth();
-            int height = source.getHeight();
-            if (x1 >= x2 || y1 >= y2
-                    || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
-                    || x1 > width || x2 > width || y1 > height || y2 > height) {
-                return source;
-            }
-            int w = x2 - x1 + 1;
-            int h = y2 - y1 + 1;
-            BufferedImage target = source.getSubimage(x1, y1, w, h);
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BufferedImage showArea(BufferedImage source,
-            Color color, int lineWidth,
-            int x1, int y1, int x2, int y2) {
-        try {
-
-            int width = source.getWidth();
-            int height = source.getHeight();
-            if (x1 >= x2 || y1 >= y2
-                    || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
-                    || x1 > width || x2 > width || y1 > height || y2 > height) {
-                return source;
-            }
-            int imageType = source.getType();
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            g.setComposite(ac);
-            g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
-            g.setStroke(stroke);
-            g.drawLine(x1, y1, x2, y1);
-            g.drawLine(x1, y1, x1, y2);
-            g.drawLine(x2, y1, x2, y2);
-            g.drawLine(x1, y2, x2, y2);
-            g.dispose();
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
-    public static BufferedImage showScope(BufferedImage source, ImageScope scope) {
-        try {
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int alpha = (int) Math.round(scope.getOpacity() * 255);
-            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            for (int j = scope.getLeftY(); j <= scope.getRightY(); j++) {
-                for (int i = scope.getLeftX(); i <= scope.getRightX(); i++) {
-                    int rgb = source.getRGB(i, j);
-                    Color color = new Color(rgb);
-                    Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-                    target.setRGB(i, j, newcolor.getRGB());
-                }
-            }
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
 }

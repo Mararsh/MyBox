@@ -56,8 +56,8 @@ public class BaseController implements Initializable {
 
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
-    protected String myFxml, parentFxml, currentStatus, baseTitle;
-    protected Stage myStage;
+    protected String myFxml, parentFxml, currentStatus;
+    protected Stage myStage, loadingStage;
     protected Alert loadingAlert;
     protected Task<Void> task;
     protected BaseController parentController;
@@ -616,7 +616,7 @@ public class BaseController implements Initializable {
             LoadingController controller = fxmlLoader.getController();
             controller.init(task);
 
-            final Stage loadingStage = new Stage();
+            loadingStage = new Stage();
             loadingStage.initModality(block);
 //            loadingStage.initStyle(StageStyle.UNDECORATED);
             loadingStage.initStyle(StageStyle.TRANSPARENT);
@@ -650,6 +650,14 @@ public class BaseController implements Initializable {
 
     public void setThisFxml(String thisFxml) {
         this.myFxml = thisFxml;
+    }
+
+    public Stage getLoadingStage() {
+        return loadingStage;
+    }
+
+    public void setLoadingStage(Stage loadingStage) {
+        this.loadingStage = loadingStage;
     }
 
     public Alert getLoadingAlert() {
@@ -1084,17 +1092,6 @@ public class BaseController implements Initializable {
 
     public void setDirsTableController(DirectoriesTableController dirsTableController) {
         this.dirsTableController = dirsTableController;
-    }
-
-    public String getBaseTitle() {
-        if (baseTitle == null) {
-            baseTitle = getMyStage().getTitle();
-        }
-        return baseTitle;
-    }
-
-    public void setBaseTitle(String baseTitle) {
-        this.baseTitle = baseTitle;
     }
 
 }

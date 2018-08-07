@@ -30,7 +30,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -43,20 +46,21 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import javafx.scene.input.MouseButton;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConverter;
@@ -68,12 +72,10 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.ImageScope.AreaScopeType;
-import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
+import mara.mybox.tools.FxmlTools.ImageManufactureType;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
@@ -84,53 +86,47 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureController extends ImageViewerController {
 
+    protected int saturateStep = 5, brightnessStep = 5, hueStep = 5, percent = 50;
+    protected int saturateOffset = 0, brightnessOffset = 0, hueOffset = 0;
     protected File nextFile, lastFile, refFile;
     protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey, FontSizeKey, FontFamilyKey;
-    protected ScrollPane refPane, cropPane;
-    protected ImageView refView, cropImageView;
-    protected Image refImage, undoImage, redoImage, cropImage, currentImage;
-    protected ImageFileInformation refInfo, cropInfo;
-    private boolean noRatio, isScale, isSettingValues, areaValid;
+    protected ScrollPane refPane;
+    protected ImageView refView;
+    protected Image refImage, undoImage, redoImage;
+    protected ImageFileInformation refInfo;
+    private boolean noRatio, isScale, isPickingOriginalColor, isPickingNewColor, isPickingPosition;
     private float scale = 1.0f, shearX, shearY = 0, waterTransparent = 0.5f;
-    private int width, height, colorOperationType, filtersOperationType, waterX, waterY, waterSize;
-    private int pixelPickingType, colorValue, cropLeftX, cropLeftY, cropRightX, cropRightY, binaryThreshold;
-    private ImageScope colorScope, filtersScope, replaceColorScope, cropScope;
-    protected SimpleBooleanProperty imageChanged;
+    private int width, height, colorDistance, opacity = 100, colorMatchType, hueDistance, waterX, waterY, waterSize;
+    public SimpleBooleanProperty imageChanged;
 
     @FXML
     protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar, replaceColorBar, watermarkBar, transformBar;
     @FXML
-    protected Tab fileTab, zoomTab, colorTab, filtersTab, watermarkTab, cropTab;
+    protected Tab fileTab, zoomTab, hueTab, saturateTab, brightnessTab, filtersTab, watermarkTab;
     @FXML
-    protected Tab replaceColorTab, pixelsTab, refTab, browseTab, transformTab, edgesTab;
+    protected Tab replaceColorTab, pixelsTab, refTab, browseTab, opacityTab, transformTab, edgesTab;
     @FXML
-    protected Slider zoomSlider, angleSlider, colorSlider, binarySlider;
+    protected Slider zoomSlider, angleSlider, hueSlider, saturateSlider, brightnessSlider, binarySlider, opacitySlider;
     @FXML
-    protected Label zoomValue, colorUnit, tipsLabel, promptLabel, binaryValue, thresholdLabel;
+    protected Label zoomValue, hueValue, saturateValue, brightnessValue, binaryValue, tipsLabel, promptLabel, opacityValue;
     @FXML
-    protected ToggleGroup sortGroup, pixelsGroup, filtersGroup, colorGroup;
+    protected ToggleGroup sortGroup, pixelsGroup, colorMatchGroup;
     @FXML
     protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
     @FXML
-    protected Button pickNewColorButton, transparentForNewButton, recoverButton, replaceColorOkButton, replaceColorScopeButton;
+    protected Button pickOldColorButton, pickNewColorButton, transparentForNewButton, recoverButton, colorOkButton, opacityOkButton;
     @FXML
-    protected Button waterPositionButton, waterAddButton, undoButton, redoButton, cropOkButton, filtersScopeButton, shearButton;
+    protected Button waterPositionButton, waterAddButton, undoButton, redoButton;
     @FXML
-    protected Button colorScopeButton, binaryCalculateButton, binaryOkButton, colorDecreaseButton, colorIncreaseButton;
-    @FXML
-    protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck;
-    @FXML
-    protected CheckBox colorScopeCheck, replaceColorScopeCheck, filtersScopeCheck, cropScopeCheck;
+    protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck, excludedCheck;
     @FXML
     protected CheckBox edgesTopCheck, edgesBottomCheck, edgesLeftCheck, edgesRightCheck;
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, scaleInput, colorInput;
+    protected TextField widthInput, heightInput, scaleInput, colorDistanceInput, hueDistanceInput;
     @FXML
-    protected TextField waterInput, waterXInput, waterYInput;
-    @FXML
-    protected TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
+    protected TextField shearXInput, shearYInput, waterInput, waterXInput, waterYInput;
     @FXML
     protected ChoiceBox ratioBox, waterStyleBox, waterFamilyBox;
     @FXML
@@ -138,36 +134,13 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ColorPicker newColorPicker, waterColorPicker, edgesColorPicker;
     @FXML
-    protected ComboBox angleBox, waterSizeBox, waterTransparentBox, colorBox, shearBox;
-    @FXML
-    protected RadioButton opacityRadio;
+    protected ComboBox originalColorsBox, angleBox, waterSizeBox, waterTransparentBox;
 
-    public static class ColorOperationType {
+    public static class ColorMatchType {
 
-        public static int Brightness = 0;
-        public static int Sauration = 1;
-        public static int Hue = 2;
-        public static int Opacity = 3;
-
-    }
-
-    public static class FiltersOperationType {
-
-        public static int Gray = 0;
-        public static int Invert = 1;
-        public static int BlackOrWhite = 2;
-
-    }
-
-    public static class PixelPickingType {
-
-        public static int None = 0;
-        public static int NewColor = 1;
-        public static int Watermark = 2;
-        public static int RectangleLeft = 3;
-        public static int RectangleRight = 4;
-        public static int OriginalColor = 5;
-        public static int CircleCenter = 6;
+        public static int AccurateMatch = 0;
+        public static int ColorDistance = 1;
+        public static int HueDistance = 2;
 
     }
 
@@ -188,14 +161,16 @@ public class ImageManufactureController extends ImageViewerController {
             initViewTab();
             initBrowseTab();
             initPixelsTab();
-            initColorTab();
+            initHueTab();
+            initSaturateTab();
+            initBrightnessTab();
+            initOpacityTab();
             initFiltersTab();
             initTransformTab();
             initReplaceColorTab();
             initWatermarkTab();
             initReferenceTab();
             initEdgesTab();
-            initCropTab();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -210,7 +185,10 @@ public class ImageManufactureController extends ImageViewerController {
             browseTab.setDisable(true);
             navBar.setDisable(true);
             zoomTab.setDisable(true);
-            colorTab.setDisable(true);
+            hueTab.setDisable(true);
+            saturateTab.setDisable(true);
+            brightnessTab.setDisable(true);
+            opacityTab.setDisable(true);
             filtersTab.setDisable(true);
             replaceColorTab.setDisable(true);
             pixelsTab.setDisable(true);
@@ -218,20 +196,7 @@ public class ImageManufactureController extends ImageViewerController {
             transformTab.setDisable(true);
             watermarkTab.setDisable(true);
             edgesTab.setDisable(true);
-            cropTab.setDisable(true);
             hotBar.setDisable(true);
-
-            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-                @Override
-                public void changed(ObservableValue<? extends Tab> observable,
-                        Tab oldValue, Tab newValue) {
-                    imageView.setImage(currentImage);
-                    pixelPickingType = ImageManufactureController.PixelPickingType.None;
-                    imageView.setCursor(Cursor.OPEN_HAND);
-                    promptLabel.setText("");
-                    showScope();
-                }
-            });
 
             Tooltip tips = new Tooltip(getMessage("ImageManufactureTips"));
             tips.setFont(new Font(16));
@@ -252,13 +217,12 @@ public class ImageManufactureController extends ImageViewerController {
                         recoverButton.setDisable(false);
                         undoButton.setDisable(false);
                         redoButton.setDisable(true);
-                        getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath() + "*");
+                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath() + "*");
                     } else {
                         saveButton.setDisable(true);
                         recoverButton.setDisable(true);
-                        getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+                        getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
                     }
-                    setBottomLabel();
                 }
             });
 
@@ -267,7 +231,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    // File Methods
     protected void initFileTab() {
         try {
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -291,100 +254,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    @FXML
-    @Override
-    protected void selectSourceFile(ActionEvent event) {
-        if (image != null && imageChanged.getValue()) {
-            if (!checkSavingBeforeExit()) {
-                return;
-            }
-        }
-        super.selectSourceFile(event);
-    }
-
-    @Override
-    public void afterImageLoaded() {
-        try {
-            super.afterImageLoaded();
-            if (image == null) {
-                return;
-            }
-            fileBar.setDisable(false);
-            navBar.setDisable(false);
-            zoomTab.setDisable(false);
-            colorTab.setDisable(false);
-            filtersTab.setDisable(false);
-            replaceColorTab.setDisable(false);
-            pixelsTab.setDisable(false);
-            refTab.setDisable(false);
-            hotBar.setDisable(false);
-            browseTab.setDisable(false);
-            if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat())) {
-                opacityRadio.setDisable(true);
-                transparentForNewButton.setDisable(true);
-            } else {
-                opacityRadio.setDisable(false);
-                transparentForNewButton.setDisable(false);
-            }
-            transformTab.setDisable(false);
-            watermarkTab.setDisable(false);
-            edgesTab.setDisable(false);
-            cropTab.setDisable(false);
-
-            isSettingValues = true;
-
-            currentImage = image;
-            imageChanged.set(false);
-
-            widthInput.setText(imageInformation.getxPixels() + "");
-            heightInput.setText(imageInformation.getyPixels() + "");
-            attributes.setSourceWidth(imageInformation.getxPixels());
-            attributes.setSourceHeight(imageInformation.getyPixels());
-
-            waterXInput.setText(imageInformation.getxPixels() / 2 + "");
-            waterYInput.setText(imageInformation.getyPixels() / 2 + "");
-
-            colorScope = new ImageScope();
-            colorScope.setOperationType(OperationType.Color);
-
-            filtersScope = new ImageScope();
-            filtersScope.setOperationType(OperationType.Filters);
-
-            replaceColorScope = new ImageScope();
-            replaceColorScope.setOperationType(OperationType.ReplaceColor);
-//            replaceColorScope.setAllColors(false);
-//            replaceColorOkButton.setDisable(true);
-
-            cropRightXInput.setText(imageInformation.getxPixels() * 3 / 4 + "");
-            cropRightYInput.setText(imageInformation.getyPixels() * 3 / 4 + "");
-            cropLeftXInput.setText(imageInformation.getxPixels() / 4 + "");
-            cropLeftYInput.setText(imageInformation.getyPixels() / 4 + "");
-
-            cropScope = new ImageScope();
-            cropScope.setOperationType(OperationType.Crop);
-            cropScope.setAreaScopeType(AreaScopeType.Rectangle);
-            cropScope.setIndicateScope(cropScopeCheck.isSelected());
-
-            pixelPickingType = PixelPickingType.None;
-            imageView.setCursor(Cursor.OPEN_HAND);
-            promptLabel.setText("");
-
-            isSettingValues = false;
-
-            checkNevigator();
-            straighten();
-            setBottomLabel();
-
-            undoButton.setDisable(true);
-            redoButton.setDisable(true);
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
-    // View Methods
     protected void initViewTab() {
         try {
 
@@ -401,43 +270,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    @FXML
-    @Override
-    public void moveRight() {
-        FxmlTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            FxmlTools.setScrollPane(refPane, -40, refPane.getVvalue());
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveLeft() {
-        FxmlTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            FxmlTools.setScrollPane(refPane, 40, refPane.getVvalue());
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveUp() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), 40);
-        }
-    }
-
-    @FXML
-    @Override
-    public void moveDown() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), -40);
-        }
-    }
-
-    // Browse Methods
     protected void initBrowseTab() {
         try {
             sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -456,105 +288,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    @FXML
-    public void next() {
-        if (!checkSavingBeforeExit()) {
-            return;
-        }
-        if (nextFile != null) {
-            loadImage(nextFile.getAbsoluteFile(), false);
-        }
-    }
-
-    @FXML
-    public void last() {
-        if (!checkSavingBeforeExit()) {
-            return;
-        }
-        if (lastFile != null) {
-            loadImage(lastFile.getAbsoluteFile(), false);
-        }
-    }
-
-    @FXML
-    public void browseAction() {
-        try {
-            if (!stageReloading()) {
-                return;
-            }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final ImagesViewerController controller = fxmlLoader.getController();
-            controller.setMyStage(myStage);
-            myStage.setScene(new Scene(pane));
-            myStage.setTitle(getMessage("AppTitle"));
-            controller.loadImages(sourceFile.getParentFile(), 10);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    private void checkNevigator() {
-        try {
-            if (sourceFile == null) {
-                lastFile = null;
-                lastButton.setDisable(true);
-                nextFile = null;
-                nextButton.setDisable(true);
-                return;
-            }
-            File path = sourceFile.getParentFile();
-            List<File> sortedFiles = new ArrayList<>();
-            File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isFile() && FileTools.isSupportedImage(file)) {
-                    sortedFiles.add(file);
-                }
-            }
-            RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-            if (getMessage("OriginalFileName").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
-
-            } else if (getMessage("CreateTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
-
-            } else if (getMessage("ModifyTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
-
-            } else if (getMessage("Size").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
-            }
-
-            for (int i = 0; i < sortedFiles.size(); i++) {
-                if (sortedFiles.get(i).getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
-                    if (i < sortedFiles.size() - 1) {
-                        nextFile = sortedFiles.get(i + 1);
-                        nextButton.setDisable(false);
-                    } else {
-                        nextFile = null;
-                        nextButton.setDisable(true);
-                    }
-                    if (i > 0) {
-                        lastFile = sortedFiles.get(i - 1);
-                        lastButton.setDisable(false);
-                    } else {
-                        lastFile = null;
-                        lastButton.setDisable(true);
-                    }
-                    return;
-                }
-            }
-            lastFile = null;
-            lastButton.setDisable(true);
-            nextFile = null;
-            nextButton.setDisable(true);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    // Pixels methods
     protected void initPixelsTab() {
         try {
 
@@ -668,6 +401,7 @@ public class ImageManufactureController extends ImageViewerController {
             scale = Float.valueOf(scaleInput.getText());
             if (scale > 0) {
                 scaleInput.setStyle(null);
+                final Image currentImage = imageView.getImage();
                 if (currentImage != null) {
                     noRatio = true;
                     widthInput.setText(Math.round(currentImage.getWidth() * scale) + "");
@@ -682,206 +416,13 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void checkRatioAdjustion(String s) {
+    protected void initHueTab() {
         try {
-            if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnWidth);
-            } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnHeight);
-            } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnLarger);
-            } else if (getMessage("BaseOnSmaller").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnSmaller);
-            } else {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.None);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void checkRatio() {
-        try {
-            width = Integer.valueOf(widthInput.getText());
-            height = Integer.valueOf(heightInput.getText());
-            attributes.setTargetWidth(width);
-            attributes.setTargetHeight(height);
-            int sourceX = imageInformation.getxPixels();
-            int sourceY = imageInformation.getyPixels();
-            if (noRatio || !keepRatioCheck.isSelected() || sourceX <= 0 || sourceY <= 0) {
-                return;
-            }
-            long ratioX = Math.round(width * 1000 / sourceX);
-            long ratioY = Math.round(height * 1000 / sourceY);
-            if (ratioX == ratioY) {
-                return;
-            }
-            switch (attributes.getRatioAdjustion()) {
-                case ImageConverter.KeepRatioType.BaseOnWidth:
-                    heightInput.setText(Math.round(width * sourceY / sourceX) + "");
-                    break;
-                case ImageConverter.KeepRatioType.BaseOnHeight:
-                    widthInput.setText(Math.round(height * sourceX / sourceY) + "");
-                    break;
-                case ImageConverter.KeepRatioType.BaseOnLarger:
-                    if (ratioX > ratioY) {
-                        heightInput.setText(Math.round(width * sourceY / sourceX) + "");
-                    } else {
-                        widthInput.setText(Math.round(height * sourceX / sourceY) + "");
-                    }
-                    break;
-                case ImageConverter.KeepRatioType.BaseOnSmaller:
-                    if (ratioX > ratioY) {
-                        widthInput.setText(Math.round(height * sourceX / sourceY) + "");
-                    } else {
-                        heightInput.setText(Math.round(width * sourceY / sourceX) + "");
-                    }
-                    break;
-                default:
-                    break;
-            }
-            width = Integer.valueOf(widthInput.getText());
-            height = Integer.valueOf(heightInput.getText());
-        } catch (Exception e) {
-//            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void pixelsCalculator() {
-        try {
-            attributes.setKeepRatio(keepRatioCheck.isSelected());
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            PixelsCalculationController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            controller.setSource(attributes, widthInput, heightInput);
-
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getMyStage());
-            stage.setTitle(AppVaribles.getMessage("PixelsCalculator"));
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            stage.show();
-            noRatio = true;
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    noRatio = false;
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void pixelsAction() {
-        if (isScale) {
-            setScale();
-        } else {
-            setPixels();
-        }
-    }
-
-    protected void setScale() {
-        if (scale == 1.0 || scale <= 0) {
-            return;
-        }
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), scale);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    protected void setPixels() {
-        if (width <= 0 || height <= 0) {
-            return;
-        }
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), width, height);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    // Color Methods
-    protected void initColorTab() {
-        try {
-            colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkColorOperationType();
-                }
-            });
-            checkColorOperationType();
-
-            colorSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            hueSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    colorValue = newValue.intValue();
-                    colorInput.setText(colorValue + "");
-                }
-            });
-
-            colorInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkColorInput();
-                }
-            });
-            checkColorInput();
-
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(colorScopeCheck, tips);
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(colorScopeButton, stips);
-            }
-
-            colorScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    colorScope.setIndicateScope(colorScopeCheck.isSelected());
-                    showScope(colorScope);
+                    hueStep = newValue.intValue();
+                    hueValue.setText(hueStep + "");
                 }
             });
 
@@ -890,287 +431,55 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    private void checkColorOperationType() {
-        RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
-        if (getMessage("Brightness").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Brightness;
-            colorSlider.setMax(100);
-            colorSlider.setMin(0);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            colorInput.setText("5");
-            colorDecreaseButton.setVisible(true);
-            colorIncreaseButton.setText(getMessage("Increase"));
-        } else if (getMessage("Saturation").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Sauration;
-            colorSlider.setMax(100);
-            colorSlider.setMin(0);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            colorInput.setText("5");
-            colorDecreaseButton.setVisible(true);
-            colorIncreaseButton.setText(getMessage("Increase"));
-        } else if (getMessage("Hue").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Hue;
-            colorSlider.setMax(360);
-            colorSlider.setMin(0);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText(getMessage("Degree"));
-            colorInput.setText("5");
-            colorDecreaseButton.setVisible(true);
-            colorIncreaseButton.setText(getMessage("Increase"));
-        } else if (getMessage("Opacity").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Opacity;
-            colorSlider.setMax(100);
-            colorSlider.setMin(0);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            colorInput.setText("50");
-            colorDecreaseButton.setVisible(false);
-            colorIncreaseButton.setText(getMessage("OK"));
-        }
-    }
-
-    private void checkColorInput() {
+    protected void initSaturateTab() {
         try {
-            colorValue = Integer.valueOf(colorInput.getText());
-            if (colorValue >= 0 && colorValue <= colorSlider.getMax()) {
-                colorInput.setStyle(null);
-                colorSlider.setValue(colorValue);
-            } else {
-                colorInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            colorInput.setStyle(badStyle);
-        }
-    }
-
-    @FXML
-    public void increaseColor() {
-        if (colorOperationType == ColorOperationType.Brightness) {
-            increaseBrightness();
-        } else if (colorOperationType == ColorOperationType.Sauration) {
-            increaseSaturate();
-        } else if (colorOperationType == ColorOperationType.Hue) {
-            increaseHue();
-        } else if (colorOperationType == ColorOperationType.Opacity) {
-            setOpacity();
-        }
-    }
-
-    @FXML
-    public void decreaseColor() {
-        if (colorOperationType == ColorOperationType.Brightness) {
-            decreaseBrightness();
-        } else if (colorOperationType == ColorOperationType.Sauration) {
-            decreaseSaturate();
-        } else if (colorOperationType == ColorOperationType.Hue) {
-            decreaseHue();
-        }
-    }
-
-    @FXML
-    public void setColorScope() {
-        setScope(colorScope);
-    }
-
-    public void increaseHue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeHue(currentImage, colorValue, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseHue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeHue(currentImage, 0 - colorValue, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseSaturate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeSaturate(currentImage, colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-    public void decreaseSaturate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeSaturate(currentImage, 0.0f - colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseBrightness() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeBrightness(currentImage, colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseBrightness() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeBrightness(currentImage, 0.0f - colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setOpacity() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.setOpacity(currentImage, colorValue, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    // Filters Methods
-    protected void initFiltersTab() {
-        try {
-            filtersGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            saturateSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkFiltersOperationType();
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    saturateStep = newValue.intValue();
+                    saturateValue.setText(saturateStep + "%");
                 }
             });
-            checkFiltersOperationType();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
 
+    protected void initBrightnessTab() {
+        try {
+            brightnessSlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    brightnessStep = newValue.intValue();
+                    brightnessValue.setText(brightnessStep + "%");
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initOpacityTab() {
+        try {
+            opacitySlider.valueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    opacity = newValue.intValue();
+                    opacityValue.setText(opacity + "");
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initFiltersTab() {
+        try {
             binarySlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    binaryThreshold = newValue.intValue();
-                    binaryValue.setText(binaryThreshold + "%");
-                }
-            });
-            binarySlider.setValue(50);
-
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(filtersScopeCheck, tips);
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(filtersScopeButton, stips);
-            }
-
-            filtersScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    filtersScope.setIndicateScope(filtersScopeCheck.isSelected());
-                    showScope(filtersScope);
+                    percent = newValue.intValue();
+                    binaryValue.setText(percent + "%");
                 }
             });
 
@@ -1179,120 +488,6 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    private void checkFiltersOperationType() {
-        RadioButton selected = (RadioButton) filtersGroup.getSelectedToggle();
-        if (getMessage("BlackOrWhite").equals(selected.getText())) {
-            filtersOperationType = FiltersOperationType.BlackOrWhite;
-            binarySlider.setDisable(false);
-            binaryValue.setDisable(false);
-            thresholdLabel.setDisable(false);
-            binaryCalculateButton.setDisable(false);
-        } else {
-            if (getMessage("Gray").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Gray;
-            } else if (getMessage("Invert").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Invert;
-            }
-            binarySlider.setDisable(true);
-            binaryValue.setDisable(true);
-            thresholdLabel.setDisable(true);
-            binaryCalculateButton.setDisable(true);
-        }
-    }
-
-    @FXML
-    public void setFiltersScope() {
-        setScope(filtersScope);
-    }
-
-    @FXML
-    public void calculateThreshold() {
-        int threshold = ImageGrayTools.calculateThreshold(sourceFile);
-        binaryThreshold = threshold * 100 / 256;
-        binarySlider.setValue(binaryThreshold);
-    }
-
-    @FXML
-    public void filtersAction() {
-        if (filtersOperationType == FiltersOperationType.Gray) {
-            setGray();
-        } else if (filtersOperationType == FiltersOperationType.Invert) {
-            setInvert();
-        } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
-            setBinary();
-        }
-    }
-
-    public void setInvert() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeInvert(currentImage, filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setGray() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeGray(currentImage, filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setBinary() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeBinary(currentImage, binaryThreshold, filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    // Transform Methods
     protected void initTransformTab() {
         try {
 
@@ -1302,27 +497,23 @@ public class ImageManufactureController extends ImageViewerController {
                 FxmlTools.setComments(transformBar, tips);
             }
 
-            ObservableList<String> shears = FXCollections.observableArrayList(
-                    "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
-                    "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
-                    "1.5", "-1.5", "2", "-2");
-            shearBox.getItems().addAll(shears);
-            shearBox.valueProperty().addListener(new ChangeListener<String>() {
+            shearXInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        shearX = Float.valueOf(newValue);
-                        shearBox.getEditor().setStyle(null);
-                        shearButton.setDisable(false);
-                    } catch (Exception e) {
-                        shearX = 0;
-                        shearBox.getEditor().setStyle(badStyle);
-                        shearButton.setDisable(true);
-                    }
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkShearX();
                 }
             });
-            shearBox.getSelectionModel().select(0);
+            checkShearX();
 
+//            shearYInput.textProperty().addListener(new ChangeListener<String>() {
+//                @Override
+//                public void changed(ObservableValue<? extends String> observable,
+//                        String oldValue, String newValue) {
+//                    checkShearY();
+//                }
+//            });
+//            checkShearY();
             angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -1334,8 +525,9 @@ public class ImageManufactureController extends ImageViewerController {
             });
 
             ObservableList<String> angles = FXCollections.observableArrayList(
-                    "90", "180", "45", "30", "60", "15", "75", "120", "135");
+                    "90", "0", "180", "45", "30", "60", "75", "120", "135");
             angleBox.getItems().addAll(angles);
+            angleBox.getSelectionModel().select(0);
             angleBox.setVisibleRowCount(angles.size());
             angleBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -1354,201 +546,165 @@ public class ImageManufactureController extends ImageViewerController {
                     }
                 }
             });
-            angleBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    @FXML
-    public void rightRotate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.rotateImage(currentImage, rotateAngle);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+    private void checkShearX() {
+        try {
+            shearX = Float.valueOf(shearXInput.getText());
+            shearXInput.setStyle(null);
+//            if (shearX >= -1.0 && shearX <= 1.0) {
+//                shearXInput.setStyle(null);
+//            } else {
+//                shearXInput.setStyle(badStyle);
+//            }
+        } catch (Exception e) {
+            shearXInput.setStyle(badStyle);
+        }
     }
 
-    @FXML
-    public void leftRotate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.rotateImage(currentImage, 360 - rotateAngle);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+    private void checkShearY() {
+//        try {
+//            shearY = Float.valueOf(shearYInput.getText());
+//            if (shearY >= -1.0 && shearY <= 1.0) {
+//                shearYInput.setStyle(null);
+//            } else {
+//                shearYInput.setStyle(badStyle);
+//            }
+//        } catch (Exception e) {
+//            shearYInput.setStyle(badStyle);
+//        }
     }
 
-    @FXML
-    public void horizontalAction() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.horizontalImage(currentImage);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    @FXML
-    public void verticalAction() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.verticalImage(currentImage);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    @FXML
-    public void shearAction() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.shearImage(currentImage, shearX, 0);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    //  Replace Colors Methods
     protected void initReplaceColorTab() {
         try {
-
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(replaceColorScopeCheck, tips);
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(replaceColorScopeButton, stips);
-            }
-            replaceColorScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            colorMatchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    replaceColorScope.setIndicateScope(replaceColorScopeCheck.isSelected());
-                    showScope(replaceColorScope);
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkMatchType();
+                }
+            });
+            checkMatchType();
+
+            FxmlTools.quickTooltip(colorDistanceInput, new Tooltip("0 ~ 255"));
+            FxmlTools.quickTooltip(hueDistanceInput, new Tooltip("0 ~ 360"));
+            if (AppVaribles.showComments) {
+                Tooltip tips = new Tooltip(getMessage("ReplaceColorComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(replaceColorBar, tips);
+            }
+
+            colorDistanceInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkColorDistance();
+                }
+            });
+            checkColorDistance();
+
+            hueDistanceInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkHueDistance();
+                }
+            });
+            checkHueDistance();
+
+            originalColorsBox.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
+                @Override
+                public ListCell<Color> call(ListView<Color> p) {
+                    return new ListCell<Color>() {
+                        private final Rectangle rectangle;
+
+                        {
+                            setContentDisplay(ContentDisplay.LEFT);
+                            rectangle = new Rectangle(10, 10);
+                        }
+
+                        @Override
+                        protected void updateItem(Color item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if (item == null || empty) {
+                                setGraphic(null);
+                            } else {
+                                rectangle.setFill(item);
+                                setGraphic(rectangle);
+                                setText(item.toString());
+                            }
+                        }
+                    };
                 }
             });
 
+            originalColorsBox.setVisibleRowCount(0);
+            colorOkButton.disableProperty().bind(
+                    colorDistanceInput.styleProperty().isEqualTo(badStyle)
+                            .or(originalColorsBox.visibleRowCountProperty().isEqualTo(0))
+            );
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    @FXML
-    public void setReplaceColorScope() {
-        setScope(replaceColorScope);
+    private void checkMatchType() {
+        RadioButton selected = (RadioButton) colorMatchGroup.getSelectedToggle();
+        if (getMessage("ColorDistance").equals(selected.getText())) {
+            colorMatchType = ColorMatchType.ColorDistance;
+            colorDistanceInput.setDisable(false);
+            hueDistanceInput.setDisable(true);
+            hueDistanceInput.setStyle(null);
+
+        } else if (getMessage("HueDistance").equals(selected.getText())) {
+            colorMatchType = ColorMatchType.HueDistance;
+            hueDistanceInput.setDisable(false);
+            colorDistanceInput.setDisable(true);
+            colorDistanceInput.setStyle(null);
+
+        } else {
+            colorMatchType = ColorMatchType.AccurateMatch;
+            colorDistanceInput.setDisable(true);
+            colorDistanceInput.setStyle(null);
+            hueDistanceInput.setDisable(true);
+            hueDistanceInput.setStyle(null);
+
+        }
 
     }
 
-    @FXML
-    public void pickColorForNew() {
-        pixelPickingType = PixelPickingType.NewColor;
-        imageView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("PickColorComments"));
-    }
-
-    @FXML
-    public void transparentForNew() {
-        newColorPicker.setValue(new Color(0, 0, 0, 0));
-    }
-
-    @FXML
-    public void replaceColorAction() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlTools.replaceColors(currentImage, newColorPicker.getValue(), replaceColorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        undoImage = currentImage;
-                        currentImage = newImage;
-                        imageView.setImage(newImage);
-                        imageChanged.set(true);
-                    }
-                });
-                return null;
+    private void checkColorDistance() {
+        try {
+            colorDistance = Integer.valueOf(colorDistanceInput.getText());
+            if (colorDistance >= 0 && colorDistance <= 255) {
+                colorDistanceInput.setStyle(null);
+            } else {
+                colorDistanceInput.setStyle(badStyle);
             }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        } catch (Exception e) {
+            colorDistanceInput.setStyle(badStyle);
+        }
     }
 
-    // Watermark Methods
+    private void checkHueDistance() {
+        try {
+            hueDistance = Integer.valueOf(hueDistanceInput.getText());
+            if (hueDistance >= 0 && hueDistance <= 360) {
+                hueDistanceInput.setStyle(null);
+            } else {
+                hueDistanceInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            hueDistanceInput.setStyle(badStyle);
+        }
+    }
+
     protected void initWatermarkTab() {
         try {
 
@@ -1648,7 +804,7 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             waterX = Integer.valueOf(waterXInput.getText());
             waterXInput.setStyle(null);
-            if (waterX >= 0 && waterX <= currentImage.getWidth()) {
+            if (waterX >= 0 && waterX <= imageInformation.getxPixels()) {
                 waterXInput.setStyle(null);
             } else {
                 waterXInput.setStyle(badStyle);
@@ -1662,7 +818,7 @@ public class ImageManufactureController extends ImageViewerController {
         try {
             waterY = Integer.valueOf(waterYInput.getText());
             waterYInput.setStyle(null);
-            if (waterY >= 0 && waterY <= currentImage.getHeight()) {
+            if (waterY >= 0 && waterY <= imageInformation.getyPixels()) {
                 waterYInput.setStyle(null);
             } else {
                 waterYInput.setStyle(badStyle);
@@ -1672,15 +828,922 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
+    protected void initReferenceTab() {
+        try {
+            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    checkReferenceImage();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void initEdgesTab() {
+        try {
+            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    checkReferenceImage();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    protected void selectSourceFile(ActionEvent event) {
+        if (image != null && imageChanged.getValue()) {
+            if (!checkSavingBeforeExit()) {
+                return;
+            }
+        }
+        super.selectSourceFile(event);
+    }
+
+    @Override
+    public void afterImageLoaded() {
+        super.afterImageLoaded();
+        if (image != null) {
+            fileBar.setDisable(false);
+            navBar.setDisable(false);
+            zoomTab.setDisable(false);
+            hueTab.setDisable(false);
+            saturateTab.setDisable(false);
+            brightnessTab.setDisable(false);
+            filtersTab.setDisable(false);
+            replaceColorTab.setDisable(false);
+            pixelsTab.setDisable(false);
+            refTab.setDisable(false);
+            hotBar.setDisable(false);
+            browseTab.setDisable(false);
+            if (CommonValues.NoAlphaImages.contains(imageInformation.getImageFormat())) {
+                opacityTab.setDisable(true);
+//                transparentForNewButton.setDisable(true);
+            } else {
+                opacityTab.setDisable(false);
+                transparentForNewButton.setDisable(false);
+            }
+            transformTab.setDisable(false);
+            watermarkTab.setDisable(false);
+            edgesTab.setDisable(false);
+
+            widthInput.setText(imageInformation.getxPixels() + "");
+            heightInput.setText(imageInformation.getyPixels() + "");
+            attributes.setSourceWidth(imageInformation.getxPixels());
+            attributes.setSourceHeight(imageInformation.getyPixels());
+
+            waterXInput.setText(imageInformation.getxPixels() / 2 + "");
+            waterYInput.setText(imageInformation.getyPixels() / 2 + "");
+
+            checkNevigator();
+            straighten();
+            showLabel();
+
+            imageChanged.set(false);
+            undoButton.setDisable(true);
+            redoButton.setDisable(true);
+            isPickingOriginalColor = false;
+            isPickingNewColor = false;
+            imageView.setCursor(Cursor.OPEN_HAND);
+            promptLabel.setText("");
+            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    public void recovery() {
+        undoImage = imageView.getImage();
+        imageView.setImage(image);
+        imageChanged.set(false);
+        undoButton.setDisable(false);
+        redoButton.setDisable(true);
+        showLabel();
+    }
+
+    @FXML
+    public void increaseSaturate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeSaturate(currentImage, saturateStep / 100.0f);
+                saturateOffset += saturateStep;
+                if (saturateOffset > 100) {
+                    saturateOffset = 100;
+                }
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+    @FXML
+    public void decreaseSaturate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeSaturate(currentImage, 0.0f - saturateStep / 100.0f);
+                saturateOffset -= saturateStep;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void increaseHue() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeHue(currentImage, hueStep);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void decreaseHue() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeHue(currentImage, 0 - hueStep);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void increaseBrightness() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeBrightness(currentImage, brightnessStep / 100.0f);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void decreaseBrightness() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.changeBrightness(currentImage, 0.0f - brightnessStep / 100.0f);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void setInvert() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.manufactureImage(currentImage, ImageManufactureType.Invert);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void setGray() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.manufactureImage(currentImage, ImageManufactureType.Gray);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void setBinary() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.makeBinary(currentImage, percent);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void pixelsCalculator() {
+        try {
+            attributes.setKeepRatio(keepRatioCheck.isSelected());
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
+            Pane pane = fxmlLoader.load();
+            PixelsCalculationController controller = fxmlLoader.getController();
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            controller.setSource(attributes, widthInput, heightInput);
+
+            Scene scene = new Scene(pane);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(getMyStage());
+            stage.setTitle(AppVaribles.getMessage("PixelsCalculator"));
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(scene);
+            stage.show();
+            noRatio = true;
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    noRatio = false;
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void setOriginalSize() {
+        noRatio = true;
+        if (imageInformation.getxPixels() > 0) {
+            widthInput.setText(imageInformation.getxPixels() + "");
+        }
+        if (imageInformation.getyPixels() > 0) {
+            heightInput.setText(imageInformation.getyPixels() + "");
+        }
+        noRatio = false;
+    }
+
+    @FXML
+    protected void pixelsAction() {
+        if (isScale) {
+            setScale();
+        } else {
+            setPixels();
+        }
+    }
+
+    @FXML
+    public void save() {
+        if (saveCheck.isSelected()) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+
+        final Image currentImage = imageView.getImage();
+        Task saveTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                String format = imageInformation.getImageFormat();
+                final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, format);
+                ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
+                imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
+                image = currentImage;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageChanged.set(false);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(saveTask);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+    @FXML
+    public void saveAs() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            AppVaribles.setConfigValue(targetPathKey, file.getParent());
+
+            final Image currentImage = imageView.getImage();
+            Task saveTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    String format = FileTools.getFileSuffix(file.getName());
+                    final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, imageInformation.getImageFormat());
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (openCheck.isSelected()) {
+                                showImageManufacture(file.getAbsolutePath());
+                            }
+                        }
+                    });
+                    return null;
+                }
+            };
+            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(saveTask);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void next() {
+        if (!checkSavingBeforeExit()) {
+            return;
+        }
+        if (nextFile != null) {
+            loadImage(nextFile.getAbsoluteFile(), false);
+        }
+    }
+
+    @FXML
+    public void last() {
+        if (!checkSavingBeforeExit()) {
+            return;
+        }
+        if (lastFile != null) {
+            loadImage(lastFile.getAbsoluteFile(), false);
+        }
+    }
+
+    @FXML
+    public void browseAction() {
+        try {
+            if (!stageReloading()) {
+                return;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
+            Pane pane = fxmlLoader.load();
+            final ImagesViewerController controller = fxmlLoader.getController();
+            controller.setMyStage(myStage);
+            myStage.setScene(new Scene(pane));
+            myStage.setTitle(getMessage("AppTitle"));
+            controller.loadImages(sourceFile.getParentFile(), 10);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void pickColorForOriginal() {
+        isPickingOriginalColor = true;
+        isPickingNewColor = false;
+        isPickingPosition = false;
+        imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickColorComments"));
+    }
+
+    @FXML
+    public void pickColorForNew() {
+        isPickingOriginalColor = false;
+        isPickingNewColor = true;
+        isPickingPosition = false;
+        imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickColorComments"));
+    }
+
+    @FXML
+    public void transparentForNew() {
+        newColorPicker.setValue(new Color(0, 0, 0, 0));
+    }
+
+    @FXML
+    public void calculateThreshold() {
+        int threshold = ImageGrayTools.calculateThreshold(sourceFile);
+        percent = threshold * 100 / 256;
+        binarySlider.setValue(percent);
+    }
+
+    @FXML
+    @Override
+    public void zoomIn() {
+        imageView.setFitHeight(imageView.getFitHeight() * (1 + zoomStep / 100.0f));
+        imageView.setFitWidth(imageView.getFitWidth() * (1 + zoomStep / 100.0f));
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            refView.setFitHeight(refView.getFitHeight() * (1 + zoomStep / 100.0f));
+            refView.setFitWidth(refView.getFitWidth() * (1 + zoomStep / 100.0f));
+        }
+    }
+
+    @FXML
+    @Override
+    public void zoomOut() {
+        imageView.setFitHeight(imageView.getFitHeight() * (1 - zoomStep / 100.0f));
+        imageView.setFitWidth(imageView.getFitWidth() * (1 - zoomStep / 100.0f));
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            refView.setFitHeight(refView.getFitHeight() * (1 - zoomStep / 100.0f));
+            refView.setFitWidth(refView.getFitWidth() * (1 - zoomStep / 100.0f));
+        }
+    }
+
+    @FXML
+    @Override
+    public void imageSize() {
+        final Image currentImage = imageView.getImage();
+        imageView.setFitWidth(currentImage.getWidth());
+        imageView.setFitHeight(currentImage.getHeight());
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            refView.setFitHeight(refInfo.getyPixels());
+            refView.setFitWidth(refInfo.getxPixels());
+        }
+    }
+
+    @FXML
+    @Override
+    public void paneSize() {
+        imageView.setFitHeight(scrollPane.getHeight() - 5);
+        imageView.setFitWidth(scrollPane.getWidth() - 1);
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            refView.setFitHeight(refPane.getHeight() - 5);
+            refView.setFitWidth(refPane.getWidth() - 1);
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveRight() {
+        FxmlTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            FxmlTools.setScrollPane(refPane, -40, refPane.getVvalue());
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveLeft() {
+        FxmlTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            FxmlTools.setScrollPane(refPane, 40, refPane.getVvalue());
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveUp() {
+        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), 40);
+        }
+    }
+
+    @FXML
+    @Override
+    public void moveDown() {
+        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), -40);
+        }
+    }
+
+    @FXML
+    public void rightRotate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.rotateImage(currentImage, rotateAngle);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void leftRotate() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.rotateImage(currentImage, 360 - rotateAngle);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void selectReference() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            File file = fileChooser.showOpenDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            refFile = file;
+            AppVaribles.setConfigValue("LastPath", sourceFile.getParent());
+            AppVaribles.setConfigValue(sourcePathKey, sourceFile.getParent());
+
+            loadReferenceImage();
+
+        } catch (Exception e) {
+//            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void originalImage() {
+        refFile = sourceFile;
+        loadReferenceImage();
+    }
+
+    @FXML
+    public void showLabel() {
+        final Image currentImage = imageView.getImage();
+        if (imageInformation == null || currentImage == null) {
+            return;
+        }
+        String str = AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  "
+                + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getxPixels() + "x" + imageInformation.getyPixels() + "  "
+                + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(imageInformation.getFile().length()) + "  "
+                + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(imageInformation.getFile().lastModified()) + "  "
+                + AppVaribles.getMessage("CurrentPixels") + ":" + (int) currentImage.getWidth() + "x" + (int) currentImage.getHeight();
+        bottomLabel.setText(str);
+    }
+
+    @FXML
+    public void popRefInformation() {
+        showImageInformation(refInfo);
+    }
+
+    @FXML
+    public void popRefMeta() {
+        showImageMetaData(refInfo);
+    }
+
+    @FXML
+    public void clickImage(MouseEvent event) {
+        if (isPickingOriginalColor || isPickingNewColor) {
+            if (event.getClickCount() > 1) {
+                isPickingOriginalColor = false;
+                isPickingNewColor = false;
+                imageView.setCursor(Cursor.OPEN_HAND);
+                promptLabel.setText("");
+
+            } else {
+                double imageX = event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth();
+                double imageY = event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight();
+
+                PixelReader pixelReader = image.getPixelReader();
+                Color color = pixelReader.getColor((int) Math.round(imageX), (int) Math.round(imageY));
+                if (isPickingOriginalColor) {
+                    originalColorsBox.setVisibleRowCount(20);
+                    originalColorsBox.getItems().add(color);
+                    originalColorsBox.getSelectionModel().select(color);
+                } else {
+                    newColorPicker.setValue(color);
+                }
+            }
+
+        } else if (isPickingPosition) {
+
+            waterXInput.setText((int) (event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth()) + "");
+            waterYInput.setText((int) (event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight()) + "");
+
+            isPickingOriginalColor = false;
+            isPickingNewColor = false;
+            isPickingPosition = false;
+            imageView.setCursor(Cursor.OPEN_HAND);
+            promptLabel.setText("");
+        }
+
+    }
+
+    @FXML
+    public void replaceColorAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                List<Color> colors = originalColorsBox.getItems();
+                final Image newImage;
+                if (colorMatchType == ColorMatchType.ColorDistance) {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceColorsExcluded(currentImage, colors, newColorPicker.getValue(), colorDistance);
+                    } else {
+                        newImage = FxmlTools.replaceColorsIncluded(currentImage, colors, newColorPicker.getValue(), colorDistance);
+                    }
+
+                } else if (colorMatchType == ColorMatchType.HueDistance) {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceHuesExcluded(currentImage, colors, newColorPicker.getValue(), hueDistance);
+                    } else {
+                        newImage = FxmlTools.replaceHuesIncluded(currentImage, colors, newColorPicker.getValue(), hueDistance);
+                    }
+
+                } else {
+
+                    if (excludedCheck.isSelected()) {
+                        newImage = FxmlTools.replaceColorsUnMatched(currentImage, colors, newColorPicker.getValue());
+                    } else {
+                        newImage = FxmlTools.replaceColorsMatched(currentImage, colors, newColorPicker.getValue());
+                    }
+
+                }
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void clearOriginalColorsAction() {
+        originalColorsBox.getItems().clear();
+        originalColorsBox.setVisibleRowCount(0);
+    }
+
+    @FXML
+    public void opacityAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.opcityImage(currentImage, opacity);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void horizontalAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.horizontalImage(currentImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void verticalAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.verticalImage(currentImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void shearAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxmlTools.shearImage(currentImage, shearX, 0);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
     @FXML
     public void waterPositionAction() {
-        pixelPickingType = PixelPickingType.Watermark;
+        isPickingOriginalColor = false;
+        isPickingNewColor = false;
+        isPickingPosition = true;
         imageView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickPositionComments"));
     }
 
     @FXML
     public void waterAddAction() {
+        final Image currentImage = imageView.getImage();
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -1702,9 +1765,9 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         undoImage = currentImage;
-                        currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        showLabel();
                     }
                 });
                 return null;
@@ -1716,19 +1779,129 @@ public class ImageManufactureController extends ImageViewerController {
         thread.start();
     }
 
-    // Reference Methods
-    protected void initReferenceTab() {
-        try {
-            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    checkReferenceImage();
-                }
-            });
+    @FXML
+    public void edgesTransparentAction() {
+        edgesColorPicker.setValue(Color.TRANSPARENT);
+    }
 
-        } catch (Exception e) {
-            logger.error(e.toString());
+    @FXML
+    public void edgesBlackAction() {
+        edgesColorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void edgesWhiteAction() {
+        edgesColorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    public void edgesOkAction() {
+        final Image currentImage = imageView.getImage();
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    final Image newImage = FxmlTools.cutEdges(currentImage, waterColorPicker.getValue(),
+                            edgesTopCheck.isSelected(), edgesBottomCheck.isSelected(),
+                            edgesLeftCheck.isSelected(), edgesRightCheck.isSelected());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            undoImage = currentImage;
+                            imageView.setImage(newImage);
+                            imageChanged.set(true);
+                            showLabel();
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void undoAction() {
+        if (undoImage == null) {
+            undoButton.setDisable(true);
         }
+        redoImage = imageView.getImage();
+        imageView.setImage(undoImage);
+        imageChanged.set(true);
+        undoButton.setDisable(true);
+        redoButton.setDisable(false);
+    }
+
+    @FXML
+    public void redoAction() {
+        if (redoImage == null) {
+            redoButton.setDisable(true);
+        }
+        undoImage = imageView.getImage();
+        imageView.setImage(redoImage);
+        imageChanged.set(true);
+        undoButton.setDisable(false);
+        redoButton.setDisable(true);
+    }
+
+    private void checkNevigator() {
+        if (sourceFile == null) {
+            lastFile = null;
+            lastButton.setDisable(true);
+            nextFile = null;
+            nextButton.setDisable(true);
+            return;
+        }
+        File path = sourceFile.getParentFile();
+        List<File> sortedFiles = new ArrayList<>();
+        File[] files = path.listFiles();
+        for (File file : files) {
+            if (file.isFile() && FileTools.isSupportedImage(file)) {
+                sortedFiles.add(file);
+            }
+        }
+        RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
+        if (getMessage("OriginalFileName").equals(sort.getText())) {
+            FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
+
+        } else if (getMessage("CreateTime").equals(sort.getText())) {
+            FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
+
+        } else if (getMessage("ModifyTime").equals(sort.getText())) {
+            FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
+
+        } else if (getMessage("Size").equals(sort.getText())) {
+            FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
+        }
+
+        for (int i = 0; i < sortedFiles.size(); i++) {
+            if (sortedFiles.get(i).getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
+                if (i < sortedFiles.size() - 1) {
+                    nextFile = sortedFiles.get(i + 1);
+                    nextButton.setDisable(false);
+                } else {
+                    nextFile = null;
+                    nextButton.setDisable(true);
+                }
+                if (i > 0) {
+                    lastFile = sortedFiles.get(i - 1);
+                    lastButton.setDisable(false);
+                } else {
+                    lastFile = null;
+                    lastButton.setDisable(true);
+                }
+                return;
+            }
+        }
+        lastFile = null;
+        lastButton.setDisable(true);
+        nextFile = null;
+        nextButton.setDisable(true);
     }
 
     private void checkReferenceImage() {
@@ -1752,11 +1925,9 @@ public class ImageManufactureController extends ImageViewerController {
                                     return;
                                 }
                                 String str = AppVaribles.getMessage("Format") + ":" + refInfo.getImageFormat() + "  "
-                                        + AppVaribles.getMessage("Pixels") + ":" + refInfo.getxPixels() + "x" + refInfo.getyPixels();
-                                if (refInfo.getFile() != null) {
-                                    str += "  " + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(refInfo.getFile().length()) + "  "
-                                            + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(refInfo.getFile().lastModified());
-                                }
+                                        + AppVaribles.getMessage("Pixels") + ":" + refInfo.getxPixels() + "x" + refInfo.getyPixels() + "  "
+                                        + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(refInfo.getFile().length()) + "  "
+                                        + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(refInfo.getFile().lastModified());
                                 bottomLabel.setText(str);
                             }
                         });
@@ -1830,653 +2001,116 @@ public class ImageManufactureController extends ImageViewerController {
         thread.start();
     }
 
-    @FXML
-    public void selectReference() {
+    protected void checkRatioAdjustion(String s) {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+            if (getMessage("BaseOnWidth").equals(s)) {
+                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnWidth);
+            } else if (getMessage("BaseOnHeight").equals(s)) {
+                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnHeight);
+            } else if (getMessage("BaseOnLarger").equals(s)) {
+                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnLarger);
+            } else if (getMessage("BaseOnSmaller").equals(s)) {
+                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnSmaller);
+            } else {
+                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.None);
             }
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null) {
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void checkRatio() {
+        try {
+            width = Integer.valueOf(widthInput.getText());
+            height = Integer.valueOf(heightInput.getText());
+            attributes.setTargetWidth(width);
+            attributes.setTargetHeight(height);
+            int sourceX = imageInformation.getxPixels();
+            int sourceY = imageInformation.getyPixels();
+            if (noRatio || !keepRatioCheck.isSelected() || sourceX <= 0 || sourceY <= 0) {
                 return;
             }
-            refFile = file;
-            AppVaribles.setConfigValue("LastPath", sourceFile.getParent());
-            AppVaribles.setConfigValue(sourcePathKey, sourceFile.getParent());
-
-            loadReferenceImage();
-
+            long ratioX = Math.round(width * 1000 / sourceX);
+            long ratioY = Math.round(height * 1000 / sourceY);
+            if (ratioX == ratioY) {
+                return;
+            }
+            switch (attributes.getRatioAdjustion()) {
+                case ImageConverter.KeepRatioType.BaseOnWidth:
+                    heightInput.setText(Math.round(width * sourceY / sourceX) + "");
+                    break;
+                case ImageConverter.KeepRatioType.BaseOnHeight:
+                    widthInput.setText(Math.round(height * sourceX / sourceY) + "");
+                    break;
+                case ImageConverter.KeepRatioType.BaseOnLarger:
+                    if (ratioX > ratioY) {
+                        heightInput.setText(Math.round(width * sourceY / sourceX) + "");
+                    } else {
+                        widthInput.setText(Math.round(height * sourceX / sourceY) + "");
+                    }
+                    break;
+                case ImageConverter.KeepRatioType.BaseOnSmaller:
+                    if (ratioX > ratioY) {
+                        widthInput.setText(Math.round(height * sourceX / sourceY) + "");
+                    } else {
+                        heightInput.setText(Math.round(width * sourceY / sourceX) + "");
+                    }
+                    break;
+                default:
+                    break;
+            }
+            width = Integer.valueOf(widthInput.getText());
+            height = Integer.valueOf(heightInput.getText());
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
     }
 
-    @FXML
-    public void originalImage() {
-        refFile = sourceFile;
-        loadReferenceImage();
-    }
-
-    @FXML
-    public void popRefInformation() {
-        showImageInformation(refInfo);
-    }
-
-    @FXML
-    public void popRefMeta() {
-        showImageMetaData(refInfo);
-    }
-
-    // Cut Edges Methods
-    protected void initEdgesTab() {
-        try {
-            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    checkReferenceImage();
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
+    protected void setScale() {
+        if (scale == 1.0 || scale <= 0) {
+            return;
         }
-    }
-
-    @FXML
-    public void edgesTransparentAction() {
-        edgesColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void edgesBlackAction() {
-        edgesColorPicker.setValue(Color.BLACK);
-    }
-
-    @FXML
-    public void edgesWhiteAction() {
-        edgesColorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    public void cutEdgesAction() {
+        final Image currentImage = imageView.getImage();
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                try {
-                    final Image newImage = FxmlTools.cutEdges(currentImage, waterColorPicker.getValue(),
-                            edgesTopCheck.isSelected(), edgesBottomCheck.isSelected(),
-                            edgesLeftCheck.isSelected(), edgesRightCheck.isSelected());
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            undoImage = currentImage;
-                            currentImage = newImage;
-                            imageView.setImage(newImage);
-                            imageChanged.set(true);
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    // Crop Methods
-    protected void initCropTab() {
-        try {
-
-            cropLeftXInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropLeftYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropRightXInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropRightYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(cropScopeCheck, tips);
-            }
-            cropScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    cropScope.setIndicateScope(cropScopeCheck.isSelected());
-                    showScope(cropScope);
-                }
-            });
-
-            cropOkButton.disableProperty().bind(
-                    cropLeftXInput.styleProperty().isEqualTo(badStyle)
-                            .or(cropLeftYInput.styleProperty().isEqualTo(badStyle))
-                            .or(cropRightXInput.styleProperty().isEqualTo(badStyle))
-                            .or(cropRightYInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(cropLeftXInput.textProperty()))
-                            .or(Bindings.isEmpty(cropLeftYInput.textProperty()))
-                            .or(Bindings.isEmpty(cropRightXInput.textProperty()))
-                            .or(Bindings.isEmpty(cropRightYInput.textProperty()))
-            );
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void checkCropValues() {
-        areaValid = true;
-        try {
-            cropLeftX = Integer.valueOf(cropLeftXInput.getText());
-            cropLeftXInput.setStyle(null);
-            if (cropLeftX >= 0 && cropLeftX <= currentImage.getWidth()) {
-                cropLeftXInput.setStyle(null);
-            } else {
-                cropLeftXInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropLeftXInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        try {
-            cropLeftY = Integer.valueOf(cropLeftYInput.getText());
-            cropLeftYInput.setStyle(null);
-            if (cropLeftY >= 0 && cropLeftY <= currentImage.getHeight()) {
-                cropLeftYInput.setStyle(null);
-            } else {
-                cropLeftYInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropLeftYInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        try {
-            cropRightX = Integer.valueOf(cropRightXInput.getText());
-            cropRightXInput.setStyle(null);
-            if (cropRightX >= 0 && cropRightX <= currentImage.getWidth()) {
-                cropRightXInput.setStyle(null);
-            } else {
-                cropRightXInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropRightXInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        try {
-            cropRightY = Integer.valueOf(cropRightYInput.getText());
-            cropRightYInput.setStyle(null);
-            if (cropRightY >= 0 && cropRightY <= currentImage.getHeight()) {
-                cropRightYInput.setStyle(null);
-            } else {
-                cropRightYInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropRightYInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (cropLeftX >= cropRightX) {
-            cropLeftXInput.setStyle(badStyle);
-            cropRightXInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (cropLeftY >= cropRightY) {
-            cropLeftYInput.setStyle(badStyle);
-            cropRightYInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (!areaValid) {
-            promptLabel.setText(getMessage("InvalidRectangle"));
-            return;
-        }
-
-        if (!isSettingValues) {
-            showCropScope();
-        }
-
-    }
-
-    private void showCropScope() {
-        cropScope.setLeftX(cropLeftX);
-        cropScope.setLeftY(cropLeftY);
-        cropScope.setRightX(cropRightX);
-        cropScope.setRightY(cropRightY);
-        showScope(cropScope);
-    }
-
-    @FXML
-    public void cropPickLeft() {
-        pixelPickingType = PixelPickingType.RectangleLeft;
-        imageView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("ContinueClickLeft"));
-    }
-
-    @FXML
-    public void cropPickRight() {
-        pixelPickingType = PixelPickingType.RectangleRight;
-        imageView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("ContinueClickRight"));
-    }
-
-    @FXML
-    public void cropAction() {
-        pixelPickingType = ImageManufactureController.PixelPickingType.None;
-        imageView.setCursor(Cursor.OPEN_HAND);
-        promptLabel.setText("");
-
-        Task cropTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    final Image newImage = FxmlTools.cropImage(currentImage,
-                            cropLeftX, cropLeftY, cropRightX, cropRightY);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            undoImage = currentImage;
-                            currentImage = newImage;
-                            imageView.setImage(newImage);
-                            imageChanged.set(true);
-
-                            isSettingValues = true;
-                            cropRightXInput.setText((int) currentImage.getWidth() * 3 / 4 + "");
-                            cropRightYInput.setText((int) currentImage.getHeight() * 3 / 4 + "");
-                            cropLeftXInput.setText((int) currentImage.getWidth() / 4 + "");
-                            cropLeftYInput.setText((int) currentImage.getHeight() / 4 + "");
-                            isSettingValues = false;
-                            promptLabel.setText("");
-                            showCropScope();
-
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
-            }
-        };
-        openHandlingStage(cropTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(cropTask);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    //  Hotbar Methods
-    @FXML
-    public void recovery() {
-        imageView.setImage(image);
-        undoImage = currentImage;
-        currentImage = image;
-        imageChanged.set(false);
-        undoButton.setDisable(false);
-        redoButton.setDisable(true);
-        showScope();
-    }
-
-    @FXML
-    protected void setOriginalSize() {
-        noRatio = true;
-        if (imageInformation.getxPixels() > 0) {
-            widthInput.setText(imageInformation.getxPixels() + "");
-        }
-        if (imageInformation.getyPixels() > 0) {
-            heightInput.setText(imageInformation.getyPixels() + "");
-        }
-        noRatio = false;
-    }
-
-    @FXML
-    public void save() {
-        if (saveCheck.isSelected()) {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
-            alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() != ButtonType.OK) {
-                return;
-            }
-        }
-
-        Task saveTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                String format = imageInformation.getImageFormat();
-                final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, format);
-                ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
-                imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
-                image = currentImage;
+                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), scale);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        imageChanged.set(false);
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
                     }
                 });
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-
     }
 
-    @FXML
-    public void saveAs() {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
-            AppVaribles.setConfigValue(targetPathKey, file.getParent());
-
-            Task saveTask = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, imageInformation.getImageFormat());
-                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (openCheck.isSelected()) {
-                                showImageManufacture(file.getAbsolutePath());
-                            }
-                        }
-                    });
-                    return null;
-                }
-            };
-            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(saveTask);
-            thread.setDaemon(true);
-            thread.start();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    @FXML
-    @Override
-    public void zoomIn() {
-        try {
-            imageView.setFitHeight(imageView.getFitHeight() * (1 + zoomStep / 100.0f));
-            imageView.setFitWidth(imageView.getFitWidth() * (1 + zoomStep / 100.0f));
-            if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-                refView.setFitHeight(refView.getFitHeight() * (1 + zoomStep / 100.0f));
-                refView.setFitWidth(refView.getFitWidth() * (1 + zoomStep / 100.0f));
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    public void zoomOut() {
-        imageView.setFitHeight(imageView.getFitHeight() * (1 - zoomStep / 100.0f));
-        imageView.setFitWidth(imageView.getFitWidth() * (1 - zoomStep / 100.0f));
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setFitHeight(refView.getFitHeight() * (1 - zoomStep / 100.0f));
-            refView.setFitWidth(refView.getFitWidth() * (1 - zoomStep / 100.0f));
-        }
-    }
-
-    @FXML
-    @Override
-    public void imageSize() {
-        imageView.setFitWidth(currentImage.getWidth());
-        imageView.setFitHeight(currentImage.getHeight());
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setFitHeight(refInfo.getyPixels());
-            refView.setFitWidth(refInfo.getxPixels());
-        }
-    }
-
-    @FXML
-    @Override
-    public void paneSize() {
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
-        imageView.setFitWidth(scrollPane.getWidth() - 1);
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
-            refView.setFitHeight(refPane.getHeight() - 5);
-            refView.setFitWidth(refPane.getWidth() - 1);
-        }
-    }
-
-    // Common Methods
-    @FXML
-    public void setBottomLabel() {
-        if (imageInformation == null || currentImage == null) {
+    protected void setPixels() {
+        if (width <= 0 || height <= 0) {
             return;
         }
-        String str = AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  "
-                + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getxPixels() + "x" + imageInformation.getyPixels() + "  "
-                + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(imageInformation.getFile().length()) + "  "
-                + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(imageInformation.getFile().lastModified()) + "  "
-                + AppVaribles.getMessage("CurrentPixels") + ":" + (int) currentImage.getWidth() + "x" + (int) currentImage.getHeight();
-        bottomLabel.setText(str);
-    }
-
-    @FXML
-    public void clickImage(MouseEvent event) {
-        if (currentImage == null || event.getButton() == MouseButton.SECONDARY
-                || pixelPickingType == ImageManufactureController.PixelPickingType.None) {
-
-            pixelPickingType = ImageManufactureController.PixelPickingType.None;
-            imageView.setCursor(Cursor.OPEN_HAND);
-            promptLabel.setText("");
-            return;
-        }
-
-        int x = (int) Math.round(event.getX() * currentImage.getWidth() / imageView.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * currentImage.getHeight() / imageView.getBoundsInLocal().getHeight());
-
-        if (pixelPickingType == PixelPickingType.NewColor) {
-
-            PixelReader pixelReader = currentImage.getPixelReader();
-            Color color = pixelReader.getColor(x, y);
-            newColorPicker.setValue(color);
-            promptLabel.setText(getMessage("ContinueClickColor"));
-
-        } else if (pixelPickingType == PixelPickingType.Watermark) {
-
-            waterXInput.setText(x + "");
-            waterYInput.setText(y + "");
-            promptLabel.setText(getMessage("ContinueClickPosition"));
-
-        } else if (pixelPickingType == PixelPickingType.RectangleLeft) {
-
-            isSettingValues = true;
-            cropLeftXInput.setText(x + "");
-            cropLeftYInput.setText(y + "");
-            isSettingValues = false;
-
-            if (!areaValid) {
-                promptLabel.setText(getMessage("InvalidRectangle"));
-            } else if (task == null || !task.isRunning()) {
-                showCropScope();
-                promptLabel.setText(getMessage("ContinueClickLeft"));
-            } else {
-                promptLabel.setText(getMessage("PickPositionComments"));
-            }
-
-        } else if (pixelPickingType == PixelPickingType.RectangleRight) {
-
-            isSettingValues = true;
-            cropRightXInput.setText(x + "");
-            cropRightYInput.setText(y + "");
-            isSettingValues = false;
-
-            if (!areaValid) {
-                promptLabel.setText(getMessage("InvalidRectangle"));
-            } else if (task == null || !task.isRunning()) {
-                showCropScope();
-                promptLabel.setText(getMessage("ContinueClickRight"));
-            } else {
-                promptLabel.setText(getMessage("PickPositionComments"));
-            }
-        }
-
-    }
-
-    @FXML
-    public void undoAction() {
-        if (undoImage == null) {
-            undoButton.setDisable(true);
-        }
-        redoImage = currentImage;
-        currentImage = undoImage;
-        imageView.setImage(undoImage);
-        imageChanged.set(true);
-        undoButton.setDisable(true);
-        redoButton.setDisable(false);
-    }
-
-    @FXML
-    public void redoAction() {
-        if (redoImage == null) {
-            redoButton.setDisable(true);
-        }
-        undoImage = currentImage;
-        currentImage = redoImage;
-        imageView.setImage(redoImage);
-        imageChanged.set(true);
-        undoButton.setDisable(false);
-        redoButton.setDisable(true);
-    }
-
-    @FXML
-    public void keyPressed() {
-
-    }
-
-    public void setScope(ImageScope imageScope) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageScopeFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            ImageScopeController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getMyStage());
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            stage.show();
-
-            imageScope.setImage(currentImage);
-            String title = AppVaribles.getMessage("ImageManufactureScope");
-            switch (imageScope.getOperationType()) {
-                case OperationType.Color:
-                    title += " - " + AppVaribles.getMessage("Color");
-                    break;
-                case OperationType.ReplaceColor:
-                    title += " - " + AppVaribles.getMessage("ReplaceColor");
-                    break;
-                case OperationType.Filters:
-                    title += " - " + AppVaribles.getMessage("Filters");
-                    break;
-                case OperationType.Crop:
-                    title += " - " + AppVaribles.getMessage("Crop");
-                    break;
-                default:
-                    break;
-            }
-            controller.loadImage(this, imageScope, title);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void showScope() {
-        String tab = tabPane.getSelectionModel().getSelectedItem().getText();
-        final ImageScope imageScope;
-        if (getMessage("Color").equals(tab)) {
-            imageScope = colorScope;
-        } else if (getMessage("ReplaceColor").equals(tab)) {
-            imageScope = replaceColorScope;
-        } else if (getMessage("Filters").equals(tab)) {
-            imageScope = filtersScope;
-        } else if (getMessage("Crop").equals(tab)) {
-            showCropScope();
-            return;
-        } else {
-            imageScope = null;
-        }
-        showScope(imageScope);
-    }
-
-    private void showScope(final ImageScope imageScope) {
-        if (imageScope == null
-                || imageScope.isAll() || !imageScope.isIndicateScope()) {
-            imageView.setImage(currentImage);
-            return;
-        }
-
-        if (task != null && task.isRunning()) {
-            return;
-        }
+        final Image currentImage = imageView.getImage();
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                try {
-                    final Image newImage = FxmlTools.indicateScope(currentImage, imageScope);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImage(newImage);
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
+                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), width, height);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        showLabel();
+                    }
+                });
                 return null;
             }
         };
@@ -2484,41 +2118,6 @@ public class ImageManufactureController extends ImageViewerController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    public void scopeDetermined(ImageScope imageScope) {
-
-        switch (imageScope.getOperationType()) {
-            case OperationType.Color:
-                colorScope = imageScope;
-                boolean cStatus = colorScopeCheck.isSelected();
-                colorScopeCheck.setSelected(!colorScope.isAll());
-                if (cStatus == colorScopeCheck.isSelected()) {
-                    colorScope.setIndicateScope(cStatus);
-                    showScope(colorScope);
-                }
-                break;
-            case OperationType.ReplaceColor:
-                replaceColorScope = imageScope;
-                boolean rStatus = replaceColorScopeCheck.isSelected();
-                filtersScopeCheck.setSelected(!replaceColorScope.isAll());
-                if (rStatus == replaceColorScopeCheck.isSelected()) {
-                    replaceColorScope.setIndicateScope(rStatus);
-                    showScope(replaceColorScope);
-                }
-                break;
-            case OperationType.Filters:
-                filtersScope = imageScope;
-                boolean fStatus = filtersScopeCheck.isSelected();
-                filtersScopeCheck.setSelected(!filtersScope.isAll());
-                if (fStatus == filtersScopeCheck.isSelected()) {
-                    filtersScope.setIndicateScope(fStatus);
-                    showScope(filtersScope);
-                }
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -2559,5 +2158,4 @@ public class ImageManufactureController extends ImageViewerController {
             return true;
         }
     }
-
 }
