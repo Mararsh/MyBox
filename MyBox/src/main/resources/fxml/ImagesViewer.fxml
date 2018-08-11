@@ -78,24 +78,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" prefHeight="50.0" HBox.hgrow="NEVER">
-                            <items>
-                                <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" prefHeight="35.0" prefWidth="35.0" text="g" />
-                                <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" prefHeight="35.0" prefWidth="35.0" text="p" />
-                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="35.0" text="+" />
-                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="35.0" text="-" />
-                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" prefHeight="35.0" prefWidth="35.0" text="&gt;" />
-                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" prefHeight="35.0" prefWidth="35.0" text="&lt;" />
-                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" prefHeight="35.0" prefWidth="35.0" text="^" />
-                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" prefHeight="35.0" prefWidth="35.0" text="v" />
-                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" prefHeight="35.0" prefWidth="35.0" text="r" />
-                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" prefHeight="35.0" prefWidth="35.0" text="l" />
-                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" prefHeight="35.0" prefWidth="35.0" text="t" />
-                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" prefHeight="35.0" prefWidth="35.0" text="s" />
-                            </items>
+                        <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="NEVER">
+                     <items>
+                        <Label text="%ColumnsNumber" />
+                        <ComboBox fx:id="colsBox" prefWidth="80.0" />
+                        <CheckBox fx:id="eachCheck" mnemonicParsing="false" text="%ButtonsEachImage" />
+                     </items>
                         </ToolBar>
                     </children>
                 </HBox>
+            <HBox alignment="CENTER" VBox.vgrow="NEVER">
+               <children>
+                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                    <items>
+                                <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
+                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
+                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
+                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
+                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                    </items>
+                  </ToolBar>
+               </children>
+            </HBox>
                 <VBox fx:id="imagesPane" alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS" />
             </children>
             <BorderPane.margin>

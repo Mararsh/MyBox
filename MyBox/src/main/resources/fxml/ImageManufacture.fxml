@@ -157,8 +157,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <Insets right="20.0" />
                                                             </padding>
                                                         </Label>
-                                                        <CheckBox fx:id="colorScopeCheck" mnemonicParsing="false" text="%IndicateScope" />
                                                         <Button fx:id="colorScopeButton" mnemonicParsing="false" onAction="#setColorScope" text="%Scope..." />
+                                          <Button mnemonicParsing="false" onAction="#clearColorScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="colorDecreaseButton" mnemonicParsing="false" onAction="#decreaseColor" text="%Decrease" />
                                                         <Button fx:id="colorIncreaseButton" mnemonicParsing="false" onAction="#increaseColor" text="%Increase" />
@@ -192,8 +192,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Label fx:id="binaryValue" text="50%" />
                                                         <Button fx:id="binaryCalculateButton" mnemonicParsing="false" onAction="#calculateThreshold" text="%Calculate" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <CheckBox fx:id="filtersScopeCheck" mnemonicParsing="false" text="%IndicateScope" />
                                                         <Button fx:id="filtersScopeButton" mnemonicParsing="false" onAction="#setFiltersScope" text="%Scope..." />
+                                          <Button mnemonicParsing="false" onAction="#clearFiltersScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="filtersOkButton" mnemonicParsing="false" onAction="#filtersAction" text="%OK" />
                                                     </items>
@@ -218,8 +218,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="transparentForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
                                                         <Button fx:id="pickNewColorButton" mnemonicParsing="false" onAction="#pickColorForNew" text="%PickColor" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <CheckBox fx:id="replaceColorScopeCheck" mnemonicParsing="false" text="%IndicateScope" />
                                                         <Button fx:id="replaceColorScopeButton" mnemonicParsing="false" onAction="#setReplaceColorScope" text="%Scope..." />
+                                          <Button mnemonicParsing="false" onAction="#clearReplaceColorScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="replaceColorOkButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
                                                     </items>
@@ -247,9 +247,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <TextField fx:id="cropRightXInput" prefWidth="80.0" promptText="X" />
                                                         <TextField fx:id="cropRightYInput" prefWidth="80.0" promptText="Y" />
                                           <Label prefWidth="20.0" text=" " />
-                                          <CheckBox fx:id="cropScopeCheck" mnemonicParsing="false" selected="true" text="%IndicateScope" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <Button fx:id="cropOkButton" mnemonicParsing="false" onAction="#cropAction" text="%OK" />
+                                                        <Button fx:id="cropOkButton" mnemonicParsing="false" onAction="#cropAction" text="%Crop" />
                                                     </items>
                                                 </ToolBar>
                                             </children>

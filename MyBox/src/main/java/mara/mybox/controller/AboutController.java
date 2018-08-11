@@ -30,7 +30,7 @@ public class AboutController extends BaseController {
 
     @Override
     protected void initializeNext() {
-        version.setText(CommonValues.AppVersion + "");
+        version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
 
         task = new Task<Void>() {

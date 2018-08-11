@@ -396,6 +396,7 @@ public class BaseController implements Initializable {
 //                    return;
 //                }
 //            }
+//            logger.debug("reloadStage:" + getClass());
             if (!stageReloading()) {
                 return;
             }
@@ -484,7 +485,7 @@ public class BaseController implements Initializable {
 
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(AppVaribles.getMessage("AppTitle"));
+                alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVaribles.getMessage("TaskRunning"));
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK && task != null) {
@@ -543,7 +544,7 @@ public class BaseController implements Initializable {
     public void popInformation(String information) {
         try {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setTitle(getMyStage().getTitle());
             alert.setHeaderText(null);
             alert.setContentText(information);
             alert.showAndWait();
@@ -606,6 +607,28 @@ public class BaseController implements Initializable {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public Stage openHandlingStage(Modality block) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
+            Pane pane = fxmlLoader.load();
+            LoadingController controller = fxmlLoader.getController();
+
+            final Stage loadingStage = new Stage();
+            loadingStage.initModality(block);
+//            loadingStage.initStyle(StageStyle.UNDECORATED);
+            loadingStage.initStyle(StageStyle.TRANSPARENT);
+            loadingStage.initOwner(getMyStage());
+            loadingStage.setScene(new Scene(pane));
+            loadingStage.show();
+
+            return loadingStage;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
     }
 

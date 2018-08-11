@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
@@ -20,6 +21,9 @@ import mara.mybox.tools.FileTools;
 public class ImageViewerIController extends ImageViewerController {
 
     protected boolean isRefer;
+
+    @FXML
+    private HBox buttonsBox;
 
     @Override
     protected void initializeNext2() {
@@ -57,6 +61,10 @@ public class ImageViewerIController extends ImageViewerController {
             str += "  " + AppVaribles.getMessage("ImagesComments");
         }
         parentController.bottomLabel.setText(str);
+    }
+
+    public void removeButtons() {
+        thisPane.getChildren().remove(buttonsBox);
     }
 
     public boolean isIsRefer() {

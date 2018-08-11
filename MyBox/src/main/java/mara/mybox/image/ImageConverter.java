@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import static mara.mybox.objects.CommonValues.AlphaColor;
 import mara.mybox.objects.ImageScope;
 import org.apache.logging.log4j.LogManager;
@@ -440,7 +441,7 @@ public class ImageConverter {
             int height = source.getHeight();
             if (x1 >= x2 || y1 >= y2
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
-                    || x1 > width || x2 > width || y1 > height || y2 > height) {
+                    || x2 > width || y2 > height) {
                 return source;
             }
             int w = x2 - x1 + 1;
@@ -500,6 +501,53 @@ public class ImageConverter {
                     target.setRGB(i, j, newcolor.getRGB());
                 }
             }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateSplit(BufferedImage source,
+            List<Integer> rows, List<Integer> cols,
+            Color lineColor, int lineWidth) {
+        try {
+            if (rows == null || cols == null) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+
+            int imageType = source.getType();
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+//            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+//            g.setComposite(ac);
+            g.setColor(lineColor);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+            g.setStroke(stroke);
+            logger.debug("setStroke");
+
+            for (int i = 0; i < rows.size(); i++) {
+                int row = rows.get(i);
+                if (row <= 0 || row >= height) {
+                    continue;
+                }
+                g.drawLine(0, row, width, row);
+                logger.debug("row:" + row);
+
+            }
+            for (int i = 0; i < cols.size(); i++) {
+                int col = cols.get(i);
+                if (col <= 0 || col >= width) {
+                    continue;
+                }
+                g.drawLine(col, 0, col, height);
+                logger.debug("col:" + col);
+
+            }
+            g.dispose();
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

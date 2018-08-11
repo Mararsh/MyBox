@@ -161,13 +161,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <children>
                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                     <items>
-                  <CheckBox fx:id="indicateScopeCheck" mnemonicParsing="false" text="%IndicateScope" />
-                  <Label fx:id="opacityLabel" disable="true" text="%Opacity">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding></Label>
-                  <ComboBox fx:id="opacityBox" disable="true" prefWidth="100.0" />
-                  <Label fx:id="opacityComments" disable="true" text="%opacityComments" />
+                  <Label fx:id="opacityLabel" text="%Opacity" />
+                  <ComboBox fx:id="opacityBox" prefWidth="100.0" />
+                  <Label fx:id="opacityComments" text="%opacityComments" />
                     </items>
                 </ToolBar>
                 <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
@@ -181,17 +177,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </ToolBar>
             </children>
         </HBox>
-        <SplitPane fx:id="splitPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+        <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                    <content>
-                        <ImageView fx:id="imageView" cache="true" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </ImageView>
-                    </content>
-                </ScrollPane>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="589.0" text="%OriginalImage" VBox.vgrow="NEVER" />
+                  <ScrollPane fx:id="refPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                     <content>
+                        <ImageView fx:id="refView" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickRef" pickOnBounds="true" preserveRatio="true" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Scope" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                          <content>
+                              <ImageView fx:id="imageView" cache="true" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
+                                  <cursor>
+                                      <Cursor fx:constant="OPEN_HAND" />
+                                  </cursor>
+                              </ImageView>
+                          </content>
+                      </ScrollPane>
+               </children>
+            </VBox>
             </items>
         </SplitPane>
             <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" textFill="#a13f3f" VBox.vgrow="NEVER">

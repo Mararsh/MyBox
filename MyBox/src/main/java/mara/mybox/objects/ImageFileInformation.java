@@ -16,12 +16,13 @@ public class ImageFileInformation {
     private int xPixels, yPixels, colorChannels;
     private int yDensity, xDensity;  // dpi
     private long createTime;
-    private boolean hasAlpha, isLossless;
+    private boolean hasAlpha, isLossless, isScope;
     private String metaData;
 
     public ImageFileInformation() {
         hasAlpha = false;
         isLossless = true;
+        isScope = false;
     }
 
     public File getFile() {
@@ -150,6 +151,14 @@ public class ImageFileInformation {
 
     public void setExtraFormat(String extraFormat) {
         this.extraFormat = extraFormat;
+    }
+
+    public boolean isIsScope() {
+        return isScope;
+    }
+
+    public void setIsScope(boolean isScope) {
+        this.isScope = isScope;
     }
 
 }

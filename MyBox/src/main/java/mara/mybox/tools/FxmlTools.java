@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -686,18 +688,115 @@ public class FxmlTools {
 
     public static Image cutEdges(Image image, Color color,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        java.awt.Color cutColor = FxmlTools.colorConvert(color);
-        BufferedImage target = ImageConverter.cutEdges(source, FxmlTools.colorConvert(color),
-                cutTop, cutBottom, cutLeft, cutRight);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
+
+        try {
+            int width = (int) image.getWidth();
+            int height = (int) image.getHeight();
+            PixelReader pixelReader = image.getPixelReader();
+
+            int top = 0, bottom = height - 1, left = 0, right = width - 1;
+            if (cutTop) {
+                for (int j = 0; j < height; j++) {
+                    boolean hasValue = false;
+                    for (int i = 0; i < width; i++) {
+                        if (!pixelReader.getColor(i, j).equals(color)) {
+//                            logger.debug("hasValue: " + i + " " + j + " " + color);
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        top = j;
+                        break;
+                    }
+                }
+            }
+//            logger.debug("top: " + top);
+            if (top < 0) {
+                return null;
+            }
+            if (cutBottom) {
+                for (int j = height - 1; j >= 0; j--) {
+                    boolean hasValue = false;
+                    for (int i = 0; i < width; i++) {
+                        if (!pixelReader.getColor(i, j).equals(color)) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        bottom = j;
+                        break;
+                    }
+                }
+            }
+//            logger.debug("bottom: " + bottom);
+            if (bottom < 0) {
+                return null;
+            }
+            if (cutLeft) {
+                for (int i = 0; i < width; i++) {
+                    boolean hasValue = false;
+                    for (int j = 0; j < height; j++) {
+                        if (!pixelReader.getColor(i, j).equals(color)) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        left = i;
+                        break;
+                    }
+                }
+            }
+//            logger.debug("left: " + left);
+            if (left < 0) {
+                return null;
+            }
+            if (cutRight) {
+                for (int i = width - 1; i >= 0; i--) {
+                    boolean hasValue = false;
+                    for (int j = 0; j < height; j++) {
+                        if (!pixelReader.getColor(i, j).equals(color)) {
+                            hasValue = true;
+                            break;
+                        }
+                    }
+                    if (hasValue) {
+                        right = i;
+                        break;
+                    }
+                }
+            }
+//            logger.debug("right: " + right);
+            if (right < 0) {
+                return null;
+            }
+
+//            logger.debug(left + " " + top + " " + right + " " + bottom);
+            return cropImage(image, left, top, right, bottom);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+
     }
 
     public static Image cropImage(Image image, int x1, int y1, int x2, int y2) {
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConverter.cropImage(source, x1, y1, x2, y2);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        if (x1 >= x2 || y1 >= y2
+                || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
+                || x2 > width || y2 > height) {
+            return image;
+        }
+        int w = x2 - x1 + 1;
+        int h = y2 - y1 + 1;
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage(w, h);
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, w, h, pixelReader, x1, y1);
         return newImage;
     }
 
@@ -740,6 +839,81 @@ public class FxmlTools {
                 Color opacityColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
                 if (scope.indicateOpacity(x, y, color)) {
                     pixelWriter.setColor(x, y, opacityColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+
+        return newImage;
+    }
+
+    public static Image indicateSplit(Image image,
+            List<Integer> rows, List<Integer> cols,
+            Color lineColor, int lineWidth) {
+        if (rows == null || cols == null) {
+            return image;
+        }
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+        List<Integer> lineRows = new ArrayList<>();
+        int row, top, bottom;
+        for (int i = 0; i < rows.size(); i++) {
+            row = rows.get(i);
+            if (row <= 0 || row >= height - 1) {
+                continue;
+            }
+            top = row - lineWidth / 2;
+            if (top < 0) {
+                top = 0;
+            }
+            bottom = row + lineWidth / 2;
+            if (lineWidth % 2 == 0) {
+                bottom--;
+            }
+            if (bottom >= height) {
+                bottom = height - 1;
+            }
+            for (int j = top; j <= bottom; j++) {
+                lineRows.add(j);
+            }
+        }
+        List<Integer> lineCols = new ArrayList<>();
+        int col, left, right;
+        for (int i = 0; i < cols.size(); i++) {
+            col = cols.get(i);
+            if (col <= 0 || col >= width - 1) {
+                continue;
+            }
+            left = col - lineWidth / 2;
+            if (left < 0) {
+                left = 0;
+            }
+            right = col + lineWidth / 2;
+            if (lineWidth % 2 == 0) {
+                right--;
+            }
+            if (right >= width) {
+                right = width - 1;
+            }
+            for (int j = left; j <= right; j++) {
+                lineCols.add(j);
+            }
+        }
+
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (lineCols.contains(x) || lineRows.contains(y)) {
+                    pixelWriter.setColor(x, y, lineColor);
                 } else {
                     pixelWriter.setColor(x, y, color);
                 }

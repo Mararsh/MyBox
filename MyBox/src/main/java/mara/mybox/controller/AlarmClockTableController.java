@@ -121,7 +121,7 @@ public class AlarmClockTableController extends BaseController {
     @FXML
     private void clearAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(AppVaribles.getMessage("AppTitle"));
+        alert.setTitle(getBaseTitle());
         alert.setContentText(AppVaribles.getMessage("SureClearAlarmClocks"));
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {

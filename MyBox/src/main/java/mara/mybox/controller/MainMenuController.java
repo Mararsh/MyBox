@@ -2,11 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
@@ -15,7 +12,6 @@ import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
-import javax.sound.sampled.Clip;
 import static mara.mybox.controller.BaseController.logger;
 
 /**
@@ -180,6 +176,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageSplit(ActionEvent event) {
+        reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
+    }
+
+    @FXML
     private void openColorPalette(ActionEvent event) {
         openStage(CommonValues.ColorPaletteFxml, AppVaribles.getMessage("ColorPalette"), false, false);
     }
@@ -255,36 +256,8 @@ public class MainMenuController extends BaseController {
         try {
 //            logger.debug("stageReloading");
 
-            if (parentController.getClass().equals(mara.mybox.controller.AlarmClockController.class)) {
-                AlarmClockController p = (AlarmClockController) parentController;
-                Clip player = p.getPlayer();
-                if (p.getPlayer() != null) {
-                    player.stop();
-                    player.drain();
-                    player.close();
-                    player = null;
-                }
-            }
+            parentController.stageClosing();
 
-            if (parentController.getClass().equals(mara.mybox.controller.ImageManufactureController.class)) {
-                ImageManufactureController p = (ImageManufactureController) parentController;
-                if (!p.stageReloading()) {
-                    return false;
-                }
-            }
-
-            if (parentController.task != null && parentController.task.isRunning()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(AppVaribles.getMessage("AppTitle"));
-                alert.setContentText(AppVaribles.getMessage("TaskRunning"));
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK && parentController.task != null) {
-                    parentController.task.cancel();
-                    return true;
-                } else {
-                    return false;
-                }
-            }
             return true;
 
         } catch (Exception e) {

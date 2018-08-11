@@ -20,6 +20,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -88,10 +89,12 @@ public class ImageManufactureController extends ImageViewerController {
     protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey, FontSizeKey, FontFamilyKey;
     protected ScrollPane refPane, cropPane;
     protected ImageView refView, cropImageView;
-    protected Image refImage, undoImage, redoImage, cropImage, currentImage;
+    protected Label refLabel;
+    protected VBox refBox;
+    protected Image refImage, undoImage, redoImage, cropImage, currentImage, scopeImage;
     protected ImageFileInformation refInfo, cropInfo;
     private boolean noRatio, isScale, isSettingValues, areaValid;
-    private float scale = 1.0f, shearX, shearY = 0, waterTransparent = 0.5f;
+    private float scale = 1.0f, shearX, waterTransparent = 0.5f;
     private int width, height, colorOperationType, filtersOperationType, waterX, waterY, waterSize;
     private int pixelPickingType, colorValue, cropLeftX, cropLeftY, cropRightX, cropRightY, binaryThreshold;
     private ImageScope colorScope, filtersScope, replaceColorScope, cropScope;
@@ -119,8 +122,6 @@ public class ImageManufactureController extends ImageViewerController {
     protected Button colorScopeButton, binaryCalculateButton, binaryOkButton, colorDecreaseButton, colorIncreaseButton;
     @FXML
     protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck;
-    @FXML
-    protected CheckBox colorScopeCheck, replaceColorScopeCheck, filtersScopeCheck, cropScopeCheck;
     @FXML
     protected CheckBox edgesTopCheck, edgesBottomCheck, edgesLeftCheck, edgesRightCheck;
     @FXML
@@ -363,7 +364,7 @@ public class ImageManufactureController extends ImageViewerController {
             cropScope = new ImageScope();
             cropScope.setOperationType(OperationType.Crop);
             cropScope.setAreaScopeType(AreaScopeType.Rectangle);
-            cropScope.setIndicateScope(cropScopeCheck.isSelected());
+            cropScope.setIndicateScope(true);
 
             pixelPickingType = PixelPickingType.None;
             imageView.setCursor(Cursor.OPEN_HAND);
@@ -377,7 +378,7 @@ public class ImageManufactureController extends ImageViewerController {
 
             undoButton.setDisable(true);
             redoButton.setDisable(true);
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -487,8 +488,8 @@ public class ImageManufactureController extends ImageViewerController {
             final ImagesViewerController controller = fxmlLoader.getController();
             controller.setMyStage(myStage);
             myStage.setScene(new Scene(pane));
-            myStage.setTitle(getMessage("AppTitle"));
-            controller.loadImages(sourceFile.getParentFile(), 10);
+            myStage.setTitle(getMessage("MultipleImagesViewer"));
+            controller.loadImages(sourceFile.getParentFile(), 16);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -869,21 +870,10 @@ public class ImageManufactureController extends ImageViewerController {
             checkColorInput();
 
             if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(colorScopeCheck, tips);
                 Tooltip stips = new Tooltip(getMessage("ScopeComments"));
                 stips.setFont(new Font(16));
                 FxmlTools.setComments(colorScopeButton, stips);
             }
-
-            colorScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    colorScope.setIndicateScope(colorScopeCheck.isSelected());
-                    showScope(colorScope);
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -972,6 +962,15 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     public void setColorScope() {
         setScope(colorScope);
+    }
+
+    @FXML
+    public void clearColorScope() {
+        colorScope = new ImageScope();
+        colorScope.setOperationType(OperationType.Color);
+        refImage = currentImage;
+        refInfo = imageInformation;
+        displayRefCheck.setSelected(false);
     }
 
     public void increaseHue() {
@@ -1158,21 +1157,10 @@ public class ImageManufactureController extends ImageViewerController {
             binarySlider.setValue(50);
 
             if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(filtersScopeCheck, tips);
                 Tooltip stips = new Tooltip(getMessage("ScopeComments"));
                 stips.setFont(new Font(16));
                 FxmlTools.setComments(filtersScopeButton, stips);
             }
-
-            filtersScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    filtersScope.setIndicateScope(filtersScopeCheck.isSelected());
-                    showScope(filtersScope);
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1203,6 +1191,15 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     public void setFiltersScope() {
         setScope(filtersScope);
+    }
+
+    @FXML
+    public void clearFiltersScope() {
+        filtersScope = new ImageScope();
+        filtersScope.setOperationType(OperationType.Filters);
+        refImage = currentImage;
+        refInfo = imageInformation;
+        displayRefCheck.setSelected(false);
     }
 
     @FXML
@@ -1486,20 +1483,10 @@ public class ImageManufactureController extends ImageViewerController {
         try {
 
             if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(replaceColorScopeCheck, tips);
                 Tooltip stips = new Tooltip(getMessage("ScopeComments"));
                 stips.setFont(new Font(16));
                 FxmlTools.setComments(replaceColorScopeButton, stips);
             }
-            replaceColorScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    replaceColorScope.setIndicateScope(replaceColorScopeCheck.isSelected());
-                    showScope(replaceColorScope);
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1510,6 +1497,15 @@ public class ImageManufactureController extends ImageViewerController {
     public void setReplaceColorScope() {
         setScope(replaceColorScope);
 
+    }
+
+    @FXML
+    public void clearReplaceColorScope() {
+        replaceColorScope = new ImageScope();
+        replaceColorScope.setOperationType(OperationType.ReplaceColor);
+        refImage = currentImage;
+        refInfo = imageInformation;
+        displayRefCheck.setSelected(false);
     }
 
     @FXML
@@ -1762,7 +1758,23 @@ public class ImageManufactureController extends ImageViewerController {
                         });
                     }
                     refPane.setContent(refView);
-                    splitPane.getItems().add(0, refPane);
+
+                    if (refInfo != null && refInfo.isIsScope()) {
+                        refBox = new VBox();
+                        VBox.setVgrow(refBox, Priority.ALWAYS);
+                        HBox.setHgrow(refBox, Priority.ALWAYS);
+                        refLabel = new Label();
+                        refLabel.setText(getMessage("Scope") + getMessage("opacityComments"));
+                        refLabel.setAlignment(Pos.CENTER);
+                        VBox.setVgrow(refLabel, Priority.NEVER);
+                        HBox.setHgrow(refLabel, Priority.ALWAYS);
+                        refBox.getChildren().add(0, refLabel);
+                        refBox.getChildren().add(1, refPane);
+                        splitPane.getItems().add(0, refBox);
+                        logger.debug(refLabel.getText());
+                    } else {
+                        splitPane.getItems().add(0, refPane);
+                    }
                     splitPane.setDividerPositions(0.5);
                     refBar.setDisable(false);
 
@@ -1771,6 +1783,18 @@ public class ImageManufactureController extends ImageViewerController {
                     }
                     if (refImage == null) {
                         loadReferenceImage();
+                    } else {
+                        refView.setImage(refImage);
+                        if (refInfo != null) {
+                            logger.debug(scrollPane.getHeight() + " " + refInfo.getyPixels());
+                            if (scrollPane.getHeight() < refInfo.getyPixels()) {
+                                refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
+                                refView.setFitWidth(scrollPane.getWidth() - 1);
+                            } else {
+                                refView.setFitHeight(refInfo.getyPixels());
+                                refView.setFitWidth(refInfo.getxPixels());
+                            }
+                        }
                     }
 
                 }
@@ -1794,7 +1818,7 @@ public class ImageManufactureController extends ImageViewerController {
             refImage = image;
             refInfo = imageInformation;
             refView.setImage(refImage);
-            if (refPane.getHeight() < refInfo.getyPixels()) {
+            if (scrollPane.getHeight() < refInfo.getyPixels()) {
                 refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
                 refView.setFitWidth(scrollPane.getWidth() - 1);
             } else {
@@ -1964,19 +1988,6 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(cropScopeCheck, tips);
-            }
-            cropScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    cropScope.setIndicateScope(cropScopeCheck.isSelected());
-                    showScope(cropScope);
-                }
-            });
-
             cropOkButton.disableProperty().bind(
                     cropLeftXInput.styleProperty().isEqualTo(badStyle)
                             .or(cropLeftYInput.styleProperty().isEqualTo(badStyle))
@@ -2079,7 +2090,31 @@ public class ImageManufactureController extends ImageViewerController {
         cropScope.setLeftY(cropLeftY);
         cropScope.setRightX(cropRightX);
         cropScope.setRightY(cropRightY);
-        showScope(cropScope);
+
+        if (task != null && task.isRunning()) {
+            return;
+        }
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    final Image newImage = FxmlTools.indicateScope(currentImage, cropScope);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImage(newImage);
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
@@ -2117,13 +2152,12 @@ public class ImageManufactureController extends ImageViewerController {
                             imageChanged.set(true);
 
                             isSettingValues = true;
-                            cropRightXInput.setText((int) currentImage.getWidth() * 3 / 4 + "");
-                            cropRightYInput.setText((int) currentImage.getHeight() * 3 / 4 + "");
-                            cropLeftXInput.setText((int) currentImage.getWidth() / 4 + "");
-                            cropLeftYInput.setText((int) currentImage.getHeight() / 4 + "");
+                            cropRightXInput.setText("");
+                            cropRightYInput.setText("");
+                            cropLeftXInput.setText("");
+                            cropLeftYInput.setText("");
                             isSettingValues = false;
                             promptLabel.setText("");
-                            showCropScope();
 
                         }
                     });
@@ -2148,7 +2182,6 @@ public class ImageManufactureController extends ImageViewerController {
         imageChanged.set(false);
         undoButton.setDisable(false);
         redoButton.setDisable(true);
-        showScope();
     }
 
     @FXML
@@ -2167,7 +2200,7 @@ public class ImageManufactureController extends ImageViewerController {
     public void save() {
         if (saveCheck.isSelected()) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK) {
@@ -2271,7 +2304,7 @@ public class ImageManufactureController extends ImageViewerController {
     public void imageSize() {
         imageView.setFitWidth(currentImage.getWidth());
         imageView.setFitHeight(currentImage.getHeight());
-        if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
+        if (refSyncCheck.isSelected() && displayRefCheck.isSelected() && refInfo != null) {
             refView.setFitHeight(refInfo.getyPixels());
             refView.setFitWidth(refInfo.getxPixels());
         }
@@ -2435,7 +2468,7 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    private void showScope() {
+    private ImageScope getCurrentScope() {
         String tab = tabPane.getSelectionModel().getSelectedItem().getText();
         final ImageScope imageScope;
         if (getMessage("Color").equals(tab)) {
@@ -2446,75 +2479,59 @@ public class ImageManufactureController extends ImageViewerController {
             imageScope = filtersScope;
         } else if (getMessage("Crop").equals(tab)) {
             showCropScope();
-            return;
+            promptLabel.setText(AppVaribles.getMessage("CropComments"));
+            imageScope = null;
         } else {
             imageScope = null;
         }
-        showScope(imageScope);
+        return imageScope;
+    }
+
+    private void showScope() {
+        showScope(getCurrentScope());
     }
 
     private void showScope(final ImageScope imageScope) {
-        if (imageScope == null
-                || imageScope.isAll() || !imageScope.isIndicateScope()) {
-            imageView.setImage(currentImage);
+        if (imageScope == null || imageScope.getImage() == null) {
+            refImage = currentImage;
+            refInfo = imageInformation;
+            displayRefCheck.setSelected(false);
             return;
         }
+        if (!imageScope.isAll()) {
+            displayRefCheck.setSelected(false);
+            refImage = imageScope.getImage();
+            refInfo = new ImageFileInformation();
+            refInfo.setImageFormat(imageInformation.getImageFormat());
+            refInfo.setxPixels(imageInformation.getxPixels());
+            refInfo.setyPixels(imageInformation.getyPixels());
+            refInfo.setIsScope(true);
+            logger.debug(refInfo.isIsScope());
+            displayRefCheck.setSelected(true);
+        }
+    }
 
-        if (task != null && task.isRunning()) {
+    private void recoveryScope() {
+        final ImageScope imageScope = getCurrentScope();
+        if (imageScope == null) {
             return;
         }
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    final Image newImage = FxmlTools.indicateScope(currentImage, imageScope);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImage(newImage);
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        refImage = currentImage;
+        refInfo = imageInformation;
+        displayRefCheck.setSelected(false);
     }
 
     public void scopeDetermined(ImageScope imageScope) {
-
+        showScope(imageScope);
         switch (imageScope.getOperationType()) {
             case OperationType.Color:
                 colorScope = imageScope;
-                boolean cStatus = colorScopeCheck.isSelected();
-                colorScopeCheck.setSelected(!colorScope.isAll());
-                if (cStatus == colorScopeCheck.isSelected()) {
-                    colorScope.setIndicateScope(cStatus);
-                    showScope(colorScope);
-                }
                 break;
             case OperationType.ReplaceColor:
                 replaceColorScope = imageScope;
-                boolean rStatus = replaceColorScopeCheck.isSelected();
-                filtersScopeCheck.setSelected(!replaceColorScope.isAll());
-                if (rStatus == replaceColorScopeCheck.isSelected()) {
-                    replaceColorScope.setIndicateScope(rStatus);
-                    showScope(replaceColorScope);
-                }
                 break;
             case OperationType.Filters:
                 filtersScope = imageScope;
-                boolean fStatus = filtersScopeCheck.isSelected();
-                filtersScopeCheck.setSelected(!filtersScope.isAll());
-                if (fStatus == filtersScopeCheck.isSelected()) {
-                    filtersScope.setIndicateScope(fStatus);
-                    showScope(filtersScope);
-                }
                 break;
             default:
                 break;
@@ -2539,7 +2556,7 @@ public class ImageManufactureController extends ImageViewerController {
     public boolean checkSavingBeforeExit() {
         if (imageChanged.getValue()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("ImageChanged"));
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));

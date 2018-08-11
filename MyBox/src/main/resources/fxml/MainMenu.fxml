@@ -28,6 +28,8 @@
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />

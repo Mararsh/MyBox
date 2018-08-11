@@ -66,7 +66,7 @@ public class ImageScopeController extends BaseController {
     @FXML
     private Tab colorTab, areaTab;
     @FXML
-    private CheckBox colorExcludedCheck, rectangleExcludedCheck, circleExcludedCheck, indicateScopeCheck;
+    private CheckBox colorExcludedCheck, rectangleExcludedCheck, circleExcludedCheck;
     @FXML
     private ToolBar rectangleBar, circleBar, colorBar1, colorBar2, hotBar, areaBar, colorBar;
     @FXML
@@ -86,9 +86,9 @@ public class ImageScopeController extends BaseController {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private ScrollPane scrollPane;
+    private ScrollPane scrollPane, refPane;
     @FXML
-    private ImageView imageView;
+    private ImageView imageView, refView;
     @FXML
     private Label promptLabel, titleLabel, opacityLabel, opacityComments;
 
@@ -99,25 +99,6 @@ public class ImageScopeController extends BaseController {
             initAreaTab();
 
             initColorTab();
-
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("IndicateScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(indicateScopeCheck, tips);
-            }
-            indicateScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable,
-                        Boolean oldValue, Boolean newValue) {
-                    imageScope.setIndicateScope(indicateScopeCheck.isSelected());
-                    opacityLabel.setDisable(!indicateScopeCheck.isSelected());
-                    opacityComments.setDisable(!indicateScopeCheck.isSelected());
-                    opacityBox.setDisable(!indicateScopeCheck.isSelected());
-                    if (!isSettingValue) {
-                        showScope();
-                    }
-                }
-            });
 
             ObservableList<Double> values = FXCollections.observableArrayList(
                     0.1, 0.5, 0.2, 0.3, 0.6, 0.4, 0.7, 0.8, 0.9, 1.0);
@@ -640,6 +621,7 @@ public class ImageScopeController extends BaseController {
             getMyStage().setTitle(title);
 
             imageView.setPreserveRatio(true);
+            refView.setPreserveRatio(true);
             if (scrollPane.getHeight() < imageScope.getImage().getHeight()) {
                 paneSize();
             } else {
@@ -647,6 +629,7 @@ public class ImageScopeController extends BaseController {
             }
             isSettingValue = true;
             imageView.setImage(imageScope.getImage());
+            refView.setImage(imageScope.getImage());
 
             List<Color> colors = imageScope.getColors();
             if (colors != null && !colors.isEmpty()) {
@@ -725,7 +708,7 @@ public class ImageScopeController extends BaseController {
             } else {
                 opacityBox.getSelectionModel().select(0);
             }
-            indicateScopeCheck.setSelected(imageScope.isIndicateScope());
+            imageScope.setIndicateScope(true);
 
             switch (imageScope.getOperationType()) {
                 case OperationType.ReplaceColor:
@@ -791,6 +774,7 @@ public class ImageScopeController extends BaseController {
     private void pickColors(ActionEvent event) {
         pixelPickingType = ImageManufactureController.PixelPickingType.OriginalColor;
         imageView.setCursor(Cursor.HAND);
+        refView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickColorComments"));
     }
 
@@ -805,6 +789,7 @@ public class ImageScopeController extends BaseController {
     private void pickLeft(ActionEvent event) {
         pixelPickingType = ImageManufactureController.PixelPickingType.RectangleLeft;
         imageView.setCursor(Cursor.HAND);
+        refView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickPositionComments"));
     }
 
@@ -812,6 +797,7 @@ public class ImageScopeController extends BaseController {
     private void pickRight(ActionEvent event) {
         pixelPickingType = ImageManufactureController.PixelPickingType.RectangleRight;
         imageView.setCursor(Cursor.HAND);
+        refView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickPositionComments"));
     }
 
@@ -819,6 +805,7 @@ public class ImageScopeController extends BaseController {
     private void pickCenter(ActionEvent event) {
         pixelPickingType = ImageManufactureController.PixelPickingType.CircleCenter;
         imageView.setCursor(Cursor.HAND);
+        refView.setCursor(Cursor.HAND);
         promptLabel.setText(getMessage("PickCenterComments"));
     }
 
@@ -831,6 +818,7 @@ public class ImageScopeController extends BaseController {
 
                 pixelPickingType = ImageManufactureController.PixelPickingType.None;
                 imageView.setCursor(Cursor.OPEN_HAND);
+                refView.setCursor(Cursor.OPEN_HAND);
                 promptLabel.setText("");
                 return;
             }
@@ -838,6 +826,42 @@ public class ImageScopeController extends BaseController {
             int x = (int) Math.round(event.getX() * currentImage.getWidth() / imageView.getBoundsInLocal().getWidth());
             int y = (int) Math.round(event.getY() * currentImage.getHeight() / imageView.getBoundsInLocal().getHeight());
 
+            handleClick(x, y);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void clickRef(MouseEvent event) {
+        try {
+            final Image currentImage = refView.getImage();
+            if (currentImage == null || event.getButton() == MouseButton.SECONDARY
+                    || pixelPickingType == ImageManufactureController.PixelPickingType.None) {
+
+                pixelPickingType = ImageManufactureController.PixelPickingType.None;
+                imageView.setCursor(Cursor.OPEN_HAND);
+                refView.setCursor(Cursor.OPEN_HAND);
+                promptLabel.setText("");
+                return;
+            }
+
+            int x = (int) Math.round(event.getX() * currentImage.getWidth() / refView.getBoundsInLocal().getWidth());
+            int y = (int) Math.round(event.getY() * currentImage.getHeight() / refView.getBoundsInLocal().getHeight());
+
+            handleClick(x, y);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    public void handleClick(int x, int y) {
+        try {
+            final Image currentImage = imageView.getImage();
             if (pixelPickingType == ImageManufactureController.PixelPickingType.OriginalColor) {
 
                 PixelReader pixelReader = currentImage.getPixelReader();
@@ -922,12 +946,16 @@ public class ImageScopeController extends BaseController {
     public void zoomIn() {
         imageView.setFitHeight(imageView.getFitHeight() * (1 + 5 / 100.0f));
         imageView.setFitWidth(imageView.getFitWidth() * (1 + 5 / 100.0f));
+        refView.setFitHeight(refView.getFitHeight() * (1 + 5 / 100.0f));
+        refView.setFitWidth(refView.getFitWidth() * (1 + 5 / 100.0f));
     }
 
     @FXML
     public void zoomOut() {
         imageView.setFitHeight(imageView.getFitHeight() * (1 - 5 / 100.0f));
         imageView.setFitWidth(imageView.getFitWidth() * (1 - 5 / 100.0f));
+        refView.setFitHeight(refView.getFitHeight() * (1 - 5 / 100.0f));
+        refView.setFitWidth(refView.getFitWidth() * (1 - 5 / 100.0f));
 
     }
 
@@ -935,12 +963,16 @@ public class ImageScopeController extends BaseController {
     public void imageSize() {
         imageView.setFitHeight(imageScope.getImage().getWidth());
         imageView.setFitWidth(imageScope.getImage().getHeight());
+        refView.setFitHeight(imageScope.getImage().getWidth());
+        refView.setFitWidth(imageScope.getImage().getHeight());
     }
 
     @FXML
     public void paneSize() {
         imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
+        refView.setFitHeight(refPane.getHeight() - 5);
+        refView.setFitWidth(refPane.getWidth() - 1);
     }
 
     private void writeValues() {
@@ -966,8 +998,6 @@ public class ImageScopeController extends BaseController {
         imageScope.setCenterY(centerY);
         imageScope.setRadius(radius);
         imageScope.setCircleExcluded(circleExcludedCheck.isSelected());
-
-        imageScope.setIndicateScope(indicateScopeCheck.isSelected());
 
     }
 

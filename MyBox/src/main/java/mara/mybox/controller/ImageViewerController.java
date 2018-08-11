@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -33,7 +33,7 @@ public class ImageViewerController extends ImageBaseController {
     protected int currentAngle = 0, rotateAngle = 90;
 
     @FXML
-    protected Label imageFile;
+    protected TextField imageFile;
     @FXML
     protected HBox toolBar;
     @FXML
@@ -69,6 +69,7 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void afterImageLoaded() {
         imageView.setPreserveRatio(true);
+//        logger.debug(scrollPane.getHeight() + " " + imageInformation.getyPixels());
         if (scrollPane.getHeight() < imageInformation.getyPixels()) {
             imageView.setFitHeight(scrollPane.getHeight() - 5);
             imageView.setFitWidth(scrollPane.getWidth() - 1);
@@ -258,7 +259,7 @@ public class ImageViewerController extends ImageBaseController {
 
             Stage imageInformationStage = new Stage();
             controller.setMyStage(imageInformationStage);
-            imageInformationStage.setTitle(AppVaribles.getMessage("AppTitle"));
+            imageInformationStage.setTitle(getMyStage().getTitle());
             imageInformationStage.initModality(Modality.NONE);
             imageInformationStage.initStyle(StageStyle.DECORATED);
             imageInformationStage.initOwner(null);
@@ -283,7 +284,7 @@ public class ImageViewerController extends ImageBaseController {
 
             Stage imageInformationStage = new Stage();
             controller.setMyStage(imageInformationStage);
-            imageInformationStage.setTitle(AppVaribles.getMessage("AppTitle"));
+            imageInformationStage.setTitle(getMyStage().getTitle());
             imageInformationStage.initModality(Modality.NONE);
             imageInformationStage.initStyle(StageStyle.DECORATED);
             imageInformationStage.initOwner(null);

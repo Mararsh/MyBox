@@ -64,12 +64,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </ToolBar>
             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
-                <Tab fx:id="editorTab" text="%Editor">
+                <Tab fx:id="editorTab" text="%HtmlEditor">
                      <content>
                             <HTMLEditor fx:id="htmlEdior" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                      </content>
                 </Tab>
-                <Tab fx:id="codesTab" text="%Codes">
+                <Tab fx:id="codesTab" text="%HtmlCodes">
                      <content>
                         <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" />
                      </content>

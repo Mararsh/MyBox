@@ -139,7 +139,7 @@ public class PdfSourceSelectionController extends BaseController {
 
             Stage infoStage = new Stage();
             controller.setMyStage(infoStage);
-            infoStage.setTitle(AppVaribles.getMessage("AppTitle"));
+            infoStage.setTitle(getMyStage().getTitle());
             infoStage.initModality(Modality.NONE);
             infoStage.initStyle(StageStyle.DECORATED);
             infoStage.initOwner(null);

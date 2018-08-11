@@ -116,7 +116,7 @@ public abstract class ImageBaseController extends BaseController {
     public void loadImage(final File file, final boolean onlyInformation) {
         sourceFile = file;
         final String fileName = file.getPath();
-        task = new Task<Void>() {
+        Task loadTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 imageInformation = ImageFileReaders.readImageMetaData(fileName);
@@ -135,8 +135,8 @@ public abstract class ImageBaseController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
+        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(loadTask);
         thread.setDaemon(true);
         thread.start();
     }

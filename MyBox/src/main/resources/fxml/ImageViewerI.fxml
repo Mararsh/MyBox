@@ -9,7 +9,7 @@
 
 <VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerIController">
     <children>
-        <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+        <HBox fx:id="buttonsBox" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
             <children>
                 <ToolBar maxWidth="1.7976931348623157E308">
                     <items>
@@ -35,7 +35,7 @@
                 </ToolBar>
             </children>
         </HBox>
-        <Label fx:id="imageFile" maxWidth="1.7976931348623157E308" text="Label" VBox.vgrow="NEVER" />
+        <TextField fx:id="imageFile" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
             <content>
                 <ImageView fx:id="imageView" cache="true" onMouseClicked="#imageClicked" onMouseEntered="#imageEntered" pickOnBounds="true" preserveRatio="true">

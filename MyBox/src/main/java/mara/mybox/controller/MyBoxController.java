@@ -101,6 +101,13 @@ public class MyBoxController extends BaseController {
                     reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
                 }
             });
+            MenuItem ImageSplit = new MenuItem(AppVaribles.getMessage("ImageSplit"));
+            ImageSplit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
+                }
+            });
             MenuItem imageConverter = new MenuItem(AppVaribles.getMessage("ImageConverter"));
             imageConverter.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -130,7 +137,8 @@ public class MyBoxController extends BaseController {
                 }
             });
             imageMenu = new ContextMenu();
-            imageMenu.getItems().addAll(ImageManufacture, imagesViewer, new SeparatorMenuItem(),
+            imageMenu.getItems().addAll(ImageManufacture, ImageSplit, new SeparatorMenuItem(),
+                    imagesViewer, new SeparatorMenuItem(),
                     imageConverter, imageConverterBatch, new SeparatorMenuItem(),
                     colorPalette, pixelsCalculator);
 

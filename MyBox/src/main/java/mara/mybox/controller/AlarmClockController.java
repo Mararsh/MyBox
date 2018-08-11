@@ -619,6 +619,18 @@ public class AlarmClockController extends BaseController {
         saveButton.setText(getMessage("Save"));
     }
 
+    @Override
+    public boolean stageClosing() {
+//        logger.debug("stageClosing");
+        if (player != null) {
+            player.stop();
+            player.drain();
+            player.close();
+            player = null;
+        }
+        return super.stageClosing();
+    }
+
     public boolean isIsEdit() {
         return isEdit;
     }

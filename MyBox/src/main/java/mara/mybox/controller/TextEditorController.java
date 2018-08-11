@@ -6,15 +6,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Optional;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.InputEvent;
 import javafx.stage.FileChooser;
-import mara.mybox.controller.BaseController;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 
@@ -28,6 +33,9 @@ public class TextEditorController extends BaseController {
 
     private final String TextFilePathKey;
     private int cols, rows;
+    protected SimpleBooleanProperty fileChanged;
+    protected int lastTextLen;
+    private boolean isSettingValues;
 
     @FXML
     private Button openButton, createButton, saveButton;
@@ -54,7 +62,31 @@ public class TextEditorController extends BaseController {
             textArea.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
                 @Override
                 public void handle(InputEvent event) {
-                    bottomText.setText(AppVaribles.getMessage("Total") + ": " + textArea.getText().length());
+                    int len = textArea.getText().length();
+                    if (!isSettingValues && len != lastTextLen) {
+                        fileChanged.set(true);
+                    }
+                    lastTextLen = len;
+                    bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
+                }
+            });
+
+            fileChanged = new SimpleBooleanProperty(false);
+            fileChanged.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    String t = getBaseTitle();
+                    if (sourceFile != null) {
+                        t += "  " + sourceFile.getAbsolutePath();
+                    }
+                    if (fileChanged.getValue()) {
+                        getMyStage().setTitle(t + "*");
+                    } else {
+                        getMyStage().setTitle(t);
+                    }
                 }
             });
 
@@ -67,6 +99,7 @@ public class TextEditorController extends BaseController {
     @FXML
     private void openAction(ActionEvent event) {
         try {
+            isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
             File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
             fileChooser.setInitialDirectory(path);
@@ -93,8 +126,11 @@ public class TextEditorController extends BaseController {
                 }
             }
             textArea.setText(contents.toString());
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
             bottomText.setText("Cols:" + cols + " rows:" + rows + " total:" + textArea.getText().length());
+
+            fileChanged.set(false);
+            isSettingValues = false;
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -103,8 +139,9 @@ public class TextEditorController extends BaseController {
     }
 
     @FXML
-    private void saveAction(ActionEvent event) {
+    private void saveAction() {
         try {
+            isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
                 File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
@@ -122,7 +159,9 @@ public class TextEditorController extends BaseController {
                 out.write(textArea.getText());
                 out.flush();
             }
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+            fileChanged.set(false);
+            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -132,6 +171,7 @@ public class TextEditorController extends BaseController {
     @FXML
     private void saveAsAction(ActionEvent event) {
         try {
+            isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
             File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
             fileChooser.setInitialDirectory(path);
@@ -147,7 +187,9 @@ public class TextEditorController extends BaseController {
                 out.write(textArea.getText());
                 out.flush();
             }
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+            fileChanged.set(false);
+            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -157,24 +199,59 @@ public class TextEditorController extends BaseController {
     @FXML
     private void createAction(ActionEvent event) {
         try {
+
+            isSettingValues = true;
             sourceFile = null;
             textArea.setText("");
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            AppVaribles.setConfigValue("LastPath", file.getParent());
-            AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
-            sourceFile = file;
-            getMyStage().setTitle(AppVaribles.getMessage("AppTitle") + "  " + sourceFile.getAbsolutePath());
+            fileChanged.set(false);
+            getMyStage().setTitle(getBaseTitle());
+            isSettingValues = false;
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
+    }
+
+    @Override
+    public boolean stageReloading() {
+//        logger.debug("stageReloading");
+        return checkSavingBeforeExit();
+    }
+
+    @Override
+    public boolean stageClosing() {
+//        logger.debug("stageClosing");
+        if (!checkSavingBeforeExit()) {
+            return false;
+        }
+        return super.stageClosing();
+    }
+
+    public boolean checkSavingBeforeExit() {
+//        logger.debug(fileChanged.getValue());
+
+        if (fileChanged == null || !fileChanged.getValue()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(AppVaribles.getMessage("FileChanged"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonSave) {
+                saveAction();
+                return true;
+            } else if (result.get() == buttonNotSave) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
 }
