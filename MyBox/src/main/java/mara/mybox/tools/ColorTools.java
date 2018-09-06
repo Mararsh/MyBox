@@ -16,6 +16,21 @@ public class ColorTools {
 
     private static final Logger logger = LogManager.getLogger();
 
+    public static String rgb2Hex(javafx.scene.paint.Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+    }
+
+    public static String rgb2AlphaHex(javafx.scene.paint.Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                (int) (color.getOpacity() * 255),
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+    }
+
     public static int color2Pixel(int a, int r, int g, int b) {
         return color2Pixel(new Color(a, r, g, b));
 //        return (a << 24) | (r << 16) | (g << 8) | b;

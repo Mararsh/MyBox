@@ -324,7 +324,7 @@ public abstract class PdfBaseController extends BaseController {
                                     File txtFile = new File(finalTargetName);
                                     Desktop.getDesktop().browse(txtFile.toURI());
                                 } else {
-                                    showImageManufacture(finalTargetName);
+                                    openImageManufactureInNew(finalTargetName);
                                 }
                             }
 

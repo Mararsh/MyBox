@@ -60,10 +60,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectImages" text="%Select..." />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="navBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="ALWAYS">
+                        <ToolBar fx:id="navBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="ALWAYS">
                             <items>
-                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%PreviousBatch" />
-                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%NextBacth" />
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousBatch" />
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextBacth" />
                                 <Label text="%Sort">
                                     <padding>
                                         <Insets left="20.0" />
@@ -78,7 +78,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="NEVER">
+                        <ToolBar fx:id="setBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="NEVER">
                      <items>
                         <Label text="%ColumnsNumber" />
                         <ComboBox fx:id="colsBox" prefWidth="80.0" />
@@ -89,7 +89,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </HBox>
             <HBox alignment="CENTER" VBox.vgrow="NEVER">
                <children>
-                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                  <ToolBar fx:id="opBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                     <items>
                                 <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />

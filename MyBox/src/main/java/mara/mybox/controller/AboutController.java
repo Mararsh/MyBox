@@ -32,6 +32,8 @@ public class AboutController extends BaseController {
     protected void initializeNext() {
         version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
+        userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
+                + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion + ".pdf");
 
         task = new Task<Void>() {
             @Override

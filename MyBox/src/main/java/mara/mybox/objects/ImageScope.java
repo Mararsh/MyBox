@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import static mara.mybox.tools.FxmlTools.isColorMatch;
-import static mara.mybox.tools.FxmlTools.isHueMatch;
+import static mara.mybox.tools.FxImageTools.isColorMatch;
+import static mara.mybox.tools.FxImageTools.isHueMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

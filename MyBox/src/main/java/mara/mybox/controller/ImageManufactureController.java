@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +11,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -60,7 +57,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConverter;
+import mara.mybox.image.ImageConvertionTools;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -76,6 +73,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.tools.FxImageTools;
 
 /**
  * @Author Mara
@@ -85,8 +83,9 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureController extends ImageViewerController {
 
-    protected File nextFile, lastFile, refFile;
-    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey, FontSizeKey, FontFamilyKey;
+    protected File refFile;
+    protected String ImageSortTypeKey, ImageOpenAfterSaveAsKey, ImageReferenceDisplayKey, ImageSaveConfirmKey;
+    protected String ImageFontSizeKey, ImageFontFamilyKey, ImageWatermarkColorKey, ImageWatermarkShadowKey, ImageShadowKey, ImageArcKey;
     protected ScrollPane refPane, cropPane;
     protected ImageView refView, cropImageView;
     protected Label refLabel;
@@ -95,39 +94,42 @@ public class ImageManufactureController extends ImageViewerController {
     protected ImageFileInformation refInfo, cropInfo;
     private boolean noRatio, isScale, isSettingValues, areaValid;
     private float scale = 1.0f, shearX, waterTransparent = 0.5f;
-    private int width, height, colorOperationType, filtersOperationType, waterX, waterY, waterSize;
-    private int pixelPickingType, colorValue, cropLeftX, cropLeftY, cropRightX, cropRightY, binaryThreshold;
+    private int width, height, colorOperationType, filtersOperationType, shadow, arc, waterX, waterY, waterSize, waterShadow;
+    private int pixelPickingType, colorValue, cropLeftX, cropLeftY, cropRightX, cropRightY, binaryThreshold, addEdgeWidth;
     private ImageScope colorScope, filtersScope, replaceColorScope, cropScope;
     protected SimpleBooleanProperty imageChanged;
+    protected String initTab;
 
     @FXML
     protected ToolBar fileBar, navBar, refBar, hotBar, scaleBar, replaceColorBar, watermarkBar, transformBar;
     @FXML
-    protected Tab fileTab, zoomTab, colorTab, filtersTab, watermarkTab, cropTab;
+    protected Tab fileTab, viewTab, colorTab, filtersTab, watermarkTab, cropTab, arcTab, shadowTab;
     @FXML
-    protected Tab replaceColorTab, pixelsTab, refTab, browseTab, transformTab, edgesTab;
+    protected Tab replaceColorTab, sizeTab, refTab, browseTab, transformTab, cutEdgesTab, addEdgesTab;
     @FXML
     protected Slider zoomSlider, angleSlider, colorSlider, binarySlider;
     @FXML
     protected Label zoomValue, colorUnit, tipsLabel, promptLabel, binaryValue, thresholdLabel;
     @FXML
-    protected ToggleGroup sortGroup, pixelsGroup, filtersGroup, colorGroup;
+    protected ToggleGroup pixelsGroup, filtersGroup, colorGroup;
     @FXML
-    protected Button nextButton, lastButton, origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
+    protected Button origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
     @FXML
     protected Button pickNewColorButton, transparentForNewButton, recoverButton, replaceColorOkButton, replaceColorScopeButton;
     @FXML
     protected Button waterPositionButton, waterAddButton, undoButton, redoButton, cropOkButton, filtersScopeButton, shearButton;
     @FXML
-    protected Button colorScopeButton, binaryCalculateButton, binaryOkButton, colorDecreaseButton, colorIncreaseButton;
+    protected Button colorScopeButton, binaryCalculateButton, binaryOkButton, colorDecreaseButton, colorIncreaseButton, addEdgesOkButton;
     @FXML
     protected CheckBox openCheck, saveCheck, displayRefCheck, refSyncCheck, keepRatioCheck;
     @FXML
-    protected CheckBox edgesTopCheck, edgesBottomCheck, edgesLeftCheck, edgesRightCheck;
+    protected CheckBox cutEdgesTopCheck, cutEdgesBottomCheck, cutEdgesLeftCheck, cutEdgesRightCheck;
+    @FXML
+    protected CheckBox addEdgesTopCheck, addEdgesBottomCheck, addEdgesLeftCheck, addEdgesRightCheck;
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, scaleInput, colorInput;
+    protected TextField widthInput, heightInput, colorInput;
     @FXML
     protected TextField waterInput, waterXInput, waterYInput;
     @FXML
@@ -137,11 +139,13 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     private TabPane tabPane;
     @FXML
-    protected ColorPicker newColorPicker, waterColorPicker, edgesColorPicker;
+    protected ColorPicker newColorPicker, waterColorPicker, cutEdgesColorPicker, addEdgesColorPicker, arcColorPicker, shadowColorPicker;
     @FXML
-    protected ComboBox angleBox, waterSizeBox, waterTransparentBox, colorBox, shearBox;
+    protected ComboBox angleBox, colorBox, shearBox, scaleBox, shadowBox, arcBox, addEdgeBox;
     @FXML
-    protected RadioButton opacityRadio;
+    protected ComboBox waterSizeBox, waterTransparentBox, waterShadowBox;
+    @FXML
+    protected RadioButton opacityRadio, redRadio;
 
     public static class ColorOperationType {
 
@@ -149,6 +153,9 @@ public class ImageManufactureController extends ImageViewerController {
         public static int Sauration = 1;
         public static int Hue = 2;
         public static int Opacity = 3;
+        public static int Red = 4;
+        public static int Green = 5;
+        public static int Blue = 6;
 
     }
 
@@ -157,6 +164,9 @@ public class ImageManufactureController extends ImageViewerController {
         public static int Gray = 0;
         public static int Invert = 1;
         public static int BlackOrWhite = 2;
+        public static int Red = 3;
+        public static int Green = 4;
+        public static int Blue = 5;
 
     }
 
@@ -169,6 +179,7 @@ public class ImageManufactureController extends ImageViewerController {
         public static int RectangleRight = 4;
         public static int OriginalColor = 5;
         public static int CircleCenter = 6;
+        public static int EdgeColor = 7;
 
     }
 
@@ -177,8 +188,12 @@ public class ImageManufactureController extends ImageViewerController {
         ImageOpenAfterSaveAsKey = "ImageOpenAfterSaveAs";
         ImageSaveConfirmKey = "ImageSaveConfirmKey";
         ImageReferenceDisplayKey = "ImageReferenceDisplay";
-        FontSizeKey = "FontSizeKey";
-        FontFamilyKey = "FontFamilyKey";
+        ImageFontSizeKey = "ImageFontSizeKey";
+        ImageFontFamilyKey = "ImageFontFamilyKey";
+        ImageWatermarkColorKey = "ImageWatermarkColorKey";
+        ImageWatermarkShadowKey = "ImageWatermarkShadowKey";
+        ImageShadowKey = "ImageShadowKey";
+        ImageArcKey = "ImageArcKey";
     }
 
     @Override
@@ -194,8 +209,11 @@ public class ImageManufactureController extends ImageViewerController {
             initTransformTab();
             initReplaceColorTab();
             initWatermarkTab();
+            initArcTab();
+            initShadowTab();
             initReferenceTab();
-            initEdgesTab();
+            initCutEdgesTab();
+            initAddEdgesTab();
             initCropTab();
 
         } catch (Exception e) {
@@ -210,15 +228,18 @@ public class ImageManufactureController extends ImageViewerController {
             fileBar.setDisable(true);
             browseTab.setDisable(true);
             navBar.setDisable(true);
-            zoomTab.setDisable(true);
+            viewTab.setDisable(true);
             colorTab.setDisable(true);
             filtersTab.setDisable(true);
             replaceColorTab.setDisable(true);
-            pixelsTab.setDisable(true);
+            sizeTab.setDisable(true);
             refTab.setDisable(true);
             transformTab.setDisable(true);
             watermarkTab.setDisable(true);
-            edgesTab.setDisable(true);
+            arcTab.setDisable(true);
+            shadowTab.setDisable(true);
+            cutEdgesTab.setDisable(true);
+            addEdgesTab.setDisable(true);
             cropTab.setDisable(true);
             hotBar.setDisable(true);
 
@@ -257,7 +278,9 @@ public class ImageManufactureController extends ImageViewerController {
                     } else {
                         saveButton.setDisable(true);
                         recoverButton.setDisable(true);
-                        getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+                        if (sourceFile != null) {
+                            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+                        }
                     }
                     setBottomLabel();
                 }
@@ -312,11 +335,13 @@ public class ImageManufactureController extends ImageViewerController {
             }
             fileBar.setDisable(false);
             navBar.setDisable(false);
-            zoomTab.setDisable(false);
+            viewTab.setDisable(false);
             colorTab.setDisable(false);
             filtersTab.setDisable(false);
+            arcTab.setDisable(false);
+            shadowTab.setDisable(false);
             replaceColorTab.setDisable(false);
-            pixelsTab.setDisable(false);
+            sizeTab.setDisable(false);
             refTab.setDisable(false);
             hotBar.setDisable(false);
             browseTab.setDisable(false);
@@ -329,7 +354,8 @@ public class ImageManufactureController extends ImageViewerController {
             }
             transformTab.setDisable(false);
             watermarkTab.setDisable(false);
-            edgesTab.setDisable(false);
+            cutEdgesTab.setDisable(false);
+            addEdgesTab.setDisable(false);
             cropTab.setDisable(false);
 
             isSettingValues = true;
@@ -366,19 +392,87 @@ public class ImageManufactureController extends ImageViewerController {
             cropScope.setAreaScopeType(AreaScopeType.Rectangle);
             cropScope.setIndicateScope(true);
 
+            arcBox.getItems().clear();
+            arcBox.getItems().addAll(Arrays.asList(imageInformation.getxPixels() / 6 + "",
+                    imageInformation.getxPixels() / 8 + "",
+                    imageInformation.getxPixels() / 4 + "",
+                    imageInformation.getxPixels() / 10 + "",
+                    "0", "15", "30", "50", "150", "300", "10", "3"));
+            arcBox.getSelectionModel().select(0);
+
+            shadowBox.getItems().clear();
+            shadowBox.getItems().addAll(Arrays.asList(imageInformation.getxPixels() / 100 + "",
+                    imageInformation.getxPixels() / 50 + "",
+                    imageInformation.getxPixels() / 200 + "",
+                    imageInformation.getxPixels() / 30 + "",
+                    "0", "4", "5", "3", "2", "1", "6"));
+            shadowBox.getSelectionModel().select(0);
+
+//            if (image.getWidth() > 2000 || image.getHeight() > 2000) {
+//                waterShadowBox.setDisable(true);
+//            } else {
+//                waterShadowBox.setDisable(false);
+//            }
             pixelPickingType = PixelPickingType.None;
             imageView.setCursor(Cursor.OPEN_HAND);
             promptLabel.setText("");
 
+            if (initTab != null) {
+                switch (initTab) {
+                    case "size":
+                        tabPane.getSelectionModel().select(sizeTab);
+                        break;
+                    case "crop":
+                        tabPane.getSelectionModel().select(cropTab);
+                        break;
+                    case "color":
+                        tabPane.getSelectionModel().select(colorTab);
+                        break;
+                    case "filters":
+                        tabPane.getSelectionModel().select(filtersTab);
+                        break;
+                    case "replaceColor":
+                        tabPane.getSelectionModel().select(replaceColorTab);
+                        break;
+                    case "watermark":
+                        tabPane.getSelectionModel().select(watermarkTab);
+                        break;
+                    case "arc":
+                        tabPane.getSelectionModel().select(arcTab);
+                        break;
+                    case "shadow":
+                        tabPane.getSelectionModel().select(shadowTab);
+                        break;
+                    case "transform":
+                        tabPane.getSelectionModel().select(transformTab);
+                        break;
+                    case "cutEdges":
+                        tabPane.getSelectionModel().select(cutEdgesTab);
+                        break;
+                    case "addEdges":
+                        tabPane.getSelectionModel().select(addEdgesTab);
+                        break;
+                    case "view":
+                        tabPane.getSelectionModel().select(viewTab);
+                        break;
+                    case "reference":
+                        tabPane.getSelectionModel().select(refTab);
+                        break;
+                    case "browse":
+                        tabPane.getSelectionModel().select(browseTab);
+                        break;
+                }
+            }
+
             isSettingValues = false;
 
-            checkNevigator();
+            checkImageNevigator();
             straighten();
             setBottomLabel();
 
             undoButton.setDisable(true);
             redoButton.setDisable(true);
-            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+            getMyStage().setTitle(AppVaribles.getMessage("ImageManufacture") + "  " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -445,7 +539,7 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkNevigator();
+                    checkImageNevigator();
                     RadioButton selected = (RadioButton) sortGroup.getSelectedToggle();
                     AppVaribles.setConfigValue(ImageSortTypeKey, selected.getText());
                 }
@@ -458,7 +552,8 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    public void next() {
+    @Override
+    public void nextAction() {
         if (!checkSavingBeforeExit()) {
             return;
         }
@@ -468,90 +563,13 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    public void last() {
+    @Override
+    public void previousAction() {
         if (!checkSavingBeforeExit()) {
             return;
         }
-        if (lastFile != null) {
-            loadImage(lastFile.getAbsoluteFile(), false);
-        }
-    }
-
-    @FXML
-    public void browseAction() {
-        try {
-            if (!stageReloading()) {
-                return;
-            }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final ImagesViewerController controller = fxmlLoader.getController();
-            controller.setMyStage(myStage);
-            myStage.setScene(new Scene(pane));
-            myStage.setTitle(getMessage("MultipleImagesViewer"));
-            controller.loadImages(sourceFile.getParentFile(), 16);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    private void checkNevigator() {
-        try {
-            if (sourceFile == null) {
-                lastFile = null;
-                lastButton.setDisable(true);
-                nextFile = null;
-                nextButton.setDisable(true);
-                return;
-            }
-            File path = sourceFile.getParentFile();
-            List<File> sortedFiles = new ArrayList<>();
-            File[] files = path.listFiles();
-            for (File file : files) {
-                if (file.isFile() && FileTools.isSupportedImage(file)) {
-                    sortedFiles.add(file);
-                }
-            }
-            RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-            if (getMessage("OriginalFileName").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
-
-            } else if (getMessage("CreateTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
-
-            } else if (getMessage("ModifyTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
-
-            } else if (getMessage("Size").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
-            }
-
-            for (int i = 0; i < sortedFiles.size(); i++) {
-                if (sortedFiles.get(i).getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
-                    if (i < sortedFiles.size() - 1) {
-                        nextFile = sortedFiles.get(i + 1);
-                        nextButton.setDisable(false);
-                    } else {
-                        nextFile = null;
-                        nextButton.setDisable(true);
-                    }
-                    if (i > 0) {
-                        lastFile = sortedFiles.get(i - 1);
-                        lastButton.setDisable(false);
-                    } else {
-                        lastFile = null;
-                        lastButton.setDisable(true);
-                    }
-                    return;
-                }
-            }
-            lastFile = null;
-            lastButton.setDisable(true);
-            nextFile = null;
-            nextButton.setDisable(true);
-        } catch (Exception e) {
-            logger.debug(e.toString());
+        if (previousFile != null) {
+            loadImage(previousFile.getAbsoluteFile(), false);
         }
     }
 
@@ -589,7 +607,7 @@ public class ImageManufactureController extends ImageViewerController {
             pixelsOkButton.disableProperty().bind(
                     widthInput.styleProperty().isEqualTo(badStyle)
                             .or(heightInput.styleProperty().isEqualTo(badStyle))
-                            .or(scaleInput.styleProperty().isEqualTo(badStyle))
+                            .or(scaleBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
 
             pixelsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -600,7 +618,7 @@ public class ImageManufactureController extends ImageViewerController {
                     if (getMessage("Pixels").equals(selected.getText())) {
                         scaleBar.setDisable(false);
                         isScale = false;
-                        scaleInput.setStyle(null);
+                        scaleBox.getEditor().setStyle(null);
                     } else {
                         scaleBar.setDisable(true);
                         isScale = true;
@@ -610,7 +628,7 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            ratioBox.getItems().addAll(FXCollections.observableArrayList(getMessage("BaseOnLarger"),
+            ratioBox.getItems().addAll(Arrays.asList(getMessage("BaseOnLarger"),
                     getMessage("BaseOnWidth"), getMessage("BaseOnHeight"), getMessage("BaseOnSmaller")));
             ratioBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -622,14 +640,31 @@ public class ImageManufactureController extends ImageViewerController {
             });
             ratioBox.getSelectionModel().select(0);
 
-            scaleInput.textProperty().addListener(new ChangeListener<String>() {
+            scaleBox.getItems().addAll(Arrays.asList("1.0", "0.5", "2.0", "0.8", "0.1", "1.5", "3.0", "10.0", "0.01", "5.0", "0.3"));
+            scaleBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkPixelsScale();
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        scale = Float.valueOf(newValue);
+                        if (scale > 0) {
+                            scaleBox.getEditor().setStyle(null);
+                            if (currentImage != null) {
+                                noRatio = true;
+                                widthInput.setText(Math.round(currentImage.getWidth() * scale) + "");
+                                heightInput.setText(Math.round(currentImage.getHeight() * scale) + "");
+                                noRatio = false;
+                            }
+                        } else {
+                            scaleBox.getEditor().setStyle(badStyle);
+                        }
+
+                    } catch (Exception e) {
+                        scale = 0;
+                        scaleBox.getEditor().setStyle(badStyle);
+                    }
                 }
             });
-            checkPixelsScale();
+            scaleBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -664,37 +699,18 @@ public class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    private void checkPixelsScale() {
-        try {
-            scale = Float.valueOf(scaleInput.getText());
-            if (scale > 0) {
-                scaleInput.setStyle(null);
-                if (currentImage != null) {
-                    noRatio = true;
-                    widthInput.setText(Math.round(currentImage.getWidth() * scale) + "");
-                    heightInput.setText(Math.round(currentImage.getHeight() * scale) + "");
-                    noRatio = false;
-                }
-            } else {
-                scaleInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            scaleInput.setStyle(badStyle);
-        }
-    }
-
     protected void checkRatioAdjustion(String s) {
         try {
             if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnWidth);
+                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnWidth);
             } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnHeight);
+                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnHeight);
             } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnLarger);
+                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnLarger);
             } else if (getMessage("BaseOnSmaller").equals(s)) {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.BaseOnSmaller);
+                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnSmaller);
             } else {
-                attributes.setRatioAdjustion(ImageConverter.KeepRatioType.None);
+                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.None);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -718,20 +734,20 @@ public class ImageManufactureController extends ImageViewerController {
                 return;
             }
             switch (attributes.getRatioAdjustion()) {
-                case ImageConverter.KeepRatioType.BaseOnWidth:
+                case ImageConvertionTools.KeepRatioType.BaseOnWidth:
                     heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     break;
-                case ImageConverter.KeepRatioType.BaseOnHeight:
+                case ImageConvertionTools.KeepRatioType.BaseOnHeight:
                     widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     break;
-                case ImageConverter.KeepRatioType.BaseOnLarger:
+                case ImageConvertionTools.KeepRatioType.BaseOnLarger:
                     if (ratioX > ratioY) {
                         heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     } else {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     }
                     break;
-                case ImageConverter.KeepRatioType.BaseOnSmaller:
+                case ImageConvertionTools.KeepRatioType.BaseOnSmaller:
                     if (ratioX > ratioY) {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     } else {
@@ -789,13 +805,13 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     protected void setScale() {
-        if (scale == 1.0 || scale <= 0) {
+        if (scale <= 0) {
             return;
         }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), scale);
+                final Image newImage = FxImageTools.scaleImage(currentImage, imageInformation.getImageFormat(), scale);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -803,6 +819,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -821,7 +838,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.scaleImage(currentImage, imageInformation.getImageFormat(), width, height);
+                final Image newImage = FxImageTools.scaleImage(currentImage, imageInformation.getImageFormat(), width, height);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -829,6 +846,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -918,6 +936,33 @@ public class ImageManufactureController extends ImageViewerController {
             colorInput.setText("50");
             colorDecreaseButton.setVisible(false);
             colorIncreaseButton.setText(getMessage("OK"));
+        } else if (getMessage("Red").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Red;
+            colorSlider.setMax(255);
+            colorSlider.setMin(0);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            colorInput.setText("5");
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("Green").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Green;
+            colorSlider.setMax(255);
+            colorSlider.setMin(0);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            colorInput.setText("5");
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("Blue").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Blue;
+            colorSlider.setMax(255);
+            colorSlider.setMin(0);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            colorInput.setText("5");
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
         }
     }
 
@@ -945,6 +990,12 @@ public class ImageManufactureController extends ImageViewerController {
             increaseHue();
         } else if (colorOperationType == ColorOperationType.Opacity) {
             setOpacity();
+        } else if (colorOperationType == ColorOperationType.Red) {
+            increaseRed();
+        } else if (colorOperationType == ColorOperationType.Green) {
+            increaseGreen();
+        } else if (colorOperationType == ColorOperationType.Blue) {
+            increaseBlue();
         }
     }
 
@@ -956,6 +1007,12 @@ public class ImageManufactureController extends ImageViewerController {
             decreaseSaturate();
         } else if (colorOperationType == ColorOperationType.Hue) {
             decreaseHue();
+        } else if (colorOperationType == ColorOperationType.Red) {
+            decreaseRed();
+        } else if (colorOperationType == ColorOperationType.Green) {
+            decreaseGreen();
+        } else if (colorOperationType == ColorOperationType.Blue) {
+            decreaseBlue();
         }
     }
 
@@ -977,7 +1034,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeHue(currentImage, colorValue, colorScope);
+                final Image newImage = FxImageTools.changeHue(currentImage, colorValue, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1000,7 +1057,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeHue(currentImage, 0 - colorValue, colorScope);
+                final Image newImage = FxImageTools.changeHue(currentImage, 0 - colorValue, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1023,7 +1080,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeSaturate(currentImage, colorValue / 100.0f, colorScope);
+                final Image newImage = FxImageTools.changeSaturate(currentImage, colorValue / 100.0f, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1047,7 +1104,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeSaturate(currentImage, 0.0f - colorValue / 100.0f, colorScope);
+                final Image newImage = FxImageTools.changeSaturate(currentImage, 0.0f - colorValue / 100.0f, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1070,7 +1127,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeBrightness(currentImage, colorValue / 100.0f, colorScope);
+                final Image newImage = FxImageTools.changeBrightness(currentImage, colorValue / 100.0f, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1093,7 +1150,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.changeBrightness(currentImage, 0.0f - colorValue / 100.0f, colorScope);
+                final Image newImage = FxImageTools.changeBrightness(currentImage, 0.0f - colorValue / 100.0f, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1116,7 +1173,145 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.setOpacity(currentImage, colorValue, colorScope);
+                final Image newImage = FxImageTools.setOpacity(currentImage, colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void increaseRed() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeRed(currentImage, colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void increaseGreen() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeGreen(currentImage, colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void increaseBlue() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeBlue(currentImage, colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void decreaseRed() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeRed(currentImage, 0 - colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void decreaseGreen() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeGreen(currentImage, 0 - colorValue, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void decreaseBlue() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.changeBlue(currentImage, 0 - colorValue, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1180,6 +1375,12 @@ public class ImageManufactureController extends ImageViewerController {
                 filtersOperationType = FiltersOperationType.Gray;
             } else if (getMessage("Invert").equals(selected.getText())) {
                 filtersOperationType = FiltersOperationType.Invert;
+            } else if (getMessage("Red").equals(selected.getText())) {
+                filtersOperationType = FiltersOperationType.Red;
+            } else if (getMessage("Green").equals(selected.getText())) {
+                filtersOperationType = FiltersOperationType.Green;
+            } else if (getMessage("Blue").equals(selected.getText())) {
+                filtersOperationType = FiltersOperationType.Blue;
             }
             binarySlider.setDisable(true);
             binaryValue.setDisable(true);
@@ -1217,6 +1418,12 @@ public class ImageManufactureController extends ImageViewerController {
             setInvert();
         } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
             setBinary();
+        } else if (filtersOperationType == FiltersOperationType.Red) {
+            setRed();
+        } else if (filtersOperationType == FiltersOperationType.Green) {
+            setGreen();
+        } else if (filtersOperationType == FiltersOperationType.Blue) {
+            setBlue();
         }
     }
 
@@ -1224,7 +1431,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeInvert(currentImage, filtersScope);
+                final Image newImage = FxImageTools.makeInvert(currentImage, filtersScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1247,7 +1454,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeGray(currentImage, filtersScope);
+                final Image newImage = FxImageTools.makeGray(currentImage, filtersScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1270,7 +1477,76 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.makeBinary(currentImage, binaryThreshold, filtersScope);
+                final Image newImage = FxImageTools.makeBinary(currentImage, binaryThreshold, filtersScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void setRed() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.keepRed(currentImage, filtersScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void setGreen() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.keepGreen(currentImage, filtersScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void setBlue() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.keepBlue(currentImage, filtersScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1299,7 +1575,7 @@ public class ImageManufactureController extends ImageViewerController {
                 FxmlTools.setComments(transformBar, tips);
             }
 
-            ObservableList<String> shears = FXCollections.observableArrayList(
+            List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
                     "1.5", "-1.5", "2", "-2");
@@ -1330,10 +1606,8 @@ public class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            ObservableList<String> angles = FXCollections.observableArrayList(
-                    "90", "180", "45", "30", "60", "15", "75", "120", "135");
-            angleBox.getItems().addAll(angles);
-            angleBox.setVisibleRowCount(angles.size());
+            angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "75", "120", "135"));
+            angleBox.setVisibleRowCount(10);
             angleBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -1363,7 +1637,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.rotateImage(currentImage, rotateAngle);
+                final Image newImage = FxImageTools.rotateImage(currentImage, rotateAngle);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1371,6 +1645,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1387,7 +1662,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.rotateImage(currentImage, 360 - rotateAngle);
+                final Image newImage = FxImageTools.rotateImage(currentImage, 360 - rotateAngle);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1395,6 +1670,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1411,7 +1687,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.horizontalImage(currentImage);
+                final Image newImage = FxImageTools.horizontalImage(currentImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1419,6 +1695,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1435,7 +1712,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.verticalImage(currentImage);
+                final Image newImage = FxImageTools.verticalImage(currentImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1443,6 +1720,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1459,7 +1737,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.shearImage(currentImage, shearX, 0);
+                final Image newImage = FxImageTools.shearImage(currentImage, shearX, 0);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1467,6 +1745,7 @@ public class ImageManufactureController extends ImageViewerController {
                         currentImage = newImage;
                         imageView.setImage(newImage);
                         imageChanged.set(true);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1525,7 +1804,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.replaceColors(currentImage, newColorPicker.getValue(), replaceColorScope);
+                final Image newImage = FxImageTools.replaceColors(currentImage, newColorPicker.getValue(), replaceColorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1572,7 +1851,7 @@ public class ImageManufactureController extends ImageViewerController {
             });
             checkWaterY();
 
-            ObservableList<String> sizes = FXCollections.observableArrayList(
+            List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
             waterSizeBox.getItems().addAll(sizes);
             waterSizeBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -1589,9 +1868,7 @@ public class ImageManufactureController extends ImageViewerController {
             });
             waterSizeBox.getSelectionModel().select(0);
 
-            ObservableList<String> transparents = FXCollections.observableArrayList(
-                    "0.5", "1.0", "0.3", "0.1", "0.8");
-            waterTransparentBox.getItems().addAll(transparents);
+            waterTransparentBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             waterTransparentBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -1611,21 +1888,50 @@ public class ImageManufactureController extends ImageViewerController {
             });
             waterTransparentBox.getSelectionModel().select(0);
 
-            ObservableList<String> styles = FXCollections.observableArrayList(
-                    getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
+            waterShadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
+            waterShadowBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        waterShadow = Integer.valueOf(newValue);
+                        if (waterShadow >= 0) {
+                            waterShadowBox.getEditor().setStyle(null);
+                            AppVaribles.setConfigValue(ImageWatermarkShadowKey, newValue);
+                        } else {
+                            waterShadow = 0;
+                            waterShadowBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        waterShadow = 0;
+                        waterShadowBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            waterShadowBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageWatermarkShadowKey, "0"));
+
+            List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
             waterStyleBox.getSelectionModel().select(0);
 
             GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.getSelectionModel().select(AppVaribles.getConfigValue(FontFamilyKey, fontNames[0]));
+            waterFamilyBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageFontFamilyKey, fontNames[0]));
             waterFamilyBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    AppVaribles.setConfigValue(FontFamilyKey, newValue);
+                    AppVaribles.setConfigValue(ImageFontFamilyKey, newValue);
                 }
             });
+
+            waterColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+                @Override
+                public void changed(ObservableValue<? extends Color> observable,
+                        Color oldValue, Color newValue) {
+                    AppVaribles.setConfigValue(ImageWatermarkColorKey, newValue.toString());
+                }
+            });
+            waterColorPicker.setValue(Color.web(AppVaribles.getConfigValue(ImageWatermarkColorKey, "#FFFFFF")));
 
             waterAddButton.disableProperty().bind(
                     waterXInput.styleProperty().isEqualTo(badStyle)
@@ -1677,6 +1983,29 @@ public class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void waterAddAction() {
+//        String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
+//        String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
+//        Font font;
+//        if (AppVaribles.getMessage("Bold").equals(fontStyle)) {
+//            font = Font.font(fontFamily, FontWeight.BOLD, waterSize);
+//        } else if (AppVaribles.getMessage("Italic").equals(fontStyle)) {
+//            font = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, waterSize);
+//        } else if (AppVaribles.getMessage("Bold Italic").equals(fontStyle)) {
+//            font = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, waterSize);
+//        } else {
+//            font = Font.font(fontFamily, FontWeight.NORMAL, waterSize);
+//        }
+//        final Image newImage = FxImageTools.addWatermarkFx(currentImage, waterInput.getText(),
+//                font, waterColorPicker.getValue(), waterX, waterY, waterTransparent, waterShadow);
+//        if (newImage != null) {
+//            undoImage = currentImage;
+//            currentImage = newImage;
+//            imageView.setImage(newImage);
+//            imageChanged.set(true);
+//            return;
+//        }
+
+        // If JavaFx way fail for big image, then go the way of Java2D
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -1692,8 +2021,8 @@ public class ImageManufactureController extends ImageViewerController {
                 } else {
                     font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, waterSize);
                 }
-                final Image newImage = FxmlTools.addWatermark(currentImage, waterInput.getText(),
-                        font, waterColorPicker.getValue(), waterX, waterY, waterTransparent);
+                final Image newImage = FxImageTools.addWatermark(currentImage, waterInput.getText(),
+                        font, waterColorPicker.getValue(), waterX, waterY, waterTransparent, waterShadow);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1710,6 +2039,7 @@ public class ImageManufactureController extends ImageViewerController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+
     }
 
     // Reference Methods
@@ -1771,7 +2101,7 @@ public class ImageManufactureController extends ImageViewerController {
                         refBox.getChildren().add(0, refLabel);
                         refBox.getChildren().add(1, refPane);
                         splitPane.getItems().add(0, refBox);
-                        logger.debug(refLabel.getText());
+//                        logger.debug(refLabel.getText());
                     } else {
                         splitPane.getItems().add(0, refPane);
                     }
@@ -1786,7 +2116,7 @@ public class ImageManufactureController extends ImageViewerController {
                     } else {
                         refView.setImage(refImage);
                         if (refInfo != null) {
-                            logger.debug(scrollPane.getHeight() + " " + refInfo.getyPixels());
+//                            logger.debug(scrollPane.getHeight() + " " + refInfo.getyPixels());
                             if (scrollPane.getHeight() < refInfo.getyPixels()) {
                                 refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
                                 refView.setFitWidth(scrollPane.getWidth() - 1);
@@ -1843,6 +2173,7 @@ public class ImageManufactureController extends ImageViewerController {
                             refView.setFitHeight(refInfo.getyPixels());
                             refView.setFitWidth(refInfo.getxPixels());
                         }
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -1896,14 +2227,8 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     // Cut Edges Methods
-    protected void initEdgesTab() {
+    protected void initCutEdgesTab() {
         try {
-            displayRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    checkReferenceImage();
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1911,18 +2236,18 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    public void edgesTransparentAction() {
-        edgesColorPicker.setValue(Color.TRANSPARENT);
+    public void cutEdgesTransparentAction() {
+        cutEdgesColorPicker.setValue(Color.TRANSPARENT);
     }
 
     @FXML
-    public void edgesBlackAction() {
-        edgesColorPicker.setValue(Color.BLACK);
+    public void cutEdgesBlackAction() {
+        cutEdgesColorPicker.setValue(Color.BLACK);
     }
 
     @FXML
-    public void edgesWhiteAction() {
-        edgesColorPicker.setValue(Color.WHITE);
+    public void cutEdgesWhiteAction() {
+        cutEdgesColorPicker.setValue(Color.WHITE);
     }
 
     @FXML
@@ -1931,9 +2256,9 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlTools.cutEdges(currentImage, waterColorPicker.getValue(),
-                            edgesTopCheck.isSelected(), edgesBottomCheck.isSelected(),
-                            edgesLeftCheck.isSelected(), edgesRightCheck.isSelected());
+                    final Image newImage = FxImageTools.cutEdges(currentImage, cutEdgesColorPicker.getValue(),
+                            cutEdgesTopCheck.isSelected(), cutEdgesBottomCheck.isSelected(),
+                            cutEdgesLeftCheck.isSelected(), cutEdgesRightCheck.isSelected());
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -1941,11 +2266,284 @@ public class ImageManufactureController extends ImageViewerController {
                             currentImage = newImage;
                             imageView.setImage(newImage);
                             imageChanged.set(true);
+                            setBottomLabel();
                         }
                     });
                 } catch (Exception e) {
                     logger.debug(e.toString());
                 }
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    // Add Edges Methods
+    protected void initAddEdgesTab() {
+        try {
+            addEdgeBox.getItems().addAll(Arrays.asList("5", "10", "2", "15", "20", "30", "1"));
+            addEdgeBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        addEdgeWidth = Integer.valueOf(newValue);
+                        if (addEdgeWidth > 0) {
+                            addEdgeBox.getEditor().setStyle(null);
+                        } else {
+                            addEdgeWidth = 0;
+                            addEdgeBox.getEditor().setStyle(badStyle);
+                        }
+
+                    } catch (Exception e) {
+                        addEdgeWidth = 0;
+                        addEdgeBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            addEdgeBox.getSelectionModel().select(0);
+
+            addEdgesOkButton.disableProperty().bind(
+                    addEdgeBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void addEdgesTransparentAction() {
+        addEdgesColorPicker.setValue(Color.TRANSPARENT);
+    }
+
+    @FXML
+    public void addEdgesBlackAction() {
+        addEdgesColorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void addEdgesWhiteAction() {
+        addEdgesColorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    public void pickColorForEdge() {
+        pixelPickingType = PixelPickingType.EdgeColor;
+        imageView.setCursor(Cursor.HAND);
+        promptLabel.setText(getMessage("PickColorComments"));
+    }
+
+    @FXML
+    public void addEdgesAction() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.addEdgesFx(currentImage,
+                        addEdgesColorPicker.getValue(), addEdgeWidth,
+                        addEdgesTopCheck.isSelected(), addEdgesBottomCheck.isSelected(),
+                        addEdgesLeftCheck.isSelected(), addEdgesRightCheck.isSelected());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        setBottomLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+    // Arc Methods
+    protected void initArcTab() {
+        try {
+            arcBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        arc = Integer.valueOf(newValue);
+                        if (arc >= 0) {
+                            arcBox.getEditor().setStyle(null);
+                            AppVaribles.setConfigValue(ImageArcKey, newValue);
+                        } else {
+                            arc = 0;
+                            arcBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        arc = 0;
+                        arcBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            arcColorPicker.setValue(Color.TRANSPARENT);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void arcTransparentAction() {
+        arcColorPicker.setValue(Color.TRANSPARENT);
+    }
+
+    @FXML
+    public void arcWhiteAction() {
+        arcColorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    public void arcBlackAction() {
+        arcColorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void arcAction() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.addArc(currentImage, arc, arcColorPicker.getValue());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        setBottomLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
+
+    @FXML
+    public void arcAction2() {
+        if (arc <= 0) {
+            return;
+        }
+        final Image newImage = FxImageTools.addArcFx(currentImage, arc, arcColorPicker.getValue());
+        if (newImage == null) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(AppVaribles.getMessage("ErrorForBigImage"));
+            Optional<ButtonType> result = alert.showAndWait();
+            return;
+        }
+
+        undoImage = currentImage;
+        currentImage = newImage;
+        imageView.setImage(newImage);
+        imageChanged.set(true);
+        setBottomLabel();
+
+    }
+
+    // Shadow Methods
+    protected void initShadowTab() {
+        try {
+            shadowBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        shadow = Integer.valueOf(newValue);
+                        if (shadow >= 0) {
+                            shadowBox.getEditor().setStyle(null);
+                            AppVaribles.setConfigValue(ImageShadowKey, newValue);
+                        } else {
+                            shadow = 0;
+                            shadowBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        shadow = 0;
+                        shadowBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            shadowColorPicker.setValue(Color.BLACK);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void shadowTransparentAction() {
+        shadowColorPicker.setValue(Color.TRANSPARENT);
+    }
+
+    @FXML
+    public void shadowWhiteAction() {
+        shadowColorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    public void shadowBlackAction() {
+        shadowColorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void shadowAction() {
+        if (shadow <= 0) {
+            return;
+        }
+        try {
+            Image newImage = FxImageTools.addShadowFx(currentImage, shadow, shadowColorPicker.getValue());
+            if (newImage != null) {
+                undoImage = currentImage;
+                currentImage = newImage;
+                imageView.setImage(newImage);
+                imageChanged.set(true);
+                setBottomLabel();
+                return;
+            }
+        } catch (Exception e) {
+
+        }
+
+        Image newImage = FxImageTools.addShadowBigFx(currentImage, shadow, shadowColorPicker.getValue());
+        if (newImage != null) {
+            undoImage = currentImage;
+            currentImage = newImage;
+            imageView.setImage(newImage);
+            imageChanged.set(true);
+            setBottomLabel();
+            return;
+        }
+
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage = FxImageTools.addShadow(currentImage, shadow, shadowColorPicker.getValue());
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                        setBottomLabel();
+                    }
+                });
                 return null;
             }
         };
@@ -2086,6 +2684,10 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     private void showCropScope() {
+        if (!areaValid) {
+            return;
+        }
+
         cropScope.setLeftX(cropLeftX);
         cropScope.setLeftY(cropLeftY);
         cropScope.setRightX(cropRightX);
@@ -2098,7 +2700,7 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlTools.indicateScope(currentImage, cropScope);
+                    final Image newImage = FxImageTools.indicateScopeFx(currentImage, cropScope);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -2141,7 +2743,7 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlTools.cropImage(currentImage,
+                    final Image newImage = FxImageTools.cropImage(currentImage,
                             cropLeftX, cropLeftY, cropRightX, cropRightY);
                     Platform.runLater(new Runnable() {
                         @Override
@@ -2152,12 +2754,13 @@ public class ImageManufactureController extends ImageViewerController {
                             imageChanged.set(true);
 
                             isSettingValues = true;
-                            cropRightXInput.setText("");
-                            cropRightYInput.setText("");
-                            cropLeftXInput.setText("");
-                            cropLeftYInput.setText("");
+                            cropRightXInput.setText((int) currentImage.getWidth() + "");
+                            cropRightYInput.setText((int) currentImage.getHeight() + "");
+                            cropLeftXInput.setText("0");
+                            cropLeftYInput.setText("0");
                             isSettingValues = false;
                             promptLabel.setText("");
+                            setBottomLabel();
 
                         }
                     });
@@ -2212,7 +2815,7 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 String format = imageInformation.getImageFormat();
-                final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, format);
+                final BufferedImage bufferedImage = FxImageTools.getWritableData(currentImage, format);
                 ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
                 imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
                 image = currentImage;
@@ -2220,6 +2823,7 @@ public class ImageManufactureController extends ImageViewerController {
                     @Override
                     public void run() {
                         imageChanged.set(false);
+                        setBottomLabel();
                     }
                 });
                 return null;
@@ -2243,19 +2847,22 @@ public class ImageManufactureController extends ImageViewerController {
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
             AppVaribles.setConfigValue(targetPathKey, file.getParent());
 
             Task saveTask = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlTools.getWritableData(currentImage, imageInformation.getImageFormat());
+                    final BufferedImage bufferedImage = FxImageTools.getWritableData(currentImage, format);
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             if (openCheck.isSelected()) {
-                                showImageManufacture(file.getAbsolutePath());
+                                openImageManufactureInNew(file.getAbsolutePath());
                             }
                         }
                     });
@@ -2277,8 +2884,7 @@ public class ImageManufactureController extends ImageViewerController {
     @Override
     public void zoomIn() {
         try {
-            imageView.setFitHeight(imageView.getFitHeight() * (1 + zoomStep / 100.0f));
-            imageView.setFitWidth(imageView.getFitWidth() * (1 + zoomStep / 100.0f));
+            super.zoomIn();
             if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
                 refView.setFitHeight(refView.getFitHeight() * (1 + zoomStep / 100.0f));
                 refView.setFitWidth(refView.getFitWidth() * (1 + zoomStep / 100.0f));
@@ -2291,8 +2897,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void zoomOut() {
-        imageView.setFitHeight(imageView.getFitHeight() * (1 - zoomStep / 100.0f));
-        imageView.setFitWidth(imageView.getFitWidth() * (1 - zoomStep / 100.0f));
+        super.zoomOut();
         if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
             refView.setFitHeight(refView.getFitHeight() * (1 - zoomStep / 100.0f));
             refView.setFitWidth(refView.getFitWidth() * (1 - zoomStep / 100.0f));
@@ -2302,8 +2907,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void imageSize() {
-        imageView.setFitWidth(currentImage.getWidth());
-        imageView.setFitHeight(currentImage.getHeight());
+        super.imageSize();
         if (refSyncCheck.isSelected() && displayRefCheck.isSelected() && refInfo != null) {
             refView.setFitHeight(refInfo.getyPixels());
             refView.setFitWidth(refInfo.getxPixels());
@@ -2313,8 +2917,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     @Override
     public void paneSize() {
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
-        imageView.setFitWidth(scrollPane.getWidth() - 1);
+        super.paneSize();
         if (refSyncCheck.isSelected() && displayRefCheck.isSelected()) {
             refView.setFitHeight(refPane.getHeight() - 5);
             refView.setFitWidth(refPane.getWidth() - 1);
@@ -2354,6 +2957,13 @@ public class ImageManufactureController extends ImageViewerController {
             PixelReader pixelReader = currentImage.getPixelReader();
             Color color = pixelReader.getColor(x, y);
             newColorPicker.setValue(color);
+            promptLabel.setText(getMessage("ContinueClickColor"));
+
+        } else if (pixelPickingType == PixelPickingType.EdgeColor) {
+
+            PixelReader pixelReader = currentImage.getPixelReader();
+            Color color = pixelReader.getColor(x, y);
+            cutEdgesColorPicker.setValue(color);
             promptLabel.setText(getMessage("ContinueClickColor"));
 
         } else if (pixelPickingType == PixelPickingType.Watermark) {
@@ -2506,7 +3116,7 @@ public class ImageManufactureController extends ImageViewerController {
             refInfo.setxPixels(imageInformation.getxPixels());
             refInfo.setyPixels(imageInformation.getyPixels());
             refInfo.setIsScope(true);
-            logger.debug(refInfo.isIsScope());
+//            logger.debug(refInfo.isIsScope());
             displayRefCheck.setSelected(true);
         }
     }
@@ -2575,6 +3185,14 @@ public class ImageManufactureController extends ImageViewerController {
         } else {
             return true;
         }
+    }
+
+    public String getInitTab() {
+        return initTab;
+    }
+
+    public void setInitTab(String initTab) {
+        this.initTab = initTab;
     }
 
 }

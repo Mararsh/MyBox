@@ -88,48 +88,48 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%SourceFiles" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%Copy">
+                                                <RadioButton fx:id="copyRadio" mnemonicParsing="false" selected="true" text="%Copy">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="filesGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%Move" toggleGroup="$filesGroup" />
+                                                <RadioButton fx:id="moveRadio" mnemonicParsing="false" text="%Move" toggleGroup="$filesGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%ExistedFiles" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%ReplaceModified">
+                                                <RadioButton fx:id="replaceModifiedRadio" mnemonicParsing="false" selected="true" text="%ReplaceModified">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="replaceGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%Replace" toggleGroup="$replaceGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Rename" toggleGroup="$replaceGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%NotCopy" toggleGroup="$replaceGroup" />
+                                                <RadioButton fx:id="replaceRadio" mnemonicParsing="false" text="%Replace" toggleGroup="$replaceGroup" />
+                                                <RadioButton fx:id="renameRadio" mnemonicParsing="false" text="%Rename" toggleGroup="$replaceGroup" />
+                                                <RadioButton fx:id="notCopyRadio" mnemonicParsing="false" text="%NotCopy" toggleGroup="$replaceGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%By" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%ModifyTime">
+                                                <RadioButton fx:id="modifiyTimeRadio" mnemonicParsing="false" selected="true" text="%ModifyTime">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="byGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%CreateTime" toggleGroup="$byGroup" />
+                                                <RadioButton fx:id="createTimeRadio" mnemonicParsing="false" text="%CreateTime" toggleGroup="$byGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%Category" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%Month">
+                                                <RadioButton fx:id="monthRadio" mnemonicParsing="false" selected="true" text="%Month">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="dirGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%Day" toggleGroup="$dirGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Year" toggleGroup="$dirGroup" />
+                                                <RadioButton fx:id="dayRadio" mnemonicParsing="false" text="%Day" toggleGroup="$dirGroup" />
+                                                <RadioButton fx:id="yearRadio" mnemonicParsing="false" text="%Year" toggleGroup="$dirGroup" />
                                                 <Label text="%FileArrangeComments" />
                                             </children>
                                         </HBox>

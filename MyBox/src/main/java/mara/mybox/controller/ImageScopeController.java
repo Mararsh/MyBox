@@ -1,11 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,6 +44,7 @@ import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.tools.FxImageTools;
 
 /**
  * @Author Mara
@@ -100,8 +100,7 @@ public class ImageScopeController extends BaseController {
 
             initColorTab();
 
-            ObservableList<Double> values = FXCollections.observableArrayList(
-                    0.1, 0.5, 0.2, 0.3, 0.6, 0.4, 0.7, 0.8, 0.9, 1.0);
+            List<Double> values = Arrays.asList(0.1, 0.5, 0.2, 0.3, 0.6, 0.4, 0.7, 0.8, 0.9, 1.0);
             opacityBox.getItems().addAll(values);
             opacityBox.setVisibleRowCount(values.size());
             opacityBox.valueProperty().addListener(new ChangeListener<Double>() {
@@ -1016,7 +1015,7 @@ public class ImageScopeController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlTools.indicateScope(imageScope.getImage(), imageScope);
+                    final Image newImage = FxImageTools.indicateScopeFx(imageScope.getImage(), imageScope);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

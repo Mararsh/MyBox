@@ -51,62 +51,77 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" spacing="5.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" BorderPane.alignment="CENTER">
             <children>
-            <HBox alignment="CENTER_LEFT" spacing="10.0">
-               <children>
-                              <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
-                                  <HBox.margin>
-                                      <Insets />
-                                  </HBox.margin>
-                              </TextField>
-                              <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select...">
-                                  <HBox.margin>
-                                      <Insets />
-                                  </HBox.margin>
-                              </Button>
-               </children>
-            </HBox>
-            <HBox fx:id="toolBar" alignment="CENTER_LEFT">
-               <children>
-                  <ToolBar prefHeight="44.0">
+                <HBox fx:id="sourceBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                    <children>
+                  <ToolBar HBox.hgrow="NEVER">
                     <items>
-                      <Button mnemonicParsing="false" onAction="#popImageInformation" prefHeight="30.0" text="%ImageInformation" />
-                        <Button mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
+                              <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select..." />
                     </items>
                   </ToolBar>
-                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                  <ToolBar fx:id="navBar" disable="true" HBox.hgrow="ALWAYS">
                     <items>
-                      <Button fx:id="oButton" mnemonicParsing="false" onAction="#originalSize" prefHeight="30.0" text="%OriginalSize" />
-                        <Button fx:id="wButton" mnemonicParsing="false" onAction="#windowSize" text="%WindowSize" />
-                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="30.0" text="%ZoomIn" />
-                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="30.0" text="%ZoomOut" />
-                        <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
-                        <Button fx:id="lButton" layoutX="588.0" layoutY="10.0" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
-                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                        <Button fx:id="bButton" mnemonicParsing="false" onAction="#back" text="%Back" />
+                        <Label text="%Sort">
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                        </Label>
+                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="sortGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
+                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
+                        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousImage" />
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextImage" />
+                        <Button mnemonicParsing="false" onAction="#browseAction" text="%MultipleImagesViewer" />
                     </items>
                   </ToolBar>
-               </children>
-            </HBox>
-            <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-               <content>
-                  <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" pickOnBounds="true" preserveRatio="true">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></ImageView>
-               </content>
-            </ScrollPane>
+                  <ToolBar fx:id="infoBar" disable="true" HBox.hgrow="NEVER">
+                    <items>
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#popImageInformation" prefHeight="30.0" text="%ImageInformation" />
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
+                    </items>
+                  </ToolBar>
+                    </children>
+                </HBox>
+                  <ToolBar fx:id="toolbar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="NEVER">
+                      <items>
+                          <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                          <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                          <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                          <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                          <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
+                          <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
+                          <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
+                          <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
+                          <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                          <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                          <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                          <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                      </items>
+                  </ToolBar>
+                <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                    <content>
+                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" pickOnBounds="true" preserveRatio="true">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </ImageView>
+                    </content>
+                </ScrollPane>
             </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
         </VBox>
     </center>
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
 </BorderPane>

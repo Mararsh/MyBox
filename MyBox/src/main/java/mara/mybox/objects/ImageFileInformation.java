@@ -1,6 +1,7 @@
 package mara.mybox.objects;
 
 import java.io.File;
+import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -17,12 +18,26 @@ public class ImageFileInformation {
     private int yDensity, xDensity;  // dpi
     private long createTime;
     private boolean hasAlpha, isLossless, isScope;
-    private String metaData;
+    private String metaData, filename, size;
+    private Image image;
+    private ImageFileInformation self;
 
     public ImageFileInformation() {
         hasAlpha = false;
         isLossless = true;
         isScope = false;
+    }
+
+    public ImageFileInformation(Image image) {
+        hasAlpha = false;
+        isLossless = true;
+        isScope = false;
+        this.image = image;
+        if (image == null) {
+            return;
+        }
+        xPixels = (int) image.getWidth();
+        yPixels = (int) image.getHeight();
     }
 
     public File getFile() {
@@ -159,6 +174,40 @@ public class ImageFileInformation {
 
     public void setIsScope(boolean isScope) {
         this.isScope = isScope;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public ImageFileInformation getSelf() {
+        return self;
+    }
+
+    public void setSelf(ImageFileInformation self) {
+        this.self = self;
+    }
+
+    public String getFilename() {
+        filename = file.getAbsolutePath();
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getSize() {
+        size = xPixels + "x" + yPixels;
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
 }

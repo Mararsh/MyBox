@@ -1,14 +1,10 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 
@@ -37,17 +33,18 @@ public class ImageViewerIController extends ImageViewerController {
     @FXML
     void imageClicked(MouseEvent event) {
         if (!isRefer && event.getClickCount() > 1) {
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
-                Pane pane = fxmlLoader.load();
-                ImageManufactureController controller = fxmlLoader.getController();
-                controller.loadImage(sourceFile.getAbsolutePath());
-
-                controller.setMyStage(getMyStage());
-                myStage.setScene(new Scene(pane));
-            } catch (Exception e) {
-                logger.error(e.toString());
-            }
+            openImageManufactureInNew(sourceFile.getAbsolutePath());
+//            try {
+//                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+//                Pane pane = fxmlLoader.load();
+//                ImageManufactureController controller = fxmlLoader.getController();
+//                controller.loadImage(sourceFile.getAbsolutePath());
+//
+//                controller.setMyStage(getMyStage());
+//                myStage.setScene(new Scene(pane));
+//            } catch (Exception e) {
+//                logger.error(e.toString());
+//            }
         }
     }
 

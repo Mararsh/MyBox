@@ -120,11 +120,12 @@ public abstract class ImageBaseController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 imageInformation = ImageFileReaders.readImageMetaData(fileName);
-                BufferedImage bufferImage = null;
                 String format = FileTools.getFileSuffix(fileName).toLowerCase();
                 if (!"raw".equals(format) && !onlyInformation) {
-                    bufferImage = ImageIO.read(file);
+                    BufferedImage bufferImage = ImageIO.read(file);
                     image = SwingFXUtils.toFXImage(bufferImage, null);
+//                    image = new Image(file.getAbsolutePath());
+                    imageInformation.setImage(image);
                 }
                 Platform.runLater(new Runnable() {
                     @Override
@@ -298,7 +299,7 @@ public abstract class ImageBaseController extends BaseController {
                                         || !new File(currentParameters.finalTargetName).exists()) {
                                     popInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else {
-                                    showImageManufacture(currentParameters.finalTargetName);
+                                    openImageManufactureInNew(currentParameters.finalTargetName);
                                 }
                             }
 

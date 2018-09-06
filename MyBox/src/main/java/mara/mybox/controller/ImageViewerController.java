@@ -1,24 +1,32 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -31,23 +39,29 @@ public class ImageViewerController extends ImageBaseController {
     protected double mouseX, mouseY;
     protected int zoomStep = 10;
     protected int currentAngle = 0, rotateAngle = 90;
+    protected File nextFile, previousFile;
 
     @FXML
     protected TextField imageFile;
     @FXML
-    protected HBox toolBar;
+    protected HBox sourceBox;
     @FXML
-    protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton;
+    protected VBox contentBox;
     @FXML
-    protected Button tButton, sButton, mrButton, mlButton, upButton, downButton;
+    protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton, previousButton, nextButton;
+    @FXML
+    protected Button tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
+    @FXML
+    protected ToolBar toolbar, navBar, infoBar;
+    @FXML
+    protected ToggleGroup sortGroup;
 
     @Override
     protected void initializeNext2() {
         try {
 
-            toolBar.disableProperty().bind(
-                    Bindings.isEmpty(sourceFileInput.textProperty())
-                            .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
+            toolbar.disableProperty().bind(
+                    Bindings.isNull(imageView.imageProperty())
             );
 //            setTips();
 
@@ -68,23 +82,33 @@ public class ImageViewerController extends ImageBaseController {
 
     @Override
     public void afterImageLoaded() {
-        imageView.setPreserveRatio(true);
-//        logger.debug(scrollPane.getHeight() + " " + imageInformation.getyPixels());
-        if (scrollPane.getHeight() < imageInformation.getyPixels()) {
-            imageView.setFitHeight(scrollPane.getHeight() - 5);
-            imageView.setFitWidth(scrollPane.getWidth() - 1);
-        } else {
-            imageView.setFitHeight(imageInformation.getyPixels());
-            imageView.setFitWidth(imageInformation.getxPixels());
-        }
         try {
+            if (image == null) {
+                return;
+            }
+            imageView.setPreserveRatio(true);
             imageView.setImage(image);
-//                        imageView.setImage(new Image("file:" + fileName, true));
-            if (imageFile != null) {
+            fitSize();
+            if (imageFile != null && sourceFile != null) {
                 imageFile.setText(sourceFile.getName());
+            }
+            if (infoButton != null) {
+                infoButton.setDisable(imageInformation == null);
+            }
+            if (metaButton != null) {
+                metaButton.setDisable(imageInformation == null);
+            }
+
+            if (sourceFile != null && navBar != null) {
+                navBar.setDisable(false);
+                checkImageNevigator();
+            }
+            if (infoBar != null && imageInformation != null) {
+                infoBar.setDisable(false);
             }
 
         } catch (Exception e) {
+            logger.error(e.toString());
             imageView.setImage(null);
             popInformation(AppVaribles.getMessage("NotSupported"));
         }
@@ -105,8 +129,22 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void popImageInformation2() {
-        showImageInformation(imageInformation);
+    public void nextAction() {
+        if (nextFile != null) {
+            loadImage(nextFile.getAbsoluteFile(), false);
+        }
+    }
+
+    @FXML
+    public void previousAction() {
+        if (previousFile != null) {
+            loadImage(previousFile.getAbsoluteFile(), false);
+        }
+    }
+
+    @FXML
+    public void browseAction() {
+        openImagesBrowserInNew(sourceFile.getParentFile(), 16);
     }
 
     @FXML
@@ -115,33 +153,51 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void popMetaData2() {
-        showImageMetaData(imageInformation);
-    }
-
-    @FXML
     public void zoomIn() {
-        imageView.setFitHeight(imageView.getFitHeight() * (1 + zoomStep / 100.0f));
-        imageView.setFitWidth(imageView.getFitWidth() * (1 + zoomStep / 100.0f));
+        double currentWidth = imageView.getFitWidth();
+        if (currentWidth == -1) {
+            currentWidth = image.getWidth();
+        }
+        imageView.setFitWidth(currentWidth * (1 + zoomStep / 100.0f));
+        double currentHeight = imageView.getFitHeight();
+        if (currentHeight == -1) {
+            currentHeight = image.getHeight();
+        }
+        imageView.setFitHeight(currentHeight * (1 + zoomStep / 100.0f));
     }
 
     @FXML
     public void zoomOut() {
-        imageView.setFitHeight(imageView.getFitHeight() * (1 - zoomStep / 100.0f));
-        imageView.setFitWidth(imageView.getFitWidth() * (1 - zoomStep / 100.0f));
-
+        double currentWidth = imageView.getFitWidth();
+        if (currentWidth == -1) {
+            currentWidth = image.getWidth();
+        }
+        imageView.setFitWidth(currentWidth * (1 - zoomStep / 100.0f));
+        double currentHeight = imageView.getFitHeight();
+        if (currentHeight == -1) {
+            currentHeight = image.getHeight();
+        }
+        imageView.setFitHeight(currentHeight * (1 - zoomStep / 100.0f));
     }
 
     @FXML
     public void imageSize() {
-        imageView.setFitHeight(imageInformation.getyPixels());
-        imageView.setFitWidth(imageInformation.getxPixels());
+        imageView.setFitHeight(-1);
+        imageView.setFitWidth(-1);
     }
 
     @FXML
     public void paneSize() {
         imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
+    }
+
+    public void fitSize() {
+        if (scrollPane.getHeight() < image.getHeight()) {
+            paneSize();
+        } else {
+            imageSize();
+        }
     }
 
     @FXML
@@ -247,6 +303,13 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
+    public void loadImage(Image inImage) {
+        sourceFile = null;
+        imageInformation = null;
+        image = inImage;
+        afterImageLoaded();
+    }
+
     public void showImageInformation(ImageFileInformation info) {
         try {
             if (info == null) {
@@ -297,6 +360,65 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
+    public void checkImageNevigator() {
+        try {
+            if (sourceFile == null) {
+                previousFile = null;
+                previousButton.setDisable(true);
+                nextFile = null;
+                nextButton.setDisable(true);
+                return;
+            }
+            File path = sourceFile.getParentFile();
+            List<File> sortedFiles = new ArrayList<>();
+            File[] files = path.listFiles();
+            for (File file : files) {
+                if (file.isFile() && FileTools.isSupportedImage(file)) {
+                    sortedFiles.add(file);
+                }
+            }
+            RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
+            if (getMessage("OriginalFileName").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
+
+            } else if (getMessage("CreateTime").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
+
+            } else if (getMessage("ModifyTime").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
+
+            } else if (getMessage("Size").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
+            }
+
+            for (int i = 0; i < sortedFiles.size(); i++) {
+                if (sortedFiles.get(i).getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
+                    if (i < sortedFiles.size() - 1) {
+                        nextFile = sortedFiles.get(i + 1);
+                        nextButton.setDisable(false);
+                    } else {
+                        nextFile = null;
+                        nextButton.setDisable(true);
+                    }
+                    if (i > 0) {
+                        previousFile = sortedFiles.get(i - 1);
+                        previousButton.setDisable(false);
+                    } else {
+                        previousFile = null;
+                        previousButton.setDisable(true);
+                    }
+                    return;
+                }
+            }
+            previousFile = null;
+            previousButton.setDisable(true);
+            nextFile = null;
+            nextButton.setDisable(true);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     public double getMouseX() {
         return mouseX;
     }
@@ -311,14 +433,6 @@ public class ImageViewerController extends ImageBaseController {
 
     public void setMouseY(double mouseY) {
         this.mouseY = mouseY;
-    }
-
-    public HBox getToolBar() {
-        return toolBar;
-    }
-
-    public void setToolBar(HBox toolBar) {
-        this.toolBar = toolBar;
     }
 
     public Button getiButton() {

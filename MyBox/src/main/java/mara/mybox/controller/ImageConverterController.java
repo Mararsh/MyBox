@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConverter;
+import mara.mybox.image.ImageConvertionTools;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -58,7 +58,7 @@ public class ImageConverterController extends ImageBaseController {
 
     @FXML
     protected void showImage(ActionEvent event) {
-        showImageManufacture(sourceFile.getAbsolutePath());
+        openImageManufactureInNew(sourceFile.getAbsolutePath());
     }
 
     @Override
@@ -161,7 +161,7 @@ public class ImageConverterController extends ImageBaseController {
                         if (currentParameters.finalTargetName == null) {
                             return false;
                         }
-                        BufferedImage newImage = ImageConverter.scaleImage(bufferImage, w, h);
+                        BufferedImage newImage = ImageConvertionTools.scaleImage(bufferImage, w, h);
                         int color = bufferImage.getType();
                         logger.debug(color);
                         if (ImageType.BINARY == attributes.getColorSpace()) {

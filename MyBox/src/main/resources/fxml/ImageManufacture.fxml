@@ -79,7 +79,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="pixelsTab" text="%Pixels">
+                                <Tab fx:id="sizeTab" text="%Size">
                                     <content>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                                             <children>
@@ -107,7 +107,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <ToggleGroup fx:id="pixelsGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <TextField fx:id="scaleInput" prefWidth="50.0" text="1.0" />
+                                                        <ComboBox fx:id="scaleBox" editable="true" prefWidth="80.0" />
                                                         <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Pixels" toggleGroup="$pixelsGroup">
                                                             <padding>
                                                                 <Insets left="10.0" />
@@ -118,6 +118,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToolBar HBox.hgrow="ALWAYS">
                                                     <items>
                                                         <Button mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="cropTab" text="%Crop">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar>
+                                                    <items>
+                                                        <Button mnemonicParsing="false" onAction="#cropPickLeft" text="%LeftTop" />
+                                                        <TextField fx:id="cropLeftXInput" prefWidth="80.0" promptText="X" />
+                                                        <TextField fx:id="cropLeftYInput" prefWidth="80.0" promptText="Y" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Button mnemonicParsing="false" onAction="#cropPickRight" text="%RightBottom" />
+                                                        <TextField fx:id="cropRightXInput" prefWidth="80.0" promptText="X" />
+                                                        <TextField fx:id="cropRightYInput" prefWidth="80.0" promptText="Y" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Button fx:id="cropOkButton" mnemonicParsing="false" onAction="#cropAction" text="%Crop" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -136,18 +163,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToolBar maxWidth="1.7976931348623157E308">
                                                     <items>
                                                         <RadioButton mnemonicParsing="false" selected="true" text="%Brightness">
-                                                            <padding>
-                                                                <Insets left="30.0" />
-                                                            </padding>
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="colorGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
                                                         <RadioButton mnemonicParsing="false" text="%Saturation" toggleGroup="$colorGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$colorGroup" />
+                                                        <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
                                                         <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup">
                                                             <padding>
-                                                                <Insets right="30.0" />
+                                                                <Insets right="20.0" />
                                                             </padding>
                                                         </RadioButton>
                                                         <Slider fx:id="colorSlider" blockIncrement="1.0" minorTickCount="1" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="5.0" />
@@ -158,7 +185,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                             </padding>
                                                         </Label>
                                                         <Button fx:id="colorScopeButton" mnemonicParsing="false" onAction="#setColorScope" text="%Scope..." />
-                                          <Button mnemonicParsing="false" onAction="#clearColorScope" text="%ClearScope" />
+                                                        <Button mnemonicParsing="false" onAction="#clearColorScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="colorDecreaseButton" mnemonicParsing="false" onAction="#decreaseColor" text="%Decrease" />
                                                         <Button fx:id="colorIncreaseButton" mnemonicParsing="false" onAction="#increaseColor" text="%Increase" />
@@ -172,19 +199,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <content>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
-                                                <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                <ToolBar HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Slider prefHeight="44.0" prefWidth="27.0" showTickLabels="true" showTickMarks="true" visible="false" />
+                                                        <Slider prefWidth="5.0" showTickLabels="true" showTickMarks="true" visible="false" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Label prefWidth="30.0" text="     " />
-                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Gray">
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Red">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="filtersGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$filtersGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$filtersGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%Invert" toggleGroup="$filtersGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
                                                         <Slider fx:id="binarySlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="55.0" />
@@ -193,7 +222,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="binaryCalculateButton" mnemonicParsing="false" onAction="#calculateThreshold" text="%Calculate" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="filtersScopeButton" mnemonicParsing="false" onAction="#setFiltersScope" text="%Scope..." />
-                                          <Button mnemonicParsing="false" onAction="#clearFiltersScope" text="%ClearScope" />
+                                                        <Button mnemonicParsing="false" onAction="#clearFiltersScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="filtersOkButton" mnemonicParsing="false" onAction="#filtersAction" text="%OK" />
                                                     </items>
@@ -219,36 +248,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="pickNewColorButton" mnemonicParsing="false" onAction="#pickColorForNew" text="%PickColor" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="replaceColorScopeButton" mnemonicParsing="false" onAction="#setReplaceColorScope" text="%Scope..." />
-                                          <Button mnemonicParsing="false" onAction="#clearReplaceColorScope" text="%ClearScope" />
+                                                        <Button mnemonicParsing="false" onAction="#clearReplaceColorScope" text="%ClearScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="replaceColorOkButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
-                                                    </items>
-                                                </ToolBar>
-                                            </children>
-                                        </HBox>
-                                    </content>
-                                </Tab>
-                                <Tab fx:id="cropTab" text="%Crop">
-                                    <content>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                            <children>
-                                                <ToolBar HBox.hgrow="ALWAYS">
-                                                    <items>
-                                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                                                    </items>
-                                                </ToolBar>
-                                                <ToolBar>
-                                                    <items>
-                                                        <Button mnemonicParsing="false" onAction="#cropPickLeft" text="%LeftTop" />
-                                                        <TextField fx:id="cropLeftXInput" prefWidth="80.0" promptText="X" />
-                                                        <TextField fx:id="cropLeftYInput" prefWidth="80.0" promptText="Y" />
-                                          <Label prefWidth="20.0" text=" " />
-                                                        <Button mnemonicParsing="false" onAction="#cropPickRight" text="%RightBottom" />
-                                                        <TextField fx:id="cropRightXInput" prefWidth="80.0" promptText="X" />
-                                                        <TextField fx:id="cropRightYInput" prefWidth="80.0" promptText="Y" />
-                                          <Label prefWidth="20.0" text=" " />
-                                                        <Label prefWidth="20.0" text=" " />
-                                                        <Button fx:id="cropOkButton" mnemonicParsing="false" onAction="#cropAction" text="%Crop" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -267,17 +269,79 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToolBar fx:id="watermarkBar">
                                                     <items>
                                                         <Label text="%Text" />
-                                                        <TextField fx:id="waterInput" prefHeight="30.0" prefWidth="271.0" promptText="%Watermark" />
+                                                        <TextField fx:id="waterInput" prefWidth="180.0" promptText="%Watermark" text="MyBox" />
                                                         <ComboBox fx:id="waterSizeBox" editable="true" prefWidth="80.0" promptText="%Size" />
                                                         <ChoiceBox fx:id="waterStyleBox" prefWidth="100.0" />
                                                         <ChoiceBox fx:id="waterFamilyBox" prefWidth="100.0" />
                                                         <ColorPicker fx:id="waterColorPicker" />
                                                         <Button fx:id="waterPositionButton" mnemonicParsing="false" onAction="#waterPositionAction" text="%Position" />
-                                                        <TextField fx:id="waterXInput" prefWidth="60.0" promptText="X" />
-                                                        <TextField fx:id="waterYInput" prefWidth="60.0" promptText="Y" />
+                                                        <TextField fx:id="waterXInput" prefWidth="50.0" promptText="X" />
+                                                        <TextField fx:id="waterYInput" prefWidth="50.0" promptText="Y" />
                                                         <Label text="%Transparent" />
                                                         <ComboBox fx:id="waterTransparentBox" editable="true" prefWidth="80.0" />
+                                                        <Label text="%Shadow" />
+                                                        <ComboBox fx:id="waterShadowBox" editable="true" prefWidth="80.0" />
                                                         <Button fx:id="waterAddButton" mnemonicParsing="false" onAction="#waterAddAction" text="%Add" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="arcTab" text="%Arc">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="1.0" visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar>
+                                                    <items>
+                                                        <Label text="%Background" />
+                                                        <ColorPicker fx:id="arcColorPicker" />
+                                                        <Button mnemonicParsing="false" onAction="#arcTransparentAction" text="%Transparent" />
+                                                        <Button mnemonicParsing="false" onAction="#arcWhiteAction" text="%White" />
+                                                        <Button mnemonicParsing="false" onAction="#arcBlackAction" text="%Black" />
+                                                        <Label text="%Size">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <ComboBox fx:id="arcBox" editable="true" prefWidth="100.0" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Button mnemonicParsing="false" onAction="#arcAction" text="%Add" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="shadowTab" text="%Shadow">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="1.0" visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar>
+                                                    <items>
+                                                        <Label text="%ShadowColor" />
+                                                        <ColorPicker fx:id="shadowColorPicker" />
+                                                        <Button mnemonicParsing="false" onAction="#shadowTransparentAction" text="%Transparent" />
+                                                        <Button mnemonicParsing="false" onAction="#shadowWhiteAction" text="%White" />
+                                                        <Button mnemonicParsing="false" onAction="#shadowBlackAction" text="%Black" />
+                                                        <Label text="%Size">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <ComboBox fx:id="shadowBox" editable="true" prefWidth="100.0" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Button mnemonicParsing="false" onAction="#shadowAction" text="%Add" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -295,7 +359,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="transformBar">
                                                     <items>
-                                          <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
+                                                        <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
                                                         <Button fx:id="shearButton" mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
                                                         <Label text="%Mirror">
                                                             <padding>
@@ -319,7 +383,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="edgesTab" text="%CutEdges">
+                                <Tab fx:id="cutEdgesTab" text="%CutEdges">
                                     <content>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
@@ -331,28 +395,64 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToolBar>
                                                     <items>
                                                         <Label text="%ByColor" />
-                                                        <ColorPicker fx:id="edgesColorPicker" />
-                                                        <Button mnemonicParsing="false" onAction="#edgesTransparentAction" text="%Transparent" />
-                                                        <Button mnemonicParsing="false" onAction="#edgesWhiteAction" text="%White" />
-                                                        <Button mnemonicParsing="false" onAction="#edgesBlackAction" text="%Black" />
+                                                        <ColorPicker fx:id="cutEdgesColorPicker" />
+                                                        <Button mnemonicParsing="false" onAction="#cutEdgesTransparentAction" text="%Transparent" />
+                                                        <Button mnemonicParsing="false" onAction="#cutEdgesWhiteAction" text="%White" />
+                                                        <Button mnemonicParsing="false" onAction="#cutEdgesBlackAction" text="%Black" />
+                                                        <Button mnemonicParsing="false" onAction="#pickColorForEdge" text="%PickColor" />
                                                         <Label text="%Edges">
                                                             <padding>
                                                                 <Insets left="30.0" />
                                                             </padding>
                                                         </Label>
-                                                        <CheckBox fx:id="edgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
-                                                        <CheckBox fx:id="edgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
-                                                        <CheckBox fx:id="edgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
-                                                        <CheckBox fx:id="edgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
+                                                        <CheckBox fx:id="cutEdgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
+                                                        <CheckBox fx:id="cutEdgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
+                                                        <CheckBox fx:id="cutEdgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
+                                                        <CheckBox fx:id="cutEdgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <Button fx:id="edgesOkButton" mnemonicParsing="false" onAction="#cutEdgesAction" text="%OK" />
+                                                        <Button fx:id="cutEdgesOkButton" mnemonicParsing="false" onAction="#cutEdgesAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="zoomTab" text="%View">
+                                <Tab fx:id="addEdgesTab" text="%AddEdges">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar>
+                                                    <items>
+                                                        <Label text="%Color" />
+                                                        <ColorPicker fx:id="addEdgesColorPicker" />
+                                                        <Button mnemonicParsing="false" onAction="#addEdgesTransparentAction" text="%Transparent" />
+                                                        <Button mnemonicParsing="false" onAction="#addEdgesWhiteAction" text="%White" />
+                                                        <Button mnemonicParsing="false" onAction="#addEdgesBlackAction" text="%Black" />
+                                                        <Label text="%Edges">
+                                                            <padding>
+                                                                <Insets left="30.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <CheckBox fx:id="addEdgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
+                                                        <CheckBox fx:id="addEdgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
+                                                        <CheckBox fx:id="addEdgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
+                                                        <CheckBox fx:id="addEdgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Label text="%Width" />
+                                                        <ComboBox fx:id="addEdgeBox" editable="true" prefWidth="80.0" />
+                                                        <Button fx:id="addEdgesOkButton" mnemonicParsing="false" onAction="#addEdgesAction" text="%OK" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="viewTab" text="%View">
                                     <content>
                                         <ToolBar maxWidth="1.7976931348623157E308">
                                             <items>
@@ -409,8 +509,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="navBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#next" text="%NextImage" />
-                                                        <Button fx:id="lastButton" mnemonicParsing="false" onAction="#last" text="%PreviousImage" />
+                                                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextImage" />
+                                                        <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousImage" />
                                                         <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="sortGroup" />
@@ -436,9 +536,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Label fx:id="tipsLabel" text="%Tips" />
                                 <Button mnemonicParsing="false" visible="false" />
                                 <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" textFill="#ab4343">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font></Label>
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                </Label>
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
@@ -473,9 +574,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
-            <padding>
-                <Insets bottom="5.0" top="5.0" />
-            </padding>
         </VBox>
     </center>
     <padding>

@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -14,8 +15,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +24,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -45,7 +45,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConverter;
+import mara.mybox.image.ImageConvertionTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -53,6 +53,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.tools.FxImageTools;
 
 /**
  * @Author Mara
@@ -65,6 +66,7 @@ public class ImageSplitController extends ImageViewerController {
     private List<Integer> rows, cols;
     protected SimpleBooleanProperty parametersValid;
     private int rowsNumber, colsNumber, pixelPickingType;
+    private boolean isCustom;
 
     public static class PixelPickingType {
 
@@ -82,11 +84,13 @@ public class ImageSplitController extends ImageViewerController {
     @FXML
     private ToolBar hotBar, sourceBar;
     @FXML
-    private Button infoButton, metaButton, equiOkButton, splitButton, rowsPositionButton, colsPositionButton;
+    private Button infoButton, metaButton, equiOkButton, saveButton, rowsPositionButton, colsPositionButton;
     @FXML
     private Button imageButton, wButton, openTargetButton;
     @FXML
     private TextField rowsNumberInput, colsNumberInput, rowsInput, colsInput;
+    @FXML
+    private CheckBox displaySizeCheck;
     @FXML
     private ComboBox<String> targetTypeBox;
     @FXML
@@ -128,10 +132,12 @@ public class ImageSplitController extends ImageViewerController {
                 bottomLabel.setText("");
                 RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
                 if (AppVaribles.getMessage("Equipartition").equals(selected.getText())) {
+                    isCustom = false;
                     equiTab.setDisable(false);
                     customTab.setDisable(true);
                     tabPane.getSelectionModel().select(equiTab);
                 } else if (AppVaribles.getMessage("Custom").equals(selected.getText())) {
+                    isCustom = true;
                     equiTab.setDisable(true);
                     customTab.setDisable(false);
                     tabPane.getSelectionModel().select(customTab);
@@ -141,9 +147,7 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        ObservableList<Integer> widths = FXCollections.observableArrayList(
-                15, 10, 20, 5, 30, 8);
-        lineWidthBox.getItems().addAll(widths);
+        lineWidthBox.getItems().addAll(Arrays.asList(15, 10, 20, 5, 30, 8, 40));
         lineWidthBox.getSelectionModel().select(0);
         lineWidthBox.valueProperty().addListener(new ChangeListener<Integer>() {
             @Override
@@ -171,7 +175,7 @@ public class ImageSplitController extends ImageViewerController {
         }
 
         parametersValid = new SimpleBooleanProperty(false);
-        splitButton.disableProperty().bind(
+        saveButton.disableProperty().bind(
                 Bindings.isEmpty(targetPathInput.textProperty())
                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                         .or(parametersValid.isEqualTo(new SimpleBooleanProperty(false)))
@@ -268,6 +272,7 @@ public class ImageSplitController extends ImageViewerController {
         } else {
             equiOkButton.setDisable(true);
             parametersValid.set(false);
+            bottomLabel.setText("");
         }
     }
 
@@ -342,6 +347,7 @@ public class ImageSplitController extends ImageViewerController {
             rowsInput.setStyle(badStyle);
             parametersValid.set(false);
             imageView.setImage(image);
+            bottomLabel.setText("");
         }
     }
 
@@ -365,6 +371,10 @@ public class ImageSplitController extends ImageViewerController {
 
             cols = new ArrayList();
             rows = new ArrayList();
+            Integer v = 10 + imageInformation.getyPixels() * 3 / 1000;
+            lineWidthBox.getItems().add(0, v);
+            lineWidthBox.getSelectionModel().select(v);
+
             parametersValid.set(false);
 
             bottomLabel.setText(getMessage("SplitComments"));
@@ -513,7 +523,7 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     @FXML
-    private void splitAction(ActionEvent event) {
+    private void saveAction(ActionEvent event) {
         if (image == null || targetPath == null
                 || rows == null || cols == null
                 || rows.size() < 1 || cols.size() < 1) {
@@ -527,27 +537,15 @@ public class ImageSplitController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 int x1, y1, x2, y2, count = 0;
-                final BufferedImage source = FxmlTools.getWritableData(image, imageInformation.getImageFormat());
+                final BufferedImage source = FxImageTools.getWritableData(image, imageInformation.getImageFormat());
                 String format = targetTypeBox.getSelectionModel().getSelectedItem();
-                Collections.sort(rows, new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer p1, Integer p2) {
-                        return p1 - p2;
-                    }
-                });
-                Collections.sort(cols, new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer p1, Integer p2) {
-                        return p1 - p2;
-                    }
-                });
                 for (int i = 0; i < rows.size() - 1; i++) {
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
                     for (int j = 0; j < cols.size() - 1; j++) {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
-                        BufferedImage target = ImageConverter.cropImage(source, x1, y1, x2, y2);
+                        BufferedImage target = ImageConvertionTools.cropImage(source, x1, y1, x2, y2);
                         String fileName = targetPath.getAbsolutePath() + "/"
                                 + targetPrefixInput.getText() + "_"
                                 + (rows.size() - 1) + "x" + (cols.size() - 1) + "_"
@@ -562,12 +560,19 @@ public class ImageSplitController extends ImageViewerController {
                     @Override
                     public void run() {
                         try {
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle(getMyStage().getTitle());
                             String info = MessageFormat.format(AppVaribles.getMessage("SplitResult"),
                                     fileNames.size(), "\"" + targetPath.getAbsolutePath() + "\"");
-                            for (String name : fileNames) {
-                                info += "\n    " + name;
+                            int num = fileNames.size();
+                            if (num > 10) {
+                                num = 10;
+                            }
+                            for (int i = 0; i < num; i++) {
+                                info += "\n    " + fileNames.get(i);
+                            }
+                            if (fileNames.size() > num) {
+                                info += "\n    ......";
                             }
                             alert.setContentText(info);
                             ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("OpenTargetPath"));
@@ -639,21 +644,55 @@ public class ImageSplitController extends ImageViewerController {
             return;
         }
         if (rows == null || cols == null
-                || rows.size() < 1 || cols.size() < 1) {
+                || rows.size() < 2 || cols.size() < 2) {
             imageView.setImage(image);
             return;
         }
+//        final Image newImage = FxImageTools.indicateSplitFx(image, rows, cols,
+//                lineColorPicker.getValue(), lineWidthBox.getValue(), displaySizeCheck.isSelected());
+//        if (newImage != null) {
+//            imageView.setImage(newImage);
+//            String comments = AppVaribles.getMessage("SplittedNumber") + ": "
+//                    + (cols.size() - 1) * (rows.size() - 1);
+//            if (!isCustom) {
+//                comments += "  " + AppVaribles.getMessage("ImageSize") + ": "
+//                        + ((int) image.getWidth() / (cols.size() - 1))
+//                        + " x " + ((int) image.getHeight() / (rows.size() - 1));
+//            }
+//            bottomLabel.setText(comments);
+//            return;
+//        }
+
+        // If JavaFx way fail, then go way of Java2D
         Task divideTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlTools.indicateSplit(image, rows, cols,
-                        lineColorPicker.getValue(), lineWidthBox.getValue());
+                Collections.sort(rows, new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer p1, Integer p2) {
+                        return p1 - p2;
+                    }
+                });
+                Collections.sort(cols, new Comparator<Integer>() {
+                    @Override
+                    public int compare(Integer p1, Integer p2) {
+                        return p1 - p2;
+                    }
+                });
+                final Image newImage = FxImageTools.indicateSplit(image, rows, cols,
+                        lineColorPicker.getValue(), lineWidthBox.getValue(), displaySizeCheck.isSelected());
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         imageView.setImage(newImage);
-                        bottomLabel.setText(AppVaribles.getMessage("SplittingRows") + ":" + rows
-                                + "    " + AppVaribles.getMessage("SplittingColumns") + ":" + cols);
+                        String comments = AppVaribles.getMessage("SplittedNumber") + ": "
+                                + (cols.size() - 1) * (rows.size() - 1);
+                        if (!isCustom) {
+                            comments += "  " + AppVaribles.getMessage("ImageSize") + ": "
+                                    + ((int) image.getWidth() / (cols.size() - 1))
+                                    + " x " + ((int) image.getHeight() / (rows.size() - 1));
+                        }
+                        bottomLabel.setText(comments);
                     }
                 });
                 return null;

@@ -26,6 +26,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -379,11 +380,11 @@ public class BaseController implements Initializable {
         filesTableController.filesTableView.refresh();
     }
 
-    public void reloadStage(String newFxml) {
-        reloadStage(newFxml, null);
+    public BaseController reloadStage(String newFxml) {
+        return reloadStage(newFxml, null);
     }
 
-    public void reloadStage(String newFxml, String title) {
+    public BaseController reloadStage(String newFxml, String title) {
         try {
             getMyStage();
 //            if (task != null && task.isRunning()) {
@@ -398,7 +399,7 @@ public class BaseController implements Initializable {
 //            }
 //            logger.debug("reloadStage:" + getClass());
             if (!stageReloading()) {
-                return;
+                return null;
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -421,9 +422,10 @@ public class BaseController implements Initializable {
 //            if (!newFxml.equals(CommonValues.AlarmClockFxml)) {
 //                AppVaribles.alarmClockController = null;
 //            }
-
+            return controller;
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
     }
 
@@ -439,13 +441,12 @@ public class BaseController implements Initializable {
         openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, monitorClosing);
     }
 
-    public void openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
+    public BaseController openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
             final BaseController controller = fxmlLoader.getController();
             Stage stage = new Stage();
-            controller.setMyStage(stage);
 
             Scene scene = new Scene(pane);
             stage.initModality(Modality.NONE);
@@ -472,8 +473,11 @@ public class BaseController implements Initializable {
                 });
             }
             stage.show();
+            controller.setMyStage(stage);
+            return controller;
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
     }
 
@@ -589,12 +593,11 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void showImageManufacture(String filename) {
+    public void openImageManufactureInNew(String filename) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
             ImageManufactureController controller = fxmlLoader.getController();
-            controller.loadImage(filename);
 
             Stage stage = new Stage();
             controller.setMyStage(stage);
@@ -603,7 +606,53 @@ public class BaseController implements Initializable {
             stage.initOwner(null);
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(root));
+            stage.setTitle(AppVaribles.getMessage("ImageManufacture"));
             stage.show();
+
+            controller.loadImage(filename);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void openImagesBrowserInNew(File path, int number) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
+            Pane pane = fxmlLoader.load();
+            final ImagesViewerController controller = fxmlLoader.getController();
+
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.initOwner(null);
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(new Scene(pane));
+            stage.setTitle(getMessage("MultipleImagesViewer"));
+            stage.show();
+
+            controller.loadImages(path, number);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void showImageView(Image image) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            ImageViewerController controller = fxmlLoader.getController();
+
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.initOwner(null);
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(new Scene(root));
+            stage.setTitle(AppVaribles.getMessage("ImageViewer"));
+            stage.show();
+            controller.loadImage(image);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -632,7 +681,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    public void openHandlingStage(final Task<?> task, Modality block) {
+    public Stage openHandlingStage(final Task<?> task, Modality block) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -653,9 +702,23 @@ public class BaseController implements Initializable {
                     loadingStage.close();
                 }
             });
+            task.setOnCancelled(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    loadingStage.close();
+                }
+            });
+            task.setOnFailed(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    loadingStage.close();
+                }
+            });
+            return loadingStage;
 
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
     }
 
@@ -1110,8 +1173,11 @@ public class BaseController implements Initializable {
     }
 
     public String getBaseTitle() {
-        if (baseTitle == null) {
+        if (baseTitle == null && getMyStage() != null) {
             baseTitle = getMyStage().getTitle();
+            if (baseTitle == null) {
+                baseTitle = AppVaribles.getMessage("AppTitle");
+            }
         }
         return baseTitle;
     }

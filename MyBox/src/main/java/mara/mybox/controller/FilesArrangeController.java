@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -51,6 +52,7 @@ public class FilesArrangeController extends BaseController {
     protected int newlines, maxLines, totalLines, cacheLines = 200;
     protected String strFailedCopy, strCreatedSuccessfully, strCopySuccessfully, strDeleteSuccessfully, strFailedDelete;
     protected FileSynchronizeAttributes copyAttr;
+    private final String FileArrangeSubdirKey, FileArrangeCopyKey, FileArrangeExistedKey, FileArrangeModifyTimeKey, FileArrangeCategoryKey;
 
     private class DirType {
 
@@ -77,10 +79,19 @@ public class FilesArrangeController extends BaseController {
     protected TextArea logsTextArea;
     @FXML
     protected Button clearButton;
+    @FXML
+    private RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
+    @FXML
+    private RadioButton modifiyTimeRadio, createTimeRadio, monthRadio, dayRadio, yearRadio;
 
     public FilesArrangeController() {
         targetPathKey = "FilesArrageTargetPath";
         sourcePathKey = "FilesArrageSourcePath";
+        FileArrangeSubdirKey = "FileArrangeSubdirKey";
+        FileArrangeCopyKey = "FileArrangeCopyKey";
+        FileArrangeExistedKey = "FileArrangeExistedKey";
+        FileArrangeModifyTimeKey = "FileArrangeModifyTimeKey";
+        FileArrangeCategoryKey = "FileArrangeCategoryKey";
 
         fileExtensionFilter = new ArrayList();
         fileExtensionFilter.add(new FileChooser.ExtensionFilter("*", "*.*"));
@@ -89,38 +100,8 @@ public class FilesArrangeController extends BaseController {
     @Override
     protected void initializeNext() {
         try {
-
-            sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
-            sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    final File file = new File(newValue);
-                    if (!file.exists() || !file.isDirectory()) {
-                        sourcePathInput.setStyle(badStyle);
-                        return;
-                    }
-                    sourcePathInput.setStyle(null);
-                    AppVaribles.setConfigValue("LastPath", newValue);
-                    AppVaribles.setConfigValue(sourcePathKey, newValue);
-                }
-            });
-
-            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
-            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    final File file = new File(newValue);
-                    if (!file.isDirectory()) {
-                        targetPathInput.setStyle(badStyle);
-                        return;
-                    }
-                    targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue("LastPath", newValue);
-                    AppVaribles.setConfigValue(targetPathKey, newValue);
-                }
-            });
+            initDirTab();
+            initConditionTab();
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
@@ -135,6 +116,157 @@ public class FilesArrangeController extends BaseController {
 
         } catch (Exception e) {
             logger.debug(e.toString());
+        }
+
+    }
+
+    private void initDirTab() {
+        sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+        sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                final File file = new File(newValue);
+                if (!file.exists() || !file.isDirectory()) {
+                    sourcePathInput.setStyle(badStyle);
+                    return;
+                }
+                sourcePathInput.setStyle(null);
+                AppVaribles.setConfigValue("LastPath", newValue);
+                AppVaribles.setConfigValue(sourcePathKey, newValue);
+            }
+        });
+
+        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+        targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                final File file = new File(newValue);
+                if (!file.isDirectory()) {
+                    targetPathInput.setStyle(badStyle);
+                    return;
+                }
+                targetPathInput.setStyle(null);
+                AppVaribles.setConfigValue("LastPath", newValue);
+                AppVaribles.setConfigValue(targetPathKey, newValue);
+            }
+        });
+
+    }
+
+    private void initConditionTab() {
+
+        subdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean old_toggle, Boolean new_toggle) {
+                handleSubdir = subdirCheck.isSelected();
+                AppVaribles.setConfigValue(FileArrangeSubdirKey, isCopy);
+            }
+        });
+        subdirCheck.setSelected(AppVaribles.getConfigBoolean(FileArrangeSubdirKey, true));
+
+        filesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
+                isCopy = getMessage("Copy").equals(selected.getText());
+                AppVaribles.setConfigValue(FileArrangeCopyKey, isCopy);
+            }
+        });
+        if (AppVaribles.getConfigBoolean(FileArrangeCopyKey, true)) {
+            copyRadio.setSelected(true);
+        } else {
+            moveRadio.setSelected(true);
+        }
+
+        replaceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
+                if (getMessage("ReplaceModified").equals(selected.getText())) {
+                    replaceType = ReplaceType.ReplaceModified;
+                    AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+                } else if (getMessage("NotCopy").equals(selected.getText())) {
+                    replaceType = ReplaceType.NotCopy;
+                    AppVaribles.setConfigValue(FileArrangeExistedKey, "NotCopy");
+                } else if (getMessage("Replace").equals(selected.getText())) {
+                    replaceType = ReplaceType.Replace;
+                    AppVaribles.setConfigValue(FileArrangeExistedKey, "Replace");
+                } else if (getMessage("Rename").equals(selected.getText())) {
+                    replaceType = ReplaceType.Rename;
+                    AppVaribles.setConfigValue(FileArrangeExistedKey, "Rename");
+                } else {
+                    replaceType = ReplaceType.ReplaceModified;
+                    AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+                }
+            }
+        });
+        String replaceSelect = AppVaribles.getConfigValue(FileArrangeExistedKey, "ReplaceModified");
+        switch (replaceSelect) {
+            case "ReplaceModified":
+                replaceModifiedRadio.setSelected(true);
+                break;
+            case "Replace":
+                replaceRadio.setSelected(true);
+                break;
+            case "Rename":
+                renameRadio.setSelected(true);
+                break;
+            case "NotCopy":
+                notCopyRadio.setSelected(true);
+                break;
+        }
+
+        byGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) byGroup.getSelectedToggle();
+                byModifyTime = getMessage("ModifyTime").equals(selected.getText());
+                AppVaribles.setConfigValue(FileArrangeModifyTimeKey, byModifyTime);
+            }
+        });
+        if (AppVaribles.getConfigBoolean(FileArrangeModifyTimeKey, true)) {
+            modifiyTimeRadio.setSelected(true);
+        } else {
+            createTimeRadio.setSelected(true);
+        }
+
+        dirGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
+                if (getMessage("Year").equals(selected.getText())) {
+                    dirType = DirType.Year;
+                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Year");
+                } else if (getMessage("Month").equals(selected.getText())) {
+                    dirType = DirType.Month;
+                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+                } else if (getMessage("Day").equals(selected.getText())) {
+                    dirType = DirType.Day;
+                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Day");
+                } else {
+                    dirType = DirType.Month;
+                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+                }
+            }
+        });
+        String dirSelect = AppVaribles.getConfigValue(FileArrangeCategoryKey, "Month");
+        switch (dirSelect) {
+            case "Year":
+                yearRadio.setSelected(true);
+                break;
+            case "Month":
+                monthRadio.setSelected(true);
+                break;
+            case "Day":
+                dayRadio.setSelected(true);
+                break;
         }
 
     }
@@ -196,38 +328,6 @@ public class FilesArrangeController extends BaseController {
             sourcePath = new File(sourcePathInput.getText());
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
-
-                RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
-                isCopy = getMessage("Copy").equals(selected.getText());
-
-                selected = (RadioButton) byGroup.getSelectedToggle();
-                byModifyTime = getMessage("ModifyTime").equals(selected.getText());
-
-                selected = (RadioButton) replaceGroup.getSelectedToggle();
-                if (getMessage("ReplaceModified").equals(selected.getText())) {
-                    replaceType = ReplaceType.ReplaceModified;
-                } else if (getMessage("NotCopy").equals(selected.getText())) {
-                    replaceType = ReplaceType.NotCopy;
-                } else if (getMessage("Replace").equals(selected.getText())) {
-                    replaceType = ReplaceType.Replace;
-                } else if (getMessage("Rename").equals(selected.getText())) {
-                    replaceType = ReplaceType.Rename;
-                } else {
-                    replaceType = ReplaceType.ReplaceModified;
-                }
-
-                selected = (RadioButton) dirGroup.getSelectedToggle();
-                if (getMessage("Year").equals(selected.getText())) {
-                    dirType = DirType.Year;
-                } else if (getMessage("Month").equals(selected.getText())) {
-                    dirType = DirType.Month;
-                } else if (getMessage("Day").equals(selected.getText())) {
-                    dirType = DirType.Day;
-                } else {
-                    dirType = DirType.Month;
-                }
-
-                handleSubdir = subdirCheck.isSelected();
 
                 logsTextArea.setText(AppVaribles.getMessage("SourcePath") + ": " + sourcePathInput.getText() + "\n");
                 logsTextArea.appendText(AppVaribles.getMessage("TargetPath") + ": " + targetPathInput.getText() + "\n");

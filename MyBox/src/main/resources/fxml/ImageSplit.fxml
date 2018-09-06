@@ -90,6 +90,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <Label text="%FilePath" />
                                           <TextField fx:id="targetPathInput" prefWidth="300.0" />
                                         <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                          <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" text="%Open" />
                                           <Label text="%FileNamePrefix">
                                              <padding>
                                                 <Insets left="20.0" />
@@ -102,8 +103,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                              </padding>
                                           </Label>
                                           <ComboBox fx:id="targetTypeBox" prefWidth="120.0" />
-                                          <Label prefWidth="20.0" text=" " />
-                                          <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" text="%Open" />
                                       </items>
                                     </ToolBar>
                                  </children>
@@ -185,13 +184,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="splitButton" disable="true" mnemonicParsing="false" onAction="#splitAction" text="%Split" />
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                         <RadioButton fx:id="customRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Custom">
                            <toggleGroup>
                               <ToggleGroup fx:id="splitGroup" />
                            </toggleGroup>
                         </RadioButton>
                         <RadioButton fx:id="euqipartitionRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Equipartition" toggleGroup="$splitGroup" />
+                        <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
                         <ComboBox fx:id="lineWidthBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                         <Label text="%LineWidth" />
                         <ColorPicker fx:id="lineColorPicker" />

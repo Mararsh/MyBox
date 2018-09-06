@@ -28,8 +28,26 @@
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
-                  <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                  <Menu mnemonicParsing="false" text="%ImageManufactureSub">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#openImageManufactureSize" text="%Size" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureFilters" text="%Filters" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureReplaceColor" text="%ReplaceColor" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureWatermark" text="%Watermark" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureShadow" text="%Shadow" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureTransform" text="%Transform" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCutEdges" text="%CutEdges" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureAddEdges" text="%AddEdges" />
+                    </items>
+                  </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageCombine" text="%ImageCombine" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                         <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />

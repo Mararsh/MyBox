@@ -7,10 +7,19 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import static mara.mybox.objects.CommonValues.AlphaColor;
+import mara.mybox.objects.ImageCombine;
+import mara.mybox.objects.ImageCombine.CombineSizeType;
+import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageScope;
+import mara.mybox.tools.FxImageTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +29,7 @@ import org.apache.logging.log4j.Logger;
  * @Version 1.0
  * @License Apache License Version 2.0
  */
-public class ImageConverter {
+public class ImageConvertionTools {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -392,7 +401,7 @@ public class ImageConverter {
     }
 
     public static BufferedImage addWatermarkText(BufferedImage source, String text,
-            Font font, Color color, int x, int y, float transparent) {
+            Font font, Color color, int x, int y, float transparent, int shadow) {
         try {
             if (transparent > 1.0f || transparent < 0) {
                 transparent = 1.0f;
@@ -403,11 +412,43 @@ public class ImageConverter {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent);
-            g.setComposite(ac);
+            if (shadow > 0) {  // Not blurred. Can improve
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+                g.setColor(Color.GRAY);
+                g.setFont(font);
+                g.drawString(text, x + shadow, y + shadow);
+            }
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
             g.setColor(color);
             g.setFont(font);
             g.drawString(text, x, y);
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage addWatermarkTexts(BufferedImage source,
+            Font font, Color color, float transparent,
+            List<String> texts, List<Integer> xs, List<Integer> ys) {
+        try {
+            if (transparent > 1.0f || transparent < 0) {
+                transparent = 1.0f;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
+            g.setColor(color);
+            g.setFont(font);
+            for (int i = 0; i < texts.size(); i++) {
+                g.drawString(texts.get(i), xs.get(i), ys.get(i));
+            }
             g.dispose();
             return target;
         } catch (Exception e) {
@@ -431,6 +472,44 @@ public class ImageConverter {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static BufferedImage addArc(BufferedImage srcImage, int arc, Color bgColor) {
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int imageType = srcImage.getType();
+        BufferedImage target = new BufferedImage(width, height, imageType);
+        Graphics2D g = target.createGraphics();
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        g.setColor(bgColor);
+        g.fillRect(0, 0, width, height);
+        g.setClip(new RoundRectangle2D.Double(0, 0, width, height, arc, arc));
+        g.drawImage(srcImage, 0, 0, null);
+        g.dispose();
+
+        return target;
+    }
+
+    public static BufferedImage addShadow(BufferedImage srcImage, int shadow, Color bgColor) {
+        if (shadow <= 0) {
+            return srcImage;
+        }
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int imageType = srcImage.getType();
+        BufferedImage target = new BufferedImage(width + shadow, height + shadow, imageType);
+        Graphics2D g = target.createGraphics();
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        g.setColor(bgColor);
+        g.fillRect(shadow, shadow, width + shadow, height + shadow);
+        g.drawImage(srcImage, 0, 0, null);
+        g.dispose();
+
+        return target;
     }
 
     public static BufferedImage cropImage(BufferedImage source,
@@ -522,30 +601,46 @@ public class ImageConverter {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-//            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-//            g.setComposite(ac);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
             g.setColor(lineColor);
             BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
             g.setStroke(stroke);
-            logger.debug("setStroke");
 
             for (int i = 0; i < rows.size(); i++) {
                 int row = rows.get(i);
-                if (row <= 0 || row >= height) {
+                if (row <= 0 || row >= height - 1) {
                     continue;
                 }
                 g.drawLine(0, row, width, row);
-                logger.debug("row:" + row);
-
             }
             for (int i = 0; i < cols.size(); i++) {
                 int col = cols.get(i);
-                if (col <= 0 || col >= width) {
+                if (col <= 0 || col >= width - 1) {
                     continue;
                 }
                 g.drawLine(col, 0, col, height);
-                logger.debug("col:" + col);
+            }
 
+            List<String> texts = new ArrayList<>();
+            List<Integer> xs = new ArrayList<>();
+            List<Integer> ys = new ArrayList<>();
+            for (int i = 0; i < rows.size() - 1; i++) {
+                int h = rows.get(i + 1) - rows.get(i);
+                for (int j = 0; j < cols.size() - 1; j++) {
+                    int w = cols.get(j + 1) - cols.get(j);
+                    texts.add(w + "x" + h);
+                    xs.add(cols.get(j) + w / 3);
+                    ys.add(rows.get(i) + h / 3);
+//                    logger.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+                }
+            }
+
+            int fontSize = width / (cols.size() * 10);
+            Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
+            g.setFont(font);
+            for (int i = 0; i < texts.size(); i++) {
+                g.drawString(texts.get(i), xs.get(i), ys.get(i));
             }
             g.dispose();
             return target;
@@ -555,4 +650,312 @@ public class ImageConverter {
         }
     }
 
+    public static BufferedImage combineSingleColumn(List<javafx.scene.image.Image> images) {
+        if (images == null || images.isEmpty()) {
+            return null;
+        }
+        try {
+            int imageWidth, imageHeight, totalWidth = 0, totalHeight = 0;
+            for (javafx.scene.image.Image image : images) {
+                imageWidth = (int) image.getWidth();
+                if (totalWidth < imageWidth) {
+                    totalWidth = imageWidth;
+                }
+                totalHeight += (int) image.getHeight();
+            }
+
+            BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+
+            int x = 0, y = 0;
+            for (javafx.scene.image.Image image : images) {
+                BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+                imageWidth = (int) image.getWidth();
+                imageHeight = (int) image.getHeight();
+                g.drawImage(source, x, y, imageWidth, imageHeight, null);
+                y += imageHeight;
+            }
+
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static javafx.scene.image.Image combineSingleColumn(ImageCombine imageCombine,
+            List<ImageFileInformation> images, boolean isPart, boolean careTotal) {
+        if (imageCombine == null || images == null) {
+            return null;
+        }
+        try {
+            int x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            int totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
+            int sizeType = imageCombine.getSizeType();
+            if (sizeType == CombineSizeType.AlignAsBigger) {
+                for (ImageFileInformation image : images) {
+                    imageWidth = (int) image.getImage().getWidth();
+                    if (imageWidth > maxWidth) {
+                        maxWidth = imageWidth;
+                    }
+                }
+            }
+            if (sizeType == CombineSizeType.AlignAsSmaller) {
+                for (ImageFileInformation image : images) {
+                    imageWidth = (int) image.getImage().getWidth();
+                    if (imageWidth < minWidth) {
+                        minWidth = imageWidth;
+                    }
+                }
+            }
+            List<Integer> xs = new ArrayList();
+            List<Integer> ys = new ArrayList();
+            List<Integer> widths = new ArrayList();
+            List<Integer> heights = new ArrayList();
+            for (int i = 0; i < images.size(); i++) {
+                ImageFileInformation imageInfo = images.get(i);
+                javafx.scene.image.Image image = imageInfo.getImage();
+                imageWidth = (int) image.getWidth();
+                imageHeight = (int) image.getHeight();
+                if (sizeType == CombineSizeType.KeepSize
+                        || sizeType == CombineSizeType.TotalWidth
+                        || sizeType == CombineSizeType.TotalHeight) {
+
+                } else if (sizeType == CombineSizeType.EachWidth) {
+                    if (!isPart) {
+                        imageHeight = (imageHeight * imageCombine.getEachWidthValue()) / imageWidth;
+                        imageWidth = imageCombine.getEachWidthValue();
+                    }
+                } else if (sizeType == CombineSizeType.EachHeight) {
+                    if (!isPart) {
+                        imageWidth = (imageWidth * imageCombine.getEachHeightValue()) / imageHeight;
+                        imageHeight = imageCombine.getEachHeightValue();
+                    }
+                } else if (sizeType == CombineSizeType.AlignAsBigger) {
+                    imageHeight = (imageHeight * maxWidth) / imageWidth;
+                    imageWidth = maxWidth;
+                } else if (sizeType == CombineSizeType.AlignAsSmaller) {
+                    imageHeight = (imageHeight * minWidth) / imageWidth;
+                    imageWidth = minWidth;
+                }
+
+                xs.add(x);
+                ys.add(y);
+                widths.add(imageWidth);
+                heights.add(imageHeight);
+
+                x = imageCombine.getEdgesValue();
+                y += imageHeight + imageCombine.getIntervalValue();
+
+                if (imageWidth > totalWidth) {
+                    totalWidth = imageWidth;
+                }
+            }
+
+            totalWidth += 2 * imageCombine.getEdgesValue();
+            totalHeight = y + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+
+            javafx.scene.image.Image newImage = writeImage(images, totalWidth, totalHeight,
+                    FxImageTools.colorConvert(imageCombine.getBgColor()),
+                    xs, ys, widths, heights,
+                    imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
+                    careTotal && (sizeType == CombineSizeType.TotalWidth),
+                    careTotal && (sizeType == CombineSizeType.TotalHeight));
+
+            return newImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static javafx.scene.image.Image combineSingleRow(ImageCombine imageCombine,
+            List<ImageFileInformation> images, boolean isPart, boolean careTotal) {
+        if (imageCombine == null || images == null) {
+            return null;
+        }
+        try {
+            int x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            int totalWidth = 0, totalHeight = 0, maxHeight = 0, minHeight = Integer.MAX_VALUE;
+            int sizeType = imageCombine.getSizeType();
+
+            if (isPart) {
+                y = 0;
+            }
+            if (sizeType == CombineSizeType.AlignAsBigger) {
+                for (ImageFileInformation image : images) {
+                    imageHeight = (int) image.getImage().getHeight();
+                    if (imageHeight > maxHeight) {
+                        maxHeight = imageHeight;
+                    }
+                }
+            }
+            if (sizeType == CombineSizeType.AlignAsSmaller) {
+                for (ImageFileInformation image : images) {
+                    imageHeight = (int) image.getImage().getHeight();
+                    if (imageHeight < minHeight) {
+                        minHeight = imageHeight;
+                    }
+                }
+            }
+            List<Integer> xs = new ArrayList();
+            List<Integer> ys = new ArrayList();
+            List<Integer> widths = new ArrayList();
+            List<Integer> heights = new ArrayList();
+            for (int i = 0; i < images.size(); i++) {
+                ImageFileInformation imageInfo = images.get(i);
+                javafx.scene.image.Image image = imageInfo.getImage();
+                imageWidth = (int) image.getWidth();
+                imageHeight = (int) image.getHeight();
+                if (sizeType == CombineSizeType.KeepSize
+                        || sizeType == CombineSizeType.TotalWidth
+                        || sizeType == CombineSizeType.TotalHeight) {
+
+                } else if (sizeType == CombineSizeType.EachWidth) {
+                    imageHeight = (imageHeight * imageCombine.getEachWidthValue()) / imageWidth;
+                    imageWidth = imageCombine.getEachWidthValue();
+                } else if (sizeType == CombineSizeType.EachHeight) {
+                    imageWidth = (imageWidth * imageCombine.getEachHeightValue()) / imageHeight;
+                    imageHeight = imageCombine.getEachHeightValue();
+                } else if (sizeType == CombineSizeType.AlignAsBigger) {
+                    imageWidth = (imageWidth * maxHeight) / imageHeight;
+                    imageHeight = maxHeight;
+                } else if (sizeType == CombineSizeType.AlignAsSmaller) {
+                    imageWidth = (imageWidth * minHeight) / imageHeight;
+                    imageHeight = minHeight;
+                }
+
+                xs.add(x);
+                ys.add(y);
+                widths.add(imageWidth);
+                heights.add(imageHeight);
+
+                x += imageWidth + imageCombine.getIntervalValue();
+
+                if (imageHeight > totalHeight) {
+                    totalHeight = imageHeight;
+                }
+            }
+
+            totalWidth = x + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+            if (!isPart) {
+                totalHeight += 2 * imageCombine.getEdgesValue();
+            }
+
+            javafx.scene.image.Image newImage = writeImage(images, totalWidth, totalHeight,
+                    FxImageTools.colorConvert(imageCombine.getBgColor()),
+                    xs, ys, widths, heights,
+                    imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
+                    careTotal && (sizeType == CombineSizeType.TotalWidth),
+                    careTotal && (sizeType == CombineSizeType.TotalHeight));
+
+            return newImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static javafx.scene.image.Image writeImage(List<ImageFileInformation> images,
+            int totalWidth, int totalHeight, Color bgColor,
+            List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
+            int trueTotalWidth, int trueTotalHeight,
+            boolean isTotalWidth, boolean isTotalHeight) {
+        if (images == null || xs == null || ys == null || widths == null || heights == null) {
+            return null;
+        }
+        try {
+            BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g.setColor(bgColor);
+            g.fillRect(0, 0, totalWidth, totalHeight);
+
+            for (int i = 0; i < images.size(); i++) {
+                ImageFileInformation imageInfo = images.get(i);
+                javafx.scene.image.Image image = imageInfo.getImage();
+                BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+                g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
+            }
+
+            if (isTotalWidth) {
+                target = scaleImage(target, trueTotalWidth, (trueTotalWidth * totalHeight) / totalWidth);
+            } else if (isTotalHeight) {
+                target = scaleImage(target, (trueTotalHeight * totalWidth) / totalHeight, trueTotalHeight);
+            }
+
+            javafx.scene.image.Image newImage = SwingFXUtils.toFXImage(target, null);
+            return newImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage applyFilter(BufferedImage srcImage, Kernel filter) {
+        if (srcImage == null) {
+            return null;
+        }
+        if (filter == null) {
+            return srcImage;
+        }
+        int width = srcImage.getWidth();
+        int height = srcImage.getHeight();
+        int imageType = srcImage.getType();
+
+        ConvolveOp imageOp = new ConvolveOp(filter, ConvolveOp.EDGE_NO_OP, null);
+        BufferedImage target = new BufferedImage(width, height, imageType);
+        imageOp.filter(srcImage, target);
+        return target;
+    }
+
+    public static Kernel makeGaussFilter(int radius) {
+        if (radius < 1) {
+            return null;
+        }
+        float sum = 0.0f;
+        int width = radius * 2 + 1;
+        int size = (int) Math.pow((float) (width), 2);
+        float sigma = radius / 3.0f;
+        float twoSigmaSquare = 2.0f * sigma * sigma;
+        float sigmaRoot = (float) Math.PI * twoSigmaSquare;
+        float[] data = new float[size];
+        int index = 0;
+        float x, y;
+        for (int i = -radius; i <= radius; i++) {
+            for (int j = -radius; j <= radius; j++) {
+                x = i * i;
+                y = j * j;
+                data[index] = (float) Math.exp(-(x + y) / twoSigmaSquare) / sigmaRoot;
+                sum += data[index];
+                index++;
+            }
+        }
+        String v = "";
+        for (int k = 0; k < size; k++) {
+            data[k] = data[k] / sum;
+            v += "  " + data[k];
+        }
+        logger.debug(v);
+        return new Kernel(width, width, data);
+    }
+
+    public static BufferedImage blurImage(BufferedImage srcImage, int size) {
+//        float[] filter = {
+//            0.0625f, 0.125f, 0.0625f,
+//            0.125f, 0.025f, 0.125f,
+//            0.0625f, 0.125f, 0.0625f
+//        };
+        return applyFilter(srcImage, makeGaussFilter(size));
+    }
+
+//    public static BufferedImage sharpenImage(BufferedImage srcImage) {
+//        float[] filter = {
+//            -1.0f, -1.0f, -1.0f,
+//            -1.0f, 9.0f, -1.0f,
+//            -1.0f, -1.0f, -1.0f
+//        };
+//        return applyFilter(srcImage, filter);
+//    }
 }

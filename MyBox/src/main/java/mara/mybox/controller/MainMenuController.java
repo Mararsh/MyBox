@@ -176,8 +176,90 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageManufactureSize(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("size");
+    }
+
+    @FXML
+    private void openImageManufactureCrop(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("crop");
+    }
+
+    @FXML
+    private void openImageManufactureColor(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("color");
+    }
+
+    @FXML
+    private void openImageManufactureFilters(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("filters");
+    }
+
+    @FXML
+    private void openImageManufactureReplaceColor(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("replaceColor");
+    }
+
+    @FXML
+    private void openImageManufactureWatermark(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("watermark");
+    }
+
+    @FXML
+    private void openImageManufactureArc(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("arc");
+    }
+
+    @FXML
+    private void openImageManufactureShadow(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("shadow");
+    }
+
+    @FXML
+    private void openImageManufactureTransform(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("transform");
+    }
+
+    @FXML
+    private void openImageManufactureCutEdges(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("cutEdges");
+    }
+
+    @FXML
+    private void openImageManufactureAddEdges(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("addEdges");
+    }
+
+    @FXML
     private void openImageSplit(ActionEvent event) {
         reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
+    }
+
+    @FXML
+    private void openImageCombine(ActionEvent event) {
+        reloadStage(CommonValues.ImageCombineFxml, AppVaribles.getMessage("ImageCombine"));
     }
 
     @FXML

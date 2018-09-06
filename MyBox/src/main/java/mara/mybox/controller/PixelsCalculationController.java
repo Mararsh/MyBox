@@ -23,7 +23,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConverter.KeepRatioType;
+import mara.mybox.image.ImageConvertionTools.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
