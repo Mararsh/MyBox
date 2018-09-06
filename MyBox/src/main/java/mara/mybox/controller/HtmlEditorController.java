@@ -207,10 +207,9 @@ public class HtmlEditorController extends TextEditorController {
                             .or(urlInput.styleProperty().isEqualTo(badStyle))
             );
 
-            snapsotButton.disableProperty().bind(
-                    webEngine.documentProperty().isNull()
-            );
-
+//            snapsotButton.disableProperty().bind(
+//                    webEngine.documentProperty().isNull()
+//            );
         } catch (Exception e) {
             logger.error(e.toString());
         }
