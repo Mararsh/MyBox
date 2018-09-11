@@ -158,11 +158,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar maxWidth="1.7976931348623157E308">
                                                     <items>
-                                          <Button fx:id="rowsPositionButton" mnemonicParsing="false" onAction="#rowsPositionAction" text="%SplittingRows" />
+                                          <Label text="%SplittingRows" />
                                                         <TextField fx:id="rowsInput" prefWidth="200.0" promptText="%SplitByComma" />
                                           <Button mnemonicParsing="false" onAction="#clearRows" text="%Clear" />
                                           <Label prefWidth="20.0" text=" " />
-                                          <Button fx:id="colsPositionButton" mnemonicParsing="false" onAction="#colsPositionAction" text="%SplittingColumns" />
+                                          <Label text="%SplittingColumns" />
                                                         <TextField fx:id="colsInput" prefWidth="200.0" promptText="%SplitByComma" />
                                           <Button mnemonicParsing="false" onAction="#clearCols" text="%Clear" />
                                                     </items>

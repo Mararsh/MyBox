@@ -4,9 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
@@ -25,13 +23,9 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
-    private ToggleGroup langGroup, alarmGroup, alphaGroup;
-    @FXML
     private RadioMenuItem chineseMenuItem, englishMenuItem, keepAlarmMenuItem, stopAlarmMenuItem, showCommentsMenu, hideCommentsMenu;
     @FXML
     private RadioMenuItem replaceWhiteMenu, replaceBlackMenu;
-    @FXML
-    private Menu homeMenu, pdfMenu, imageMenu, fileMenu, deskstopMenu, helpMenu;
 
     @Override
     protected void initializeNext() {
@@ -131,6 +125,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImagesCombinePdf(ActionEvent event) {
+        reloadStage(CommonValues.ImagesCombinePdfFxml, AppVaribles.getMessage("ImagesCombinePdf"));
+    }
+
+    @FXML
     private void openPdfExtractImages(ActionEvent event) {
         reloadStage(CommonValues.PdfExtractImagesFxml, AppVaribles.getMessage("PdfExtractImages"));
     }
@@ -148,6 +147,21 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openPdfExtractImagesBatch(ActionEvent event) {
         reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
+    }
+
+    @FXML
+    private void openMergePdf(ActionEvent event) {
+        reloadStage(CommonValues.PdfMergeFxml, AppVaribles.getMessage("MergePdf"));
+    }
+
+    @FXML
+    private void openSplitPdf(ActionEvent event) {
+        reloadStage(CommonValues.PdfSplitFxml, AppVaribles.getMessage("SplitPdf"));
+    }
+
+    @FXML
+    private void openCompressPdfImages(ActionEvent event) {
+        reloadStage(CommonValues.PdfCompressImagesFxml, AppVaribles.getMessage("CompressPdfImages"));
     }
 
     @FXML
@@ -239,17 +253,17 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureCutEdges(ActionEvent event) {
+    private void openImageManufactureCutMargins(ActionEvent event) {
         ImageManufactureController controller
                 = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("cutEdges");
+        controller.setInitTab("cutMargins");
     }
 
     @FXML
-    private void openImageManufactureAddEdges(ActionEvent event) {
+    private void openImageManufactureAddMargins(ActionEvent event) {
         ImageManufactureController controller
                 = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("addEdges");
+        controller.setInitTab("addMargins");
     }
 
     @FXML
@@ -259,7 +273,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openImageCombine(ActionEvent event) {
-        reloadStage(CommonValues.ImageCombineFxml, AppVaribles.getMessage("ImageCombine"));
+        reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
     }
 
     @FXML
@@ -300,6 +314,13 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openHtmlEditor(ActionEvent event) {
         reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+    }
+
+    @FXML
+    private void openHtmlEditor2(ActionEvent event) {
+        HtmlEditorController controller
+                = (HtmlEditorController) reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+        controller.switchBroswerTab();
     }
 
     @FXML

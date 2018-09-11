@@ -138,11 +138,11 @@ public class DirectoriessRenameController extends FilesRenameController {
         }
     }
 
-    protected void recoverySelected(ObservableList<FileInformation> selecteds) {
-        if (selecteds == null || selecteds.isEmpty()) {
+    protected void recoverySelected(ObservableList<FileInformation> selected) {
+        if (selected == null || selected.isEmpty()) {
             return;
         }
-        for (FileInformation dir : selecteds) {
+        for (FileInformation dir : selected) {
             currentNewNames = newNames.get(dir.getFileName());
             int recovered = 0;
             for (String newName : currentNewNames.keySet()) {

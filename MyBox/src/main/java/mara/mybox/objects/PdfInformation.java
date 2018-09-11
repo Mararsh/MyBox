@@ -2,10 +2,13 @@ package mara.mybox.objects;
 
 import java.io.File;
 import java.util.Date;
+import mara.mybox.tools.PdfTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
  * @Author Mara
@@ -22,9 +25,62 @@ public class PdfInformation {
     private float version;
     private int numberOfPages;
     private Date createTime, modifyTime;
+    private String firstPageSize, firstPageSize2;
+
+    public PdfInformation() {
+    }
 
     public PdfInformation(File file) {
         this.file = file;
+    }
+
+    public void loadDocument(String password) {
+        try {
+            try (PDDocument doc = PDDocument.load(file, password)) {
+                PDDocumentInformation docInfo = doc.getDocumentInformation();
+                if (docInfo.getCreationDate() != null) {
+                    createTime = docInfo.getCreationDate().getTime();
+                }
+                if (docInfo.getModificationDate() != null) {
+                    modifyTime = docInfo.getModificationDate().getTime();
+                }
+                creator = docInfo.getCreator();
+                producer = docInfo.getProducer();
+                title = docInfo.getTitle();
+                subject = docInfo.getSubject();
+                author = docInfo.getAuthor();
+                numberOfPages = doc.getNumberOfPages();
+                version = doc.getVersion();
+
+                PDPage page = doc.getPage(0);
+                String size = "";
+                PDRectangle box = page.getMediaBox();
+                if (box != null) {
+                    size += "MediaBox: " + PdfTools.pixels2mm(box.getWidth()) + "mm * "
+                            + PdfTools.pixels2mm(box.getHeight()) + "mm";
+                }
+                box = page.getTrimBox();
+                if (box != null) {
+                    size += "  TrimBox: " + PdfTools.pixels2mm(box.getWidth()) + "mm * "
+                            + PdfTools.pixels2mm(box.getHeight()) + "mm";
+                }
+                firstPageSize = size;
+                size = "";
+                box = page.getCropBox();
+                if (box != null) {
+                    size += "CropBox: " + +PdfTools.pixels2mm(box.getWidth()) + "mm * "
+                            + PdfTools.pixels2mm(box.getHeight()) + "mm";
+                }
+                box = page.getBleedBox();
+                if (box != null) {
+                    size += "  BleedBox: " + +PdfTools.pixels2mm(box.getWidth()) + "mm * "
+                            + PdfTools.pixels2mm(box.getHeight()) + "mm";
+                }
+                firstPageSize2 = size;
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public File getFile() {
@@ -107,28 +163,20 @@ public class PdfInformation {
         this.modifyTime = modifyTime;
     }
 
-    public void loadDocument(String password) {
-        try {
-            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
-            try (PDDocument doc = PDDocument.load(file, password)) {
-                PDDocumentInformation docInfo = doc.getDocumentInformation();
-                if (docInfo.getCreationDate() != null) {
-                    createTime = docInfo.getCreationDate().getTime();
-                }
-                if (docInfo.getModificationDate() != null) {
-                    modifyTime = docInfo.getModificationDate().getTime();
-                }
-                creator = docInfo.getCreator();
-                producer = docInfo.getProducer();
-                title = docInfo.getTitle();
-                subject = docInfo.getSubject();
-                author = docInfo.getAuthor();
-                numberOfPages = doc.getNumberOfPages();
-                version = doc.getVersion();
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    public String getFirstPageSize() {
+        return firstPageSize;
+    }
+
+    public void setFirstPageSize(String firstPageSize) {
+        this.firstPageSize = firstPageSize;
+    }
+
+    public String getFirstPageSize2() {
+        return firstPageSize2;
+    }
+
+    public void setFirstPageSize2(String firstPageSize2) {
+        this.firstPageSize2 = firstPageSize2;
     }
 
 }

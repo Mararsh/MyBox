@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +30,9 @@ public class FilesTableController extends BaseController {
     @FXML
     protected Pane filesTablePane;
     @FXML
-    protected Button addButton, clearButton, deleteButton, recoveryAllButton, recoverySelectedButton;
+    protected Button addButton, clearButton, deleteButton, upButton, downButton;
+    @FXML
+    protected Button recoveryAllButton, recoverySelectedButton;
     @FXML
     protected TableView<FileInformation> filesTableView;
     @FXML
@@ -75,7 +78,7 @@ public class FilesTableController extends BaseController {
             }
 
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue("LastPath", path);
+            AppVaribles.setConfigValue(LastPathKey, path);
             AppVaribles.setConfigValue(parentController.sourcePathKey, path);
             for (File file : files) {
                 if (findData(file.getAbsolutePath()) != null) {
@@ -91,10 +94,61 @@ public class FilesTableController extends BaseController {
     }
 
     @FXML
+    void upAction(ActionEvent event) {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        for (Integer index : selected) {
+            if (index == 0) {
+                continue;
+            }
+            FileInformation info = tableData.get(index);
+            tableData.set(index, tableData.get(index - 1));
+            tableData.set(index - 1, info);
+            filesTableView.getSelectionModel().select(index - 1);
+        }
+        for (Integer index : selected) {
+            if (index > 0) {
+                filesTableView.getSelectionModel().select(index - 1);
+            }
+        }
+        filesTableView.refresh();
+    }
+
+    @FXML
+    void downAction(ActionEvent event) {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        for (int i = selected.size() - 1; i >= 0; i--) {
+            int index = selected.get(i);
+            if (index == tableData.size() - 1) {
+                continue;
+            }
+            FileInformation info = tableData.get(index);
+            tableData.set(index, tableData.get(index + 1));
+            tableData.set(index + 1, info);
+        }
+        for (int i = selected.size() - 1; i >= 0; i--) {
+            int index = selected.get(i);
+            if (index < tableData.size() - 1) {
+                filesTableView.getSelectionModel().select(index + 1);
+            }
+        }
+        filesTableView.refresh();
+    }
+
+    @FXML
     void clearAction(ActionEvent event) {
         tableData.clear();
         addButton.setDisable(false);
         deleteButton.setDisable(false);
+        upButton.setDisable(false);
+        downButton.setDisable(false);
         recoveryAllButton.setDisable(true);
         recoverySelectedButton.setDisable(true);
     }
@@ -131,6 +185,8 @@ public class FilesTableController extends BaseController {
         filesTableView.refresh();
         addButton.setDisable(false);
         deleteButton.setDisable(false);
+        upButton.setDisable(false);
+        downButton.setDisable(false);
     }
 
     @FXML

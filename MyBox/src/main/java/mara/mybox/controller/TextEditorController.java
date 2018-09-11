@@ -108,7 +108,7 @@ public class TextEditorController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(LastPathKey, file.getParent());
             AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
             sourceFile = file;
 
@@ -151,7 +151,7 @@ public class TextEditorController extends BaseController {
                 if (file == null) {
                     return;
                 }
-                AppVaribles.setConfigValue("LastPath", file.getParent());
+                AppVaribles.setConfigValue(LastPathKey, file.getParent());
                 AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
                 sourceFile = file;
             }
@@ -180,7 +180,7 @@ public class TextEditorController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(LastPathKey, file.getParent());
             AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
             sourceFile = file;
             try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, false))) {
@@ -216,19 +216,19 @@ public class TextEditorController extends BaseController {
     @Override
     public boolean stageReloading() {
 //        logger.debug("stageReloading");
-        return checkSavingBeforeExit();
+        return checkSavingForNextAction();
     }
 
     @Override
     public boolean stageClosing() {
 //        logger.debug("stageClosing");
-        if (!checkSavingBeforeExit()) {
+        if (!checkSavingForNextAction()) {
             return false;
         }
         return super.stageClosing();
     }
 
-    public boolean checkSavingBeforeExit() {
+    public boolean checkSavingForNextAction() {
 //        logger.debug(fileChanged.getValue());
 
         if (fileChanged == null || !fileChanged.getValue()) {

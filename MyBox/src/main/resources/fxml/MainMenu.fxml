@@ -16,13 +16,19 @@
                 </Menu>
                 <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
+                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                  <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImages" text="%CompressPdfImages" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
+                  <MenuItem mnemonicParsing="false" onAction="#openSplitPdf" text="%SplitPdf" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImages" text="%PdfExtractImages" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTexts" text="%PdfExtractTexts" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
                   <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
                     </items>
                 </Menu>
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
@@ -39,13 +45,14 @@
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureShadow" text="%Shadow" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufactureTransform" text="%Transform" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCutEdges" text="%CutEdges" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureAddEdges" text="%AddEdges" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCutMargins" text="%CutMargins" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureAddMargins" text="%AddMargins" />
                     </items>
                   </Menu>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
                   <MenuItem mnemonicParsing="false" onAction="#openImageCombine" text="%ImageCombine" />
+                  <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                         <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
@@ -59,15 +66,20 @@
                 </Menu>
                 <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
-                  <MenuItem mnemonicParsing="false" onAction="#openTextEditor" text="%TextEditor" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
                   <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#openDirsRename" text="%DirectoriesRename" />
                   <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="openHtmlEditor" mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
+                  <MenuItem mnemonicParsing="false" onAction="#openTextEditor" text="%TextEditor" />
                </items></Menu>
+            <Menu mnemonicParsing="false" text="%NetworkTools">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor2" text="%HtmlEditor" />
+              </items>
+            </Menu>
             <Menu mnemonicParsing="false" text="%DesktopTools">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />

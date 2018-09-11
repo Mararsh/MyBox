@@ -2,6 +2,7 @@ package mara.mybox.objects;
 
 import java.io.File;
 import javafx.scene.image.Image;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -10,15 +11,13 @@ import javafx.scene.image.Image;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageFileInformation {
+public class ImageFileInformation extends FileInformation {
 
-    private File file;
     private String imageFormat, colorSpace, compressionType, imageRotation, bitDepth, extraFormat = "";
     private int xPixels, yPixels, colorChannels;
     private int yDensity, xDensity;  // dpi
-    private long createTime;
     private boolean hasAlpha, isLossless, isScope;
-    private String metaData, filename, size;
+    private String metaData, filename, pixels;
     private Image image;
     private ImageFileInformation self;
 
@@ -26,6 +25,15 @@ public class ImageFileInformation {
         hasAlpha = false;
         isLossless = true;
         isScope = false;
+    }
+
+    public ImageFileInformation(File file) {
+        super(file);
+        hasAlpha = false;
+        isLossless = true;
+        isScope = false;
+        filename = fileName.get();
+        imageFormat = FileTools.getFileSuffix(filename);
     }
 
     public ImageFileInformation(Image image) {
@@ -128,14 +136,6 @@ public class ImageFileInformation {
         this.bitDepth = bitDepth;
     }
 
-    public long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
-    }
-
     public boolean isHasAlpha() {
         return hasAlpha;
     }
@@ -201,13 +201,16 @@ public class ImageFileInformation {
         this.filename = filename;
     }
 
-    public String getSize() {
-        size = xPixels + "x" + yPixels;
-        return size;
+    public String getPixels() {
+        if (xPixels == 0 && yPixels == 0) {
+            return "";
+        }
+        pixels = xPixels + "x" + yPixels;
+        return pixels;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setPixels(String pixels) {
+        this.pixels = pixels;
     }
 
 }

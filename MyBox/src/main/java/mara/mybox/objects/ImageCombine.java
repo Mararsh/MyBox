@@ -18,7 +18,7 @@ public class ImageCombine {
     private static final Logger logger = LogManager.getLogger();
 
     protected ObservableList<ImageFileInformation> sourceImages = FXCollections.observableArrayList();
-    private int columnsValue, intervalValue, edgesValue, arrayType, sizeType;
+    private int columnsValue, intervalValue, MarginsValue, arrayType, sizeType;
     private int eachWidthValue, eachHeightValue, totalWidthValue, totalHeightValue;
     private Color bgColor = Color.WHITE;
 
@@ -68,12 +68,12 @@ public class ImageCombine {
         this.intervalValue = intervalValue;
     }
 
-    public int getEdgesValue() {
-        return edgesValue;
+    public int getMarginsValue() {
+        return MarginsValue;
     }
 
-    public void setEdgesValue(int edgesValue) {
-        this.edgesValue = edgesValue;
+    public void setMarginsValue(int MarginsValue) {
+        this.MarginsValue = MarginsValue;
     }
 
     public int getArrayType() {

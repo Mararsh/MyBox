@@ -11,8 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.tools.DateTools;
-import static mara.mybox.tools.FileTools.showFileSize;
 
 /**
  * @Author Mara
@@ -75,9 +73,9 @@ public class ImageInformationController extends BaseController {
             File file = info.getFile();
             FilesPath.setText(file.getParent());
             FileName.setText(file.getName());
-            CreateTime.setText(DateTools.datetimeToString(info.getCreateTime()));
-            ModifyTime.setText(DateTools.datetimeToString(file.lastModified()));
-            FileSize.setText(showFileSize(file.length()));
+            CreateTime.setText(info.getCreateTime());
+            ModifyTime.setText(info.getModifyTime());
+            FileSize.setText(info.getFileSize());
             xPixels.setText(info.getxPixels() + "");
             yPixels.setText(info.getyPixels() + "");
             if (info.getxDensity() > 0) {

@@ -135,14 +135,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar>
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#cropPickLeft" text="%LeftTop" />
+                                          <Label text="%LeftTop" />
                                                         <TextField fx:id="cropLeftXInput" prefWidth="80.0" promptText="X" />
                                                         <TextField fx:id="cropLeftYInput" prefWidth="80.0" promptText="Y" />
-                                                        <Label prefWidth="20.0" text=" " />
-                                                        <Button mnemonicParsing="false" onAction="#cropPickRight" text="%RightBottom" />
+                                          <Label text="%RightBottom">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding>
+                                          </Label>
                                                         <TextField fx:id="cropRightXInput" prefWidth="80.0" promptText="X" />
                                                         <TextField fx:id="cropRightYInput" prefWidth="80.0" promptText="Y" />
                                                         <Label prefWidth="20.0" text=" " />
+                                          <CheckBox fx:id="cropShowCheck" mnemonicParsing="false" selected="true" text="%ShowScope" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="cropOkButton" mnemonicParsing="false" onAction="#cropAction" text="%Crop" />
                                                     </items>
@@ -263,24 +267,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <ToolBar HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                                        <Button mnemonicParsing="false" prefWidth="2.0" visible="false" />
                                                     </items>
                                                 </ToolBar>
-                                                <ToolBar fx:id="watermarkBar">
+                                                <ToolBar fx:id="watermarkBar" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Label text="%Text" />
-                                                        <TextField fx:id="waterInput" prefWidth="180.0" promptText="%Watermark" text="MyBox" />
-                                                        <ComboBox fx:id="waterSizeBox" editable="true" prefWidth="80.0" promptText="%Size" />
-                                                        <ChoiceBox fx:id="waterStyleBox" prefWidth="100.0" />
-                                                        <ChoiceBox fx:id="waterFamilyBox" prefWidth="100.0" />
+                                                        <TextField fx:id="waterInput" maxWidth="1.7976931348623157E308" prefWidth="260.0" promptText="%Watermark" text="MyBox" />
+                                                        <ComboBox fx:id="waterSizeBox" editable="true" prefWidth="65.0" promptText="%Size" />
+                                                        <ChoiceBox fx:id="waterStyleBox" prefWidth="80.0" />
+                                                        <ChoiceBox fx:id="waterFamilyBox" prefWidth="80.0" />
                                                         <ColorPicker fx:id="waterColorPicker" />
-                                                        <Button fx:id="waterPositionButton" mnemonicParsing="false" onAction="#waterPositionAction" text="%Position" />
-                                                        <TextField fx:id="waterXInput" prefWidth="50.0" promptText="X" />
-                                                        <TextField fx:id="waterYInput" prefWidth="50.0" promptText="Y" />
+                                                        <TextField fx:id="waterXInput" prefWidth="60.0" promptText="X" />
+                                                        <TextField fx:id="waterYInput" prefWidth="60.0" promptText="Y" />
                                                         <Label text="%Transparent" />
-                                                        <ComboBox fx:id="waterTransparentBox" editable="true" prefWidth="80.0" />
+                                                        <ComboBox fx:id="waterTransparentBox" editable="true" prefWidth="70.0" />
                                                         <Label text="%Shadow" />
-                                                        <ComboBox fx:id="waterShadowBox" editable="true" prefWidth="80.0" />
+                                                        <ComboBox fx:id="waterShadowBox" editable="true" prefWidth="70.0" />
+                                          <Label text="%Angle" />
+                                          <ComboBox fx:id="waterAngleBox" editable="true" prefWidth="70.0" />
                                                         <Button fx:id="waterAddButton" mnemonicParsing="false" onAction="#waterAddAction" text="%Add" />
                                                     </items>
                                                 </ToolBar>
@@ -383,7 +387,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="cutEdgesTab" text="%CutEdges">
+                                <Tab fx:id="cutMarginsTab" text="%CutMargins">
                                     <content>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
@@ -394,30 +398,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar>
                                                     <items>
-                                                        <Label text="%ByColor" />
-                                                        <ColorPicker fx:id="cutEdgesColorPicker" />
-                                                        <Button mnemonicParsing="false" onAction="#cutEdgesTransparentAction" text="%Transparent" />
-                                                        <Button mnemonicParsing="false" onAction="#cutEdgesWhiteAction" text="%White" />
-                                                        <Button mnemonicParsing="false" onAction="#cutEdgesBlackAction" text="%Black" />
-                                                        <Button mnemonicParsing="false" onAction="#pickColorForEdge" text="%PickColor" />
-                                                        <Label text="%Edges">
+                                          <RadioButton fx:id="cutMarginsByWidthRadio" mnemonicParsing="false" selected="true" text="%ByWidth">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="cutMarginGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <ComboBox fx:id="cutMarginBox" editable="true" prefWidth="80.0" />
+                                          <RadioButton fx:id="cutMarginsByColorRadio" mnemonicParsing="false" text="%ByColor" toggleGroup="$cutMarginGroup" />
+                                                        <ColorPicker fx:id="cutMarginsColorPicker" disable="true" />
+                                                        <Button fx:id="cutMarginsTrButton" disable="true" mnemonicParsing="false" onAction="#cutMarginsTransparentAction" text="%Transparent" />
+                                                        <Button fx:id="cutMarginsWhiteButton" disable="true" mnemonicParsing="false" onAction="#cutMarginsWhiteAction" text="%White" />
+                                                        <Button fx:id="cutMarginsBlackButton" disable="true" mnemonicParsing="false" onAction="#cutMarginsBlackAction" text="%Black" />
+                                                        <Button fx:id="cutMarginsPickButton" disable="true" mnemonicParsing="false" onAction="#pickColorForMargin" text="%PickColor" />
+                                                        <Label text="%Margins">
                                                             <padding>
-                                                                <Insets left="30.0" />
+                                                                <Insets left="20.0" />
                                                             </padding>
                                                         </Label>
-                                                        <CheckBox fx:id="cutEdgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
-                                                        <CheckBox fx:id="cutEdgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
-                                                        <CheckBox fx:id="cutEdgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
-                                                        <CheckBox fx:id="cutEdgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
+                                                        <CheckBox fx:id="cutMarginsTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
+                                                        <CheckBox fx:id="cutMarginsBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
+                                                        <CheckBox fx:id="cutMarginsLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
+                                                        <CheckBox fx:id="cutMarginsRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <Button fx:id="cutEdgesOkButton" mnemonicParsing="false" onAction="#cutEdgesAction" text="%OK" />
+                                                        <Button fx:id="cutMarginsOkButton" mnemonicParsing="false" onAction="#cutMarginsAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="addEdgesTab" text="%AddEdges">
+                                <Tab fx:id="addMarginsTab" text="%AddMargins">
                                     <content>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
@@ -428,24 +438,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar>
                                                     <items>
-                                                        <Label text="%Color" />
-                                                        <ColorPicker fx:id="addEdgesColorPicker" />
-                                                        <Button mnemonicParsing="false" onAction="#addEdgesTransparentAction" text="%Transparent" />
-                                                        <Button mnemonicParsing="false" onAction="#addEdgesWhiteAction" text="%White" />
-                                                        <Button mnemonicParsing="false" onAction="#addEdgesBlackAction" text="%Black" />
-                                                        <Label text="%Edges">
+                                                        <Label text="%Width" />
+                                                        <ComboBox fx:id="addMarginBox" editable="true" prefWidth="80.0" />
+                                                        <Label text="%Color">
+                                             <padding>
+                                                <Insets left="20.0" />
+                                             </padding></Label>
+                                                        <ColorPicker fx:id="addMarginsColorPicker" />
+                                                        <Button mnemonicParsing="false" onAction="#addMarginsTransparentAction" text="%Transparent" />
+                                                        <Button mnemonicParsing="false" onAction="#addMarginsWhiteAction" text="%White" />
+                                                        <Button mnemonicParsing="false" onAction="#addMarginsBlackAction" text="%Black" />
+                                                        <Label text="%Margins">
                                                             <padding>
-                                                                <Insets left="30.0" />
+                                                                <Insets left="20.0" />
                                                             </padding>
                                                         </Label>
-                                                        <CheckBox fx:id="addEdgesTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
-                                                        <CheckBox fx:id="addEdgesBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
-                                                        <CheckBox fx:id="addEdgesLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
-                                                        <CheckBox fx:id="addEdgesRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
+                                                        <CheckBox fx:id="addMarginsTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
+                                                        <CheckBox fx:id="addMarginsBottomCheck" mnemonicParsing="false" selected="true" text="%Bottom" />
+                                                        <CheckBox fx:id="addMarginsLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
+                                                        <CheckBox fx:id="addMarginsRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                                                         <Label prefWidth="20.0" text=" " />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="addEdgeBox" editable="true" prefWidth="80.0" />
-                                                        <Button fx:id="addEdgesOkButton" mnemonicParsing="false" onAction="#addEdgesAction" text="%OK" />
+                                                        <Button fx:id="addMarginsOkButton" mnemonicParsing="false" onAction="#addMarginsAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -529,17 +542,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </TabPane>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT">
+                <HBox fx:id="hotBox" alignment="CENTER_LEFT">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
                                 <Label fx:id="tipsLabel" text="%Tips" />
                                 <Button mnemonicParsing="false" visible="false" />
-                                <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" textFill="#ab4343">
-                                    <font>
-                                        <Font name="System Bold" size="15.0" />
-                                    </font>
-                                </Label>
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">

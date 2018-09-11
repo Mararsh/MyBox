@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -69,7 +70,7 @@ public class BaseController implements Initializable {
     protected ObservableList<FileInformation> sourceFilesInformation;
     protected String finalTargetName;
 
-    protected String targetPathKey, creatSubdirKey, fillZeroKey;
+    protected String LastPathKey, targetPathKey, creatSubdirKey, fillZeroKey;
     protected String previewKey, sourcePathKey;
     protected String appendColorKey, appendCompressionTypeKey;
     protected String appendDensityKey, appendQualityKey, appendSizeKey;
@@ -100,7 +101,7 @@ public class BaseController implements Initializable {
     protected Label bottomLabel;
 
     public BaseController() {
-
+        LastPathKey = "LastPathKey";
         targetPathKey = "targetPath";
         creatSubdirKey = "creatSubdir";
         fillZeroKey = "fillZero";
@@ -170,6 +171,7 @@ public class BaseController implements Initializable {
                 dirsTableController.setFileExtensionFilter(fileExtensionFilter);
                 dirsTableController.setParentController(this);
             }
+            sourceFilesInformation = FXCollections.observableArrayList();
 
             if (subdirCheck != null) {
                 subdirCheck.setSelected(AppVaribles.getConfigBoolean(creatSubdirKey));
@@ -275,7 +277,7 @@ public class BaseController implements Initializable {
                 return;
             }
             sourceFile = file;
-            AppVaribles.setConfigValue("LastPath", sourceFile.getParent());
+            AppVaribles.setConfigValue(LastPathKey, sourceFile.getParent());
             AppVaribles.setConfigValue(sourcePathKey, sourceFile.getParent());
 
             if (sourceFileInput != null) {
@@ -308,7 +310,7 @@ public class BaseController implements Initializable {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", directory.getPath());
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
             AppVaribles.setConfigValue(targetPathKey, directory.getPath());
 
             targetPathInput.setText(directory.getPath());
@@ -331,7 +333,16 @@ public class BaseController implements Initializable {
                 Desktop.getDesktop().browse(new File(finalTargetName).toURI());
             } else {
                 if (targetSelectionController.targetPathInput != null) {
-                    Desktop.getDesktop().browse(new File(targetSelectionController.targetPathInput.getText()).toURI());
+
+                    String path = targetSelectionController.targetPathInput.getText();
+                    if (targetSelectionController.subdirCheck != null && targetSelectionController.subdirCheck.isSelected()) {
+                        if (path.endsWith("/") || path.endsWith("\\")) {
+                            path += targetSelectionController.targetPrefixInput.getText();
+                        } else {
+                            path += "/" + targetSelectionController.targetPrefixInput.getText();
+                        }
+                    }
+                    Desktop.getDesktop().browse(new File(path).toURI());
                 }
             }
 
@@ -653,6 +664,28 @@ public class BaseController implements Initializable {
             stage.setTitle(AppVaribles.getMessage("ImageViewer"));
             stage.show();
             controller.loadImage(image);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void showImageView(String file) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            ImageViewerController controller = fxmlLoader.getController();
+
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.initOwner(null);
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(new Scene(root));
+            stage.setTitle(AppVaribles.getMessage("ImageViewer"));
+            stage.show();
+            controller.loadImage(file);
 
         } catch (Exception e) {
             logger.error(e.toString());

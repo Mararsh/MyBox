@@ -34,7 +34,10 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         try {
 
+            // https://bugs.openjdk.java.net/browse/JDK-8041125
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+            System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
+
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
                 userPath.mkdirs();
@@ -49,6 +52,7 @@ public class MainApp extends Application {
             }
 
             ImageValueTools.registrySupportedImageFormats();
+            AppVaribles.initAppVaribles();
 
             FXMLLoader fxmlLoader;
             Pane pane;

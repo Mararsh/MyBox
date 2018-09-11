@@ -157,14 +157,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="desktopBox" alignment="CENTER" onMouseClicked="#showDesktopMenu" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
+                        <VBox fx:id="networkBox" alignment="CENTER" onMouseClicked="#showNetworkMenu" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                             <children>
                                 <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../img/DesktopTools.png" />
                                     </image>
                                 </ImageView>
-                                <Label text="%DesktopTools">
+                                <Label text="%NetworkTools">
                                     <font>
                                         <Font size="18.0" />
                                     </font>

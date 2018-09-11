@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -14,12 +15,13 @@ import java.awt.image.Kernel;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
+import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.CommonValues.AlphaColor;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.tools.FxImageTools;
+import mara.mybox.tools.FxmlImageTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -120,7 +122,18 @@ public class ImageConvertionTools {
         }
     }
 
-    public static BufferedImage RemoveAlpha(BufferedImage source) {
+    public static BufferedImage clearAlpha(BufferedImage image) {
+//        if (!image.isAlphaPremultiplied()) {
+//            return image;
+//        }
+        if (AppVaribles.alphaAsBlack) {
+            return ImageConvertionTools.removeAlpha(image);
+        } else {
+            return ImageConvertionTools.replaceAlphaAsWhite(image);
+        }
+    }
+
+    public static BufferedImage removeAlpha(BufferedImage source) {
         try {
             if (!source.isAlphaPremultiplied()) {
                 return source;
@@ -135,11 +148,11 @@ public class ImageConvertionTools {
         }
     }
 
-    public static BufferedImage ReplaceAlphaAsBlack(BufferedImage source) {
-        return RemoveAlpha(source);
+    public static BufferedImage replaceAlphaAsBlack(BufferedImage source) {
+        return removeAlpha(source);
     }
 
-    public static BufferedImage ReplaceAlphaAsWhite(BufferedImage source) {
+    public static BufferedImage replaceAlphaAsWhite(BufferedImage source) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
@@ -220,11 +233,11 @@ public class ImageConvertionTools {
         } else {
             alphaColor = Color.WHITE;
         }
-        target = cutEdges(target, alphaColor, true, true, true, true);
+        target = cutMargins(target, alphaColor, true, true, true, true);
         return target;
     }
 
-    public static BufferedImage cutEdges(BufferedImage source, Color cutColor,
+    public static BufferedImage cutMargins(BufferedImage source, Color cutColor,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
             int width = source.getWidth();
@@ -392,7 +405,7 @@ public class ImageConvertionTools {
             } else {
                 alphaColor = Color.WHITE;
             }
-            target = cutEdges(target, alphaColor, true, true, true, true);
+            target = cutMargins(target, alphaColor, true, true, true, true);
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -401,7 +414,8 @@ public class ImageConvertionTools {
     }
 
     public static BufferedImage addWatermarkText(BufferedImage source, String text,
-            Font font, Color color, int x, int y, float transparent, int shadow) {
+            Font font, Color color, int x, int y,
+            float transparent, int shadow, int angle) {
         try {
             if (transparent > 1.0f || transparent < 0) {
                 transparent = 1.0f;
@@ -412,15 +426,18 @@ public class ImageConvertionTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
+            AffineTransform affineTransform = new AffineTransform();
+            affineTransform.rotate(Math.toRadians(angle), 0, 0);
+            Font rotatedFont = font.deriveFont(affineTransform);
             if (shadow > 0) {  // Not blurred. Can improve
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
                 g.setColor(Color.GRAY);
-                g.setFont(font);
+                g.setFont(rotatedFont);
                 g.drawString(text, x + shadow, y + shadow);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
             g.setColor(color);
-            g.setFont(font);
+            g.setFont(rotatedFont);
             g.drawString(text, x, y);
             g.dispose();
             return target;
@@ -552,7 +569,8 @@ public class ImageConvertionTools {
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
             g.setComposite(ac);
             g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
             g.setStroke(stroke);
             g.drawLine(x1, y1, x2, y1);
             g.drawLine(x1, y1, x1, y2);
@@ -604,7 +622,9 @@ public class ImageConvertionTools {
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
             g.setComposite(ac);
             g.setColor(lineColor);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+//            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
             g.setStroke(stroke);
 
             for (int i = 0; i < rows.size(); i++) {
@@ -689,7 +709,7 @@ public class ImageConvertionTools {
             return null;
         }
         try {
-            int x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            int x = imageCombine.getMarginsValue(), y = imageCombine.getMarginsValue(), imageWidth, imageHeight;
             int totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == CombineSizeType.AlignAsBigger) {
@@ -744,7 +764,7 @@ public class ImageConvertionTools {
                 widths.add(imageWidth);
                 heights.add(imageHeight);
 
-                x = imageCombine.getEdgesValue();
+                x = imageCombine.getMarginsValue();
                 y += imageHeight + imageCombine.getIntervalValue();
 
                 if (imageWidth > totalWidth) {
@@ -752,11 +772,11 @@ public class ImageConvertionTools {
                 }
             }
 
-            totalWidth += 2 * imageCombine.getEdgesValue();
-            totalHeight = y + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+            totalWidth += 2 * imageCombine.getMarginsValue();
+            totalHeight = y + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
 
             javafx.scene.image.Image newImage = writeImage(images, totalWidth, totalHeight,
-                    FxImageTools.colorConvert(imageCombine.getBgColor()),
+                    FxmlImageTools.colorConvert(imageCombine.getBgColor()),
                     xs, ys, widths, heights,
                     imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == CombineSizeType.TotalWidth),
@@ -775,7 +795,7 @@ public class ImageConvertionTools {
             return null;
         }
         try {
-            int x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            int x = imageCombine.getMarginsValue(), y = imageCombine.getMarginsValue(), imageWidth, imageHeight;
             int totalWidth = 0, totalHeight = 0, maxHeight = 0, minHeight = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
 
@@ -837,13 +857,13 @@ public class ImageConvertionTools {
                 }
             }
 
-            totalWidth = x + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+            totalWidth = x + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
             if (!isPart) {
-                totalHeight += 2 * imageCombine.getEdgesValue();
+                totalHeight += 2 * imageCombine.getMarginsValue();
             }
 
             javafx.scene.image.Image newImage = writeImage(images, totalWidth, totalHeight,
-                    FxImageTools.colorConvert(imageCombine.getBgColor()),
+                    FxmlImageTools.colorConvert(imageCombine.getBgColor()),
                     xs, ys, widths, heights,
                     imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),
                     careTotal && (sizeType == CombineSizeType.TotalWidth),

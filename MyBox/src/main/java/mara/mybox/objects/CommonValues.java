@@ -17,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "2.11";
-    public static final String AppVersionDate = "2018-09-06";
+    public static final String AppVersion = "2.12";
+    public static final String AppVersionDate = "2018-09-11";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -33,7 +33,11 @@ public class CommonValues {
     public static final String PdfExtractTextsBatchFxml = "/fxml/PdfExtractTextsBatch.fxml";
     public static final String PdfConvertImagesFxml = "/fxml/PdfConvertImages.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
+    public static final String PdfCompressImagesFxml = "/fxml/PdfCompressImages.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
+    public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
+    public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
+    public static final String PdfSplitFxml = "/fxml/PdfSplit.fxml";
     public static final String FileFxml = "/fxml/PdfConvertImages.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
@@ -44,6 +48,7 @@ public class CommonValues {
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
+    public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
@@ -57,7 +62,6 @@ public class CommonValues {
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
-    public static final String ImageCombineFxml = "/fxml/ImageCombine.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -79,6 +83,12 @@ public class CommonValues {
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
 
     public static final int InvalidValue = -9999999;
+
+    public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
+        }
+    };
 
     public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList() {
         {

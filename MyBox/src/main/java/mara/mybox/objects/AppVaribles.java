@@ -35,11 +35,16 @@ public class AppVaribles {
     public static AlarmClockController alarmClockController;
     public static boolean showComments = true;
     public static boolean alphaAsBlack = false;
+    public static int commentsDelay = 3000;
 
     public AppVaribles() {
-        setCurrentBundle();
+    }
+
+    public static void initAppVaribles() {
         showComments = getConfigBoolean("ShowComments", true);
         alphaAsBlack = getConfigBoolean("AlphaAsBlack", false);
+        setCurrentBundle();
+
     }
 
     public static String getMessage(String thestr) {
@@ -100,6 +105,25 @@ public class AppVaribles {
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
+        }
+    }
+
+    public static int getConfigInt(String key, int defaultValue) {
+        String v = getConfigValue(key, defaultValue + "");
+        try {
+            int value = Integer.parseInt(v);
+            return value;
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public static boolean setConfigInt(String key, int value) {
+        if (ConfigTools.writeConfigValue(key, value + "")) {
+            configValues.put(key, value + "");
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -13,7 +13,6 @@ import javax.imageio.stream.ImageInputStream;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.ColorTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FileTools.getFileCreateTime;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,9 +38,7 @@ public class ImageFileReaders {
             if (!file.exists() || !file.isFile()) {
                 return null;
             }
-            ImageFileInformation info = new ImageFileInformation();
-            info.setFile(file);
-            info.setCreateTime(getFileCreateTime(fileName));
+            ImageFileInformation info = new ImageFileInformation(file);
             info.setImageFormat(FileTools.getFileSuffix(fileName).toLowerCase());
 
             try {

@@ -11,8 +11,10 @@
                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <items>
                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                  <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
+                  <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                     </items>
                 </ToolBar>
                 <TableView fx:id="filesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

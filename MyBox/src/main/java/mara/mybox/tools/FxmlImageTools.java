@@ -24,7 +24,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import mara.mybox.image.ImageConvertionTools;
-import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageFileInformation;
@@ -39,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FxImageTools {
+public class FxmlImageTools {
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -92,15 +91,10 @@ public class FxImageTools {
     // https://stackoverflow.com/questions/19548363/image-saved-in-javafx-as-jpg-is-pink-toned
     public static BufferedImage getWritableData(Image image, String format) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        if (!CommonValues.NoAlphaImages.contains(format.toLowerCase())
-                || !bufferedImage.isAlphaPremultiplied()) {
+        if (!CommonValues.NoAlphaImages.contains(format.toLowerCase())) {
             return bufferedImage;
         }
-        if (AppVaribles.alphaAsBlack) {
-            return ImageConvertionTools.RemoveAlpha(bufferedImage);
-        } else {
-            return ImageConvertionTools.ReplaceAlphaAsWhite(bufferedImage);
-        }
+        return ImageConvertionTools.clearAlpha(bufferedImage);
     }
 
     public static Image changeSaturate(Image image, float change, ImageScope scope) {
@@ -557,10 +551,11 @@ public class FxImageTools {
     }
 
     public static Image addWatermark(Image image, String textString,
-            java.awt.Font font, Color color, int x, int y, float transparent, int shadow) {
+            java.awt.Font font, Color color, int x, int y,
+            float transparent, int shadow, int angle) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageConvertionTools.addWatermarkText(source, textString,
-                font, FxImageTools.colorConvert(color), x, y, transparent, shadow);
+                font, FxmlImageTools.colorConvert(color), x, y, transparent, shadow, angle);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -606,7 +601,36 @@ public class FxImageTools {
         return newColor;
     }
 
-    public static Image cutEdges(Image image, Color color,
+    public static Image cutMarginsByWidth(Image image, int MarginWidth,
+            boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
+
+        try {
+            int imageWidth = (int) image.getWidth();
+            int imageHeight = (int) image.getHeight();
+            PixelReader pixelReader = image.getPixelReader();
+
+            int top = 0, bottom = imageHeight - 1, left = 0, right = imageWidth - 1;
+            if (cutTop) {
+                top = MarginWidth;
+            }
+            if (cutBottom) {
+                bottom -= MarginWidth;
+            }
+            if (cutLeft) {
+                left = MarginWidth;
+            }
+            if (cutRight) {
+                right -= MarginWidth;
+            }
+            return cropImage(image, left, top, right, bottom);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+
+    }
+
+    public static Image cutMarginsByColor(Image image, Color color,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
 
         try {
@@ -703,10 +727,10 @@ public class FxImageTools {
 
     }
 
-    public static Image addEdgesFx(Image image, Color color, int edgeWidth,
+    public static Image addMarginsFx(Image image, Color color, int MarginWidth,
             boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
-            if (image == null || edgeWidth <= 0) {
+            if (image == null || MarginWidth <= 0) {
                 return image;
             }
             int width = (int) image.getWidth();
@@ -714,20 +738,20 @@ public class FxImageTools {
             int totalWidth = width, totalHegiht = height;
             int x1 = 0, y1 = 0, x2 = width, y2 = height;
             if (addLeft) {
-                totalWidth += edgeWidth;
-                x1 = edgeWidth;
-                x2 = width + edgeWidth;
+                totalWidth += MarginWidth;
+                x1 = MarginWidth;
+                x2 = width + MarginWidth;
             }
             if (addRight) {
-                totalWidth += edgeWidth;
+                totalWidth += MarginWidth;
             }
             if (addTop) {
-                totalHegiht += edgeWidth;
-                y1 = edgeWidth;
-                y2 = height + edgeWidth;
+                totalHegiht += MarginWidth;
+                y1 = MarginWidth;
+                y2 = height + MarginWidth;
             }
             if (addBottom) {
-                totalHegiht += edgeWidth;
+                totalHegiht += MarginWidth;
             }
 //            logger.debug(width + "  " + totalWidth);
 
@@ -739,28 +763,28 @@ public class FxImageTools {
 //            logger.debug(x1 + "  " + y1);
 //            logger.debug(totalWidth + "  " + totalHegiht);
             if (addLeft) {
-                for (int x = 0; x < edgeWidth; x++) {
+                for (int x = 0; x < MarginWidth; x++) {
                     for (int y = 0; y < totalHegiht; y++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (addRight) {
-                for (int x = totalWidth - 1; x > totalWidth - edgeWidth - 1; x--) {
+                for (int x = totalWidth - 1; x > totalWidth - MarginWidth - 1; x--) {
                     for (int y = 0; y < totalHegiht; y++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (addTop) {
-                for (int y = 0; y < edgeWidth; y++) {
+                for (int y = 0; y < MarginWidth; y++) {
                     for (int x = 0; x < totalWidth; x++) {
                         pixelWriter.setColor(x, y, color);
                     }
                 }
             }
             if (addBottom) {
-                for (int y = totalHegiht - 1; y > totalHegiht - edgeWidth - 1; y--) {
+                for (int y = totalHegiht - 1; y > totalHegiht - MarginWidth - 1; y--) {
                     for (int x = 0; x < totalWidth; x++) {
                         pixelWriter.setColor(x, y, color);
                     }
@@ -777,10 +801,10 @@ public class FxImageTools {
     }
 
     // This way may fail for big image
-    public static Image addEdgesFx2(Image image, Color color, int edgeWidth,
+    public static Image addMarginsFx2(Image image, Color color, int MarginWidth,
             boolean addTop, boolean addBottom, boolean addLeft, boolean addRight) {
         try {
-            if (image == null || edgeWidth <= 0) {
+            if (image == null || MarginWidth <= 0) {
                 return image;
             }
             Group group = new Group();
@@ -790,22 +814,22 @@ public class FxImageTools {
             view.setFitWidth(imageWidth);
             view.setFitHeight(imageHeight);
             if (addLeft) {
-                view.setX(edgeWidth);
-                totalWidth += edgeWidth;
+                view.setX(MarginWidth);
+                totalWidth += MarginWidth;
             } else {
                 view.setX(0);
             }
             if (addTop) {
-                view.setY(edgeWidth);
-                totalHeight += edgeWidth;
+                view.setY(MarginWidth);
+                totalHeight += MarginWidth;
             } else {
                 view.setY(0);
             }
             if (addBottom) {
-                totalHeight += edgeWidth;
+                totalHeight += MarginWidth;
             }
             if (addRight) {
-                totalWidth += edgeWidth;
+                totalWidth += MarginWidth;
             }
             group.getChildren().add(view);
 
@@ -833,7 +857,7 @@ public class FxImageTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConvertionTools.addArc(source, arc, FxImageTools.colorConvert(bgColor));
+        BufferedImage target = ImageConvertionTools.addArc(source, arc, FxmlImageTools.colorConvert(bgColor));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -915,7 +939,7 @@ public class FxImageTools {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConvertionTools.addShadow(source, shadow, FxImageTools.colorConvert(color));
+        BufferedImage target = ImageConvertionTools.addShadow(source, shadow, FxmlImageTools.colorConvert(color));
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -932,11 +956,11 @@ public class FxImageTools {
         PixelWriter pixelWriter = newImage.getPixelWriter();
         pixelWriter.setPixels(0, 0, width, height, pixelReader, 0, 0);
 
-        blurEdgesFx(pixelWriter, color, width, height, shadow);
+        blurMarginsFx(pixelWriter, color, width, height, shadow);
 
 //        int max = 120;
 //        if (shadow < max) {
-//            blurEdgesFx(pixelWriter, color, width, height, shadow);
+//            blurMarginsFx(pixelWriter, color, width, height, shadow);
 //        } else {
 //            // bottom lines
 //            for (int y = height; y < height + shadow - max; y++) {
@@ -950,13 +974,13 @@ public class FxImageTools {
 //                    pixelWriter.setColor(x, y, color);
 //                }
 //            }
-//            blurEdgesFx(pixelWriter, color, width, height, max);
+//            blurMarginsFx(pixelWriter, color, width, height, max);
 //
 //        }
         return newImage;
     }
 
-    private static void blurEdgesFx(PixelWriter pixelWriter, Color color,
+    private static void blurMarginsFx(PixelWriter pixelWriter, Color color,
             int width, int height, int shadow) {
         // bottom lines
         for (int y = height; y < height + shadow; y++) {
@@ -1105,6 +1129,18 @@ public class FxImageTools {
         return newImage;
     }
 
+    public static Image indicateAreaFx(Image image, ImageScope scope, Color color, int width) {
+        if ((scope.getAreaScopeType() == AreaScopeType.AllArea) && scope.isAllColors()) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConvertionTools.showArea(source,
+                FxmlImageTools.colorConvert(color), width,
+                scope.getLeftX(), scope.getLeftY(), scope.getRightX(), scope.getRightY());
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
     public static Image indicateSplit(Image image,
             List<Integer> rows, List<Integer> cols,
             Color lineColor, int lineWidth, boolean showSize) {
@@ -1114,7 +1150,7 @@ public class FxImageTools {
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageConvertionTools.indicateSplit(source, rows, cols,
-                FxImageTools.colorConvert(lineColor), lineWidth);
+                FxmlImageTools.colorConvert(lineColor), lineWidth);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -1186,14 +1222,14 @@ public class FxImageTools {
 
     // This way may fail for big image
     public static Image combineImagesColumnFx(List<Image> images,
-            Color bgColor, int interval, int edge) {
+            Color bgColor, int interval, int Margin) {
         try {
             if (images == null || images.isEmpty()) {
                 return null;
             }
             Group group = new Group();
 
-            int x = edge, y = edge, width = 0, height = 0;
+            int x = Margin, y = Margin, width = 0, height = 0;
             for (int i = 0; i < images.size(); i++) {
                 Image image = images.get(i);
                 ImageView view = new ImageView(image);
@@ -1203,7 +1239,7 @@ public class FxImageTools {
                 view.setY(y);
                 group.getChildren().add(view);
 
-                x = edge;
+                x = Margin;
                 y += image.getHeight() + interval;
 
                 if (image.getWidth() > width) {
@@ -1211,8 +1247,8 @@ public class FxImageTools {
                 }
             }
 
-            width += 2 * edge;
-            height = y + edge - interval;
+            width += 2 * Margin;
+            height = y + Margin - interval;
             Blend blend = new Blend(BlendMode.SRC_OVER);
             blend.setBottomInput(new ColorInput(0, 0, width, height, bgColor));
             group.setEffect(blend);
@@ -1246,7 +1282,7 @@ public class FxImageTools {
         try {
             Group group = new Group();
 
-            double x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            double x = imageCombine.getMarginsValue(), y = imageCombine.getMarginsValue(), imageWidth, imageHeight;
             double totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
@@ -1289,7 +1325,7 @@ public class FxImageTools {
 //                logger.debug(imageWidth + " " + imageHeight);
                 group.getChildren().add(view);
 
-                x = imageCombine.getEdgesValue();
+                x = imageCombine.getMarginsValue();
                 y += imageHeight + imageCombine.getIntervalValue();
 
                 if (imageWidth > totalWidth) {
@@ -1297,8 +1333,8 @@ public class FxImageTools {
                 }
             }
 
-            totalWidth += 2 * imageCombine.getEdgesValue();
-            totalHeight = y + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+            totalWidth += 2 * imageCombine.getMarginsValue();
+            totalHeight = y + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
             Blend blend = new Blend(BlendMode.SRC_OVER);
             blend.setBottomInput(new ColorInput(0, 0, totalWidth, totalHeight, imageCombine.getBgColor()));
             group.setEffect(blend);
@@ -1321,7 +1357,7 @@ public class FxImageTools {
         }
         try {
             Group group = new Group();
-            int x = imageCombine.getEdgesValue(), y = imageCombine.getEdgesValue(), imageWidth, imageHeight;
+            int x = imageCombine.getMarginsValue(), y = imageCombine.getMarginsValue(), imageWidth, imageHeight;
             int totalWidth = 0, totalHeight = 0, maxHeight = 0, minHeight = Integer.MAX_VALUE;
             if (isPart) {
                 y = 0;
@@ -1375,9 +1411,9 @@ public class FxImageTools {
                 }
             }
 
-            totalWidth = x + imageCombine.getEdgesValue() - imageCombine.getIntervalValue();
+            totalWidth = x + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
             if (!isPart) {
-                totalHeight += 2 * imageCombine.getEdgesValue();
+                totalHeight += 2 * imageCombine.getMarginsValue();
             }
             Blend blend = new Blend(BlendMode.SRC_OVER);
             blend.setBottomInput(new ColorInput(0, 0, totalWidth, totalHeight, imageCombine.getBgColor()));
@@ -1438,7 +1474,7 @@ public class FxImageTools {
         }
     }
 
-    public static Image blurBottomEdge(Image image, int size) {
+    public static Image blurBottomMargin(Image image, int size) {
         int height = (int) image.getHeight();
         if (size >= height - 1) {
             return image;
@@ -1474,7 +1510,7 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image blurLeftEdge(Image image, int size) {
+    public static Image blurLeftMargin(Image image, int size) {
         int width = (int) image.getWidth();
         if (size >= width - 1) {
             return image;
@@ -1510,7 +1546,7 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image blurEdgesFx(Image image, int size) {
+    public static Image blurMarginsFx(Image image, int size) {
         int width = (int) image.getWidth();
         int height = (int) image.getHeight();
         if (size >= width - 1 && size >= height - 1) {

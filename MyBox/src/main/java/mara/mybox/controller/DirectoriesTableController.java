@@ -49,7 +49,7 @@ public class DirectoriesTableController extends FilesTableController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", directory.getPath());
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
             AppVaribles.setConfigValue(parentController.sourcePathKey, directory.getPath());
 
             if (findData(directory.getAbsolutePath()) != null) {

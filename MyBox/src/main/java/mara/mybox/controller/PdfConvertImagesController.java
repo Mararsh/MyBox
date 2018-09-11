@@ -34,6 +34,8 @@ public class PdfConvertImagesController extends PdfBaseController {
     protected void initializeNext2() {
         try {
 
+//            sourceSelectionController.fromPageInput.setText(AppVaribles.getConfigValue(PdfSourceFromKey, "0"));
+//            sourceSelectionController.toPageInput.setText(AppVaribles.getConfigValue(PdfSourceToKey, ""));
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))

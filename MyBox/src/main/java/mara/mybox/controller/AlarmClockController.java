@@ -488,7 +488,7 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(LastPathKey, file.getParent());
             AppVaribles.setConfigValue(SystemMediaPathKey, file.getParent());
 
             wavInput.setText(file.getAbsolutePath());
@@ -513,7 +513,7 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(LastPathKey, file.getParent());
             AppVaribles.setConfigValue(MusicPathKey, file.getParent());
 
             mp3Input.setText(file.getAbsolutePath());

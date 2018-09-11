@@ -100,7 +100,7 @@ public class ImagesViewerController extends ImageViewerController {
             setBar.setDisable(true);
 
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVaribles.getConfigValue("LastPath", System.getProperty("user.home"));
+            String defaultPath = AppVaribles.getConfigValue(LastPathKey, System.getProperty("user.home"));
             fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue(sourcePathKey, defaultPath)));
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             imageFileList = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -112,7 +112,7 @@ public class ImagesViewerController extends ImageViewerController {
             filesNumber = imageFileList.size();
             checkImagesNevigator();
             String path = imageFileList.get(0).getParent();
-            AppVaribles.setConfigValue("LastPath", path);
+            AppVaribles.setConfigValue(LastPathKey, path);
             AppVaribles.setConfigValue(sourcePathKey, path);
             bottomLabel.setText(AppVaribles.getMessage("ImagesComments"));
 

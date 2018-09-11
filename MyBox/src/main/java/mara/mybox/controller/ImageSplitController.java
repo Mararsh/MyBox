@@ -19,7 +19,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -53,7 +52,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxImageTools;
+import mara.mybox.tools.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -173,6 +172,17 @@ public class ImageSplitController extends ImageViewerController {
             FxmlTools.setComments(lineWidthBox, tips);
             FxmlTools.setComments(lineColorPicker, tips);
         }
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observable,
+                    Tab oldValue, Tab newValue) {
+                if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
+                    bottomLabel.setText(getMessage("SplitCustomComments"));
+                    FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
+                }
+            }
+        });
 
         parametersValid = new SimpleBooleanProperty(false);
         saveButton.disableProperty().bind(
@@ -348,6 +358,7 @@ public class ImageSplitController extends ImageViewerController {
             parametersValid.set(false);
             imageView.setImage(image);
             bottomLabel.setText("");
+            FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
         }
     }
 
@@ -463,22 +474,8 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     @FXML
-    private void rowsPositionAction(ActionEvent event) {
-        pixelPickingType = PixelPickingType.Row;
-        imageView.setCursor(Cursor.HAND);
-        bottomLabel.setText(getMessage("ContinueClickRow"));
-    }
-
-    @FXML
     private void clearRows(ActionEvent event) {
         rowsInput.setText("");
-    }
-
-    @FXML
-    private void colsPositionAction(ActionEvent event) {
-        pixelPickingType = PixelPickingType.Columm;
-        imageView.setCursor(Cursor.HAND);
-        bottomLabel.setText(getMessage("ContinueClickCol"));
     }
 
     @FXML
@@ -488,16 +485,14 @@ public class ImageSplitController extends ImageViewerController {
 
     @FXML
     private void clickImage(MouseEvent event) {
-        if (image == null || event.getButton() == MouseButton.SECONDARY
-                || pixelPickingType == PixelPickingType.None) {
-
-            pixelPickingType = PixelPickingType.None;
-            imageView.setCursor(Cursor.OPEN_HAND);
-            bottomLabel.setText("");
+        if (image == null || !customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
             return;
         }
+//        imageView.setCursor(Cursor.OPEN_HAND);
+        bottomLabel.setText(getMessage("SplitCustomComments"));
+        FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
 
-        if (pixelPickingType == PixelPickingType.Row) {
+        if (event.getButton() == MouseButton.PRIMARY) {
 
             int y = (int) Math.round(event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight());
             String str = rowsInput.getText().trim();
@@ -506,9 +501,8 @@ public class ImageSplitController extends ImageViewerController {
             } else {
                 rowsInput.setText(str + "," + y);
             }
-            bottomLabel.setText(getMessage("ContinueClickRow"));
 
-        } else if (pixelPickingType == PixelPickingType.Columm) {
+        } else if (event.getButton() == MouseButton.SECONDARY) {
             int x = (int) Math.round(event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth());
             String str = colsInput.getText().trim();
             if (str.isEmpty()) {
@@ -516,7 +510,6 @@ public class ImageSplitController extends ImageViewerController {
             } else {
                 colsInput.setText(str + "," + x);
             }
-            bottomLabel.setText(getMessage("ContinueClickCol"));
 
         }
 
@@ -537,7 +530,7 @@ public class ImageSplitController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 int x1, y1, x2, y2, count = 0;
-                final BufferedImage source = FxImageTools.getWritableData(image, imageInformation.getImageFormat());
+                final BufferedImage source = FxmlImageTools.getWritableData(image, imageInformation.getImageFormat());
                 String format = targetTypeBox.getSelectionModel().getSelectedItem();
                 for (int i = 0; i < rows.size() - 1; i++) {
                     y1 = rows.get(i);
@@ -679,7 +672,7 @@ public class ImageSplitController extends ImageViewerController {
                         return p1 - p2;
                     }
                 });
-                final Image newImage = FxImageTools.indicateSplit(image, rows, cols,
+                final Image newImage = FxmlImageTools.indicateSplit(image, rows, cols,
                         lineColorPicker.getValue(), lineWidthBox.getValue(), displaySizeCheck.isSelected());
                 Platform.runLater(new Runnable() {
                     @Override
@@ -693,6 +686,9 @@ public class ImageSplitController extends ImageViewerController {
                                     + " x " + ((int) image.getHeight() / (rows.size() - 1));
                         }
                         bottomLabel.setText(comments);
+                        if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
+                            FxmlTools.popInformation(imageView, AppVaribles.getMessage("SplitCustomComments"));
+                        }
                     }
                 });
                 return null;

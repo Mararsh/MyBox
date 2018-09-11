@@ -58,7 +58,7 @@ import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxImageTools;
+import mara.mybox.tools.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -68,7 +68,7 @@ import mara.mybox.tools.FxImageTools;
  */
 public class ImagesCombineController extends ImageViewerController {
 
-    protected String ImageCombineArrayTypeKey, ImageCombineCombineSizeTypeKey, ImageCombineColumnsKey, ImageCombineIntervalKey, ImageCombineEdgesKey;
+    protected String ImageCombineArrayTypeKey, ImageCombineCombineSizeTypeKey, ImageCombineColumnsKey, ImageCombineIntervalKey, ImageCombineMarginsKey;
     protected String ImageCombineEachWidthKey, ImageCombineEachHeightKey, ImageCombineTotalWidthKey, ImageCombineTotalHeightKey, ImageCombineFileTypeKey;
     protected String ImageCombineBgColorKey;
 
@@ -87,7 +87,7 @@ public class ImagesCombineController extends ImageViewerController {
     @FXML
     private TextField totalWidthInput, totalHeightInput, eachWidthInput, eachHeightInput;
     @FXML
-    private ComboBox<String> targetTypeBox, columnsBox, intervalBox, edgesBox;
+    private ComboBox<String> targetTypeBox, columnsBox, intervalBox, MarginsBox;
     @FXML
     private ColorPicker bgPicker;
     @FXML
@@ -114,7 +114,7 @@ public class ImagesCombineController extends ImageViewerController {
         ImageCombineTotalHeightKey = "ImageCombineTotalHeightKey";
         ImageCombineColumnsKey = "ImageCombineColumnsKey";
         ImageCombineIntervalKey = "ImageCombineIntervalKey";
-        ImageCombineEdgesKey = "ImageCombineEdgesKey";
+        ImageCombineMarginsKey = "ImageCombineMarginsKey";
         ImageCombineFileTypeKey = "ImageCombineFileTypeKey";
         ImageCombineBgColorKey = "ImageCombineBgColorKey";
     }
@@ -135,7 +135,7 @@ public class ImagesCombineController extends ImageViewerController {
     private void initSourceSection() {
         try {
             fileColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("filename"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("size"));
+            sizeColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("pixels"));
             imageColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, Image>("image"));
             imageColumn.setCellFactory(new Callback<TableColumn<ImageFileInformation, Image>, TableCell<ImageFileInformation, Image>>() {
                 @Override
@@ -225,30 +225,30 @@ public class ImagesCombineController extends ImageViewerController {
             });
             intervalBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineIntervalKey, "5"));
 
-            edgesBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
-            edgesBox.valueProperty().addListener(new ChangeListener<String>() {
+            MarginsBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
+            MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int edgesValue = Integer.valueOf(newValue);
-                        if (edgesValue >= 0) {
-                            imageCombine.setEdgesValue(edgesValue);
-                            edgesBox.getEditor().setStyle(null);
-                            AppVaribles.setConfigValue(ImageCombineEdgesKey, edgesValue + "");
+                        int MarginsValue = Integer.valueOf(newValue);
+                        if (MarginsValue >= 0) {
+                            imageCombine.setMarginsValue(MarginsValue);
+                            MarginsBox.getEditor().setStyle(null);
+                            AppVaribles.setConfigValue(ImageCombineMarginsKey, MarginsValue + "");
                             combineImages();
                         } else {
-                            imageCombine.setEdgesValue(-1);
-                            edgesBox.getEditor().setStyle(badStyle);
+                            imageCombine.setMarginsValue(-1);
+                            MarginsBox.getEditor().setStyle(badStyle);
                         }
 
                     } catch (Exception e) {
-                        imageCombine.setEdgesValue(-1);
-                        edgesBox.getEditor().setStyle(badStyle);
+                        imageCombine.setMarginsValue(-1);
+                        MarginsBox.getEditor().setStyle(badStyle);
                     }
                 }
             });
-            edgesBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineEdgesKey, "5"));
+            MarginsBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineMarginsKey, "5"));
 
             bgPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
@@ -564,7 +564,7 @@ public class ImagesCombineController extends ImageViewerController {
                 try {
                     String format = targetTypeBox.getSelectionModel().getSelectedItem();
                     filename = new File(targetPath.getAbsolutePath() + "/" + targetPrefixInput.getText() + "." + format).getAbsolutePath();
-                    final BufferedImage bufferedImage = FxImageTools.getWritableData(image, format);
+                    final BufferedImage bufferedImage = FxmlImageTools.getWritableData(image, format);
                     ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                 } catch (Exception e) {
                     logger.error(e.toString());
@@ -646,7 +646,7 @@ public class ImagesCombineController extends ImageViewerController {
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue("LastPath", path);
+            AppVaribles.setConfigValue(LastPathKey, path);
             AppVaribles.setConfigValue(sourcePathKey, path);
             loadImages(files);
 
@@ -723,20 +723,24 @@ public class ImagesCombineController extends ImageViewerController {
     }
 
     @FXML
-    private void upAciton(ActionEvent event) {
+    private void upAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
             return;
         }
         for (Integer index : selected) {
-            if (index <= 0 || index > imageCombine.getSourceImages().size() - 1) {
+            if (index == 0) {
                 continue;
             }
             ImageFileInformation info = imageCombine.getSourceImages().get(index);
             imageCombine.getSourceImages().set(index, imageCombine.getSourceImages().get(index - 1));
             imageCombine.getSourceImages().set(index - 1, info);
-            sourceTable.getSelectionModel().select(index - 1);
+        }
+        for (Integer index : selected) {
+            if (index > 0) {
+                sourceTable.getSelectionModel().select(index - 1);
+            }
         }
         sourceTable.refresh();
     }
@@ -750,13 +754,18 @@ public class ImagesCombineController extends ImageViewerController {
         }
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
-            if (index < 0 || index >= imageCombine.getSourceImages().size() - 1) {
+            if (index == imageCombine.getSourceImages().size() - 1) {
                 continue;
             }
             ImageFileInformation info = imageCombine.getSourceImages().get(index);
             imageCombine.getSourceImages().set(index, imageCombine.getSourceImages().get(index + 1));
             imageCombine.getSourceImages().set(index + 1, info);
-            sourceTable.getSelectionModel().select(index + 1);
+        }
+        for (int i = selected.size() - 1; i >= 0; i--) {
+            int index = selected.get(i);
+            if (index < imageCombine.getSourceImages().size() - 1) {
+                sourceTable.getSelectionModel().select(index + 1);
+            }
         }
         sourceTable.refresh();
     }

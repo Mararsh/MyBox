@@ -162,6 +162,23 @@ public class FileTools {
         }
     }
 
+    public static String showFileSize2(long size) {
+        double kb = size * 1.0f / 1024;
+        String s = ValueTools.roundDouble3(kb) + " KB";
+        if (kb < 1024) {
+            return s;
+        }
+
+        double mb = size * 1.0f / (1024 * 1024);
+        if (mb < 1024) {
+            return s + " (" + ValueTools.roundDouble3(mb) + " MB)";
+        } else {
+            double gb = size * 1.0f / (1024 * 1024 * 1024);
+            return s + " (" + ValueTools.roundDouble3(gb) + " GB)";
+        }
+
+    }
+
     public static class FileSortType {
 
         public static final int FileName = 0;
@@ -332,4 +349,34 @@ public class FileTools {
         return dir.delete();
     }
 
+    public static String getFontFile(String fontName) {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("linux")) {
+            return getFontFile("/usr/share/fonts/", fontName);
+
+        } else if (os.contains("windows")) {
+            return getFontFile("C:/Windows/Fonts/", fontName);
+
+        } else if (os.contains("mac")) {
+            String f = getFontFile("/Library/Fonts/", fontName);
+            if (f != null) {
+                return f;
+            } else {
+                return getFontFile("/System/Library/Fonts/", fontName);
+            }
+        }
+        return null;
+    }
+
+    public static String getFontFile(String path, String fontName) {
+        if (new File(path + fontName + ".ttf ").exists()) {
+            return path + fontName + ".ttf ";
+        } else if (new File(path + fontName.toLowerCase() + ".ttf ").exists()) {
+            return path + fontName + ".ttf ";
+        } else if (new File(path + fontName.toUpperCase() + ".ttf ").exists()) {
+            return path + fontName + ".ttf ";
+        } else {
+            return null;
+        }
+    }
 }

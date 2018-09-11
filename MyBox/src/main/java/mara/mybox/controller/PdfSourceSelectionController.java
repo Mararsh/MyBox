@@ -6,7 +6,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,15 +51,13 @@ public class PdfSourceSelectionController extends BaseController {
     protected PasswordField passwordInput;
 
     public PdfSourceSelectionController() {
-
     }
 
     @Override
     protected void initializeNext() {
         try {
 
-            fileExtensionFilter = new ArrayList();
-            fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
+            fileExtensionFilter = CommonValues.PdfExtensionFilter;
 
             sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -112,7 +109,7 @@ public class PdfSourceSelectionController extends BaseController {
                 return;
             }
             parentController.sourceFile = file;
-            AppVaribles.setConfigValue("LastPath", file.getParent());
+            AppVaribles.setConfigValue(LastPathKey, file.getParent());
             AppVaribles.setConfigValue(parentController.sourcePathKey, file.getParent());
 
             if (sourceFileInput != null) {

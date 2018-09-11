@@ -5,12 +5,16 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -18,6 +22,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Popup;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
@@ -88,6 +93,66 @@ public class FxmlTools {
                 tooltip.hide();
             }
         });
+    }
+
+    public static void popInformation(final Node node, String text) {
+        final Popup popup = new Popup();
+        Label popupLabel = new Label(text);
+        popupLabel.setStyle("-fx-background-color:black;"
+                + " -fx-text-fill: white;"
+                + " -fx-font-size: 18px;"
+                + " -fx-padding: 10px;"
+                + " -fx-background-radius: 6;");
+        popup.setAutoHide(true);
+        popup.setAutoFix(true);
+        popup.getContent().addAll(popupLabel);
+        popup.show(node.getScene().getWindow());
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (popup != null) {
+                            popup.hide();
+                        }
+                        timer.cancel();
+                    }
+                });
+            }
+        }, AppVaribles.commentsDelay);
+    }
+
+    public static void popError(final Node node, String text) {
+        final Popup popup = new Popup();
+        Label popupLabel = new Label(text);
+        popupLabel.setStyle("-fx-background-color:white;"
+                + " -fx-text-fill: red;"
+                + " -fx-font-size: 18px;"
+                + " -fx-padding: 10px;"
+                + " -fx-background-radius: 6;");
+        popup.setAutoHide(true);
+        popup.setAutoFix(true);
+        popup.getContent().addAll(popupLabel);
+        popup.show(node.getScene().getWindow());
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (popup != null) {
+                            popup.hide();
+                        }
+                        timer.cancel();
+                    }
+                });
+            }
+        }, AppVaribles.commentsDelay);
     }
 
     public static void setComments(final Node node, final Tooltip tooltip) {

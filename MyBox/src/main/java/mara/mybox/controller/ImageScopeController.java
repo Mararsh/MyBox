@@ -44,7 +44,7 @@ import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxImageTools;
+import mara.mybox.tools.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -90,7 +90,7 @@ public class ImageScopeController extends BaseController {
     @FXML
     private ImageView imageView, refView;
     @FXML
-    private Label promptLabel, titleLabel, opacityLabel, opacityComments;
+    private Label titleLabel, opacityLabel, opacityComments;
 
     @Override
     protected void initializeNext() {
@@ -145,7 +145,6 @@ public class ImageScopeController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    promptLabel.setText("");
                     imageView.setCursor(Cursor.OPEN_HAND);
                     pixelPickingType = ImageManufactureController.PixelPickingType.None;
                     RadioButton selected = (RadioButton) areaGroup.getSelectedToggle();
@@ -287,7 +286,6 @@ public class ImageScopeController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    promptLabel.setText("");
                     imageView.setCursor(Cursor.OPEN_HAND);
                     pixelPickingType = ImageManufactureController.PixelPickingType.None;
                     RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
@@ -476,9 +474,8 @@ public class ImageScopeController extends BaseController {
             if (!isSettingValue) {
                 showScope();
             }
-            promptLabel.setText("");
         } else {
-            promptLabel.setText(getMessage("InvalidRectangle"));
+            FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
         }
 
     }
@@ -535,7 +532,6 @@ public class ImageScopeController extends BaseController {
             centerYInput.setStyle(null);
             radiusInput.setStyle(null);
             areaValid = true;
-            promptLabel.setText("");
             return;
         }
 
@@ -543,9 +539,8 @@ public class ImageScopeController extends BaseController {
             if (!isSettingValue) {
                 showScope();
             }
-            promptLabel.setText("");
         } else {
-            promptLabel.setText(getMessage("InvalidCircle"));
+            FxmlTools.popError(imageView, getMessage("InvalidCircle"));
         }
 
     }
@@ -774,7 +769,7 @@ public class ImageScopeController extends BaseController {
         pixelPickingType = ImageManufactureController.PixelPickingType.OriginalColor;
         imageView.setCursor(Cursor.HAND);
         refView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("PickColorComments"));
+        FxmlTools.popInformation(imageView, getMessage("PickColorComments"));
     }
 
     @FXML
@@ -789,7 +784,7 @@ public class ImageScopeController extends BaseController {
         pixelPickingType = ImageManufactureController.PixelPickingType.RectangleLeft;
         imageView.setCursor(Cursor.HAND);
         refView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("PickPositionComments"));
+        FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
     }
 
     @FXML
@@ -797,7 +792,7 @@ public class ImageScopeController extends BaseController {
         pixelPickingType = ImageManufactureController.PixelPickingType.RectangleRight;
         imageView.setCursor(Cursor.HAND);
         refView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("PickPositionComments"));
+        FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
     }
 
     @FXML
@@ -805,7 +800,15 @@ public class ImageScopeController extends BaseController {
         pixelPickingType = ImageManufactureController.PixelPickingType.CircleCenter;
         imageView.setCursor(Cursor.HAND);
         refView.setCursor(Cursor.HAND);
-        promptLabel.setText(getMessage("PickCenterComments"));
+        FxmlTools.popInformation(imageView, getMessage("PickCenterComments"));
+    }
+
+    @FXML
+    private void setRadius(ActionEvent event) {
+        pixelPickingType = ImageManufactureController.PixelPickingType.CircleRadius;
+        imageView.setCursor(Cursor.HAND);
+        refView.setCursor(Cursor.HAND);
+        FxmlTools.popInformation(imageView, getMessage("SetRadiusComments"));
     }
 
     @FXML
@@ -818,7 +821,6 @@ public class ImageScopeController extends BaseController {
                 pixelPickingType = ImageManufactureController.PixelPickingType.None;
                 imageView.setCursor(Cursor.OPEN_HAND);
                 refView.setCursor(Cursor.OPEN_HAND);
-                promptLabel.setText("");
                 return;
             }
 
@@ -843,7 +845,6 @@ public class ImageScopeController extends BaseController {
                 pixelPickingType = ImageManufactureController.PixelPickingType.None;
                 imageView.setCursor(Cursor.OPEN_HAND);
                 refView.setCursor(Cursor.OPEN_HAND);
-                promptLabel.setText("");
                 return;
             }
 
@@ -871,7 +872,7 @@ public class ImageScopeController extends BaseController {
                     colorsBox.getSelectionModel().select(color);
                     showScope();
                 }
-                promptLabel.setText(getMessage("ContinueClickColor"));
+                FxmlTools.popInformation(imageView, getMessage("ContinueClickColor"));
 
             } else if (pixelPickingType == ImageManufactureController.PixelPickingType.RectangleLeft) {
 
@@ -881,12 +882,12 @@ public class ImageScopeController extends BaseController {
                 isSettingValue = false;
 
                 if (!areaValid) {
-                    promptLabel.setText(getMessage("InvalidRectangle"));
+                    FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
                 } else if (task == null || !task.isRunning()) {
                     showScope();
-                    promptLabel.setText(getMessage("ContinueClickLeft"));
+                    FxmlTools.popInformation(imageView, getMessage("ContinueClickLeft"));
                 } else {
-                    promptLabel.setText(getMessage("PickPositionComments"));
+                    FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
                 }
 
             } else if (pixelPickingType == ImageManufactureController.PixelPickingType.RectangleRight) {
@@ -897,12 +898,12 @@ public class ImageScopeController extends BaseController {
                 isSettingValue = false;
 
                 if (!areaValid) {
-                    promptLabel.setText(getMessage("InvalidRectangle"));
+                    FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
                 } else if (task == null || !task.isRunning()) {
                     showScope();
-                    promptLabel.setText(getMessage("ContinueClickRight"));
+                    FxmlTools.popInformation(imageView, getMessage("ContinueClickRight"));
                 } else {
-                    promptLabel.setText(getMessage("PickPositionComments"));
+                    FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
                 }
 
             } else if (pixelPickingType == ImageManufactureController.PixelPickingType.CircleCenter) {
@@ -913,12 +914,28 @@ public class ImageScopeController extends BaseController {
                 isSettingValue = false;
 
                 if (!areaValid) {
-                    promptLabel.setText(getMessage("InvalidCircle"));
+                    FxmlTools.popError(imageView, getMessage("InvalidCircle"));
                 } else if (task == null || !task.isRunning()) {
                     showScope();
-                    promptLabel.setText(getMessage("ContinueClickCenter"));
+                    FxmlTools.popInformation(imageView, getMessage("ContinueClickCenter"));
                 } else {
-                    promptLabel.setText(getMessage("PickCenterComments"));
+                    FxmlTools.popInformation(imageView, getMessage("PickCenterComments"));
+                }
+
+            } else if (pixelPickingType == ImageManufactureController.PixelPickingType.CircleRadius) {
+
+                isSettingValue = true;
+                long r = Math.round(Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)));
+                radiusInput.setText(r + "");
+                isSettingValue = false;
+
+                if (!areaValid) {
+                    FxmlTools.popError(imageView, getMessage("InvalidCircle"));
+                } else if (task == null || !task.isRunning()) {
+                    showScope();
+                    FxmlTools.popInformation(imageView, getMessage("ContinueClickRadius"));
+                } else {
+                    FxmlTools.popInformation(imageView, getMessage("SetRadiusComments"));
                 }
 
             }
@@ -1015,7 +1032,7 @@ public class ImageScopeController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxImageTools.indicateScopeFx(imageScope.getImage(), imageScope);
+                    final Image newImage = FxmlImageTools.indicateScopeFx(imageScope.getImage(), imageScope);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

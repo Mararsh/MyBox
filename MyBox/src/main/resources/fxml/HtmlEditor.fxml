@@ -53,20 +53,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <ToolBar VBox.vgrow="NEVER">
-                    <items>
-                        <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%File" />
-                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" text="%Create" />
-                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                        <Button mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
-                    </items>
-                </ToolBar>
                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab fx:id="editorTab" text="%HtmlEditor">
                      <content>
                         <VBox prefHeight="200.0" prefWidth="100.0">
                            <children>
+                                  <ToolBar VBox.vgrow="NEVER">
+                                      <items>
+                                          <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%File" />
+                                          <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" text="%Create" />
+                                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                          <Button mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
+                                      </items>
+                                  </ToolBar>
                                       <HTMLEditor fx:id="htmlEdior" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
@@ -84,13 +84,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                               <ToolBar fx:id="browserToolbar" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                 <items>
                                           <Label text="%WebAddress" />
-                                          <TextField fx:id="urlInput" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" />
+                                    <ComboBox fx:id="urlBox" editable="true" prefHeight="30.0" prefWidth="484.0" />
                                           <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" text="%Load" />
                                     <Button fx:id="updateEditorButton" mnemonicParsing="false" onAction="#updateEditor" text="%UpdateEditor" />
                                   <Button mnemonicParsing="false" onAction="#updateBrowser" text="%LoadEditorContents" />
-                                          <Button fx:id="snapsotButton" mnemonicParsing="false" onAction="#snapshot" text="%Snapshot" />
                                 </items>
                               </ToolBar>
+                              <HBox maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                 <children>
+                                    <ToolBar HBox.hgrow="ALWAYS">
+                                      <items>
+                                        <Button mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                          <Button mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                      </items>
+                                    </ToolBar>
+                                    <ToolBar fx:id="snapBar" HBox.hgrow="NEVER">
+                                      <items>
+                                          <Label text="%DelayMM" />
+                                          <ComboBox fx:id="delayBox" editable="true" prefWidth="100.0" />
+                                          <RadioButton mnemonicParsing="false" selected="true" text="%OneImage">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="snapGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
+                                          <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
+                                                <Button fx:id="snapsotButton" mnemonicParsing="false" onAction="#snapshot" text="%Snapshot" />
+                                      </items>
+                                    </ToolBar>
+                                 </children>
+                              </HBox>
                               <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>

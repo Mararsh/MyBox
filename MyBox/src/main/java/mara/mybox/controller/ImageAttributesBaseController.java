@@ -25,8 +25,12 @@ import org.apache.pdfbox.rendering.ImageType;
  */
 public class ImageAttributesBaseController extends BaseController {
 
+    private final String ImageFormatKey, ImageColorKey, ImageCompressionTypeKey;
+    private final String ImageQualityKey, ImageQualityInputKey;
+    private final String ImageBinaryKey, ImageBinaryInputKey;
+
     @FXML
-    protected ToggleGroup ImageFormatGroup, ImageColorGroup, QualityGroup, CompressionGroup, ColorConversionGroup;
+    protected ToggleGroup ImageFormatGroup, ImageColorGroup, QualityGroup, CompressionGroup, binaryGroup;
     @FXML
     protected RadioButton RGB, ARGB, Gray, Binary, fullQuality;
     @FXML
@@ -38,11 +42,21 @@ public class ImageAttributesBaseController extends BaseController {
 
     protected ImageAttributes attributes = new ImageAttributes();
 
-    public static class ColorConversion {
+    public static class BinaryAlgorithm {
 
         public static int DEFAULT = 0;
         public static int OTSU = 1;
         public static int THRESHOLD = 9;
+    }
+
+    public ImageAttributesBaseController() {
+        ImageFormatKey = "ImageFormatKey";
+        ImageColorKey = "ImageColorKey";
+        ImageCompressionTypeKey = "ImageCompressionTypeKey";
+        ImageQualityKey = "ImageQualityKey";
+        ImageQualityInputKey = "ImageQualityInputKey";
+        ImageBinaryKey = "ImageBinaryKey";
+        ImageBinaryInputKey = "ImageBinaryInputKey";
     }
 
     @Override
@@ -56,7 +70,7 @@ public class ImageAttributesBaseController extends BaseController {
                 checkImageFormat();
             }
         });
-        FxmlTools.setRadioSelected(ImageFormatGroup, AppVaribles.getConfigValue("imageFormat", "png"));
+        FxmlTools.setRadioSelected(ImageFormatGroup, AppVaribles.getConfigValue(ImageFormatKey, "png"));
         checkImageFormat();
 
         ImageColorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -66,7 +80,7 @@ public class ImageAttributesBaseController extends BaseController {
                 checkImageColor();
             }
         });
-        FxmlTools.setRadioSelected(ImageColorGroup, AppVaribles.getConfigValue("imageColor", AppVaribles.getMessage("Color")));
+        FxmlTools.setRadioSelected(ImageColorGroup, AppVaribles.getConfigValue(ImageColorKey, AppVaribles.getMessage("Colorful")));
         checkImageColor();
 
         QualityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -76,7 +90,7 @@ public class ImageAttributesBaseController extends BaseController {
                 checkQuality();
             }
         });
-        FxmlTools.setRadioSelected(QualityGroup, AppVaribles.getConfigValue("quality", "100%"));
+        FxmlTools.setRadioSelected(QualityGroup, AppVaribles.getConfigValue(ImageQualityKey, "100%"));
         checkQuality();
 
         qualityInput.textProperty().addListener(new ChangeListener<String>() {
@@ -86,16 +100,16 @@ public class ImageAttributesBaseController extends BaseController {
                 checkQuality();
             }
         });
-        qualityInput.setText(AppVaribles.getConfigValue("qualityInput", null));
+        qualityInput.setText(AppVaribles.getConfigValue(ImageQualityInputKey, null));
 
-        ColorConversionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        binaryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 checkColorConversion();
             }
         });
-        FxmlTools.setRadioSelected(ColorConversionGroup, AppVaribles.getConfigValue("colorConversion", AppVaribles.getMessage("Default")));
+        FxmlTools.setRadioSelected(binaryGroup, AppVaribles.getConfigValue(ImageBinaryKey, AppVaribles.getMessage("Default")));
 
         thresholdInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -104,7 +118,7 @@ public class ImageAttributesBaseController extends BaseController {
                 checkColorConversion();
             }
         });
-        thresholdInput.setText(AppVaribles.getConfigValue("thresholdInput", null));
+        thresholdInput.setText(AppVaribles.getConfigValue(ImageBinaryInputKey, null));
 
         if (pcxSelect != null) {
             FxmlTools.quickTooltip(pcxSelect, new Tooltip(getMessage("PcxComments")));
@@ -122,7 +136,7 @@ public class ImageAttributesBaseController extends BaseController {
             RadioButton selected = (RadioButton) ImageFormatGroup.getSelectedToggle();
             String imageFormat = selected.getText();
             attributes.setImageFormat(imageFormat);
-            AppVaribles.setConfigValue("imageFormat", imageFormat);
+            AppVaribles.setConfigValue(ImageFormatKey, imageFormat);
 
             String[] compressionTypes = ImageValueTools.getCompressionTypes(imageFormat, attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
@@ -175,8 +189,8 @@ public class ImageAttributesBaseController extends BaseController {
         try {
             RadioButton selected = (RadioButton) ImageColorGroup.getSelectedToggle();
             String s = selected.getText();
-            AppVaribles.setConfigValue("imageColor", s);
-            if (getMessage("Color").equals(s)) {
+            AppVaribles.setConfigValue(ImageColorKey, s);
+            if (getMessage("Colorful").equals(s)) {
                 attributes.setColorSpace(ImageType.RGB);
             } else if (getMessage("ColorAlpha").equals(s)) {
                 attributes.setColorSpace(ImageType.ARGB);
@@ -199,7 +213,7 @@ public class ImageAttributesBaseController extends BaseController {
             } else {
                 colorBox.setDisable(true);
                 if (thresholdInput.getStyle().equals(FxmlTools.badStyle)) {
-                    FxmlTools.setRadioFirstSelected(ColorConversionGroup);
+                    FxmlTools.setRadioFirstSelected(binaryGroup);
                 }
             }
 
@@ -237,7 +251,8 @@ public class ImageAttributesBaseController extends BaseController {
                 checkCompressionType();
             }
         });
-        FxmlTools.setRadioSelected(CompressionGroup, AppVaribles.getConfigValue("compressionType", AppVaribles.getMessage("None")));
+        FxmlTools.setRadioSelected(CompressionGroup,
+                AppVaribles.getConfigValue(ImageCompressionTypeKey, AppVaribles.getMessage("None")));
         checkCompressionType();
     }
 
@@ -245,7 +260,7 @@ public class ImageAttributesBaseController extends BaseController {
         try {
             RadioButton selected = (RadioButton) CompressionGroup.getSelectedToggle();
             attributes.setCompressionType(selected.getText());
-            AppVaribles.setConfigValue("compressionType", selected.getText());
+            AppVaribles.setConfigValue(ImageCompressionTypeKey, selected.getText());
         } catch (Exception e) {
             attributes.setCompressionType(null);
         }
@@ -254,24 +269,24 @@ public class ImageAttributesBaseController extends BaseController {
     protected void checkColorConversion() {
         thresholdInput.setStyle(null);
         try {
-            RadioButton selected = (RadioButton) ColorConversionGroup.getSelectedToggle();
+            RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
             String s = selected.getText();
 
             if (getMessage("Threshold").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
             } else if (getMessage("OTSU").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
-                AppVaribles.setConfigValue("colorConversion", s);
+                AppVaribles.setConfigValue(ImageBinaryKey, s);
             } else {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
-                AppVaribles.setConfigValue("colorConversion", s);
+                AppVaribles.setConfigValue(ImageBinaryKey, s);
             }
 
             int inputValue;
             try {
                 inputValue = Integer.parseInt(thresholdInput.getText());
                 if (inputValue >= 0 && inputValue <= 100) {
-                    AppVaribles.setConfigValue("thresholdInput", inputValue + "");
+                    AppVaribles.setConfigValue(ImageBinaryInputKey, inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -282,7 +297,7 @@ public class ImageAttributesBaseController extends BaseController {
             if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
                 if (inputValue >= 0) {
                     attributes.setThreshold(inputValue);
-                    AppVaribles.setConfigValue("colorConversion", s);
+                    AppVaribles.setConfigValue(ImageBinaryKey, s);
                 } else {
                     thresholdInput.setStyle(FxmlTools.badStyle);
                 }
@@ -311,7 +326,7 @@ public class ImageAttributesBaseController extends BaseController {
             try {
                 inputValue = Integer.parseInt(qualityInput.getText());
                 if (inputValue >= 0 && inputValue <= 100) {
-                    AppVaribles.setConfigValue("qualityInput", inputValue + "");
+                    AppVaribles.setConfigValue(ImageQualityInputKey, inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -321,13 +336,13 @@ public class ImageAttributesBaseController extends BaseController {
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue >= 0) {
                     attributes.setQuality(inputValue);
-                    AppVaribles.setConfigValue("quality", s);
+                    AppVaribles.setConfigValue(ImageQualityKey, s);
                 } else {
                     qualityInput.setStyle(FxmlTools.badStyle);
                 }
             } else {
                 attributes.setQuality(Integer.parseInt(s.substring(0, s.length() - 1)));
-                AppVaribles.setConfigValue("quality", s);
+                AppVaribles.setConfigValue(ImageQualityKey, s);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -414,12 +429,12 @@ public class ImageAttributesBaseController extends BaseController {
         this.colorBox = colorBox;
     }
 
-    public ToggleGroup getColorConversionGroup() {
-        return ColorConversionGroup;
+    public ToggleGroup getBinaryGroup() {
+        return binaryGroup;
     }
 
-    public void setColorConversionGroup(ToggleGroup ColorConversionGroup) {
-        this.ColorConversionGroup = ColorConversionGroup;
+    public void setBinaryGroup(ToggleGroup binaryGroup) {
+        this.binaryGroup = binaryGroup;
     }
 
     public TextField getThresholdInput() {

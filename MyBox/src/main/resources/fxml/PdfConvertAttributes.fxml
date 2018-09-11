@@ -89,7 +89,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Label text="%ImageColor" GridPane.rowIndex="1" />
                 <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1">
                     <children>
-                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Color">
+                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Colorful">
                             <toggleGroup>
                                 <ToggleGroup fx:id="ImageColorGroup" />
                             </toggleGroup>
@@ -100,18 +100,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     </children>
                 </HBox>
 
-                <Label text="%ColorScheme" GridPane.rowIndex="5" />
+                <Label text="%BinaryAlgorithm" GridPane.rowIndex="5" />
                 <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <children>
                         <HBox fx:id="colorBox" alignment="CENTER_LEFT" disable="true" prefHeight="100.0" prefWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <RadioButton mnemonicParsing="false" selected="true" text="%Default">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="ColorConversionGroup" />
-                                    </toggleGroup>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="binaryGroup" />
+                           </toggleGroup>
                                 </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$ColorConversionGroup" />
-                                <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$ColorConversionGroup" />
+                                <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
+                                <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
                                 <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" />
                                 <Label text="\%" />
                             </children>

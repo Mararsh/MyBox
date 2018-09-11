@@ -14,18 +14,19 @@ import org.apache.logging.log4j.Logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public final class FileInformation {
+public class FileInformation {
 
     protected static final Logger logger = LogManager.getLogger();
 
-    private SimpleStringProperty fileName, newName, fileType, createTime, modifyTime, fileSize, handled;
+    protected File file;
+    protected SimpleStringProperty fileName, newName, fileType, createTime, modifyTime, fileSize, handled;
 
     public FileInformation() {
 
     }
 
     public FileInformation(File file) {
-
+        this.file = file;
         String filename = file.getAbsolutePath();
         this.handled = new SimpleStringProperty("");
         this.fileName = new SimpleStringProperty(file.getAbsolutePath());
@@ -94,6 +95,14 @@ public final class FileInformation {
 
     public void setHandled(String handled) {
         this.handled.set(handled);
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
 }

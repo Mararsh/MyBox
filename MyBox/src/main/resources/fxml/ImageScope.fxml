@@ -95,11 +95,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                               <Button mnemonicParsing="false" onAction="#pickCenter" text="%CircleCenter" />
                               <TextField fx:id="centerXInput" prefWidth="80.0" promptText="X" />
                               <TextField fx:id="centerYInput" prefWidth="80.0" promptText="Y" />
-                              <Label text="%Radius">
-                                 <padding>
-                                    <Insets left="30.0" />
-                                 </padding>
-                              </Label>
+                              <Button mnemonicParsing="false" onAction="#setRadius" text="%Radius" />
                               <TextField fx:id="radiusInput" prefWidth="80.0" />
                               <Label prefWidth="20.0" text=" " />
                                     <CheckBox fx:id="circleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
@@ -205,11 +201,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             </VBox>
             </items>
         </SplitPane>
-            <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" textFill="#a13f3f" VBox.vgrow="NEVER">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
     </children>
     <BorderPane.margin>
         <Insets />

@@ -132,7 +132,7 @@ public class FilesArrangeController extends BaseController {
                     return;
                 }
                 sourcePathInput.setStyle(null);
-                AppVaribles.setConfigValue("LastPath", newValue);
+                AppVaribles.setConfigValue(LastPathKey, newValue);
                 AppVaribles.setConfigValue(sourcePathKey, newValue);
             }
         });
@@ -148,7 +148,7 @@ public class FilesArrangeController extends BaseController {
                     return;
                 }
                 targetPathInput.setStyle(null);
-                AppVaribles.setConfigValue("LastPath", newValue);
+                AppVaribles.setConfigValue(LastPathKey, newValue);
                 AppVaribles.setConfigValue(targetPathKey, newValue);
             }
         });

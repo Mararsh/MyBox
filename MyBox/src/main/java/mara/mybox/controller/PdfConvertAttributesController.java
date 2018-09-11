@@ -26,12 +26,19 @@ import mara.mybox.tools.FxmlTools;
  */
 public class PdfConvertAttributesController extends ImageAttributesBaseController {
 
+    private final String PdfConvertDensityKey, PdfConvertDensityInputKey;
+
     @FXML
     protected HBox pdfConvertAttributesPane;
     @FXML
     protected ToggleGroup DensityGroup;
     @FXML
     protected TextField densityInput;
+
+    public PdfConvertAttributesController() {
+        PdfConvertDensityKey = "PdfConvertDensityKey";
+        PdfConvertDensityInputKey = "PdfConvertDensityInputKey";
+    }
 
     @Override
     protected void initializeNext2() {
@@ -43,7 +50,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
                 checkDensity();
             }
         });
-        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getConfigValue("density", "72dpi"));
+        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getConfigValue(PdfConvertDensityKey, "72dpi"));
         checkDensity();
         densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -52,7 +59,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
                 checkDensity();
             }
         });
-        densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
+        densityInput.setText(AppVaribles.getConfigValue(PdfConvertDensityInputKey, null));
         FxmlTools.setNonnegativeValidation(densityInput);
 
     }
@@ -66,7 +73,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             try {
                 inputValue = Integer.parseInt(densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setConfigValue("densityInput", inputValue + "");
+                    AppVaribles.setConfigValue(PdfConvertDensityInputKey, inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -76,14 +83,14 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     attributes.setDensity(inputValue);
-                    AppVaribles.setConfigValue("density", s);
+                    AppVaribles.setConfigValue(PdfConvertDensityKey, s);
                 } else {
                     densityInput.setStyle(FxmlTools.badStyle);
                 }
 
             } else {
                 attributes.setDensity(Integer.parseInt(s.substring(0, s.length() - 3)));
-                AppVaribles.setConfigValue("density", s);
+                AppVaribles.setConfigValue(PdfConvertDensityKey, s);
             }
         } catch (Exception e) {
             logger.error(e.toString());

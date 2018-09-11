@@ -9,10 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -27,7 +27,8 @@ import mara.mybox.tools.ValueTools;
  */
 public abstract class PdfBaseController extends BaseController {
 
-    protected boolean isTxt;
+    protected boolean isTxt, allowPaused;
+    protected String PdfSourceFromKey, PdfSourceToKey;
 
     @FXML
     protected PdfSourceSelectionController sourceSelectionController;
@@ -59,14 +60,17 @@ public abstract class PdfBaseController extends BaseController {
         appendDensityKey = "PdfAppendDensity";
         appendQualityKey = "PdfAppendQuality";
         appendSizeKey = "PdfAppendSize";
+        PdfSourceFromKey = "PdfSourceFromKey";
+        PdfSourceToKey = "PdfSourceToKey";
 
-        fileExtensionFilter = new ArrayList();
-        fileExtensionFilter.add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
+        fileExtensionFilter = CommonValues.PdfExtensionFilter;
+
     }
 
     @Override
     protected void initializeNext() {
         try {
+            allowPaused = true;
 
             if (sourceSelectionController != null) {
                 sourceSelectionController.setParentController(this);
@@ -84,6 +88,9 @@ public abstract class PdfBaseController extends BaseController {
 
     @Override
     protected void sourceFileChanged(final File file) {
+        if (targetSelectionController == null) {
+            return;
+        }
         if (targetSelectionController.targetPrefixInput != null) {
             String filename = file.getName();
             targetSelectionController.targetPrefixInput.setText(FileTools.getFilePrefix(filename));
@@ -177,7 +184,9 @@ public abstract class PdfBaseController extends BaseController {
         actualParameters.sourceFile = sourceSelectionController.pdfInformation.getFile();
 
         actualParameters.fromPage = sourceSelectionController.readFromPage();
+//        AppVaribles.setConfigInt(PdfSourceFromKey, actualParameters.fromPage);
         actualParameters.toPage = sourceSelectionController.readToPage();
+//        AppVaribles.setConfigInt(PdfSourceFromKey, actualParameters.toPage);
         actualParameters.currentNameNumber = actualParameters.acumFrom;
         actualParameters.password = sourceSelectionController.readPassword();
         actualParameters.startPage = actualParameters.fromPage;
@@ -295,15 +304,17 @@ public abstract class PdfBaseController extends BaseController {
                                     cancelProcess(event);
                                 }
                             });
-                            operationBarController.pauseButton.setVisible(true);
-                            operationBarController.pauseButton.setDisable(false);
-                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
-                            operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    pauseProcess(event);
-                                }
-                            });
+                            if (allowPaused) {
+                                operationBarController.pauseButton.setVisible(true);
+                                operationBarController.pauseButton.setDisable(false);
+                                operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
+                                operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+                                    @Override
+                                    public void handle(ActionEvent event) {
+                                        pauseProcess(event);
+                                    }
+                                });
+                            }
                             paraBox.setDisable(true);
                             break;
 

@@ -96,7 +96,7 @@ public class DirectorySynchronizeController extends BaseController {
                         return;
                     }
                     sourcePathInput.setStyle(null);
-                    AppVaribles.setConfigValue("LastPath", newValue);
+                    AppVaribles.setConfigValue(LastPathKey, newValue);
                     AppVaribles.setConfigValue(sourcePathKey, newValue);
                 }
             });
@@ -112,7 +112,7 @@ public class DirectorySynchronizeController extends BaseController {
                         return;
                     }
                     targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue("LastPath", newValue);
+                    AppVaribles.setConfigValue(LastPathKey, newValue);
                     AppVaribles.setConfigValue(targetPathKey, newValue);
                 }
             });
@@ -158,7 +158,7 @@ public class DirectorySynchronizeController extends BaseController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", directory.getPath());
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
             AppVaribles.setConfigValue(sourcePathKey, directory.getPath());
 
             sourcePathInput.setText(directory.getPath());
@@ -184,7 +184,7 @@ public class DirectorySynchronizeController extends BaseController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue("LastPath", directory.getPath());
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
             AppVaribles.setConfigValue(targetPathKey, directory.getPath());
 
             targetPathInput.setText(directory.getPath());

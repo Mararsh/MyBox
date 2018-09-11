@@ -40,6 +40,8 @@ public class PdfInformationController extends BaseController {
     private TextField version;
     @FXML
     private TextField numberOfPages;
+    @FXML
+    private TextField firstPageSize, firstPageSize2;
 
     @FXML
     private void closeStage() {
@@ -65,6 +67,8 @@ public class PdfInformationController extends BaseController {
             producer.setText(info.getProducer());
             version.setText(info.getVersion() + "");
             numberOfPages.setText(info.getNumberOfPages() + "");
+            firstPageSize.setText(info.getFirstPageSize());
+            firstPageSize2.setText(info.getFirstPageSize2());
         } catch (Exception e) {
             logger.error(e.toString());
         }
