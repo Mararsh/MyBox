@@ -11,6 +11,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -131,11 +133,18 @@ public class PdfSourceSelectionController extends BaseController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PdfInformationFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            PdfInformationController controller = fxmlLoader.getController();
-            controller.setInformation(pdfInformation);
-
+            final PdfInformationController controller = fxmlLoader.getController();
             Stage infoStage = new Stage();
             controller.setMyStage(infoStage);
+            infoStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             infoStage.setTitle(getMyStage().getTitle());
             infoStage.initModality(Modality.NONE);
             infoStage.initStyle(StageStyle.DECORATED);
@@ -143,6 +152,8 @@ public class PdfSourceSelectionController extends BaseController {
             infoStage.getIcons().add(CommonValues.AppIcon);
             infoStage.setScene(new Scene(root));
             infoStage.show();
+
+            controller.setInformation(pdfInformation);
 
         } catch (Exception e) {
             logger.error(e.toString());

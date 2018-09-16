@@ -22,6 +22,7 @@ import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -46,6 +47,7 @@ import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -78,6 +80,7 @@ public class HtmlEditorController extends TextEditorController {
     private URL url;
     private List<Image> images;
     private File targetFile;
+    protected SimpleBooleanProperty loadedCompletely;
 
     @FXML
     private Button saveButton, openButton, createButton, loadButton, updateEditorButton, snapsotButton;
@@ -153,7 +156,6 @@ public class HtmlEditorController extends TextEditorController {
             textArea.setOnKeyReleased(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    logger.debug(event.getEventType());
                     int len = textArea.getText().length();
                     if (!isSettingValues && len != lastTextLen) {
                         fileChanged.set(true);
@@ -256,16 +258,10 @@ public class HtmlEditorController extends TextEditorController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
-                    if (AppVaribles.getMessage("OneImage").equals(selected.getText())) {
-                        isOneImage = true;
-                        windowSizeCheck.setDisable(true);
-                    } else {
-                        isOneImage = false;
-                        windowSizeCheck.setDisable(false);
-                    }
+                    checkOneImage();
                 }
             });
+            checkOneImage();
 
             if (AppVaribles.showComments) {
                 Tooltip tips = new Tooltip(getMessage("htmlSnapComments"));
@@ -303,10 +299,34 @@ public class HtmlEditorController extends TextEditorController {
                 }
             });
 
+            loadedCompletely = new SimpleBooleanProperty(false);
+            loadedCompletely.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (loadedCompletely.getValue()) {
+                        startSnap();
+                    } else {
+
+                    }
+
+                }
+            });
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
+    }
+
+    private void checkOneImage() {
+        RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
+        if (AppVaribles.getMessage("OneImage").equals(selected.getText())) {
+            isOneImage = true;
+            windowSizeCheck.setDisable(true);
+        } else {
+            isOneImage = false;
+            windowSizeCheck.setDisable(false);
+        }
     }
 
     private void checkEditorChanged() {
@@ -389,12 +409,46 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void updateEditor(ActionEvent event) {
+    private void updateEditor() {
         try {
-            if (!checkSavingForNextAction()) {
-                return;
+//            if (!checkSavingForNextAction()) {
+//                return;
+//            }
+
+            String contents = getBrowserContents();
+            logger.debug(contents.length());
+            try (BufferedWriter out = new BufferedWriter(new FileWriter("D:/tmp2/broswer.html", false))) {
+                out.write(contents);
+                out.flush();
             }
 
+            contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+            logger.debug(contents.length());
+            try (BufferedWriter out = new BufferedWriter(new FileWriter("D:/tmp2/js.html", false))) {
+                out.write(contents);
+                out.flush();
+            }
+
+            htmlEdior.setHtmlText(contents);
+            textArea.setText(contents);
+//            fileChanged.set(true);
+//            WebDriver driver = new FirefoxDriver();
+//            WebDriverWait wait = new WebDriverWait(driver, 10);
+//            try {
+//                driver.get("https://weibo.com/2362300433");
+////                driver.findElement(By.name("q")).sendKeys("cheese" + Keys.ENTER);
+////                WebElement firstResult = wait.until(presenceOfElementLocated(By.cssSelector("h3>a")));
+////                System.out.println(firstResult.getText());
+//            } finally {
+////                driver.quit();
+//            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private String getBrowserContents() {
+        try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -405,14 +459,15 @@ public class HtmlEditorController extends TextEditorController {
             StringWriter stringWriter = new StringWriter();
             transformer.transform(new DOMSource(webEngine.getDocument()), new StreamResult(stringWriter));
             String contents = stringWriter.getBuffer().toString();
-
-//            String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-            htmlEdior.setHtmlText(contents);
-            textArea.setText(contents);
-            fileChanged.set(true);
+            return contents;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return null;
         }
+    }
+
+    private void checkClasses() {
+
     }
 
     @FXML
@@ -526,12 +581,20 @@ public class HtmlEditorController extends TextEditorController {
         targetFile = file;
         images = new ArrayList();
 
+        loadWholePage();
+
+    }
+
+    private void startSnap() {
+
         final int totalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
         final int snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
         final int width = (Integer) webEngine.executeScript("document.documentElement.clientWidth < document.body.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ");
         snapHeight = 0;
         snapCount = 0;
         webEngine.executeScript("window.scrollTo(0,0 );");
+        updateEditor();
+
         bottomText.setText(AppVaribles.getMessage("SnapingImage..."));
         final SnapshotParameters parameters = new SnapshotParameters();
         parameters.setFill(Color.TRANSPARENT);
@@ -546,6 +609,7 @@ public class HtmlEditorController extends TextEditorController {
                         @Override
                         public void run() {
                             try {
+
                                 Image snapshot = webView.snapshot(parameters, null);
                                 if (totalHeight < snapHeight + snapStep) { // last snap
                                     snapshot = FxmlImageTools.cropImage(snapshot, 0, snapStep - (totalHeight - snapHeight),
@@ -578,22 +642,70 @@ public class HtmlEditorController extends TextEditorController {
                                             Desktop.getDesktop().browse(targetFile.toURI());
                                         }
                                     } else {
-                                        FxmlTools.popError(bottomText, AppVaribles.getMessage("Failed"));
+                                        popError(AppVaribles.getMessage("Failed"));
                                     }
 
+                                    webEngine.executeScript("window.scrollTo(0,0 );");
                                     bottomText.setText("");
+                                    snapsotButton.setDisable(false);
                                 } else {
                                     webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
                                 }
                             } catch (Exception e) {
                                 logger.error(e.toString());
-                                FxmlTools.popError(bottomText, AppVaribles.getMessage("Failed"));
+                                webEngine.executeScript("window.scrollTo(0,0 );");
+                                popError(AppVaribles.getMessage("Failed"));
                             }
                         }
                     });
                 }
             }
-        }, 0, delay);
+        }, 5000, delay);
+
+    }
+
+    private void loadWholePage() {
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        getMyStage().setY(0);
+        getMyStage().setHeight(primaryScreenBounds.getHeight());
+
+        int loadDelay = 5000;
+        loadedCompletely.set(false);
+        snapsotButton.setDisable(true);
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            int lastHeight = 0, newHeight = -1;
+
+            @Override
+            public void run() {
+                if (newHeight == lastHeight) {
+                    logger.debug(" Complete:" + newHeight);
+                    this.cancel();
+//                    loadedCompletely.set(true);
+                } else {
+                    lastHeight = newHeight;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
+                                logger.debug(lastHeight + "  newHeight:" + newHeight);
+
+                                if (newHeight == lastHeight) {
+                                    startSnap();
+                                } else {
+                                    webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
+                                }
+
+                            } catch (Exception e) {
+                                logger.error(e.toString());
+                            }
+                        }
+                    });
+                }
+            }
+        }, 0, loadDelay);
 
     }
 

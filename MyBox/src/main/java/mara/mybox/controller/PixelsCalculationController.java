@@ -676,20 +676,20 @@ public class PixelsCalculationController extends BaseController {
 
     @FXML
     private void close(ActionEvent event) {
-        getMyStage().close();
+        closeStage();
     }
 
     @FXML
     private void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
-            popInformation(AppVaribles.getMessage("Invalid"));
+            alertInformation(AppVaribles.getMessage("Invalid"));
             return;
         }
         if (parentXInput != null && parentYInput != null) {
             parentXInput.setText(finalX + "");
             parentYInput.setText(finalY + "");
         }
-        getMyStage().close();
+        closeStage();
     }
 
     public void setSource(ImageAttributes parentAttributes, TextField parentXInput, TextField parentYInput) {

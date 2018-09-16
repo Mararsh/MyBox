@@ -532,7 +532,7 @@ public class AlarmClockController extends BaseController {
         }
         if (repeatType == AlarmClock.AlarmType.NotRepeat
                 && startTime <= new Date().getTime()) {
-            popInformation(getMessage("AlarmNeverHappen"));
+            alertInformation(getMessage("AlarmNeverHappen"));
             return;
         }
         currentAlarm.setAlarmType(repeatType);

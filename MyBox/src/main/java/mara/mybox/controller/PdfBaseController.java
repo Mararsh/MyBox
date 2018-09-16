@@ -330,7 +330,7 @@ public abstract class PdfBaseController extends BaseController {
                             if (isPreview) {
                                 if (finalTargetName == null
                                         || !new File(finalTargetName).exists()) {
-                                    popInformation(AppVaribles.getMessage("NoDataNotSupported"));
+                                    alertInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else if (isTxt) {
                                     File txtFile = new File(finalTargetName);
                                     Desktop.getDesktop().browse(txtFile.toURI());

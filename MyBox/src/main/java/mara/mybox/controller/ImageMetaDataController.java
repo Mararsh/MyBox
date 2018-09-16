@@ -28,7 +28,7 @@ public class ImageMetaDataController extends BaseController {
     @FXML
     private void closeStage(MouseEvent event) {
         try {
-            getMyStage().close();
+            closeStage();
         } catch (Exception e) {
             logger.error(e.toString());
         }

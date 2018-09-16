@@ -78,7 +78,7 @@ public class ImageScopeController extends BaseController {
     @FXML
     private TextField leftXInput, leftYInput, rightXInput, rightYInput, colorDistanceInput, hueDistanceInput;
     @FXML
-    private TextField centerXInput, centerYInput, radiusInput;
+    private TextField centerXInput, centerYInput, radiusInput, currentInput;
     @FXML
     private RadioButton allColorsRadio, selectedColorsRadio, allAreaRadio, selectedRectangleRadio, selectedCircleRadio;
     @FXML
@@ -86,11 +86,19 @@ public class ImageScopeController extends BaseController {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private ScrollPane scrollPane, refPane;
+    private ScrollPane imagePane, scopePane;
     @FXML
-    private ImageView imageView, refView;
+    private ImageView imageView, scopeView;
     @FXML
     private Label titleLabel, opacityLabel, opacityComments;
+
+    public static class PixelPickingType {
+
+        public static int None = 0;
+        public static int Rectangle = 3;
+        public static int Circle = 5;
+        public static int OriginalColor = 4;
+    }
 
     @Override
     protected void initializeNext() {
@@ -114,6 +122,29 @@ public class ImageScopeController extends BaseController {
                     } else {
                         opacity = 0.1;
                     }
+                }
+            });
+
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue<? extends Tab> observable,
+                        Tab oldValue, Tab newValue) {
+                    pixelPickingType = PixelPickingType.None;
+                    imageView.setCursor(Cursor.OPEN_HAND);
+
+                    Tab tab = tabPane.getSelectionModel().getSelectedItem();
+                    if (colorTab.equals(tab)) {
+                        if (!imageScope.isAllColors()) {
+                            pixelPickingType = PixelPickingType.OriginalColor;
+                        }
+                    } else if (areaTab.equals(tab)) {
+                        if (imageScope.getAreaScopeType() == AreaScopeType.Rectangle) {
+                            pixelPickingType = PixelPickingType.Rectangle;
+                        } else if (imageScope.getAreaScopeType() == AreaScopeType.Circle) {
+                            pixelPickingType = PixelPickingType.Circle;
+                        }
+                    }
+                    popInformation();
                 }
             });
 
@@ -146,7 +177,7 @@ public class ImageScopeController extends BaseController {
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
                     imageView.setCursor(Cursor.OPEN_HAND);
-                    pixelPickingType = ImageManufactureController.PixelPickingType.None;
+                    pixelPickingType = PixelPickingType.None;
                     RadioButton selected = (RadioButton) areaGroup.getSelectedToggle();
                     if (getMessage("AllArea").equals(selected.getText())) {
                         imageScope.setAreaScopeType(AreaScopeType.AllArea);
@@ -162,6 +193,7 @@ public class ImageScopeController extends BaseController {
                         areaValid = true;
                     } else if (getMessage("SelectedRectangle").equals(selected.getText())) {
                         imageScope.setAreaScopeType(AreaScopeType.Rectangle);
+                        pixelPickingType = PixelPickingType.Rectangle;
                         rectangleBar.setDisable(false);
                         circleBar.setDisable(true);
                         centerXInput.setStyle(null);
@@ -175,6 +207,7 @@ public class ImageScopeController extends BaseController {
                         }
                     } else if (getMessage("SelectedCircle").equals(selected.getText())) {
                         imageScope.setAreaScopeType(AreaScopeType.Circle);
+                        pixelPickingType = PixelPickingType.Circle;
                         rectangleBar.setDisable(true);
                         circleBar.setDisable(false);
                         leftXInput.setStyle(null);
@@ -287,7 +320,7 @@ public class ImageScopeController extends BaseController {
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
                     imageView.setCursor(Cursor.OPEN_HAND);
-                    pixelPickingType = ImageManufactureController.PixelPickingType.None;
+                    pixelPickingType = PixelPickingType.None;
                     RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
                     if (getMessage("AllColors").equals(selected.getText())) {
                         imageScope.setAllColors(true);
@@ -297,6 +330,7 @@ public class ImageScopeController extends BaseController {
                         hueDistanceInput.setStyle(null);
                         colorsBox.setVisibleRowCount(20);
                     } else {
+                        pixelPickingType = PixelPickingType.OriginalColor;
                         imageScope.setAllColors(false);
                         colorBar1.setDisable(false);
                         colorBar2.setDisable(false);
@@ -475,7 +509,7 @@ public class ImageScopeController extends BaseController {
                 showScope();
             }
         } else {
-            FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
+            popError(getMessage("InvalidRectangle"));
         }
 
     }
@@ -540,7 +574,7 @@ public class ImageScopeController extends BaseController {
                 showScope();
             }
         } else {
-            FxmlTools.popError(imageView, getMessage("InvalidCircle"));
+            popError(getMessage("InvalidCircle"));
         }
 
     }
@@ -608,22 +642,22 @@ public class ImageScopeController extends BaseController {
             this.imageController = controller;
             this.imageScope = imageScope;
             if (controller == null || imageScope == null || imageScope.getImage() == null) {
-                getMyStage().close();
+                closeStage();
                 return;
             }
             titleLabel.setText(title);
             getMyStage().setTitle(title);
 
             imageView.setPreserveRatio(true);
-            refView.setPreserveRatio(true);
-            if (scrollPane.getHeight() < imageScope.getImage().getHeight()) {
+            scopeView.setPreserveRatio(true);
+            if (imagePane.getHeight() < imageScope.getImage().getHeight()) {
                 paneSize();
             } else {
                 imageSize();
             }
             isSettingValue = true;
             imageView.setImage(imageScope.getImage());
-            refView.setImage(imageScope.getImage());
+            scopeView.setImage(imageScope.getImage());
 
             List<Color> colors = imageScope.getColors();
             if (colors != null && !colors.isEmpty()) {
@@ -721,9 +755,7 @@ public class ImageScopeController extends BaseController {
 
             isSettingValue = false;
 
-            if (imageScope.getAreaScopeType() != AreaScopeType.AllArea) {
-                showScope();
-            }
+            showScope();
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -765,14 +797,6 @@ public class ImageScopeController extends BaseController {
     }
 
     @FXML
-    private void pickColors(ActionEvent event) {
-        pixelPickingType = ImageManufactureController.PixelPickingType.OriginalColor;
-        imageView.setCursor(Cursor.HAND);
-        refView.setCursor(Cursor.HAND);
-        FxmlTools.popInformation(imageView, getMessage("PickColorComments"));
-    }
-
-    @FXML
     private void clearColors(ActionEvent event) {
         colorsBox.getItems().clear();
         showScope();
@@ -780,54 +804,20 @@ public class ImageScopeController extends BaseController {
     }
 
     @FXML
-    private void pickLeft(ActionEvent event) {
-        pixelPickingType = ImageManufactureController.PixelPickingType.RectangleLeft;
-        imageView.setCursor(Cursor.HAND);
-        refView.setCursor(Cursor.HAND);
-        FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
-    }
-
-    @FXML
-    private void pickRight(ActionEvent event) {
-        pixelPickingType = ImageManufactureController.PixelPickingType.RectangleRight;
-        imageView.setCursor(Cursor.HAND);
-        refView.setCursor(Cursor.HAND);
-        FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
-    }
-
-    @FXML
-    private void pickCenter(ActionEvent event) {
-        pixelPickingType = ImageManufactureController.PixelPickingType.CircleCenter;
-        imageView.setCursor(Cursor.HAND);
-        refView.setCursor(Cursor.HAND);
-        FxmlTools.popInformation(imageView, getMessage("PickCenterComments"));
-    }
-
-    @FXML
-    private void setRadius(ActionEvent event) {
-        pixelPickingType = ImageManufactureController.PixelPickingType.CircleRadius;
-        imageView.setCursor(Cursor.HAND);
-        refView.setCursor(Cursor.HAND);
-        FxmlTools.popInformation(imageView, getMessage("SetRadiusComments"));
-    }
-
-    @FXML
     public void clickImage(MouseEvent event) {
         try {
             final Image currentImage = imageView.getImage();
-            if (currentImage == null || event.getButton() == MouseButton.SECONDARY
-                    || pixelPickingType == ImageManufactureController.PixelPickingType.None) {
-
-                pixelPickingType = ImageManufactureController.PixelPickingType.None;
+            if (currentImage == null || pixelPickingType == PixelPickingType.None) {
+                pixelPickingType = PixelPickingType.None;
                 imageView.setCursor(Cursor.OPEN_HAND);
-                refView.setCursor(Cursor.OPEN_HAND);
+                scopeView.setCursor(Cursor.OPEN_HAND);
                 return;
             }
 
             int x = (int) Math.round(event.getX() * currentImage.getWidth() / imageView.getBoundsInLocal().getWidth());
             int y = (int) Math.round(event.getY() * currentImage.getHeight() / imageView.getBoundsInLocal().getHeight());
 
-            handleClick(x, y);
+            handleClick(event, x, y);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -838,20 +828,21 @@ public class ImageScopeController extends BaseController {
     @FXML
     public void clickRef(MouseEvent event) {
         try {
-            final Image currentImage = refView.getImage();
-            if (currentImage == null || event.getButton() == MouseButton.SECONDARY
-                    || pixelPickingType == ImageManufactureController.PixelPickingType.None) {
+            final Image currentImage = scopeView.getImage();
+            if (currentImage == null || pixelPickingType == PixelPickingType.None) {
 
-                pixelPickingType = ImageManufactureController.PixelPickingType.None;
+                pixelPickingType = PixelPickingType.None;
                 imageView.setCursor(Cursor.OPEN_HAND);
-                refView.setCursor(Cursor.OPEN_HAND);
+                scopeView.setCursor(Cursor.OPEN_HAND);
                 return;
             }
 
-            int x = (int) Math.round(event.getX() * currentImage.getWidth() / refView.getBoundsInLocal().getWidth());
-            int y = (int) Math.round(event.getY() * currentImage.getHeight() / refView.getBoundsInLocal().getHeight());
+            int x = (int) Math.round(event.getX() * currentImage.getWidth() / scopeView.getBoundsInLocal().getWidth());
+            int y = (int) Math.round(event.getY() * currentImage.getHeight() / scopeView.getBoundsInLocal().getHeight());
+            imageView.setCursor(Cursor.HAND);
+            scopeView.setCursor(Cursor.HAND);
 
-            handleClick(x, y);
+            handleClick(event, x, y);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -859,10 +850,26 @@ public class ImageScopeController extends BaseController {
 
     }
 
-    public void handleClick(int x, int y) {
+    private void popInformation() {
+
+        if (pixelPickingType == PixelPickingType.OriginalColor) {
+            popInformation(getMessage("PickColorComments"), 5000);
+
+        } else if (pixelPickingType == PixelPickingType.Rectangle) {
+            popInformation(getMessage("PickRectangleComments"), 5000);
+
+        } else if (pixelPickingType == PixelPickingType.Circle) {
+            popInformation(getMessage("PickCenterComments"), 5000);
+
+        } else {
+            hidePopup();
+        }
+    }
+
+    public void handleClick(MouseEvent event, int x, int y) {
         try {
             final Image currentImage = imageView.getImage();
-            if (pixelPickingType == ImageManufactureController.PixelPickingType.OriginalColor) {
+            if (pixelPickingType == PixelPickingType.OriginalColor) {
 
                 PixelReader pixelReader = currentImage.getPixelReader();
                 Color color = pixelReader.getColor(x, y);
@@ -872,70 +879,60 @@ public class ImageScopeController extends BaseController {
                     colorsBox.getSelectionModel().select(color);
                     showScope();
                 }
-                FxmlTools.popInformation(imageView, getMessage("ContinueClickColor"));
 
-            } else if (pixelPickingType == ImageManufactureController.PixelPickingType.RectangleLeft) {
+            } else if (pixelPickingType == PixelPickingType.Rectangle) {
 
-                isSettingValue = true;
-                leftXInput.setText(x + "");
-                leftYInput.setText(y + "");
-                isSettingValue = false;
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    isSettingValue = true;
+                    leftXInput.setText(x + "");
+                    leftYInput.setText(y + "");
+                    isSettingValue = false;
 
-                if (!areaValid) {
-                    FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
-                } else if (task == null || !task.isRunning()) {
-                    showScope();
-                    FxmlTools.popInformation(imageView, getMessage("ContinueClickLeft"));
-                } else {
-                    FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
+                    if (!areaValid) {
+                        popError(getMessage("InvalidRectangle"));
+                    } else if (task == null || !task.isRunning()) {
+                        showScope();
+                    }
+
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    isSettingValue = true;
+                    rightXInput.setText(x + "");
+                    rightYInput.setText(y + "");
+                    isSettingValue = false;
+
+                    if (!areaValid) {
+                        popError(getMessage("InvalidRectangle"));
+                    } else if (task == null || !task.isRunning()) {
+                        showScope();
+                    }
                 }
 
-            } else if (pixelPickingType == ImageManufactureController.PixelPickingType.RectangleRight) {
+            } else if (pixelPickingType == PixelPickingType.Circle) {
 
-                isSettingValue = true;
-                rightXInput.setText(x + "");
-                rightYInput.setText(y + "");
-                isSettingValue = false;
+                if (event.getButton() == MouseButton.PRIMARY) {
 
-                if (!areaValid) {
-                    FxmlTools.popError(imageView, getMessage("InvalidRectangle"));
-                } else if (task == null || !task.isRunning()) {
-                    showScope();
-                    FxmlTools.popInformation(imageView, getMessage("ContinueClickRight"));
-                } else {
-                    FxmlTools.popInformation(imageView, getMessage("PickPositionComments"));
-                }
+                    isSettingValue = true;
+                    centerXInput.setText(x + "");
+                    centerYInput.setText(y + "");
+                    isSettingValue = false;
 
-            } else if (pixelPickingType == ImageManufactureController.PixelPickingType.CircleCenter) {
+                    if (!areaValid) {
+                        popError(getMessage("InvalidCircle"));
+                    } else if (task == null || !task.isRunning()) {
+                        showScope();
+                    }
 
-                isSettingValue = true;
-                centerXInput.setText(x + "");
-                centerYInput.setText(y + "");
-                isSettingValue = false;
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    isSettingValue = true;
+                    long r = Math.round(Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)));
+                    radiusInput.setText(r + "");
+                    isSettingValue = false;
 
-                if (!areaValid) {
-                    FxmlTools.popError(imageView, getMessage("InvalidCircle"));
-                } else if (task == null || !task.isRunning()) {
-                    showScope();
-                    FxmlTools.popInformation(imageView, getMessage("ContinueClickCenter"));
-                } else {
-                    FxmlTools.popInformation(imageView, getMessage("PickCenterComments"));
-                }
-
-            } else if (pixelPickingType == ImageManufactureController.PixelPickingType.CircleRadius) {
-
-                isSettingValue = true;
-                long r = Math.round(Math.sqrt((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)));
-                radiusInput.setText(r + "");
-                isSettingValue = false;
-
-                if (!areaValid) {
-                    FxmlTools.popError(imageView, getMessage("InvalidCircle"));
-                } else if (task == null || !task.isRunning()) {
-                    showScope();
-                    FxmlTools.popInformation(imageView, getMessage("ContinueClickRadius"));
-                } else {
-                    FxmlTools.popInformation(imageView, getMessage("SetRadiusComments"));
+                    if (!areaValid) {
+                        popError(getMessage("InvalidCircle"));
+                    } else if (task == null || !task.isRunning()) {
+                        showScope();
+                    }
                 }
 
             }
@@ -950,9 +947,9 @@ public class ImageScopeController extends BaseController {
     private void okAction(ActionEvent event) {
         writeValues();
 
-        imageScope.setImage(imageView.getImage());
+        imageScope.setImage(scopeView.getImage());
 
-        getMyStage().close();
+        closeStage();
 
         imageController.scopeDetermined(imageScope);
 
@@ -962,16 +959,16 @@ public class ImageScopeController extends BaseController {
     public void zoomIn() {
         imageView.setFitHeight(imageView.getFitHeight() * (1 + 5 / 100.0f));
         imageView.setFitWidth(imageView.getFitWidth() * (1 + 5 / 100.0f));
-        refView.setFitHeight(refView.getFitHeight() * (1 + 5 / 100.0f));
-        refView.setFitWidth(refView.getFitWidth() * (1 + 5 / 100.0f));
+        scopeView.setFitHeight(scopeView.getFitHeight() * (1 + 5 / 100.0f));
+        scopeView.setFitWidth(scopeView.getFitWidth() * (1 + 5 / 100.0f));
     }
 
     @FXML
     public void zoomOut() {
         imageView.setFitHeight(imageView.getFitHeight() * (1 - 5 / 100.0f));
         imageView.setFitWidth(imageView.getFitWidth() * (1 - 5 / 100.0f));
-        refView.setFitHeight(refView.getFitHeight() * (1 - 5 / 100.0f));
-        refView.setFitWidth(refView.getFitWidth() * (1 - 5 / 100.0f));
+        scopeView.setFitHeight(scopeView.getFitHeight() * (1 - 5 / 100.0f));
+        scopeView.setFitWidth(scopeView.getFitWidth() * (1 - 5 / 100.0f));
 
     }
 
@@ -979,25 +976,25 @@ public class ImageScopeController extends BaseController {
     public void imageSize() {
         imageView.setFitHeight(imageScope.getImage().getWidth());
         imageView.setFitWidth(imageScope.getImage().getHeight());
-        refView.setFitHeight(imageScope.getImage().getWidth());
-        refView.setFitWidth(imageScope.getImage().getHeight());
+        scopeView.setFitHeight(imageScope.getImage().getWidth());
+        scopeView.setFitWidth(imageScope.getImage().getHeight());
     }
 
     @FXML
     public void paneSize() {
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
-        imageView.setFitWidth(scrollPane.getWidth() - 1);
-        refView.setFitHeight(refPane.getHeight() - 5);
-        refView.setFitWidth(refPane.getWidth() - 1);
+        imageView.setFitHeight(imagePane.getHeight() - 5);
+        imageView.setFitWidth(imagePane.getWidth() - 1);
+        scopeView.setFitHeight(imagePane.getHeight() - 5);
+        scopeView.setFitWidth(imagePane.getWidth() - 1);
     }
 
     private void writeValues() {
         List<Color> colors = colorsBox.getItems();
-        if (colors == null || colors.isEmpty()) {
-            if (!imageScope.isAllColors()) {
-                return;
-            }
-        }
+//        if (colors == null || colors.isEmpty()) {
+//            if (!imageScope.isAllColors()) {
+//                return;
+//            }
+//        }
         imageScope.setColors(colors);
         imageScope.setColorExcluded(colorExcludedCheck.isSelected());
         imageScope.setColorDistance(colorDistance);
@@ -1018,12 +1015,13 @@ public class ImageScopeController extends BaseController {
     }
 
     private void showScope() {
+        showScopeText();
         if (isSettingValue || !areaValid
                 || task != null && task.isRunning()) {
             return;
         }
         if (imageScope.isAll() || !imageScope.isIndicateScope()) {
-            imageView.setImage(imageScope.getImage());
+            scopeView.setImage(imageScope.getImage());
             return;
         }
 
@@ -1036,7 +1034,9 @@ public class ImageScopeController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            imageView.setImage(newImage);
+                            scopeView.setImage(newImage);
+                            popInformation();
+                            showScopeText();
                         }
                     });
                 } catch (Exception e) {
@@ -1049,6 +1049,69 @@ public class ImageScopeController extends BaseController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void showScopeText() {
+        writeValues();
+        currentInput.setText(getScopeText(imageScope));
+
+    }
+
+    public static String getScopeText(ImageScope imageScope) {
+        if (imageScope == null) {
+            return "";
+        }
+        String s = "";
+        if (imageScope.isAll()) {
+            s = getMessage("WholeImage");
+        } else {
+            switch (imageScope.getAreaScopeType()) {
+                case AreaScopeType.AllArea:
+                    s = getMessage("AllArea");
+                    break;
+                case AreaScopeType.Rectangle:
+                    s = getMessage("SelectedRectangle") + ":("
+                            + imageScope.getLeftX() + "," + imageScope.getLeftY()
+                            + ")-(" + imageScope.getRightX() + "," + imageScope.getRightY() + ")";
+                    if (imageScope.isRectangleExcluded()) {
+                        s += " " + getMessage("Excluded");
+                    }
+                    break;
+                case AreaScopeType.Circle:
+                    s = getMessage("SelectedCircle") + ":("
+                            + imageScope.getCenterX() + "," + imageScope.getCenterY()
+                            + ")-" + imageScope.getRadius();
+                    if (imageScope.isCircleExcluded()) {
+                        s += " " + getMessage("Excluded");
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (imageScope.isAllColors()) {
+                s += "   " + getMessage("AllColors");
+            } else {
+                s += "   " + getMessage("SelectedColors") + ":";
+                List<Color> colors = imageScope.getColors();
+                if (colors.isEmpty()) {
+                    s += getMessage("None") + " ";
+                } else {
+                    for (Color c : colors) {
+                        s += c.toString() + " ";
+                    }
+                }
+                if (imageScope.isMatchColor()) {
+                    s += getMessage("ColorDistance") + ":" + imageScope.getColorDistance();
+                } else {
+                    s += getMessage("HueDistance") + ":" + imageScope.getHueDistance();
+                }
+                if (imageScope.isColorExcluded()) {
+                    s += " " + getMessage("Excluded");
+                }
+            }
+        }
+        return s;
     }
 
     public ImageManufactureController getImageController() {

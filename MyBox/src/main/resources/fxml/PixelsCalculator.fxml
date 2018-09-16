@@ -26,7 +26,7 @@
                         <TextField fx:id="source_width" prefHeight="30.0" prefWidth="80.0" />
                         <Label text="%PixelsHeight" />
                         <TextField fx:id="source_height" prefWidth="80.0" />
-                  <Label fx:id="ratioLabel" prefWidth="200.0" text="%AspectRatio" />
+                        <Label fx:id="ratioLabel" prefWidth="200.0" text="%AspectRatio" />
                     </children>
                     <padding>
                         <Insets left="20.0" />
@@ -41,18 +41,18 @@
                         <Insets left="40.0" />
                     </HBox.margin>
                 </CheckBox>
-            <HBox fx:id="adjustBox" alignment="CENTER_LEFT" spacing="10.0">
-               <children>
-                      <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
-                          <toggleGroup>
-                              <ToggleGroup fx:id="ratioGroup" />
-                          </toggleGroup>
-                      </RadioButton>
-                      <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
-                      <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
-                      <RadioButton mnemonicParsing="false" text="%BaseOnSmaller" toggleGroup="$ratioGroup" />
-               </children>
-            </HBox>
+                <HBox fx:id="adjustBox" alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <RadioButton mnemonicParsing="false" selected="true" text="%BaseOnLarger">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="ratioGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="%BaseOnWidth" toggleGroup="$ratioGroup" />
+                        <RadioButton mnemonicParsing="false" text="%BaseOnHeight" toggleGroup="$ratioGroup" />
+                        <RadioButton mnemonicParsing="false" text="%BaseOnSmaller" toggleGroup="$ratioGroup" />
+                    </children>
+                </HBox>
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
@@ -119,9 +119,9 @@
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <RadioButton mnemonicParsing="false" prefWidth="150.0" selected="true" text="%Centimetres">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="cp_sizeGroup" />
-                                       </toggleGroup>
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="cp_sizeGroup" />
+                                                    </toggleGroup>
                                                 </RadioButton>
                                                 <Label text="%Width">
                                                     <HBox.margin>
@@ -154,9 +154,9 @@
                                             <children>
                                                 <Label prefWidth="100.0" text="%Display" />
                                                 <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="cp_DensityGroup" />
-                                       </toggleGroup>
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="cp_DensityGroup" />
+                                                    </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$cp_DensityGroup" />
                                                 <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$cp_DensityGroup" />
@@ -333,7 +333,7 @@
                 <Font size="18.0" />
             </font>
         </TextField>
-        <TextField fx:id="adjustLabel" editable="false" styleClass="copyable-blue-label" stylesheets="@../styles/MyBox.css" text="Label">
+        <TextField fx:id="adjustLabel" editable="false" styleClass="copyable-darkRed-label" stylesheets="@../styles/MyBox.css" text="Label">
             <font>
                 <Font size="18.0" />
             </font>

@@ -73,9 +73,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                      </content>
                         </Tab>
                         <Tab fx:id="codesTab" text="%HtmlCodes">
-                            <content>
-                                <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" />
-                            </content>
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <children>
+                              <ToolBar maxWidth="1.7976931348623157E308" visible="false" VBox.vgrow="NEVER">
+                                <items>
+                                    <TextField />
+                                  <Button mnemonicParsing="false" text="%Next" />
+                                    <Button mnemonicParsing="false" text="%Previous" />
+                                </items>
+                              </ToolBar>
+                                      <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                     </content>
                         </Tab>
                         <Tab fx:id="browserTab" text="%HtmlBrowser">
                      <content>

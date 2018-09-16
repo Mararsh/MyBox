@@ -49,7 +49,7 @@ public class AlarmClockRunController extends BaseController {
             player.close();
             player = null;
         }
-        getMyStage().close();
+        closeStage();
     }
 
     public void runAlarm(final AlarmClock alarm) {

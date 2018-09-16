@@ -17,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "2.12";
-    public static final String AppVersionDate = "2018-09-11";
+    public static final String AppVersion = "2.13";
+    public static final String AppVersionDate = "2018-09-15";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -34,6 +34,7 @@ public class CommonValues {
     public static final String PdfConvertImagesFxml = "/fxml/PdfConvertImages.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfCompressImagesFxml = "/fxml/PdfCompressImages.fxml";
+    public static final String PdfCompressImagesBatchFxml = "/fxml/PdfCompressImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
@@ -50,6 +51,8 @@ public class CommonValues {
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
     public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
+    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
+    public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
@@ -59,9 +62,10 @@ public class CommonValues {
     public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
     public static final String AlarmClockRunFxml = "/fxml/AlarmClockRun.fxml";
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
+    public static final String WeiboSnapFxml = "/fxml/WeiboSnap.fxml";
+    public static final String WeiboSnapRunFxml = "/fxml/WeiboSnapRun.fxml";
+    public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
-    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
-    public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

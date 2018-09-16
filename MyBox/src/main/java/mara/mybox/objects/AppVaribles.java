@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 public class AppVaribles {
 
     private static final Logger logger = LogManager.getLogger();
-
     public static ResourceBundle CurrentBundle = CommonValues.BundleDefault;
     public static Map<String, String> configValues = new HashMap();
     public static ScheduledExecutorService executorService;
@@ -35,7 +34,7 @@ public class AppVaribles {
     public static AlarmClockController alarmClockController;
     public static boolean showComments = true;
     public static boolean alphaAsBlack = false;
-    public static int commentsDelay = 3000;
+    public static int commentsDelay = 2000;
 
     public AppVaribles() {
     }

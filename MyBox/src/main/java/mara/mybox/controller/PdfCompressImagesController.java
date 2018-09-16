@@ -25,7 +25,6 @@ import mara.mybox.image.ImageGrayTools;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -45,15 +44,16 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  */
 public class PdfCompressImagesController extends PdfBaseController {
 
-    private File targetFile;
-    private int jpegQuality, format, threshold;
+    protected String PdfCompressImagesSourcePathKey;
+    protected int jpegQuality, format, threshold;
+    protected File targetFile;
 
     @FXML
-    private ToggleGroup formatGroup;
+    protected ToggleGroup formatGroup;
     @FXML
-    private ComboBox<String> jpegBox;
+    protected ComboBox<String> jpegBox;
     @FXML
-    private TextField thresholdInput, authorInput;
+    protected TextField thresholdInput, authorInput;
 
     public static class PdfImageFormat {
 
@@ -63,6 +63,8 @@ public class PdfCompressImagesController extends PdfBaseController {
     }
 
     public PdfCompressImagesController() {
+        PdfCompressImagesSourcePathKey = "PdfCompressImagesSourcePathKey";
+        targetPathKey = "PDFCompressImagesPathKey";
 
     }
 
@@ -88,7 +90,7 @@ public class PdfCompressImagesController extends PdfBaseController {
         );
     }
 
-    private void initOptionsSection() {
+    protected void initOptionsSection() {
 
         formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -129,7 +131,7 @@ public class PdfCompressImagesController extends PdfBaseController {
 
     }
 
-    private void checkFormat() {
+    protected void checkFormat() {
         jpegBox.setDisable(true);
         jpegBox.setStyle(null);
         thresholdInput.setDisable(true);
@@ -145,7 +147,7 @@ public class PdfCompressImagesController extends PdfBaseController {
         }
     }
 
-    private void checkJpegQuality() {
+    protected void checkJpegQuality() {
         jpegQuality = 100;
         try {
             jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
@@ -159,7 +161,7 @@ public class PdfCompressImagesController extends PdfBaseController {
         }
     }
 
-    private void checkThreshold() {
+    protected void checkThreshold() {
         try {
             if (thresholdInput.getText().isEmpty()) {
                 threshold = -1;
@@ -179,7 +181,7 @@ public class PdfCompressImagesController extends PdfBaseController {
         }
     }
 
-    private void initTargetSection() {
+    protected void initTargetSection() {
 
         targetFileInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -264,7 +266,8 @@ public class PdfCompressImagesController extends PdfBaseController {
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
-                                currentParameters.targetPrefix = FileTools.getFilePrefix(file.getName());
+                                targetFile = new File(targetPath.getAbsolutePath() + File.separator
+                                        + FileTools.getFileName(file.getName()));
                             }
 
                             handleCurrentFile();
@@ -290,10 +293,14 @@ public class PdfCompressImagesController extends PdfBaseController {
                         public void run() {
                             try {
                                 if (!fail && targetFile.exists()) {
-                                    Desktop.getDesktop().browse(targetFile.toURI());
+                                    if (currentParameters.isBatch) {
+                                        Desktop.getDesktop().browse(targetPath.toURI());
+                                    } else {
+                                        Desktop.getDesktop().browse(targetFile.toURI());
+                                    }
                                     operationBarController.openTargetButton.setDisable(false);
                                 } else {
-                                    FxmlTools.popError(jpegBox, AppVaribles.getMessage("ImageCombinePdfFail"));
+                                    popError(AppVaribles.getMessage("ImageCombinePdfFail"));
                                 }
                             } catch (Exception e) {
                                 logger.error(e.toString());
@@ -428,6 +435,10 @@ public class PdfCompressImagesController extends PdfBaseController {
             updateInterface("Failed");
             logger.error(e.toString());
         }
+    }
+
+    protected File getTargetFile() {
+        return targetFile;
     }
 
     @FXML

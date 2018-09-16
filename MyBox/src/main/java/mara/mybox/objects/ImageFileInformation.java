@@ -16,7 +16,7 @@ public class ImageFileInformation extends FileInformation {
     private String imageFormat, colorSpace, compressionType, imageRotation, bitDepth, extraFormat = "";
     private int xPixels, yPixels, colorChannels;
     private int yDensity, xDensity;  // dpi
-    private boolean hasAlpha, isLossless, isScope;
+    private boolean hasAlpha, isLossless;
     private String metaData, filename, pixels;
     private Image image;
     private ImageFileInformation self;
@@ -24,14 +24,12 @@ public class ImageFileInformation extends FileInformation {
     public ImageFileInformation() {
         hasAlpha = false;
         isLossless = true;
-        isScope = false;
     }
 
     public ImageFileInformation(File file) {
         super(file);
         hasAlpha = false;
         isLossless = true;
-        isScope = false;
         filename = fileName.get();
         imageFormat = FileTools.getFileSuffix(filename);
     }
@@ -39,7 +37,6 @@ public class ImageFileInformation extends FileInformation {
     public ImageFileInformation(Image image) {
         hasAlpha = false;
         isLossless = true;
-        isScope = false;
         this.image = image;
         if (image == null) {
             return;
@@ -166,14 +163,6 @@ public class ImageFileInformation extends FileInformation {
 
     public void setExtraFormat(String extraFormat) {
         this.extraFormat = extraFormat;
-    }
-
-    public boolean isIsScope() {
-        return isScope;
-    }
-
-    public void setIsScope(boolean isScope) {
-        this.isScope = isScope;
     }
 
     public Image getImage() {

@@ -108,10 +108,8 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void exit(ActionEvent event) {
-        if (stageClosing()) {
-            // This statement is internel call to close the stage, so itself can not tigger stageClosing()
-            getMyStage().close();
-        }
+        // This statement is internel call to close the stage, so itself can not tigger stageClosing()
+        closeStage();
     }
 
     @FXML
@@ -162,6 +160,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openCompressPdfImages(ActionEvent event) {
         reloadStage(CommonValues.PdfCompressImagesFxml, AppVaribles.getMessage("CompressPdfImages"));
+    }
+
+    @FXML
+    private void openCompressPdfImagesBatch(ActionEvent event) {
+        reloadStage(CommonValues.PdfCompressImagesBatchFxml, AppVaribles.getMessage("CompressPdfImagesBatch"));
     }
 
     @FXML
@@ -326,6 +329,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openTextEditor(ActionEvent event) {
         reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
+    }
+
+    @FXML
+    private void openWeiboSnap(ActionEvent event) {
+        reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
     }
 
     @FXML

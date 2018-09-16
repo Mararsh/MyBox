@@ -115,6 +115,15 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfCompressImagesFxml, AppVaribles.getMessage("CompressPdfImages"));
             }
         });
+
+        MenuItem pdfCompressImagesBatch = new MenuItem(AppVaribles.getMessage("CompressPdfImagesBatch"));
+        pdfCompressImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.PdfCompressImagesBatchFxml, AppVaribles.getMessage("CompressPdfImagesBatch"));
+            }
+        });
+
         MenuItem pdfMerge = new MenuItem(AppVaribles.getMessage("MergePdf"));
         pdfMerge.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -132,9 +141,10 @@ public class MyBoxController extends BaseController {
         pdfMenus = new ContextMenu();
         pdfMenus.getItems().addAll(
                 pdfConvertImages, pdfConvertImagesBatch, new SeparatorMenuItem(),
-                imagesCombinePdf, pdfCompressImages, new SeparatorMenuItem(),
+                imagesCombinePdf, new SeparatorMenuItem(),
+                pdfCompressImages, pdfCompressImagesBatch, new SeparatorMenuItem(),
                 pdfMerge, pdfSplit, new SeparatorMenuItem(),
-                pdfExtractImages, pdfExtractTexts, pdfExtractImagesBatch, pdfExtractTextsBatch);
+                pdfExtractImages, pdfExtractImagesBatch, pdfExtractTexts, pdfExtractTextsBatch);
 
     }
 
@@ -366,9 +376,9 @@ public class MyBoxController extends BaseController {
             }
         });
         fileMenu = new ContextMenu();
-        fileMenu.getItems().addAll(htmlEditor, textEditor, new SeparatorMenuItem(),
-                filesRename, filesArrangement, new SeparatorMenuItem(),
-                dirSynchronize, dirsRename);
+        fileMenu.getItems().addAll(filesRename, filesArrangement, new SeparatorMenuItem(),
+                dirSynchronize, dirsRename, new SeparatorMenuItem(),
+                htmlEditor, textEditor);
 
     }
 
@@ -382,8 +392,16 @@ public class MyBoxController extends BaseController {
                 controller.switchBroswerTab();
             }
         });
+
+        MenuItem weiboSnap = new MenuItem(AppVaribles.getMessage("WeiboSnap"));
+        weiboSnap.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
+            }
+        });
         networkMenu = new ContextMenu();
-        networkMenu.getItems().addAll(htmlEditor);
+        networkMenu.getItems().addAll(weiboSnap, htmlEditor);
 
     }
 

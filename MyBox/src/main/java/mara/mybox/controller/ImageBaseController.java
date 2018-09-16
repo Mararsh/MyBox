@@ -297,7 +297,7 @@ public abstract class ImageBaseController extends BaseController {
                             if (isPreview || !currentParameters.isBatch) {
                                 if (currentParameters.finalTargetName == null
                                         || !new File(currentParameters.finalTargetName).exists()) {
-                                    popInformation(AppVaribles.getMessage("NoDataNotSupported"));
+                                    alertInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else {
                                     openImageManufactureInNew(currentParameters.finalTargetName);
                                 }

@@ -53,7 +53,7 @@ public class ColorPaletteController extends BaseController {
 
     @FXML
     private void close(ActionEvent event) {
-        getMyStage().close();
+        closeStage();
     }
 
 }

@@ -78,10 +78,11 @@ public class ImagesCombinePdfController extends ImageBaseController {
     private final String ImagesCombinePdfPathKey, ImageCombineLoadImagesKey, ImageCombineTargetPathKey;
     private final String ImageCombineSizeKey, ImageCombineMarginsKey;
     private final int snapSize = 150;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
     private File targetFile;
-    private PDRectangle pageSize;
-    private boolean isImageSize;
+
+    protected int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
+    protected PDRectangle pageSize;
+    protected boolean isImageSize;
 
     @FXML
     private Button addButton, openTargetButton, saveButton, deleteButton, clearButton;
@@ -94,15 +95,15 @@ public class ImagesCombinePdfController extends ImageBaseController {
     @FXML
     private ColorPicker bgPicker;
     @FXML
-    private CheckBox loadCheck, pageNumberCheck;
+    protected CheckBox loadCheck, pageNumberCheck;
     @FXML
-    private ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
+    protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
     @FXML
-    private ToggleGroup sizeGroup, formatGroup;
+    protected ToggleGroup sizeGroup, formatGroup;
     @FXML
-    private TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
+    protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    private HBox sizeBox;
+    protected HBox sizeBox;
 
     public static class PdfImageFormat {
 
@@ -125,7 +126,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
         try {
             initSourceSection();
             initTargetSection();
-            initOptionsSection();
+            initPdfOptionsSection();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -220,7 +221,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
     }
 
-    private void initOptionsSection() {
+    protected void initPdfOptionsSection() {
 
         if (AppVaribles.showComments) {
             Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
@@ -356,25 +357,27 @@ public class ImagesCombinePdfController extends ImageBaseController {
         });
         MarginsBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineMarginsKey, "20"));
 
-        fontBox.getItems().addAll(Arrays.asList(
-                "幼圆",
-                "仿宋",
-                "隶书",
-                "Helvetica",
-                "Courier",
-                "Times New Roman"
-        ));
-        fontBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
+        if (fontBox != null) {
+            fontBox.getItems().addAll(Arrays.asList(
+                    "幼圆",
+                    "仿宋",
+                    "隶书",
+                    "Helvetica",
+                    "Courier",
+                    "Times New Roman"
+            ));
+            fontBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov,
+                        String oldValue, String newValue) {
+                }
+            });
+            fontBox.getSelectionModel().select(0);
+            if (AppVaribles.showComments) {
+                Tooltip tips = new Tooltip(getMessage("FontFileComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(fontBox, tips);
             }
-        });
-        fontBox.getSelectionModel().select(0);
-        if (AppVaribles.showComments) {
-            Tooltip tips = new Tooltip(getMessage("FontFileComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(fontBox, tips);
         }
 
     }
@@ -946,7 +949,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                                 Desktop.getDesktop().browse(targetFile.toURI());
                                 openTargetButton.setDisable(false);
                             } else {
-                                FxmlTools.popError(loadCheck, AppVaribles.getMessage("ImageCombinePdfFail"));
+                                popError(AppVaribles.getMessage("ImageCombinePdfFail"));
                             }
                         } catch (Exception e) {
                             logger.error(e.toString());

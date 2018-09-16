@@ -17,6 +17,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -43,6 +44,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConvertionTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -179,7 +181,9 @@ public class ImageSplitController extends ImageViewerController {
                     Tab oldValue, Tab newValue) {
                 if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
                     bottomLabel.setText(getMessage("SplitCustomComments"));
-                    FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
+                    popInformation(getMessage("SplitCustomComments"));
+                } else {
+                    hidePopup();
                 }
             }
         });
@@ -358,7 +362,7 @@ public class ImageSplitController extends ImageViewerController {
             parametersValid.set(false);
             imageView.setImage(image);
             bottomLabel.setText("");
-            FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
+            popInformation(getMessage("SplitCustomComments"));
         }
     }
 
@@ -490,7 +494,7 @@ public class ImageSplitController extends ImageViewerController {
         }
 //        imageView.setCursor(Cursor.OPEN_HAND);
         bottomLabel.setText(getMessage("SplitCustomComments"));
-        FxmlTools.popInformation(imageView, getMessage("SplitCustomComments"));
+        popInformation(getMessage("SplitCustomComments"));
 
         if (event.getButton() == MouseButton.PRIMARY) {
 
@@ -590,11 +594,20 @@ public class ImageSplitController extends ImageViewerController {
                                 final ImagesViewerController controller = fxmlLoader.getController();
                                 Stage stage = new Stage();
                                 controller.setMyStage(stage);
+                                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                                    @Override
+                                    public void handle(WindowEvent event) {
+                                        if (!controller.stageClosing()) {
+                                            event.consume();
+                                        }
+                                    }
+                                });
                                 stage.setScene(new Scene(pane));
                                 stage.setTitle(AppVaribles.getMessage("MultipleImagesViewer"));
                                 stage.show();
                                 controller.loadImages(fileNames, cols.size() - 1);
                             }
+
                         } catch (Exception e) {
                         }
 
@@ -687,7 +700,7 @@ public class ImageSplitController extends ImageViewerController {
                         }
                         bottomLabel.setText(comments);
                         if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
-                            FxmlTools.popInformation(imageView, AppVaribles.getMessage("SplitCustomComments"));
+                            popInformation(AppVaribles.getMessage("SplitCustomComments"));
                         }
                     }
                 });

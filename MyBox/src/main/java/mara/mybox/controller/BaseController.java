@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -33,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -63,6 +66,8 @@ public class BaseController implements Initializable {
     protected Alert loadingAlert;
     protected Task<Void> task;
     protected BaseController parentController;
+    protected Timer popupTimer;
+    protected Popup popup;
 
     protected boolean isPreview, targetIsFile, paused;
     protected File sourceFile, targetPath;
@@ -492,12 +497,22 @@ public class BaseController implements Initializable {
         }
     }
 
+    public boolean closeStage() {
+        if (stageClosing()) {
+            getMyStage().close();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean stageClosing() {
         try {
 //            logger.debug("stageClosing:" + getMyStage().getWidth() + "," + myStage.getHeight());
 //            logger.debug(Platform.isImplicitExit());
 //            logger.debug("stageClosing:" + getClass());
 
+            hidePopup();
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
@@ -556,7 +571,31 @@ public class BaseController implements Initializable {
 
     }
 
-    public void popInformation(String information) {
+    public void alertError(String information) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setHeaderText(null);
+            alert.setContentText(information);
+            alert.showAndWait();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void alertWarning(String information) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setHeaderText(null);
+            alert.setContentText(information);
+            alert.showAndWait();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void alertInformation(String information) {
         try {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(getMyStage().getTitle());
@@ -565,6 +604,106 @@ public class BaseController implements Initializable {
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public void popInformation(String text) {
+        popInformation(text, AppVaribles.commentsDelay);
+    }
+
+    public void popInformation(String text, int delay) {
+        try {
+            if (popup != null) {
+                popup.hide();
+            }
+            popup = getPopup();
+            Label popupLabel = new Label(text);
+            popupLabel.setStyle("-fx-background-color:black;"
+                    + " -fx-text-fill: white;"
+                    + " -fx-font-size: 18px;"
+                    + " -fx-padding: 10px;"
+                    + " -fx-background-radius: 6;");
+            popup.setAutoFix(true);
+            popup.getContent().add(popupLabel);
+
+            if (delay <= 0) {
+                popup.setAutoHide(true);  // This will cause user alway has to double click to run other control
+            } else {
+                if (popupTimer != null) {
+                    popupTimer.cancel();
+                }
+                popupTimer = getPopupTimer();
+                popupTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    if (popup != null) {
+                                        popup.hide();
+                                    }
+                                    popupTimer.cancel();
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        });
+                    }
+                }, delay);
+            }
+
+            popup.show(getMyStage());
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void popError(String text) {
+        popError(text, AppVaribles.commentsDelay);
+    }
+
+    public void popError(String text, int delay) {
+        popup = getPopup();
+        Label popupLabel = new Label(text);
+        popupLabel.setStyle("-fx-background-color:white;"
+                + " -fx-text-fill: red;"
+                + " -fx-font-size: 18px;"
+                + " -fx-padding: 10px;"
+                + " -fx-background-radius: 6;");
+        popup.setAutoFix(true);
+        popup.getContent().add(popupLabel);
+
+        if (delay <= 0) {
+            popup.setAutoHide(true);
+        }
+        popupTimer = getPopupTimer();
+        popupTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (popup != null) {
+                            popup.hide();
+                        }
+                        popupTimer.cancel();
+                    }
+                });
+            }
+        }, delay);
+
+        popup.show(getMyStage());
+
+    }
+
+    public void hidePopup() {
+        if (popup != null) {
+            popup.hide();
+        }
+        if (popupTimer != null) {
+            popupTimer.cancel();
         }
     }
 
@@ -586,11 +725,19 @@ public class BaseController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageViewerController controller = fxmlLoader.getController();
+            final ImageViewerController controller = fxmlLoader.getController();
             controller.loadImage(filename);
-
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             stage.setTitle(AppVaribles.getMessage("AppTitle"));
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
@@ -608,10 +755,18 @@ public class BaseController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageManufactureController controller = fxmlLoader.getController();
-
+            final ImageManufactureController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
@@ -631,9 +786,17 @@ public class BaseController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
             final ImagesViewerController controller = fxmlLoader.getController();
-
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
@@ -652,10 +815,18 @@ public class BaseController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageViewerController controller = fxmlLoader.getController();
-
+            final ImageViewerController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
@@ -674,10 +845,18 @@ public class BaseController implements Initializable {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageViewerController controller = fxmlLoader.getController();
-
+            final ImageViewerController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
@@ -693,18 +872,26 @@ public class BaseController implements Initializable {
     }
 
     public Stage openHandlingStage(Modality block) {
+        return openHandlingStage(block, null);
+    }
+
+    public Stage openHandlingStage(Modality block, String info) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
             LoadingController controller = fxmlLoader.getController();
-
             final Stage loadingStage = new Stage();
+
             loadingStage.initModality(block);
 //            loadingStage.initStyle(StageStyle.UNDECORATED);
             loadingStage.initStyle(StageStyle.TRANSPARENT);
             loadingStage.initOwner(getMyStage());
             loadingStage.setScene(new Scene(pane));
             loadingStage.show();
+
+            if (info != null) {
+                controller.setInfo(info);
+            }
 
             return loadingStage;
 
@@ -715,6 +902,10 @@ public class BaseController implements Initializable {
     }
 
     public Stage openHandlingStage(final Task<?> task, Modality block) {
+        return openHandlingStage(task, block, null);
+    }
+
+    public Stage openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -728,6 +919,10 @@ public class BaseController implements Initializable {
             loadingStage.initOwner(getMyStage());
             loadingStage.setScene(new Scene(pane));
             loadingStage.show();
+
+            if (info != null) {
+                controller.setInfo(info);
+            }
 
             task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
@@ -1217,6 +1412,31 @@ public class BaseController implements Initializable {
 
     public void setBaseTitle(String baseTitle) {
         this.baseTitle = baseTitle;
+    }
+
+    public Timer getPopupTimer() {
+        if (popupTimer != null) {
+            popupTimer.cancel();
+
+        }
+        popupTimer = new Timer();
+        return popupTimer;
+    }
+
+    public void setPopupTimer(Timer popupTimer) {
+        this.popupTimer = popupTimer;
+    }
+
+    public Popup getPopup() {
+        if (popup != null) {
+            popup.hide();
+        }
+        popup = new Popup();
+        return popup;
+    }
+
+    public void setPopup(Popup popup) {
+        this.popup = popup;
     }
 
 }

@@ -1,61 +1,45 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
- * @Author Mara
- * @CreateDate 2018-9-10
- * @Description
- * @License Apache License Version 2.0
+ * FXML Controller class
+ *
+ * @author mara
  */
-public class PdfMergeController extends PdfBaseController {
+public class PdfCompressImagesBatchController extends PdfCompressImagesController {
 
-    private int pageWidth, pageHeight;
-    private File targetFile;
-    private PDRectangle pageSize;
-    private boolean notChange;
-
-    @FXML
-    private Button openTargetButton, saveButton;
     @FXML
     private TableView<FileInformation> sourceTable;
     @FXML
-    private TableColumn<FileInformation, String> fileColumn, pixelsColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
-    @FXML
-    private TextField authorInput;
+    private TableColumn<FileInformation, String> fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
 
-    public PdfMergeController() {
+    public PdfCompressImagesBatchController() {
 
     }
 
@@ -65,10 +49,18 @@ public class PdfMergeController extends PdfBaseController {
             allowPaused = false;
 
             initSourceSection();
-            initTargetSection();
             initOptionsSection();
+            initTargetSection();
+
+            operationBarController.startButton.disableProperty().bind(
+                    Bindings.isEmpty(targetPathInput.textProperty())
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(jpegBox.styleProperty().isEqualTo(badStyle))
+                            .or(thresholdInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(sourceFilesInformation))
+            );
         } catch (Exception e) {
-            logger.error(e.toString());
+            logger.debug(e.toString());
         }
     }
 
@@ -97,47 +89,33 @@ public class PdfMergeController extends PdfBaseController {
         }
     }
 
-    private void initTargetSection() {
-        try {
-            targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    openTargetButton.setDisable(true);
-                    try {
-                        targetFile = new File(newValue);
-                        if (!newValue.toLowerCase().endsWith(".pdf")) {
-                            targetFile = null;
-                            targetFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        targetFileInput.setStyle(null);
-                        AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
-                    } catch (Exception e) {
-                        targetFile = null;
-                        targetFileInput.setStyle(badStyle);
+    @Override
+    protected void initTargetSection() {
+        targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                try {
+                    final File file = new File(newValue);
+                    if (!file.exists() || !file.isDirectory()) {
+                        targetPathInput.setStyle(badStyle);
+                        return;
                     }
+                    targetPathInput.setStyle(null);
+                    AppVaribles.setConfigValue(targetPathKey, file.getPath());
+                    targetPath = file;
+                    targetPathChanged();
+                } catch (Exception e) {
                 }
-            });
-            saveButton.disableProperty().bind(Bindings.isEmpty(sourceFilesInformation)
-                    .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(badStyle))
-            );
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    private void initOptionsSection() {
-
+            }
+        });
+        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
     }
 
     @FXML
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(PdfCompressImagesSourcePathKey, System.getProperty("user.home")));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(System.getProperty("user.home"));
             }
@@ -150,7 +128,7 @@ public class PdfMergeController extends PdfBaseController {
             }
             String path = files.get(0).getParent();
             AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(targetPathKey, path);
+            AppVaribles.setConfigValue(PdfCompressImagesSourcePathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);
@@ -258,104 +236,39 @@ public class PdfMergeController extends PdfBaseController {
         sourceTable.refresh();
     }
 
-    @FXML
-    protected void selectTargetFile(ActionEvent event) {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            targetFile = file;
-            AppVaribles.setConfigValue(LastPathKey, targetFile.getParent());
-            AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
+    @Override
+    protected void makeMoreParameters() {
+        actualParameters.isBatch = true;
 
-            if (targetFileInput != null) {
-                targetFileInput.setText(targetFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-//            logger.error(e.toString());
+        if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+            actualParameters = null;
+            return;
         }
+        sourceFiles = new ArrayList();
+        for (FileInformation f : sourceFilesInformation) {
+            sourceFiles.add(new File(f.getFileName()));
+        }
+
+//        actualParameters.sourceFile = new File(sourceFilesInformation.get(0).getFileName());
+        actualParameters.fromPage = 0;
+        actualParameters.toPage = 100;
+        actualParameters.acumFrom = 0;
+        actualParameters.currentNameNumber = 0;
+        actualParameters.password = "";
+        actualParameters.startPage = 0;
+        actualParameters.acumStart = 0;
+        actualParameters.acumDigit = 0;
+
     }
 
     @FXML
-    protected void openTargetAction(ActionEvent event) {
-        if (!targetFile.exists()) {
-            openTargetButton.setDisable(true);
-            return;
-        }
-        openTargetButton.setDisable(false);
+    @Override
+    protected void openTarget(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(targetFile.toURI());
+            Desktop.getDesktop().browse(targetPath.toURI());
         } catch (Exception e) {
-
+            logger.error(e.toString());
         }
-    }
-
-    @FXML
-    protected void saveAction(ActionEvent event) {
-        if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()
-                || targetFile == null) {
-            return;
-        }
-        Task saveTask = new Task<Void>() {
-            private boolean fail;
-            private PDDocument document;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    PDFMergerUtility mergePdf = new PDFMergerUtility();
-                    for (FileInformation source : sourceFilesInformation) {
-                        mergePdf.addSource(source.getFile());
-                    }
-                    mergePdf.setDestinationFileName(targetFile.getAbsolutePath());
-                    mergePdf.mergeDocuments(null);
-
-                    try (PDDocument doc = PDDocument.load(targetFile)) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + CommonValues.AppVersion);
-                        info.setAuthor(authorInput.getText());
-                        doc.setDocumentInformation(info);
-                        document = doc;
-                        doc.save(targetFile);
-                    }
-                    fail = false;
-
-                } catch (Exception e) {
-                    fail = true;
-                    logger.error(e.toString());
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (!fail && targetFile.exists()) {
-                                Desktop.getDesktop().browse(targetFile.toURI());
-                                openTargetButton.setDisable(false);
-                            } else {
-                                popError(AppVaribles.getMessage("ImageCombinePdfFail"));
-                            }
-                        } catch (Exception e) {
-                            logger.error(e.toString());
-                        }
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
-        thread.setDaemon(true);
-        thread.start();
     }
 
 }

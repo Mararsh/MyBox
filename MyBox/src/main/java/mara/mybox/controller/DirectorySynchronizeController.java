@@ -237,7 +237,7 @@ public class DirectorySynchronizeController extends BaseController {
                 copyAttr.setDeleteNotExisteds(deleteNonExistedCheck.isSelected());
 
                 if (!copyAttr.isCopyNew() && !copyAttr.isCopyExisted() && !copyAttr.isCopySubdir()) {
-                    popInformation(getMessage("NothingCopy"));
+                    alertInformation(getMessage("NothingCopy"));
                     return false;
                 }
                 // In case that the source path itself is in blacklist
@@ -246,7 +246,7 @@ public class DirectorySynchronizeController extends BaseController {
                     String srcName = sourcePath.getName();
                     for (String key : keys) {
                         if (srcName.contains(key)) {
-                            popInformation(getMessage("NothingCopy"));
+                            alertInformation(getMessage("NothingCopy"));
                             return false;
                         }
                     }

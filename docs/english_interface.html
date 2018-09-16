@@ -29,8 +29,8 @@
 		ul.inside {list-style-position: inside; text-indent: 2em;}
     </style>
 </head> 
-<body class="article" contenteditable="true"> 
-<a href="https://github.com/Mararsh/MyBox"><img src="home.jpg" width="60px"></a> 
+<body class="article" > 
+<a href="https://github.com/Mararsh/MyBox"><img src="home.jpg" width=60px></a> 
 
 <p class="p1">MyBox: Set of Easy Tools</p>
 <img src="intro-en.jpg" width="800px"><br><br>
@@ -39,13 +39,13 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v2.12/MyBox-2.12-exe.zip">MyBox-2.12-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-2.13-exe.zip">MyBox-2.13-exe.zip</a></p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed, and run following command to launch this program:</p>
 <pre><code>                   java   -jar   MyBox-VERSION.jar</code></pre>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v2.12/MyBox-2.12-jar.zip">MyBox-2.12-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-2.13-jar.zip">MyBox-2.13-jar.zip</a></p>
 
-<p class="paragraph">Current version is 2.12. It includes the following features: </p>
+<p class="paragraph">Current version is 2.13. It includes the following features: </p>
 <ol>
 <li>Switch interface in Chinese and English at any time. </li>
 <li>Convert each page of PDF file to an image with options of format, density, color,  compression, quality, and color conversion. </li>
@@ -78,6 +78,10 @@
 
 <br>
 <p class="p2">Development Logs</p>
+<p class="paragraph">2018-09-15 v2.13 Show Reference Image and Scope Image seperately. Make sure no thread runnig after program exits. Compress images in PDF in batching way. Snap Tool for Weibo, backup contents of any weibo account automatically. Duration can be set. Both PDF files and html files can be saved. 
+Weibo pages are loaded dynamically, so locally backed pages can not be loaded and shown correctly. They are backed just for texts in the pages.
+This tool might fail to work when weibo would change the accessing channel of pages in future. Who know~ 
+</p>
 <p class="paragraph">2018-09-11 v2.12 Combine images as PDF file, Compress images in PDF, combine PDF files, split PDF. Support Chinese written in PDF file, and system font file is locating automatically while user can input ttf file path. Prompt information is shown more smoothly and friendly. In web browser, font size can be zoom in and zoom out, and web page can be snapped into PDF file with settings of delay and PDF page size.</p>
 <p class="paragraph">2018-09-06 v2.11 Image combining which supports array options, background color, interval, edges, and size options. Web browser supports synchronized contents with web editor and snapshots of the whole web page in one image. Image maunfacture like shadow, arced corners, adding edges. Implement manufacture of big image and make sure performance is acceptable.</p>
 <p class="paragraph">2018-08-11 v2.10  Image Spliting which supports equipartition and custom. Scope of image manufacture is easier to use. No number limition is for multiple image files viewed in same screen now.</p>

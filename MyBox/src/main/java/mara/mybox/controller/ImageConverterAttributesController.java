@@ -132,7 +132,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
-            PixelsCalculationController controller = fxmlLoader.getController();
+            final PixelsCalculationController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
             controller.setSource(attributes, xInput, yInput);
@@ -149,6 +149,9 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                 @Override
                 public void handle(WindowEvent event) {
                     noRatio = false;
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
                 }
             });
         } catch (Exception e) {

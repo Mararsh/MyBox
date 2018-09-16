@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -110,7 +112,7 @@ public class ImageViewerController extends ImageBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
-            popInformation(AppVaribles.getMessage("NotSupported"));
+            alertInformation(AppVaribles.getMessage("NotSupported"));
         }
     }
 
@@ -317,11 +319,18 @@ public class ImageViewerController extends ImageBaseController {
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageInformationFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageInformationController controller = fxmlLoader.getController();
-            controller.loadInformation(info);
-
+            final ImageInformationController controller = fxmlLoader.getController();
             Stage imageInformationStage = new Stage();
             controller.setMyStage(imageInformationStage);
+            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             imageInformationStage.setTitle(getMyStage().getTitle());
             imageInformationStage.initModality(Modality.NONE);
             imageInformationStage.initStyle(StageStyle.DECORATED);
@@ -329,6 +338,8 @@ public class ImageViewerController extends ImageBaseController {
             imageInformationStage.getIcons().add(CommonValues.AppIcon);
             imageInformationStage.setScene(new Scene(root));
             imageInformationStage.show();
+
+            controller.loadInformation(info);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -342,11 +353,18 @@ public class ImageViewerController extends ImageBaseController {
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageMetaDataFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
-            ImageMetaDataController controller = fxmlLoader.getController();
-            controller.loadData(info);
-
+            final ImageMetaDataController controller = fxmlLoader.getController();
             Stage imageInformationStage = new Stage();
             controller.setMyStage(imageInformationStage);
+            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
             imageInformationStage.setTitle(getMyStage().getTitle());
             imageInformationStage.initModality(Modality.NONE);
             imageInformationStage.initStyle(StageStyle.DECORATED);
@@ -354,6 +372,8 @@ public class ImageViewerController extends ImageBaseController {
             imageInformationStage.getIcons().add(CommonValues.AppIcon);
             imageInformationStage.setScene(new Scene(root));
             imageInformationStage.show();
+
+            controller.loadData(info);
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -55,15 +55,6 @@ public class AboutController extends BaseController {
     }
 
     @FXML
-    private void closeStage() {
-        try {
-            getMyStage().close();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
     private void linkLicense() {
         try {
             Desktop.getDesktop().browse(new URI(licenseLink.getText()));

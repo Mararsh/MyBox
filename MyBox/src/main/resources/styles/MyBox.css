@@ -24,4 +24,17 @@
     -fx-font-size: 16px;
 }
 
+.copyable-darkRed-label, .copyable-darkRed-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: #961c1c;
+    -fx-font-size: 16px;
+}
+
+.darkRed-error {
+    -fx-text-fill: #961c1c;
+    -fx-font-size: 16px;
+    -fx-font-weight: bolder;
+}
+
 

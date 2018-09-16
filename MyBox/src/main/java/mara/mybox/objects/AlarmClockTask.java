@@ -5,11 +5,13 @@ import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.objects.AlarmClock.AlarmType;
 import static mara.mybox.objects.AppVaribles.scheduledTasks;
@@ -52,10 +54,17 @@ public class AlarmClockTask extends TimerTask {
                     try {
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.AlarmClockRunFxml), AppVaribles.CurrentBundle);
                         Pane pane = fxmlLoader.load();
-                        AlarmClockRunController controller = fxmlLoader.getController();
+                        final AlarmClockRunController controller = fxmlLoader.getController();
                         Stage stage = new Stage();
                         controller.setMyStage(stage);
-                        controller.runAlarm(alarm);
+                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                            @Override
+                            public void handle(WindowEvent event) {
+                                if (!controller.stageClosing()) {
+                                    event.consume();
+                                }
+                            }
+                        });
 
                         Scene scene = new Scene(pane);
                         stage.initModality(Modality.NONE);
@@ -64,6 +73,8 @@ public class AlarmClockTask extends TimerTask {
                         stage.getIcons().add(CommonValues.AppIcon);
                         stage.setScene(scene);
                         stage.show();
+
+                        controller.runAlarm(alarm);
 
                         if (AppVaribles.alarmClockController != null
                                 && AppVaribles.alarmClockController.getAlertClockTableController() != null) {

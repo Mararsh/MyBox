@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.text.MessageFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -9,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 
 /**
@@ -82,6 +84,18 @@ public class DateTools {
         }
     }
 
+    public static Date parseMonth(String month) {
+        return stringToDatetime(month, "yyyy-MM");
+    }
+
+    public static Date thisMonth() {
+        return DateTools.stringToDatetime(nowString().substring(0, 7), "yyyy-MM");
+    }
+
+    public static String dateToMonthString(Date theDate) {
+        return datetimeToString(theDate).substring(0, 7);
+    }
+
     public static boolean isWeekend(long time) {
         try {
             Calendar cal = Calendar.getInstance();
@@ -95,6 +109,36 @@ public class DateTools {
             return false;
         }
 
+    }
+
+    public static String showTime(long v) {
+        long ms = v;
+        if (v < 1000) {
+            return MessageFormat.format(AppVaribles.getMessage("MillisecondsNumber"), ms);
+        }
+        long seconds = ms / 1000;
+        ms = ms % 1000;
+        if (seconds < 60) {
+            return MessageFormat.format(AppVaribles.getMessage("SecondsNumber"), seconds, ms);
+        }
+        long minutes = seconds / 60;
+        seconds = seconds % 60;
+        if (minutes < 60) {
+            return MessageFormat.format(AppVaribles.getMessage("MinutesNumber"), minutes, seconds, ms);
+        }
+        long hours = minutes / 60;
+        minutes = minutes % 60;
+        if (hours < 24) {
+            return MessageFormat.format(AppVaribles.getMessage("HoursNumber"), hours, minutes, seconds, ms);
+        }
+        long days = hours / 24;
+        hours = hours % 24;
+        if (days < 365) {
+            return MessageFormat.format(AppVaribles.getMessage("DaysNumber"), days, hours, minutes, seconds, ms);
+        }
+        long years = days / 365;
+        days = days % 365;
+        return MessageFormat.format(AppVaribles.getMessage("YearsNumber"), years, days, hours, minutes, seconds, ms);
     }
 
 }

@@ -43,15 +43,6 @@ public class PdfInformationController extends BaseController {
     @FXML
     private TextField firstPageSize, firstPageSize2;
 
-    @FXML
-    private void closeStage() {
-        try {
-            getMyStage().close();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     public void setInformation(PdfInformation info) {
         try {
             File file = info.getFile();

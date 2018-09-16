@@ -17,7 +17,6 @@ import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -275,7 +274,7 @@ public class PdfSplitController extends PdfBaseController {
                                     }
                                 }
                                 if (!s.isEmpty()) {
-                                    FxmlTools.popInformation(thisPane, s);
+                                    popInformation(s);
                                 }
 
                             } catch (Exception e) {
