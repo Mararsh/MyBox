@@ -74,8 +74,8 @@ public class HtmlEditorController extends TextEditorController {
 
     private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlKey, HtmlPdfPathKey;
     private WebEngine webEngine;
-    private int cols, rows, delay, fontSize;
-    protected int lastHtmlLen, snapHeight, snapCount;
+    private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY;
+    protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
     private boolean isSettingValues, isOneImage;
     private URL url;
     private List<Image> images;
@@ -89,7 +89,7 @@ public class HtmlEditorController extends TextEditorController {
     @FXML
     private WebView webView;
     @FXML
-    private TextArea textArea;
+    private TextArea codesArea;
     @FXML
     private TabPane tabPane;
     @FXML
@@ -128,40 +128,26 @@ public class HtmlEditorController extends TextEditorController {
     @Override
     protected void initializeNext() {
         try {
+
+            lastCodesLen = lastHtmlLen = 0;
+            isSettingValues = false;
+
+            initCodeEdtior();
+            initBroswer();
+
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue<? extends Tab> observable,
                         Tab oldValue, Tab newValue) {
-                    isSettingValues = true;
-                    if (newValue.equals(editorTab)) {
-                        htmlEdior.setHtmlText(textArea.getText());
-                    } else if (newValue.equals(codesTab)) {
-                        textArea.setText(htmlEdior.getHtmlText());
+                    if (fileChanged.get()) {
+                        isSettingValues = true;
+                        if (newValue.equals(editorTab)) {
+                            htmlEdior.setHtmlText(codesArea.getText());
+                        } else if (newValue.equals(codesTab)) {
+                            codesArea.setText(htmlEdior.getHtmlText());
+                        }
+                        isSettingValues = false;
                     }
-                    isSettingValues = false;
-                }
-            });
-
-            initEdtior();
-            initBroswer();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    protected void initEdtior() {
-        try {
-            textArea.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    int len = textArea.getText().length();
-                    if (!isSettingValues && len != lastTextLen) {
-                        fileChanged.set(true);
-                    }
-                    lastTextLen = len;
-                    bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
                 }
             });
 
@@ -190,21 +176,61 @@ public class HtmlEditorController extends TextEditorController {
 
     }
 
-    protected void initBroswer() {
+    protected void initHtmlEdtior() {
         try {
             // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
             htmlEdior.addEventHandler(DragEvent.DRAG_EXITED, new EventHandler<InputEvent>() { // work
                 @Override
                 public void handle(InputEvent event) {
-                    checkEditorChanged();
+                    checkHtmlEditorChanged();
                 }
             });
             htmlEdior.setOnKeyReleased(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    checkEditorChanged();
+                    logger.debug("setOnKeyReleased");
+                    checkHtmlEditorChanged();
                 }
             });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    private void checkHtmlEditorChanged() {
+        int len = htmlEdior.getHtmlText().length();
+        logger.debug(isSettingValues + "  " + len + " " + lastHtmlLen);
+        if (!isSettingValues && len != lastHtmlLen) {
+            fileChanged.set(true);
+        }
+        lastHtmlLen = len;
+        bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
+    }
+
+    protected void initCodeEdtior() {
+        try {
+            codesArea.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    int len = codesArea.getText().length();
+                    if (!isSettingValues && len != lastTextLen) {
+                        fileChanged.set(true);
+                    }
+                    lastCodesLen = len;
+                    bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected void initBroswer() {
+        try {
 
             urlBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -329,15 +355,6 @@ public class HtmlEditorController extends TextEditorController {
         }
     }
 
-    private void checkEditorChanged() {
-        int len = htmlEdior.getHtmlText().length();
-        if (!isSettingValues && len != lastHtmlLen) {
-            fileChanged.set(true);
-        }
-        lastHtmlLen = len;
-        bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
-    }
-
     @FXML
     private void openAction(ActionEvent event) {
         try {
@@ -374,8 +391,9 @@ public class HtmlEditorController extends TextEditorController {
             }
             String conString = contents.toString();
             htmlEdior.setHtmlText(conString);
-            textArea.setText(conString);
+            codesArea.setText(conString);
             webEngine.loadContent(conString);
+            lastCodesLen = lastHtmlLen = contents.length();
             fileChanged.set(false);
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
             isSettingValues = false;
@@ -401,6 +419,7 @@ public class HtmlEditorController extends TextEditorController {
     @FXML
     private void updateBrowser(ActionEvent event) {
         try {
+            logger.debug("updateBrowser");
             webEngine.loadContent(htmlEdior.getHtmlText());
         } catch (Exception e) {
             logger.error(e.toString());
@@ -411,37 +430,19 @@ public class HtmlEditorController extends TextEditorController {
     @FXML
     private void updateEditor() {
         try {
-//            if (!checkSavingForNextAction()) {
-//                return;
-//            }
+            logger.debug("updateEditor");
+            if (!checkSavingForNextAction()) {
+                return;
+            }
 
             String contents = getBrowserContents();
             logger.debug(contents.length());
-            try (BufferedWriter out = new BufferedWriter(new FileWriter("D:/tmp2/broswer.html", false))) {
-                out.write(contents);
-                out.flush();
-            }
-
-            contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-            logger.debug(contents.length());
-            try (BufferedWriter out = new BufferedWriter(new FileWriter("D:/tmp2/js.html", false))) {
-                out.write(contents);
-                out.flush();
-            }
+//            String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+//            logger.debug(contents.length());
 
             htmlEdior.setHtmlText(contents);
-            textArea.setText(contents);
-//            fileChanged.set(true);
-//            WebDriver driver = new FirefoxDriver();
-//            WebDriverWait wait = new WebDriverWait(driver, 10);
-//            try {
-//                driver.get("https://weibo.com/2362300433");
-////                driver.findElement(By.name("q")).sendKeys("cheese" + Keys.ENTER);
-////                WebElement firstResult = wait.until(presenceOfElementLocated(By.cssSelector("h3>a")));
-////                System.out.println(firstResult.getText());
-//            } finally {
-////                driver.quit();
-//            }
+            codesArea.setText(contents);
+            fileChanged.set(true);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -466,10 +467,6 @@ public class HtmlEditorController extends TextEditorController {
         }
     }
 
-    private void checkClasses() {
-
-    }
-
     @FXML
     private void saveAction() {
         try {
@@ -489,7 +486,7 @@ public class HtmlEditorController extends TextEditorController {
             }
             String contents;
             if (tabPane.getSelectionModel().getSelectedItem().equals(codesTab)) {
-                contents = textArea.getText();
+                contents = codesArea.getText();
             } else {
                 contents = htmlEdior.getHtmlText();
             }
@@ -526,7 +523,7 @@ public class HtmlEditorController extends TextEditorController {
             if (AppVaribles.getMessage("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
                 contents = htmlEdior.getHtmlText();
             } else {
-                contents = textArea.getText();
+                contents = codesArea.getText();
             }
             try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, false))) {
                 out.write(contents);
@@ -547,6 +544,8 @@ public class HtmlEditorController extends TextEditorController {
             isSettingValues = true;
             sourceFile = null;
             htmlEdior.setHtmlText("");
+            codesArea.setText("");
+            lastCodesLen = lastHtmlLen = 0;
             fileChanged.set(false);
             getMyStage().setTitle(getBaseTitle());
             isSettingValues = false;
@@ -665,9 +664,11 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     private void loadWholePage() {
+        orginalStageHeight = (int) getMyStage().getHeight();
+        orginalStageY = (int) myStage.getY();
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        getMyStage().setY(0);
-        getMyStage().setHeight(primaryScreenBounds.getHeight());
+        myStage.setY(0);
+        myStage.setHeight(primaryScreenBounds.getHeight());
 
         int loadDelay = 5000;
         loadedCompletely.set(false);
@@ -682,7 +683,13 @@ public class HtmlEditorController extends TextEditorController {
                 if (newHeight == lastHeight) {
                     logger.debug(" Complete:" + newHeight);
                     this.cancel();
-//                    loadedCompletely.set(true);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            myStage.setY(orginalStageY);
+                            myStage.setHeight(orginalStageHeight);
+                        }
+                    });
                 } else {
                     lastHeight = newHeight;
                     Platform.runLater(new Runnable() {

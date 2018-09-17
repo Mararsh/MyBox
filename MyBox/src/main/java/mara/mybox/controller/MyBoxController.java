@@ -389,7 +389,7 @@ public class MyBoxController extends BaseController {
             public void handle(ActionEvent event) {
                 HtmlEditorController controller
                         = (HtmlEditorController) reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
-                controller.switchBroswerTab();
+//                controller.switchBroswerTab();
             }
         });
 

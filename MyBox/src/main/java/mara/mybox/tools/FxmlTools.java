@@ -8,6 +8,7 @@ import java.net.URL;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -18,6 +19,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
@@ -36,6 +39,27 @@ public class FxmlTools {
     private static final Logger logger = LogManager.getLogger();
 
     public static String badStyle = "-fx-text-box-border: red;";
+
+    public static void miao() {
+
+        Task miaoTask = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try {
+                    File miao = FxmlTools.getUserFile(getClass(), "/sound/miao3.mp3", "miao3.mp3");
+                    FloatControl control = SoundTools.getControl(miao);
+                    Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
+                    player.start();
+                } catch (Exception e) {
+                }
+                return null;
+            }
+        };
+        Thread thread = new Thread(miaoTask);
+        thread.setDaemon(true);
+        thread.start();
+
+    }
 
     public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
         final Bounds visibleBounds = scrollPane.getViewportBounds();

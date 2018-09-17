@@ -66,7 +66,13 @@ public class WeiboSnapingInfoController {
         }
     }
 
-    public void setError(String str) {
+    public void showError(String str) {
+        errorText.setStyle("-fx-text-fill: #961c1c; -fx-font-size: 16px;");
+        errorText.setText(str);
+    }
+
+    public void showMem(String str) {
+        errorText.setStyle("-fx-text-fill: #2e598a; -fx-font-size: 16px;");
         errorText.setText(str);
     }
 

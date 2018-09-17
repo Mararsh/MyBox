@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -47,9 +48,9 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapController extends BaseController {
 
     private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
-    private final String WeiboLastAddressKey, WeiboAuthorKey;
+    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey;
     private int loadDelay, scrollDelay, maxDelay, webWidth;
-    protected int lastHtmlLen, snapHeight, snapCount;
+    protected int lastHtmlLen, snapHeight, snapCount, retry;
     private boolean imagePerScreen, isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -63,7 +64,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private ToggleGroup imageGroup, sizeGroup, formatGroup;
     @FXML
-    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox;
+    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox;
     @FXML
     private TextField addressInput, pathInput, startInput, endInput;
     @FXML
@@ -75,7 +76,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    protected HBox sizeBox;
+    protected HBox sizeBox, delayBox;
 
     public WeiboSnapController() {
         WeiboTargetPathKey = "WeiboTargetPathKey";
@@ -85,6 +86,7 @@ public class WeiboSnapController extends BaseController {
         WeiboZoomKey = "WeiboZoomKey";
         WeiboLastAddressKey = "WeiboLastAddressKey";
         WeiboAuthorKey = "WeiboAuthorKey";
+        WeiboRetryKey = "WeiboRetryKey";
     }
 
     @Override
@@ -156,6 +158,29 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
+        tips = new Tooltip(AppVaribles.getMessage("SnapDelayCommnets"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(delayBox, tips);
+
+        retryBox.getItems().addAll(Arrays.asList("3", "0", "1", "5", "7", "10"));
+        retryBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    retry = Integer.valueOf(newValue);
+                    if (retry > 0) {
+                        AppVaribles.setConfigValue(WeiboRetryKey, retry + "");
+                    } else {
+                        retry = 3;
+                    }
+                } catch (Exception e) {
+                    retry = 3;
+                }
+            }
+        });
+        retryBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboRetryKey, "3"));
+
         loadDelayBox.getItems().addAll(Arrays.asList("2000", "3000", "1000", "5000", "1000", "500", "7000", "10000"));
         loadDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -177,9 +202,9 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "5000"));
+        loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2000"));
 
-        scrollDelayBox.getItems().addAll(Arrays.asList("300", "50", "100", "1000", "600", "2000", "3000", "5000", "10000"));
+        scrollDelayBox.getItems().addAll(Arrays.asList("100", "50", "300", "1000", "600", "2000", "3000", "5000", "10000"));
         scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -369,8 +394,8 @@ public class WeiboSnapController extends BaseController {
         checkPageSize();
 
         standardSizeBox.getItems().addAll(Arrays.asList(
-                "A4 (16k) 21.0cm x 29.7cm",
                 "A4-横向 (16k)  29.7cm x 21.0cm",
+                "A4 (16k) 21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
                 "A3 (8k)   29.7cm x 42.0cm",
@@ -801,6 +826,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setCreateHtml(htmlCheck.isSelected());
             parameters.setKeepPagePdf(keepPageCheck.isSelected());
             parameters.setMiao(miaoCheck.isSelected());
+            parameters.setRetry(retry);
             return parameters;
         } catch (Exception e) {
             parameters = null;
@@ -833,6 +859,11 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
+    protected void callMiao(MouseEvent event) {
+        FxmlTools.miao();
+    }
+
+    @FXML
     protected void startSnap() {
         try {
             if (parameters == null) {
@@ -856,6 +887,7 @@ public class WeiboSnapController extends BaseController {
             stage.initModality(Modality.NONE);
             stage.initOwner(null);
             stage.initStyle(StageStyle.DECORATED);
+            stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(pane));
             stage.show();
 

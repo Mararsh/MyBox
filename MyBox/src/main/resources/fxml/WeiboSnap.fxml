@@ -56,6 +56,12 @@
                                             </padding>
                                         </Label>
                                         <ComboBox fx:id="widthBox" editable="true" prefWidth="150.0" />
+                              <Label text="%FailedRetryTimes">
+                                 <HBox.margin>
+                                    <Insets left="40.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <ComboBox fx:id="retryBox" prefWidth="80.0" />
                                     </children>
                                 </HBox>
                                 <HBox fx:id="delayBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -205,8 +211,12 @@
         <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
                 <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
-                <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample" />
-            <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%meow" />
+                <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
+                    <HBox.margin>
+                        <Insets right="40.0" />
+                    </HBox.margin>
+                </Button>
+                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
             </children>
             <BorderPane.margin>
                 <Insets top="10.0" />

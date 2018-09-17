@@ -14,7 +14,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int loadDelay, scrollDelay, maxDelay, webWidth;
+    private int loadDelay, scrollDelay, maxDelay, webWidth, retry;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, keepPagePdf, miao;
     private String webAddress, author, title;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
@@ -220,6 +220,14 @@ public class WeiboSnapParameters {
 
     public void setMiao(boolean miao) {
         this.miao = miao;
+    }
+
+    public int getRetry() {
+        return retry;
+    }
+
+    public void setRetry(int retry) {
+        this.retry = retry;
     }
 
 }

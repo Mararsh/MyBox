@@ -6,9 +6,9 @@
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
-可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.13-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-2.13-exe.zip) 
+可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-2.14-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v2.14/MyBox-2.14-exe.zip) 
 
-在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-2.13-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-2.13-jar.zip) ，执行以下命令来启动程序：
+在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-2.14-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v2.14/MyBox-2.14-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
 
@@ -19,13 +19,13 @@
 
 [在线提交软件需求和问题报告：https://github.com/Mararsh/MyBox/issues](https://github.com/Mararsh/MyBox/issues)
 
-[用户手册：https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-UserGuide-2.13.pdf](https://github.com/Mararsh/MyBox/releases/download/v2.13/MyBox-UserGuide-2.13.pdf)
+[用户手册：https://github.com/Mararsh/MyBox/releases/download/v2.14/MyBox-UserGuide-2.14.pdf](https://github.com/Mararsh/MyBox/releases/download/v2.14/MyBox-UserGuide-2.14.pdf)
 
 [云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)
 
 
 ## 当前版本
-当前是版本2.13，已实现的特点：
+当前是版本2.14，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -73,6 +73,9 @@
 
 ## 开发日志
 ```
+2018-09-17 版本2.14 微博截图工具：设置失败时重试次数、以应对网络状况很糟的情况；
+当某个月的微博页数很多时，不合并当月的PDF文件，以避免无法生成非常大的PDF文件的情况（有位博主一个月发了36页微博~）。。
+
 2018-09-15 版本2.13 分开参照图和范围图。确保程序退出时不残留线程。批量PDF压缩图片。
 微博截图工具：自动保存任意微博账户的所有微博内容，可以设置起止月份，可以截图为PDF、也可以保存html文件
 （由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容）。
@@ -140,6 +143,6 @@
 ```
 
 ## 主界面
-![About](https://mararsh.github.io/MyBox/common-1.jpg)
+![About](https://mararsh.github.io/MyBox/0.png)
 
 

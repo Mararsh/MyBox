@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,8 +30,6 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -39,7 +38,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.SoundTools;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -56,7 +54,7 @@ public class WeiboSnapRunController extends BaseController {
     private WebEngine webEngine;
     private List<Image> images;
     private WeiboSnapParameters parameters;
-    private int snapHeight, snapCount, pageHeight, screenHeight, screenWidth, currentPage, pageCount;
+    private int snapHeight, snapCount, pageHeight, screenHeight, screenWidth, currentPage, pageCount, retried;
     private int htmlCount, monthPdfCount, pagePdfCount, windowWidth, completedMonthsCount, totalMonthsCount;
     private Timer loadTimer, snapTimer;
     private long loadStartTime, snapStartTime, startTime;
@@ -69,6 +67,8 @@ public class WeiboSnapRunController extends BaseController {
     private File rootPath, pdfPath, htmlPath;
     private WeiboSnapController parent;
     private Map<String, List<File>> pdfs;
+    private Runtime r;
+    private long mb;
 
     @FXML
     private TextField bottomText;
@@ -83,6 +83,9 @@ public class WeiboSnapRunController extends BaseController {
     @Override
     protected void initializeNext() {
         webEngine = webView.getEngine();
+
+        r = Runtime.getRuntime();
+        mb = 1024 * 1024;
 
     }
 
@@ -107,7 +110,7 @@ public class WeiboSnapRunController extends BaseController {
             myStage.setY(0);
             myStage.setHeight(primaryScreenBounds.getHeight());
 
-            htmlCount = monthPdfCount = pagePdfCount = completedMonthsCount = 0;
+            htmlCount = monthPdfCount = pagePdfCount = completedMonthsCount = retried = 0;
             loadFailed = loadCompleted = snapFailed = snapCompleted = false;
             startTime = new Date().getTime();
 
@@ -228,6 +231,7 @@ public class WeiboSnapRunController extends BaseController {
                                     if (!loadCompleted) {
                                         webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
                                     }
+
                                 } catch (Exception e) {
 //                                    loadFailed = loadCompleted = true;
 //                                    errorString = e.toString();
@@ -323,6 +327,7 @@ public class WeiboSnapRunController extends BaseController {
 
     private void loadNextPage() {
         try {
+            retried = 0;
             currentPage++;
             Calendar c = Calendar.getInstance();
             c.setTime(currentMonth);
@@ -335,7 +340,9 @@ public class WeiboSnapRunController extends BaseController {
                 c.add(Calendar.MONTH, 1);
                 currentMonth = c.getTime();
                 if (currentMonth.getTime() > parameters.getEndMonth().getTime()) {
-                    miao();
+                    if (parameters.isMiao()) {
+                        FxmlTools.miao();
+                    }
                     if (parent != null) {
                         parent.popInformation(AppVaribles.getMessage("MissCompleted"));
                     }
@@ -365,6 +372,7 @@ public class WeiboSnapRunController extends BaseController {
 
             loadPage(currentAddress);
         } catch (Exception e) {
+            retried = Integer.MAX_VALUE;
             errorString = e.toString();
             pageFailed(loadingController);
         }
@@ -382,12 +390,15 @@ public class WeiboSnapRunController extends BaseController {
         loadingController.addLine(AppVaribles.getMessage("SnapDuration") + ": "
                 + DateTools.dateToMonthString(parameters.getStartMonth()) + " ~ " + DateTools.dateToMonthString(parameters.getEndMonth()));
         loadingController.addLine(AppVaribles.getMessage("MonthsNumberWillSnap") + ": " + totalMonthsCount);
+        loadingController.addLine(AppVaribles.getMessage("CompletedMonths") + ": " + completedMonthsCount);
+        loadingController.addLine(AppVaribles.getMessage("CurrentLoadingMonth") + ": " + DateTools.dateToMonthString(currentMonth));
+        loadingController.addLine(AppVaribles.getMessage("PagesNumberThisMonth") + ": " + pageCount);
+        loadingController.addLine(AppVaribles.getMessage("CurrentLoadingPage") + ": " + currentPage);
+        loadingController.addLine(AppVaribles.getMessage("PdfFilesSaved") + ": " + (pagePdfCount + monthPdfCount));
+        loadingController.addLine(AppVaribles.getMessage("HtmlFilesSaved") + ": " + htmlCount);
         long passed = new Date().getTime() - startTime;
         loadingController.addLine(AppVaribles.getMessage("SnapingStartTime") + ": " + DateTools.datetimeToString(startTime)
                 + " (" + AppVaribles.getMessage("ElapsedTime") + ": " + DateTools.showTime(passed) + ")");
-        loadingController.addLine(AppVaribles.getMessage("CompletedMonths") + ": " + completedMonthsCount);
-        loadingController.addLine(AppVaribles.getMessage("PdfFilesSaved") + ": " + (pagePdfCount + monthPdfCount));
-        loadingController.addLine(AppVaribles.getMessage("HtmlFilesSaved") + ": " + htmlCount);
         if (completedMonthsCount > 0) {
             long speed = passed / completedMonthsCount;
             loadingController.addLine(AppVaribles.getMessage("SpeedOfSnapingMonth") + ": " + DateTools.showTime(speed));
@@ -399,9 +410,20 @@ public class WeiboSnapRunController extends BaseController {
             loadingController.addLine(AppVaribles.getMessage("PredictedCompleteTime") + ": " + DateTools.datetimeToString(c.getTime())
                     + " (" + AppVaribles.getMessage("LeftTime") + ": " + DateTools.showTime(left) + ")");
         }
-        loadingController.addLine(AppVaribles.getMessage("CurrentLoadingMonth") + ": " + DateTools.dateToMonthString(currentMonth));
-        loadingController.addLine(AppVaribles.getMessage("PagesNumberThisMonth") + ": " + pageCount);
-        loadingController.addLine(AppVaribles.getMessage("CurrentLoadingPage") + ": " + currentPage);
+
+        if (retried > 0) {
+            loadingController.showError(MessageFormat.format(AppVaribles.getMessage("RetryingTimes"), retried));
+        } else {
+            long freeMemory = r.freeMemory() / mb;
+            long totalMemory = r.totalMemory() / mb;
+            long maxMemory = r.maxMemory() / mb;
+            int availableProcessors = r.availableProcessors();
+
+            loadingController.showMem("申请内存:" + maxMemory + "M"
+                    + " 已占内存:" + totalMemory + "M"
+                    + " 可用内存:" + freeMemory + "M"
+                    + " 可用处理器:" + availableProcessors);
+        }
 
     }
 
@@ -552,19 +574,27 @@ public class WeiboSnapRunController extends BaseController {
     }
 
     public void reloadPage() {
+        retried = 0;
         loadingController.getReloadButton().setDisable(true);
-        loadingController.setError("");
+        loadingController.showError("");
         loadPage(currentAddress);
     }
 
     private void pageFailed(WeiboSnapingInfoController controller) {
         try {
-            miao();
+            if (retried < parameters.getRetry()) {
+                retried++;
+                loadPage(currentAddress);
+                return;
+            }
+            if (parameters.isMiao()) {
+                FxmlTools.miao();
+            }
             if (errorString == null) {
                 errorString = AppVaribles.getMessage("FailedWeiboSnap");
             }
             if (controller != null) {
-                controller.setError(errorString);
+                controller.showError(errorString);
                 controller.getReloadButton().setDisable(false);
             } else {
                 alertError(errorString);
@@ -742,28 +772,32 @@ public class WeiboSnapRunController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 try {
+                    boolean keep = parameters.isKeepPagePdf();
+                    if (files.size() < 10) {  // Avoid too many pages~
+                        PDFMergerUtility mergePdf = new PDFMergerUtility();
+                        for (File file : files) {
+                            mergePdf.addSource(file);
+                        }
+                        String monthFile = pdfPath.getAbsolutePath() + File.separator + accountName + "-" + month + ".pdf";
+                        mergePdf.setDestinationFileName(monthFile);
+                        mergePdf.mergeDocuments(null);
 
-                    PDFMergerUtility mergePdf = new PDFMergerUtility();
-                    for (File file : files) {
-                        mergePdf.addSource(file);
+                        try (PDDocument doc = PDDocument.load(new File(monthFile))) {
+                            PDDocumentInformation info = new PDDocumentInformation();
+                            info.setCreationDate(Calendar.getInstance());
+                            info.setModificationDate(Calendar.getInstance());
+                            info.setProducer("MyBox v" + CommonValues.AppVersion);
+                            info.setAuthor(parameters.getAuthor());
+                            doc.setDocumentInformation(info);
+                            doc.save(new File(monthFile));
+                            monthPdfCount++;
+                            logger.debug(monthFile);
+                        }
+                    } else {
+                        keep = true;
                     }
-                    String monthFile = pdfPath.getAbsolutePath() + File.separator + accountName + "-" + month + ".pdf";
-                    mergePdf.setDestinationFileName(monthFile);
-                    mergePdf.mergeDocuments(null);
 
-                    try (PDDocument doc = PDDocument.load(new File(monthFile))) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + CommonValues.AppVersion);
-                        info.setAuthor(parameters.getAuthor());
-                        doc.setDocumentInformation(info);
-                        doc.save(new File(monthFile));
-                        monthPdfCount++;
-                        logger.debug(monthFile);
-                    }
-
-                    if (!parameters.isKeepPagePdf()) {
+                    if (!keep) {
                         for (File file : files) {
                             try {
                                 file.delete();
@@ -816,29 +850,6 @@ public class WeiboSnapRunController extends BaseController {
             Desktop.getDesktop().browse(rootPath.toURI());
         } catch (Exception e) {
         }
-    }
-
-    protected void miao() {
-        if (!parameters.isMiao()) {
-            return;
-        }
-        Task miaoTask = new Task<Void>() {
-            @Override
-            protected Void call() {
-                try {
-                    File miao = FxmlTools.getUserFile(getClass(), "/sound/miao3.mp3", "miao3.mp3");
-                    FloatControl control = SoundTools.getControl(miao);
-                    Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
-                    player.start();
-                } catch (Exception e) {
-                }
-                return null;
-            }
-        };
-        Thread thread = new Thread(miaoTask);
-        thread.setDaemon(true);
-        thread.start();
-
     }
 
     public WeiboSnapController getParent() {

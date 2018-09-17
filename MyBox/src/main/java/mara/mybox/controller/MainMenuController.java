@@ -323,7 +323,7 @@ public class MainMenuController extends BaseController {
     private void openHtmlEditor2(ActionEvent event) {
         HtmlEditorController controller
                 = (HtmlEditorController) reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
-        controller.switchBroswerTab();
+//        controller.switchBroswerTab();
     }
 
     @FXML
