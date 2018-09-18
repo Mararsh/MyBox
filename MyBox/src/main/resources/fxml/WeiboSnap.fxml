@@ -39,47 +39,40 @@
                                         <Label text="%EmptyForVeryStart" />
                                         <Label text="%EndMonth">
                                             <padding>
-                                                <Insets left="50.0" />
+                                                <Insets left="30.0" />
                                             </padding>
                                         </Label>
                                         <TextField fx:id="endInput" prefHeight="30.0" prefWidth="80.0" promptText="2018-09" />
                                         <Label text="%EmptyForNow" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
-                                        <Label text="%WebPageScale" />
-                                        <ComboBox fx:id="zoomBox" editable="true" prefWidth="80.0" />
-                                        <Label text="%WebWidth">
-                                            <padding>
-                                                <Insets left="20.0" />
-                                            </padding>
-                                        </Label>
-                                        <ComboBox fx:id="widthBox" editable="true" prefWidth="150.0" />
-                              <Label text="%FailedRetryTimes">
+                              <CheckBox fx:id="expandCommentsCheck" mnemonicParsing="false" selected="true" text="%ExpandComments">
                                  <HBox.margin>
-                                    <Insets left="40.0" />
+                                    <Insets left="30.0" />
                                  </HBox.margin>
-                              </Label>
-                              <ComboBox fx:id="retryBox" prefWidth="80.0" />
+                              </CheckBox>
                                     </children>
                                 </HBox>
                                 <HBox fx:id="delayBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%LoadRetryDelay" />
-                                        <ComboBox fx:id="loadDelayBox" editable="true" prefWidth="100.0" />
+                                        <ComboBox fx:id="loadDelayBox" editable="true" prefWidth="80.0" />
                                         <Label text="%MaxLoadDelay">
-                                            <padding>
-                                                <Insets left="10.0" />
-                                            </padding>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
                                         </Label>
-                                        <ComboBox fx:id="maxDelayBox" editable="true" prefWidth="120.0" />
-                                        <Label text="%ScrollDelay">
-                                            <padding>
-                                                <Insets left="10.0" />
-                                            </padding>
-                                        </Label>
+                                        <ComboBox fx:id="maxDelayBox" editable="true" prefWidth="80.0" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label text="%ScrollDelay" />
                                         <ComboBox fx:id="scrollDelayBox" editable="true" prefWidth="100.0" />
+                              <Label text="%FailedRetryTimes">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <ComboBox fx:id="retryBox" prefWidth="80.0" />
                                     </children>
                                 </HBox>
                             </children>
@@ -100,6 +93,12 @@
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%PerPage" toggleGroup="$imageGroup" />
                                         <Label text="%NotRecommended" />
+                              <CheckBox fx:id="fullScreenCheck" mnemonicParsing="false" text="%FullScreen">
+                                 <HBox.margin>
+                                    <Insets left="60.0" />
+                                 </HBox.margin>
+                              </CheckBox>
+                              <Label text="%NotRecommended" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -170,6 +169,12 @@
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
+                              <Label text="%MaximumSizeMergedPDF">
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <ComboBox fx:id="maxMergedBox" editable="true" prefWidth="100.0" />
                                     </children>
                                 </HBox>
                             </children>

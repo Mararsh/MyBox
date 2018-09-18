@@ -55,10 +55,10 @@ public class WeiboSnapRunController extends BaseController {
     private List<Image> images;
     private WeiboSnapParameters parameters;
     private int snapHeight, snapCount, pageHeight, screenHeight, screenWidth, currentPage, pageCount, retried;
-    private int htmlCount, monthPdfCount, pagePdfCount, windowWidth, completedMonthsCount, totalMonthsCount;
+    private int htmlCount, monthPdfCount, pagePdfCount, completedMonthsCount, totalMonthsCount;
     private Timer loadTimer, snapTimer;
-    private long loadStartTime, snapStartTime, startTime;
-    private boolean loadFailed, loadCompleted, snapFailed, snapCompleted;
+    private long loadStartTime, snapStartTime, startTime, maxMergeSize, maxDelay, loadDelay;
+    private boolean loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted;
     private WeiboSnapingInfoController loadingController;
     private Stage loadingStage;
     private String pdfFilename, htmlFilename, currentMonthString, accountName, setFontScript, baseText, errorString;
@@ -68,7 +68,10 @@ public class WeiboSnapRunController extends BaseController {
     private WeiboSnapController parent;
     private Map<String, List<File>> pdfs;
     private Runtime r;
-    private long mb;
+    private final long mb;
+    private final String expendScipt;
+    private float zoomScale;
+    private int pageWidth;
 
     @FXML
     private TextField bottomText;
@@ -78,6 +81,20 @@ public class WeiboSnapRunController extends BaseController {
     public WeiboSnapRunController() {
         WeiboLastStartMonthKey = "WeiboLastStartMonthKey";
 
+        mb = 1024 * 1024;
+        expendScipt = " function mybox() { "
+                + " var texts = document.getElementsByClassName('S_txt2');  "
+                + " for(var i = 0; i <texts.length; i++) { "
+                + "     var actionType = texts[i].getAttribute('action-type');  "
+                + "     if ( actionType == null || actionType != 'fl_comment') continue; "
+                + "     if ( texts[i].firstElementChild == null) continue;  "
+                + "     if ( texts[i].firstElementChild.firstElementChild == null) continue;  "
+                + "     if ( texts[i].firstElementChild.firstElementChild.firstElementChild == null) continue; "
+                + "     if ( texts[i].firstElementChild.firstElementChild.firstElementChild.children[1] == null) continue; "
+                + "     var comments = texts[i].firstElementChild.firstElementChild.firstElementChild.children[1].textContent; "
+                + "     if ( comments != null &&  comments != '评论' ) texts[i].click(); "
+                + " }"
+                + "}  mybox();";
     }
 
     @Override
@@ -85,7 +102,8 @@ public class WeiboSnapRunController extends BaseController {
         webEngine = webView.getEngine();
 
         r = Runtime.getRuntime();
-        mb = 1024 * 1024;
+        zoomScale = 1.5f;
+        pageWidth = 950;
 
     }
 
@@ -100,19 +118,21 @@ public class WeiboSnapRunController extends BaseController {
             }
 
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            if (parameters.getWebWidth() <= 0) {
+            if (parameters.isFullScreen()) {
                 myStage.setX(0);
-                windowWidth = (int) primaryScreenBounds.getWidth();
+                myStage.setWidth((int) primaryScreenBounds.getWidth());
             } else {
-                windowWidth = parameters.getWebWidth();
+                myStage.setWidth(pageWidth);
             }
-            myStage.setWidth(windowWidth);
             myStage.setY(0);
             myStage.setHeight(primaryScreenBounds.getHeight());
 
             htmlCount = monthPdfCount = pagePdfCount = completedMonthsCount = retried = 0;
-            loadFailed = loadCompleted = snapFailed = snapCompleted = false;
+            loadFailed = loadCompleted = mainCompleted = snapFailed = snapCompleted = false;
             startTime = new Date().getTime();
+            maxMergeSize = parameters.getMaxMergeSize() * 1024 * 1024;
+            maxDelay = parameters.getMaxDelay() * 1000;
+            loadDelay = parameters.getLoadDelay() * 1000;
 
             loadMain();
         } catch (Exception e) {
@@ -151,13 +171,14 @@ public class WeiboSnapRunController extends BaseController {
         try {
             webEngine.load(parameters.getWebAddress());
             logger.debug(parameters.getWebAddress());
+            Thread.sleep(loadDelay);
 
             if (!openLoadingStage()) {
                 return;
             }
             loadingController.setInfo(AppVaribles.getMessage("CheckingWeiBoMain"));
 
-            loadFailed = loadCompleted = false;
+            loadFailed = loadCompleted = mainCompleted = false;
             accountName = null;
             firstMonth = lastMonth = null;
 
@@ -173,9 +194,9 @@ public class WeiboSnapRunController extends BaseController {
                 @Override
                 public void run() {
                     try {
-                        if (new Date().getTime() - loadStartTime >= parameters.getMaxDelay()) {
+                        if (new Date().getTime() - loadStartTime >= maxDelay) {
                             loadFailed = loadCompleted = true;
-//                            errorString = AppVaribles.getMessage("OverTime");
+//                            errorString = AppVaribles.getMessage("TimeOver");
                         }
                         if (loadFailed || loadCompleted) {
                             quit();
@@ -208,7 +229,7 @@ public class WeiboSnapRunController extends BaseController {
                                                 try {
                                                     s = s.substring(0, posfirst2);
                                                     lastMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
-                                                    logger.debug(DateTools.datetimeToString(lastMonth));
+//                                                    logger.debug(DateTools.datetimeToString(lastMonth));
                                                     int posLast1 = contents.lastIndexOf("&stat_date=");
                                                     if (posLast1 > 0) {
                                                         s = contents.substring(posLast1 + "&stat_date=".length());
@@ -217,13 +238,15 @@ public class WeiboSnapRunController extends BaseController {
                                                             try {
                                                                 s = s.substring(0, posLast2);
                                                                 firstMonth = DateTools.parseMonth(s.substring(0, 4) + "-" + s.substring(4, 6));
-                                                                logger.debug(DateTools.datetimeToString(firstMonth));
+//                                                                logger.debug(DateTools.datetimeToString(firstMonth));
                                                                 loadCompleted = true;
                                                             } catch (Exception e) {
+                                                                logger.error(e.toString());
                                                             }
                                                         }
                                                     }
                                                 } catch (Exception e) {
+                                                    logger.error(e.toString());
                                                 }
                                             }
                                         }
@@ -269,7 +292,7 @@ public class WeiboSnapRunController extends BaseController {
                     });
                 }
 
-            }, parameters.getLoadDelay(), parameters.getLoadDelay());
+            }, loadDelay, loadDelay);
 
         } catch (Exception e) {
             alertError(e.toString());
@@ -412,7 +435,8 @@ public class WeiboSnapRunController extends BaseController {
         }
 
         if (retried > 0) {
-            loadingController.showError(MessageFormat.format(AppVaribles.getMessage("RetryingTimes"), retried));
+            loadingController.showError(errorString + "\n"
+                    + MessageFormat.format(AppVaribles.getMessage("RetryingTimes"), retried));
         } else {
             long freeMemory = r.freeMemory() / mb;
             long totalMemory = r.totalMemory() / mb;
@@ -434,7 +458,6 @@ public class WeiboSnapRunController extends BaseController {
             if (loadTimer != null) {
                 loadTimer.cancel();
             }
-
             if (!openLoadingStage()) {
                 return;
             }
@@ -447,7 +470,7 @@ public class WeiboSnapRunController extends BaseController {
 
             loadTimer = new Timer();
             loadStartTime = new Date().getTime();
-            loadFailed = loadCompleted = false;
+            loadFailed = loadCompleted = mainCompleted = false;
             loadTimer.schedule(new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
                 boolean emptyPage = false;
@@ -456,9 +479,10 @@ public class WeiboSnapRunController extends BaseController {
                 @Override
                 public void run() {
                     try {
-                        if (new Date().getTime() - loadStartTime >= parameters.getMaxDelay()) {
+                        if (new Date().getTime() - loadStartTime >= maxDelay) {
                             loadFailed = loadCompleted = true;
-                            errorString = AppVaribles.getMessage("OverTime");
+                            errorString = AppVaribles.getMessage("TimeOver");
+                            logger.debug(errorString);
                         }
                         if (loadFailed || loadCompleted) {
                             quit();
@@ -475,10 +499,14 @@ public class WeiboSnapRunController extends BaseController {
                                     contents = null;
                                     if (newHeight == lastHeight) {
                                         contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-                                        if (contents.contains("查看更早微博")) {
-                                            currentPage = 1;
-                                            pageCount = 1;
+                                        if (mainCompleted) {
                                             loadCompleted = true;
+                                        } else if (contents.contains("查看更早微博")) {
+//                                            currentPage = 1;
+//                                            pageCount = 1;
+                                            webEngine.executeScript(expendScipt);
+                                            Thread.sleep(loadDelay);
+                                            mainCompleted = true;
                                         } else if (contents.contains("还没有发过微博")) {
                                             currentPage = 0;
                                             pageCount = 0;
@@ -495,11 +523,16 @@ public class WeiboSnapRunController extends BaseController {
                                                         try {
                                                             currentPage = Integer.valueOf(s1.substring(0, pos2));
                                                             pageCount = Integer.valueOf(s1.substring(pos2 + "&amp;countPage=".length(), pos3));
-                                                            loadCompleted = true;
-//                                                    logger.debug("currentPage:" + currentPage + "  pageCount:" + pageCount);
+                                                            if (parameters.isExpandComments()) {
+                                                                webEngine.executeScript(expendScipt);
+                                                                Thread.sleep(loadDelay);
+                                                            } else {
+                                                                loadCompleted = true;
+                                                            }
+                                                            mainCompleted = true;
                                                         } catch (Exception e) {
-                                                            loadFailed = loadCompleted = true;
-                                                            errorString = e.toString();
+//                                                            loadFailed = loadCompleted = true;
+//                                                            errorString = e.toString();
                                                             logger.debug(e.toString());
                                                         }
                                                     }
@@ -520,10 +553,10 @@ public class WeiboSnapRunController extends BaseController {
                         });
 
                     } catch (Exception e) {
-                        loadFailed = loadCompleted = true;
                         logger.error(e.toString());
-                        errorString = e.toString();
-                        quit();
+//                        loadFailed = loadCompleted = true;
+//                        errorString = e.toString();
+//                        quit();
                     }
                 }
 
@@ -547,6 +580,7 @@ public class WeiboSnapRunController extends BaseController {
                                     }
                                 }
                             }
+                            contents = null;
                             if (loadFailed) {
                                 pageFailed(loadingController);
                             } else {
@@ -564,7 +598,7 @@ public class WeiboSnapRunController extends BaseController {
                     });
                 }
 
-            }, parameters.getLoadDelay(), parameters.getLoadDelay());
+            }, loadDelay, loadDelay);
 
         } catch (Exception e) {
             errorString = e.toString();
@@ -582,6 +616,9 @@ public class WeiboSnapRunController extends BaseController {
 
     private void pageFailed(WeiboSnapingInfoController controller) {
         try {
+            if (errorString == null) {
+                errorString = AppVaribles.getMessage("FailedWeiboSnap");
+            }
             if (retried < parameters.getRetry()) {
                 retried++;
                 loadPage(currentAddress);
@@ -589,9 +626,6 @@ public class WeiboSnapRunController extends BaseController {
             }
             if (parameters.isMiao()) {
                 FxmlTools.miao();
-            }
-            if (errorString == null) {
-                errorString = AppVaribles.getMessage("FailedWeiboSnap");
             }
             if (controller != null) {
                 controller.showError(errorString);
@@ -611,8 +645,8 @@ public class WeiboSnapRunController extends BaseController {
                 snapTimer.cancel();
             }
             webEngine.executeScript("window.scrollTo(0,0 );");
-            webEngine.executeScript("document.getElementsByTagName('body')[0].style.zoom = " + parameters.getZoomScale() + ";");
-            Thread.sleep(parameters.getLoadDelay());
+            webEngine.executeScript("document.getElementsByTagName('body')[0].style.zoom = " + zoomScale + ";");
+            Thread.sleep(loadDelay);
             pageHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
             screenHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
             screenWidth = (Integer) webEngine.executeScript("document.documentElement.clientWidth || document.body.clientWidth;");
@@ -628,7 +662,7 @@ public class WeiboSnapRunController extends BaseController {
             }
             loadingController.setInfo(AppVaribles.getMessage("SnapingPage"));
             setBaseInfo();
-            loadingController.addLine(AppVaribles.getMessage("PageZoomScale") + ": " + parameters.getZoomScale());
+            loadingController.addLine(AppVaribles.getMessage("PageZoomScale") + ": " + zoomScale);
             loadingController.addLine(AppVaribles.getMessage("CurrentWindowHeight") + ": " + screenHeight);
             loadingController.addLine(AppVaribles.getMessage("CurrentWindowWidth") + ": " + screenWidth);
             if (parameters.isCreatePDF()) {
@@ -648,9 +682,9 @@ public class WeiboSnapRunController extends BaseController {
                 @Override
                 public void run() {
                     try {
-                        if (new Date().getTime() - snapStartTime >= parameters.getMaxDelay()) {
+                        if (new Date().getTime() - snapStartTime >= maxDelay) {
                             loadFailed = loadCompleted = true;
-                            errorString = AppVaribles.getMessage("OverTime");
+                            errorString = AppVaribles.getMessage("TimeOver");
                         }
                         if (snapFailed || snapCompleted || pageHeight <= snapHeight) {
                             quit();
@@ -664,12 +698,11 @@ public class WeiboSnapRunController extends BaseController {
                                     final SnapshotParameters snapPara = new SnapshotParameters();
                                     snapPara.setFill(Color.TRANSPARENT);
                                     Image snapshot = webView.snapshot(snapPara, null);
+                                    int y1 = 0;
                                     if (pageHeight < snapHeight + screenHeight) { // last snap
-                                        snapshot = FxmlImageTools.cropImage(snapshot, 0, screenHeight - (pageHeight - snapHeight),
-                                                screenWidth - 1, (int) snapshot.getHeight() - 1);
-                                    } else {
-                                        snapshot = FxmlImageTools.cropImage(snapshot, 0, 0,
-                                                screenWidth - 1, (int) snapshot.getHeight() - 1);
+                                        y1 = screenHeight - (pageHeight - snapHeight);
+                                        snapshot = FxmlImageTools.cropImage(snapshot, 0, y1,
+                                                (int) snapshot.getWidth() - 1, (int) snapshot.getHeight() - 1);
                                     }
                                     images.add(snapshot);
                                     snapHeight += snapStep;
@@ -730,6 +763,7 @@ public class WeiboSnapRunController extends BaseController {
                                     }
                                 }
                             }
+                            images = new ArrayList<>();
                             if (!snapFailed) {
                                 loadNextPage();
                             } else {
@@ -739,7 +773,7 @@ public class WeiboSnapRunController extends BaseController {
                     });
                 }
 
-            }, parameters.getLoadDelay(), parameters.getScrollDelay());
+            }, loadDelay, parameters.getScrollDelay());
 
         } catch (Exception e) {
             errorString = e.toString();
@@ -772,13 +806,25 @@ public class WeiboSnapRunController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 try {
+                    String monthFile = pdfPath.getAbsolutePath() + File.separator + accountName + "-" + month + ".pdf";
+                    if (files.size() == 1) {
+                        files.get(0).renameTo(new File(monthFile));
+                        monthPdfCount++;
+                        pdfs.remove(month);
+                        logger.debug("rename");
+                        return null;
+                    }
+
                     boolean keep = parameters.isKeepPagePdf();
-                    if (files.size() < 10) {  // Avoid too many pages~
+                    long totalSize = 0;
+                    for (File file : files) {
+                        totalSize += file.length();
+                    }
+                    if (totalSize <= maxMergeSize) {
                         PDFMergerUtility mergePdf = new PDFMergerUtility();
                         for (File file : files) {
                             mergePdf.addSource(file);
                         }
-                        String monthFile = pdfPath.getAbsolutePath() + File.separator + accountName + "-" + month + ".pdf";
                         mergePdf.setDestinationFileName(monthFile);
                         mergePdf.mergeDocuments(null);
 
@@ -794,6 +840,7 @@ public class WeiboSnapRunController extends BaseController {
                             logger.debug(monthFile);
                         }
                     } else {
+                        logger.debug(totalSize);
                         keep = true;
                     }
 

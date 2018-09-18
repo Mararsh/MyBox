@@ -48,15 +48,14 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapController extends BaseController {
 
     private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
-    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey;
-    private int loadDelay, scrollDelay, maxDelay, webWidth;
+    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey;
+    private int loadDelay, scrollDelay, maxDelay;
     protected int lastHtmlLen, snapHeight, snapCount, retry;
     private boolean imagePerScreen, isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
     private Date startMonth, endMonth;
-    private float zoomScale;
-    protected int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
+    protected int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
     protected PDRectangle pageSize;
 
     @FXML
@@ -64,13 +63,13 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private ToggleGroup imageGroup, sizeGroup, formatGroup;
     @FXML
-    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox;
+    private ComboBox<String> loadDelayBox, scrollDelayBox, maxDelayBox, retryBox, maxMergedBox;
     @FXML
     private TextField addressInput, pathInput, startInput, endInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, keepPageCheck, miaoCheck;
+    private CheckBox pdfCheck, htmlCheck, keepPageCheck, miaoCheck, fullScreenCheck, expandCommentsCheck;
     @FXML
     protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
     @FXML
@@ -87,6 +86,7 @@ public class WeiboSnapController extends BaseController {
         WeiboLastAddressKey = "WeiboLastAddressKey";
         WeiboAuthorKey = "WeiboAuthorKey";
         WeiboRetryKey = "WeiboRetryKey";
+        WeiboMaxMergeKey = "WeiboMaxMergeKey";
     }
 
     @Override
@@ -181,7 +181,7 @@ public class WeiboSnapController extends BaseController {
         });
         retryBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboRetryKey, "3"));
 
-        loadDelayBox.getItems().addAll(Arrays.asList("2000", "3000", "1000", "5000", "1000", "500", "7000", "10000"));
+        loadDelayBox.getItems().addAll(Arrays.asList("2", "3", "5", "1", "7", "10"));
         loadDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -204,7 +204,7 @@ public class WeiboSnapController extends BaseController {
         });
         loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2000"));
 
-        scrollDelayBox.getItems().addAll(Arrays.asList("100", "50", "300", "1000", "600", "2000", "3000", "5000", "10000"));
+        scrollDelayBox.getItems().addAll(Arrays.asList("100", "50", "300", "1000", "600", "2000", "3000", "5000"));
         scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -227,7 +227,7 @@ public class WeiboSnapController extends BaseController {
         });
         scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "100"));
 
-        maxDelayBox.getItems().addAll(Arrays.asList("30000", "20000", "15000", "10000", "60000"));
+        maxDelayBox.getItems().addAll(Arrays.asList("60", "120", "180", "300", "150", "240"));
         maxDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -248,60 +248,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "30000"));
-
-        zoomBox.getItems().addAll(Arrays.asList("1.5", "1", "2", "1.6", "1.8", "0.8"));
-        zoomBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    zoomScale = Float.valueOf(newValue);
-                    if (zoomScale > 0) {
-                        zoomBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(WeiboZoomKey, zoomScale + "");
-                        if (zoomScale > 2) {
-                            popInformation(AppVaribles.getMessage("TooLargerScale"));
-                        }
-                    } else {
-                        zoomScale = 1.5f;
-                        zoomBox.getEditor().setStyle(badStyle);
-                    }
-
-                } catch (Exception e) {
-                    zoomScale = 1.5f;
-                    zoomBox.getEditor().setStyle(badStyle);
-                }
-            }
-        });
-        zoomBox.getSelectionModel().select(0);
-
-        widthBox.getItems().addAll(Arrays.asList(AppVaribles.getMessage("ScreenWidth"), "1200", "1400", "1800", "1000", "800"));
-        widthBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    if (newValue.equals(AppVaribles.getMessage("ScreenWidth"))) {
-                        webWidth = 0;
-                        widthBox.getEditor().setStyle(null);
-                        return;
-                    }
-                    webWidth = Integer.valueOf(newValue);
-                    if (webWidth > 0) {
-                        widthBox.getEditor().setStyle(null);
-                    } else {
-                        webWidth = 0;
-                        widthBox.getEditor().setStyle(badStyle);
-                    }
-
-                } catch (Exception e) {
-                    webWidth = 0;
-                    widthBox.getEditor().setStyle(badStyle);
-                }
-            }
-        });
-        widthBox.getSelectionModel().select(0);
+        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "60000"));
 
     }
 
@@ -365,6 +312,38 @@ public class WeiboSnapController extends BaseController {
         });
         checkImageOption();
 
+        formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                checkFormat();
+            }
+        });
+        checkFormat();
+
+        jpegBox.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
+        jpegBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                checkJpegQuality();
+            }
+        });
+        jpegBox.getSelectionModel().select(0);
+        checkJpegQuality();
+
+        thresholdInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                checkThreshold();
+            }
+        });
+        checkThreshold();
+
+        Tooltip tips = new Tooltip(AppVaribles.getMessage("FullScreenComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(fullScreenCheck, tips);
+
     }
 
     private void checkImageOption() {
@@ -373,6 +352,58 @@ public class WeiboSnapController extends BaseController {
             imagePerScreen = true;
         } else if (AppVaribles.getMessage("PerPage").equals(selected.getText())) {
             imagePerScreen = false;
+        }
+    }
+
+    private void checkFormat() {
+        jpegBox.setDisable(true);
+        jpegBox.setStyle(null);
+        thresholdInput.setDisable(true);
+
+        RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
+        if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
+            format = ImagesCombinePdfController.PdfImageFormat.Original;
+        } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
+            format = ImagesCombinePdfController.PdfImageFormat.Tiff;
+            thresholdInput.setDisable(false);
+        } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
+            format = ImagesCombinePdfController.PdfImageFormat.Jpeg;
+            jpegBox.setDisable(false);
+            checkJpegQuality();
+        }
+    }
+
+    private void checkJpegQuality() {
+        jpegQuality = 100;
+        try {
+            jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
+            if (jpegQuality >= 0 && jpegQuality <= 100) {
+                jpegBox.setStyle(null);
+            } else {
+                jpegBox.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            jpegBox.setStyle(badStyle);
+        }
+    }
+
+    private void checkThreshold() {
+        try {
+            if (thresholdInput.getText().isEmpty()) {
+                threshold = -1;
+                thresholdInput.setStyle(null);
+                return;
+            }
+            threshold = Integer.valueOf(thresholdInput.getText());
+            if (threshold >= 0 && threshold <= 100) {
+                thresholdInput.setStyle(null);
+            } else {
+                threshold = -1;
+                thresholdInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            threshold = -1;
+            thresholdInput.setStyle(badStyle);
         }
     }
 
@@ -453,43 +484,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
-        formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                checkFormat();
-            }
-        });
-        checkFormat();
-
-        jpegBox.getItems().addAll(Arrays.asList(
-                "100",
-                "75",
-                "90",
-                "50",
-                "60",
-                "80",
-                "30",
-                "10"
-        ));
-        jpegBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                checkJpegQuality();
-            }
-        });
-        jpegBox.getSelectionModel().select(0);
-        checkJpegQuality();
-
-        thresholdInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                checkThreshold();
-            }
-        });
-        checkThreshold();
-
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -519,6 +513,31 @@ public class WeiboSnapController extends BaseController {
             }
         });
         authorInput.setText(AppVaribles.getConfigValue(WeiboAuthorKey, ""));
+
+        Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(maxMergedBox, tips);
+        maxMergedBox.getItems().addAll(Arrays.asList("500", "600", "400", "300", "700", "1000"));
+        maxMergedBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    maxMergeSize = Integer.valueOf(newValue);
+                    if (maxMergeSize > 0) {
+                        maxMergedBox.getEditor().setStyle(null);
+                        AppVaribles.setConfigValue(WeiboMaxMergeKey, newValue);
+                    } else {
+                        maxMergeSize = 400;
+                        maxMergedBox.getEditor().setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    maxMergeSize = 400;
+                    maxMergedBox.getEditor().setStyle(badStyle);
+                }
+            }
+        });
+        maxMergedBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxMergeKey, "400"));
 
     }
 
@@ -658,58 +677,6 @@ public class WeiboSnapController extends BaseController {
 
     }
 
-    private void checkFormat() {
-        jpegBox.setDisable(true);
-        jpegBox.setStyle(null);
-        thresholdInput.setDisable(true);
-
-        RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Original;
-        } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Tiff;
-            thresholdInput.setDisable(false);
-        } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Jpeg;
-            jpegBox.setDisable(false);
-            checkJpegQuality();
-        }
-    }
-
-    private void checkJpegQuality() {
-        jpegQuality = 100;
-        try {
-            jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
-            if (jpegQuality >= 0 && jpegQuality <= 100) {
-                jpegBox.setStyle(null);
-            } else {
-                jpegBox.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            jpegBox.setStyle(badStyle);
-        }
-    }
-
-    private void checkThreshold() {
-        try {
-            if (thresholdInput.getText().isEmpty()) {
-                threshold = -1;
-                thresholdInput.setStyle(null);
-                return;
-            }
-            threshold = Integer.valueOf(thresholdInput.getText());
-            if (threshold >= 0 && threshold <= 100) {
-                thresholdInput.setStyle(null);
-            } else {
-                threshold = -1;
-                thresholdInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            threshold = -1;
-            thresholdInput.setStyle(badStyle);
-        }
-    }
-
     private void checkTargetFiles() {
         if (!pdfCheck.isSelected() && !htmlCheck.isSelected()) {
             popError(AppVaribles.getMessage("NothingSave"));
@@ -754,6 +721,10 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
+        Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(keepPageCheck, tips);
+
         startButton.disableProperty().bind(Bindings.isEmpty(pathInput.textProperty())
                 .or(pathInput.styleProperty().isEqualTo(badStyle))
                 .or(startInput.styleProperty().isEqualTo(badStyle))
@@ -761,10 +732,8 @@ public class WeiboSnapController extends BaseController {
                 .or(loadDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(scrollDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(maxDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
-                .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(addressInput.textProperty()))
                 .or(addressInput.styleProperty().isEqualTo(badStyle))
-                .or(widthBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(pdfCheck.styleProperty().isEqualTo(badStyle))
         );
 
@@ -807,11 +776,9 @@ public class WeiboSnapController extends BaseController {
                 endMonth = new Date();
             }
             parameters.setEndMonth(endMonth);
-            parameters.setZoomScale(zoomScale);
             parameters.setLoadDelay(loadDelay);
             parameters.setScrollDelay(scrollDelay);
             parameters.setMaxDelay(maxDelay);
-            parameters.setWebWidth(webWidth);
             parameters.setImagePerScreen(imagePerScreen);
             parameters.setFormat(format);
             parameters.setJpegQuality(jpegQuality);
@@ -827,6 +794,9 @@ public class WeiboSnapController extends BaseController {
             parameters.setKeepPagePdf(keepPageCheck.isSelected());
             parameters.setMiao(miaoCheck.isSelected());
             parameters.setRetry(retry);
+            parameters.setMaxMergeSize(maxMergeSize);
+            parameters.setExpandComments(expandCommentsCheck.isSelected());
+            parameters.setFullScreen(fullScreenCheck.isSelected());
             return parameters;
         } catch (Exception e) {
             parameters = null;

@@ -14,13 +14,13 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int loadDelay, scrollDelay, maxDelay, webWidth, retry;
-    private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, keepPagePdf, miao;
+    private int loadDelay, scrollDelay, maxDelay, retry;
+    private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, keepPagePdf;
+    private boolean miao, expandComments, fullScreen;
     private String webAddress, author, title;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
-    private float zoomScale;
 
     public File getTargetPath() {
         return targetPath;
@@ -52,22 +52,6 @@ public class WeiboSnapParameters {
 
     public void setMaxDelay(int maxDelay) {
         this.maxDelay = maxDelay;
-    }
-
-    public float getZoomScale() {
-        return zoomScale;
-    }
-
-    public void setZoomScale(float zoomScale) {
-        this.zoomScale = zoomScale;
-    }
-
-    public int getWebWidth() {
-        return webWidth;
-    }
-
-    public void setWebWidth(int webWidth) {
-        this.webWidth = webWidth;
     }
 
     public boolean isImagePerScreen() {
@@ -228,6 +212,30 @@ public class WeiboSnapParameters {
 
     public void setRetry(int retry) {
         this.retry = retry;
+    }
+
+    public int getMaxMergeSize() {
+        return maxMergeSize;
+    }
+
+    public void setMaxMergeSize(int maxMergeSize) {
+        this.maxMergeSize = maxMergeSize;
+    }
+
+    public boolean isExpandComments() {
+        return expandComments;
+    }
+
+    public void setExpandComments(boolean expandComments) {
+        this.expandComments = expandComments;
+    }
+
+    public boolean isFullScreen() {
+        return fullScreen;
+    }
+
+    public void setFullScreen(boolean fullScreen) {
+        this.fullScreen = fullScreen;
     }
 
 }
