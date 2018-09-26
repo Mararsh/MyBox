@@ -85,7 +85,8 @@
 
 ## 开发日志
 ```
-2018-09-26 版本3.1 所有图像操作都可以批量处理了。修正颜色处理算法。设置缺省字体大小以适应屏幕分辨率的变化。
+2018-09-26 版本3.1 所有图像操作都可以批量处理了。修正颜色处理算法。
+设置缺省字体大小以适应屏幕分辨率的变化。用户手册拆分成各个工具的分册了。
 提示用户：在使用微博截图功能之前需要在MyBox浏览器里成功登录一次以安装微博证书、
 （正在寻求突破这一限制的办法。Mybox没有兴趣接触用户个人信息）。
 
@@ -163,21 +164,17 @@
 ```
 
 ## 实现基础
-```
 MyBox基于以下开源软件/开源库：
-	JavaFx
-		https://docs.oracle.com/javafx/2/
-	PDFBox
-		https://pdfbox.apache.org/
-	jai-imageio
-		https://github.com/jai-imageio/jai-imageio-core
-	javazoom
-		http://www.javazoom.net/index.shtml
-	log4j
-		https://logging.apache.org/log4j/2.x/
-
-```
-
+	[JavaFx  https://docs.oracle.com/javafx/2/](https://docs.oracle.com/javafx/2/)
+	
+	[PDFBox  https://pdfbox.apache.org/](https://pdfbox.apache.org/)
+	
+	[jai-imageio  https://github.com/jai-imageio/jai-imageio-core](https://github.com/jai-imageio/jai-imageio-core)
+	
+	[javazoom  http://www.javazoom.net/index.shtml](http://www.javazoom.net/index.shtml)
+	
+	[log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
+		
 
 ## 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)
