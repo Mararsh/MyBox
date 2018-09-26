@@ -58,7 +58,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -155,7 +155,9 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ComboBox waterSizeBox, waterTransparentBox, waterShadowBox, waterAngleBox;
     @FXML
-    protected RadioButton opacityRadio, redRadio, cutMarginsByWidthRadio, cutMarginsByColorRadio;
+    protected RadioButton opacityRadio, redRadio, cutMarginsByWidthRadio, cutMarginsByColorRadio, replaceColorSetting;
+    @FXML
+    protected RadioButton grayRadio, bwRadio;
     @FXML
     protected HBox hotBox;
     @FXML
@@ -200,6 +202,7 @@ public class ImageManufactureController extends ImageViewerController {
     }
 
     public ImageManufactureController() {
+        sourcePathKey = "ImageSourcePathKey";
         ImageSortTypeKey = "ImageSortType";
         ImageOpenAfterSaveAsKey = "ImageOpenAfterSaveAs";
         ImageSaveConfirmKey = "ImageSaveConfirmKey";
@@ -266,13 +269,14 @@ public class ImageManufactureController extends ImageViewerController {
                         Tab oldValue, Tab newValue) {
                     imageView.setImage(currentImage);
                     imageView.setCursor(Cursor.OPEN_HAND);
+                    fitSize();
 
                     Tab tab = tabPane.getSelectionModel().getSelectedItem();
                     pixelPickingType = PixelPickingType.None;
                     hidePopup();
                     if (watermarkTab.equals(tab)) {
                         pixelPickingType = PixelPickingType.Watermark;
-                        popInformation(getMessage("ClickImageForPosition"));
+                        popInformation(getMessage("ClickImageForWatermark"));
 
                     } else if (replaceColorTab.equals(tab)) {
                         checkReplaceColorScope();
@@ -289,15 +293,13 @@ public class ImageManufactureController extends ImageViewerController {
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(tipsLabel, tips);
 
-            if (AppVaribles.showComments) {
-                tips = new Tooltip(getMessage("ImageRefTips"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(showRefCheck, tips);
+            tips = new Tooltip(getMessage("ImageRefTips"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(showRefCheck, tips);
 
-                tips = new Tooltip(getMessage("ShowScopeComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(showScopeCheck, tips);
-            }
+            tips = new Tooltip(getMessage("ShowScopeComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(showScopeCheck, tips);
 
             showScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -406,6 +408,7 @@ public class ImageManufactureController extends ImageViewerController {
                 transShadowButton.setDisable(false);
                 cutMarginsTrButton.setDisable(false);
                 waterTransparentBox.setDisable(false);
+
             }
             transformTab.setDisable(false);
             watermarkTab.setDisable(false);
@@ -422,9 +425,6 @@ public class ImageManufactureController extends ImageViewerController {
             heightInput.setText(imageInformation.getyPixels() + "");
             attributes.setSourceWidth(imageInformation.getxPixels());
             attributes.setSourceHeight(imageInformation.getyPixels());
-
-            waterXInput.setText(imageInformation.getxPixels() / 2 + "");
-            waterYInput.setText(imageInformation.getyPixels() / 2 + "");
 
             colorScope = new ImageScope();
             colorScope.setOperationType(OperationType.Color);
@@ -766,15 +766,15 @@ public class ImageManufactureController extends ImageViewerController {
     protected void checkRatioAdjustion(String s) {
         try {
             if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnWidth);
+                attributes.setRatioAdjustion(ImageConvertTools.KeepRatioType.BaseOnWidth);
             } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnHeight);
+                attributes.setRatioAdjustion(ImageConvertTools.KeepRatioType.BaseOnHeight);
             } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnLarger);
+                attributes.setRatioAdjustion(ImageConvertTools.KeepRatioType.BaseOnLarger);
             } else if (getMessage("BaseOnSmaller").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.BaseOnSmaller);
+                attributes.setRatioAdjustion(ImageConvertTools.KeepRatioType.BaseOnSmaller);
             } else {
-                attributes.setRatioAdjustion(ImageConvertionTools.KeepRatioType.None);
+                attributes.setRatioAdjustion(ImageConvertTools.KeepRatioType.None);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -801,20 +801,20 @@ public class ImageManufactureController extends ImageViewerController {
                 return;
             }
             switch (attributes.getRatioAdjustion()) {
-                case ImageConvertionTools.KeepRatioType.BaseOnWidth:
+                case ImageConvertTools.KeepRatioType.BaseOnWidth:
                     heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     break;
-                case ImageConvertionTools.KeepRatioType.BaseOnHeight:
+                case ImageConvertTools.KeepRatioType.BaseOnHeight:
                     widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     break;
-                case ImageConvertionTools.KeepRatioType.BaseOnLarger:
+                case ImageConvertTools.KeepRatioType.BaseOnLarger:
                     if (ratioX > ratioY) {
                         heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     } else {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     }
                     break;
-                case ImageConvertionTools.KeepRatioType.BaseOnSmaller:
+                case ImageConvertTools.KeepRatioType.BaseOnSmaller:
                     if (ratioX > ratioY) {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     } else {
@@ -957,11 +957,9 @@ public class ImageManufactureController extends ImageViewerController {
             });
             checkColorInput();
 
-            if (AppVaribles.showComments) {
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(colorScopeButton, stips);
-            }
+            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
+            stips.setFont(new Font(16));
+            FxmlTools.setComments(colorScopeButton, stips);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -973,28 +971,34 @@ public class ImageManufactureController extends ImageViewerController {
         if (getMessage("Brightness").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Brightness;
             colorSlider.setMax(100);
-            colorSlider.setMin(0);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         } else if (getMessage("Saturation").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Sauration;
             colorSlider.setMax(100);
-            colorSlider.setMin(0);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         } else if (getMessage("Hue").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Hue;
-            colorSlider.setMax(360);
-            colorSlider.setMin(0);
+            colorSlider.setMax(359);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText(getMessage("Degree"));
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         } else if (getMessage("Opacity").equals(selected.getText())) {
@@ -1003,34 +1007,42 @@ public class ImageManufactureController extends ImageViewerController {
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
-            colorInput.setText("50");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
             colorDecreaseButton.setVisible(false);
             colorIncreaseButton.setText(getMessage("OK"));
         } else if (getMessage("Red").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Red;
             colorSlider.setMax(255);
-            colorSlider.setMin(0);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         } else if (getMessage("Green").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Green;
             colorSlider.setMax(255);
-            colorSlider.setMin(0);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         } else if (getMessage("Blue").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Blue;
             colorSlider.setMax(255);
-            colorSlider.setMin(0);
+            colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
-            colorInput.setText("5");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
         }
@@ -1244,7 +1256,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.setOpacity(currentImage, colorValue, colorScope);
+                final Image newImage = FxmlImageTools.setOpacity(currentImage, colorValue / 100.0f, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1267,7 +1279,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeRed(currentImage, colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeRed(currentImage, colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1290,7 +1302,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeGreen(currentImage, colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeGreen(currentImage, colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1313,7 +1325,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBlue(currentImage, colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeBlue(currentImage, colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1336,7 +1348,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeRed(currentImage, 0 - colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeRed(currentImage, 0.0 - colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1359,7 +1371,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeGreen(currentImage, 0 - colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeGreen(currentImage, 0.0 - colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1382,7 +1394,7 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBlue(currentImage, 0 - colorValue, colorScope);
+                final Image newImage = FxmlImageTools.changeBlue(currentImage, 0.0 - colorValue / 255.0, colorScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1422,11 +1434,14 @@ public class ImageManufactureController extends ImageViewerController {
             });
             binarySlider.setValue(50);
 
-            if (AppVaribles.showComments) {
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(filtersScopeButton, stips);
-            }
+            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
+            stips.setFont(new Font(16));
+            FxmlTools.setComments(filtersScopeButton, stips);
+
+            stips = new Tooltip(getMessage("GrayBinaryComments"));
+            stips.setFont(new Font(16));
+            FxmlTools.setComments(grayRadio, stips);
+            FxmlTools.setComments(bwRadio, stips);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1548,7 +1563,8 @@ public class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeBinary(currentImage, binaryThreshold, filtersScope);
+                final Image newImage
+                        = FxmlImageTools.makeBinary(currentImage, binaryThreshold, filtersScope);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1640,11 +1656,9 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initTransformTab() {
         try {
 
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("transformComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(transformBar, tips);
-            }
+            Tooltip tips = new Tooltip(getMessage("transformComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(transformBar, tips);
 
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
@@ -1832,6 +1846,10 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initReplaceColorTab() {
         try {
 
+            Tooltip tips = new Tooltip(getMessage("ClickForReplaceColor"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(replaceColorBar, tips);
+
             replaceScopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -1862,10 +1880,8 @@ public class ImageManufactureController extends ImageViewerController {
                 popInformation(getMessage("ClickForReplaceColor"));
                 setScopeColor(scopeColorPicker.getValue());
             } else if (AppVaribles.getMessage("Settings").equals(selected.getText())) {
-                replaceColorScopeType = ReplaceColorScopeType.Settings;
-                pixelPickingType = PixelPickingType.None;
-                setScope(replaceColorScope);
-            } else {
+
+            } else if (AppVaribles.getMessage("Color").equals(selected.getText())) {
                 replaceColorScopeType = ReplaceColorScopeType.Color;
                 pixelPickingType = PixelPickingType.ReplaceColor;
                 popInformation(getMessage("ClickForReplaceColor"));
@@ -1905,6 +1921,13 @@ public class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    public void setScopeForReplaceColor() {
+        replaceColorScopeType = ReplaceColorScopeType.Settings;
+        pixelPickingType = PixelPickingType.None;
+        setScope(replaceColorScope);
     }
 
     @FXML
@@ -1965,29 +1988,24 @@ public class ImageManufactureController extends ImageViewerController {
     protected void initWatermarkTab() {
         try {
 
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("watermarkComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(watermarkBar, tips);
-            }
+            Tooltip tips = new Tooltip(getMessage("watermarkComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(watermarkBar, tips);
 
             waterXInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkWaterX();
+                    checkWaterPosition();
                 }
             });
-            checkWaterX();
-
             waterYInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkWaterY();
+                    checkWaterPosition();
                 }
             });
-            checkWaterY();
 
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
@@ -2088,24 +2106,15 @@ public class ImageManufactureController extends ImageViewerController {
             waterAngleBox.getSelectionModel().select(0);
             waterAngle = 0;
 
-            waterAddButton.disableProperty().bind(
-                    waterXInput.styleProperty().isEqualTo(badStyle)
-                            .or(waterYInput.styleProperty().isEqualTo(badStyle))
-                            .or(waterSizeBox.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(waterTransparentBox.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(waterInput.textProperty()))
-            );
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void checkWaterX() {
+    private void checkWaterPosition() {
         try {
             waterX = Integer.valueOf(waterXInput.getText());
-            waterXInput.setStyle(null);
-            if (waterX >= 0 && waterX <= currentImage.getWidth()) {
+            if (waterX >= 0 && waterX <= currentImage.getWidth() - 1) {
                 waterXInput.setStyle(null);
             } else {
                 waterXInput.setStyle(badStyle);
@@ -2113,13 +2122,10 @@ public class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             waterXInput.setStyle(badStyle);
         }
-    }
 
-    private void checkWaterY() {
         try {
             waterY = Integer.valueOf(waterYInput.getText());
-            waterYInput.setStyle(null);
-            if (waterY >= 0 && waterY <= currentImage.getHeight()) {
+            if (waterY >= 0 && waterY <= currentImage.getHeight() - 1) {
                 waterYInput.setStyle(null);
             } else {
                 waterYInput.setStyle(badStyle);
@@ -2127,10 +2133,20 @@ public class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             waterYInput.setStyle(badStyle);
         }
+
+        if (!isSettingValues) {
+            addWatermark();
+        }
+
     }
 
     @FXML
-    public void waterAddAction() {
+    public void addWatermark() {
+        if (waterInput.getText() == null || waterInput.getText().trim().isEmpty()
+                || waterY < 0 || waterY > currentImage.getHeight() - 1
+                || waterX < 0 || waterX > currentImage.getWidth() - 1) {
+            return;
+        }
 //        String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
 //        String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
 //        Font font;
@@ -2922,8 +2938,11 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlImageTools.indicateAreaFx(currentImage, cropScope,
-                            Color.RED, (int) currentImage.getWidth() / 100);
+                    int lineWidth = 1;
+                    if (currentImage.getWidth() >= 100) {
+                        lineWidth = (int) currentImage.getWidth() / 100;
+                    }
+                    final Image newImage = FxmlImageTools.indicateAreaFx(currentImage, cropScope, Color.RED, lineWidth);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -3023,7 +3042,7 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 String format = imageInformation.getImageFormat();
-                final BufferedImage bufferedImage = FxmlImageTools.getWritableData(currentImage, format);
+                final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(currentImage);
                 ImageFileWriters.writeImageFile(bufferedImage, format, sourceFile.getAbsolutePath());
                 imageInformation = ImageFileReaders.readImageMetaData(sourceFile.getAbsolutePath());
                 image = currentImage;
@@ -3064,7 +3083,7 @@ public class ImageManufactureController extends ImageViewerController {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlImageTools.getWritableData(currentImage, format);
+                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(currentImage);
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                     Platform.runLater(new Runnable() {
                         @Override
@@ -3230,9 +3249,13 @@ public class ImageManufactureController extends ImageViewerController {
             int x = (int) Math.round(event.getX() * currentImage.getWidth() / imageView.getBoundsInLocal().getWidth());
             int y = (int) Math.round(event.getY() * currentImage.getHeight() / imageView.getBoundsInLocal().getHeight());
 
+            isSettingValues = true;
             waterXInput.setText(x + "");
             waterYInput.setText(y + "");
-            popInformation(getMessage("ContinueClickPosition"));
+            popInformation(getMessage("ClickImageForWatermark"));
+            isSettingValues = false;
+
+            addWatermark();
 
         } else if (cutMarginsTab.equals(tab)) {
 
@@ -3408,6 +3431,7 @@ public class ImageManufactureController extends ImageViewerController {
                     scopeText = new TextField();
                     scopeText.setAlignment(Pos.CENTER_LEFT);
                     scopeText.setEditable(false);
+                    scopeText.setStyle("-fx-text-fill: #961c1c;");
                     VBox.setVgrow(scopeText, Priority.NEVER);
                     HBox.setHgrow(scopeText, Priority.ALWAYS);
                     scopeBox.getChildren().add(0, scopeText);
@@ -3457,7 +3481,7 @@ public class ImageManufactureController extends ImageViewerController {
                 break;
         }
         splitPane.layout();
-        paneSize();
+        fitSize();
     }
 
     public void scopeDetermined(ImageScope imageScope) {

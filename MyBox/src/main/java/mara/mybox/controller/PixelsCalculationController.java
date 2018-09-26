@@ -23,7 +23,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools.KeepRatioType;
+import mara.mybox.image.ImageConvertTools.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
@@ -685,60 +685,70 @@ public class PixelsCalculationController extends BaseController {
             alertInformation(AppVaribles.getMessage("Invalid"));
             return;
         }
-        if (parentXInput != null && parentYInput != null) {
+        if (parentXInput != null) {
             parentXInput.setText(finalX + "");
+        }
+        if (parentYInput != null) {
             parentYInput.setText(finalY + "");
         }
         closeStage();
     }
 
-    public void setSource(ImageAttributes parentAttributes, TextField parentXInput, TextField parentYInput) {
-        fromSource = true;
-        this.parentAttributes = parentAttributes;
-        this.parentXInput = parentXInput;
-        this.parentYInput = parentYInput;
+    public void setSource(final ImageAttributes parentAttributes,
+            final TextField parentXInput, final TextField parentYInput) {
+        try {
+            fromSource = true;
+            this.parentAttributes = parentAttributes;
+            this.parentXInput = parentXInput;
+            this.parentYInput = parentYInput;
 
-        sourceCheck.setSelected(true);
-        sourceCheck.setDisable(true);
-        sourcePixelsBox.setDisable(true);
-        ratioBox.setDisable(true);
+            sourceCheck.setSelected(true);
+            sourceCheck.setDisable(true);
+            sourcePixelsBox.setDisable(true);
+            ratioBox.setDisable(true);
 
-        if (parentAttributes.getSourceWidth() > 0 && parentAttributes.getSourceHeight() > 0) {
-            source_width.setText(parentAttributes.getSourceWidth() + "");
-            source_height.setText(parentAttributes.getSourceHeight() + "");
-            radioCheck.setSelected(parentAttributes.isKeepRatio());
-            if (parentAttributes.isKeepRatio()) {
-                int rd = parentAttributes.getRatioAdjustion();
-                switch (rd) {
-                    case KeepRatioType.BaseOnWidth:
-                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
-                        break;
-                    case KeepRatioType.BaseOnHeight:
-                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
-                        break;
-                    case KeepRatioType.BaseOnLarger:
-                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
-                        break;
-                    case KeepRatioType.BaseOnSmaller:
-                        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
-                        break;
-                    default:
-                        break;
+            if (parentAttributes != null
+                    && parentAttributes.getSourceWidth() > 0 && parentAttributes.getSourceHeight() > 0) {
+                source_width.setText(parentAttributes.getSourceWidth() + "");
+                source_height.setText(parentAttributes.getSourceHeight() + "");
+                radioCheck.setSelected(parentAttributes.isKeepRatio());
+                if (parentAttributes.isKeepRatio()) {
+                    int rd = parentAttributes.getRatioAdjustion();
+                    switch (rd) {
+                        case KeepRatioType.BaseOnWidth:
+                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
+                            break;
+                        case KeepRatioType.BaseOnHeight:
+                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
+                            break;
+                        case KeepRatioType.BaseOnLarger:
+                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
+                            break;
+                        case KeepRatioType.BaseOnSmaller:
+                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                            break;
+                        default:
+                            break;
+                    }
                 }
+
+                cs_width.setText(parentAttributes.getSourceWidth() + "");
+                cs_height.setText(parentAttributes.getSourceHeight() + "");
+
+                cd_width.setText(parentAttributes.getSourceWidth() + "");
+                cd_height.setText(parentAttributes.getSourceHeight() + "");
+
+            } else {
+                radioCheck.setSelected(false);
             }
 
-            cs_width.setText(parentAttributes.getSourceWidth() + "");
-            cs_height.setText(parentAttributes.getSourceHeight() + "");
-
-            cd_width.setText(parentAttributes.getSourceWidth() + "");
-            cd_height.setText(parentAttributes.getSourceHeight() + "");
-
-        } else {
-            radioCheck.setSelected(false);
+            if (this.parentXInput != null || this.parentYInput != null) {
+                useButton.setVisible(true);
+                useButton.setDisable(true);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
-
-        useButton.setVisible(true);
-        useButton.setDisable(true);
 
     }
 

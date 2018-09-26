@@ -8,8 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -17,9 +16,8 @@ import org.apache.logging.log4j.Logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class WeiboSnapingInfoController {
+public class WeiboSnapingInfoController extends BaseController {
 
-    private static final Logger logger = LogManager.getLogger();
     private WeiboSnapRunController parent;
 
     @FXML
@@ -28,8 +26,6 @@ public class WeiboSnapingInfoController {
     private Label infoLabel;
     @FXML
     private TextArea infoText, errorText;
-    @FXML
-    private VBox thisPane;
     @FXML
     private Button stopButton, reloadButton;
 
@@ -91,11 +87,16 @@ public class WeiboSnapingInfoController {
         parent.reloadPage();
     }
 
+    @FXML
+    private void mybox(ActionEvent event) {
+        openStage(CommonValues.MyboxFxml, false, true);
+    }
+
     public WeiboSnapRunController getParent() {
         return parent;
     }
 
-    public void setParent(WeiboSnapRunController parent) {
+    public void setParent(final WeiboSnapRunController parent) {
         this.parent = parent;
     }
 
@@ -121,10 +122,6 @@ public class WeiboSnapingInfoController {
 
     public void setInfoText(TextArea infoText) {
         this.infoText = infoText;
-    }
-
-    public VBox getThisPane() {
-        return thisPane;
     }
 
     public void setThisPane(VBox thisPane) {

@@ -125,7 +125,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                        <VBox fx:id="desktopBox" alignment="CENTER" onMouseClicked="#showDesktopMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
                                     <children>
@@ -136,7 +136,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </children>
                                 </HBox>
-                                <Label text="%FileTools">
+                                <Label text="%DesktopTools">
                                     <font>
                                         <Font size="18.0" />
                                     </font>

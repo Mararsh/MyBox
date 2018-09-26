@@ -22,6 +22,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.ImageAttributes;
 import static mara.mybox.imagefile.ImageBmpFile.writeBmpImageFile;
 import static mara.mybox.imagefile.ImageJpegFile.writeJPEGImageFile;
@@ -49,24 +50,35 @@ public class ImageFileWriters {
         if (image == null || outFile == null || format == null) {
             return false;
         }
-        ImageAttributes attributes = new ImageAttributes();
-        attributes.setImageFormat(format);
-        switch (format) {
-            case "jpg":
-                attributes.setCompressionType("JPEG");
-                break;
-            case "gif":
-                attributes.setCompressionType("LZW");
-                break;
-            case "tif":
-                attributes.setCompressionType("Deflate");
-                break;
-            case "bmp":
-                attributes.setCompressionType("BI_RGB");
-                break;
+        try {
+            ImageAttributes attributes = new ImageAttributes();
+            attributes.setImageFormat(format);
+            switch (format.toLowerCase()) {
+                case "jpg":
+                case "jpeg":
+                    attributes.setCompressionType("JPEG");
+                    break;
+                case "gif":
+                    attributes.setCompressionType("LZW");
+                    break;
+                case "tif":
+                case "tiff":
+                    if (image.getType() == BufferedImage.TYPE_BYTE_BINARY) {
+                        attributes.setCompressionType("CCITT T.6");
+                    } else {
+                        attributes.setCompressionType("Deflate");
+                    }
+                    break;
+                case "bmp":
+                    attributes.setCompressionType("BI_RGB");
+                    break;
+            }
+            attributes.setQuality(100);
+            return writeImageFile(image, attributes, outFile);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
-        attributes.setQuality(100);
-        return writeImageFile(image, attributes, outFile);
     }
 
     public static boolean writeImageFile(BufferedImage image,
@@ -74,22 +86,28 @@ public class ImageFileWriters {
         if (image == null || attributes == null || outFile == null) {
             return false;
         }
-        File file = new File(outFile);
+        String format;
+        File file;
         try {
+            format = attributes.getImageFormat().toLowerCase();
+            image = ImageConvertTools.checkAlpha(image, format);
+
+            file = new File(outFile);
             if (file.exists()) {
                 file.delete();
             }
         } catch (Exception e) {
+            logger.debug(e.toString());
             return false;
         }
 
-        String format = attributes.getImageFormat().toLowerCase();
         try {
             switch (format) {
                 case "png":
                     return writePNGImageFile(image, attributes, file);
 //                    displayMetadata(outFile);
                 case "tif":
+                case "tiff":
                     return writeTiffImageFile(image, attributes, file);
 //                    displayTiffMetadata(outFile);
 //                    displayMetadata(outFile);
@@ -97,6 +115,7 @@ public class ImageFileWriters {
                     return writeRawImageFile(image, attributes, file);
 
                 case "jpg":
+                case "jpeg":
                     return writeJPEGImageFile(image, attributes, file);
 //                    displayMetadata(outFile);
                 case "bmp":
@@ -132,6 +151,7 @@ public class ImageFileWriters {
             ImageWriter writer;
             switch (imageFormat.toLowerCase()) {
                 case "tif":
+                case "tiff":
                     writer = new TIFFImageWriter(new TIFFImageWriterSpi());
                     break;
                 case "raw":
@@ -139,6 +159,7 @@ public class ImageFileWriters {
                     writer = new RawImageWriter(spi);
                     break;
                 case "jpg":
+                case "jpeg":
                     writer = ImageIO.getImageWritersByFormatName("jpg").next();
                     break;
                 case "bmp":

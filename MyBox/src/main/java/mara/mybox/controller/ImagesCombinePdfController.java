@@ -43,7 +43,7 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.objects.AppVaribles;
@@ -223,11 +223,9 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
     protected void initPdfOptionsSection() {
 
-        if (AppVaribles.showComments) {
-            Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(sizeBox, tips);
-        }
+        Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -373,11 +371,11 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 }
             });
             fontBox.getSelectionModel().select(0);
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("FontFileComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(fontBox, tips);
-            }
+
+            tips = new Tooltip(getMessage("FontFileComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(fontBox, tips);
+
         }
 
     }
@@ -853,7 +851,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                             if (source.getImage() == null) {
                                 bufferedImage = ImageIO.read(source.getFile());
                                 if (format == PdfImageFormat.Jpeg) {
-                                    bufferedImage = ImageConvertionTools.clearAlpha(bufferedImage);
+                                    bufferedImage = ImageConvertTools.clearAlpha(bufferedImage);
                                     imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
                                 } else if (format == PdfImageFormat.Tiff) {
                                     if (threshold < 0) {
@@ -876,10 +874,10 @@ public class ImagesCombinePdfController extends ImageBaseController {
                                     }
                                     imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                                 } else if (format == PdfImageFormat.Jpeg) {
-                                    bufferedImage = FxmlImageTools.getWritableData(source.getImage(), "jpg");
+                                    bufferedImage = FxmlImageTools.checkAlpha(source.getImage(), "jpg");
                                     imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
                                 } else {
-                                    bufferedImage = FxmlImageTools.getWritableData(source.getImage(), source.getImageFormat());
+                                    bufferedImage = FxmlImageTools.checkAlpha(source.getImage(), source.getImageFormat());
                                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                                 }
                             }

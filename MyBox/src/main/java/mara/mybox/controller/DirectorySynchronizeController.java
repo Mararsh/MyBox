@@ -63,7 +63,7 @@ public class DirectorySynchronizeController extends BaseController {
     @FXML
     protected ToggleGroup copyGroup;
     @FXML
-    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck;
+    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck, verboseCheck;
     @FXML
     protected CheckBox copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck;
     @FXML
@@ -431,6 +431,8 @@ public class DirectorySynchronizeController extends BaseController {
                                 conditionsBox.setDisable(false);
                             }
                             showCost();
+                            updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
+                                    + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
                             updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
@@ -481,7 +483,7 @@ public class DirectorySynchronizeController extends BaseController {
     }
 
     protected void updateLogs(final String line, boolean immediate) {
-        updateLogs(line, true, false);
+        updateLogs(line, true, immediate);
     }
 
     protected void updateLogs(final String line, boolean showTime, boolean immediate) {
@@ -597,31 +599,43 @@ public class DirectorySynchronizeController extends BaseController {
                     if (copyFile(srcFile, targetFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                        updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
-                                + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
+                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                         lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                         return false;
                     }
                 } else if (copyAttr.isCopySubdir()) {
-                    updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    }
                     if (srcFile.listFiles() == null && !copyAttr.isCopyEmpty()) {
                         continue;
                     }
                     if (startHandle && !targetFile.exists()) {
                         targetFile.mkdirs();
-                        updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
+                        }
                     }
                     if (conditionalCopy(srcFile, targetFile)) {
                         if (startHandle) {
                             copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
                             copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                            updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
-                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                            if (verboseCheck.isSelected()) {
+                                updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
+                                        + srcFileName + " -> " + targetFile.getAbsolutePath());
+                            }
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        }
                         return false;
                     }
                 }
@@ -651,7 +665,9 @@ public class DirectorySynchronizeController extends BaseController {
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {
                         startHandle = true;
-                        updateLogs(getMessage("ReachFile") + " " + lastFileName, true);
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(getMessage("ReachFile") + " " + lastFileName, true);
+                        }
                     }
                     if (srcFile.isFile()) {
                         continue;
@@ -669,28 +685,40 @@ public class DirectorySynchronizeController extends BaseController {
                     if (copyFile(srcFile, targetFile)) {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                        updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
-                                + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
+                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                         lastFileName = srcFileName;
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedCopy + srcFileName + " -> " + targetFile.getAbsolutePath());
+                        }
                         return false;
                     }
                 } else {
-                    updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    }
                     if (startHandle) {
                         targetFile.mkdirs();
-                        updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strCreatedSuccessfully + targetFile.getAbsolutePath());
+                        }
                     }
                     if (copyWholeDirectory(srcFile, targetFile)) {
                         if (startHandle) {
                             copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
                             copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                            updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
-                                    + srcFileName + " -> " + targetFile.getAbsolutePath());
+                            if (verboseCheck.isSelected()) {
+                                updateLogs(copyAttr.getCopiedDirectoriesNumber() + "  " + strCopySuccessfully
+                                        + srcFileName + " -> " + targetFile.getAbsolutePath());
+                            }
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
-                        updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedCopy + srcFile.getAbsolutePath() + " -> " + targetFile.getAbsolutePath());
+                        }
                         return false;
                     }
                 }
@@ -719,7 +747,9 @@ public class DirectorySynchronizeController extends BaseController {
                         if (record) {
                             copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                             copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                            updateLogs(copyAttr.getDeletedDirectories() + "  " + strDirectoryDeleteSuccessfully + filename);
+                            if (verboseCheck.isSelected()) {
+                                updateLogs(copyAttr.getDeletedDirectories() + "  " + strDirectoryDeleteSuccessfully + filename);
+                            }
                         }
                     } catch (Exception e) {
                         if (record) {
@@ -735,7 +765,9 @@ public class DirectorySynchronizeController extends BaseController {
                     if (record) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        updateLogs(strFailedDelete + filename);
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedDelete + filename);
+                        }
                     }
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
@@ -747,7 +779,9 @@ public class DirectorySynchronizeController extends BaseController {
                 if (record) {
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    updateLogs(copyAttr.getDeletedFiles() + "  " + strFileDeleteSuccessfully + filename);
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(copyAttr.getDeletedFiles() + "  " + strFileDeleteSuccessfully + filename);
+                    }
                 }
             } catch (Exception e) {
                 if (record) {
@@ -815,11 +849,15 @@ public class DirectorySynchronizeController extends BaseController {
                         targetFile.delete();
                         copyAttr.setDeletedDirectories(copyAttr.getDeletedDirectories() + 1);
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        updateLogs(strDirectoryDeleteSuccessfully + filename);
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strDirectoryDeleteSuccessfully + filename);
+                        }
                     } catch (Exception e) {
                         copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                         copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                        updateLogs(strFailedDelete + filename);
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strFailedDelete + filename);
+                        }
                         if (!copyAttr.isContinueWhenError()) {
                             return false;
                         }
@@ -827,7 +865,9 @@ public class DirectorySynchronizeController extends BaseController {
                 } else {
                     copyAttr.setFailedDeletedDirectories(copyAttr.getFailedDeletedDirectories() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);
-                    updateLogs(strFailedDelete + filename);
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(strFailedDelete + filename);
+                    }
                     if (!copyAttr.isContinueWhenError()) {
                         return false;
                     }
@@ -837,7 +877,9 @@ public class DirectorySynchronizeController extends BaseController {
                     targetFile.delete();
                     copyAttr.setDeletedFiles(copyAttr.getDeletedFiles() + 1);
                     copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                    updateLogs(strFileDeleteSuccessfully + filename);
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(strFileDeleteSuccessfully + filename);
+                    }
                 } catch (Exception e) {
                     copyAttr.setFailedDeletedFiles(copyAttr.getFailedDeletedFiles() + 1);
                     copyAttr.setFailedDeletedSize(copyAttr.getFailedDeletedSize() + len);

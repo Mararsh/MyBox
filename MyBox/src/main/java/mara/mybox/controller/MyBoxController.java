@@ -35,10 +35,10 @@ public class MyBoxController extends BaseController {
         try {
             initPdfToolsMenu();
             initImageToolsMenu();
-            initFileToolsMenu();
-            initOtherMenu();
-            initNetworkToolsMenu();
             initDesktopToolsMenu();
+            initFileToolsMenu();
+            initNetworkToolsMenu();
+            initOtherMenu();
 
             List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
             if (alarms != null) {
@@ -220,6 +220,20 @@ public class MyBoxController extends BaseController {
                 openStage(CommonValues.ColorPaletteFxml, AppVaribles.getMessage("ColorPalette"), false, false);
             }
         });
+
+        Menu manufactureSubMenu = initImageSubToolsMenu();
+        Menu manufactureBatchMenu = initImageBatchToolsMenu();
+
+        imageMenu = new ContextMenu();
+        imageMenu.getItems().addAll(ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
+                ImageSplit, ImageCombine, imagesCombinePdf, new SeparatorMenuItem(),
+                imageViewer, imagesViewer, new SeparatorMenuItem(),
+                imageConverter, imageConverterBatch, new SeparatorMenuItem(),
+                colorPalette, pixelsCalculator);
+    }
+
+    private Menu initImageSubToolsMenu() {
+
         MenuItem imageSizeMenu = new MenuItem(AppVaribles.getMessage("Size"));
         imageSizeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -319,20 +333,113 @@ public class MyBoxController extends BaseController {
                 controller.setInitTab("shadow");
             }
         });
-        Menu manufactureMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
-        manufactureMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageFiltersMenu,
+        Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
+        manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageFiltersMenu,
                 imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
+        return manufactureSubMenu;
 
-        imageMenu = new ContextMenu();
-        imageMenu.getItems().addAll(ImageManufacture, manufactureMenu, new SeparatorMenuItem(),
-                ImageSplit, ImageCombine, imagesCombinePdf, new SeparatorMenuItem(),
-                imageViewer, imagesViewer, new SeparatorMenuItem(),
-                imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                colorPalette, pixelsCalculator);
     }
 
-    private void initFileToolsMenu() {
+    private Menu initImageBatchToolsMenu() {
+
+        MenuItem imageSizeMenu = new MenuItem(AppVaribles.getMessage("Size"));
+        imageSizeMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchSizeFxml, AppVaribles.getMessage("ImageManufactureBatchSize"));
+            }
+        });
+
+        MenuItem imageCropMenu = new MenuItem(AppVaribles.getMessage("Crop"));
+        imageCropMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchCropFxml, AppVaribles.getMessage("ImageManufactureBatchCrop"));
+            }
+        });
+
+        MenuItem imageColorMenu = new MenuItem(AppVaribles.getMessage("Color"));
+        imageColorMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchColorFxml, AppVaribles.getMessage("ImageManufactureBatchColor"));
+            }
+        });
+
+        MenuItem imageFiltersMenu = new MenuItem(AppVaribles.getMessage("Filters"));
+        imageFiltersMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchFiltersFxml, AppVaribles.getMessage("ImageManufactureBatchFilters"));
+            }
+        });
+
+        MenuItem imageReplaceColorMenu = new MenuItem(AppVaribles.getMessage("ReplaceColor"));
+        imageReplaceColorMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchReplaceColorFxml, AppVaribles.getMessage("ImageManufactureBatchReplaceColor"));
+            }
+        });
+
+        MenuItem imageWatermarkMenu = new MenuItem(AppVaribles.getMessage("Watermark"));
+        imageWatermarkMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchWatermarkFxml, AppVaribles.getMessage("ImageManufactureBatchWatermark"));
+            }
+        });
+
+        MenuItem imageArcMenu = new MenuItem(AppVaribles.getMessage("Arc"));
+        imageArcMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchArcFxml, AppVaribles.getMessage("ImageManufactureBatchArc"));
+            }
+        });
+
+        MenuItem imageShadowMenu = new MenuItem(AppVaribles.getMessage("Shadow"));
+        imageShadowMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchShadowFxml, AppVaribles.getMessage("ImageManufactureBatchShadow"));
+            }
+        });
+
+        MenuItem imageTransformMenu = new MenuItem(AppVaribles.getMessage("Transform"));
+        imageTransformMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchTransformFxml, AppVaribles.getMessage("ImageManufactureBatchTransform"));
+            }
+        });
+
+        MenuItem imageCutMarginsMenu = new MenuItem(AppVaribles.getMessage("CutMargins"));
+        imageCutMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchCutMarginsFxml, AppVaribles.getMessage("ImageManufactureBatchCutMargins"));
+            }
+        });
+
+        MenuItem imageAddMarginsMenu = new MenuItem(AppVaribles.getMessage("AddMargins"));
+        imageAddMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchAddMarginsFxml, AppVaribles.getMessage("ImageManufactureBatchAddMargins"));
+            }
+        });
+
+        Menu manufactureBatchMenu = new Menu(AppVaribles.getMessage("ImageManufactureBatch"));
+        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageFiltersMenu,
+                imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
+                imageCutMarginsMenu, imageAddMarginsMenu);
+        return manufactureBatchMenu;
+
+    }
+
+    private void initDesktopToolsMenu() {
         MenuItem filesRename = new MenuItem(AppVaribles.getMessage("FilesRename"));
         filesRename.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -375,10 +482,22 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
             }
         });
+
+        MenuItem alarmClock = new MenuItem(AppVaribles.getMessage("AlarmClock"));
+        alarmClock.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.AlarmClockFxml, AppVaribles.getMessage("AlarmClock"));
+            }
+        });
+        desktopMenu = new ContextMenu();
+        desktopMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
+                filesArrangement, dirSynchronize, new SeparatorMenuItem(),
+                htmlEditor, textEditor, new SeparatorMenuItem(), alarmClock);
+    }
+
+    private void initFileToolsMenu() {
         fileMenu = new ContextMenu();
-        fileMenu.getItems().addAll(filesRename, filesArrangement, new SeparatorMenuItem(),
-                dirSynchronize, dirsRename, new SeparatorMenuItem(),
-                htmlEditor, textEditor);
 
     }
 
@@ -397,24 +516,14 @@ public class MyBoxController extends BaseController {
         weiboSnap.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
+                WeiboSnapController controller
+                        = (WeiboSnapController) reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
+                controller.checkLogin();
             }
         });
         networkMenu = new ContextMenu();
         networkMenu.getItems().addAll(weiboSnap, htmlEditor);
 
-    }
-
-    private void initDesktopToolsMenu() {
-        MenuItem alarmClock = new MenuItem(AppVaribles.getMessage("AlarmClock"));
-        alarmClock.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.AlarmClockFxml, AppVaribles.getMessage("AlarmClock"));
-            }
-        });
-        desktopMenu = new ContextMenu();
-        desktopMenu.getItems().addAll(alarmClock);
     }
 
     private void initOtherMenu() {

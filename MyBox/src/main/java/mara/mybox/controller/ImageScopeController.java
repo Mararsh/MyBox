@@ -37,7 +37,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.ImageScope.AreaScopeType;
@@ -164,13 +163,11 @@ public class ImageScopeController extends BaseController {
 
     protected void initAreaTab() {
         try {
-            if (AppVaribles.showComments) {
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(areaBar, stips);
-                FxmlTools.setComments(rectangleExcludedCheck, stips);
-                FxmlTools.setComments(circleExcludedCheck, stips);
-            }
+            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
+            stips.setFont(new Font(16));
+            FxmlTools.setComments(areaBar, stips);
+            FxmlTools.setComments(rectangleExcludedCheck, stips);
+            FxmlTools.setComments(circleExcludedCheck, stips);
 
             areaGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -308,12 +305,10 @@ public class ImageScopeController extends BaseController {
 
     protected void initColorTab() {
         try {
-            if (AppVaribles.showComments) {
-                Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-                stips.setFont(new Font(16));
-                FxmlTools.setComments(colorBar, stips);
-                FxmlTools.setComments(colorExcludedCheck, stips);
-            }
+            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
+            stips.setFont(new Font(16));
+            FxmlTools.setComments(colorBar, stips);
+            FxmlTools.setComments(colorExcludedCheck, stips);
 
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -360,11 +355,9 @@ public class ImageScopeController extends BaseController {
 
             FxmlTools.quickTooltip(colorDistanceInput, new Tooltip("0 ~ 255"));
             FxmlTools.quickTooltip(hueDistanceInput, new Tooltip("0 ~ 360"));
-            if (AppVaribles.showComments) {
-                Tooltip tips = new Tooltip(getMessage("ColorMatchComments"));
-                tips.setFont(new Font(16));
-                FxmlTools.setComments(colorBar1, tips);
-            }
+            Tooltip tips = new Tooltip(getMessage("ColorMatchComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(colorBar1, tips);
 
             colorDistanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -765,10 +758,9 @@ public class ImageScopeController extends BaseController {
 
     @FXML
     private void setTransparent(ActionEvent event) {
-        Color alpha = new Color(0, 0, 0, 0);
-        if (!colorsBox.getItems().contains(alpha)) {
-            colorsBox.getItems().add(alpha);
-            colorsBox.getSelectionModel().select(alpha);
+        if (!colorsBox.getItems().contains(Color.TRANSPARENT)) {
+            colorsBox.getItems().add(Color.TRANSPARENT);
+            colorsBox.getSelectionModel().select(Color.TRANSPARENT);
             showScope();
         }
         colorsBox.setVisibleRowCount(20);

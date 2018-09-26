@@ -106,9 +106,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <HBox fx:id="colorBox" alignment="CENTER_LEFT" disable="true" prefHeight="100.0" prefWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
                                 <RadioButton mnemonicParsing="false" selected="true" text="%Default">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="binaryGroup" />
-                           </toggleGroup>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="binaryGroup" />
+                                    </toggleGroup>
                                 </RadioButton>
                                 <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
                                 <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
@@ -125,7 +125,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <RadioButton mnemonicParsing="false" selected="true" text="72dpi">
                             <toggleGroup>
                                 <ToggleGroup fx:id="DensityGroup" />
-                            </toggleGroup></RadioButton>
+                            </toggleGroup>
+                        </RadioButton>
                         <RadioButton mnemonicParsing="false" text="96dpi" toggleGroup="$DensityGroup" />
                         <RadioButton mnemonicParsing="false" text="300dpi" toggleGroup="$DensityGroup" />
                         <RadioButton mnemonicParsing="false" text="160dpi" toggleGroup="$DensityGroup" />

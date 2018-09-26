@@ -57,16 +57,22 @@ public class ImagePnmFile {
                 }
             }
 
-            PNMMetadata metaData = (PNMMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (attributes.getDensity() > 0) {
-                float pixelSizeMm = 25.4f / attributes.getDensity();
-                String format = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
-                Element tree = (Element) metaData.getAsTree(format);
-                Element HorizontalPixelSize = (Element) tree.getElementsByTagName("HorizontalPixelSize").item(0);
-                HorizontalPixelSize.setAttribute("value", pixelSizeMm + "");
-                Element VerticalPixelSize = (Element) tree.getElementsByTagName("VerticalPixelSize").item(0);
-                VerticalPixelSize.setAttribute("value", pixelSizeMm + "");
-                metaData.mergeTree(format, tree);
+            PNMMetadata metaData;
+            try {
+                metaData = (PNMMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                if (attributes.getDensity() > 0) {
+                    float pixelSizeMm = 25.4f / attributes.getDensity();
+                    String format = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
+                    Element tree = (Element) metaData.getAsTree(format);
+                    Element HorizontalPixelSize = (Element) tree.getElementsByTagName("HorizontalPixelSize").item(0);
+                    HorizontalPixelSize.setAttribute("value", pixelSizeMm + "");
+                    Element VerticalPixelSize = (Element) tree.getElementsByTagName("VerticalPixelSize").item(0);
+                    VerticalPixelSize.setAttribute("value", pixelSizeMm + "");
+                    metaData.mergeTree(format, tree);
+                }
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
             }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {

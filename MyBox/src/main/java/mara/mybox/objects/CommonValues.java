@@ -17,14 +17,15 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.0";
-    public static final String AppVersionDate = "2018-09-18";
+    public static final String AppVersion = "3.1";
+    public static final String AppVersionDate = "2018-09-26";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
     public static final String AlarmClocksFile = UserFilePath + "/.alarmClocks";
 
     public static final Image AppIcon = new Image("img/mybox.png");
+    public static final String MyBoxStyle = "/styles/MyBox.css";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
     public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
@@ -49,6 +50,18 @@ public class CommonValues {
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
+    public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
+    public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
+    public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
+    public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
+    public static final String ImageManufactureBatchFiltersFxml = "/fxml/ImageManufactureBatchFilters.fxml";
+    public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
+    public static final String ImageManufactureBatchWatermarkFxml = "/fxml/ImageManufactureBatchWatermark.fxml";
+    public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
+    public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
+    public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
+    public static final String ImageManufactureBatchAddMarginsFxml = "/fxml/ImageManufactureBatchAddMargins.fxml";
+    public static final String ImageManufactureBatchCutMarginsFxml = "/fxml/ImageManufactureBatchCutMargins.fxml";
     public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
@@ -64,7 +77,7 @@ public class CommonValues {
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
     public static final String WeiboSnapFxml = "/fxml/WeiboSnap.fxml";
     public static final String WeiboSnapRunFxml = "/fxml/WeiboSnapRun.fxml";
-    public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo1.fxml";
+    public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");

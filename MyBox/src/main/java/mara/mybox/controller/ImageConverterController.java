@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -161,13 +161,16 @@ public class ImageConverterController extends ImageBaseController {
                         if (currentParameters.finalTargetName == null) {
                             return false;
                         }
-                        BufferedImage newImage = ImageConvertionTools.scaleImage(bufferImage, w, h);
+                        BufferedImage newImage = ImageConvertTools.scaleImage(bufferImage, w, h);
                         int color = bufferImage.getType();
-                        logger.debug(color);
                         if (ImageType.BINARY == attributes.getColorSpace()) {
                             if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
                                     && attributes.getThreshold() >= 0) {
                                 newImage = ImageGrayTools.color2BinaryWithPercentage(newImage, attributes.getThreshold());
+
+                            } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                                newImage = ImageGrayTools.color2BinaryByCalculation(newImage);
+
                             } else if (color != BufferedImage.TYPE_BYTE_BINARY) {
                                 newImage = ImageGrayTools.color2Binary(newImage);
                             }

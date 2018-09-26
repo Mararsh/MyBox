@@ -107,7 +107,7 @@ public class WeiboSnapRunController extends BaseController {
 
     }
 
-    public void start(WeiboSnapParameters parameters) {
+    public void start(final WeiboSnapParameters parameters) {
         try {
             this.parameters = parameters;
             getMyStage();
@@ -364,7 +364,7 @@ public class WeiboSnapRunController extends BaseController {
                 currentMonth = c.getTime();
                 if (currentMonth.getTime() > parameters.getEndMonth().getTime()) {
                     if (parameters.isMiao()) {
-                        FxmlTools.miao();
+                        FxmlTools.miao3();
                     }
                     if (parent != null) {
                         parent.popInformation(AppVaribles.getMessage("MissCompleted"));
@@ -614,7 +614,7 @@ public class WeiboSnapRunController extends BaseController {
         loadPage(currentAddress);
     }
 
-    private void pageFailed(WeiboSnapingInfoController controller) {
+    private void pageFailed(final WeiboSnapingInfoController controller) {
         try {
             if (errorString == null) {
                 errorString = AppVaribles.getMessage("FailedWeiboSnap");
@@ -625,7 +625,7 @@ public class WeiboSnapRunController extends BaseController {
                 return;
             }
             if (parameters.isMiao()) {
-                FxmlTools.miao();
+                FxmlTools.miao3();
             }
             if (controller != null) {
                 controller.showError(errorString);
@@ -903,7 +903,7 @@ public class WeiboSnapRunController extends BaseController {
         return parent;
     }
 
-    public void setParent(WeiboSnapController parent) {
+    public void setParent(final WeiboSnapController parent) {
         this.parent = parent;
     }
 

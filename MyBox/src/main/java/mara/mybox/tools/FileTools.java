@@ -86,6 +86,20 @@ public class FileTools {
         return fname;
     }
 
+    public static String replaceFileSuffix(String filename, String newSuffix) {
+        if (filename == null) {
+            return null;
+        }
+        String fname = filename;
+        int pos = filename.lastIndexOf(".");
+        if (pos >= 0) {
+            fname = fname.substring(0, pos) + "." + newSuffix;
+        } else {
+            fname += "." + newSuffix;
+        }
+        return fname;
+    }
+
     public static String getTempFile(String filename) {
         if (filename == null) {
             return null;

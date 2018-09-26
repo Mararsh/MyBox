@@ -27,13 +27,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -46,7 +43,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -81,11 +78,11 @@ public class ImageSplitController extends ImageViewerController {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private Tab sourceTab, targetTab, equiTab, customTab;
+    private Tab targetTab, equiTab, customTab;
     @FXML
     private ToolBar hotBar, sourceBar;
     @FXML
-    private Button infoButton, metaButton, equiOkButton, saveButton, rowsPositionButton, colsPositionButton;
+    private Button equiOkButton, saveButton, rowsPositionButton, colsPositionButton;
     @FXML
     private Button imageButton, wButton, openTargetButton;
     @FXML
@@ -97,11 +94,9 @@ public class ImageSplitController extends ImageViewerController {
     @FXML
     private ComboBox<Integer> lineWidthBox;
     @FXML
-    private RadioButton customRadio, euqipartitionRadio;
-    @FXML
-    private ToggleGroup splitGroup;
-    @FXML
     private ColorPicker lineColorPicker;
+    @FXML
+    private ToolBar customBar;
 
     @Override
     protected void initializeNext() {
@@ -125,24 +120,21 @@ public class ImageSplitController extends ImageViewerController {
         equiTab.setDisable(true);
         customTab.setDisable(true);
 
-        splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
             @Override
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                imageView.setImage(image);
+            public void changed(ObservableValue<? extends Tab> observable,
+                    Tab oldValue, Tab newValue) {
+                hidePopup();
                 bottomLabel.setText("");
-                RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-                if (AppVaribles.getMessage("Equipartition").equals(selected.getText())) {
-                    isCustom = false;
-                    equiTab.setDisable(false);
-                    customTab.setDisable(true);
-                    tabPane.getSelectionModel().select(equiTab);
-                } else if (AppVaribles.getMessage("Custom").equals(selected.getText())) {
+                Tab tab = tabPane.getSelectionModel().getSelectedItem();
+                if (customTab.equals(tab)) {
+                    bottomLabel.setText(getMessage("SplitCustomComments"));
+                    popInformation(getMessage("SplitCustomComments"));
                     isCustom = true;
-                    equiTab.setDisable(true);
-                    customTab.setDisable(false);
-                    tabPane.getSelectionModel().select(customTab);
                     checkCustomValues();
+                } else if (equiTab.equals(tab)) {
+                    isCustom = false;
+//                    imageView.setImage(image);
                 }
 
             }
@@ -168,23 +160,19 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        if (AppVaribles.showComments) {
-            Tooltip tips = new Tooltip(getMessage("SplitComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(lineWidthBox, tips);
-            FxmlTools.setComments(lineColorPicker, tips);
-        }
+        Tooltip tips = new Tooltip(getMessage("SplitComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.setComments(lineWidthBox, tips);
+        FxmlTools.setComments(lineColorPicker, tips);
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+        tips = new Tooltip(getMessage("SplitCustomComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(customBar, tips);
+
+        displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Tab> observable,
-                    Tab oldValue, Tab newValue) {
-                if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
-                    bottomLabel.setText(getMessage("SplitCustomComments"));
-                    popInformation(getMessage("SplitCustomComments"));
-                } else {
-                    hidePopup();
-                }
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                indicateSplit();
             }
         });
 
@@ -295,14 +283,18 @@ public class ImageSplitController extends ImageViewerController {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
-                checkCustomValues();
+                if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
+                    checkCustomValues();
+                }
             }
         });
         colsInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
-                checkCustomValues();
+                if (customTab.equals(tabPane.getSelectionModel().getSelectedItem())) {
+                    checkCustomValues();
+                }
             }
         });
 
@@ -378,8 +370,9 @@ public class ImageSplitController extends ImageViewerController {
             sourceBar.setDisable(false);
             hotBar.setDisable(false);
             targetTab.setDisable(false);
+            equiTab.setDisable(false);
+            customTab.setDisable(false);
 
-            euqipartitionRadio.setSelected(true);
             targetPathInput.setText(sourceFile.getParent());
             targetPrefixInput.setText(FileTools.getFilePrefix(sourceFile.getName()));
             targetTypeBox.getSelectionModel().select(FileTools.getFileSuffix(sourceFile.getName()));
@@ -534,7 +527,7 @@ public class ImageSplitController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 int x1, y1, x2, y2, count = 0;
-                final BufferedImage source = FxmlImageTools.getWritableData(image, imageInformation.getImageFormat());
+                final BufferedImage source = FxmlImageTools.getBufferedImage(image);
                 String format = targetTypeBox.getSelectionModel().getSelectedItem();
                 for (int i = 0; i < rows.size() - 1; i++) {
                     y1 = rows.get(i);
@@ -542,7 +535,7 @@ public class ImageSplitController extends ImageViewerController {
                     for (int j = 0; j < cols.size() - 1; j++) {
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
-                        BufferedImage target = ImageConvertionTools.cropImage(source, x1, y1, x2, y2);
+                        BufferedImage target = ImageConvertTools.cropImage(source, x1, y1, x2, y2);
                         String fileName = targetPath.getAbsolutePath() + "/"
                                 + targetPrefixInput.getText() + "_"
                                 + (rows.size() - 1) + "x" + (cols.size() - 1) + "_"
@@ -628,16 +621,30 @@ public class ImageSplitController extends ImageViewerController {
             parametersValid.set(false);
             return;
         }
+        String colsString = "";
         cols = new ArrayList();
         cols.add(0);
         for (int i = 1; i < colsNumber; i++) {
-            cols.add(i * imageInformation.getxPixels() / colsNumber);
+            int v = i * imageInformation.getxPixels() / colsNumber;
+            cols.add(v);
+            if (colsString.isEmpty()) {
+                colsString = v + "";
+            } else {
+                colsString += "," + v;
+            }
         }
         cols.add(imageInformation.getxPixels() - 1);
+        String rowsString = "";
         rows = new ArrayList();
         rows.add(0);
         for (int i = 1; i < rowsNumber; i++) {
-            rows.add(i * imageInformation.getyPixels() / rowsNumber);
+            int v = i * imageInformation.getyPixels() / rowsNumber;
+            rows.add(v);
+            if (rowsString.isEmpty()) {
+                rowsString = v + "";
+            } else {
+                rowsString += "," + v;
+            }
         }
         rows.add(imageInformation.getyPixels() - 1);
         parametersValid.set(true);

@@ -1,8 +1,11 @@
 package mara.mybox.image;
 
-import mara.mybox.tools.ColorTools;
+import mara.mybox.image.ImageColorTools;
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import javax.imageio.ImageIO;
 
@@ -19,29 +22,44 @@ public class ImageGrayTools {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static BufferedImage color2Gray(BufferedImage image) {
+    public static BufferedImage color2Gray(BufferedImage source) {
         try {
-            int width = image.getWidth();
-            int height = image.getHeight();
+            int width = source.getWidth();
+            int height = source.getHeight();
             BufferedImage grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    int pixel = image.getRGB(i, j);
-                    int grayPixel = ColorTools.pixel2GrayPixel(pixel);
-                    grayImage.setRGB(i, j, grayPixel);
-                }
-            }
+            Graphics2D graphics = grayImage.createGraphics();
+            graphics.drawImage(source, 0, 0, null);
             return grayImage;
         } catch (Exception e) {
             logger.error(e.toString());
-            return image;
+            return source;
+        }
+    }
+
+    public static BufferedImage color2Gray(BufferedImage source, boolean preserveChannels) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            BufferedImage grayImage;
+            if (preserveChannels) {
+                grayImage = new BufferedImage(width, height, source.getType());
+            } else {
+                grayImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+            }
+            ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+            ColorConvertOp theOp = new ColorConvertOp(cs, null);
+            theOp.filter(source, grayImage);
+            return grayImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
         }
     }
 
     public static int calculateThreshold(File file) {
         try {
             BufferedImage bufferImage = ImageIO.read(file);
-            return calculateThresholdOnGary(color2Gray(bufferImage));
+            return OTSU(color2Gray(bufferImage));
         } catch (Exception e) {
             logger.error(e.toString());
             return -1;
@@ -52,7 +70,7 @@ public class ImageGrayTools {
     //  OTSU algorithm: ICV=PA∗(MA−M)2+PB∗(MB−M)2
     // https://blog.csdn.net/taoyanbian1022/article/details/9030825
     // https://blog.csdn.net/liyuanbhu/article/details/49387483
-    public static int calculateThresholdOnGary(BufferedImage grayImage) {
+    public static int OTSU(BufferedImage grayImage) {
         try {
             int width = grayImage.getWidth();
             int height = grayImage.getHeight();
@@ -61,7 +79,7 @@ public class ImageGrayTools {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
 //                    int r = 0xFF & grayImage.getRGB(i, j);
-                    int gray = ColorTools.pixel2GrayValue(grayImage.getRGB(i, j));
+                    int gray = ImageColorTools.pixel2GrayValue(grayImage.getRGB(i, j));
                     grayNumber[gray]++;
                 }
             }
@@ -118,7 +136,7 @@ public class ImageGrayTools {
 
     public static BufferedImage color2BinaryWithThreshold(BufferedImage image, int threshold) {
         try {
-//            logger.error("color2BinaryWithThreshold:" + threshold);
+            logger.error("color2BinaryWithThreshold:" + threshold);
             int width = image.getWidth();
             int height = image.getHeight();
             BufferedImage binaryImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
@@ -127,7 +145,7 @@ public class ImageGrayTools {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     int pixel = image.getRGB(i, j);
-                    int gray = ColorTools.pixel2GrayValue(pixel);
+                    int gray = ImageColorTools.pixel2GrayValue(pixel);
                     if (gray < threshold) {
                         binaryImage.setRGB(i, j, black);
                     } else {
@@ -142,13 +160,27 @@ public class ImageGrayTools {
         }
     }
 
-    public static BufferedImage color2Binary(BufferedImage image) {
+    public static BufferedImage color2BinaryByCalculation(BufferedImage image) {
         try {
             BufferedImage grayImage = color2Gray(image);
-            return gray2Binary(grayImage);
+            return gray2BinaryByCalculation(grayImage);
         } catch (Exception e) {
             logger.error(e.toString());
             return image;
+        }
+    }
+
+    public static BufferedImage color2Binary(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            BufferedImage binImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
+            Graphics2D graphics = binImage.createGraphics();
+            graphics.drawImage(source, 0, 0, null);
+            return binImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
         }
     }
 
@@ -167,7 +199,7 @@ public class ImageGrayTools {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     int pixel = grayImage.getRGB(i, j);
-                    int gray = ColorTools.grayPixel2GrayValue(pixel);
+                    int gray = ImageColorTools.grayPixel2GrayValue(pixel);
                     if (gray < threshold) {
                         binaryImage.setRGB(i, j, black);
                     } else {
@@ -182,8 +214,8 @@ public class ImageGrayTools {
         }
     }
 
-    public static BufferedImage gray2Binary(BufferedImage grayImage) {
-        int threshold = calculateThresholdOnGary(grayImage);
+    public static BufferedImage gray2BinaryByCalculation(BufferedImage grayImage) {
+        int threshold = OTSU(grayImage);
         return gray2BinaryWithThreshold(grayImage, threshold);
     }
 

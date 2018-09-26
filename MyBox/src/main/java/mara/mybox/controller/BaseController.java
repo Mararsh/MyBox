@@ -123,6 +123,10 @@ public class BaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            if (thisPane != null) {
+                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+            }
+
             myFxml = FxmlTools.getFxmlPath(url.getPath());
             AppVaribles.currentController = this;
             AppVaribles.alarmClockController = null;
@@ -449,12 +453,12 @@ public class BaseController implements Initializable {
         return true;
     }
 
-    public void openStage(String newFxml, boolean isOwned) {
-        openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, false);
+    public BaseController openStage(String newFxml, boolean isOwned) {
+        return openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, false);
     }
 
-    public void openStage(String newFxml, boolean isOwned, boolean monitorClosing) {
-        openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, monitorClosing);
+    public BaseController openStage(String newFxml, boolean isOwned, boolean monitorClosing) {
+        return openStage(newFxml, AppVaribles.getMessage("AppTitle"), isOwned, monitorClosing);
     }
 
     public BaseController openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
@@ -677,22 +681,23 @@ public class BaseController implements Initializable {
 
         if (delay <= 0) {
             popup.setAutoHide(true);
-        }
-        popupTimer = getPopupTimer();
-        popupTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (popup != null) {
-                            popup.hide();
+        } else {
+            popupTimer = getPopupTimer();
+            popupTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (popup != null) {
+                                popup.hide();
+                            }
+                            popupTimer.cancel();
                         }
-                        popupTimer.cancel();
-                    }
-                });
-            }
-        }, delay);
+                    });
+                }
+            }, delay);
+        }
 
         popup.show(getMyStage());
 

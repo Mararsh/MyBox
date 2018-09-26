@@ -56,116 +56,116 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Insets bottom="20.0" />
             </VBox.margin>
         </Label>
-      <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-         <children>
-            <Label text="%CurrentScope" />
-            <TextField fx:id="currentInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-      <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="170.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
-        <tabs>
-          <Tab fx:id="areaTab" text="%AreaScope">
-               <content>
-                  <VBox maxWidth="1.7976931348623157E308">
-                     <children>
-                        <ToolBar fx:id="areaBar" prefHeight="40.0" prefWidth="200.0">
-                          <items>
-                                    <RadioButton fx:id="allAreaRadio" mnemonicParsing="false" text="%AllArea">
-                                        <toggleGroup>
-                                            <ToggleGroup fx:id="areaGroup" />
-                                        </toggleGroup>
-                                    </RadioButton>
-                              <RadioButton fx:id="selectedRectangleRadio" mnemonicParsing="false" text="%SelectedRectangle" toggleGroup="$areaGroup" />
-                                    <RadioButton fx:id="selectedCircleRadio" mnemonicParsing="false" text="%SelectedCircle" toggleGroup="$areaGroup">
-                                 <padding>
-                                    <Insets right="20.0" />
-                                 </padding>
-                              </RadioButton>
-                          </items>
-                        </ToolBar>
-                          <ToolBar fx:id="rectangleBar" maxWidth="1.7976931348623157E308">
-                              <items>
-                              <Label text="%LeftTop" />
-                                  <TextField fx:id="leftXInput" prefWidth="80.0" promptText="X" />
-                                  <TextField fx:id="leftYInput" prefWidth="80.0" promptText="Y" />
-                              <Label prefWidth="20.0" text=" " />
-                              <Label text="%RightBottom" />
-                                  <TextField fx:id="rightXInput" prefWidth="80.0" promptText="X" />
-                                  <TextField fx:id="rightYInput" prefWidth="80.0" promptText="Y" />
-                              <Label prefWidth="20.0" text=" " />
-                              <CheckBox fx:id="rectangleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
-                              </items>
-                          </ToolBar>
-                            <ToolBar fx:id="circleBar">
-                                <items>
-                              <Label text="%CircleCenter" />
-                              <TextField fx:id="centerXInput" prefWidth="80.0" promptText="X" />
-                              <TextField fx:id="centerYInput" prefWidth="80.0" promptText="Y" />
-                              <Label text="%Radius" />
-                              <TextField fx:id="radiusInput" prefWidth="80.0" />
-                              <Label prefWidth="20.0" text=" " />
-                                    <CheckBox fx:id="circleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
-                                </items>
-                            </ToolBar>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-          <Tab fx:id="colorTab" text="%ColorScope">
-               <content>
-                  <VBox>
-                     <children>
-                          <ToolBar fx:id="colorBar" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                              <items>
-                                  <RadioButton fx:id="allColorsRadio" mnemonicParsing="false" text="%AllColors">
-                                      <toggleGroup>
-                                          <ToggleGroup fx:id="colorGroup" />
-                                      </toggleGroup>
-                                  </RadioButton>
-                                  <RadioButton fx:id="selectedColorsRadio" mnemonicParsing="false" text="%SelectedColors" toggleGroup="$colorGroup">
-                                 <padding>
-                                    <Insets right="20.0" />
-                                 </padding>
-                              </RadioButton>
-                              </items>
-                          </ToolBar>
-                          <ToolBar fx:id="colorBar1" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                              <items>
-                              <Label text="%PickedColors" />
-                                  <ComboBox fx:id="colorsBox" prefWidth="200.0" />
-                                  <Button fx:id="transparentForNewButton" mnemonicParsing="false" onAction="#setTransparent" text="%Transparent" />
-                                  <Button mnemonicParsing="false" onAction="#setBlack" text="%Black" />
-                                  <Button mnemonicParsing="false" onAction="#setWhite" text="%White" />
-                                  <Button mnemonicParsing="false" onAction="#clearColors" text="%Clear" />
-                              </items>
-                          </ToolBar>
-                        <ToolBar fx:id="colorBar2" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                          <items>
-                                  <RadioButton fx:id="colorDistanceRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ColorDistance">
-                                      <toggleGroup>
-                                          <ToggleGroup fx:id="distanceGroup" />
-                                      </toggleGroup>
-                                  </RadioButton>
-                                  <TextField fx:id="colorDistanceInput" prefWidth="45.0" />
-                                  <RadioButton fx:id="hueDistanceRadio" mnemonicParsing="false" text="%HueDistance" toggleGroup="$distanceGroup" />
-                                  <TextField fx:id="hueDistanceInput" disable="true" prefWidth="45.0" />
-                              <Label prefWidth="20.0" text=" " />
-                                  <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%Excluded" />
-                          </items>
-                        </ToolBar>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+                <Label text="%CurrentScope" />
+                <TextField fx:id="currentInput" editable="false" styleClass="darkRed-emphase" stylesheets="@../styles/MyBox.css"   maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="170.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
+            <tabs>
+                <Tab fx:id="areaTab" text="%AreaScope">
+                    <content>
+                        <VBox maxWidth="1.7976931348623157E308">
+                            <children>
+                                <ToolBar fx:id="areaBar" prefHeight="40.0" prefWidth="200.0">
+                                    <items>
+                                        <RadioButton fx:id="allAreaRadio" mnemonicParsing="false" text="%AllArea">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="areaGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="selectedRectangleRadio" mnemonicParsing="false" text="%SelectedRectangle" toggleGroup="$areaGroup" />
+                                        <RadioButton fx:id="selectedCircleRadio" mnemonicParsing="false" text="%SelectedCircle" toggleGroup="$areaGroup">
+                                            <padding>
+                                                <Insets right="20.0" />
+                                            </padding>
+                                        </RadioButton>
+                                    </items>
+                                </ToolBar>
+                                <ToolBar fx:id="rectangleBar" maxWidth="1.7976931348623157E308">
+                                    <items>
+                                        <Label text="%LeftTop" />
+                                        <TextField fx:id="leftXInput" prefWidth="80.0" promptText="X" />
+                                        <TextField fx:id="leftYInput" prefWidth="80.0" promptText="Y" />
+                                        <Label prefWidth="20.0" text=" " />
+                                        <Label text="%RightBottom" />
+                                        <TextField fx:id="rightXInput" prefWidth="80.0" promptText="X" />
+                                        <TextField fx:id="rightYInput" prefWidth="80.0" promptText="Y" />
+                                        <Label prefWidth="20.0" text=" " />
+                                        <CheckBox fx:id="rectangleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
+                                    </items>
+                                </ToolBar>
+                                <ToolBar fx:id="circleBar">
+                                    <items>
+                                        <Label text="%CircleCenter" />
+                                        <TextField fx:id="centerXInput" prefWidth="80.0" promptText="X" />
+                                        <TextField fx:id="centerYInput" prefWidth="80.0" promptText="Y" />
+                                        <Label text="%Radius" />
+                                        <TextField fx:id="radiusInput" prefWidth="80.0" />
+                                        <Label prefWidth="20.0" text=" " />
+                                        <CheckBox fx:id="circleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
+                                    </items>
+                                </ToolBar>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab fx:id="colorTab" text="%ColorScope">
+                    <content>
+                        <VBox>
+                            <children>
+                                <ToolBar fx:id="colorBar" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                    <items>
+                                        <RadioButton fx:id="allColorsRadio" mnemonicParsing="false" text="%AllColors">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="colorGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="selectedColorsRadio" mnemonicParsing="false" text="%SelectedColors" toggleGroup="$colorGroup">
+                                            <padding>
+                                                <Insets right="20.0" />
+                                            </padding>
+                                        </RadioButton>
+                                    </items>
+                                </ToolBar>
+                                <ToolBar fx:id="colorBar1" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                    <items>
+                                        <Label text="%PickedColors" />
+                                        <ComboBox fx:id="colorsBox" prefWidth="200.0" />
+                                        <Button fx:id="transparentForNewButton" mnemonicParsing="false" onAction="#setTransparent" text="%Transparent" />
+                                        <Button mnemonicParsing="false" onAction="#setBlack" text="%Black" />
+                                        <Button mnemonicParsing="false" onAction="#setWhite" text="%White" />
+                                        <Button mnemonicParsing="false" onAction="#clearColors" text="%Clear" />
+                                    </items>
+                                </ToolBar>
+                                <ToolBar fx:id="colorBar2" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                    <items>
+                                        <RadioButton fx:id="colorDistanceRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ColorDistance">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="distanceGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <TextField fx:id="colorDistanceInput" prefWidth="45.0" />
+                                        <RadioButton fx:id="hueDistanceRadio" mnemonicParsing="false" text="%HueDistance" toggleGroup="$distanceGroup" />
+                                        <TextField fx:id="hueDistanceInput" disable="true" prefWidth="45.0" />
+                                        <Label prefWidth="20.0" text=" " />
+                                        <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%Excluded" />
+                                    </items>
+                                </ToolBar>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
             <children>
                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                     <items>
-                  <Label fx:id="opacityLabel" text="%Opacity" />
-                  <ComboBox fx:id="opacityBox" prefWidth="100.0" />
-                  <Label fx:id="opacityComments" text="%opacityComments" />
+                        <Label fx:id="opacityLabel" text="%Opacity" />
+                        <ComboBox fx:id="opacityBox" prefWidth="100.0" />
+                        <Label fx:id="opacityComments" text="%opacityComments" />
                     </items>
                 </ToolBar>
                 <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
@@ -181,30 +181,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </HBox>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-               <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="589.0" text="%OriginalImage" VBox.vgrow="NEVER" />
-                  <ScrollPane fx:id="imagePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                     <content>
-                        <ImageView fx:id="imageView" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickRef" pickOnBounds="true" preserveRatio="true" />
-                     </content>
-                  </ScrollPane>
-               </children>
-            </VBox>
-            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-               <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Scope" textAlignment="CENTER" VBox.vgrow="NEVER" />
-                      <ScrollPane fx:id="scopePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                          <content>
-                              <ImageView fx:id="scopeView" cache="true" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                                  <cursor>
-                                      <Cursor fx:constant="OPEN_HAND" />
-                                  </cursor>
-                              </ImageView>
-                          </content>
-                      </ScrollPane>
-               </children>
-            </VBox>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="589.0" text="%OriginalImage" VBox.vgrow="NEVER" />
+                        <ScrollPane fx:id="imagePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ImageView fx:id="imageView" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickRef" pickOnBounds="true" preserveRatio="true" />
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Scope" textAlignment="CENTER" VBox.vgrow="NEVER" />
+                        <ScrollPane fx:id="scopePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ImageView fx:id="scopeView" cache="true" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
+                                    <cursor>
+                                        <Cursor fx:constant="OPEN_HAND" />
+                                    </cursor>
+                                </ImageView>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
             </items>
         </SplitPane>
     </children>

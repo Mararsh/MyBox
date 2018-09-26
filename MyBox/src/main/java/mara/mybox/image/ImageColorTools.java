@@ -1,4 +1,4 @@
-package mara.mybox.tools;
+package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.color.ColorSpace;
@@ -12,126 +12,53 @@ import org.apache.logging.log4j.Logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ColorTools {
+public class ImageColorTools {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static String rgb2Hex(javafx.scene.paint.Color color) {
-        return String.format("#%02X%02X%02X",
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
+    public static int RGB2Pixel(int r, int g, int b, int a) {
+        return RGB2Pixel(new Color(r, g, b, a));
     }
 
-    public static String rgb2AlphaHex(javafx.scene.paint.Color color) {
-        return String.format("#%02X%02X%02X%02X",
-                (int) (color.getOpacity() * 255),
-                (int) (color.getRed() * 255),
-                (int) (color.getGreen() * 255),
-                (int) (color.getBlue() * 255));
+    public static int RGB2Pixel(int r, int g, int b) {
+        return RGB2Pixel(r, g, b, 255);
     }
 
-    public static int color2Pixel(int a, int r, int g, int b) {
-        return color2Pixel(new Color(a, r, g, b));
-//        return (a << 24) | (r << 16) | (g << 8) | b;
+    public static int RGB2Pixel(Color color) {
+        return color.getRGB();
     }
 
-    public static int color2Pixel(int r, int g, int b) {
-        return color2Pixel(255, r, g, b);
-    }
-
-    public static int color2Pixel(Color color) {
-        return adjustPixelColor(color.getRGB());
-//        try {
-//            int a, r, g, b;
-//            a = color.getAlpha();
-//            r = color.getRed();
-//            g = color.getGreen();
-//            b = color.getBlue();
-//            return a | (r << 16) | (g << 8) | b;
-//        } catch (Exception e) {
-//            return -1;
-//        }
-    }
-
-    /*
-        加上颜色最大值就是实际颜色值
-            -16777216 对应 0xff000000
-            -1 对应 0xffffffff
-            0xffffff 的值 16777215
-     */
- /*
-    new Color(255, 255, 255, 0): 16777215
-    new Color(255, 255, 255, 255): -1
-    Color.WHITE: -1
-    new Color(0, 0, 0, 0): 0
-    new Color(0, 0, 0, 255): -16777216
-    Color.BLACK: -16777216
-    new Color(255, 0, 0, 0): 16711680
-    new Color(255, 0, 0, 255): -65536
-    Color.RED: -65536
-    Color.BLUE: -16776961
-     */
-    public static int adjustPixelColor(int pixelColor) {
-//        logger.debug("new Color(255, 255, 255, 0): " + new Color(255, 255, 255, 0).getRGB());
-//        logger.debug("new Color(255, 255, 255, 255): " + new Color(255, 255, 255, 255).getRGB());
-//        logger.debug("Color.WHITE: " + Color.WHITE.getRGB());
-//        logger.debug("new Color(0, 0, 0, 0): " + new Color(0, 0, 0, 0).getRGB());
-//        logger.debug("new Color(0, 0, 0, 255): " + new Color(0, 0, 0, 255).getRGB());
-//        logger.debug("Color.BLACK: " + Color.BLACK.getRGB());
-//        logger.debug("new Color(255, 0, 0, 0): " + new Color(255, 0, 0, 0).getRGB());
-//        logger.debug("new Color(255, 0, 0, 255): " + new Color(255, 0, 0, 255).getRGB());
-//        logger.debug("Color.RED: " + Color.RED.getRGB());
-//        logger.debug("Color.BLUE: " + Color.BLUE.getRGB());
-        return 16777216 + pixelColor;
-//        if (pixelColor > 8388608) {
-//            return pixelColor - 16777216;
-//        } else {
-//            return pixelColor;
-//        }
-    }
-
-    public static Color pixel2Color(int pixel) {
+    public static Color pixel2RGB(int pixel) {
         return new Color(pixel);
-//        try {
-//            int a, r, g, b;
-//            a = pixel & 0xff000000;
-//            r = (pixel & 0xff0000) >> 16;
-//            g = (pixel & 0xff00) >> 8;
-//            b = (pixel & 0xff);
-//            return new Color(a, r, g, b);
-//        } catch (Exception e) {
-//            return null;
-//        }
     }
 
-    public static int color2GrayPixel(int a, int r, int g, int b) {
-        return color2GrayPixel(r, g, b);
+    public static float[] pixel2HSB(int pixel) {
+        Color rgb = pixel2RGB(pixel);
+        return Color.RGBtoHSB(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), null);
     }
 
-    public static int color2GrayPixel(int r, int g, int b) {
+    public static int RGB2GrayPixel(int r, int g, int b, int a) {
         int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
-        int pixel = color2Pixel(gray, gray, gray);
-        return pixel;
+        return ImageColorTools.RGB2Pixel(gray, gray, gray, a);
     }
 
     public static int pixel2GrayPixel(int pixel) {
-        Color c = pixel2Color(pixel);
-        return color2GrayPixel(c.getRed(), c.getGreen(), c.getBlue());
+        Color c = pixel2RGB(pixel);
+        return RGB2GrayPixel(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
     }
 
-    public static int color2GrayValue(int r, int g, int b) {
+    public static int RGB2GrayValue(int r, int g, int b) {
         int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
         return gray;
     }
 
     public static int pixel2GrayValue(int pixel) {
-        Color c = pixel2Color(pixel);
-        return color2GrayValue(c.getRed(), c.getGreen(), c.getBlue());
+        Color c = new Color(pixel);
+        return RGB2GrayValue(c.getRed(), c.getGreen(), c.getBlue());
     }
 
     public static int grayPixel2GrayValue(int pixel) {
-        Color c = pixel2Color(pixel);
+        Color c = pixel2RGB(pixel);
         return c.getRed();
     }
 
@@ -219,11 +146,17 @@ public class ColorTools {
         return v;
     }
 
-    public static boolean isColorMatch(Color color1, Color color2, int threshold) {
-        double v = 2 * Math.pow(color1.getRed() - color2.getRed(), 2)
-                + 4 * Math.pow(color1.getGreen() - color2.getGreen(), 2)
-                + 3 * Math.pow(color1.getBlue() - color2.getBlue(), 2);
-        return calculateColorDistance2(color1, color2) <= Math.pow(threshold, 2);
+    public static boolean isColorMatch(Color color1, Color color2, int distance) {
+        if (color1 == color2) {
+            return true;
+        } else if (distance == 0) {
+            return false;
+        }
+        return calculateColorDistance2(color1, color2) <= Math.pow(distance, 2);
+    }
+
+    public static boolean isHueMatch(Color color1, Color color2, int distance) {
+        return Math.abs(getHue(color1) - getHue(color2)) <= distance;
     }
 
     public static int getHue(Color color) {

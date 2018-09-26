@@ -51,6 +51,21 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureAddMargins" text="%AddMargins" />
                             </items>
                         </Menu>
+                        <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchFilters" text="%Filters" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchWatermark" text="%Watermark" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCutMargins" text="%CutMargins" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchAddMargins" text="%AddMargins" />
+                            </items>
+                        </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageCombine" text="%ImageCombine" />
@@ -67,16 +82,18 @@
                         <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                     </items>
                 </Menu>
-                <Menu fx:id="fileMenu" mnemonicParsing="false" text="%FileTools">
+                <Menu mnemonicParsing="false" text="%DesktopTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openDirsRename" text="%DirectoriesRename" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                         <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem fx:id="openHtmlEditor" mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                         <MenuItem mnemonicParsing="false" onAction="#openTextEditor" text="%TextEditor" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%NetworkTools">
@@ -85,12 +102,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor2" text="%HtmlEditor" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="%DesktopTools">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%Settings">
+                <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">
                     <items>
                         <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
                             <toggleGroup>
@@ -99,12 +111,7 @@
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="showCommentsMenu" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="commentsGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="hideCommentsMenu" mnemonicParsing="false" onAction="#hideCommentsAction" text="%HideComments" toggleGroup="$commentsGroup" />
+                        <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <RadioMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite">
                             <toggleGroup>
@@ -113,12 +120,7 @@
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="replaceBlackMenu" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="stopAlarmMenuItem" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="alarmGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="keepAlarmMenuItem" mnemonicParsing="false" onAction="#setKeepAlarm" text="%KeepAlarmsExit" toggleGroup="$alarmGroup" />
+                        <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
                     </items>
                 </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">

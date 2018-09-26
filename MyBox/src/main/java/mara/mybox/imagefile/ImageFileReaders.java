@@ -11,7 +11,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.tools.ColorTools;
+import mara.mybox.image.ImageColorTools;
 import mara.mybox.tools.FileTools;
 
 import org.apache.logging.log4j.LogManager;
@@ -70,7 +70,7 @@ public class ImageFileReaders {
                     try {
                         ColorModel cm = reader.getImageTypes(0).next().getColorModel();
                         ColorSpace cs = cm.getColorSpace();
-                        info.setColorSpace(ColorTools.getColorSpaceName(cs.getType()));
+                        info.setColorSpace(ImageColorTools.getColorSpaceName(cs.getType()));
                         info.setColorChannels(cm.getNumComponents());
                         info.setBitDepth(cm.getPixelSize() + "");
                     } catch (Exception e) {

@@ -54,6 +54,7 @@ public class MainApp extends Application {
             ImageValueTools.registrySupportedImageFormats();
             AppVaribles.initAppVaribles();
 
+//            logger.debug(Screen.getPrimary().getDpi());
             FXMLLoader fxmlLoader;
             Pane pane;
             if (imageFile != null) {
@@ -85,6 +86,7 @@ public class MainApp extends Application {
                     }
                 });
             }
+            pane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
 
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setTitle(AppVaribles.getMessage("AppTitle"));

@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageSplitController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageSplitController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -156,7 +156,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="defineOkButton" disable="true" mnemonicParsing="false" onAction="#defineOkAction" prefWidth="2.0" text=" " visible="false" />
                                                     </items>
                                                 </ToolBar>
-                                                <ToolBar maxWidth="1.7976931348623157E308">
+                                                <ToolBar fx:id="customBar" maxWidth="1.7976931348623157E308">
                                                     <items>
                                           <Label text="%SplittingRows" />
                                                         <TextField fx:id="rowsInput" prefWidth="200.0" promptText="%SplitByComma" />
@@ -185,12 +185,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                        <RadioButton fx:id="customRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Custom">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="splitGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="euqipartitionRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Equipartition" toggleGroup="$splitGroup" />
                         <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
                         <ComboBox fx:id="lineWidthBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                         <Label text="%LineWidth" />

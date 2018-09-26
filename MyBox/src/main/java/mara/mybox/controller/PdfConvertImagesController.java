@@ -194,9 +194,9 @@ public class PdfConvertImagesController extends PdfBaseController {
                     image = ImageGrayTools.color2BinaryWithPercentage(image, attributes.getThreshold());
                 } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
                     image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.RGB);
-                    image = ImageGrayTools.color2Binary(image);
+                    image = ImageGrayTools.color2BinaryByCalculation(image);
                 } else {
-                    image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());
+                    image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.BINARY);
                 }
             } else {
                 image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());

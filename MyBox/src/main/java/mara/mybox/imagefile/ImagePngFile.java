@@ -55,17 +55,23 @@ public class ImagePngFile {
                 }
             }
 
-            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
-                String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
-                IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
-                IIOMetadataNode pHYs = new IIOMetadataNode("pHYs");
-                String dpm = dpi2dpm(attributes.getDensity()) + "";
-                pHYs.setAttribute("pixelsPerUnitXAxis", dpm);
-                pHYs.setAttribute("pixelsPerUnitYAxis", dpm);
-                pHYs.setAttribute("unitSpecifier", "meter");  // density is dots per !Meter!
-                tree.appendChild(pHYs);
-                metaData.mergeTree(format, tree);
+            IIOMetadata metaData;
+            try {
+                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
+                    String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_png_1.0"
+                    IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
+                    IIOMetadataNode pHYs = new IIOMetadataNode("pHYs");
+                    String dpm = dpi2dpm(attributes.getDensity()) + "";
+                    pHYs.setAttribute("pixelsPerUnitXAxis", dpm);
+                    pHYs.setAttribute("pixelsPerUnitYAxis", dpm);
+                    pHYs.setAttribute("unitSpecifier", "meter");  // density is dots per !Meter!
+                    tree.appendChild(pHYs);
+                    metaData.mergeTree(format, tree);
+                }
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
             }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {

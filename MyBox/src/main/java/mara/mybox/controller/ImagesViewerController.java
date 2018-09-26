@@ -492,7 +492,7 @@ public class ImagesViewerController extends ImageViewerController {
                 }
             }
             makeImagesPane(cols);
-            logger.debug(cols);
+
             filesNumber = imageFileList.size();
             if (imageFileList.isEmpty()) {
                 return;

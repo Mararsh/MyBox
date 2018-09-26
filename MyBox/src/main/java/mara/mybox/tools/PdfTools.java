@@ -79,7 +79,7 @@ public class PdfTools {
                 int marginSize = 20, total = images.size();
                 for (Image image : images) {
                     PDImageXObject imageObject;
-                    bufferedImage = FxmlImageTools.getWritableData(image, "png");
+                    bufferedImage = FxmlImageTools.getBufferedImage(image);
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     if (isImageSize) {
                         pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
@@ -146,10 +146,10 @@ public class PdfTools {
                         }
                         imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                     } else if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
-                        bufferedImage = FxmlImageTools.getWritableData(image, "jpg");
+                        bufferedImage = FxmlImageTools.checkAlpha(image, "jpg");
                         imageObject = JPEGFactory.createFromImage(document, bufferedImage, p.getJpegQuality() / 100f);
                     } else {
-                        bufferedImage = FxmlImageTools.getWritableData(image, "png");
+                        bufferedImage = FxmlImageTools.getBufferedImage(image);
                         imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     }
 

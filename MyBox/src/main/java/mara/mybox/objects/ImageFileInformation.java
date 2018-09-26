@@ -45,14 +45,6 @@ public class ImageFileInformation extends FileInformation {
         yPixels = (int) image.getHeight();
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public String getImageFormat() {
         return imageFormat;
     }

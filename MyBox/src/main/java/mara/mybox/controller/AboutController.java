@@ -30,7 +30,7 @@ public class AboutController extends BaseController {
         userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
                 + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion + ".pdf");
 
-        FxmlTools.miao();
+        FxmlTools.miao8();
 
     }
 

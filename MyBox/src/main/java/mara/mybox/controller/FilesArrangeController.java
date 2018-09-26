@@ -17,6 +17,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -44,7 +45,7 @@ public class FilesArrangeController extends BaseController {
 
     protected String lastFileName;
     protected Date startTime;
-    private boolean startHandle, isCopy, byModifyTime, handleSubdir;
+    private boolean startHandle, isCopy, byModifyTime;
     private int dirType, replaceType;
     protected File sourcePath;
     protected String renameAppdex = "-m";
@@ -83,6 +84,8 @@ public class FilesArrangeController extends BaseController {
     private RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
     @FXML
     private RadioButton modifiyTimeRadio, createTimeRadio, monthRadio, dayRadio, yearRadio;
+    @FXML
+    private CheckBox verboseCheck;
 
     public FilesArrangeController() {
         targetPathKey = "FilesArrageTargetPath";
@@ -161,7 +164,6 @@ public class FilesArrangeController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean old_toggle, Boolean new_toggle) {
-                handleSubdir = subdirCheck.isSelected();
                 AppVaribles.setConfigValue(FileArrangeSubdirKey, isCopy);
             }
         });
@@ -178,31 +180,17 @@ public class FilesArrangeController extends BaseController {
         });
         if (AppVaribles.getConfigBoolean(FileArrangeCopyKey, true)) {
             copyRadio.setSelected(true);
+            isCopy = true;
         } else {
             moveRadio.setSelected(true);
+            isCopy = false;
         }
 
         replaceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
-                RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
-                if (getMessage("ReplaceModified").equals(selected.getText())) {
-                    replaceType = ReplaceType.ReplaceModified;
-                    AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
-                } else if (getMessage("NotCopy").equals(selected.getText())) {
-                    replaceType = ReplaceType.NotCopy;
-                    AppVaribles.setConfigValue(FileArrangeExistedKey, "NotCopy");
-                } else if (getMessage("Replace").equals(selected.getText())) {
-                    replaceType = ReplaceType.Replace;
-                    AppVaribles.setConfigValue(FileArrangeExistedKey, "Replace");
-                } else if (getMessage("Rename").equals(selected.getText())) {
-                    replaceType = ReplaceType.Rename;
-                    AppVaribles.setConfigValue(FileArrangeExistedKey, "Rename");
-                } else {
-                    replaceType = ReplaceType.ReplaceModified;
-                    AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
-                }
+                checkReplaceType();
             }
         });
         String replaceSelect = AppVaribles.getConfigValue(FileArrangeExistedKey, "ReplaceModified");
@@ -220,6 +208,7 @@ public class FilesArrangeController extends BaseController {
                 notCopyRadio.setSelected(true);
                 break;
         }
+        checkReplaceType();
 
         byGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -232,28 +221,17 @@ public class FilesArrangeController extends BaseController {
         });
         if (AppVaribles.getConfigBoolean(FileArrangeModifyTimeKey, true)) {
             modifiyTimeRadio.setSelected(true);
+            byModifyTime = true;
         } else {
             createTimeRadio.setSelected(true);
+            byModifyTime = false;
         }
 
         dirGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
-                RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
-                if (getMessage("Year").equals(selected.getText())) {
-                    dirType = DirType.Year;
-                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Year");
-                } else if (getMessage("Month").equals(selected.getText())) {
-                    dirType = DirType.Month;
-                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
-                } else if (getMessage("Day").equals(selected.getText())) {
-                    dirType = DirType.Day;
-                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Day");
-                } else {
-                    dirType = DirType.Month;
-                    AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
-                }
+                checkDirType();
             }
         });
         String dirSelect = AppVaribles.getConfigValue(FileArrangeCategoryKey, "Month");
@@ -268,7 +246,46 @@ public class FilesArrangeController extends BaseController {
                 dayRadio.setSelected(true);
                 break;
         }
+        checkDirType();
 
+    }
+
+    private void checkReplaceType() {
+        RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
+        if (getMessage("ReplaceModified").equals(selected.getText())) {
+            replaceType = ReplaceType.ReplaceModified;
+            AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+        } else if (getMessage("NotCopy").equals(selected.getText())) {
+            replaceType = ReplaceType.NotCopy;
+            AppVaribles.setConfigValue(FileArrangeExistedKey, "NotCopy");
+        } else if (getMessage("Replace").equals(selected.getText())) {
+            replaceType = ReplaceType.Replace;
+            AppVaribles.setConfigValue(FileArrangeExistedKey, "Replace");
+        } else if (getMessage("Rename").equals(selected.getText())) {
+            replaceType = ReplaceType.Rename;
+            AppVaribles.setConfigValue(FileArrangeExistedKey, "Rename");
+        } else {
+            replaceType = ReplaceType.ReplaceModified;
+            AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+        }
+
+    }
+
+    private void checkDirType() {
+        RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
+        if (getMessage("Year").equals(selected.getText())) {
+            dirType = DirType.Year;
+            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Year");
+        } else if (getMessage("Month").equals(selected.getText())) {
+            dirType = DirType.Month;
+            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+        } else if (getMessage("Day").equals(selected.getText())) {
+            dirType = DirType.Day;
+            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Day");
+        } else {
+            dirType = DirType.Month;
+            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+        }
     }
 
     @FXML
@@ -495,6 +512,8 @@ public class FilesArrangeController extends BaseController {
                             }
 
                             showCost();
+                            updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
+                                    + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
                             updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
                                     + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
@@ -552,6 +571,7 @@ public class FilesArrangeController extends BaseController {
                     return false;
                 }
                 srcFileName = srcFile.getAbsolutePath();
+                logger.debug(srcFileName);
                 len = srcFile.length();
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {
@@ -570,8 +590,10 @@ public class FilesArrangeController extends BaseController {
                     copyAttr.setTotalSize(copyAttr.getTotalSize() + srcFile.length());
                 }
                 if (srcFile.isDirectory()) {
-                    if (handleSubdir) {
-                        updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                    if (subdirCheck.isSelected()) {
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(getMessage("HandlingDirectory") + " " + srcFileName, true);
+                        }
                         arranegFiles(srcFile);
                     }
                     continue;
@@ -602,7 +624,9 @@ public class FilesArrangeController extends BaseController {
                             path = new File(targetPath + File.separator + c.get(Calendar.YEAR));
                             if (!path.exists()) {
                                 path.mkdirs();
-                                updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                if (verboseCheck.isSelected()) {
+                                    updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                }
                             }
                             break;
                         case DirType.Day:
@@ -611,7 +635,9 @@ public class FilesArrangeController extends BaseController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month + "-" + day);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                if (verboseCheck.isSelected()) {
+                                    updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                }
                             }
                             break;
                         case DirType.Month:
@@ -620,7 +646,9 @@ public class FilesArrangeController extends BaseController {
                                     + File.separator + c.get(Calendar.YEAR) + "-" + month);
                             if (!path.exists()) {
                                 path.mkdirs();
-                                updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                if (verboseCheck.isSelected()) {
+                                    updateLogs(strCreatedSuccessfully + path.getAbsolutePath());
+                                }
                             }
                             break;
                     }
@@ -646,12 +674,16 @@ public class FilesArrangeController extends BaseController {
                     if (!isCopy) {
                         srcFile.delete();
                         copyAttr.setDeletedSize(copyAttr.getDeletedSize() + len);
-                        updateLogs(strDeleteSuccessfully + srcFileName);
+                        if (verboseCheck.isSelected()) {
+                            updateLogs(strDeleteSuccessfully + srcFileName);
+                        }
                     }
                     copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                     copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
-                    updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
-                            + srcFileName + " -> " + newFile.getAbsolutePath());
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(copyAttr.getCopiedFilesNumber() + "  " + strCopySuccessfully
+                                + srcFileName + " -> " + newFile.getAbsolutePath());
+                    }
                     lastFileName = srcFileName;
 
                 } catch (Exception e) {
@@ -685,7 +717,7 @@ public class FilesArrangeController extends BaseController {
     }
 
     protected void updateLogs(final String line, boolean immediate) {
-        updateLogs(line, true, false);
+        updateLogs(line, true, immediate);
     }
 
     protected void updateLogs(final String line, boolean showTime, boolean immediate) {

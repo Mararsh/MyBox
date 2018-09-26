@@ -6,9 +6,9 @@
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
-可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-3.0-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.0/MyBox-3.0-exe.zip) 
+可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-3.1-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-3.1-exe.zip) 
 
-在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-3.0-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.0/MyBox-3.0-jar.zip) ，执行以下命令来启动程序：
+在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-3.1-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-3.1-jar.zip) ，执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
 
 
@@ -19,13 +19,23 @@
 
 [在线提交软件需求和问题报告：https://github.com/Mararsh/MyBox/issues](https://github.com/Mararsh/MyBox/issues)
 
-[用户手册：https://github.com/Mararsh/MyBox/releases/download/v3.0/MyBox-UserGuide-3.0.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.0/MyBox-UserGuide-3.0.pdf)
-
 [云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)
 
 
+## 用户手册
+[综述](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-Overview.pdf)
+
+[PDF工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
+
+[图像工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf)
+
+[桌面工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
+
+[网络工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-NetworkTools.pdf)
+
+
 ## 当前版本
-当前是版本3.0，已实现的特点：
+当前是版本3.1，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -36,6 +46,7 @@
 	E. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
 	F. 将PDF中的图片提取出来。可以指定页码范围。
 	G. 将PDF文件中的文字提取出来，可以定制页的分割行。
+	F. PDF的批量处理。
 2. 图像工具：
 	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿通道。
 	B. 滤镜：灰色、反色、黑白色、红/蓝/绿通道。
@@ -50,8 +61,9 @@
 	K. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
 	L. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
 	M. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-	N. 调色盘
-	O. 像素计算器
+	N. 图像的批量处理。
+	O. 调色盘
+	P. 像素计算器
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
@@ -66,14 +78,17 @@
 	   如果微博修改网页访问方式，此工具将可能失效。
 	B. 网页浏览器：缩放字体、截图页面为整图或者PDF文件。
 	C. 网页编辑器：富文本方式编辑网页，或直接编辑html代码。
-5. 支持批量处理，可以暂停/继续处理过程。
-6. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
-7. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
-8. 设置：切换中英文、是否显示注释、如何处理透明通道、退出程序时是否关闭闹钟。
+5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
+6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
+7. 设置：切换中英文、是否显示注释、如何处理透明通道、退出程序时是否关闭闹钟。
 ```
 
 ## 开发日志
 ```
+2018-09-26 版本3.1 所有图像操作都可以批量处理了。修正颜色处理算法。设置缺省字体大小以适应屏幕分辨率的变化。
+提示用户：在使用微博截图功能之前需要在MyBox浏览器里成功登录一次以安装微博证书、
+（正在寻求突破这一限制的办法。Mybox没有兴趣接触用户个人信息）。
+
 2018-09-18 版本3.0 微博截图工具：可以只截取有效内容（速度提高一倍并且文件大小减小一半）、
 可以展开评论（好得意这个功能！）、可以设置合并PDF的最大尺寸。
 修正html编辑器的错误并增强功能。
@@ -146,6 +161,23 @@
 
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。
 ```
+
+## 实现基础
+```
+MyBox基于以下开源软件/开源库：
+	JavaFx
+		https://docs.oracle.com/javafx/2/
+	PDFBox
+		https://pdfbox.apache.org/
+	jai-imageio
+		https://github.com/jai-imageio/jai-imageio-core
+	javazoom
+		http://www.javazoom.net/index.shtml
+	log4j
+		https://logging.apache.org/log4j/2.x/
+
+```
+
 
 ## 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)

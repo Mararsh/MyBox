@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1125.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <tabs>
                         <Tab fx:id="editorTab" text="%HtmlEditor">
                      <content>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
                                   <ToolBar VBox.vgrow="NEVER">
                                       <items>
@@ -97,6 +97,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <Label text="%WebAddress" />
                                     <ComboBox fx:id="urlBox" editable="true" prefHeight="30.0" prefWidth="484.0" />
                                           <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" text="%Load" />
+                                    <Button mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
                                     <Button fx:id="updateEditorButton" mnemonicParsing="false" onAction="#updateEditor" text="%UpdateEditor" />
                                   <Button mnemonicParsing="false" onAction="#updateBrowser" text="%LoadEditorContents" />
                                 </items>
@@ -105,7 +106,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                  <children>
                                     <ToolBar HBox.hgrow="ALWAYS">
                                       <items>
-                                          <Button mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
                                           <Button mnemonicParsing="false" onAction="#backAction" text="%Back" />
                                           <Button mnemonicParsing="false" onAction="#forwardAction" text="%Forward" />
                                         <Button mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
@@ -114,7 +114,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     </ToolBar>
                                     <ToolBar fx:id="snapBar" HBox.hgrow="NEVER">
                                       <items>
-                                          <Label text="%DelayMM" />
+                                          <Label text="%LoadRetryDelay" />
                                           <ComboBox fx:id="delayBox" editable="true" prefWidth="100.0" />
                                           <RadioButton mnemonicParsing="false" selected="true" text="%OneImage">
                                              <toggleGroup>

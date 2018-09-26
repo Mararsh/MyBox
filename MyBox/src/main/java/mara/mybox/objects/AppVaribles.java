@@ -34,7 +34,7 @@ public class AppVaribles {
     public static AlarmClockController alarmClockController;
     public static boolean showComments = true;
     public static boolean alphaAsBlack = false;
-    public static int commentsDelay = 2000;
+    public static int commentsDelay = 3000;
 
     public AppVaribles() {
     }

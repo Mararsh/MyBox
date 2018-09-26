@@ -2,8 +2,8 @@
 
 <configuration status="off"  monitorInterval="1800">
     <properties>
-        <property name="LOG_HOME">/home/QXSKlogs</property>
-        <property name="APP_NAME">QXSK</property>
+        <property name="LOG_HOME">${sys:user.home}/log4j2</property>
+        <property name="APP_NAME">MyBox</property>
     </properties>
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">

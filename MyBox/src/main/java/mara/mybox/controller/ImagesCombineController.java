@@ -47,7 +47,7 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -564,7 +564,7 @@ public class ImagesCombineController extends ImageViewerController {
                 try {
                     String format = targetTypeBox.getSelectionModel().getSelectedItem();
                     filename = new File(targetPath.getAbsolutePath() + "/" + targetPrefixInput.getText() + "." + format).getAbsolutePath();
-                    final BufferedImage bufferedImage = FxmlImageTools.getWritableData(image, format);
+                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
                     ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                 } catch (Exception e) {
                     logger.error(e.toString());
@@ -786,9 +786,9 @@ public class ImagesCombineController extends ImageViewerController {
 
         List<ImageFileInformation> sources = imageCombine.getSourceImages();
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-            image = ImageConvertionTools.combineSingleColumn(imageCombine, sources, false, true);
+            image = ImageConvertTools.combineSingleColumn(imageCombine, sources, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-            image = ImageConvertionTools.combineSingleRow(imageCombine, sources, false, true);
+            image = ImageConvertTools.combineSingleRow(imageCombine, sources, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
             image = combineImagesColumns(sources);
         } else {
@@ -813,16 +813,16 @@ public class ImagesCombineController extends ImageViewerController {
             for (ImageFileInformation imageInfo : images) {
                 rowImages.add(imageInfo);
                 if (rowImages.size() == imageCombine.getColumnsValue()) {
-                    Image rowImage = ImageConvertionTools.combineSingleRow(imageCombine, rowImages, true, false);
+                    Image rowImage = ImageConvertTools.combineSingleRow(imageCombine, rowImages, true, false);
                     rows.add(new ImageFileInformation(rowImage));
                     rowImages = new ArrayList();
                 }
             }
             if (!rowImages.isEmpty()) {
-                Image rowImage = ImageConvertionTools.combineSingleRow(imageCombine, rowImages, true, false);
+                Image rowImage = ImageConvertTools.combineSingleRow(imageCombine, rowImages, true, false);
                 rows.add(new ImageFileInformation(rowImage));
             }
-            Image newImage = ImageConvertionTools.combineSingleColumn(imageCombine, rows, true, true);
+            Image newImage = ImageConvertTools.combineSingleColumn(imageCombine, rows, true, true);
             return newImage;
         } catch (Exception e) {
             logger.error(e.toString());

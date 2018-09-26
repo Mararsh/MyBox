@@ -40,13 +40,21 @@ public class FxmlTools {
 
     public static String badStyle = "-fx-text-box-border: red;";
 
-    public static void miao() {
+    public static void miao3() {
+        playSound("/sound/miao3.mp3", "miao3.mp3");
+    }
+
+    public static void miao8() {
+        playSound("/sound/miao8.mp3", "miao8.mp3");
+    }
+
+    public static void playSound(final String file, final String userFile) {
 
         Task miaoTask = new Task<Void>() {
             @Override
             protected Void call() {
                 try {
-                    File miao = FxmlTools.getUserFile(getClass(), "/sound/miao3.mp3", "miao3.mp3");
+                    File miao = FxmlTools.getUserFile(getClass(), file, userFile);
                     FloatControl control = SoundTools.getControl(miao);
                     Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
                     player.start();
@@ -59,6 +67,21 @@ public class FxmlTools {
         thread.setDaemon(true);
         thread.start();
 
+    }
+
+    public static String rgb2Hex(javafx.scene.paint.Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
+    }
+
+    public static String rgb2AlphaHex(javafx.scene.paint.Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                (int) (color.getOpacity() * 255),
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
     }
 
     public static void setScrollPane(ScrollPane scrollPane, double xOffset, double yOffset) {
@@ -257,6 +280,8 @@ public class FxmlTools {
         if (file.exists()) {
             return file;
         }
+//        return new File(someClass.getResource(resourceFile).toExternalForm());
+
         URL url = someClass.getResource(resourceFile);
         if (url.toString().startsWith("jar:")) {
             try {

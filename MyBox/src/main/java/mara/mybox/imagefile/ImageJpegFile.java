@@ -60,15 +60,21 @@ public class ImageJpegFile {
             }
 //            logger.debug(param.getCompressionQuality());
 
-            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (attributes != null && attributes.getDensity() > 0) {
-                String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_jpeg_image_1.0"
-                Element tree = (Element) metaData.getAsTree(format);
-                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
-                jfif.setAttribute("Xdensity", attributes.getDensity() + "");
-                jfif.setAttribute("Ydensity", attributes.getDensity() + "");
-                jfif.setAttribute("resUnits", "1"); // density is dots per inch
-                metaData.mergeTree(format, tree);
+            IIOMetadata metaData;
+            try {
+                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                if (attributes != null && attributes.getDensity() > 0) {
+                    String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_jpeg_image_1.0"
+                    Element tree = (Element) metaData.getAsTree(format);
+                    Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                    jfif.setAttribute("Xdensity", attributes.getDensity() + "");
+                    jfif.setAttribute("Ydensity", attributes.getDensity() + "");
+                    jfif.setAttribute("resUnits", "1"); // density is dots per inch
+                    metaData.mergeTree(format, tree);
+                }
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
             }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {

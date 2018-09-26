@@ -90,19 +90,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="scaleBar" disable="true" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
+                                                        <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepRatio" />
                                                         <Label text="%Width" />
+                                                        <ChoiceBox fx:id="ratioBox" prefWidth="140.0" />
                                                         <TextField fx:id="widthInput" prefWidth="80.0" />
                                                         <Label text="%Height" />
                                                         <TextField fx:id="heightInput" prefWidth="80.0" />
-                                                        <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepRatio" />
-                                                        <ChoiceBox fx:id="ratioBox" prefWidth="140.0" />
                                                         <Button mnemonicParsing="false" onAction="#setOriginalSize" text="%OriginalSize" />
                                                         <Button mnemonicParsing="false" onAction="#pixelsCalculator" text="%PixelsCalculator" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <RadioButton contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%SampleScale">
+                                                        <RadioButton contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ZoomScale">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="pixelsGroup" />
                                                             </toggleGroup>
@@ -216,14 +216,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         </RadioButton>
                                                         <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$filtersGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$filtersGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
                                                         <RadioButton mnemonicParsing="false" text="%Invert" toggleGroup="$filtersGroup" />
-                                                        <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
+                                                        <RadioButton fx:id="grayRadio" mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
+                                                        <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
                                                         <Slider fx:id="binarySlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="55.0" />
                                                         <Label fx:id="thresholdLabel" text="%Threshold" />
                                                         <Label fx:id="binaryValue" text="50%" />
                                                         <Button fx:id="binaryCalculateButton" mnemonicParsing="false" onAction="#calculateThreshold" text="%Calculate" />
-                                                        <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="filtersScopeButton" mnemonicParsing="false" onAction="#setFiltersScope" text="%Scope..." />
                                                         <Button mnemonicParsing="false" onAction="#wholeFiltersScope" text="%WholeImage" />
                                                         <Label prefWidth="20.0" text=" " />
@@ -262,7 +261,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForScope" text="%Transparent" />
                                           <Button mnemonicParsing="false" onAction="#whiteForScope" text="%White" />
                                           <Button mnemonicParsing="false" onAction="#blackForScope" text="%Black" />
-                                          <RadioButton mnemonicParsing="false" text="%Setting" toggleGroup="$replaceScopeGroup" />
+                                          <RadioButton fx:id="replaceColorSetting" mnemonicParsing="false" onMouseClicked="#setScopeForReplaceColor" text="%Setting" toggleGroup="$replaceScopeGroup" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Button fx:id="replaceColorOkButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
                                                     </items>
@@ -287,15 +286,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ChoiceBox fx:id="waterStyleBox" prefWidth="80.0" />
                                                         <ChoiceBox fx:id="waterFamilyBox" prefWidth="80.0" />
                                                         <ColorPicker fx:id="waterColorPicker" />
-                                                        <TextField fx:id="waterXInput" prefWidth="60.0" promptText="X" />
-                                                        <TextField fx:id="waterYInput" prefWidth="60.0" promptText="Y" />
                                                         <Label text="%Transparent" />
                                                         <ComboBox fx:id="waterTransparentBox" editable="true" prefWidth="70.0" />
                                                         <Label text="%Shadow" />
                                                         <ComboBox fx:id="waterShadowBox" editable="true" prefWidth="70.0" />
                                           <Label text="%Angle" />
                                           <ComboBox fx:id="waterAngleBox" editable="true" prefWidth="70.0" />
-                                                        <Button fx:id="waterAddButton" mnemonicParsing="false" onAction="#waterAddAction" text="%Add" />
+                                                        <TextField fx:id="waterXInput" prefWidth="60.0" promptText="X" />
+                                                        <TextField fx:id="waterYInput" prefWidth="60.0" promptText="Y" />
                                                     </items>
                                                 </ToolBar>
                                             </children>

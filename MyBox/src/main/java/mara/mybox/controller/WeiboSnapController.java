@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +12,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -48,7 +51,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapController extends BaseController {
 
     private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
-    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey;
+    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey, WeiboEverLoginKey;
     private int loadDelay, scrollDelay, maxDelay;
     protected int lastHtmlLen, snapHeight, snapCount, retry;
     private boolean imagePerScreen, isImageSize;
@@ -87,6 +90,7 @@ public class WeiboSnapController extends BaseController {
         WeiboAuthorKey = "WeiboAuthorKey";
         WeiboRetryKey = "WeiboRetryKey";
         WeiboMaxMergeKey = "WeiboMaxMergeKey";
+        WeiboEverLoginKey = "WeiboEverLoginKey";
     }
 
     @Override
@@ -106,6 +110,31 @@ public class WeiboSnapController extends BaseController {
         }
     }
 
+    public void checkLogin() {
+        if (!AppVaribles.getConfigBoolean("WeiboEverLoginKey", false)) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(AppVaribles.getMessage("AppTitle"));
+            alert.setContentText(AppVaribles.getMessage("WeiboSnapLogin"));
+            ButtonType buttonDone = new ButtonType(AppVaribles.getMessage("WeiboLoginDone"));
+            ButtonType buttonGiveup = new ButtonType(AppVaribles.getMessage("WeiboGiveup"));
+            ButtonType buttonLogin = new ButtonType(AppVaribles.getMessage("WeiboLogin"));
+            alert.getButtonTypes().setAll(buttonDone, buttonGiveup, buttonLogin);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonDone) {
+                AppVaribles.setConfigValue("WeiboEverLoginKey", true);
+            } else if (result.get() == buttonGiveup) {
+                popError(AppVaribles.getMessage("WeiboNotWork"), -1);
+            } else if (result.get() == buttonLogin) {
+                HtmlEditorController controller
+                        = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml,
+                                AppVaribles.getMessage("HtmlEditor"), false, true);
+                controller.loginWeibo();
+            }
+
+        }
+    }
+
     private void initWebOptions() {
 
         addressInput.textProperty().addListener(new ChangeListener<String>() {
@@ -121,8 +150,9 @@ public class WeiboSnapController extends BaseController {
                     if (s.endsWith("/profile")) {
                         s = s.substring(0, s.length() - "/profile".length());
                     }
-                    if (!s.startsWith("https://weibo.com/")
-                            || s.length() <= "https://weibo.com/".length()) {
+                    if ((!s.startsWith("https://weibo.com/")
+                            && !s.startsWith("https://www.weibo.com/"))
+                            || s.length() <= "https://www.weibo.com/".length()) {
                         addressInput.setStyle(badStyle);
                         webAddress = "";
                     } else {
@@ -136,7 +166,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        addressInput.setText(AppVaribles.getConfigValue(WeiboLastAddressKey, "https://weibo.com/wow"));
+        addressInput.setText(AppVaribles.getConfigValue(WeiboLastAddressKey, "https://www.weibo.com/wow"));
 
         Tooltip tips = new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth"));
         tips.setFont(new Font(16));
@@ -192,17 +222,17 @@ public class WeiboSnapController extends BaseController {
                         loadDelayBox.getEditor().setStyle(null);
                         AppVaribles.setConfigValue(WeiboLoadDelayKey, loadDelay + "");
                     } else {
-                        loadDelay = 5000;
+                        loadDelay = 2;
                         loadDelayBox.getEditor().setStyle(badStyle);
                     }
 
                 } catch (Exception e) {
-                    loadDelay = 5000;
+                    loadDelay = 2;
                     loadDelayBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2000"));
+        loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2"));
 
         scrollDelayBox.getItems().addAll(Arrays.asList("100", "50", "300", "1000", "600", "2000", "3000", "5000"));
         scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -238,17 +268,17 @@ public class WeiboSnapController extends BaseController {
                         maxDelayBox.getEditor().setStyle(null);
                         AppVaribles.setConfigValue(WeiboMaxDelayKey, maxDelay + "");
                     } else {
-                        maxDelay = 30000;
+                        maxDelay = 60;
                         maxDelayBox.getEditor().setStyle(badStyle);
                     }
 
                 } catch (Exception e) {
-                    maxDelay = 30000;
+                    maxDelay = 60;
                     maxDelayBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "60000"));
+        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "60"));
 
     }
 
@@ -409,11 +439,9 @@ public class WeiboSnapController extends BaseController {
 
     protected void initPdfOptionsSection() {
 
-        if (AppVaribles.showComments) {
-            Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(sizeBox, tips);
-        }
+        Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -514,7 +542,7 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVaribles.getConfigValue(WeiboAuthorKey, ""));
 
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
+        tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
         tips.setFont(new Font(16));
         FxmlTools.quickTooltip(maxMergedBox, tips);
         maxMergedBox.getItems().addAll(Arrays.asList("500", "600", "400", "300", "700", "1000"));
@@ -830,7 +858,7 @@ public class WeiboSnapController extends BaseController {
 
     @FXML
     protected void callMiao(MouseEvent event) {
-        FxmlTools.miao();
+        FxmlTools.miao3();
     }
 
     @FXML

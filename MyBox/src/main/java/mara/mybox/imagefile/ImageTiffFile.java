@@ -69,25 +69,31 @@ public class ImageTiffFile {
                 }
             }
 
-            TIFFImageMetadata metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-            if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
-                long[] xRes = new long[]{attributes.getDensity(), 1};
-                long[] yRes = new long[]{attributes.getDensity(), 1};
-                Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
-                TIFFField fieldXRes = new TIFFField(
-                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
-                        TIFFTag.TIFF_RATIONAL, 1, new long[][]{xRes});
-                TIFFField fieldYRes = new TIFFField(
-                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
-                        TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
-                node.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
-                node.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
-                char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
-                TIFFField fieldResUnit = new TIFFField(
-                        BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
-                        TIFFTag.TIFF_SHORT, 1, fieldUnit);
-                node.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
-                metaData.mergeTree(metaData.getNativeMetadataFormatName(), node);
+            TIFFImageMetadata metaData;
+            try {
+                metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                if (metaData != null && !metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
+                    long[] xRes = new long[]{attributes.getDensity(), 1};
+                    long[] yRes = new long[]{attributes.getDensity(), 1};
+                    Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
+                    TIFFField fieldXRes = new TIFFField(
+                            BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
+                            TIFFTag.TIFF_RATIONAL, 1, new long[][]{xRes});
+                    TIFFField fieldYRes = new TIFFField(
+                            BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
+                            TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
+                    node.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
+                    node.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
+                    char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
+                    TIFFField fieldResUnit = new TIFFField(
+                            BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
+                            TIFFTag.TIFF_SHORT, 1, fieldUnit);
+                    node.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
+                    metaData.mergeTree(metaData.getNativeMetadataFormatName(), node);
+                }
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
             }
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {

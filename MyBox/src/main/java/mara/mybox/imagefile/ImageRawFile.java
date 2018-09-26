@@ -57,7 +57,14 @@ public class ImageRawFile {
                 }
             }
 
-            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            IIOMetadata metaData;
+            try {
+                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
+            }
+
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, metaData), param);

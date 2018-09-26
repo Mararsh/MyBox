@@ -19,7 +19,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertionTools.KeepRatioType;
+import mara.mybox.image.ImageConvertTools.KeepRatioType;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -46,7 +46,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     @FXML
     protected Button originalButton;
     @FXML
-    protected CheckBox keepCheck;
+    protected CheckBox keepCheck, alphaCheck;
     @FXML
     protected HBox ratioBox, ratioBaseBox;
 

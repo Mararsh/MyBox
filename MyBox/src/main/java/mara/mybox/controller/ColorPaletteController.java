@@ -8,7 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.ColorTools;
+import static mara.mybox.tools.FxmlTools.rgb2AlphaHex;
+import static mara.mybox.tools.FxmlTools.rgb2Hex;
 
 /**
  * @Author Mara
@@ -48,7 +49,7 @@ public class ColorPaletteController extends BaseController {
         hsbValue.setText(getMessage("Hue") + ": " + Math.round(color.getHue()) + "    "
                 + getMessage("Saturation") + ": " + Math.round(color.getSaturation() * 100) + "%    "
                 + getMessage("Brightness") + ": " + Math.round(color.getBrightness() * 100) + "%");
-        hexValue.setText("ARGB: " + ColorTools.rgb2AlphaHex(color) + "    RGB: " + ColorTools.rgb2Hex(color));
+        hexValue.setText("ARGB: " + rgb2AlphaHex(color) + "    RGB: " + rgb2Hex(color));
     }
 
     @FXML

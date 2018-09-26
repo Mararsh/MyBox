@@ -61,7 +61,14 @@ public class ImageGifFile {
                 param.setCompressionQuality(attributes.getQuality() / 100.0f);
             }
 
-            GIFImageMetadata metaData = (GIFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            GIFImageMetadata metaData;
+            try {
+                metaData = (GIFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            } catch (Exception e) {
+                logger.error(e.toString());
+                metaData = null;
+            }
+
             if (attributes.getDensity() > 0) {
                 // Have not found the way to set density data in meta data of GIF format.
             }

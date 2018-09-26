@@ -3,7 +3,11 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.io.File;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -23,35 +27,46 @@ public class MainMenuController extends BaseController {
     @FXML
     private Pane mainMenuPane;
     @FXML
-    private RadioMenuItem chineseMenuItem, englishMenuItem, keepAlarmMenuItem, stopAlarmMenuItem, showCommentsMenu, hideCommentsMenu;
+    private RadioMenuItem chineseMenuItem, englishMenuItem;
     @FXML
     private RadioMenuItem replaceWhiteMenu, replaceBlackMenu;
+    @FXML
+    private CheckMenuItem showCommentsCheck, stopAlarmCheck;
+    @FXML
+    private Menu settingsMenu;
 
     @Override
     protected void initializeNext() {
+        try {
+            if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
+                chineseMenuItem.setSelected(true);
+            } else {
+                englishMenuItem.setSelected(true);
+            }
 
-        if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
-            chineseMenuItem.setSelected(true);
-        } else {
-            englishMenuItem.setSelected(true);
-        }
+            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
 
-        if (AppVaribles.getConfigBoolean("StopAlarmsWhenExit")) {
-            stopAlarmMenuItem.setSelected(true);
-        } else {
-            keepAlarmMenuItem.setSelected(true);
-        }
+            showCommentsCheck.setSelected(AppVaribles.showComments);
 
-        if (AppVaribles.showComments) {
-            showCommentsMenu.setSelected(true);
-        } else {
-            hideCommentsMenu.setSelected(true);
-        }
+            if (AppVaribles.alphaAsBlack) {
+                replaceBlackMenu.setSelected(true);
+            } else {
+                replaceWhiteMenu.setSelected(true);
+            }
 
-        if (AppVaribles.alphaAsBlack) {
-            replaceBlackMenu.setSelected(true);
-        } else {
-            replaceWhiteMenu.setSelected(true);
+            settingsMenu.setOnShowing(new EventHandler<Event>() {
+                @Override
+                public void handle(Event e) {
+                    if (AppVaribles.alphaAsBlack) {
+                        replaceBlackMenu.setSelected(true);
+                    } else {
+                        replaceWhiteMenu.setSelected(true);
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
@@ -73,25 +88,14 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void setKeepAlarm(ActionEvent event) {
-        AppVaribles.setConfigValue("StopAlarmsWhenExit", false);
-    }
-
-    @FXML
     private void setStopAlarm(ActionEvent event) {
-        AppVaribles.setConfigValue("StopAlarmsWhenExit", true);
+        AppVaribles.setConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
     }
 
     @FXML
     private void showCommentsAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ShowComments", true);
-        AppVaribles.showComments = true;
-    }
-
-    @FXML
-    private void hideCommentsAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ShowComments", false);
-        AppVaribles.showComments = false;
+        AppVaribles.setConfigValue("ShowComments", showCommentsCheck.isSelected());
+        AppVaribles.showComments = showCommentsCheck.isSelected();
     }
 
     @FXML
@@ -270,6 +274,66 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageManufactureBatch(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchFxml, AppVaribles.getMessage("ImageManufactureBatch"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchSize(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchSizeFxml, AppVaribles.getMessage("ImageManufactureBatchSize"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchCrop(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchCropFxml, AppVaribles.getMessage("ImageManufactureBatchCrop"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchColor(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchColorFxml, AppVaribles.getMessage("ImageManufactureBatchColor"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchFilters(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchFiltersFxml, AppVaribles.getMessage("ImageManufactureBatchFilters"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchReplaceColor(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchReplaceColorFxml, AppVaribles.getMessage("ImageManufactureBatchReplaceColor"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchWatermark(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchWatermarkFxml, AppVaribles.getMessage("ImageManufactureBatchWatermark"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchArc(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchArcFxml, AppVaribles.getMessage("ImageManufactureBatchArc"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchShadow(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchShadowFxml, AppVaribles.getMessage("ImageManufactureBatchShadow"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchTransform(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchTransformFxml, AppVaribles.getMessage("ImageManufactureBatchTransform"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchAddMargins(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchAddMarginsFxml, AppVaribles.getMessage("ImageManufactureBatchAddMargins"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchCutMargins(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchCutMarginsFxml, AppVaribles.getMessage("ImageManufactureBatchCutMargins"));
+    }
+
+    @FXML
     private void openImageSplit(ActionEvent event) {
         reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
     }
@@ -333,7 +397,9 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openWeiboSnap(ActionEvent event) {
-        reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
+        WeiboSnapController controller
+                = (WeiboSnapController) reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
+        controller.checkLogin();
     }
 
     @FXML
