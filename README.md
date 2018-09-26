@@ -165,18 +165,16 @@
 
 ## 实现基础
 MyBox基于以下开源软件/开源库：
-
-	[JavaFx  https://docs.oracle.com/javafx/2/](https://docs.oracle.com/javafx/2/)
+[JavaFx  https://docs.oracle.com/javafx/2/](https://docs.oracle.com/javafx/2/)
 	
-	[PDFBox  https://pdfbox.apache.org/](https://pdfbox.apache.org/)
+[PDFBox  https://pdfbox.apache.org/](https://pdfbox.apache.org/)
 	
-	[jai-imageio  https://github.com/jai-imageio/jai-imageio-core](https://github.com/jai-imageio/jai-imageio-core)
+[jai-imageio  https://github.com/jai-imageio/jai-imageio-core](https://github.com/jai-imageio/jai-imageio-core)
 	
-	[javazoom  http://www.javazoom.net/index.shtml](http://www.javazoom.net/index.shtml)
+[javazoom  http://www.javazoom.net/index.shtml](http://www.javazoom.net/index.shtml)
 	
-	[log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
+[log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
 	
-
 
 ## 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)
