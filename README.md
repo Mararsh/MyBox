@@ -6,10 +6,11 @@
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
-可以下载exe包，无需java环境、无需安装、解包可用： [MyBox-3.1-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-3.1-exe.zip) 
+可以下载exe包，在Windows上无需java环境、无需安装、解包可用： [MyBox-3.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-3.2-exe.zip) 
+在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
-在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-3.1-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-3.1-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-版本号.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下(最好是版本8)，可以下载jar包 [MyBox-3.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-3.2-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.2.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -23,19 +24,19 @@
 
 
 ## 用户手册
-[综述](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-Overview.pdf)
 
-[PDF工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
+[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
 
-[图像工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf)
 
-[桌面工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
+[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
 
-[网络工具](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-NetworkTools.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-NetworkTools.pdf)
 
 
 ## 当前版本
-当前是版本3.1，已实现的特点：
+当前是版本3.2，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -71,13 +72,20 @@
 	   此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
 	D. 文本编辑器。
 4. 网络工具：
-	A. 微博截图工具：自动保存任意微博账户的所有微博内容。
-	   可以设置起止月份，可以截图为PDF、也可以保存html文件
-	   （由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容）。
-	   可以只截取有效内容也可全屏截图、可以展开评论。
-	   如果微博修改网页访问方式，此工具将可能失效。
-	B. 网页浏览器：缩放字体、截图页面为整图或者PDF文件。
-	C. 网页编辑器：富文本方式编辑网页，或直接编辑html代码。
+	A. 网页编辑器
+		a. 富文本方式编辑本地网页或在线网页。
+		b. 代码编辑器可以同步编辑html。
+		c. 网页浏览器可以同步编辑器内容、也可以加载在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件
+	B. 微博截图工具
+		a. 自动保存任意微博账户的任意月份的微博内容
+		b. 设置起止月份。
+		c. 确保页面完全加载，可以展开页面包含的评论、可以展开页面包含的所有图片。
+		d. 将页面保存为本地html文件。由于微博是动态加载内容，本地网页无法正常打开，仅供获取其中的文本内容。
+		e. 将页面截图保存为PDF。可以设置页尺寸、边距、作者、以及图片格式。
+		f. 将页面包含的所有图片的原图全部单独保存下来。
+		g. 实时显示处理进度。
+		h. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
+		i. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
 5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 7. 设置：切换中英文、是否显示注释、如何处理透明通道、退出程序时是否关闭闹钟。
@@ -85,6 +93,11 @@
 
 ## 开发日志
 ```
+2018-09-29 版本3.2 微博截图功能：1）在Linux和Windows上自动导入微博证书而用户无需登录可直接使用工具。
+但在Mac上没有找到导入证书的途径，因此苹果用户只好登录以后才能使用。
+2）可以展开页面上所有评论和所有图片然后截图。
+3）可以将页面中所有图片的原图保存下来。（感觉好酷）
+
 2018-09-26 版本3.1 所有图像操作都可以批量处理了。修正颜色处理算法。
 设置缺省字体大小以适应屏幕分辨率的变化。用户手册拆分成各个工具的分册了。
 提示用户：在使用微博截图功能之前需要在MyBox浏览器里成功登录一次以安装微博证书、
@@ -164,7 +177,12 @@
 ```
 
 ## 实现基础
-MyBox基于以下开源软件/开源库：
+MyBox使用NetBeans开发：
+
+[https://netbeans.org/](https://netbeans.org/)
+
+
+基于以下开源软件/开源库：
 
 [JavaFx  https://docs.oracle.com/javafx/2/](https://docs.oracle.com/javafx/2/)
 	
