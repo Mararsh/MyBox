@@ -31,6 +31,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
@@ -110,6 +112,15 @@ public class PdfTools {
 
                     content.close();
                 }
+
+                PDPage page = document.getPage(0);
+                PDPageXYZDestination dest = new PDPageXYZDestination();
+                dest.setPage(page);
+                dest.setZoom(1f);
+                dest.setTop((int) page.getCropBox().getHeight());
+                PDActionGoTo action = new PDActionGoTo();
+                action.setDestination(dest);
+                document.getDocumentCatalog().setOpenAction(action);
 
                 document.save(targetFile);
                 return true;
@@ -204,7 +215,17 @@ public class PdfTools {
                     }
 
                     content.close();
+
                 }
+
+                PDPage page = document.getPage(0);
+                PDPageXYZDestination dest = new PDPageXYZDestination();
+                dest.setPage(page);
+                dest.setZoom(1f);
+                dest.setTop((int) page.getCropBox().getHeight());
+                PDActionGoTo action = new PDActionGoTo();
+                action.setDestination(dest);
+                document.getDocumentCatalog().setOpenAction(action);
 
                 document.save(targetFile);
                 return true;

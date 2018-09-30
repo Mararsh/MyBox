@@ -17,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.1";
-    public static final String AppVersionDate = "2018-09-26";
+    public static final String AppVersion = "3.2";
+    public static final String AppVersionDate = "2018-09-29";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";

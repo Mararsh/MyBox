@@ -82,7 +82,7 @@ public class HtmlEditorController extends TextEditorController {
 
     private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
     private WebEngine webEngine;
-    private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY;
+    private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
     protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
     private boolean isSettingValues, isOneImage;
     private URL url;
@@ -90,8 +90,10 @@ public class HtmlEditorController extends TextEditorController {
     private File targetFile;
     protected SimpleBooleanProperty loadedCompletely;
     private List<String> urls;
-
+    private Stage snapingStage;
+    private LoadingController loadingController;
     private float zoomScale;
+    private Timer timer;
 
     @FXML
     private Button saveButton, openButton, createButton, loadButton, updateEditorButton, snapsotButton;
@@ -276,12 +278,12 @@ public class HtmlEditorController extends TextEditorController {
                                         for (int i = urls.size() - 1; i > 10; i--) {
                                             urls.remove(i);
                                         }
-                                        try { // **** Expcetion will be popped. DO NOT know the reason
+                                        try {
                                             urlBox.getItems().clear();
                                             urlBox.getItems().addAll(urls);
                                             urlBox.getSelectionModel().select(0);
                                         } catch (Exception e) {
-
+                                            logger.error(e.toString());
                                         }
                                         String urlsString = "";
                                         for (String item : urls) {
@@ -364,28 +366,27 @@ public class HtmlEditorController extends TextEditorController {
                 @Override
                 public void changed(ObservableValue ov, State oldState, State newState) {
                     try {
-                        if (null == newState) {
-                            browserActionBar.setDisable(true);
-                        } else {
-                            switch (newState) {
-                                case SUCCEEDED:
-                                    browserActionBar.setDisable(false);
+                        logger.debug(newState.name());
+                        logger.debug((String) webEngine.executeScript("document.cookie;"));
+
+                        switch (newState) {
+                            case SUCCEEDED:
+                                browserActionBar.setDisable(false);
 //                                bottomText.setText(AppVaribles.getMessage("Loaded"));
-                                    try {
-                                        String s = (String) webEngine.executeScript("getComputedStyle(document.body).fontSize");
-                                        fontSize = Integer.valueOf(s.substring(0, s.length() - 2));
-                                    } catch (Exception e) {
-                                        fontSize = 14;
-                                    }
-                                    break;
-                                case RUNNING:
+                                try {
+                                    String s = (String) webEngine.executeScript("getComputedStyle(document.body).fontSize");
+                                    fontSize = Integer.valueOf(s.substring(0, s.length() - 2));
+                                } catch (Exception e) {
+                                    fontSize = 14;
+                                }
+                                break;
+                            case RUNNING:
 //                                bottomText.setText(AppVaribles.getMessage("Loading..."));
-                                    browserActionBar.setDisable(true);
-                                    break;
-                                default:
-                                    browserActionBar.setDisable(true);
-                                    break;
-                            }
+                                browserActionBar.setDisable(true);
+                                break;
+                            default:
+                                browserActionBar.setDisable(true);
+                                break;
                         }
 
                     } catch (Exception e) {
@@ -397,7 +398,7 @@ public class HtmlEditorController extends TextEditorController {
             webEngine.getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
                 @Override
                 public void changed(ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) {
-                    System.out.println("Received exception: " + t1.getMessage());
+                    logger.debug("Received exception: " + t1.getMessage());
                 }
             });
 
@@ -406,7 +407,6 @@ public class HtmlEditorController extends TextEditorController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     if (loadedCompletely.getValue()) {
-                        startSnap();
                     } else {
 
                     }
@@ -660,21 +660,30 @@ public class HtmlEditorController extends TextEditorController {
 
     private void loadWholePage() {
         try {
+            orginalStageHeight = (int) getMyStage().getHeight();
+            orginalStageY = (int) myStage.getY();
+            orginalStageWidth = (int) getMyStage().getWidth();
+            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            myStage.setY(0);
+            myStage.setHeight(primaryScreenBounds.getHeight());
+//            myStage.setWidth(900);
+//            webEngine.executeScript("document.body.style.fontSize = '15px' ;");
+
             loadedCompletely.set(false);
             snapsotButton.setDisable(true);
             final int maxDelay = delay * 30;
             final long startTime = new Date().getTime();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
-            final LoadingController controller = fxmlLoader.getController();
-            final Stage snapingStage = new Stage();
+            loadingController = fxmlLoader.getController();
+            snapingStage = new Stage();
             snapingStage.initModality(Modality.WINDOW_MODAL);
             snapingStage.initStyle(StageStyle.TRANSPARENT);
             snapingStage.initOwner(getMyStage());
             snapingStage.setScene(new Scene(pane));
             snapingStage.show();
 
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.schedule(new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
 
@@ -690,14 +699,14 @@ public class HtmlEditorController extends TextEditorController {
                         quit = true;
                     }
                     if (quit) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (snapingStage != null) {
-                                    snapingStage.close();
-                                }
-                            }
-                        });
+//                        Platform.runLater(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (snapingStage != null) {
+//                                    snapingStage.close();
+//                                }
+//                            }
+//                        });
                         this.cancel();
                         return;
                     }
@@ -708,10 +717,10 @@ public class HtmlEditorController extends TextEditorController {
                         public void run() {
                             try {
                                 newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-                                controller.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + newHeight);
+                                loadingController.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + newHeight);
                                 logger.debug(lastHeight + "  newHeight:" + newHeight);
                                 if (newHeight == lastHeight) {
-                                    controller.setInfo(AppVaribles.getMessage("SnapingPage"));
+                                    loadingController.setInfo(AppVaribles.getMessage("ExpandingPage"));
                                     startSnap();
                                 } else {
                                     webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
@@ -737,11 +746,6 @@ public class HtmlEditorController extends TextEditorController {
 
     private void startSnap() {
         try {
-            orginalStageHeight = (int) getMyStage().getHeight();
-            orginalStageY = (int) myStage.getY();
-            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-            myStage.setY(0);
-            myStage.setHeight(primaryScreenBounds.getHeight());
             final int totalHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
             final int snapStep = (Integer) webEngine.executeScript("document.documentElement.clientHeight < document.body.clientHeight ? document.documentElement.clientHeight : document.body.clientHeight");
             final int width = (Integer) webEngine.executeScript("document.documentElement.clientWidth < document.body.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ");
@@ -752,19 +756,12 @@ public class HtmlEditorController extends TextEditorController {
             bottomText.setText(AppVaribles.getMessage("SnapingImage..."));
             final SnapshotParameters parameters = new SnapshotParameters();
             parameters.setFill(Color.TRANSPARENT);
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     if (totalHeight <= snapHeight) {
                         this.cancel();
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                myStage.setY(orginalStageY);
-                                myStage.setHeight(orginalStageHeight);
-                            }
-                        });
                     } else {
                         Platform.runLater(new Runnable() {
                             @Override
@@ -781,8 +778,10 @@ public class HtmlEditorController extends TextEditorController {
                                     }
                                     images.add(snapshot);
                                     snapHeight += snapStep;
+                                    loadingController.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + snapHeight);
                                     if (totalHeight <= snapHeight) { // last snap
 
+                                        loadingController.setInfo(AppVaribles.getMessage("WritingFile"));
                                         boolean success = true;
                                         if (isOneImage) {
                                             Image finalImage = FxmlImageTools.combineSingleColumn(images);
@@ -809,6 +808,12 @@ public class HtmlEditorController extends TextEditorController {
                                         webEngine.executeScript("window.scrollTo(0,0 );");
                                         bottomText.setText("");
                                         snapsotButton.setDisable(false);
+
+                                        if (snapingStage != null) {
+                                            snapingStage.close();
+                                        }
+                                        myStage.setY(orginalStageY);
+                                        myStage.setHeight(orginalStageHeight);
                                     } else {
                                         webEngine.executeScript("window.scrollTo(0, " + snapHeight + ");");
                                     }
@@ -816,6 +821,9 @@ public class HtmlEditorController extends TextEditorController {
                                     logger.error(e.toString());
                                     webEngine.executeScript("window.scrollTo(0,0 );");
                                     popError(AppVaribles.getMessage("Failed"));
+                                    if (snapingStage != null) {
+                                        snapingStage.close();
+                                    }
                                 }
                             }
                         });
@@ -874,6 +882,20 @@ public class HtmlEditorController extends TextEditorController {
             logger.debug(e.toString());
         }
 
+    }
+
+    @Override
+    public boolean stageClosing() {
+        super.stageClosing();
+        webEngine.getLoadWorker().cancel();
+        if (snapingStage != null) {
+            snapingStage.close();
+        }
+        if (timer != null) {
+            timer.cancel();
+        }
+        loadingController = null;
+        return true;
     }
 
 }

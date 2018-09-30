@@ -96,6 +96,10 @@ public class DateTools {
         return datetimeToString(theDate).substring(0, 7);
     }
 
+    public static String dateToYearString(Date theDate) {
+        return datetimeToString(theDate).substring(0, 4);
+    }
+
     public static boolean isWeekend(long time) {
         try {
             Calendar cal = Calendar.getInstance();

@@ -1,6 +1,7 @@
 package mara.mybox;
 
 import java.io.File;
+import java.security.Security;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.application.Platform;
@@ -38,6 +39,18 @@ public class MainApp extends Application {
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
 
+            Security.setProperty("javax.net.debug", "all");
+//            Security.setProperty("javax.net.ssl.trustStore", System.getProperty("user.home") +  File.separator +"cacerts");
+            Security.setProperty("javax.net.ssl.trustStore", "/usr/java/jdk-10.0.1/lib/security/cacerts");
+            Security.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+            Security.setProperty("javax.net.ssl.keyStore", "whatever");
+            Security.setProperty("javax.net.ssl.keyStorePassword", "changeit");
+            Security.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
+            Security.setProperty("allowLegacyHelloMessages", "true");
+
+//            Security.setProperty("ocsp.enable", "false");
+//            System.setProperty("com.sun.net.ssl.checkRevocation", "false");
+//            System.setProperty("com.sun.security.enableCRLDP", "false");
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
                 userPath.mkdirs();

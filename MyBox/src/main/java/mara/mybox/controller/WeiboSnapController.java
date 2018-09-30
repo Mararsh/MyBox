@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Optional;
@@ -52,27 +53,30 @@ public class WeiboSnapController extends BaseController {
 
     private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
     private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey, WeiboEverLoginKey;
-    private int loadDelay, scrollDelay, maxDelay;
-    protected int lastHtmlLen, snapHeight, snapCount, retry;
-    private boolean imagePerScreen, isImageSize;
+    private int loadDelay, scrollDelay, maxDelay, webWidth, categoryType;
+    private int lastHtmlLen, snapHeight, snapCount, retry;
+    private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
     private Date startMonth, endMonth;
-    protected int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
-    protected PDRectangle pageSize;
+    private float zoomScale;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
+    private PDRectangle pageSize;
 
     @FXML
     private VBox mainPane;
     @FXML
-    private ToggleGroup imageGroup, sizeGroup, formatGroup;
+    private ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
-    private ComboBox<String> loadDelayBox, scrollDelayBox, maxDelayBox, retryBox, maxMergedBox;
+    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox, maxMergedBox;
     @FXML
     private TextField addressInput, pathInput, startInput, endInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, keepPageCheck, miaoCheck, fullScreenCheck, expandCommentsCheck;
+    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck;
+    @FXML
+    private CheckBox expandCommentsCheck, expandPicturesCheck;
     @FXML
     protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
     @FXML
@@ -96,6 +100,7 @@ public class WeiboSnapController extends BaseController {
     @Override
     protected void initializeNext() {
         try {
+
             initWebOptions();
             initSnapOptions();
             initPdfOptionsSection();
@@ -110,6 +115,70 @@ public class WeiboSnapController extends BaseController {
         }
     }
 
+    // With this setting, no login is need to access Weibo pages.
+    public void initWeiboEnv() {
+        String path;
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            path = System.getProperty("user.home") + "/AppData/Roaming/mara.mybox.MainApp/webview/localstorage/";
+
+        } else if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+            path = System.getProperty("user.home") + "/.mara.mybox.MainApp/webview/localstorage/";
+
+        } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            checkLogin();
+            return;
+
+        } else {
+            return;
+        }
+
+        try {
+
+            File cert1 = FxmlTools.getUserFile(getClass(), "/cert/local", "cert_local");
+//            logger.debug(cert1.getAbsoluteFile());
+
+            File target1 = new File(path + "https_passport.weibo.com_0.localstorage");
+//            logger.debug(target1.getAbsoluteFile());
+            if (!target1.exists()) {
+                Files.copy(cert1.toPath(), target1.toPath());
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+        try {
+
+            File cert2 = FxmlTools.getUserFile(getClass(), "/cert/local-shm", "cert_shm");
+//            logger.debug(cert2.getAbsoluteFile());
+
+            File target2 = new File(path + "https_passport.weibo.com_0.localstorage-shm");
+//            logger.debug(target2.getAbsoluteFile());
+            if (!target2.exists()) {
+                Files.copy(cert2.toPath(), target2.toPath());
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+        try {
+
+            File cert3 = FxmlTools.getUserFile(getClass(), "/cert/local-wal", "cert_wal");
+//            logger.debug(cert3.getAbsoluteFile());
+
+            File target3 = new File(path + "https_passport.weibo.com_0.localstorage-wal");
+//            logger.debug(target3.getAbsoluteFile());
+            if (!target3.exists()) {
+                Files.copy(cert3.toPath(), target3.toPath());
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    // Can not find the path where SSL files are on Mac, so have not way to set env for Apple users.
     public void checkLogin() {
         if (!AppVaribles.getConfigBoolean("WeiboEverLoginKey", false)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -151,8 +220,11 @@ public class WeiboSnapController extends BaseController {
                         s = s.substring(0, s.length() - "/profile".length());
                     }
                     if ((!s.startsWith("https://weibo.com/")
-                            && !s.startsWith("https://www.weibo.com/"))
-                            || s.length() <= "https://www.weibo.com/".length()) {
+                            && !s.startsWith("http://weibo.com/")
+                            && !s.startsWith("https://www.weibo.com/")
+                            && !s.startsWith("http://www.weibo.com/")
+                            && !s.startsWith("www.weibo.com/")
+                            && !s.startsWith("weibo.com/"))) {
                         addressInput.setStyle(badStyle);
                         webAddress = "";
                     } else {
@@ -188,7 +260,7 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
-        tips = new Tooltip(AppVaribles.getMessage("SnapDelayCommnets"));
+        tips = new Tooltip(AppVaribles.getMessage("SnapDelayComments"));
         tips.setFont(new Font(16));
         FxmlTools.quickTooltip(delayBox, tips);
 
@@ -257,7 +329,7 @@ public class WeiboSnapController extends BaseController {
         });
         scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "100"));
 
-        maxDelayBox.getItems().addAll(Arrays.asList("60", "120", "180", "300", "150", "240"));
+        maxDelayBox.getItems().addAll(Arrays.asList("120", "60", "180", "300", "150", "240"));
         maxDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -268,17 +340,17 @@ public class WeiboSnapController extends BaseController {
                         maxDelayBox.getEditor().setStyle(null);
                         AppVaribles.setConfigValue(WeiboMaxDelayKey, maxDelay + "");
                     } else {
-                        maxDelay = 60;
+                        maxDelay = 120;
                         maxDelayBox.getEditor().setStyle(badStyle);
                     }
 
                 } catch (Exception e) {
-                    maxDelay = 60;
+                    maxDelay = 120;
                     maxDelayBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "60"));
+        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "120"));
 
     }
 
@@ -333,14 +405,58 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void initSnapOptions() {
-        imageGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+        zoomBox.getItems().addAll(Arrays.asList("1.0", "1.5", "2", "1.6", "1.8", "0.8"));
+        zoomBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Toggle> ov,
-                    Toggle old_toggle, Toggle new_toggle) {
-                checkImageOption();
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    zoomScale = Float.valueOf(newValue);
+                    if (zoomScale > 0) {
+                        zoomBox.getEditor().setStyle(null);
+                        AppVaribles.setConfigValue(WeiboZoomKey, zoomScale + "");
+                        if (zoomScale > 2) {
+                            popInformation(AppVaribles.getMessage("TooLargerScale"));
+                        }
+                    } else {
+                        zoomScale = 1.0f;
+                        zoomBox.getEditor().setStyle(badStyle);
+                    }
+
+                } catch (Exception e) {
+                    zoomScale = 1.0f;
+                    zoomBox.getEditor().setStyle(badStyle);
+                }
             }
         });
-        checkImageOption();
+        zoomBox.getSelectionModel().select(0);
+
+        widthBox.getItems().addAll(Arrays.asList("700", "900", "1000", "800", "1200", "1400", "1800", AppVaribles.getMessage("ScreenWidth")));
+        widthBox.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov,
+                    String oldValue, String newValue) {
+                try {
+                    if (newValue.equals(AppVaribles.getMessage("ScreenWidth"))) {
+                        webWidth = -1;
+                        widthBox.getEditor().setStyle(null);
+                        return;
+                    }
+                    webWidth = Integer.valueOf(newValue);
+                    if (webWidth > 0) {
+                        widthBox.getEditor().setStyle(null);
+                    } else {
+                        webWidth = 700;
+                        widthBox.getEditor().setStyle(badStyle);
+                    }
+
+                } catch (Exception e) {
+                    webWidth = 700;
+                    widthBox.getEditor().setStyle(badStyle);
+                }
+            }
+        });
+        widthBox.getSelectionModel().select(0);
 
         formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -370,19 +486,6 @@ public class WeiboSnapController extends BaseController {
         });
         checkThreshold();
 
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("FullScreenComments"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(fullScreenCheck, tips);
-
-    }
-
-    private void checkImageOption() {
-        RadioButton selected = (RadioButton) imageGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("PerScreen").equals(selected.getText())) {
-            imagePerScreen = true;
-        } else if (AppVaribles.getMessage("PerPage").equals(selected.getText())) {
-            imagePerScreen = false;
-        }
     }
 
     private void checkFormat() {
@@ -706,7 +809,7 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void checkTargetFiles() {
-        if (!pdfCheck.isSelected() && !htmlCheck.isSelected()) {
+        if (!pdfCheck.isSelected() && !htmlCheck.isSelected() && !pixCheck.isSelected()) {
             popError(AppVaribles.getMessage("NothingSave"));
             pdfCheck.setStyle(badStyle);
         } else {
@@ -749,6 +852,22 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
+        pixCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                checkTargetFiles();
+            }
+        });
+
+        categoryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                checkCategory();
+            }
+        });
+        checkCategory();
+
         Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
         tips.setFont(new Font(16));
         FxmlTools.quickTooltip(keepPageCheck, tips);
@@ -760,13 +879,28 @@ public class WeiboSnapController extends BaseController {
                 .or(loadDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(scrollDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(maxDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
+                .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(addressInput.textProperty()))
                 .or(addressInput.styleProperty().isEqualTo(badStyle))
+                .or(widthBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(pdfCheck.styleProperty().isEqualTo(badStyle))
         );
 
         exampleButton.disableProperty().bind(startButton.disableProperty());
 
+    }
+
+    private void checkCategory() {
+        RadioButton selected = (RadioButton) categoryGroup.getSelectedToggle();
+        if (AppVaribles.getMessage("InMonthsPaths").equals(selected.getText())) {
+            categoryType = WeiboSnapParameters.FileCategoryType.InMonthsPaths;
+
+        } else if (AppVaribles.getMessage("InYearsPaths").equals(selected.getText())) {
+            categoryType = WeiboSnapParameters.FileCategoryType.InYearsPaths;
+
+        } else if (AppVaribles.getMessage("InOnePath").equals(selected.getText())) {
+            categoryType = WeiboSnapParameters.FileCategoryType.InOnePath;
+        }
     }
 
     @FXML
@@ -804,10 +938,12 @@ public class WeiboSnapController extends BaseController {
                 endMonth = new Date();
             }
             parameters.setEndMonth(endMonth);
+            parameters.setZoomScale(zoomScale);
             parameters.setLoadDelay(loadDelay);
             parameters.setScrollDelay(scrollDelay);
             parameters.setMaxDelay(maxDelay);
-            parameters.setImagePerScreen(imagePerScreen);
+            parameters.setWebWidth(webWidth);
+            parameters.setImagePerScreen(true);
             parameters.setFormat(format);
             parameters.setJpegQuality(jpegQuality);
             parameters.setThreshold(threshold);
@@ -824,7 +960,10 @@ public class WeiboSnapController extends BaseController {
             parameters.setRetry(retry);
             parameters.setMaxMergeSize(maxMergeSize);
             parameters.setExpandComments(expandCommentsCheck.isSelected());
-            parameters.setFullScreen(fullScreenCheck.isSelected());
+            parameters.setFullScreen(false);
+            parameters.setSavePictures(pixCheck.isSelected());
+            parameters.setExpandPicture(expandPicturesCheck.isSelected());
+            parameters.setCategory(categoryType);
             return parameters;
         } catch (Exception e) {
             parameters = null;

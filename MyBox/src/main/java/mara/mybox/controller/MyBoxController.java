@@ -518,7 +518,7 @@ public class MyBoxController extends BaseController {
             public void handle(ActionEvent event) {
                 WeiboSnapController controller
                         = (WeiboSnapController) reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
-                controller.checkLogin();
+                controller.initWeiboEnv();
             }
         });
         networkMenu = new ContextMenu();

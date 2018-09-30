@@ -14,13 +14,21 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int loadDelay, scrollDelay, maxDelay, retry;
-    private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, keepPagePdf;
-    private boolean miao, expandComments, fullScreen;
+    private int loadDelay, scrollDelay, maxDelay, webWidth, retry;
+    private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
+    private boolean miao, expandComments, expandPicture, fullScreen;
     private String webAddress, author, title;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category;
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
+    private float zoomScale;
+
+    public static class FileCategoryType {
+
+        public static int InMonthsPaths = 0;
+        public static int InYearsPaths = 1;
+        public static int InOnePath = 2;
+    }
 
     public File getTargetPath() {
         return targetPath;
@@ -236,6 +244,46 @@ public class WeiboSnapParameters {
 
     public void setFullScreen(boolean fullScreen) {
         this.fullScreen = fullScreen;
+    }
+
+    public boolean isSavePictures() {
+        return savePictures;
+    }
+
+    public void setSavePictures(boolean savePictures) {
+        this.savePictures = savePictures;
+    }
+
+    public boolean isExpandPicture() {
+        return expandPicture;
+    }
+
+    public void setExpandPicture(boolean expandPicture) {
+        this.expandPicture = expandPicture;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
+    }
+
+    public int getWebWidth() {
+        return webWidth;
+    }
+
+    public void setWebWidth(int webWidth) {
+        this.webWidth = webWidth;
+    }
+
+    public float getZoomScale() {
+        return zoomScale;
+    }
+
+    public void setZoomScale(float zoomScale) {
+        this.zoomScale = zoomScale;
     }
 
 }
