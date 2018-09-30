@@ -522,6 +522,7 @@ public class BaseController implements Initializable {
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVaribles.getMessage("TaskRunning"));
                 Optional<ButtonType> result = alert.showAndWait();
+                logger.debug(result.get());
                 if (result.get() == ButtonType.OK && task != null) {
                     task.cancel();
                 } else {

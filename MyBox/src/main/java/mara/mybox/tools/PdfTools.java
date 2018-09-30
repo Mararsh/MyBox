@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.ImagesCombinePdfController;
 import mara.mybox.image.ImageGrayTools;
+import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.WeiboSnapParameters;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +69,7 @@ public class PdfTools {
 
         try {
             int count = 0;
-            try (PDDocument document = new PDDocument()) {
+            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
                 PDPageContentStream content;
                 PDFont font = PDType1Font.HELVETICA;
                 PDDocumentInformation info = new PDDocumentInformation();
@@ -136,7 +137,7 @@ public class PdfTools {
     public static boolean images2Pdf(List<Image> images, File targetFile, WeiboSnapParameters p) {
         try {
             int count = 0;
-            try (PDDocument document = new PDDocument()) {
+            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
                 PDPageContentStream content;
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
@@ -277,12 +278,12 @@ public class PdfTools {
                     return PDType1Font.TIMES_ROMAN;
             }
             if (fontFile != null) {
-                logger.debug(fontFile);
+//                logger.debug(fontFile);
                 font = PDType0Font.load(document, new File(fontFile));
             }
         } catch (Exception e) {
         }
-        logger.debug(font.getName());
+//        logger.debug(font.getName());
         return font;
     }
 
@@ -327,7 +328,7 @@ public class PdfTools {
         PDDocument document = null;
         try {
             // 加载 pdf 文档
-            document = PDDocument.load(fileStream);
+            document = PDDocument.load(fileStream, AppVaribles.PdfMemUsage);
             int endPage = null == document ? Integer.MAX_VALUE : document.getNumberOfPages();
             PDFTextStripper stripper = new PDFTextStripper();
             stripper.setSortByPosition(sort);

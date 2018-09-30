@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
@@ -9,18 +10,26 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
@@ -30,13 +39,15 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public class PdfSplitController extends PdfBaseController {
 
+    final private String TempDirKey, AuthorKey;
     private int splitType, pagesNumber, filesNumber;
     private List<Integer> startEndList;
+    private File tempdir;
 
     @FXML
     private ToggleGroup splitGroup;
     @FXML
-    private TextField PagesNumberInput, FilesNumberInput, ListInput, authorInput;
+    private TextField PagesNumberInput, FilesNumberInput, ListInput, authorInput, tempDirInput;
 
     public static class PdfSplitType {
 
@@ -47,7 +58,8 @@ public class PdfSplitController extends PdfBaseController {
     }
 
     public PdfSplitController() {
-
+        TempDirKey = "TempDirKey";
+        AuthorKey = "AuthorKey";
     }
 
     @Override
@@ -106,6 +118,29 @@ public class PdfSplitController extends PdfBaseController {
                     checkStartEndList();
                 }
             });
+
+            tempDirInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    try {
+                        final File file = new File(newValue);
+                        tempDirInput.setStyle(null);
+                        AppVaribles.setConfigValue(TempDirKey, file.getPath());
+
+                        tempdir = file;
+                    } catch (Exception e) {
+                    }
+                }
+            });
+            tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+
+            authorInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    AppVaribles.setConfigValue(AuthorKey, newValue);
+                }
+            });
+            authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -194,6 +229,28 @@ public class PdfSplitController extends PdfBaseController {
         }
     }
 
+    @FXML
+    protected void selectTemp(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+
+            tempDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
 //    @Override
 //    protected void sourceFileChanged(final File file) {
 //        super.sourceFileChanged(file);
@@ -213,6 +270,13 @@ public class PdfSplitController extends PdfBaseController {
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
             currentParameters.targetPath = new File(currentParameters.targetPath).getAbsolutePath();
+
+            if (tempdir != null) {
+                if (!tempdir.exists()) {
+                    tempdir.mkdirs();
+                }
+            }
+            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(tempdir);
 
             updateInterface("Started");
             task = new Task<Void>() {
@@ -287,7 +351,8 @@ public class PdfSplitController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
+                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
+                                AppVaribles.PdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -316,9 +381,11 @@ public class PdfSplitController extends PdfBaseController {
 
                 private void splitByPagesSize(PDDocument source) {
                     try {
+
                         Splitter splitter = new Splitter();
                         splitter.setStartPage(currentParameters.startPage + 1);
                         splitter.setEndPage(currentParameters.toPage + 1);
+                        splitter.setMemoryUsageSetting(memSettings);
                         splitter.setSplitAtPage(pagesNumber);
                         List<PDDocument> docs = splitter.split(source);
                         writeFiles(docs);
@@ -339,6 +406,7 @@ public class PdfSplitController extends PdfBaseController {
                         Splitter splitter = new Splitter();
                         splitter.setStartPage(currentParameters.startPage + 1);
                         splitter.setEndPage(currentParameters.toPage + 1);
+                        splitter.setMemoryUsageSetting(memSettings);
                         splitter.setSplitAtPage(pagesNumber);
                         List<PDDocument> docs = splitter.split(source);
                         writeFiles(docs);
@@ -361,6 +429,7 @@ public class PdfSplitController extends PdfBaseController {
                             Splitter splitter = new Splitter();
                             splitter.setStartPage(start + 1);
                             splitter.setEndPage(end + 1);
+                            splitter.setMemoryUsageSetting(memSettings);
                             splitter.setSplitAtPage(end - start + 1);
                             docs.add(splitter.split(source).get(0));
                         }
@@ -377,11 +446,28 @@ public class PdfSplitController extends PdfBaseController {
                         }
                         files = new ArrayList<>();
                         currentParameters.currentNameNumber = 0;
+                        PDDocumentInformation info = new PDDocumentInformation();
+                        info.setCreationDate(Calendar.getInstance());
+                        info.setModificationDate(Calendar.getInstance());
+                        info.setProducer("MyBox v" + CommonValues.AppVersion);
+                        info.setAuthor(authorInput.getText());
                         for (PDDocument doc : docs) {
                             String pageNumber = ValueTools.fillNumber(currentParameters.currentNameNumber,
                                     (filesNumber + "").length());
                             String fname = currentParameters.targetPrefix + "_" + pageNumber + ".pdf";
                             String fullname = currentParameters.targetPath + "/" + fname;
+
+                            doc.setDocumentInformation(info);
+
+                            PDPage page = doc.getPage(0);
+                            PDPageXYZDestination dest = new PDPageXYZDestination();
+                            dest.setPage(page);
+                            dest.setZoom(1f);
+                            dest.setTop((int) page.getCropBox().getHeight());
+                            PDActionGoTo action = new PDActionGoTo();
+                            action.setDestination(dest);
+                            doc.getDocumentCatalog().setOpenAction(action);
+
                             doc.save(fullname);
                             doc.close();
                             files.add(fname);

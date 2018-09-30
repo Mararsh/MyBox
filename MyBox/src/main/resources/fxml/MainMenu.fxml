@@ -119,8 +119,19 @@
                             </toggleGroup>
                         </RadioMenuItem>
                         <RadioMenuItem fx:id="replaceBlackMenu" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <RadioMenuItem fx:id="pdf500mbRadio" mnemonicParsing="false" onAction="#PdfMem500MB" text="%PDFMem500MB">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="pdfMemGroup" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem fx:id="pdf1gbRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="%PDFMem1GB" toggleGroup="$pdfMemGroup" />
+                  <RadioMenuItem fx:id="pdf2gbRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="%PDFMem2GB" toggleGroup="$pdfMemGroup" />
+                  <RadioMenuItem fx:id="pdfUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%PDFMemUnlimit" toggleGroup="$pdfMemGroup" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                     </items>
                 </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">

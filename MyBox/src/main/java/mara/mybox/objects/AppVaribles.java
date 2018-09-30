@@ -16,6 +16,7 @@ import static mara.mybox.objects.CommonValues.BundleZhCN;
 import mara.mybox.tools.ConfigTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -35,6 +36,7 @@ public class AppVaribles {
     public static boolean showComments = true;
     public static boolean alphaAsBlack = false;
     public static int commentsDelay = 3000;
+    public static MemoryUsageSetting PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
 
     public AppVaribles() {
     }
@@ -42,6 +44,21 @@ public class AppVaribles {
     public static void initAppVaribles() {
         showComments = getConfigBoolean("ShowComments", true);
         alphaAsBlack = getConfigBoolean("AlphaAsBlack", false);
+        String pm = getConfigValue("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+                break;
+            case "2GB":
+                PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+                break;
+            case "unlimit":
+                PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+                break;
+            case "500MB":
+            default:
+                PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+        }
         setCurrentBundle();
 
     }

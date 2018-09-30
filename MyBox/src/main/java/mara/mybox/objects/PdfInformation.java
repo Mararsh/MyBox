@@ -36,7 +36,7 @@ public class PdfInformation {
 
     public void loadDocument(String password) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 if (docInfo.getCreationDate() != null) {
                     createTime = docInfo.getCreationDate().getTime();

@@ -12,6 +12,7 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -127,7 +128,8 @@ public class PdfExtractTextsController extends PdfBaseController {
                         finalTargetName = currentParameters.targetPath + "/"
                                 + currentParameters.targetPrefix + ".txt";
                         FileWriter writer = new FileWriter(finalTargetName, false);
-                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
+                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
+                                AppVaribles.PdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }

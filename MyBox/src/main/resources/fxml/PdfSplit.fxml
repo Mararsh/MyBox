@@ -92,11 +92,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%Author" />
-                                                <TextField fx:id="authorInput" prefHeight="30.0" prefWidth="240.0">
+                                                <TextField fx:id="authorInput" HBox.hgrow="ALWAYS">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </TextField>
+                                                <Label text="%TempDir" />
+                                                <TextField fx:id="tempDirInput" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectTemp" text="%Select..." />
                                             </children>
                                         </HBox>
                                     </children>

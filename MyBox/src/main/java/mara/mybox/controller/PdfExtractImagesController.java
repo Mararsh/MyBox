@@ -19,6 +19,7 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -135,7 +136,8 @@ public class PdfExtractImagesController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
+                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
+                                AppVaribles.PdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }

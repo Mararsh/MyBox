@@ -14,6 +14,7 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -123,7 +124,8 @@ public class PdfConvertImagesController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
+                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
+                                AppVaribles.PdfMemUsage)) {
                             if (actualParameters.acumDigit < 1) {
                                 actualParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileWriter;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -15,6 +16,8 @@ import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.getConfigValue;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -29,7 +32,7 @@ public class MainMenuController extends BaseController {
     @FXML
     private RadioMenuItem chineseMenuItem, englishMenuItem;
     @FXML
-    private RadioMenuItem replaceWhiteMenu, replaceBlackMenu;
+    private RadioMenuItem replaceWhiteMenu, replaceBlackMenu, pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio;
     @FXML
     private CheckMenuItem showCommentsCheck, stopAlarmCheck;
     @FXML
@@ -52,6 +55,22 @@ public class MainMenuController extends BaseController {
                 replaceBlackMenu.setSelected(true);
             } else {
                 replaceWhiteMenu.setSelected(true);
+            }
+
+            String pm = getConfigValue("PdfMemDefault", "1GB");
+            switch (pm) {
+                case "1GB":
+                    pdf1gbRadio.setSelected(true);
+                    break;
+                case "2GB":
+                    pdf2gbRadio.setSelected(true);
+                    break;
+                case "unlimit":
+                    pdfUnlimitRadio.setSelected(true);
+                    break;
+                case "500MB":
+                default:
+                    pdf500mbRadio.setSelected(true);
             }
 
             settingsMenu.setOnShowing(new EventHandler<Event>() {
@@ -108,6 +127,48 @@ public class MainMenuController extends BaseController {
     private void replaceBlackAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", true);
         AppVaribles.alphaAsBlack = true;
+    }
+
+    @FXML
+    private void PdfMem500MB(ActionEvent event) {
+        AppVaribles.setConfigValue("PdfMemDefault", "500MB");
+        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+    }
+
+    @FXML
+    private void PdfMem1GB(ActionEvent event) {
+        AppVaribles.setConfigValue("PdfMemDefault", "1GB");
+        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+    }
+
+    @FXML
+    private void PdfMem2GB(ActionEvent event) {
+        AppVaribles.setConfigValue("PdfMemDefault", "2GB");
+        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+    }
+
+    @FXML
+    private void pdfMemUnlimit(ActionEvent event) {
+        AppVaribles.setConfigValue("PdfMemDefault", "unlimit");
+        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+    }
+
+    @FXML
+    private void clearSettings(ActionEvent event) {
+        try {
+            File configFile = new File(CommonValues.UserConfigFile);
+            if (!configFile.exists()) {
+                configFile.createNewFile();
+            } else {
+                try (FileWriter fileWriter = new FileWriter(configFile)) {
+                    fileWriter.write("");
+                    fileWriter.flush();
+                }
+                popInformation(AppVaribles.getMessage("Successful"));
+            }
+        } catch (Exception e) {
+            popError(e.toString());
+        }
     }
 
     @FXML
@@ -432,9 +493,7 @@ public class MainMenuController extends BaseController {
         try {
 //            logger.debug("stageReloading");
 
-            parentController.stageClosing();
-
-            return true;
+            return parentController.stageClosing();
 
         } catch (Exception e) {
             return false;

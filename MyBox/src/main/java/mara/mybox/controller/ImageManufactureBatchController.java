@@ -559,7 +559,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
             }
             ImageFileWriters.writeImageFile(target, targetFormat, currentParameters.finalTargetName);
             generatedFiles.add(currentParameters.finalTargetName);
-            return AppVaribles.getMessage("Succeeded");
+            return AppVaribles.getMessage("Successful");
         } catch (Exception e) {
             logger.error(e.toString());
             return AppVaribles.getMessage("Failed");

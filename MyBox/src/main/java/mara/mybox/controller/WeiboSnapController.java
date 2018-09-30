@@ -49,6 +49,7 @@ public class WeiboSnapController extends BaseController {
 
     private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
     private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey, WeiboEverLoginKey;
+    final private String TempDirKey, AuthorKey;
     private int loadDelay, scrollDelay, maxDelay, webWidth, categoryType;
     private int lastHtmlLen, snapHeight, snapCount, retry;
     private boolean isImageSize;
@@ -58,15 +59,16 @@ public class WeiboSnapController extends BaseController {
     private float zoomScale;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize;
     private PDRectangle pageSize;
+    private File tempdir;
 
     @FXML
     private VBox mainPane;
     @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
-    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox, maxMergedBox;
+    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox;
     @FXML
-    private TextField addressInput, pathInput, startInput, endInput;
+    private TextField addressInput, pathInput, startInput, endInput, tempDirInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
@@ -91,6 +93,8 @@ public class WeiboSnapController extends BaseController {
         WeiboRetryKey = "WeiboRetryKey";
         WeiboMaxMergeKey = "WeiboMaxMergeKey";
         WeiboEverLoginKey = "WeiboEverLoginKey";
+        TempDirKey = "TempDirKey";
+        AuthorKey = "AuthorKey";
     }
 
     @Override
@@ -547,35 +551,25 @@ public class WeiboSnapController extends BaseController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setConfigValue(WeiboAuthorKey, newValue);
+                AppVaribles.setConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getConfigValue(WeiboAuthorKey, ""));
+        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
-        tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(maxMergedBox, tips);
-        maxMergedBox.getItems().addAll(Arrays.asList("500", "600", "400", "300", "700", "1000"));
-        maxMergedBox.valueProperty().addListener(new ChangeListener<String>() {
+        tempDirInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 try {
-                    maxMergeSize = Integer.valueOf(newValue);
-                    if (maxMergeSize > 0) {
-                        maxMergedBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(WeiboMaxMergeKey, newValue);
-                    } else {
-                        maxMergeSize = 400;
-                        maxMergedBox.getEditor().setStyle(badStyle);
-                    }
+                    final File file = new File(newValue);
+                    tempDirInput.setStyle(null);
+                    AppVaribles.setConfigValue(TempDirKey, file.getPath());
+
+                    tempdir = file;
                 } catch (Exception e) {
-                    maxMergeSize = 400;
-                    maxMergedBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        maxMergedBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxMergeKey, "400"));
+        tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
 
     }
 
@@ -871,6 +865,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setSavePictures(pixCheck.isSelected());
             parameters.setExpandPicture(expandPicturesCheck.isSelected());
             parameters.setCategory(categoryType);
+            parameters.setTempdir(tempdir);
             return parameters;
         } catch (Exception e) {
             parameters = null;
@@ -905,6 +900,28 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected void callMiao(MouseEvent event) {
         FxmlTools.miao3();
+    }
+
+    @FXML
+    protected void selectTemp(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+
+            tempDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML

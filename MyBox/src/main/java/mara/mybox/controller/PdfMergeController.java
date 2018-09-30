@@ -10,28 +10,36 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
 /**
  * @Author Mara
@@ -41,10 +49,12 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  */
 public class PdfMergeController extends PdfBaseController {
 
+    final private String TempDirKey, AuthorKey;
     private int pageWidth, pageHeight;
     private File targetFile;
     private PDRectangle pageSize;
     private boolean notChange;
+    private File tempdir;
 
     @FXML
     private Button openTargetButton, saveButton;
@@ -53,10 +63,13 @@ public class PdfMergeController extends PdfBaseController {
     @FXML
     private TableColumn<FileInformation, String> fileColumn, pixelsColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
     @FXML
-    private TextField authorInput;
+    private TextField authorInput, tempDirInput;
+    @FXML
+    private CheckBox deleteCheck;
 
     public PdfMergeController() {
-
+        TempDirKey = "TempDirKey";
+        AuthorKey = "AuthorKey";
     }
 
     @Override
@@ -75,6 +88,20 @@ public class PdfMergeController extends PdfBaseController {
     private void initSourceSection() {
         try {
             sourceFilesInformation = FXCollections.observableArrayList();
+            sourceFilesInformation.addListener(new ListChangeListener<FileInformation>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends FileInformation> change) {
+                    long size = 0;
+                    if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+                        size = 0;
+                    } else {
+                        for (FileInformation source : sourceFilesInformation) {
+                            size += source.getFile().length();
+                        }
+                    }
+                    bottomLabel.setText(AppVaribles.getMessage("TotalSize") + ": " + FileTools.showFileSize(size));
+                }
+            });
 
             fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
             modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("modifyTime"));
@@ -130,6 +157,28 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     private void initOptionsSection() {
+        tempDirInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                try {
+                    final File file = new File(newValue);
+                    tempDirInput.setStyle(null);
+                    AppVaribles.setConfigValue(TempDirKey, file.getPath());
+
+                    tempdir = file;
+                } catch (Exception e) {
+                }
+            }
+        });
+        tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+
+        authorInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                AppVaribles.setConfigValue(AuthorKey, newValue);
+            }
+        });
+        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -183,7 +232,7 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     @FXML
-    private void clearAction(ActionEvent event) {
+    private void clearAction() {
         sourceFilesInformation.clear();
         sourceTable.refresh();
     }
@@ -285,6 +334,28 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     @FXML
+    protected void selectTemp(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+
+            tempDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
     protected void openTargetAction(ActionEvent event) {
         if (!targetFile.exists()) {
             openTargetButton.setDisable(true);
@@ -307,18 +378,21 @@ public class PdfMergeController extends PdfBaseController {
         Task saveTask = new Task<Void>() {
             private boolean fail;
             private PDDocument document;
+            private String errorString;
 
             @Override
             protected Void call() throws Exception {
                 try {
+                    final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(tempdir);
+
                     PDFMergerUtility mergePdf = new PDFMergerUtility();
                     for (FileInformation source : sourceFilesInformation) {
                         mergePdf.addSource(source.getFile());
                     }
                     mergePdf.setDestinationFileName(targetFile.getAbsolutePath());
-                    mergePdf.mergeDocuments(null);
+                    mergePdf.mergeDocuments(memSettings);
 
-                    try (PDDocument doc = PDDocument.load(targetFile)) {
+                    try (PDDocument doc = PDDocument.load(targetFile, memSettings)) {
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());
@@ -326,12 +400,39 @@ public class PdfMergeController extends PdfBaseController {
                         info.setAuthor(authorInput.getText());
                         doc.setDocumentInformation(info);
                         document = doc;
+
+                        PDPage page = doc.getPage(0);
+                        PDPageXYZDestination dest = new PDPageXYZDestination();
+                        dest.setPage(page);
+                        dest.setZoom(1f);
+                        dest.setTop((int) page.getCropBox().getHeight());
+                        PDActionGoTo action = new PDActionGoTo();
+                        action.setDestination(dest);
+                        doc.getDocumentCatalog().setOpenAction(action);
+
                         doc.save(targetFile);
                     }
+
+                    if (deleteCheck.isSelected()) {
+                        for (FileInformation source : sourceFilesInformation) {
+                            try {
+                                source.getFile().delete();
+                            } catch (Exception e) {
+                            }
+                        }
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                clearAction();
+                            }
+                        });
+                    }
+
                     fail = false;
 
                 } catch (Exception e) {
                     fail = true;
+                    errorString = e.toString();
                     logger.error(e.toString());
                 }
                 Platform.runLater(new Runnable() {
@@ -342,10 +443,11 @@ public class PdfMergeController extends PdfBaseController {
                                 Desktop.getDesktop().browse(targetFile.toURI());
                                 openTargetButton.setDisable(false);
                             } else {
-                                popError(AppVaribles.getMessage("ImageCombinePdfFail"));
+                                popError(errorString);
                             }
                         } catch (Exception e) {
                             logger.error(e.toString());
+                            popError(e.toString());
                         }
                     }
                 });

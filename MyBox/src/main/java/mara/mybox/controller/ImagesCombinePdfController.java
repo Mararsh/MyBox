@@ -76,7 +76,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
     private final ObservableList<ImageFileInformation> sourceImages = FXCollections.observableArrayList();
     private final String ImagesCombinePdfPathKey, ImageCombineLoadImagesKey, ImageCombineTargetPathKey;
-    private final String ImageCombineSizeKey, ImageCombineMarginsKey;
+    private final String ImageCombineSizeKey, ImageCombineMarginsKey, AuthorKey;
     private final int snapSize = 150;
     private File targetFile;
 
@@ -119,6 +119,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
         ImageCombineTargetPathKey = "ImageCombineTargetPathKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         ImageCombineSizeKey = "ImageCombineSizeKey";
+        AuthorKey = "AuthorKey";
     }
 
     @Override
@@ -209,6 +210,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 }
             }
         });
+
         saveButton.disableProperty().bind(
                 Bindings.isEmpty(sourceImages)
                         .or(Bindings.isEmpty(targetFileInput.textProperty()))
@@ -377,6 +379,14 @@ public class ImagesCombinePdfController extends ImageBaseController {
             FxmlTools.setComments(fontBox, tips);
 
         }
+
+        authorInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                AppVaribles.setConfigValue(AuthorKey, newValue);
+            }
+        });
+        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -836,7 +846,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
             protected Void call() throws Exception {
                 try {
                     int count = 0;
-                    try (PDDocument document = new PDDocument()) {
+                    try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
                         PDPageContentStream content;
                         PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
                         PDDocumentInformation info = new PDDocumentInformation();

@@ -44,7 +44,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  */
 public class PdfCompressImagesController extends PdfBaseController {
 
-    protected String PdfCompressImagesSourcePathKey;
+    protected String PdfCompressImagesSourcePathKey, AuthorKey;
     protected int jpegQuality, format, threshold;
     protected File targetFile;
 
@@ -65,7 +65,7 @@ public class PdfCompressImagesController extends PdfBaseController {
     public PdfCompressImagesController() {
         PdfCompressImagesSourcePathKey = "PdfCompressImagesSourcePathKey";
         targetPathKey = "PDFCompressImagesPathKey";
-
+        AuthorKey = "AuthorKey";
     }
 
     @Override
@@ -128,6 +128,14 @@ public class PdfCompressImagesController extends PdfBaseController {
             }
         });
         checkThreshold();
+
+        authorInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                AppVaribles.setConfigValue(AuthorKey, newValue);
+            }
+        });
+        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -312,7 +320,8 @@ public class PdfCompressImagesController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password)) {
+                        try (PDDocument doc = PDDocument.load(currentParameters.sourceFile,
+                                currentParameters.password, AppVaribles.PdfMemUsage)) {
                             document = doc;
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
@@ -324,6 +333,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                             Splitter splitter = new Splitter();
                             splitter.setStartPage(currentParameters.startPage + 1);
                             splitter.setEndPage(currentParameters.toPage + 1);
+                            splitter.setMemoryUsageSetting(AppVaribles.PdfMemUsage);
                             splitter.setSplitAtPage(currentParameters.toPage - currentParameters.startPage + 1);
                             try (PDDocument newDoc = splitter.split(document).get(0)) {
                                 newDoc.save(targetFile);
@@ -331,7 +341,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                         }
 
                         currentParameters.currentTotalHandled = 0;
-                        try (PDDocument doc = PDDocument.load(targetFile)) {
+                        try (PDDocument doc = PDDocument.load(targetFile, AppVaribles.PdfMemUsage)) {
                             PDDocumentInformation info = new PDDocumentInformation();
                             info.setCreationDate(Calendar.getInstance());
                             info.setModificationDate(Calendar.getInstance());

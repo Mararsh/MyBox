@@ -55,9 +55,10 @@
                                         </CheckBox>
                                         <CheckBox fx:id="expandPicturesCheck" mnemonicParsing="false" selected="true" text="%ExpandPictures" />
                                         <Label text="%ScrollDelay">
-                                 <HBox.margin>
-                                    <Insets left="60.0" />
-                                 </HBox.margin></Label>
+                                            <HBox.margin>
+                                                <Insets left="60.0" />
+                                            </HBox.margin>
+                                        </Label>
                                         <ComboBox fx:id="scrollDelayBox" editable="true" prefWidth="100.0" />
                                     </children>
                                 </HBox>
@@ -97,7 +98,7 @@
                                             </padding>
                                         </Label>
                                         <ComboBox fx:id="widthBox" editable="true" prefHeight="30.0" prefWidth="145.0" />
-                              <Label text="%SnapWidthComments" />
+                                        <Label text="%SnapWidthComments" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -163,19 +164,17 @@
                                                 <Insets left="10.0" />
                                             </padding>
                                         </Label>
-                                        <TextField fx:id="authorInput" prefHeight="30.0" prefWidth="325.0" promptText="Mara">
+                                        <TextField fx:id="authorInput" prefHeight="30.0" prefWidth="200.0" promptText="Mara">
                                             <HBox.margin>
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
-                                        <Label text="%MaximumSizeMergedPDF">
-                                            <HBox.margin>
-                                                <Insets left="30.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <ComboBox fx:id="maxMergedBox" editable="true" prefWidth="100.0" />
+                                        <Label text="%TempDir" />
+                                        <TextField fx:id="tempDirInput" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#selectTemp" text="%Select..." />
                                     </children>
                                 </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                     </content>
@@ -189,6 +188,13 @@
                                         <Label text="%FilesPath" />
                                         <TextField fx:id="pathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Button mnemonicParsing="false" onAction="#selectPath" text="%Select..." />
+                                        <Label text="%CategoryFiles" />
+                                        <RadioButton fx:id="monthsPathsRadio" mnemonicParsing="false" selected="true" text="%InMonthsPaths">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="categoryGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="onePathRadio" mnemonicParsing="false" text="%InOnePath" toggleGroup="$categoryGroup" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -199,32 +205,22 @@
                                         <CheckBox fx:id="keepPageCheck" mnemonicParsing="false" text="%KeepEachPagePdf" />
                                     </children>
                                 </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                           <children>
-                              <Label text="%CategoryFiles" />
-                              <RadioButton fx:id="monthsPathsRadio" mnemonicParsing="false" selected="true" text="%InMonthsPaths">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="categoryGroup" />
-                                 </toggleGroup>
-                              </RadioButton>
-                              <RadioButton fx:id="onePathRadio" mnemonicParsing="false" text="%InOnePath" toggleGroup="$categoryGroup" />
-                           </children>
-                        </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                     </content>
                 </TitledPane>
-              <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
-                  <children>
-                      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
-                      <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
-                          <HBox.margin>
-                              <Insets right="40.0" />
-                          </HBox.margin>
-                      </Button>
-                      <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
-                  </children>
-              </HBox>
+                <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
+                    <children>
+                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
+                        <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
+                            <HBox.margin>
+                                <Insets right="40.0" />
+                            </HBox.margin>
+                        </Button>
+                        <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
+                    </children>
+                </HBox>
             </children>
             <BorderPane.margin>
                 <Insets />

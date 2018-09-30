@@ -22,6 +22,7 @@ public class WeiboSnapParameters {
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
     private float zoomScale;
+    private File tempdir;
 
     public static class FileCategoryType {
 
@@ -284,6 +285,14 @@ public class WeiboSnapParameters {
 
     public void setZoomScale(float zoomScale) {
         this.zoomScale = zoomScale;
+    }
+
+    public File getTempdir() {
+        return tempdir;
+    }
+
+    public void setTempdir(File tempdir) {
+        this.tempdir = tempdir;
     }
 
 }
