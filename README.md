@@ -5,8 +5,11 @@
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
+
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
+
 [MyBox-3.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-3.3-exe.zip) 。
+
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
