@@ -50,12 +50,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebErrorEvent;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -66,6 +69,8 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.tools.ConfigTools;
+import static mara.mybox.tools.ConfigTools.checkWeiboPassport;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.FxmlImageTools;
@@ -81,10 +86,11 @@ import mara.mybox.tools.PdfTools;
 public class HtmlEditorController extends TextEditorController {
 
     private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
+    private final String WeiBoPassportChecked;
     private WebEngine webEngine;
     private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
     protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
-    private boolean isSettingValues, isOneImage;
+    private boolean isSettingValues, isOneImage, isLoadingWeiboPassport;
     private URL url;
     private List<Image> images;
     private File targetFile;
@@ -127,6 +133,7 @@ public class HtmlEditorController extends TextEditorController {
         HtmlSnapDelayKey = "HtmlSnapDelayKey";
         HtmlLastUrlsKey = "HtmllastUrlKey";
         HtmlPdfPathKey = "HtmlPdfPathKey";
+        WeiBoPassportChecked = "WeiBoPassportChecked";
 
         fileExtensionFilter = new ArrayList() {
             {
@@ -149,6 +156,7 @@ public class HtmlEditorController extends TextEditorController {
             fontSize = 14;
             zoomScale = 1.0f;
 
+            initHtmlEdtior();
             initCodeEdtior();
             initBroswer();
 
@@ -295,7 +303,7 @@ public class HtmlEditorController extends TextEditorController {
                                         }
                                         AppVaribles.setConfigValue(HtmlLastUrlsKey, urlsString);
                                     } catch (Exception e) {
-
+                                        logger.debug(e.toString());
                                     }
                                     isSettingValues = false;
                                 } else {
@@ -362,36 +370,112 @@ public class HtmlEditorController extends TextEditorController {
             FxmlTools.setComments(snapBar, tips);
 
             webEngine = webView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
                 @Override
                 public void changed(ObservableValue ov, State oldState, State newState) {
-                    try {
-                        logger.debug(newState.name());
-                        logger.debug((String) webEngine.executeScript("document.cookie;"));
+//                    logger.debug(newState.name());
+                    switch (newState) {
+                        case SUCCEEDED:
+//                            logger.debug((String) webEngine.executeScript("document.cookie;"));
+//                            logger.debug((String) webEngine.executeScript("document.referrer;"));
+                            if (isLoadingWeiboPassport) {
+                                isLoadingWeiboPassport = false;
+                                Timer loadTimer = new Timer();
+                                if (ConfigTools.isOtherPlatforms()) {
+                                    loadTimer.schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            AppVaribles.setConfigValue("WeiboPassportChecked", "true");
+                                            logger.debug(checkWeiboPassport());
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (checkWeiboPassport()) {
+                                                        webEngine.load(url.toString());
+                                                        if (loadingController != null && loadingController.getMyStage() != null) {
+                                                            loadingController.getMyStage().close();
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }, 10000);
 
-                        switch (newState) {
-                            case SUCCEEDED:
-                                browserActionBar.setDisable(false);
-//                                bottomText.setText(AppVaribles.getMessage("Loaded"));
+                                } else {
+                                    loadTimer.schedule(new TimerTask() {
+                                        private boolean done = false;
+
+                                        @Override
+                                        public void run() {
+                                            if (done) {
+                                                this.cancel();
+                                            } else {
+                                                Platform.runLater(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (checkWeiboPassport()) {
+                                                            webEngine.load(url.toString());
+                                                            done = true;
+                                                            if (loadingController != null && loadingController.getMyStage() != null) {
+                                                                loadingController.getMyStage().close();
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }, 1000, 1000);
+                                }
+                            } else {
                                 try {
                                     String s = (String) webEngine.executeScript("getComputedStyle(document.body).fontSize");
                                     fontSize = Integer.valueOf(s.substring(0, s.length() - 2));
                                 } catch (Exception e) {
                                     fontSize = 14;
                                 }
-                                break;
-                            case RUNNING:
-//                                bottomText.setText(AppVaribles.getMessage("Loading..."));
-                                browserActionBar.setDisable(true);
-                                break;
-                            default:
-                                browserActionBar.setDisable(true);
-                                break;
-                        }
+                                browserActionBar.setDisable(false);
+                                bottomText.setText(AppVaribles.getMessage("Loaded"));
+                                if (loadingController != null && loadingController.getMyStage() != null) {
+                                    loadingController.getMyStage().close();
+                                }
+                            }
 
-                    } catch (Exception e) {
-                        logger.error(e.toString());
+                            break;
+                        case RUNNING:
+                            bottomText.setText(AppVaribles.getMessage("Loading..."));
+                            browserActionBar.setDisable(true);
+                            break;
+                        default:
+                            browserActionBar.setDisable(true);
+                            break;
                     }
+
+                }
+            });
+
+            webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+
+                @Override
+                public void handle(WebEvent<String> event) {
+                    logger.debug("setOnAlert " + event.getData());
+                }
+            });
+
+            webEngine.setOnError(new EventHandler<WebErrorEvent>() {
+
+                @Override
+                public void handle(WebErrorEvent event) {
+                    logger.debug("onError " + event.getMessage());
+                }
+            });
+
+            webEngine.setConfirmHandler(new Callback<String, Boolean>() {
+
+                @Override
+                public Boolean call(String param) {
+                    logger.debug("setConfirmHandler " + param);
+                    return null;
                 }
             });
 
@@ -401,19 +485,17 @@ public class HtmlEditorController extends TextEditorController {
                     logger.debug("Received exception: " + t1.getMessage());
                 }
             });
-
-            loadedCompletely = new SimpleBooleanProperty(false);
-            loadedCompletely.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    if (loadedCompletely.getValue()) {
-                    } else {
-
-                    }
-
-                }
-            });
-
+//            loadedCompletely = new SimpleBooleanProperty(false);
+//            loadedCompletely.addListener(new ChangeListener<Boolean>() {
+//                @Override
+//                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+//                    if (loadedCompletely.getValue()) {
+//                    } else {
+//
+//                    }
+//
+//                }
+//            });
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -465,10 +547,11 @@ public class HtmlEditorController extends TextEditorController {
                     contents.append(lineTxt).append(System.getProperty("line.separator"));
                 }
             }
-            String conString = contents.toString();
+            final String conString = contents.toString();
             htmlEdior.setHtmlText(conString);
             codesArea.setText(conString);
             webEngine.loadContent(conString);
+
             lastCodesLen = lastHtmlLen = contents.length();
             fileChanged.set(false);
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
@@ -482,22 +565,47 @@ public class HtmlEditorController extends TextEditorController {
 
     @FXML
     private void loadAction(ActionEvent event) {
+        isLoadingWeiboPassport = false;
+        loadingController = openHandlingStage(Modality.NONE, AppVaribles.getMessage("Loading..."));
+        bottomText.setText(AppVaribles.getMessage("Loading..."));
         try {
-            webEngine.load(url.toString());
+            webEngine.getLoadWorker().cancel();
+            Thread.sleep(1000);
+            String urlString = url.toString();
+            if (urlString.contains("weibo.com/") && !checkWeiboPassport()) {
+                isLoadingWeiboPassport = true;
+                bottomText.setText(AppVaribles.getMessage("LoadingWeiboCertificate"));
+                logger.debug(AppVaribles.getMessage("LoadingWeiboCertificate"));
+                loadingController.setInfo(AppVaribles.getMessage("LoadingWeiboCertificate"));
+                webEngine.load("https://passport.weibo.com/visitor/visitor?entry=miniblog");
+            } else {
+                webEngine.load(urlString);
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
+            if (loadingController != null && loadingController.getMyStage() != null) {
+                loadingController.getMyStage().close();
+            }
         }
 
     }
 
     @FXML
-    private void updateBrowser(ActionEvent event) {
-        try {
-            logger.debug("updateBrowser");
-            webEngine.loadContent(htmlEdior.getHtmlText());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    private void updateBrowser(ActionEvent event
+    ) {
+        webEngine.loadContent(htmlEdior.getHtmlText());
+//        Platform.runLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    logger.debug("updateBrowser");
+//
+//                } catch (Exception e) {
+//                    logger.error(e.toString());
+//                }
+//            }
+//        });
 
     }
 
@@ -887,7 +995,16 @@ public class HtmlEditorController extends TextEditorController {
     @Override
     public boolean stageClosing() {
         super.stageClosing();
-        webEngine.getLoadWorker().cancel();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    webEngine.getLoadWorker().cancel();
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            }
+        });
         if (snapingStage != null) {
             snapingStage.close();
         }

@@ -19,7 +19,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -30,15 +34,20 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebErrorEvent;
+import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.WeiboSnapParameters;
+import mara.mybox.tools.ConfigTools;
+import static mara.mybox.tools.ConfigTools.checkWeiboPassport;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlImageTools;
@@ -64,7 +73,7 @@ public class WeiboSnapRunController extends BaseController {
     private int savedHtmlCount, savedMonthPdfCount, savedPagePdfCount, completedMonthsCount, totalMonthsCount, savedPixCount;
     private Timer loadTimer, snapTimer, expandTImer;
     private long loadStartTime, snapStartTime, startTime, maxMergeSize, maxDelay, loadDelay;
-    private boolean loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted;
+    private boolean loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted, isLoadingWeiboPassport;
     private WeiboSnapingInfoController loadingController;
     private Stage loadingStage;
     private String pdfFilename, htmlFilename, pixFilePrefix, expandPicturesScript;
@@ -119,6 +128,96 @@ public class WeiboSnapRunController extends BaseController {
     @Override
     protected void initializeNext() {
         webEngine = webView.getEngine();
+        webEngine.setJavaScriptEnabled(true);
+        webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
+                switch (newState) {
+                    case SUCCEEDED:
+                        if (isLoadingWeiboPassport) {
+                            isLoadingWeiboPassport = false;
+                            Timer loadTimer = new Timer();
+                            if (ConfigTools.isOtherPlatforms()) {
+                                loadTimer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        AppVaribles.setConfigValue("WeiboPassportChecked", "true");
+//                                        logger.debug(checkWeiboPassport());
+                                        Platform.runLater(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (checkWeiboPassport()) {
+                                                    startLoading();
+                                                }
+                                            }
+                                        });
+                                    }
+                                }, parameters.getLoadDelay() * 5);
+
+                            } else {
+                                loadTimer.schedule(new TimerTask() {
+                                    private boolean done = false;
+
+                                    @Override
+                                    public void run() {
+                                        if (done) {
+                                            this.cancel();
+                                        } else {
+                                            Platform.runLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (checkWeiboPassport()) {
+                                                        done = true;
+                                                        startLoading();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }, 1000, 1000);
+                            }
+                        }
+                        break;
+                    case RUNNING:
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
+
+        webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
+
+            @Override
+            public void handle(WebEvent<String> event) {
+                logger.debug("setOnAlert " + event.getData());
+            }
+        });
+
+        webEngine.setOnError(new EventHandler<WebErrorEvent>() {
+
+            @Override
+            public void handle(WebErrorEvent event) {
+                logger.debug("onError " + event.getMessage());
+            }
+        });
+
+        webEngine.setConfirmHandler(new Callback<String, Boolean>() {
+
+            @Override
+            public Boolean call(String param) {
+                logger.debug("setConfirmHandler " + param);
+                return null;
+            }
+        });
+
+        webEngine.getLoadWorker().exceptionProperty().addListener(new ChangeListener<Throwable>() {
+            @Override
+            public void changed(ObservableValue<? extends Throwable> ov, Throwable t, Throwable t1) {
+                logger.debug("Received exception: " + t1.getMessage());
+            }
+        });
 
         r = Runtime.getRuntime();
     }
@@ -132,7 +231,37 @@ public class WeiboSnapRunController extends BaseController {
                 closeStage();
                 return;
             }
+            if (ConfigTools.checkWeiboPassport()) {
+                startLoading();
+            } else {
+                loadPassport();
+            }
 
+        } catch (Exception e) {
+            alertError(e.toString());
+            closeStage();
+        }
+
+    }
+
+    private void loadPassport() {
+        try {
+            if (!openLoadingStage()) {
+                return;
+            }
+            isLoadingWeiboPassport = true;
+            logger.debug(AppVaribles.getMessage("LoadingWeiboCertificate"));
+            loadingController.setInfo(AppVaribles.getMessage("LoadingWeiboCertificate"));
+            webEngine.load("https://passport.weibo.com/visitor/visitor?entry=miniblog");
+
+        } catch (Exception e) {
+            alertError(e.toString());
+            closeStage();
+        }
+    }
+
+    public void startLoading() {
+        try {
             Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
             if (parameters.getWebWidth() <= 0) {
                 myStage.setX(0);
@@ -153,10 +282,10 @@ public class WeiboSnapRunController extends BaseController {
             expandPicturesScript
                     = " var items = document.getElementsByClassName('WB_pic');  "
                     + " var i=0;  "
-                    + " setInterval( myboxExpandPictures, " + (parameters.getScrollDelay() * 3) + " );  "
+                    + " var expandInterval = setInterval( myboxExpandPictures, " + (parameters.getScrollDelay() * 3) + " );  "
                     + " function myboxExpandPictures() { "
                     + "   var actionType = items[i].getAttribute('action-type');  "
-                    + "   if ( i > items.length - 1 )  clearInterval(t);"
+                    + "   if ( i > items.length - 1 )  clearInterval(expandInterval);"
                     + "   if ( actionType != null && (actionType == 'fl_pics'  || actionType == 'comment_media_img'|| actionType == 'feed_list_media_img' )) { "
                     + "      items[i].click();  "
                     + "   }; "
@@ -510,7 +639,7 @@ public class WeiboSnapRunController extends BaseController {
     private void loadPage(String address) {
         try {
             webEngine.load(address);
-            logger.debug(address);
+//            logger.debug(address);
             if (loadTimer != null) {
                 loadTimer.cancel();
             }

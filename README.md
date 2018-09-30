@@ -7,13 +7,13 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）
 
 
-可以下载exe包，在Windows上无需java环境、无需安装、解包可用： [MyBox-3.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-3.2-exe.zip) 
-
+可以下载exe包，在Windows上无需java环境、无需安装、解包可用： [MyBox-3.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-3.3-exe.zip) 
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-3.2-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.2.jar</CODE></PRE>
+
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.3-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-3.3-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.3.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -27,7 +27,7 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.3-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-UserGuide-3.3-Overview.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
 
@@ -35,11 +35,11 @@
 
 [桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.2-NetworkTools.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.2/MyBox-UserGuide-3.3-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-UserGuide-3.3-NetworkTools.pdf)
 
 
 ## 当前版本
-当前是版本3.2，已实现的特点：
+当前是版本3.3，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -96,6 +96,8 @@
 
 ## 开发日志
 ```
+2018-09-30 版本3.3 最终解决微博网站认证的问题。已在Windows、CentOS、Mac上验证。
+
 2018-09-29 版本3.2 微博截图功能：1）在Linux和Windows上自动导入微博证书而用户无需登录可直接使用工具。
 但在Mac上没有找到导入证书的途径，因此苹果用户只好登录以后才能使用。
 2）可以展开页面上所有评论和所有图片然后截图。

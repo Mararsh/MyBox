@@ -22,7 +22,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -365,10 +364,10 @@ public class ImagesViewerController extends ImageViewerController {
         setBar.setDisable(false);
         previousButton.setDisable(true);
         nextButton.setDisable(true);
-        Stage handlingStage = null;
+        LoadingController loadingController = null;
         try {
 
-            handlingStage = openHandlingStage(Modality.WINDOW_MODAL);
+            loadingController = openHandlingStage(Modality.WINDOW_MODAL);
 
             File firstFile = imageFileList.get(0);
             File path = firstFile.getParentFile();
@@ -422,8 +421,8 @@ public class ImagesViewerController extends ImageViewerController {
                             previousFiles = null;
                             previousButton.setDisable(true);
                         }
-                        if (handlingStage != null) {
-                            handlingStage.close();
+                        if (loadingController != null && loadingController.getMyStage() != null) {
+                            loadingController.getMyStage().close();
                         }
                         return;
                     }
@@ -433,13 +432,13 @@ public class ImagesViewerController extends ImageViewerController {
             previousButton.setDisable(true);
             nextFiles = null;
             nextButton.setDisable(true);
-            if (handlingStage != null) {
-                handlingStage.close();
+            if (loadingController != null && loadingController.getMyStage() != null) {
+                loadingController.getMyStage().close();
             }
         } catch (Exception e) {
             logger.debug(e.toString());
-            if (handlingStage != null) {
-                handlingStage.close();
+            if (loadingController != null && loadingController.getMyStage() != null) {
+                loadingController.getMyStage().close();
             }
         }
     }

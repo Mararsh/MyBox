@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class LoadingController {
 
     private static final Logger logger = LogManager.getLogger();
+    private Stage myStage;
 
     @FXML
     private ProgressIndicator progressIndicator;
@@ -36,6 +38,38 @@ public class LoadingController {
 
     public void setInfo(String info) {
         infoLabel.setText(info);
+    }
+
+    public Stage getMyStage() {
+        return myStage;
+    }
+
+    public void setMyStage(Stage myStage) {
+        this.myStage = myStage;
+    }
+
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
+    }
+
+    public void setProgressIndicator(ProgressIndicator progressIndicator) {
+        this.progressIndicator = progressIndicator;
+    }
+
+    public Label getInfoLabel() {
+        return infoLabel;
+    }
+
+    public void setInfoLabel(Label infoLabel) {
+        this.infoLabel = infoLabel;
+    }
+
+    public TextArea getText() {
+        return text;
+    }
+
+    public void setText(TextArea text) {
+        this.text = text;
     }
 
 }

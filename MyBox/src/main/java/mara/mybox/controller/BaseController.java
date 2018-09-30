@@ -876,11 +876,11 @@ public class BaseController implements Initializable {
         }
     }
 
-    public Stage openHandlingStage(Modality block) {
+    public LoadingController openHandlingStage(Modality block) {
         return openHandlingStage(block, null);
     }
 
-    public Stage openHandlingStage(Modality block, String info) {
+    public LoadingController openHandlingStage(Modality block, String info) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -897,8 +897,9 @@ public class BaseController implements Initializable {
             if (info != null) {
                 controller.setInfo(info);
             }
+            controller.setMyStage(loadingStage);
 
-            return loadingStage;
+            return controller;
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -906,11 +907,11 @@ public class BaseController implements Initializable {
         }
     }
 
-    public Stage openHandlingStage(final Task<?> task, Modality block) {
+    public LoadingController openHandlingStage(final Task<?> task, Modality block) {
         return openHandlingStage(task, block, null);
     }
 
-    public Stage openHandlingStage(final Task<?> task, Modality block, String info) {
+    public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
             Pane pane = fxmlLoader.load();
@@ -928,6 +929,7 @@ public class BaseController implements Initializable {
             if (info != null) {
                 controller.setInfo(info);
             }
+            controller.setMyStage(loadingStage);
 
             task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
@@ -947,7 +949,7 @@ public class BaseController implements Initializable {
                     loadingStage.close();
                 }
             });
-            return loadingStage;
+            return controller;
 
         } catch (Exception e) {
             logger.error(e.toString());

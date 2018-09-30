@@ -399,7 +399,6 @@ public class MainMenuController extends BaseController {
     private void openWeiboSnap(ActionEvent event) {
         WeiboSnapController controller
                 = (WeiboSnapController) reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
-        controller.initWeiboEnv();
     }
 
     @FXML

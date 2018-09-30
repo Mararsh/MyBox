@@ -1,10 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,9 +11,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -112,95 +108,6 @@ public class WeiboSnapController extends BaseController {
 
         } catch (Exception e) {
             logger.debug(e.toString());
-        }
-    }
-
-    // With this setting, no login is need to access Weibo pages.
-    public void initWeiboEnv() {
-        String path;
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            path = System.getProperty("user.home") + "/AppData/Roaming/mara.mybox.MainApp/webview/localstorage/";
-
-        } else if (System.getProperty("os.name").toLowerCase().contains("linux")) {
-            path = System.getProperty("user.home") + "/.mara.mybox.MainApp/webview/localstorage/";
-
-        } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            checkLogin();
-            return;
-
-        } else {
-            return;
-        }
-
-        try {
-
-            File cert1 = FxmlTools.getUserFile(getClass(), "/cert/local", "cert_local");
-//            logger.debug(cert1.getAbsoluteFile());
-
-            File target1 = new File(path + "https_passport.weibo.com_0.localstorage");
-//            logger.debug(target1.getAbsoluteFile());
-            if (!target1.exists()) {
-                Files.copy(cert1.toPath(), target1.toPath());
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-        try {
-
-            File cert2 = FxmlTools.getUserFile(getClass(), "/cert/local-shm", "cert_shm");
-//            logger.debug(cert2.getAbsoluteFile());
-
-            File target2 = new File(path + "https_passport.weibo.com_0.localstorage-shm");
-//            logger.debug(target2.getAbsoluteFile());
-            if (!target2.exists()) {
-                Files.copy(cert2.toPath(), target2.toPath());
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-        try {
-
-            File cert3 = FxmlTools.getUserFile(getClass(), "/cert/local-wal", "cert_wal");
-//            logger.debug(cert3.getAbsoluteFile());
-
-            File target3 = new File(path + "https_passport.weibo.com_0.localstorage-wal");
-//            logger.debug(target3.getAbsoluteFile());
-            if (!target3.exists()) {
-                Files.copy(cert3.toPath(), target3.toPath());
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    // Can not find the path where SSL files are on Mac, so have not way to set env for Apple users.
-    public void checkLogin() {
-        if (!AppVaribles.getConfigBoolean("WeiboEverLoginKey", false)) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(AppVaribles.getMessage("AppTitle"));
-            alert.setContentText(AppVaribles.getMessage("WeiboSnapLogin"));
-            ButtonType buttonDone = new ButtonType(AppVaribles.getMessage("WeiboLoginDone"));
-            ButtonType buttonGiveup = new ButtonType(AppVaribles.getMessage("WeiboGiveup"));
-            ButtonType buttonLogin = new ButtonType(AppVaribles.getMessage("WeiboLogin"));
-            alert.getButtonTypes().setAll(buttonDone, buttonGiveup, buttonLogin);
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonDone) {
-                AppVaribles.setConfigValue("WeiboEverLoginKey", true);
-            } else if (result.get() == buttonGiveup) {
-                popError(AppVaribles.getMessage("WeiboNotWork"), -1);
-            } else if (result.get() == buttonLogin) {
-                HtmlEditorController controller
-                        = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml,
-                                AppVaribles.getMessage("HtmlEditor"), false, true);
-                controller.loginWeibo();
-            }
-
         }
     }
 
@@ -306,7 +213,7 @@ public class WeiboSnapController extends BaseController {
         });
         loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2"));
 
-        scrollDelayBox.getItems().addAll(Arrays.asList("100", "50", "300", "1000", "600", "2000", "3000", "5000"));
+        scrollDelayBox.getItems().addAll(Arrays.asList("200", "100", "300", "1000", "600", "2000", "3000", "5000"));
         scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -317,19 +224,19 @@ public class WeiboSnapController extends BaseController {
                         scrollDelayBox.getEditor().setStyle(null);
                         AppVaribles.setConfigValue(WeiboScrollDelayKey, scrollDelay + "");
                     } else {
-                        scrollDelay = 100;
+                        scrollDelay = 200;
                         scrollDelayBox.getEditor().setStyle(badStyle);
                     }
 
                 } catch (Exception e) {
-                    scrollDelay = 100;
+                    scrollDelay = 200;
                     scrollDelayBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "100"));
+        scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "200"));
 
-        maxDelayBox.getItems().addAll(Arrays.asList("120", "60", "180", "300", "150", "240"));
+        maxDelayBox.getItems().addAll(Arrays.asList("120", "240", "60", "180", "300", "150"));
         maxDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
