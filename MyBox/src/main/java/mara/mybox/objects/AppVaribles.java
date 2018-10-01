@@ -36,7 +36,8 @@ public class AppVaribles {
     public static boolean showComments = true;
     public static boolean alphaAsBlack = false;
     public static int commentsDelay = 3000;
-    public static MemoryUsageSetting PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+    public static MemoryUsageSetting PdfMemUsage;
+    public static String currentStyle;
 
     public AppVaribles() {
     }
@@ -44,22 +45,9 @@ public class AppVaribles {
     public static void initAppVaribles() {
         showComments = getConfigBoolean("ShowComments", true);
         alphaAsBlack = getConfigBoolean("AlphaAsBlack", false);
-        String pm = getConfigValue("PdfMemDefault", "1GB");
-        switch (pm) {
-            case "1GB":
-                PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
-                break;
-            case "2GB":
-                PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
-                break;
-            case "unlimit":
-                PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
-                break;
-            case "500MB":
-            default:
-                PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
-        }
         setCurrentBundle();
+        setPdfMem(getConfigValue("PdfMemDefault", "1GB"));
+        currentStyle = getConfigValue("InterfaceStyle", CommonValues.MyBoxStyle);
 
     }
 
@@ -184,6 +172,27 @@ public class AppVaribles {
             default:
                 AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
                 break;
+        }
+    }
+
+    public static void setPdfMem(String value) {
+        switch (value) {
+            case "1GB":
+                AppVaribles.setConfigValue("PdfMemDefault", "1GB");
+                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+                break;
+            case "2GB":
+                AppVaribles.setConfigValue("PdfMemDefault", "2GB");
+                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+                break;
+            case "Unlimit":
+                AppVaribles.setConfigValue("PdfMemDefault", "Unlimit");
+                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+                break;
+            case "500MB":
+            default:
+                AppVaribles.setConfigValue("PdfMemDefault", "500MB");
+                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
         }
     }
 

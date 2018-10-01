@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -169,12 +169,19 @@
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
+                              <Label text="%DefaultDisplayScale" />
+                              <ComboBox fx:id="pdfScaleBox" editable="true" prefHeight="30.0" prefWidth="91.0" />
+                              <Label text="\%" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                           <children>
+                              <Label text="%MaxMainMemPDF" />
+                              <ComboBox fx:id="maxMemBox" prefWidth="150.0" />
                                         <Label text="%TempDir" />
                                         <TextField fx:id="tempDirInput" HBox.hgrow="ALWAYS" />
                                         <Button mnemonicParsing="false" onAction="#selectTemp" text="%Select..." />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER" />
+                           </children></HBox>
                             </children>
                         </VBox>
                     </content>
@@ -213,9 +220,10 @@
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
                         <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
+                  <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
                             <HBox.margin>
-                                <Insets right="40.0" />
+                                <Insets />
                             </HBox.margin>
                         </Button>
                         <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />

@@ -222,7 +222,7 @@ public class PdfTools {
                 PDPage page = document.getPage(0);
                 PDPageXYZDestination dest = new PDPageXYZDestination();
                 dest.setPage(page);
-                dest.setZoom(1f);
+                dest.setZoom(p.getPdfScale() / 100.0f);
                 dest.setTop((int) page.getCropBox().getHeight());
                 PDActionGoTo action = new PDActionGoTo();
                 action.setDestination(dest);

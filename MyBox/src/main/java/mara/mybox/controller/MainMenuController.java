@@ -17,7 +17,6 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
  * @Author Mara
@@ -41,51 +40,56 @@ public class MainMenuController extends BaseController {
     @Override
     protected void initializeNext() {
         try {
-            if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
-                chineseMenuItem.setSelected(true);
-            } else {
-                englishMenuItem.setSelected(true);
-            }
-
-            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
-
-            showCommentsCheck.setSelected(AppVaribles.showComments);
-
-            if (AppVaribles.alphaAsBlack) {
-                replaceBlackMenu.setSelected(true);
-            } else {
-                replaceWhiteMenu.setSelected(true);
-            }
-
-            String pm = getConfigValue("PdfMemDefault", "1GB");
-            switch (pm) {
-                case "1GB":
-                    pdf1gbRadio.setSelected(true);
-                    break;
-                case "2GB":
-                    pdf2gbRadio.setSelected(true);
-                    break;
-                case "unlimit":
-                    pdfUnlimitRadio.setSelected(true);
-                    break;
-                case "500MB":
-                default:
-                    pdf500mbRadio.setSelected(true);
-            }
 
             settingsMenu.setOnShowing(new EventHandler<Event>() {
                 @Override
                 public void handle(Event e) {
-                    if (AppVaribles.alphaAsBlack) {
-                        replaceBlackMenu.setSelected(true);
-                    } else {
-                        replaceWhiteMenu.setSelected(true);
-                    }
+                    checkAlpha();
+                    checkPdfMem();
                 }
             });
+            checkLanguage();
+            checkAlpha();
+            checkPdfMem();
+            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+            showCommentsCheck.setSelected(AppVaribles.showComments);
 
         } catch (Exception e) {
             logger.debug(e.toString());
+        }
+    }
+
+    private void checkLanguage() {
+        if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
+            chineseMenuItem.setSelected(true);
+        } else {
+            englishMenuItem.setSelected(true);
+        }
+    }
+
+    private void checkAlpha() {
+        if (AppVaribles.alphaAsBlack) {
+            replaceBlackMenu.setSelected(true);
+        } else {
+            replaceWhiteMenu.setSelected(true);
+        }
+    }
+
+    private void checkPdfMem() {
+        String pm = getConfigValue("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                pdf1gbRadio.setSelected(true);
+                break;
+            case "2GB":
+                pdf2gbRadio.setSelected(true);
+                break;
+            case "Unlimit":
+                pdfUnlimitRadio.setSelected(true);
+                break;
+            case "500MB":
+            default:
+                pdf500mbRadio.setSelected(true);
         }
     }
 
@@ -131,26 +135,22 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void PdfMem500MB(ActionEvent event) {
-        AppVaribles.setConfigValue("PdfMemDefault", "500MB");
-        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+        AppVaribles.setPdfMem("500MB");
     }
 
     @FXML
     private void PdfMem1GB(ActionEvent event) {
-        AppVaribles.setConfigValue("PdfMemDefault", "1GB");
-        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+        AppVaribles.setPdfMem("1GB");
     }
 
     @FXML
     private void PdfMem2GB(ActionEvent event) {
-        AppVaribles.setConfigValue("PdfMemDefault", "2GB");
-        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+        AppVaribles.setPdfMem("2GB");
     }
 
     @FXML
     private void pdfMemUnlimit(ActionEvent event) {
-        AppVaribles.setConfigValue("PdfMemDefault", "unlimit");
-        AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+        AppVaribles.setPdfMem("Unlimit");
     }
 
     @FXML
@@ -168,6 +168,69 @@ public class MainMenuController extends BaseController {
             }
         } catch (Exception e) {
             popError(e.toString());
+        }
+    }
+
+    @FXML
+    private void setDefaultStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.DefaultStyle);
+    }
+
+    @FXML
+    private void setWhiteOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnBlackStyle);
+    }
+
+    @FXML
+    private void setYellowOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.YellowOnBlackStyle);
+    }
+
+    @FXML
+    private void setWhiteOnGreenStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnGreenStyle);
+    }
+
+    @FXML
+    private void setCaspianStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.caspianStyle);
+    }
+
+    @FXML
+    private void setGreenOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.GreenOnBlackStyle);
+    }
+
+    @FXML
+    private void setPinkOnBlackStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.PinkOnBlackStyle);
+    }
+
+    @FXML
+    private void setBlackOnYellowStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.BlackOnYellowStyle);
+    }
+
+    @FXML
+    private void setWhiteOnPurpleStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnPurpleStyle);
+    }
+
+    @FXML
+    private void setWhiteOnBlueStyle(ActionEvent event) {
+        setInterfaceStyle(CommonValues.WhiteOnBlueStyle);
+    }
+
+    @Override
+    public void setInterfaceStyle(String style) {
+        try {
+            AppVaribles.currentStyle = style;
+            AppVaribles.setConfigValue("InterfaceStyle", AppVaribles.currentStyle);
+            if (parentController != null) {
+                parentController.setInterfaceStyle(AppVaribles.currentStyle);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 

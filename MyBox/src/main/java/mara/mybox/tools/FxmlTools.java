@@ -12,6 +12,7 @@ import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -115,6 +116,20 @@ public class FxmlTools {
             RadioButton radioButton = (RadioButton) button;
             if (text.equals(radioButton.getText())) {
                 button.setSelected(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean setItemSelected(ComboBox<String> box, String text) {
+        if (box == null || text == null) {
+            return false;
+        }
+        ObservableList<String> items = box.getItems();
+        for (String item : items) {
+            if (text.equals(item)) {
+                box.getSelectionModel().select(item);
                 return true;
             }
         }

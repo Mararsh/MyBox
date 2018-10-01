@@ -86,7 +86,11 @@ public class MainApp extends Application {
                     }
                 });
             }
-            pane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+            try {
+                pane.getStylesheets().add(getClass().getResource(AppVaribles.currentStyle).toExternalForm());
+            } catch (Exception e) {
+                logger.error(e.toString());
+            }
 
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setTitle(AppVaribles.getMessage("AppTitle"));

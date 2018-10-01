@@ -17,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.4";
-    public static final String AppVersionDate = "2018-09-30";
+    public static final String AppVersion = "3.5";
+    public static final String AppVersionDate = "2018-10-01";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -26,6 +26,16 @@ public class CommonValues {
 
     public static final Image AppIcon = new Image("img/mybox.png");
     public static final String MyBoxStyle = "/styles/MyBox.css";
+    public static final String WhiteOnBlackStyle = "/styles/whiteOnBlack.css";
+    public static final String YellowOnBlackStyle = "/styles/yellowOnBlack.css";
+    public static final String DefaultStyle = "/styles/modena.css";
+    public static final String WhiteOnGreenStyle = "/styles/whiteOnGreen.css";
+    public static final String GreenOnBlackStyle = "/styles/greenOnBlack.css";
+    public static final String caspianStyle = "/styles/caspian.css";
+    public static final String WhiteOnPurpleStyle = "/styles/whiteOnPurple.css";
+    public static final String PinkOnBlackStyle = "/styles/pinkOnBlack.css";
+    public static final String WhiteOnBlueStyle = "/styles/whiteOnBlue.css";
+    public static final String BlackOnYellowStyle = "/styles/blackOnYellow.css";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
     public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";

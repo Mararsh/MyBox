@@ -8,13 +8,13 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
 
-[MyBox-3.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.4/MyBox-3.4-exe.zip) 。
+[MyBox-3.5-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-3.5-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.4-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.4/MyBox-3.4-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.4.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.5-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-3.5-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.5.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,7 +28,7 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.4/MyBox-UserGuide-3.4-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.4/MyBox-UserGuide-3.4-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-UserGuide-3.5-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-UserGuide-3.5-Overview.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
 
@@ -40,7 +40,7 @@
 
 
 ## 当前版本
-当前是版本3.4，已实现的特点：
+当前是版本3.5，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -93,10 +93,14 @@
 5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 7. 设置：切换中英文、是否显示注释、PDF处理的最大主内存、如何处理透明通道、退出程序时是否关闭闹钟、清除个人设置。
+8. 多种界面皮肤。
 ```
 
 ## 开发日志
 ```
+2018-10-01 版本3.5 微博截图工具：调优程序逻辑，以确保界面图片全部加载。
+提供多种界面皮肤。
+
 2018-09-30 版本3.4 修正问题：1）微博截图工具，调整页面加载完成的判断条件，以保证页面信息被完整保存。
 2）关闭/切换窗口时若任务正在执行，用户选择“取消”时应留在当前窗口。
 新增功能：1）可以设置PDF处理的最大主内存和临时文件的目录；2）可以清除个人设置。

@@ -16,9 +16,9 @@ public class WeiboSnapParameters {
     private File targetPath;
     private int loadDelay, scrollDelay, maxDelay, webWidth, retry;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
-    private boolean miao, expandComments, expandPicture, fullScreen;
+    private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop;
     private String webAddress, author, title;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category, pdfScale;
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
     private float zoomScale;
@@ -293,6 +293,22 @@ public class WeiboSnapParameters {
 
     public void setTempdir(File tempdir) {
         this.tempdir = tempdir;
+    }
+
+    public int getPdfScale() {
+        return pdfScale;
+    }
+
+    public void setPdfScale(int pdfScale) {
+        this.pdfScale = pdfScale;
+    }
+
+    public boolean isOpenPathWhenStop() {
+        return openPathWhenStop;
+    }
+
+    public void setOpenPathWhenStop(boolean openPathWhenStop) {
+        this.openPathWhenStop = openPathWhenStop;
     }
 
 }

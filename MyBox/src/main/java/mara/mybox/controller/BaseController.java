@@ -123,9 +123,7 @@ public class BaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            if (thisPane != null) {
-                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
-            }
+            setInterfaceStyle(AppVaribles.currentStyle);
 
             myFxml = FxmlTools.getFxmlPath(url.getPath());
             AppVaribles.currentController = this;
@@ -269,6 +267,18 @@ public class BaseController implements Initializable {
 
     protected void initializeNext() {
 
+    }
+
+    public void setInterfaceStyle(String style) {
+        try {
+            if (thisPane != null) {
+                thisPane.getStylesheets().clear();
+                thisPane.getStylesheets().add(getClass().getResource(style).toExternalForm());
+                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML
