@@ -856,8 +856,8 @@ public class ImagesCombinePdfController extends ImageBaseController {
                         info.setAuthor(authorInput.getText());
                         document.setDocumentInformation(info);
                         BufferedImage bufferedImage;
+                        PDImageXObject imageObject;
                         for (ImageFileInformation source : sourceImages) {
-                            PDImageXObject imageObject;
                             if (source.getImage() == null) {
                                 bufferedImage = ImageIO.read(source.getFile());
                                 if (format == PdfImageFormat.Jpeg) {

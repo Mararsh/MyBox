@@ -22,7 +22,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -38,7 +37,6 @@ import mara.mybox.objects.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 /**
  * @Author Mara
@@ -48,54 +46,60 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  */
 public class WeiboSnapController extends BaseController {
 
-    private final String WeiboTargetPathKey, WeiboLoadDelayKey, WeiboScrollDelayKey, WeiboMaxDelayKey, WeiboZoomKey;
-    private final String WeiboLastAddressKey, WeiboAuthorKey, WeiboRetryKey, WeiboMaxMergeKey, WeiboEverLoginKey;
+    private final String WeiboTargetPathKey, WeiboLoadSpeedKey, WeiboScrollDelayKey, WeiboZoomKey;
+    private final String WeiboLastAddressKey, WeiboRetryKey, WeiboOpenPathKey, WeiboColseWindowKey;
+    private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
+    private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String TempDirKey, AuthorKey;
-    private int loadDelay, scrollDelay, maxDelay, webWidth, categoryType;
-    private int lastHtmlLen, snapHeight, snapCount, retry;
+    private int scrollDelay, webWidth, categoryType, retry;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
     private Date startMonth, endMonth;
-    private float zoomScale;
+    private float zoomScale, speed;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, pdfScale;
-    private PDRectangle pageSize;
     private File tempdir;
 
     @FXML
-    private VBox mainPane;
-    @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
-    private ComboBox<String> zoomBox, loadDelayBox, scrollDelayBox, maxDelayBox, widthBox, retryBox;
+    private ComboBox<String> zoomBox, speedBox, scrollDelayBox, widthBox, retryBox;
     @FXML
     private TextField addressInput, pathInput, startInput, endInput, tempDirInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck;
+    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, tempFilesCheck;
     @FXML
-    private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck;
+    private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
-    protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox, pdfScaleBox, maxMemBox;
+    private ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox, maxMemBox;
     @FXML
-    protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
+    private TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    protected HBox sizeBox, delayBox;
+    private HBox sizeBox, delayBox;
+    @FXML
+    private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio;
 
     public WeiboSnapController() {
         WeiboTargetPathKey = "WeiboTargetPathKey";
-        WeiboLoadDelayKey = "WeiboLoadDelayKey";
+        WeiboLoadSpeedKey = "WeiboLoadSpeedKey";
         WeiboScrollDelayKey = "WeiboScrollDelayKey";
-        WeiboMaxDelayKey = "WeiboMaxDelayKey";
         WeiboZoomKey = "WeiboZoomKey";
         WeiboLastAddressKey = "WeiboLastAddressKey";
-        WeiboAuthorKey = "WeiboAuthorKey";
         WeiboRetryKey = "WeiboRetryKey";
-        WeiboMaxMergeKey = "WeiboMaxMergeKey";
-        WeiboEverLoginKey = "WeiboEverLoginKey";
         TempDirKey = "TempDirKey";
         AuthorKey = "AuthorKey";
+        WeiboOpenPathKey = "WeiboOpenPathKey";
+        WeiboColseWindowKey = "WeiboColseWindowKey";
+        WeiboPdfKey = "WeiboPdfKey";
+        WeiboHtmlKey = "WeiboHtmlKey";
+        WeiboPixKey = "WeiboPixKey";
+        WeiboKeepPageKey = "WeiboKeepPageKey";
+        WeiboMiaoKey = "WeiboMiaoKey";
+        WeiboExpandPicturesKey = "WeiboExpandPicturesKey";
+        WeiboExpandCommentsKey = "WeiboExpandCommentsKey";
+        WeiboUseTempKey = "WeiboUseTempKey";
     }
 
     @Override
@@ -199,30 +203,26 @@ public class WeiboSnapController extends BaseController {
         });
         retryBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboRetryKey, "3"));
 
-        loadDelayBox.getItems().addAll(Arrays.asList("2", "3", "5", "1", "7", "10"));
-        loadDelayBox.valueProperty().addListener(new ChangeListener<String>() {
+        speedBox.getItems().addAll(Arrays.asList("1.5", "1", "1.2", "2", "3", "0.5", "0.8", "0.3", "0.2"));
+        speedBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    loadDelay = Integer.valueOf(newValue);
-                    if (loadDelay > 0) {
-                        loadDelayBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(WeiboLoadDelayKey, loadDelay + "");
+                    speed = Float.valueOf(newValue);
+                    if (speed > 0) {
+                        AppVaribles.setConfigValue(WeiboLoadSpeedKey, speed + "");
                     } else {
-                        loadDelay = 2;
-                        loadDelayBox.getEditor().setStyle(badStyle);
+                        speed = 1.5f;
                     }
-
                 } catch (Exception e) {
-                    loadDelay = 2;
-                    loadDelayBox.getEditor().setStyle(badStyle);
+                    speed = 1.5f;
                 }
             }
         });
-        loadDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadDelayKey, "2"));
+        speedBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadSpeedKey, "1.5"));
 
-        scrollDelayBox.getItems().addAll(Arrays.asList("500", "300", "200", "100", "600", "800", "1000", "2000"));
+        scrollDelayBox.getItems().addAll(Arrays.asList("300", "200", "500", "100", "600", "800", "1000", "2000"));
         scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -233,40 +233,35 @@ public class WeiboSnapController extends BaseController {
                         scrollDelayBox.getEditor().setStyle(null);
                         AppVaribles.setConfigValue(WeiboScrollDelayKey, scrollDelay + "");
                     } else {
-                        scrollDelay = 500;
+                        scrollDelay = 300;
                         scrollDelayBox.getEditor().setStyle(badStyle);
                     }
 
                 } catch (Exception e) {
-                    scrollDelay = 500;
+                    scrollDelay = 300;
                     scrollDelayBox.getEditor().setStyle(badStyle);
                 }
             }
         });
-        scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "500"));
+        scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "300"));
 
-        maxDelayBox.getItems().addAll(Arrays.asList("240", "300", "120", "60", "180", "150"));
-        maxDelayBox.valueProperty().addListener(new ChangeListener<String>() {
+        expandCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    maxDelay = Integer.valueOf(newValue);
-                    if (maxDelay > 0) {
-                        maxDelayBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(WeiboMaxDelayKey, maxDelay + "");
-                    } else {
-                        maxDelay = 240;
-                        maxDelayBox.getEditor().setStyle(badStyle);
-                    }
-
-                } catch (Exception e) {
-                    maxDelay = 240;
-                    maxDelayBox.getEditor().setStyle(badStyle);
-                }
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboExpandCommentsKey, newValue);
             }
         });
-        maxDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboMaxDelayKey, "240"));
+        expandCommentsCheck.setSelected(AppVaribles.getConfigBoolean(WeiboExpandCommentsKey));
+
+        expandPicturesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboExpandPicturesKey, newValue);
+            }
+        });
+        expandPicturesCheck.setSelected(AppVaribles.getConfigBoolean(WeiboExpandPicturesKey));
 
     }
 
@@ -401,6 +396,15 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
+
+        tempFilesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboUseTempKey, newValue);
+            }
+        });
+        tempFilesCheck.setSelected(AppVaribles.getConfigBoolean(WeiboUseTempKey));
 
     }
 
@@ -778,24 +782,69 @@ public class WeiboSnapController extends BaseController {
 
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboPdfKey, newValue);
                 checkTargetFiles();
             }
         });
+        pdfCheck.setSelected(AppVaribles.getConfigBoolean(WeiboPdfKey));
 
         htmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboHtmlKey, newValue);
                 checkTargetFiles();
             }
         });
+        htmlCheck.setSelected(AppVaribles.getConfigBoolean(WeiboHtmlKey));
 
         pixCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboPixKey, newValue);
                 checkTargetFiles();
             }
         });
+        pixCheck.setSelected(AppVaribles.getConfigBoolean(WeiboPixKey));
+
+        keepPageCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboKeepPageKey, newValue);
+            }
+        });
+        keepPageCheck.setSelected(AppVaribles.getConfigBoolean(WeiboKeepPageKey));
+
+        miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboMiaoKey, newValue);
+            }
+        });
+        miaoCheck.setSelected(AppVaribles.getConfigBoolean(WeiboMiaoKey));
+
+        openPathCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboOpenPathKey, newValue);
+            }
+        });
+        openPathCheck.setSelected(AppVaribles.getConfigBoolean(WeiboOpenPathKey));
+
+        closeWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov,
+                    Boolean oldValue, Boolean newValue) {
+                AppVaribles.setConfigValue(WeiboColseWindowKey, newValue);
+            }
+        });
+        closeWindowCheck.setSelected(AppVaribles.getConfigBoolean(WeiboColseWindowKey));
 
         categoryGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -814,9 +863,8 @@ public class WeiboSnapController extends BaseController {
                 .or(pathInput.styleProperty().isEqualTo(badStyle))
                 .or(startInput.styleProperty().isEqualTo(badStyle))
                 .or(endInput.styleProperty().isEqualTo(badStyle))
-                .or(loadDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
+                .or(speedBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(scrollDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
-                .or(maxDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(addressInput.textProperty()))
                 .or(addressInput.styleProperty().isEqualTo(badStyle))
@@ -863,56 +911,6 @@ public class WeiboSnapController extends BaseController {
         }
     }
 
-    private WeiboSnapParameters makeParameters() {
-        try {
-            parameters = new WeiboSnapParameters();
-            parameters.setWebAddress(webAddress);
-            logger.debug(parameters.getWebAddress());
-            if (startMonth == null) {
-                startMonth = DateTools.parseMonth("2009-08");
-            }
-            parameters.setStartMonth(startMonth);
-            if (endMonth == null) {
-                endMonth = new Date();
-            }
-            parameters.setEndMonth(endMonth);
-            parameters.setZoomScale(zoomScale);
-            parameters.setLoadDelay(loadDelay);
-            parameters.setScrollDelay(scrollDelay);
-            parameters.setMaxDelay(maxDelay);
-            parameters.setWebWidth(webWidth);
-            parameters.setImagePerScreen(true);
-            parameters.setFormat(format);
-            parameters.setJpegQuality(jpegQuality);
-            parameters.setThreshold(threshold);
-            parameters.setIsImageSize(isImageSize);
-            parameters.setPageWidth(pageWidth);
-            parameters.setPageHeight(pageHeight);
-            parameters.setMarginSize(marginSize);
-            parameters.setAuthor(authorInput.getText());
-            parameters.setTargetPath(targetPath);
-            parameters.setCreatePDF(pdfCheck.isSelected());
-            parameters.setCreateHtml(htmlCheck.isSelected());
-            parameters.setKeepPagePdf(keepPageCheck.isSelected());
-            parameters.setMiao(miaoCheck.isSelected());
-            parameters.setRetry(retry);
-            parameters.setMaxMergeSize(maxMergeSize);
-            parameters.setExpandComments(expandCommentsCheck.isSelected());
-            parameters.setFullScreen(false);
-            parameters.setSavePictures(pixCheck.isSelected());
-            parameters.setExpandPicture(expandPicturesCheck.isSelected());
-            parameters.setCategory(categoryType);
-            parameters.setTempdir(tempdir);
-            parameters.setPdfScale(pdfScale);
-            parameters.setOpenPathWhenStop(openPathCheck.isSelected());
-            return parameters;
-        } catch (Exception e) {
-            parameters = null;
-            logger.debug(e.toString());
-            return null;
-        }
-    }
-
     @FXML
     protected void startAction(ActionEvent event) {
         makeParameters();
@@ -942,6 +940,25 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
+    protected void suggestedSettings(ActionEvent event) {
+        if (addressInput.getText().trim().isEmpty()) {
+            addressInput.setText("https://www.weibo.com/wow");
+        }
+        retryBox.getSelectionModel().select("3");
+        speedBox.getSelectionModel().select("1.5");
+        scrollDelayBox.getSelectionModel().select("300");
+        zoomBox.getSelectionModel().select("1.0");
+        widthBox.getSelectionModel().select("700");
+        tempFilesCheck.setSelected(false);
+        imageSizeRadio.setSelected(true);
+        MarginsBox.getSelectionModel().select("20");
+        pdfScaleBox.getSelectionModel().select("60");
+        maxMemBox.getSelectionModel().select("1GB");
+        monthsPathsRadio.setSelected(true);
+        pngRadio.setSelected(true);
+    }
+
+    @FXML
     protected void selectTemp(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
@@ -966,6 +983,57 @@ public class WeiboSnapController extends BaseController {
     @FXML
     protected void mouseEnterPane(MouseEvent event) {
         FxmlTools.setItemSelected(maxMemBox, getConfigValue("PdfMemDefault", "1GB"));
+    }
+
+    private WeiboSnapParameters makeParameters() {
+        try {
+            parameters = new WeiboSnapParameters();
+            parameters.setWebAddress(webAddress);
+            logger.debug(parameters.getWebAddress());
+            if (startMonth == null) {
+                startMonth = DateTools.parseMonth("2009-08");
+            }
+            parameters.setStartMonth(startMonth);
+            if (endMonth == null) {
+                endMonth = new Date();
+            }
+            parameters.setEndMonth(endMonth);
+            parameters.setZoomScale(zoomScale);
+            parameters.setSpeed(speed);
+            parameters.setScrollDelay(scrollDelay);
+            parameters.setWebWidth(webWidth);
+            parameters.setImagePerScreen(true);
+            parameters.setFormat(format);
+            parameters.setJpegQuality(jpegQuality);
+            parameters.setThreshold(threshold);
+            parameters.setIsImageSize(isImageSize);
+            parameters.setPageWidth(pageWidth);
+            parameters.setPageHeight(pageHeight);
+            parameters.setMarginSize(marginSize);
+            parameters.setAuthor(authorInput.getText());
+            parameters.setTargetPath(targetPath);
+            parameters.setCreatePDF(pdfCheck.isSelected());
+            parameters.setCreateHtml(htmlCheck.isSelected());
+            parameters.setKeepPagePdf(keepPageCheck.isSelected());
+            parameters.setMiao(miaoCheck.isSelected());
+            parameters.setRetry(retry);
+            parameters.setMaxMergeSize(maxMergeSize);
+            parameters.setExpandComments(expandCommentsCheck.isSelected());
+            parameters.setFullScreen(false);
+            parameters.setSavePictures(pixCheck.isSelected());
+            parameters.setExpandPicture(expandPicturesCheck.isSelected());
+            parameters.setCategory(categoryType);
+            parameters.setTempdir(tempdir);
+            parameters.setPdfScale(pdfScale);
+            parameters.setOpenPathWhenStop(openPathCheck.isSelected());
+            parameters.setUseTempFiles(tempFilesCheck.isSelected());
+            parameters.setFontName("幼圆");
+            return parameters;
+        } catch (Exception e) {
+            parameters = null;
+            logger.debug(e.toString());
+            return null;
+        }
     }
 
     protected void startSnap() {
@@ -998,7 +1066,12 @@ public class WeiboSnapController extends BaseController {
             stage.show();
 
             controller.start(parameters);
-            controller.setParent(this);
+            if (closeWindowCheck.isSelected()) {
+                controller.setParent(null);
+                closeStage();
+            } else {
+                controller.setParent(this);
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -14,14 +14,14 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int loadDelay, scrollDelay, maxDelay, webWidth, retry;
+    private int scrollDelay, webWidth, retry;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
-    private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop;
-    private String webAddress, author, title;
+    private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles;
+    private String webAddress, author, title, fontName;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category, pdfScale;
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
-    private float zoomScale;
+    private float zoomScale, speed;
     private File tempdir;
 
     public static class FileCategoryType {
@@ -39,28 +39,12 @@ public class WeiboSnapParameters {
         this.targetPath = targetPath;
     }
 
-    public int getLoadDelay() {
-        return loadDelay;
-    }
-
-    public void setLoadDelay(int loadDelay) {
-        this.loadDelay = loadDelay;
-    }
-
     public int getScrollDelay() {
         return scrollDelay;
     }
 
     public void setScrollDelay(int scrollDelay) {
         this.scrollDelay = scrollDelay;
-    }
-
-    public int getMaxDelay() {
-        return maxDelay;
-    }
-
-    public void setMaxDelay(int maxDelay) {
-        this.maxDelay = maxDelay;
     }
 
     public boolean isImagePerScreen() {
@@ -292,7 +276,11 @@ public class WeiboSnapParameters {
     }
 
     public void setTempdir(File tempdir) {
-        this.tempdir = tempdir;
+        if (tempdir == null || !tempdir.exists() || !tempdir.isDirectory()) {
+            this.tempdir = new File(System.getProperty("user.home"));
+        } else {
+            this.tempdir = tempdir;
+        }
     }
 
     public int getPdfScale() {
@@ -309,6 +297,30 @@ public class WeiboSnapParameters {
 
     public void setOpenPathWhenStop(boolean openPathWhenStop) {
         this.openPathWhenStop = openPathWhenStop;
+    }
+
+    public boolean isUseTempFiles() {
+        return useTempFiles;
+    }
+
+    public void setUseTempFiles(boolean useTempFiles) {
+        this.useTempFiles = useTempFiles;
+    }
+
+    public String getFontName() {
+        return fontName;
+    }
+
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
 }

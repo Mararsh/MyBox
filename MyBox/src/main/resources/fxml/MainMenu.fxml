@@ -24,8 +24,8 @@
                         <RadioMenuItem mnemonicParsing="false" onAction="#setGreenOnBlackStyle" text="%GreenOnBlackStyle" toggleGroup="$styleGroup" />
                         <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlueStyle" text="%WhiteOnBlueStyle" toggleGroup="$styleGroup" />
                         <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnGreenStyle" text="%WhiteOnGreenStyle" toggleGroup="$styleGroup" />
-                        <RadioMenuItem mnemonicParsing="false" onAction="#setBlackOnYellowStyle" text="%BlackOnYellowStyle" toggleGroup="$styleGroup" />
                         <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnPurpleStyle" text="%WhiteOnVioletredStyle" toggleGroup="$styleGroup" />
+                        <!--<RadioMenuItem mnemonicParsing="false" onAction="#setBlackOnYellowStyle" text="%BlackOnYellowStyle" toggleGroup="$styleGroup" />-->
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />
                     </items>

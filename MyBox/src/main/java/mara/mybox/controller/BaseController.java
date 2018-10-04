@@ -274,10 +274,10 @@ public class BaseController implements Initializable {
             if (thisPane != null) {
                 thisPane.getStylesheets().clear();
                 thisPane.getStylesheets().add(getClass().getResource(style).toExternalForm());
-                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+//                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
         }
     }
 
@@ -680,37 +680,41 @@ public class BaseController implements Initializable {
     }
 
     public void popError(String text, int delay) {
-        popup = getPopup();
-        Label popupLabel = new Label(text);
-        popupLabel.setStyle("-fx-background-color:white;"
-                + " -fx-text-fill: red;"
-                + " -fx-font-size: 18px;"
-                + " -fx-padding: 10px;"
-                + " -fx-background-radius: 6;");
-        popup.setAutoFix(true);
-        popup.getContent().add(popupLabel);
+        try {
+            popup = getPopup();
+            Label popupLabel = new Label(text);
+            popupLabel.setStyle("-fx-background-color:white;"
+                    + " -fx-text-fill: red;"
+                    + " -fx-font-size: 18px;"
+                    + " -fx-padding: 10px;"
+                    + " -fx-background-radius: 6;");
+            popup.setAutoFix(true);
+            popup.getContent().add(popupLabel);
 
-        if (delay <= 0) {
-            popup.setAutoHide(true);
-        } else {
-            popupTimer = getPopupTimer();
-            popupTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (popup != null) {
-                                popup.hide();
+            if (delay <= 0) {
+                popup.setAutoHide(true);
+            } else {
+                popupTimer = getPopupTimer();
+                popupTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (popup != null) {
+                                    popup.hide();
+                                }
+                                popupTimer.cancel();
                             }
-                            popupTimer.cancel();
-                        }
-                    });
-                }
-            }, delay);
-        }
+                        });
+                    }
+                }, delay);
+            }
 
-        popup.show(getMyStage());
+            popup.show(getMyStage());
+        } catch (Exception e) {
+
+        }
 
     }
 

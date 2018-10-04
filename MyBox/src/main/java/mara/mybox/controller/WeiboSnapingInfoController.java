@@ -51,6 +51,7 @@ public class WeiboSnapingInfoController extends BaseController {
     }
 
     public void addText(String str) {
+        infoText.setStyle("-fx-font-size: 15px;");
         infoText.setText(infoText.getText().concat(str));
     }
 
@@ -63,12 +64,12 @@ public class WeiboSnapingInfoController extends BaseController {
     }
 
     public void showError(String str) {
-        errorText.setStyle("-fx-text-fill: #961c1c; -fx-font-size: 16px;");
+        errorText.setStyle("-fx-text-fill: #961c1c; -fx-font-size: 15px;");
         errorText.setText(str);
     }
 
     public void showMem(String str) {
-        errorText.setStyle("-fx-text-fill: #2e598a; -fx-font-size: 16px;");
+        errorText.setStyle("-fx-text-fill: #2e598a; -fx-font-size: 15px; ");
         errorText.setText(str);
     }
 

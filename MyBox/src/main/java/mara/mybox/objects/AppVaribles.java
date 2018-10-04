@@ -48,7 +48,6 @@ public class AppVaribles {
         setCurrentBundle();
         setPdfMem(getConfigValue("PdfMemDefault", "1GB"));
         currentStyle = getConfigValue("InterfaceStyle", CommonValues.MyBoxStyle);
-
     }
 
     public static String getMessage(String thestr) {

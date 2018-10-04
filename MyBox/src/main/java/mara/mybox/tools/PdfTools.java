@@ -134,89 +134,147 @@ public class PdfTools {
 
     }
 
-    public static boolean images2Pdf(List<Image> images, File targetFile, WeiboSnapParameters p) {
+    public static boolean imageInPdf(PDDocument document, BufferedImage bufferedImage,
+            WeiboSnapParameters p, int pageNumber, int totalPage, PDFont font) {
         try {
-            int count = 0;
+            PDImageXObject imageObject;
+            if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Tiff) {
+                if (p.getThreshold() < 0) {
+                    bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
+                } else {
+                    bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, p.getThreshold());
+                }
+                imageObject = CCITTFactory.createFromImage(document, bufferedImage);
+            } else if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
+                imageObject = JPEGFactory.createFromImage(document, bufferedImage, p.getJpegQuality() / 100f);
+            } else {
+                imageObject = LosslessFactory.createFromImage(document, bufferedImage);
+            }
+
+            PDRectangle pageSize;
+            if (p.isIsImageSize()) {
+                pageSize = new PDRectangle(imageObject.getWidth() + p.getMarginSize() * 2, imageObject.getHeight() + p.getMarginSize() * 2);
+            } else {
+                pageSize = new PDRectangle(p.getPageWidth(), p.getPageHeight());
+//                        logger.debug(p.getPageWidth() + " " + p.getPageHeight());
+            }
+            PDPage page = new PDPage(pageSize);
+            document.addPage(page);
+
+            float w, h;
+            if (p.isIsImageSize()) {
+                w = imageObject.getWidth();
+                h = imageObject.getHeight();
+            } else {
+                if (imageObject.getWidth() > imageObject.getHeight()) {
+                    w = page.getTrimBox().getWidth() - p.getMarginSize() * 2;
+                    h = imageObject.getHeight() * w / imageObject.getWidth();
+                } else {
+                    h = page.getTrimBox().getHeight() - p.getMarginSize() * 2;
+                    w = imageObject.getWidth() * h / imageObject.getHeight();
+                }
+            }
+            PDPageContentStream content = new PDPageContentStream(document, page);
+            content.drawImage(imageObject, p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() - h, w, h);
+
+            content.beginText();
+            content.setFont(font, 12);
+            content.newLineAtOffset(w + p.getMarginSize() - 80, 5);
+            content.showText(pageNumber + " / " + totalPage);
+            content.endText();
+
+            if (!p.getTitle().isEmpty()) {
+                content.beginText();
+                content.setFont(font, 16);
+                content.newLineAtOffset(p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() + 2);
+                content.showText(p.getTitle());
+                content.endText();
+            }
+
+            content.close();
+
+            return true;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+
+    }
+
+    public static boolean images2Pdf(List<Image> images, File targetFile,
+            WeiboSnapParameters p) {
+        try {
+            if (images == null || images.isEmpty()) {
+                return false;
+            }
+            int count = 0, total = images.size();
             try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
-                PDPageContentStream content;
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
                 info.setProducer("MyBox v" + CommonValues.AppVersion);
                 info.setAuthor(p.getAuthor());
                 document.setDocumentInformation(info);
+                PDFont font = getFont(document, p.getFontName());
+
                 BufferedImage bufferedImage;
                 for (Image image : images) {
-                    PDImageXObject imageObject;
-
                     if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Tiff) {
                         bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                        if (p.getThreshold() < 0) {
-                            bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
-                        } else {
-                            bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, p.getThreshold());
-                        }
-                        imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                     } else if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
                         bufferedImage = FxmlImageTools.checkAlpha(image, "jpg");
-                        imageObject = JPEGFactory.createFromImage(document, bufferedImage, p.getJpegQuality() / 100f);
                     } else {
-                        bufferedImage = FxmlImageTools.getBufferedImage(image);
-                        imageObject = LosslessFactory.createFromImage(document, bufferedImage);
+                        bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     }
+                    imageInPdf(document, bufferedImage, p, ++count, total, font);
+                }
 
-                    PDRectangle pageSize;
-                    if (p.isIsImageSize()) {
-                        pageSize = new PDRectangle(imageObject.getWidth() + p.getMarginSize() * 2, imageObject.getHeight() + p.getMarginSize() * 2);
-                    } else {
-                        pageSize = new PDRectangle(p.getPageWidth(), p.getPageHeight());
-//                        logger.debug(p.getPageWidth() + " " + p.getPageHeight());
+                PDPage page = document.getPage(0);
+                PDPageXYZDestination dest = new PDPageXYZDestination();
+                dest.setPage(page);
+                dest.setZoom(p.getPdfScale() / 100.0f);
+                dest.setTop((int) page.getCropBox().getHeight());
+                PDActionGoTo action = new PDActionGoTo();
+                action.setDestination(dest);
+                document.getDocumentCatalog().setOpenAction(action);
+
+                document.save(targetFile);
+                return true;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+
+    }
+
+    public static boolean imagesFiles2Pdf(List<String> files, File targetFile,
+            WeiboSnapParameters p, boolean deleteFiles) {
+        try {
+            if (files == null || files.isEmpty()) {
+                return false;
+            }
+            int count = 0, total = files.size();
+            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+                PDDocumentInformation info = new PDDocumentInformation();
+                info.setCreationDate(Calendar.getInstance());
+                info.setModificationDate(Calendar.getInstance());
+                info.setProducer("MyBox v" + CommonValues.AppVersion);
+                info.setAuthor(p.getAuthor());
+                document.setDocumentInformation(info);
+                PDFont font = getFont(document, p.getFontName());
+
+                BufferedImage bufferedImage;
+                File file;
+                for (String filename : files) {
+                    file = new File(filename);
+                    bufferedImage = ImageIO.read(file);
+                    imageInPdf(document, bufferedImage, p, ++count, total, font);
+                    if (deleteFiles) {
+                        file.delete();
                     }
-                    PDPage page = new PDPage(pageSize);
-                    document.addPage(page);
-                    content = new PDPageContentStream(document, page);
-
-                    float w, h;
-                    if (p.isIsImageSize()) {
-                        w = imageObject.getWidth();
-                        h = imageObject.getHeight();
-                    } else {
-                        if (imageObject.getWidth() > imageObject.getHeight()) {
-                            w = page.getTrimBox().getWidth() - p.getMarginSize() * 2;
-                            h = imageObject.getHeight() * w / imageObject.getWidth();
-                        } else {
-                            h = page.getTrimBox().getHeight() - p.getMarginSize() * 2;
-                            w = imageObject.getWidth() * h / imageObject.getHeight();
-                        }
-                    }
-                    content.drawImage(imageObject, p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() - h, w, h);
-
-                    PDFont font = PdfTools.checkFont(document, "幼圆");
-                    if (font != null) {
-                        content.beginText();
-                        content.setFont(font, 12);
-                        content.newLineAtOffset(w + p.getMarginSize() - 80, 5);
-                        content.showText((++count) + " / " + images.size());
-                        content.endText();
-
-                        if (!p.getTitle().isEmpty()) {
-                            content.beginText();
-                            content.setFont(font, 16);
-                            content.newLineAtOffset(p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() + 2);
-                            content.showText(p.getTitle());
-                            content.endText();
-                        }
-                    } else {
-                        font = PDType1Font.HELVETICA;
-                        content.beginText();
-                        content.setFont(font, 12);
-                        content.newLineAtOffset(w + p.getMarginSize() - 80, 5);
-                        content.showText((++count) + " / " + images.size());
-                        content.endText();
-                    }
-
-                    content.close();
-
                 }
 
                 PDPage page = document.getPage(0);
@@ -253,6 +311,29 @@ public class PdfTools {
 //        pageSize.setUpperRightY(page.getTrimBox().getHeight() - 20);
     }
 
+    public static String getFontFile(String name) {
+        String fontFile = null;
+        try {
+
+            switch (name) {
+                case "宋体":
+                    fontFile = FileTools.getFontFile("simsun");
+                    break;
+                case "幼圆":
+                    fontFile = FileTools.getFontFile("SIMYOU");
+                    break;
+                case "仿宋":
+                    fontFile = FileTools.getFontFile("simfang");
+                    break;
+                case "隶书":
+                    fontFile = FileTools.getFontFile("SIMLI");
+                    break;
+            }
+        } catch (Exception e) {
+        }
+        return fontFile;
+    }
+
     public static PDFont getFont(PDDocument document, String name) {
         PDFont font = PDType1Font.HELVETICA;
         try {
@@ -285,39 +366,6 @@ public class PdfTools {
         }
 //        logger.debug(font.getName());
         return font;
-    }
-
-    public static PDFont checkFont(PDDocument document, String name) {
-        try {
-            String fontFile = null;
-            switch (name) {
-                case "宋体":
-                    fontFile = FileTools.getFontFile("simsun");
-                    break;
-                case "幼圆":
-                    fontFile = FileTools.getFontFile("SIMYOU");
-                    break;
-                case "仿宋":
-                    fontFile = FileTools.getFontFile("simfang");
-                    break;
-                case "隶书":
-                    fontFile = FileTools.getFontFile("SIMLI");
-                    break;
-                case "Helvetica":
-                    return PDType1Font.HELVETICA;
-                case "Courier":
-                    return PDType1Font.COURIER;
-                case "Times New Roman":
-                    return PDType1Font.TIMES_ROMAN;
-            }
-            if (fontFile != null) {
-                return PDType0Font.load(document, new File(fontFile));
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public static String getTextFromPdf(InputStream fileStream, boolean sort) {

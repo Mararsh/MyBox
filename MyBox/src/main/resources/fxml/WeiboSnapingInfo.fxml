@@ -6,7 +6,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="639.0" prefWidth="690.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapingInfoController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="730.0" prefWidth="850.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapingInfoController">
     <children>
         <ProgressIndicator fx:id="progressIndicator" prefHeight="37.0" prefWidth="524.0">
             <VBox.margin>
@@ -19,7 +19,7 @@
                 <Insets />
             </VBox.margin>
         </TextArea>
-        <TextArea fx:id="errorText" focusTraversable="false" prefHeight="59.0" prefWidth="650.0" VBox.vgrow="NEVER">
+        <TextArea fx:id="errorText" focusTraversable="false" prefHeight="60.0" wrapText="true" VBox.vgrow="NEVER">
         </TextArea>
         <HBox alignment="CENTER" spacing="10.0">
             <children>

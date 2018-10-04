@@ -45,4 +45,5 @@ public class ValueTools {
     public static double roundDouble4(double invalue) {
         return (double) Math.round(invalue * 10000.0) / 10000.0;
     }
+
 }

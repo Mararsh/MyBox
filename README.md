@@ -8,13 +8,13 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
 
-[MyBox-3.5-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-3.5-exe.zip) 。
+[MyBox-3.6-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.5-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-3.5-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.5.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.6-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.6.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,7 +28,7 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-UserGuide-3.5-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.5/MyBox-UserGuide-3.5-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-Overview.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
 
@@ -36,11 +36,11 @@
 
 [桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-UserGuide-3.3-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.3/MyBox-UserGuide-3.3-NetworkTools.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-NetworkTools.pdf)
 
 
 ## 当前版本
-当前是版本3.5，已实现的特点：
+当前是版本3.6，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -51,7 +51,8 @@
 	E. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
 	F. 将PDF中的图片提取出来。可以指定页码范围。
 	G. 将PDF文件中的文字提取出来，可以定制页的分割行。
-	F. PDF的批量处理。
+	H. PDF的批量处理。
+	I. 可设置PDF处理的主内存使用量。
 2. 图像工具：
 	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿通道。
 	B. 滤镜：灰色、反色、黑白色、红/蓝/绿通道。
@@ -89,7 +90,7 @@
 		f. 将页面包含的所有图片的原图全部单独保存下来。
 		g. 实时显示处理进度。
 		h. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
-		i. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
+		i. 可以设置错误时重试次数。
 5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 7. 设置：切换中英文、是否显示注释、PDF处理的最大主内存、如何处理透明通道、退出程序时是否关闭闹钟、清除个人设置。
@@ -98,6 +99,10 @@
 
 ## 开发日志
 ```
+2018-10-04 版本3.6 微博截图工具：继续调优程序逻辑以确保界面图片全部加载；整理代码以避免内存泄露。
+降低界面皮肤背景的明亮度和饱和度。
+在文档中添加关于界面分辨率的介绍。
+
 2018-10-01 版本3.5 微博截图工具：调优程序逻辑，以确保界面图片全部加载。
 提供多种界面皮肤。
 

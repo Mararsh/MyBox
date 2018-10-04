@@ -1451,4 +1451,16 @@ public class ImageConvertTools {
 //        };
 //        return applyFilter(srcImage, filter);
 //    }
+//
+//    public void edgeDetect() {
+//        float data[] = {1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+//            -1.0f};
+//
+//        Kernel kernel = new Kernel(3, 3, data);
+//        ConvolveOp convolve = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP,
+//                null);
+//        convolve.filter(biSrc, biDest);
+//
+//        bi = biDest;
+//    }
 }

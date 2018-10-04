@@ -35,14 +35,14 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%StartMonth" />
-                                        <TextField fx:id="startInput" prefHeight="30.0" prefWidth="87.0" promptText="2016-05" />
+                                        <TextField fx:id="startInput" prefHeight="30.0" prefWidth="90.0" promptText="2016-05" />
                                         <Label text="%EmptyForVeryStart" />
                                         <Label text="%EndMonth">
                                             <padding>
                                                 <Insets left="30.0" />
                                             </padding>
                                         </Label>
-                                        <TextField fx:id="endInput" prefHeight="30.0" prefWidth="80.0" promptText="2018-09" />
+                                        <TextField fx:id="endInput" prefHeight="30.0" prefWidth="90.0" promptText="2018-09" />
                                         <Label text="%EmptyForNow" />
                                     </children>
                                 </HBox>
@@ -54,30 +54,24 @@
                                             </HBox.margin>
                                         </CheckBox>
                                         <CheckBox fx:id="expandPicturesCheck" mnemonicParsing="false" selected="true" text="%ExpandPictures" />
-                                        <Label text="%ScrollDelay">
+                                        <Label text="%FailedRetryTimes">
                                             <HBox.margin>
-                                                <Insets left="60.0" />
+                                                <Insets left="70.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <ComboBox fx:id="scrollDelayBox" editable="true" prefWidth="100.0" />
+                                        <ComboBox fx:id="retryBox" prefWidth="80.0" />
                                     </children>
                                 </HBox>
                                 <HBox fx:id="delayBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Label text="%LoadRetryDelay" />
-                                        <ComboBox fx:id="loadDelayBox" editable="true" prefWidth="80.0" />
-                                        <Label text="%MaxLoadDelay">
-                                            <padding>
-                                                <Insets left="20.0" />
-                                            </padding>
-                                        </Label>
-                                        <ComboBox fx:id="maxDelayBox" editable="true" prefWidth="80.0" />
-                                        <Label text="%FailedRetryTimes">
+                                        <Label text="%LoadPictureSpeed" />
+                                        <ComboBox fx:id="speedBox" editable="true" prefWidth="80.0" />
+                                        <Label text="%ScrollDelay">
                                             <HBox.margin>
-                                                <Insets left="20.0" />
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
-                                        <ComboBox fx:id="retryBox" prefWidth="80.0" />
+                                        <ComboBox fx:id="scrollDelayBox" editable="true" prefWidth="100.0" />
                                     </children>
                                 </HBox>
                             </children>
@@ -104,13 +98,13 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%Format" />
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%PNG">
+                                        <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="%PNG">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="formatGroup" />
                                             </toggleGroup>
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
-                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="80.0" />
+                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="100.0" />
                                         <Label text="\%">
                                             <padding>
                                                 <Insets right="10.0" />
@@ -120,6 +114,12 @@
                                         <TextField fx:id="thresholdInput" prefWidth="60.0" />
                                         <Label text="\%" />
                                         <Label text="%EmptyForDefault" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <CheckBox fx:id="tempFilesCheck" mnemonicParsing="false" text="%UseTempFiles" />
+                                        <Label text="%TempFileComments" />
                                     </children>
                                 </HBox>
                             </children>
@@ -137,7 +137,7 @@
                                                 <Insets />
                                             </HBox.margin>
                                         </Label>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%ImagesSize">
+                                        <RadioButton fx:id="imageSizeRadio" mnemonicParsing="false" selected="true" text="%ImagesSize">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="sizeGroup" />
                                             </toggleGroup>
@@ -169,19 +169,20 @@
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
-                              <Label text="%DefaultDisplayScale" />
-                              <ComboBox fx:id="pdfScaleBox" editable="true" prefHeight="30.0" prefWidth="91.0" />
-                              <Label text="\%" />
+                                        <Label text="%DefaultDisplayScale" />
+                                        <ComboBox fx:id="pdfScaleBox" editable="true" prefHeight="30.0" prefWidth="91.0" />
+                                        <Label text="\%" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                           <children>
-                              <Label text="%MaxMainMemPDF" />
-                              <ComboBox fx:id="maxMemBox" prefWidth="150.0" />
+                                    <children>
+                                        <Label text="%MaxMainMemPDF" />
+                                        <ComboBox fx:id="maxMemBox" prefWidth="150.0" />
                                         <Label text="%TempDir" />
                                         <TextField fx:id="tempDirInput" HBox.hgrow="ALWAYS" />
                                         <Button mnemonicParsing="false" onAction="#selectTemp" text="%Select..." />
-                           </children></HBox>
+                                    </children>
+                                </HBox>
                             </children>
                         </VBox>
                     </content>
@@ -220,12 +221,14 @@
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
                         <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
-                  <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
+                  <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
                         </Button>
+                        <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
+                        <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
                         <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
                     </children>
                 </HBox>
