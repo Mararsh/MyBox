@@ -57,6 +57,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureSize" text="%Size" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureEffects" text="%Effects" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureReplaceColor" text="%ReplaceColor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureWatermark" text="%Watermark" />
@@ -72,6 +73,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchWatermark" text="%Watermark" />

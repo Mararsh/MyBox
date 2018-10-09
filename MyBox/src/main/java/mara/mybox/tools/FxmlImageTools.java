@@ -107,6 +107,12 @@ public class FxmlImageTools {
         return target;
     }
 
+    public static BufferedImage clearAlpha(Image image) {
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConvertTools.clearAlpha(source);
+        return target;
+    }
+
     public static Image changeSaturate(Image image, float change, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
@@ -1099,12 +1105,54 @@ public class FxmlImageTools {
         return newImage;
     }
 
-    public static Image blurImage(Image image, int size) {
+    public static Image blurImage(Image image, int radius) {
         if (image == null) {
             return null;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConvertTools.blurImage(source, size);
+        BufferedImage target = ImageConvertTools.blurImage(source, radius);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image sharpenImage(Image image) {
+        if (image == null) {
+            return null;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConvertTools.sharpenImage(source);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image edgeDetectImage(Image image) {
+        if (image == null) {
+            return null;
+        }
+        BufferedImage source = clearAlpha(image);
+        BufferedImage target = ImageConvertTools.edgeDetect(source);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image thresholdingImage(Image image, int threshold, int smallValue, int bigValue) {
+
+        if (image == null) {
+            return null;
+        }
+        BufferedImage source = clearAlpha(image);
+        BufferedImage target = ImageConvertTools.thresholding(source, threshold, smallValue, bigValue);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image posterizingImage(Image image, int size) {
+
+        if (image == null) {
+            return null;
+        }
+        BufferedImage source = clearAlpha(image);
+        BufferedImage target = ImageConvertTools.posterizing(source, size);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

@@ -98,7 +98,8 @@ public class ImageManufactureController extends ImageViewerController {
     protected float scale = 1.0f, shearX, waterTransparent = 0.5f;
     protected int width, height, colorOperationType, filtersOperationType, shadow, arc, waterX, waterY, waterSize, waterShadow;
     protected int pixelPickingType, colorValue, cropLeftX, cropLeftY, cropRightX, cropRightY, binaryThreshold, addMarginWidth, cutMarginWidth;
-    protected int waterAngle, replaceColorScopeType;
+    protected int waterAngle, replaceColorScopeType, effectType, blurRadius, posterizingSize;
+    protected int threadholding, threadholdingSmall, threadholdingBig;
     protected ImageScope currentScope, colorScope, filtersScope, replaceColorScope, cropScope;
     protected SimpleBooleanProperty imageChanged;
     protected String initTab;
@@ -107,7 +108,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ToolBar fileBar, refBar, hotBar, scaleBar, replaceColorBar, watermarkBar, transformBar;
     @FXML
-    protected Tab fileTab, viewTab, colorTab, filtersTab, watermarkTab, cropTab, arcTab, shadowTab;
+    protected Tab fileTab, viewTab, colorTab, filtersTab, watermarkTab, cropTab, arcTab, shadowTab, effectsTab;
     @FXML
     protected Tab replaceColorTab, sizeTab, refTab, browseTab, transformTab, cutMarginsTab, addMarginsTab;
     @FXML
@@ -115,11 +116,11 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Label zoomValue, colorUnit, tipsLabel, binaryValue, thresholdLabel;
     @FXML
-    protected ToggleGroup pixelsGroup, filtersGroup, colorGroup, cutMarginGroup, replaceScopeGroup;
+    protected ToggleGroup pixelsGroup, filtersGroup, colorGroup, cutMarginGroup, replaceScopeGroup, effectsGroup;
     @FXML
     protected Button origImageButton, selectRefButton, pixelsOkButton, saveButton, leftButton, rightButton;
     @FXML
-    protected Button pickNewColorButton, recoverButton, replaceColorOkButton;
+    protected Button pickNewColorButton, recoverButton, replaceColorOkButton, effectsOkButton;
     @FXML
     protected Button waterPositionButton, waterAddButton, undoButton, redoButton, cropOkButton, filtersScopeButton, shearButton;
     @FXML
@@ -137,7 +138,7 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected TextField widthInput, heightInput, colorInput;
+    protected TextField widthInput, heightInput, colorInput, thresholdingInput, thresholdingMinInput, thresholdingMaxInput;
     @FXML
     protected TextField waterInput, waterXInput, waterYInput;
     @FXML
@@ -153,13 +154,13 @@ public class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ComboBox angleBox, colorBox, shearBox, scaleBox, shadowBox, arcBox, addMarginBox, cutMarginBox;
     @FXML
-    protected ComboBox waterSizeBox, waterTransparentBox, waterShadowBox, waterAngleBox;
+    protected ComboBox waterSizeBox, waterTransparentBox, waterShadowBox, waterAngleBox, blurRadiusBox, posterizingBox;
     @FXML
     protected RadioButton opacityRadio, redRadio, cutMarginsByWidthRadio, cutMarginsByColorRadio, replaceColorSetting;
     @FXML
-    protected RadioButton grayRadio, bwRadio;
+    protected RadioButton grayRadio, bwRadio, thresholdingRadio;
     @FXML
-    protected HBox hotBox;
+    protected HBox hotBox, blurBox, thresholdingBox;
     @FXML
     protected VBox imageBox;
 
@@ -183,6 +184,16 @@ public class ImageManufactureController extends ImageViewerController {
         public static int Red = 3;
         public static int Green = 4;
         public static int Blue = 5;
+
+    }
+
+    public static class EffectsOperationType {
+
+        public static int Blur = 0;
+        public static int Sharpen = 1;
+        public static int EdgeDetect = 2;
+        public static int Thresholding = 3;
+        public static int Posterizing = 4;
 
     }
 
@@ -226,6 +237,7 @@ public class ImageManufactureController extends ImageViewerController {
             initPixelsTab();
             initColorTab();
             initFiltersTab();
+            initEffectsTab();
             initTransformTab();
             initReplaceColorTab();
             initWatermarkTab();
@@ -250,6 +262,7 @@ public class ImageManufactureController extends ImageViewerController {
             navBar.setDisable(true);
             viewTab.setDisable(true);
             colorTab.setDisable(true);
+            effectsTab.setDisable(true);
             filtersTab.setDisable(true);
             replaceColorTab.setDisable(true);
             sizeTab.setDisable(true);
@@ -381,6 +394,7 @@ public class ImageManufactureController extends ImageViewerController {
             viewTab.setDisable(false);
             colorTab.setDisable(false);
             filtersTab.setDisable(false);
+            effectsTab.setDisable(false);
             arcTab.setDisable(false);
             shadowTab.setDisable(false);
             replaceColorTab.setDisable(false);
@@ -483,6 +497,9 @@ public class ImageManufactureController extends ImageViewerController {
                         break;
                     case "filters":
                         tabPane.getSelectionModel().select(filtersTab);
+                        break;
+                    case "effects":
+                        tabPane.getSelectionModel().select(effectsTab);
                         break;
                     case "replaceColor":
                         tabPane.getSelectionModel().select(replaceColorTab);
@@ -1395,6 +1412,201 @@ public class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.changeBlue(currentImage, 0.0 - colorValue / 255.0, colorScope);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        undoImage = currentImage;
+                        currentImage = newImage;
+                        imageView.setImage(newImage);
+                        imageChanged.set(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    // Effects Methods
+    protected void initEffectsTab() {
+        try {
+            effectsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkEffetcssOperationType();
+                }
+            });
+            checkEffetcssOperationType();
+
+            blurRadiusBox.getItems().addAll(Arrays.asList("10", "5", "3", "8", "15", "20", "30"));
+            blurRadiusBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        blurRadius = Integer.valueOf(newValue);
+                        if (blurRadius > 0) {
+                            blurRadiusBox.getEditor().setStyle(null);
+
+                        } else {
+                            blurRadius = 1;
+                            blurRadiusBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        blurRadius = 1;
+                        blurRadiusBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            blurRadiusBox.getSelectionModel().select(0);
+
+            posterizingBox.getItems().addAll(Arrays.asList("64", "32", "128", "16"));
+            posterizingBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        posterizingSize = Integer.valueOf(newValue);
+                        if (posterizingSize > 0) {
+                            posterizingBox.getEditor().setStyle(null);
+                        } else {
+                            posterizingSize = 32;
+                            posterizingBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        posterizingSize = 32;
+                        posterizingBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+            posterizingBox.getSelectionModel().select(0);
+
+            Tooltip tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(thresholdingInput, tips);
+            FxmlTools.quickTooltip(thresholdingMinInput, tips);
+            FxmlTools.quickTooltip(thresholdingMaxInput, tips);
+
+            tips = new Tooltip(getMessage("ThresholdingComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(thresholdingBox, tips);
+            FxmlTools.setComments(thresholdingRadio, tips);
+
+            thresholdingInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkThresholding();
+                }
+            });
+            thresholdingInput.setText("128");
+
+            thresholdingMinInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkThresholding();
+                }
+            });
+            thresholdingMinInput.setText("0");
+
+            thresholdingMaxInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkThresholding();
+                }
+            });
+            thresholdingMaxInput.setText("255");
+
+            effectsOkButton.disableProperty().bind(
+                    thresholdingInput.styleProperty().isEqualTo(badStyle)
+                            .or(thresholdingMinInput.styleProperty().isEqualTo(badStyle))
+                            .or(thresholdingMaxInput.styleProperty().isEqualTo(badStyle))
+            );
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void checkThresholding() {
+        try {
+            threadholding = Integer.valueOf(thresholdingInput.getText());
+            if (threadholding >= 0 && threadholding <= 255) {
+                thresholdingInput.setStyle(null);
+            } else {
+                thresholdingInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            thresholdingInput.setStyle(badStyle);
+        }
+        try {
+            threadholdingSmall = Integer.valueOf(thresholdingMinInput.getText());
+            if (threadholdingSmall >= 0 && threadholdingSmall <= 255) {
+                thresholdingMinInput.setStyle(null);
+            } else {
+                thresholdingMinInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            thresholdingMinInput.setStyle(badStyle);
+        }
+        try {
+            threadholdingBig = Integer.valueOf(thresholdingMaxInput.getText());
+            if (threadholdingBig >= 0 && threadholdingBig <= 255) {
+                thresholdingMaxInput.setStyle(null);
+            } else {
+                thresholdingMaxInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            thresholdingMaxInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkEffetcssOperationType() {
+        blurBox.setDisable(true);
+        thresholdingBox.setDisable(true);
+        thresholdingInput.setStyle(null);
+        thresholdingMinInput.setStyle(null);
+        thresholdingMaxInput.setStyle(null);
+        RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
+        if (getMessage("Blur").equals(selected.getText())) {
+            effectType = EffectsOperationType.Blur;
+            blurBox.setDisable(false);
+        } else if (getMessage("Sharpen").equals(selected.getText())) {
+            effectType = EffectsOperationType.Sharpen;
+        } else if (getMessage("EdgeDetection").equals(selected.getText())) {
+            effectType = EffectsOperationType.EdgeDetect;
+        } else if (getMessage("Posterizing").equals(selected.getText())) {
+            effectType = EffectsOperationType.Posterizing;
+        } else if (getMessage("Thresholding").equals(selected.getText())) {
+            effectType = EffectsOperationType.Thresholding;
+            thresholdingBox.setDisable(false);
+            checkThresholding();
+        }
+    }
+
+    @FXML
+    public void effectsAction() {
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage;
+                if (effectType == EffectsOperationType.Blur) {
+                    newImage = FxmlImageTools.blurImage(currentImage, blurRadius);
+                } else if (effectType == EffectsOperationType.Sharpen) {
+                    newImage = FxmlImageTools.sharpenImage(currentImage);
+                } else if (effectType == EffectsOperationType.EdgeDetect) {
+                    newImage = FxmlImageTools.edgeDetectImage(currentImage);
+                } else if (effectType == EffectsOperationType.Thresholding) {
+                    newImage = FxmlImageTools.thresholdingImage(currentImage, threadholding, threadholdingSmall, threadholdingBig);
+                } else if (effectType == EffectsOperationType.Posterizing) {
+                    newImage = FxmlImageTools.posterizingImage(currentImage, posterizingSize);
+                } else {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

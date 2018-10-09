@@ -63,13 +63,13 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
-    private ComboBox<String> zoomBox, speedBox, scrollDelayBox, widthBox, retryBox;
+    private ComboBox<String> zoomBox, widthBox, retryBox;
     @FXML
     private TextField addressInput, pathInput, startInput, endInput, tempDirInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, tempFilesCheck;
+    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck;
     @FXML
     private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
@@ -77,7 +77,7 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    private HBox sizeBox, delayBox;
+    private HBox sizeBox;
     @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio;
 
@@ -126,6 +126,9 @@ public class WeiboSnapController extends BaseController {
 
     private void initWebOptions() {
 
+        Tooltip tips = new Tooltip(AppVaribles.getMessage("WeiboAddressComments2"));
+        FxmlTools.quickTooltip(addressInput, tips);
+
         addressInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -160,7 +163,7 @@ public class WeiboSnapController extends BaseController {
         });
         addressInput.setText(AppVaribles.getConfigValue(WeiboLastAddressKey, "https://www.weibo.com/wow"));
 
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth"));
+        tips = new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth"));
         tips.setFont(new Font(16));
         FxmlTools.quickTooltip(startInput, tips);
         startInput.textProperty().addListener(new ChangeListener<String>() {
@@ -180,10 +183,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
 
-        tips = new Tooltip(AppVaribles.getMessage("SnapDelayComments"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(delayBox, tips);
-
         retryBox.getItems().addAll(Arrays.asList("3", "0", "1", "5", "7", "10"));
         retryBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -202,48 +201,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
         retryBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboRetryKey, "3"));
-
-        speedBox.getItems().addAll(Arrays.asList("1.5", "1", "1.2", "2", "3", "0.5", "0.8", "0.3", "0.2"));
-        speedBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    speed = Float.valueOf(newValue);
-                    if (speed > 0) {
-                        AppVaribles.setConfigValue(WeiboLoadSpeedKey, speed + "");
-                    } else {
-                        speed = 1.5f;
-                    }
-                } catch (Exception e) {
-                    speed = 1.5f;
-                }
-            }
-        });
-        speedBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboLoadSpeedKey, "1.5"));
-
-        scrollDelayBox.getItems().addAll(Arrays.asList("300", "200", "500", "100", "600", "800", "1000", "2000"));
-        scrollDelayBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                try {
-                    scrollDelay = Integer.valueOf(newValue);
-                    if (scrollDelay > 0) {
-                        scrollDelayBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(WeiboScrollDelayKey, scrollDelay + "");
-                    } else {
-                        scrollDelay = 300;
-                        scrollDelayBox.getEditor().setStyle(badStyle);
-                    }
-
-                } catch (Exception e) {
-                    scrollDelay = 300;
-                    scrollDelayBox.getEditor().setStyle(badStyle);
-                }
-            }
-        });
-        scrollDelayBox.getSelectionModel().select(AppVaribles.getConfigValue(WeiboScrollDelayKey, "300"));
 
         expandCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -396,15 +353,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
-
-        tempFilesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov,
-                    Boolean oldValue, Boolean newValue) {
-                AppVaribles.setConfigValue(WeiboUseTempKey, newValue);
-            }
-        });
-        tempFilesCheck.setSelected(AppVaribles.getConfigBoolean(WeiboUseTempKey));
 
     }
 
@@ -863,8 +811,6 @@ public class WeiboSnapController extends BaseController {
                 .or(pathInput.styleProperty().isEqualTo(badStyle))
                 .or(startInput.styleProperty().isEqualTo(badStyle))
                 .or(endInput.styleProperty().isEqualTo(badStyle))
-                .or(speedBox.getEditor().styleProperty().isEqualTo(badStyle))
-                .or(scrollDelayBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(addressInput.textProperty()))
                 .or(addressInput.styleProperty().isEqualTo(badStyle))
@@ -945,11 +891,8 @@ public class WeiboSnapController extends BaseController {
             addressInput.setText("https://www.weibo.com/wow");
         }
         retryBox.getSelectionModel().select("3");
-        speedBox.getSelectionModel().select("1.5");
-        scrollDelayBox.getSelectionModel().select("300");
         zoomBox.getSelectionModel().select("1.0");
         widthBox.getSelectionModel().select("700");
-        tempFilesCheck.setSelected(false);
         imageSizeRadio.setSelected(true);
         MarginsBox.getSelectionModel().select("20");
         pdfScaleBox.getSelectionModel().select("60");
@@ -999,8 +942,6 @@ public class WeiboSnapController extends BaseController {
             }
             parameters.setEndMonth(endMonth);
             parameters.setZoomScale(zoomScale);
-            parameters.setSpeed(speed);
-            parameters.setScrollDelay(scrollDelay);
             parameters.setWebWidth(webWidth);
             parameters.setImagePerScreen(true);
             parameters.setFormat(format);
@@ -1026,7 +967,6 @@ public class WeiboSnapController extends BaseController {
             parameters.setTempdir(tempdir);
             parameters.setPdfScale(pdfScale);
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
-            parameters.setUseTempFiles(tempFilesCheck.isSelected());
             parameters.setFontName("幼圆");
             return parameters;
         } catch (Exception e) {

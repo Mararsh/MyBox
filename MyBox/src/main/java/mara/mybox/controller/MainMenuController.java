@@ -342,6 +342,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageManufactureEffects(ActionEvent event) {
+        ImageManufactureController controller
+                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("effects");
+    }
+
+    @FXML
     private void openImageManufactureFilters(ActionEvent event) {
         ImageManufactureController controller
                 = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
@@ -415,6 +422,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageManufactureBatchColor(ActionEvent event) {
         reloadStage(CommonValues.ImageManufactureBatchColorFxml, AppVaribles.getMessage("ImageManufactureBatchColor"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchEffects(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchEffectsFxml, AppVaribles.getMessage("ImageManufactureBatchEffects"));
     }
 
     @FXML

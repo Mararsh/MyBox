@@ -62,18 +62,6 @@
                                         <ComboBox fx:id="retryBox" prefWidth="80.0" />
                                     </children>
                                 </HBox>
-                                <HBox fx:id="delayBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%LoadPictureSpeed" />
-                                        <ComboBox fx:id="speedBox" editable="true" prefWidth="80.0" />
-                                        <Label text="%ScrollDelay">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <ComboBox fx:id="scrollDelayBox" editable="true" prefWidth="100.0" />
-                                    </children>
-                                </HBox>
                             </children>
                         </VBox>
                     </content>
@@ -114,12 +102,6 @@
                                         <TextField fx:id="thresholdInput" prefWidth="60.0" />
                                         <Label text="\%" />
                                         <Label text="%EmptyForDefault" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <CheckBox fx:id="tempFilesCheck" mnemonicParsing="false" text="%UseTempFiles" />
-                                        <Label text="%TempFileComments" />
                                     </children>
                                 </HBox>
                             </children>

@@ -14,14 +14,14 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int scrollDelay, webWidth, retry;
+    private int webWidth, retry;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles;
     private String webAddress, author, title, fontName;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category, pdfScale;
     private PDRectangle pageSize;
     private Date startMonth, endMonth;
-    private float zoomScale, speed;
+    private float zoomScale;
     private File tempdir;
 
     public static class FileCategoryType {
@@ -37,14 +37,6 @@ public class WeiboSnapParameters {
 
     public void setTargetPath(File targetPath) {
         this.targetPath = targetPath;
-    }
-
-    public int getScrollDelay() {
-        return scrollDelay;
-    }
-
-    public void setScrollDelay(int scrollDelay) {
-        this.scrollDelay = scrollDelay;
     }
 
     public boolean isImagePerScreen() {
@@ -313,14 +305,6 @@ public class WeiboSnapParameters {
 
     public void setFontName(String fontName) {
         this.fontName = fontName;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
     }
 
 }

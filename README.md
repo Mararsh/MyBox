@@ -8,13 +8,13 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
 
-[MyBox-3.6-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-exe.zip) 。
+[MyBox-3.7-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.6-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.6.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.7-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.7.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,11 +28,11 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-Overview.pdf)
+
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-ImageTools.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
-
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-ImageTools.pdf)
 
 [桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
 
@@ -40,7 +40,7 @@
 
 
 ## 当前版本
-当前是版本3.6，已实现的特点：
+当前是版本3.7，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -56,20 +56,21 @@
 2. 图像工具：
 	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿通道。
 	B. 滤镜：灰色、反色、黑白色、红/蓝/绿通道。
-	C. 剪裁、换色、水印、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边。
-	D. 定义“范围”：区域（矩形或圆形）和颜色匹配。用于局部处理图像。
-	E. 图像处理上一步的“撤销”和“重做”。也可以随时恢复原图。
-	F. 确保大图片处理的正确性和性能。
-	G. 同目录下图像的导览
-	H. 选择是否显示对照图。可以选择其它图片为对照图。
-	I. 查看图片的元数据和属性。
-	J. 图片的分割。支持均等分割和定制分割。
-	K. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
-	L. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
-	M. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-	N. 图像的批量处理。
-	O. 调色盘
-	P. 像素计算器
+	C. 效果：模糊、锐化、边沿检测、海报（减色）、阈值化。
+	D. 剪裁、换色、水印、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边。
+	E. 定义“范围”：区域（矩形或圆形）和颜色匹配。用于局部处理图像。
+	F. 图像处理上一步的“撤销”和“重做”。也可以随时恢复原图。
+	G. 确保大图片处理的正确性和性能。
+	H. 同目录下图像的导览
+	I. 选择是否显示对照图。可以选择其它图片为对照图。
+	J. 查看图片的元数据和属性。
+	K. 图片的分割。支持均等分割和定制分割。
+	L. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
+	M. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
+	N. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
+	O. 图像的批量处理。
+	P. 调色盘
+	Q. 像素计算器
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
@@ -99,6 +100,10 @@
 
 ## 开发日志
 ```
+2018-10-09 版本3.7 微博截图工具：利用Javascript事件来依次加载图片，确保最小间隔以免被服务器判定为不善访问，
+同时监视最大加载间隔以免因图片挂了或者加载太快未触发事件而造成迭代中断。
+图像处理“效果”：模糊、锐化、边沿检测、海报（减色）、阈值化。
+
 2018-10-04 版本3.6 微博截图工具：继续调优程序逻辑以确保界面图片全部加载；整理代码以避免内存泄露。
 降低界面皮肤背景的明亮度和饱和度。
 在文档中添加关于界面分辨率的介绍。

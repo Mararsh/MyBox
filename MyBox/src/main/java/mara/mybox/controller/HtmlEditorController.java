@@ -69,12 +69,12 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.ConfigTools;
-import static mara.mybox.tools.ConfigTools.checkWeiboPassport;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
+import mara.mybox.tools.NetworkTools;
+import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
 
 /**
@@ -382,7 +382,7 @@ public class HtmlEditorController extends TextEditorController {
                             if (isLoadingWeiboPassport) {
                                 isLoadingWeiboPassport = false;
                                 Timer loadTimer = new Timer();
-                                if (ConfigTools.isOtherPlatforms()) {
+                                if (NetworkTools.isOtherPlatforms()) {
                                     loadTimer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {

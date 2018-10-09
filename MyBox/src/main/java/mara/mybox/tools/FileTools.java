@@ -30,7 +30,7 @@ public class FileTools {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static long getFileCreateTime(String filename) {
+    public static long getFileCreateTime(final String filename) {
         try {
             FileTime t = Files.readAttributes(Paths.get(filename), BasicFileAttributes.class).creationTime();
             return t.toMillis();
@@ -39,7 +39,7 @@ public class FileTools {
         }
     }
 
-    public static String getFilePath(String filename) {
+    public static String getFilePath(final String filename) {
         if (filename == null) {
             return null;
         }
@@ -50,7 +50,7 @@ public class FileTools {
         return filename.substring(0, pos);
     }
 
-    public static String getFileName(String filename) {
+    public static String getFileName(final String filename) {
         if (filename == null) {
             return null;
         }
@@ -62,7 +62,7 @@ public class FileTools {
         return fname;
     }
 
-    public static String getFilePrefix(String filename) {
+    public static String getFilePrefix(final String filename) {
         String fname = getFileName(filename);
         if (fname == null) {
             return null;
@@ -74,16 +74,18 @@ public class FileTools {
         return fname;
     }
 
-    public static String getFileSuffix(String filename) {
+    public static String getFileSuffix(final String filename) {
         if (filename == null) {
             return null;
         }
-        String fname = filename;
+        String suffix;
         int pos = filename.lastIndexOf(".");
-        if (pos >= 0) {
-            fname = fname.substring(pos + 1);
+        if (pos >= 0 && filename.length() > pos) {
+            suffix = filename.substring(pos + 1);
+        } else {
+            suffix = "";
         }
-        return fname;
+        return suffix;
     }
 
     public static String replaceFileSuffix(String filename, String newSuffix) {

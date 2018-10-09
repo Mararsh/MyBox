@@ -17,8 +17,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.6";
-    public static final String AppVersionDate = "2018-10-04";
+    public static final String AppVersion = "3.7";
+    public static final String AppVersionDate = "2018-10-09";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
@@ -64,6 +64,7 @@ public class CommonValues {
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
     public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
+    public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
     public static final String ImageManufactureBatchFiltersFxml = "/fxml/ImageManufactureBatchFilters.fxml";
     public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
     public static final String ImageManufactureBatchWatermarkFxml = "/fxml/ImageManufactureBatchWatermark.fxml";

@@ -9,8 +9,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.awt.image.LookupOp;
+import java.awt.image.ShortLookupTable;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
@@ -53,7 +56,7 @@ public class ImageConvertTools {
     }
 
     public static BufferedImage checkAlpha(BufferedImage source, String targetFormat) {
-        if (CommonValues.NoAlphaImages.contains(targetFormat.toLowerCase())) {
+        if (targetFormat != null && CommonValues.NoAlphaImages.contains(targetFormat.toLowerCase())) {
             return ImageConvertTools.clearAlpha(source);
         } else {
             return source;
@@ -1390,6 +1393,17 @@ public class ImageConvertTools {
         if (filter == null) {
             return source;
         }
+        ConvolveOp imageOp = new ConvolveOp(filter, ConvolveOp.EDGE_ZERO_FILL, null);
+        return applyConvolveOp(source, imageOp);
+    }
+
+    public static BufferedImage applyConvolveOp(BufferedImage source, ConvolveOp imageOp) {
+        if (source == null) {
+            return null;
+        }
+        if (imageOp == null) {
+            return source;
+        }
         int width = source.getWidth();
         int height = source.getHeight();
         int imageType = source.getType();
@@ -1397,8 +1411,6 @@ public class ImageConvertTools {
             imageType = BufferedImage.TYPE_INT_ARGB;
         }
         BufferedImage target = new BufferedImage(width, height, imageType);
-
-        ConvolveOp imageOp = new ConvolveOp(filter, ConvolveOp.EDGE_NO_OP, null);
         imageOp.filter(source, target);
         return target;
     }
@@ -1430,37 +1442,82 @@ public class ImageConvertTools {
             data[k] = data[k] / sum;
             v += "  " + data[k];
         }
-        logger.debug(v);
+//        logger.debug(v);
         return new Kernel(width, width, data);
     }
 
-    public static BufferedImage blurImage(BufferedImage srcImage, int size) {
-//        float[] filter = {
-//            0.0625f, 0.125f, 0.0625f,
-//            0.125f, 0.025f, 0.125f,
-//            0.0625f, 0.125f, 0.0625f
+    public static BufferedImage blurImage(BufferedImage source, int radius) {
+//        float ninth = 1.0f / 9.0f;
+//        float[] blurKernel = {
+//            ninth, ninth, ninth,
+//            ninth, ninth, ninth,
+//            ninth, ninth, ninth
 //        };
-        return applyFilter(srcImage, makeGaussFilter(size));
+//        Kernel k = new Kernel(3, 3, blurKernel);
+
+        Kernel k = makeGaussFilter(radius);
+        BufferedImage target = applyFilter(source, k);
+        return target;
     }
 
-//    public static BufferedImage sharpenImage(BufferedImage srcImage) {
-//        float[] filter = {
-//            -1.0f, -1.0f, -1.0f,
-//            -1.0f, 9.0f, -1.0f,
-//            -1.0f, -1.0f, -1.0f
-//        };
-//        return applyFilter(srcImage, filter);
-//    }
-//
-//    public void edgeDetect() {
-//        float data[] = {1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-//            -1.0f};
-//
-//        Kernel kernel = new Kernel(3, 3, data);
-//        ConvolveOp convolve = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP,
-//                null);
-//        convolve.filter(biSrc, biDest);
-//
-//        bi = biDest;
-//    }
+// https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
+    public static BufferedImage sharpenImage(BufferedImage source) {
+        float[] sharpenKernel = {
+            0.0f, -1.0f, 0.0f,
+            -1.0f, 5.0f, -1.0f,
+            0.0f, -1.0f, 0.0f
+        };
+        Kernel k = new Kernel(3, 3, sharpenKernel);
+
+        BufferedImage target = applyFilter(source, k);
+        return target;
+    }
+
+    // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
+    public static BufferedImage edgeDetect(BufferedImage source) {
+        float[] edgeDetectKernel = {
+            0.0f, -1.0f, 0.0f,
+            -1.0f, 4.0f, -1.0f,
+            0.0f, -1.0f, 0.0f
+        };
+        Kernel k = new Kernel(3, 3, edgeDetectKernel);
+
+        BufferedImage target = applyFilter(source, k);
+        return target;
+    }
+
+    // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html?page=2
+    public static BufferedImage thresholding(BufferedImage source, int threshold, int smallValue, int bigValue) {
+        try {
+            short[] thresholdArray = new short[256];
+            for (int i = 0; i < 256; i++) {
+                if (i < threshold) {
+                    thresholdArray[i] = (short) smallValue;
+                } else {
+                    thresholdArray[i] = (short) bigValue;
+                }
+            }
+            BufferedImageOp thresholdingOp = new LookupOp(new ShortLookupTable(0, thresholdArray), null);
+            return thresholdingOp.filter(source, null);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html?page=2
+    public static BufferedImage posterizing(BufferedImage source, int size) {
+        try {
+            short[] posterize = new short[256];
+            for (int i = 0; i < 256; i++) {
+                posterize[i] = (short) (i - (i % size));
+            }
+            BufferedImageOp posterizeOp = new LookupOp(new ShortLookupTable(0, posterize), null);
+            return posterizeOp.filter(source, null);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
 }

@@ -39,13 +39,13 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-exe.zip">MyBox-3.6-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-exe.zip">MyBox-3.7-exe.zip</a></p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed, and run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-3.6.jar</code></pre>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-3.6-jar.zip">MyBox-3.6-jar.zip</a></p>
+<pre><code>                   java   -jar   MyBox-3.7.jar</code></pre>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-jar.zip">MyBox-3.7-jar.zip</a></p>
 
-<p class="paragraph">Current version is 3.6. It includes the following features: </p>
+<p class="paragraph">Current version is 3.7. It includes the following features: </p>
 <ol>
 <li>Switch interface in Chinese and English at any time. </li>
 <li>Convert each page of PDF file to an image with options of format, density, color,  compression, quality, and color conversion. </li>
@@ -59,7 +59,8 @@
 <li>Convert image files to other formats, with options of color, size, compression, quality, etc. </li>
 <li>Above functions can be run in batching way. User can pause/continue the process. </li>
 <li>Supported image formats: png, jpg, bmp, tif, gif, wbmp, pnm, pcx. </li>
-<li>Manufacture image: Adjust pixels, saturation, lightness, hue, and RGB channels with parameters. Provide filters like gray, invert, binary, and RGB channels. Implement croping, color replacement,  opacity adjustment, cutting edges, adding edges, adding watermark, and transforms like rotating, mirrorings, and shearing. Support images browsering and reference image.</li>
+<li>Manufacture image: Adjust pixels, saturation, lightness, hue, and RGB channels with parameters. Provide filters like gray, invert, binary, and RGB channels. Implement croping, color replacement,  opacity adjustment, cutting edges, adding edges, adding watermark, and transforms like rotating, mirrorings, and shearing. <li>"Effects" of image manufacturing, including blurring, sharpening, edge detecting, posterizing, and thresholding. </li>
+<li>Support images browsering and reference image.</li>
 <li>Implement manufacture of big image and make sure performance is acceptable. </li>
 <li>Scope, including area scope like rectangle and circle and color matching, is supported for image manufacture. </li>
 <li>View information and meta data of image files. </li>
@@ -79,6 +80,9 @@
 
 <br>
 <p class="p2">Development Logs</p>
+<p class="paragraph">2018-10-09 v3.7 In Weibo Snap Tool, load images sequentially by using javascript event. Make sure the minimum interval to avoid being judged as invalid access by server. Meanwhile monitor the maximum interval to avoid broken iteration due to missed picture or untriggered event by fast loading of small picture. </br>
+"Effects" of image manufacturing, including blurring, sharpening, edge detecting, posterizing, and thresholding.</p>
+
 <p class="paragraph">2018-10-04 v3.6 Optimize algorithm of Weibo Snap Tool to make sure all pictures loaded. Check codes to avoid meomry leak.</BR>
 Reduce brightness and saturation of background colors in interface styles.</BR>
 Add introduction about dpi-aware in document.</p>

@@ -261,6 +261,15 @@ public class MyBoxController extends BaseController {
                 controller.setInitTab("Color");
             }
         });
+        MenuItem imageEffectsMenu = new MenuItem(AppVaribles.getMessage("Effects"));
+        imageEffectsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                ImageManufactureController controller
+                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                controller.setInitTab("effects");
+            }
+        });
         MenuItem imageFiltersMenu = new MenuItem(AppVaribles.getMessage("Filters"));
         imageFiltersMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -334,7 +343,7 @@ public class MyBoxController extends BaseController {
             }
         });
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
-        manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageFiltersMenu,
+        manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu, imageFiltersMenu,
                 imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
         return manufactureSubMenu;
@@ -372,6 +381,14 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.ImageManufactureBatchFiltersFxml, AppVaribles.getMessage("ImageManufactureBatchFilters"));
+            }
+        });
+
+        MenuItem imageEffectsMenu = new MenuItem(AppVaribles.getMessage("Effects"));
+        imageEffectsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageManufactureBatchEffectsFxml, AppVaribles.getMessage("ImageManufactureBatchEffects"));
             }
         });
 
@@ -432,7 +449,7 @@ public class MyBoxController extends BaseController {
         });
 
         Menu manufactureBatchMenu = new Menu(AppVaribles.getMessage("ImageManufactureBatch"));
-        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageFiltersMenu,
+        manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu, imageFiltersMenu,
                 imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
         return manufactureBatchMenu;
