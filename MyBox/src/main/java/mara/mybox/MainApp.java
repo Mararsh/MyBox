@@ -58,7 +58,7 @@ public class MainApp extends Application {
             FXMLLoader fxmlLoader;
             Pane pane;
             if (imageFile != null) {
-                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
                 pane = fxmlLoader.load();
                 final ImageManufactureController imageController = (ImageManufactureController) fxmlLoader.getController();
                 imageController.loadImage(imageFile);

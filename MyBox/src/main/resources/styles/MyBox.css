@@ -19,6 +19,12 @@
     -fx-font-size: 16px;
 }
 
+.blue-label, .blue-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: #2e598a;
+}
+
 .copyable-blue-label, .copyable-blue-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;

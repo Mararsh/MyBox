@@ -10,13 +10,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -39,10 +37,9 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  */
 public class PdfSplitController extends PdfBaseController {
 
-    final private String TempDirKey, AuthorKey;
+    final private String AuthorKey;
     private int splitType, pagesNumber, filesNumber;
     private List<Integer> startEndList;
-    private File tempdir;
 
     @FXML
     private ToggleGroup splitGroup;
@@ -58,7 +55,6 @@ public class PdfSplitController extends PdfBaseController {
     }
 
     public PdfSplitController() {
-        TempDirKey = "TempDirKey";
         AuthorKey = "AuthorKey";
     }
 
@@ -118,21 +114,6 @@ public class PdfSplitController extends PdfBaseController {
                     checkStartEndList();
                 }
             });
-
-            tempDirInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    try {
-                        final File file = new File(newValue);
-                        tempDirInput.setStyle(null);
-                        AppVaribles.setConfigValue(TempDirKey, file.getPath());
-
-                        tempdir = file;
-                    } catch (Exception e) {
-                    }
-                }
-            });
-            tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
 
             authorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -226,28 +207,6 @@ public class PdfSplitController extends PdfBaseController {
             }
         } catch (Exception e) {
             ListInput.setStyle(badStyle);
-        }
-    }
-
-    @FXML
-    protected void selectTemp(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            chooser.setInitialDirectory(path);
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
-
-            tempDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 

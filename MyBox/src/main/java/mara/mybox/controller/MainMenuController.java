@@ -44,22 +44,20 @@ public class MainMenuController extends BaseController {
             settingsMenu.setOnShowing(new EventHandler<Event>() {
                 @Override
                 public void handle(Event e) {
+                    checkLanguage();
                     checkAlpha();
                     checkPdfMem();
+                    stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+                    showCommentsCheck.setSelected(AppVaribles.showComments);
                 }
             });
-            checkLanguage();
-            checkAlpha();
-            checkPdfMem();
-            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
-            showCommentsCheck.setSelected(AppVaribles.showComments);
 
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
-    private void checkLanguage() {
+    protected void checkLanguage() {
         if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
             chineseMenuItem.setSelected(true);
         } else {
@@ -67,7 +65,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void checkAlpha() {
+    protected void checkAlpha() {
         if (AppVaribles.alphaAsBlack) {
             replaceBlackMenu.setSelected(true);
         } else {
@@ -75,7 +73,7 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    private void checkPdfMem() {
+    protected void checkPdfMem() {
         String pm = getConfigValue("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
@@ -94,67 +92,84 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void showHome(ActionEvent event) {
+    protected void showHome(ActionEvent event) {
         openStage(CommonValues.MyboxFxml, false, true);
     }
 
     @FXML
-    private void setChinese(ActionEvent event) {
+    protected void setChinese(ActionEvent event) {
         AppVaribles.setCurrentBundle("zh");
-        reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+        if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+            reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+        } else {
+            reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+        }
     }
 
     @FXML
-    private void setEnglish(ActionEvent event) {
+    protected void setEnglish(ActionEvent event) {
         AppVaribles.setCurrentBundle("en");
-        reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+        if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+            reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+        } else {
+            reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+        }
     }
 
     @FXML
-    private void setStopAlarm(ActionEvent event) {
+    protected void setStopAlarm(ActionEvent event) {
         AppVaribles.setConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
     }
 
     @FXML
-    private void showCommentsAction(ActionEvent event) {
+    protected void showCommentsAction() {
+        checkShowComments();
+    }
+
+    public void checkShowComments() {
         AppVaribles.setConfigValue("ShowComments", showCommentsCheck.isSelected());
         AppVaribles.showComments = showCommentsCheck.isSelected();
+        if (AppVaribles.showComments) {
+            popInformation(AppVaribles.getMessage("CommentsShown"));
+        } else {
+            popInformation(AppVaribles.getMessage("CommentsHidden"));
+        }
     }
 
     @FXML
-    private void replaceWhiteAction(ActionEvent event) {
+    protected void replaceWhiteAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", false);
         AppVaribles.alphaAsBlack = false;
     }
 
     @FXML
-    private void replaceBlackAction(ActionEvent event) {
+    protected void replaceBlackAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", true);
         AppVaribles.alphaAsBlack = true;
     }
 
     @FXML
-    private void PdfMem500MB(ActionEvent event) {
+    protected void PdfMem500MB(ActionEvent event) {
         AppVaribles.setPdfMem("500MB");
     }
 
     @FXML
-    private void PdfMem1GB(ActionEvent event) {
+    protected void PdfMem1GB(ActionEvent event) {
         AppVaribles.setPdfMem("1GB");
     }
 
     @FXML
-    private void PdfMem2GB(ActionEvent event) {
+    protected void PdfMem2GB(ActionEvent event) {
         AppVaribles.setPdfMem("2GB");
     }
 
     @FXML
-    private void pdfMemUnlimit(ActionEvent event) {
+    protected void pdfMemUnlimit(ActionEvent event) {
         AppVaribles.setPdfMem("Unlimit");
     }
 
     @FXML
-    private void clearSettings(ActionEvent event) {
+    protected void clearSettings(ActionEvent event) {
         try {
             File configFile = new File(CommonValues.UserConfigFile);
             if (!configFile.exists()) {
@@ -172,52 +187,52 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void setDefaultStyle(ActionEvent event) {
+    protected void setDefaultStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.DefaultStyle);
     }
 
     @FXML
-    private void setWhiteOnBlackStyle(ActionEvent event) {
+    protected void setWhiteOnBlackStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.WhiteOnBlackStyle);
     }
 
     @FXML
-    private void setYellowOnBlackStyle(ActionEvent event) {
+    protected void setYellowOnBlackStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.YellowOnBlackStyle);
     }
 
     @FXML
-    private void setWhiteOnGreenStyle(ActionEvent event) {
+    protected void setWhiteOnGreenStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.WhiteOnGreenStyle);
     }
 
     @FXML
-    private void setCaspianStyle(ActionEvent event) {
+    protected void setCaspianStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.caspianStyle);
     }
 
     @FXML
-    private void setGreenOnBlackStyle(ActionEvent event) {
+    protected void setGreenOnBlackStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.GreenOnBlackStyle);
     }
 
     @FXML
-    private void setPinkOnBlackStyle(ActionEvent event) {
+    protected void setPinkOnBlackStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.PinkOnBlackStyle);
     }
 
     @FXML
-    private void setBlackOnYellowStyle(ActionEvent event) {
+    protected void setBlackOnYellowStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.BlackOnYellowStyle);
     }
 
     @FXML
-    private void setWhiteOnPurpleStyle(ActionEvent event) {
+    protected void setWhiteOnPurpleStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.WhiteOnPurpleStyle);
     }
 
     @FXML
-    private void setWhiteOnBlueStyle(ActionEvent event) {
+    protected void setWhiteOnBlueStyle(ActionEvent event) {
         setInterfaceStyle(CommonValues.WhiteOnBlueStyle);
     }
 
@@ -317,90 +332,90 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openImageManufacture(ActionEvent event) {
-        reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
     }
 
     @FXML
     private void openImageManufactureSize(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("size");
     }
 
     @FXML
     private void openImageManufactureCrop(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("crop");
     }
 
     @FXML
     private void openImageManufactureColor(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("color");
     }
 
     @FXML
     private void openImageManufactureEffects(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("effects");
     }
 
     @FXML
     private void openImageManufactureFilters(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("filters");
     }
 
     @FXML
     private void openImageManufactureReplaceColor(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("replaceColor");
     }
 
     @FXML
     private void openImageManufactureWatermark(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("watermark");
     }
 
     @FXML
     private void openImageManufactureArc(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("arc");
     }
 
     @FXML
     private void openImageManufactureShadow(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("shadow");
     }
 
     @FXML
     private void openImageManufactureTransform(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("transform");
     }
 
     @FXML
     private void openImageManufactureCutMargins(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("cutMargins");
     }
 
     @FXML
     private void openImageManufactureAddMargins(ActionEvent event) {
-        ImageManufactureController controller
-                = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("addMargins");
     }
 
@@ -553,6 +568,13 @@ public class MainMenuController extends BaseController {
         openStage(CommonValues.AboutFxml, true);
     }
 
+    @FXML
+    private void settingsAction(ActionEvent event) {
+        BaseController c = openStage(CommonValues.SettingsFxml, true);
+        c.setParentController(parentController);
+        c.setParentFxml(parentFxml);
+    }
+
     @Override
     public Stage getMyStage() {
         if (myStage == null) {
@@ -574,6 +596,14 @@ public class MainMenuController extends BaseController {
             return false;
         }
 
+    }
+
+    public CheckMenuItem getShowCommentsCheck() {
+        return showCommentsCheck;
+    }
+
+    public void setShowCommentsCheck(CheckMenuItem showCommentsCheck) {
+        this.showCommentsCheck = showCommentsCheck;
     }
 
 }

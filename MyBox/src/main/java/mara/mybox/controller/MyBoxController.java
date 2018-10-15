@@ -156,6 +156,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
             }
         });
+
         MenuItem imagesViewer = new MenuItem(AppVaribles.getMessage("MultipleImagesViewer"));
         imagesViewer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -163,13 +164,15 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
             }
         });
+
         MenuItem ImageManufacture = new MenuItem(AppVaribles.getMessage("ImageManufacture"));
         ImageManufacture.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
             }
         });
+
         MenuItem ImageSplit = new MenuItem(AppVaribles.getMessage("ImageSplit"));
         ImageSplit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -238,110 +241,122 @@ public class MyBoxController extends BaseController {
         imageSizeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("size");
             }
         });
+
         MenuItem imageCropMenu = new MenuItem(AppVaribles.getMessage("Crop"));
         imageCropMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("crop");
             }
         });
+
         MenuItem imageColorMenu = new MenuItem(AppVaribles.getMessage("Color"));
         imageColorMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
-                controller.setInitTab("Color");
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                controller.setInitTab("color");
             }
         });
+
         MenuItem imageEffectsMenu = new MenuItem(AppVaribles.getMessage("Effects"));
         imageEffectsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("effects");
             }
         });
+
         MenuItem imageFiltersMenu = new MenuItem(AppVaribles.getMessage("Filters"));
         imageFiltersMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("filters");
             }
         });
+
         MenuItem imageReplaceColorMenu = new MenuItem(AppVaribles.getMessage("ReplaceColor"));
         imageReplaceColorMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("replaceColor");
             }
         });
+
         MenuItem imageWatermarkMenu = new MenuItem(AppVaribles.getMessage("Watermark"));
         imageWatermarkMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("watermark");
             }
         });
+
         MenuItem imageTransformMenu = new MenuItem(AppVaribles.getMessage("Transform"));
         imageTransformMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("transform");
             }
         });
+
         MenuItem imageCutMarginsMenu = new MenuItem(AppVaribles.getMessage("CutMargins"));
         imageCutMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("cutMargins");
             }
         });
+
         MenuItem imageAddMarginsMenu = new MenuItem(AppVaribles.getMessage("AddMargins"));
         imageAddMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("addMargins");
             }
         });
+
         MenuItem imageArcMenu = new MenuItem(AppVaribles.getMessage("Arc"));
         imageArcMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("arc");
             }
         });
+
         MenuItem imageShadowMenu = new MenuItem(AppVaribles.getMessage("Shadow"));
         imageShadowMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ImageManufactureController controller
-                        = (ImageManufactureController) reloadStage(CommonValues.ImageManufactureFxml, AppVaribles.getMessage("ImageManufacture"));
+                ImageManufactureFileController controller
+                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("shadow");
             }
         });
+
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
         manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu, imageFiltersMenu,
                 imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,

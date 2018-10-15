@@ -50,7 +50,7 @@ public class WeiboSnapController extends BaseController {
     private final String WeiboLastAddressKey, WeiboRetryKey, WeiboOpenPathKey, WeiboColseWindowKey;
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
-    final private String TempDirKey, AuthorKey;
+    final private String AuthorKey;
     private int scrollDelay, webWidth, categoryType, retry;
     private boolean isImageSize;
     private String webAddress;
@@ -58,14 +58,13 @@ public class WeiboSnapController extends BaseController {
     private Date startMonth, endMonth;
     private float zoomScale, speed;
     private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, pdfScale;
-    private File tempdir;
 
     @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup;
     @FXML
     private ComboBox<String> zoomBox, widthBox, retryBox;
     @FXML
-    private TextField addressInput, pathInput, startInput, endInput, tempDirInput;
+    private TextField addressInput, pathInput, startInput, endInput;
     @FXML
     private Button startButton, exampleButton;
     @FXML
@@ -88,7 +87,6 @@ public class WeiboSnapController extends BaseController {
         WeiboZoomKey = "WeiboZoomKey";
         WeiboLastAddressKey = "WeiboLastAddressKey";
         WeiboRetryKey = "WeiboRetryKey";
-        TempDirKey = "TempDirKey";
         AuthorKey = "AuthorKey";
         WeiboOpenPathKey = "WeiboOpenPathKey";
         WeiboColseWindowKey = "WeiboColseWindowKey";
@@ -141,6 +139,9 @@ public class WeiboSnapController extends BaseController {
                     }
                     if (s.endsWith("/profile")) {
                         s = s.substring(0, s.length() - "/profile".length());
+                    }
+                    if (s.endsWith("/")) {
+                        s = s.substring(0, s.length() - 1);
                     }
                     if ((!s.startsWith("https://weibo.com/")
                             && !s.startsWith("http://weibo.com/")
@@ -545,21 +546,6 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
-        tempDirInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    final File file = new File(newValue);
-                    tempDirInput.setStyle(null);
-                    AppVaribles.setConfigValue(TempDirKey, file.getPath());
-
-                    tempdir = file;
-                } catch (Exception e) {
-                }
-            }
-        });
-        tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-
     }
 
     private void checkPageSize() {
@@ -899,28 +885,6 @@ public class WeiboSnapController extends BaseController {
         maxMemBox.getSelectionModel().select("1GB");
         monthsPathsRadio.setSelected(true);
         pngRadio.setSelected(true);
-    }
-
-    @FXML
-    protected void selectTemp(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            chooser.setInitialDirectory(path);
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
-
-            tempDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     @FXML

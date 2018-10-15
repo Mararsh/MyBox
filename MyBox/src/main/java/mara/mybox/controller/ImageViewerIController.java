@@ -35,7 +35,7 @@ public class ImageViewerIController extends ImageViewerController {
         if (!isRefer && event.getClickCount() > 1) {
             openImageManufactureInNew(sourceFile.getAbsolutePath());
 //            try {
-//                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+//                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
 //                Pane pane = fxmlLoader.load();
 //                ImageManufactureController controller = fxmlLoader.getController();
 //                controller.loadImage(sourceFile.getAbsolutePath());

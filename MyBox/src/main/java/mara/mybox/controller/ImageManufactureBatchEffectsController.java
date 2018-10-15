@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.controller.ImageManufactureEffectsController.EffectsOperationType;
 import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.tools.FxmlTools;
@@ -200,17 +201,17 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         thresholdingMaxInput.setStyle(null);
         RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
         if (getMessage("Blur").equals(selected.getText())) {
-            effectType = ImageManufactureController.EffectsOperationType.Blur;
+            effectType = EffectsOperationType.Blur;
             blurBox.setDisable(false);
         } else if (getMessage("Sharpen").equals(selected.getText())) {
-            effectType = ImageManufactureController.EffectsOperationType.Sharpen;
+            effectType = EffectsOperationType.Sharpen;
         } else if (getMessage("EdgeDetection").equals(selected.getText())) {
-            effectType = ImageManufactureController.EffectsOperationType.EdgeDetect;
+            effectType = EffectsOperationType.EdgeDetect;
         } else if (getMessage("Posterizing").equals(selected.getText())) {
-            effectType = ImageManufactureController.EffectsOperationType.Posterizing;
+            effectType = EffectsOperationType.Posterizing;
             posterizingBox.setDisable(false);
         } else if (getMessage("Thresholding").equals(selected.getText())) {
-            effectType = ImageManufactureController.EffectsOperationType.Thresholding;
+            effectType = EffectsOperationType.Thresholding;
             thresholdingBox.setDisable(false);
             checkThresholding();
         }
@@ -220,19 +221,19 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
-            if (effectType == ImageManufactureController.EffectsOperationType.Blur) {
+            if (effectType == EffectsOperationType.Blur) {
                 target = ImageConvertTools.blurImage(source, blurRadius);
 
-            } else if (effectType == ImageManufactureController.EffectsOperationType.Sharpen) {
+            } else if (effectType == EffectsOperationType.Sharpen) {
                 target = ImageConvertTools.sharpenImage(source);
 
-            } else if (effectType == ImageManufactureController.EffectsOperationType.EdgeDetect) {
+            } else if (effectType == EffectsOperationType.EdgeDetect) {
                 target = ImageConvertTools.edgeDetect(ImageConvertTools.clearAlpha(source));
 
-            } else if (effectType == ImageManufactureController.EffectsOperationType.Thresholding) {
+            } else if (effectType == EffectsOperationType.Thresholding) {
                 target = ImageConvertTools.thresholding(ImageConvertTools.removeAlpha(source), threadholding, threadholdingMin, threadholdingMax);
 
-            } else if (effectType == ImageManufactureController.EffectsOperationType.Posterizing) {
+            } else if (effectType == EffectsOperationType.Posterizing) {
                 target = ImageConvertTools.posterizing(ImageConvertTools.removeAlpha(source), posterizingSize);
             }
             return target;

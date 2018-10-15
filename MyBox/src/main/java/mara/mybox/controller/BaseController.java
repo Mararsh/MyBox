@@ -30,6 +30,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -59,6 +60,8 @@ public class BaseController implements Initializable {
 
     protected static final Logger logger = LogManager.getLogger();
 
+    final protected String TempDirKey;
+
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
     protected String myFxml, parentFxml, currentStatus, baseTitle;
@@ -70,7 +73,7 @@ public class BaseController implements Initializable {
     protected Popup popup;
 
     protected boolean isPreview, targetIsFile, paused;
-    protected File sourceFile, targetPath;
+    protected File sourceFile, targetPath, tempdir;
     protected List<File> sourceFiles;
     protected ObservableList<FileInformation> sourceFilesInformation;
     protected String finalTargetName;
@@ -99,7 +102,7 @@ public class BaseController implements Initializable {
     @FXML
     protected VBox paraBox;
     @FXML
-    protected TextField previewInput, acumFromInput, digitInput;
+    protected TextField previewInput, acumFromInput, digitInput, tempDirInput;
     @FXML
     protected CheckBox fillZero, subdirCheck, appendDensity, appendColor, appendCompressionType, appendQuality, appendSize;
     @FXML
@@ -117,7 +120,7 @@ public class BaseController implements Initializable {
         appendDensityKey = "appendDensity";
         appendQualityKey = "appendQuality";
         appendSizeKey = "appendSize";
-
+        TempDirKey = "TempDirKey";
     }
 
     @Override
@@ -131,6 +134,15 @@ public class BaseController implements Initializable {
             if (mainMenuController != null) {
                 mainMenuController.setParentFxml(myFxml);
                 mainMenuController.setParentController(this);
+            }
+
+            if (thisPane != null) {
+                thisPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent event) {
+                        keyEventsHandler(event);
+                    }
+                });
             }
 
             if (sourceFileInput != null) {
@@ -259,9 +271,41 @@ public class BaseController implements Initializable {
                 FxmlTools.setNonnegativeValidation(acumFromInput);
             }
 
+            if (tempDirInput != null) {
+                tempDirInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        try {
+                            final File file = new File(newValue);
+                            tempDirInput.setStyle(null);
+                            AppVaribles.setConfigValue(TempDirKey, file.getPath());
+
+                            tempdir = file;
+                        } catch (Exception e) {
+                        }
+                    }
+
+                });
+                tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+            }
             initializeNext();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    protected void keyEventsHandler(KeyEvent event) {
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        if (event.isControlDown()) {
+            if ("m".equals(key) || "M".equals(key)) {  // ctrl-m
+                if (mainMenuController != null) {
+                    mainMenuController.getShowCommentsCheck().setSelected(!mainMenuController.getShowCommentsCheck().isSelected());
+                    mainMenuController.checkShowComments();
+                }
+            }
         }
     }
 
@@ -269,9 +313,21 @@ public class BaseController implements Initializable {
 
     }
 
+    public void setInterfaceStyle(Scene scene, String style) {
+        try {
+            if (scene != null && style != null) {
+                scene.getStylesheets().clear();
+                scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
+//                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+            }
+        } catch (Exception e) {
+//            logger.error(e.toString());
+        }
+    }
+
     public void setInterfaceStyle(String style) {
         try {
-            if (thisPane != null) {
+            if (thisPane != null && style != null) {
                 thisPane.getStylesheets().clear();
                 thisPane.getStylesheets().add(getClass().getResource(style).toExternalForm());
 //                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
@@ -366,6 +422,28 @@ public class BaseController implements Initializable {
             }
 
 //            new ProcessBuilder("Explorer", targetPath.getText()).start();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void selectTemp(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
+            if (!path.isDirectory()) {
+                path = new File(System.getProperty("user.home"));
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+
+            tempDirInput.setText(directory.getPath());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -773,7 +851,7 @@ public class BaseController implements Initializable {
 
     public void openImageManufactureInNew(String filename) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
             final ImageManufactureController controller = fxmlLoader.getController();
             Stage stage = new Stage();

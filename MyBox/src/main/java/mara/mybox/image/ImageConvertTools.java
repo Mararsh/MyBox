@@ -6,6 +6,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -863,7 +866,7 @@ public class ImageConvertTools {
 
     public static BufferedImage addWatermarkText(BufferedImage source, String text,
             Font font, Color color, int x, int y,
-            float transparent, int shadow, int angle) {
+            float transparent, int shadow, int angle, boolean isOutline) {
         try {
             if (transparent > 1.0f || transparent < 0) {
                 transparent = 1.0f;
@@ -888,9 +891,20 @@ public class ImageConvertTools {
                 g.drawString(text, x + shadow, y + shadow);
             }
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
-            g.setColor(color);
-            g.setFont(rotatedFont);
-            g.drawString(text, x, y);
+            if (isOutline) {
+                FontRenderContext frc = g.getFontRenderContext();
+                TextLayout textTl = new TextLayout(text, rotatedFont, frc);
+                Shape outline = textTl.getOutline(null);
+                AffineTransform transform = g.getTransform();
+                transform.translate(x, y);
+                g.transform(transform);
+                g.setColor(color);
+                g.draw(outline);
+            } else {
+                g.setColor(color);
+                g.setFont(rotatedFont);
+                g.drawString(text, x, y);
+            }
             g.dispose();
             return target;
         } catch (Exception e) {
@@ -963,7 +977,8 @@ public class ImageConvertTools {
         Graphics2D g = target.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        g.setBackground(bgColor);
+        g.setColor(bgColor);
+        g.fillRect(0, 0, width, height);
         g.setClip(new RoundRectangle2D.Double(0, 0, width, height, arc, arc));
         g.drawImage(source, 0, 0, null);
         g.dispose();

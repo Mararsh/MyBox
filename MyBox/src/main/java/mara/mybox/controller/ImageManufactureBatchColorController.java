@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.controller.ImageManufactureColorController.ColorOperationType;
 import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import static mara.mybox.tools.FxmlTools.badStyle;
@@ -107,7 +108,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
         decreaseRadio.setDisable(false);
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (getMessage("Brightness").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Brightness;
+            colorOperationType = ColorOperationType.Brightness;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -118,7 +119,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             increaseRadio.setDisable(false);
 
         } else if (getMessage("Saturation").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Sauration;
+            colorOperationType = ColorOperationType.Sauration;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -128,7 +129,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             }
 
         } else if (getMessage("Hue").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Hue;
+            colorOperationType = ColorOperationType.Hue;
             colorSlider.setMax(359);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -138,7 +139,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             }
 
         } else if (getMessage("Opacity").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Opacity;
+            colorOperationType = ColorOperationType.Opacity;
             colorSlider.setMax(100);
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
@@ -150,7 +151,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             decreaseRadio.setDisable(true);
 
         } else if (getMessage("Red").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Red;
+            colorOperationType = ColorOperationType.Red;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -160,7 +161,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             }
 
         } else if (getMessage("Green").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Green;
+            colorOperationType = ColorOperationType.Green;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -170,7 +171,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             }
 
         } else if (getMessage("Blue").equals(selected.getText())) {
-            colorOperationType = ImageManufactureController.ColorOperationType.Blue;
+            colorOperationType = ColorOperationType.Blue;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -218,26 +219,26 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 value = 0 - colorValue;
             }
             BufferedImage target = null;
-            if (colorOperationType == ImageManufactureController.ColorOperationType.Brightness) {
+            if (colorOperationType == ColorOperationType.Brightness) {
                 target = ImageConvertTools.changeBrightness(source, value / 100.0f);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Sauration) {
+            } else if (colorOperationType == ColorOperationType.Sauration) {
                 target = ImageConvertTools.changeSaturate(source, value / 100.0f);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Hue) {
+            } else if (colorOperationType == ColorOperationType.Hue) {
                 target = ImageConvertTools.changeHue(source, value / 360f);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Opacity) {
+            } else if (colorOperationType == ColorOperationType.Opacity) {
                 int v = (int) ((colorValue * 255 / 100.0f));
                 target = ImageConvertTools.addAlpha(source, v);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Red) {
+            } else if (colorOperationType == ColorOperationType.Red) {
                 target = ImageConvertTools.changeRed(source, value);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Green) {
+            } else if (colorOperationType == ColorOperationType.Green) {
                 target = ImageConvertTools.changeGreen(source, value);
 
-            } else if (colorOperationType == ImageManufactureController.ColorOperationType.Blue) {
+            } else if (colorOperationType == ColorOperationType.Blue) {
                 target = ImageConvertTools.changeBlue(source, value);
 
             }

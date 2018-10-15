@@ -164,9 +164,7 @@ public class FxmlTools {
         node.setOnMouseExited(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (AppVaribles.showComments) {
-                    tooltip.hide();
-                }
+                tooltip.hide();
             }
         });
     }

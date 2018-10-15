@@ -586,7 +586,7 @@ public class ImagesCombineController extends ImageViewerController {
                                 if (!stageReloading()) {
                                     return;
                                 }
-                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFxml), AppVaribles.CurrentBundle);
+                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
                                 Pane pane = fxmlLoader.load();
                                 final ImageManufactureController controller = fxmlLoader.getController();
                                 controller.setMyStage(myStage);

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureSizeController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="120.0" VBox.vgrow="NEVER">
+                    <children>
+                        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                            <tabs>
+                                <Tab fx:id="fileTab" text="%File" />
+                                <Tab fx:id="sizeTab" text="%Size">
+                                    <content>
+                                        <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                            <items>
+                                                <RadioButton mnemonicParsing="false" text=" " visible="false" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                            <items>
+                                                                <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Pixels">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="pixelsGroup" />
+                                                                    </toggleGroup>
+                                                                    <padding>
+                                                                        <Insets left="10.0" />
+                                                                    </padding>
+                                                                </RadioButton>
+                                                                <RadioButton contentDisplay="TOP" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ZoomScale" toggleGroup="$pixelsGroup" />
+                                                            </items>
+                                                        </ToolBar>
+                                                    </children>
+                                                </HBox>
+                                                <HBox VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                            <items>
+                                                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <ToolBar fx:id="pixelsBar" disable="true" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                            <items>
+                                                                <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepRatio" />
+                                                                <Label text="%Width" />
+                                                                <ChoiceBox fx:id="ratioBox" prefWidth="140.0" />
+                                                                <TextField fx:id="widthInput" prefWidth="80.0" />
+                                                                <Label text="%Height" />
+                                                                <TextField fx:id="heightInput" prefWidth="80.0" />
+                                                                <Button mnemonicParsing="false" onAction="#setOriginalSize" text="%OriginalSize" />
+                                                                <Button mnemonicParsing="false" onAction="#pixelsCalculator" text="%PixelsCalculator" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <ToolBar HBox.hgrow="NEVER">
+                                                            <items>
+                                                                <ComboBox fx:id="scaleBox" editable="true" prefWidth="80.0" />
+                                                <Label prefWidth="10.0" text=" " />
+                                                                <Button fx:id="pixelsOkButton" mnemonicParsing="false" onAction="#pixelsAction" text="%OK" />
+                                                            </items>
+                                                        </ToolBar>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="cropTab" text="%Crop" />
+                                <Tab fx:id="colorTab" text="%Color" />
+                                <Tab fx:id="effectsTab" text="%Effects" />
+                                <Tab fx:id="filtersTab" text="%Filters" />
+                                <Tab fx:id="replaceColorTab" text="%ReplaceColor" />
+                                <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="arcTab" text="%Arc" />
+                                <Tab fx:id="shadowTab" text="%Shadow" />
+                                <Tab fx:id="transformTab" text="%Transform" />
+                                <Tab fx:id="cutMarginsTab" text="%CutMargins" />
+                                <Tab fx:id="addMarginsTab" text="%AddMargins" />
+                                <Tab fx:id="viewTab" text="%View" />
+                                <Tab fx:id="refTab" text="%Reference" />
+                                <Tab fx:id="browseTab" text="%Browse" />
+                            </tabs>
+                        </TabPane>
+                    </children>
+                </HBox>
+                <HBox fx:id="hotBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                    <children>
+                        <ToolBar HBox.hgrow="ALWAYS">
+                            <items>
+                                <Label fx:id="tipsLabel" text="%Tips" />
+                                <Button mnemonicParsing="false" visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
+                            <items>
+                                <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ShowReference" />
+                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                 <!--<ComboBox fx:id="hisBox" prefWidth="150.0" />-->
+ <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
+                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <SplitPane fx:id="splitPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%CurrentImage" wrapText="true" VBox.vgrow="NEVER" />
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseClicked="#clickImage" onMouseEntered="#setBottomLabel" pickOnBounds="true" preserveRatio="true">
+                                            <cursor>
+                                                <Cursor fx:constant="OPEN_HAND" />
+                                            </cursor>
+                                        </ImageView>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </children>
+            <BorderPane.margin>
+                <Insets />
+            </BorderPane.margin>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <bottom>
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER_LEFT" />
+    </bottom>
+</BorderPane>

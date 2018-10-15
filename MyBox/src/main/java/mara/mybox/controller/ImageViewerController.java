@@ -108,7 +108,6 @@ public class ImageViewerController extends ImageBaseController {
             if (infoBar != null && imageInformation != null) {
                 infoBar.setDisable(false);
             }
-
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
@@ -312,6 +311,13 @@ public class ImageViewerController extends ImageBaseController {
         afterImageLoaded();
     }
 
+    public void loadImage(File sourceFile, Image image, ImageFileInformation imageInformation) {
+        this.sourceFile = sourceFile;
+        this.imageInformation = imageInformation;
+        this.image = image;
+        afterImageLoaded();
+    }
+
     public void showImageInformation(ImageFileInformation info) {
         try {
             if (info == null) {
@@ -381,15 +387,19 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     public void checkImageNevigator() {
+        checkImageNevigator(sourceFile);
+    }
+
+    public void checkImageNevigator(File currentfile) {
         try {
-            if (sourceFile == null) {
+            if (currentfile == null) {
                 previousFile = null;
                 previousButton.setDisable(true);
                 nextFile = null;
                 nextButton.setDisable(true);
                 return;
             }
-            File path = sourceFile.getParentFile();
+            File path = currentfile.getParentFile();
             List<File> sortedFiles = new ArrayList<>();
             File[] files = path.listFiles();
             for (File file : files) {
@@ -412,7 +422,7 @@ public class ImageViewerController extends ImageBaseController {
             }
 
             for (int i = 0; i < sortedFiles.size(); i++) {
-                if (sortedFiles.get(i).getAbsoluteFile().equals(sourceFile.getAbsoluteFile())) {
+                if (sortedFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
                     if (i < sortedFiles.size() - 1) {
                         nextFile = sortedFiles.get(i + 1);
                         nextButton.setDisable(false);

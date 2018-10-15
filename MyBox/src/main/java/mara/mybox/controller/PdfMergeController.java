@@ -23,7 +23,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
@@ -49,7 +48,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
  */
 public class PdfMergeController extends PdfBaseController {
 
-    final private String TempDirKey, AuthorKey;
+    final private String AuthorKey;
     private int pageWidth, pageHeight;
     private File targetFile;
     private PDRectangle pageSize;
@@ -68,7 +67,6 @@ public class PdfMergeController extends PdfBaseController {
     private CheckBox deleteCheck;
 
     public PdfMergeController() {
-        TempDirKey = "TempDirKey";
         AuthorKey = "AuthorKey";
     }
 
@@ -157,20 +155,6 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     private void initOptionsSection() {
-        tempDirInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    final File file = new File(newValue);
-                    tempDirInput.setStyle(null);
-                    AppVaribles.setConfigValue(TempDirKey, file.getPath());
-
-                    tempdir = file;
-                } catch (Exception e) {
-                }
-            }
-        });
-        tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -330,28 +314,6 @@ public class PdfMergeController extends PdfBaseController {
             }
         } catch (Exception e) {
 //            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void selectTemp(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            chooser.setInitialDirectory(path);
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
-
-            tempDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 

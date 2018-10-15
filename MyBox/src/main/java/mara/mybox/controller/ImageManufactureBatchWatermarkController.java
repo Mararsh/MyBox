@@ -370,7 +370,7 @@ public class ImageManufactureBatchWatermarkController extends ImageManufactureBa
 
             BufferedImage target = ImageConvertTools.addWatermarkText(source,
                     waterInput.getText().trim(), font, color,
-                    x, y, waterTransparent, waterShadow, waterAngle);
+                    x, y, waterTransparent, waterShadow, waterAngle, false);
 
             return target;
         } catch (Exception e) {

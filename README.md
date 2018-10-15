@@ -8,13 +8,13 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
 
-[MyBox-3.7-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-exe.zip) 。
+[MyBox-3.8-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-3.8-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.7-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-3.7-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.7.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.8-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-3.8-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.8.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,9 +28,9 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-Overview.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.7/MyBox-UserGuide-3.7-ImageTools.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-ImageTools.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
 
@@ -40,7 +40,7 @@
 
 
 ## 当前版本
-当前是版本3.7，已实现的特点：
+当前是版本3.8，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -55,7 +55,7 @@
 	I. 可设置PDF处理的主内存使用量。
 2. 图像工具：
 	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿通道。
-	B. 滤镜：灰色、反色、黑白色、红/蓝/绿通道。
+	B. 滤镜：灰色、反色、红/蓝/绿反色、黑白色、红/蓝/绿通道。
 	C. 效果：模糊、锐化、边沿检测、海报（减色）、阈值化。
 	D. 剪裁、换色、水印、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边。
 	E. 定义“范围”：区域（矩形或圆形）和颜色匹配。用于局部处理图像。
@@ -100,6 +100,10 @@
 
 ## 开发日志
 ```
+2018-10-15 版本3.8 优化代码：拆分图像处理的大类为各功能的子类。
+优化界面控件，使工具更易使用。设置快捷键。
+图像处理添加三个滤镜：红/蓝/绿的单通道反色。水印文字可以设置为“轮廓”。
+
 2018-10-09 版本3.7 微博截图工具：利用Javascript事件来依次加载图片，确保最小间隔以免被服务器判定为不善访问，
 同时监视最大加载间隔以免因图片挂了或者加载太快未触发事件而造成迭代中断。
 图像处理“效果”：模糊、锐化、边沿检测、海报（减色）、阈值化。

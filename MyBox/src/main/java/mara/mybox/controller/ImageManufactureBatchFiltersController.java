@@ -5,7 +5,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -13,6 +12,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.controller.ImageManufactureFiltersController.FiltersOperationType;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageGrayTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -36,8 +36,6 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
     private HBox bwBox;
     @FXML
     private TextField thresholdInput;
-    @FXML
-    private Label binaryValue;
 
     public ImageManufactureBatchFiltersController() {
 
@@ -97,19 +95,19 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
         thresholdInput.setStyle(null);
         RadioButton selected = (RadioButton) filtersGroup.getSelectedToggle();
         if (getMessage("BlackOrWhite").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.BlackOrWhite;
+            filtersOperationType = FiltersOperationType.BlackOrWhite;
             bwBox.setDisable(false);
             checkThresholdInput();
         } else if (getMessage("Gray").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.Gray;
+            filtersOperationType = FiltersOperationType.Gray;
         } else if (getMessage("Invert").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.Invert;
+            filtersOperationType = FiltersOperationType.Invert;
         } else if (getMessage("Red").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.Red;
+            filtersOperationType = FiltersOperationType.Red;
         } else if (getMessage("Green").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.Green;
+            filtersOperationType = FiltersOperationType.Green;
         } else if (getMessage("Blue").equals(selected.getText())) {
-            filtersOperationType = ImageManufactureController.FiltersOperationType.Blue;
+            filtersOperationType = FiltersOperationType.Blue;
         }
 
     }
@@ -137,13 +135,13 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
-            if (filtersOperationType == ImageManufactureController.FiltersOperationType.Gray) {
+            if (filtersOperationType == FiltersOperationType.Gray) {
                 target = ImageGrayTools.color2Gray(source);
 
-            } else if (filtersOperationType == ImageManufactureController.FiltersOperationType.Invert) {
+            } else if (filtersOperationType == FiltersOperationType.Invert) {
                 target = ImageConvertTools.makeInvert(source);
 
-            } else if (filtersOperationType == ImageManufactureController.FiltersOperationType.BlackOrWhite) {
+            } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
 
                 if (threshold < 0) {
                     target = ImageGrayTools.color2Binary(source);
@@ -151,13 +149,13 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
                     target = ImageGrayTools.color2BinaryWithPercentage(source, threshold);
                 }
 
-            } else if (filtersOperationType == ImageManufactureController.FiltersOperationType.Red) {
+            } else if (filtersOperationType == FiltersOperationType.Red) {
                 target = ImageConvertTools.keepRed(source);
 
-            } else if (filtersOperationType == ImageManufactureController.FiltersOperationType.Green) {
+            } else if (filtersOperationType == FiltersOperationType.Green) {
                 target = ImageConvertTools.keepGreen(source);
 
-            } else if (filtersOperationType == ImageManufactureController.FiltersOperationType.Blue) {
+            } else if (filtersOperationType == FiltersOperationType.Blue) {
                 target = ImageConvertTools.keepBlue(source);
 
             }

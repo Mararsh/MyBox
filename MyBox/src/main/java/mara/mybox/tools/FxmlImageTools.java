@@ -126,7 +126,7 @@ public class FxmlImageTools {
                     continue;
                 }
                 if (scope == null || scope.inScope(x, y, color)) {
-                    double v = color.getSaturation() + change;
+                    double v = color.getSaturation() * (1.0 + change);
                     if (v > 1.0) {
                         v = 1.0;
                     }
@@ -156,7 +156,7 @@ public class FxmlImageTools {
                     continue;
                 }
                 if (scope == null || scope.inScope(x, y, color)) {
-                    double v = color.getBrightness() + change;
+                    double v = color.getBrightness() * (1.0 + change);
                     if (v > 1.0) {
                         v = 1.0;
                     }
@@ -427,6 +427,78 @@ public class FxmlImageTools {
         return newImage;
     }
 
+    public static Image makeRedInvert(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        Color color, newColor;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    newColor = new Color(1.0 - color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image makeGreenInvert(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        Color color, newColor;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    newColor = new Color(color.getRed(), 1.0 - color.getGreen(), color.getBlue(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image makeBlueInvert(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        Color color, newColor;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    newColor = new Color(color.getRed(), color.getGreen(), 1.0 - color.getBlue(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
     public static Image makeGray(Image image, ImageScope scope) {
 
         PixelReader pixelReader = image.getPixelReader();
@@ -451,7 +523,7 @@ public class FxmlImageTools {
 
     }
 
-    public static Image makeBinary(Image image, int precent, ImageScope scope) {
+    public static Image makeBinaryFx(Image image, int precent, ImageScope scope) {
         double p = precent / 100.0;
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
@@ -464,8 +536,10 @@ public class FxmlImageTools {
                     pixelWriter.setColor(x, y, color);
                     continue;
                 }
+
                 if (scope.inScope(x, y, color)) {
                     double gray = 0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue();
+//                    double gray = 0.21 * color.getRed() + 0.71 * color.getGreen() + 0.07 * color.getBlue(); // refer color.grayscale()
                     if (gray < p) {
                         pixelWriter.setColor(x, y, Color.BLACK);
                     } else {
@@ -574,10 +648,10 @@ public class FxmlImageTools {
 
     public static Image addWatermark(Image image, String textString,
             java.awt.Font font, Color color, int x, int y,
-            float transparent, int shadow, int angle) {
+            float transparent, int shadow, int angle, boolean isOutline) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageConvertTools.addWatermarkText(source, textString,
-                font, FxmlImageTools.colorConvert(color), x, y, transparent, shadow, angle);
+                font, FxmlImageTools.colorConvert(color), x, y, transparent, shadow, angle, isOutline);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -1089,20 +1163,25 @@ public class FxmlImageTools {
     }
 
     public static Image cropImage(Image image, int x1, int y1, int x2, int y2) {
-        int width = (int) image.getWidth();
-        int height = (int) image.getHeight();
-        if (x1 >= x2 || y1 >= y2
-                || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
-                || x2 > width || y2 > height) {
+        try {
+            int width = (int) image.getWidth();
+            int height = (int) image.getHeight();
+            if (x1 >= x2 || y1 >= y2
+                    || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
+                    || x2 > width || y2 > height) {
+                return image;
+            }
+            int w = x2 - x1 + 1;
+            int h = y2 - y1 + 1;
+            PixelReader pixelReader = image.getPixelReader();
+            WritableImage newImage = new WritableImage(w, h);
+            PixelWriter pixelWriter = newImage.getPixelWriter();
+            pixelWriter.setPixels(0, 0, w, h, pixelReader, x1, y1);
+            return newImage;
+        } catch (Exception e) {
+            logger.debug(e.toString());
             return image;
         }
-        int w = x2 - x1 + 1;
-        int h = y2 - y1 + 1;
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage newImage = new WritableImage(w, h);
-        PixelWriter pixelWriter = newImage.getPixelWriter();
-        pixelWriter.setPixels(0, 0, w, h, pixelReader, x1, y1);
-        return newImage;
     }
 
     public static Image blurImage(Image image, int radius) {
@@ -1113,6 +1192,7 @@ public class FxmlImageTools {
         BufferedImage target = ImageConvertTools.blurImage(source, radius);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
+
     }
 
     public static Image sharpenImage(Image image) {
@@ -1185,14 +1265,12 @@ public class FxmlImageTools {
         return newImage;
     }
 
-    public static Image indicateAreaFx(Image image, ImageScope scope, Color color, int lineWidth) {
-        if ((scope.getAreaScopeType() == AreaScopeType.AllArea) && scope.isAllColors()) {
-            return image;
-        }
+    public static Image indicateArea(Image image,
+            Color color, int lineWidth,
+            int x1, int y1, int x2, int y2) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageConvertTools.showArea(source,
-                FxmlImageTools.colorConvert(color), lineWidth,
-                scope.getLeftX(), scope.getLeftY(), scope.getRightX(), scope.getRightY());
+                FxmlImageTools.colorConvert(color), lineWidth, x1, y1, x2, y2);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

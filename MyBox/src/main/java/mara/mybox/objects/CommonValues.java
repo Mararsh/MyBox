@@ -17,12 +17,13 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.7";
-    public static final String AppVersionDate = "2018-10-09";
+    public static final String AppVersion = "3.8";
+    public static final String AppVersionDate = "2018-10-15";
 
     public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
     public static final String UserConfigFile = UserFilePath + "/.conf.properties";
     public static final String AlarmClocksFile = UserFilePath + "/.alarmClocks";
+    public static final String DerbyDB = UserFilePath + "/mybox_derby";
 
     public static final Image AppIcon = new Image("img/mybox.png");
     public static final String MyBoxStyle = "/styles/MyBox.css";
@@ -52,6 +53,7 @@ public class CommonValues {
     public static final String PdfSplitFxml = "/fxml/PdfSplit.fxml";
     public static final String FileFxml = "/fxml/PdfConvertImages.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
+    public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
@@ -59,7 +61,22 @@ public class CommonValues {
     public static final String ImagesViewerFxml = "/fxml/ImagesViewer.fxml";
     public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
-    public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
+    public static final String ImageManufactureFileFxml = "/fxml/ImageManufactureFile.fxml";
+    public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
+    public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
+    public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
+    public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
+    public static final String ImageManufactureFiltersFxml = "/fxml/ImageManufactureFilters.fxml";
+    public static final String ImageManufactureReplaceColorFxml = "/fxml/ImageManufactureReplaceColor.fxml";
+    public static final String ImageManufactureWatermarkFxml = "/fxml/ImageManufactureWatermark.fxml";
+    public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
+    public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
+    public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
+    public static final String ImageManufactureAddMarginsFxml = "/fxml/ImageManufactureAddMargins.fxml";
+    public static final String ImageManufactureCutMarginsFxml = "/fxml/ImageManufactureCutMargins.fxml";
+    public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
+    public static final String ImageManufactureRefFxml = "/fxml/ImageManufactureRef.fxml";
+    public static final String ImageManufactureBrowseFxml = "/fxml/ImageManufactureBrowse.fxml";
     public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
