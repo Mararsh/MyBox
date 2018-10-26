@@ -74,8 +74,8 @@ public class ImageManufactureBatchController extends ImageBaseController {
 
     protected static class TargetExistType {
 
-        public static int Replace = 0;
-        public static int Rename = 1;
+        public static int Rename = 0;
+        public static int Replace = 1;
         public static int Skip = 2;
     }
 
@@ -151,10 +151,8 @@ public class ImageManufactureBatchController extends ImageBaseController {
         RadioButton selected = (RadioButton) alphaGroup.getSelectedToggle();
         if (getMessage("ReplaceAlphaAsBlack").equals(selected.getText())) {
             AppVaribles.setConfigValue("AlphaAsBlack", true);
-            AppVaribles.alphaAsBlack = true;
         } else {
             AppVaribles.setConfigValue("AlphaAsBlack", false);
-            AppVaribles.alphaAsBlack = false;
         }
     }
 
@@ -174,7 +172,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
 
         targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -244,9 +242,9 @@ public class ImageManufactureBatchController extends ImageBaseController {
     protected void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
@@ -396,7 +394,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
         if (blackRadio == null || whiteRadio == null) {
             return;
         }
-        if (AppVaribles.alphaAsBlack) {
+        if (AppVaribles.isAlphaAsBlack()) {
             blackRadio.setSelected(true);
         } else {
             whiteRadio.setSelected(true);

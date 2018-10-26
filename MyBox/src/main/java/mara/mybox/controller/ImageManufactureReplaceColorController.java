@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -19,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -27,8 +29,6 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.ImageScope.AreaScopeType;
-import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 
@@ -53,6 +53,10 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
     protected Button transForScopeButton, transForNewButton, replaceColorOkButton;
     @FXML
     protected RadioButton replaceColorSetting;
+    @FXML
+    protected HBox originalBox;
+    @FXML
+    private Label replaceColorLabel;
 
     public static class ReplaceColorScopeType {
 
@@ -91,8 +95,8 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
                 transForScopeButton.setDisable(false);
                 transForNewButton.setDisable(false);
             }
+            popInformation(getMessage("ClickForReplaceColor"));
 
-            setScopePane();
             isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -106,6 +110,11 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             Tooltip tips = new Tooltip(getMessage("ClickForReplaceColor"));
             tips.setFont(new Font(16));
             FxmlTools.setComments(replaceColorBar, tips);
+
+            replaceColorScope = new ImageScope();
+            replaceColorScope.setOperationType(ImageScope.OperationType.ReplaceColor);
+            replaceColorScope.setAllColors(false);
+            replaceColorScope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
 
             replaceScopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -134,14 +143,17 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
             if (AppVaribles.getMessage("Hue").equals(selected.getText())) {
                 replaceColorScopeType = ReplaceColorScopeType.Hue;
-                popInformation(getMessage("ClickForReplaceColor"));
                 setScopeColor(scopeColorPicker.getValue());
+                originalBox.setDisable(false);
+                replaceColorLabel.setVisible(true);
             } else if (AppVaribles.getMessage("Settings").equals(selected.getText())) {
-
+                originalBox.setDisable(true);
+                replaceColorLabel.setVisible(false);
             } else if (AppVaribles.getMessage("Color").equals(selected.getText())) {
                 replaceColorScopeType = ReplaceColorScopeType.Color;
-                popInformation(getMessage("ClickForReplaceColor"));
                 setScopeColor(scopeColorPicker.getValue());
+                originalBox.setDisable(false);
+                replaceColorLabel.setVisible(true);
             }
 
         } catch (Exception e) {
@@ -154,10 +166,8 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             if (replaceColorScopeType == ReplaceColorScopeType.Settings) {
                 return;
             }
-            replaceColorScope = new ImageScope();
-            replaceColorScope.setOperationType(OperationType.ReplaceColor);
             replaceColorScope.setAllColors(false);
-            replaceColorScope.setAreaScopeType(AreaScopeType.AllArea);
+            replaceColorScope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
             if (replaceColorScopeType == ReplaceColorScopeType.Color) {
                 replaceColorScope.setMatchColor(true);
                 replaceColorScope.setColorDistance(0);
@@ -255,8 +265,6 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             newColorPicker.setValue(color);
         }
 
-        popInformation(getMessage("ClickForReplaceColor"));
-
     }
 
     @FXML
@@ -265,6 +273,7 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.replaceColors(values.getCurrentImage(), newColorPicker.getValue(), replaceColorScope);
+                recordImageHistory(ImageOperationType.Replace_Color, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

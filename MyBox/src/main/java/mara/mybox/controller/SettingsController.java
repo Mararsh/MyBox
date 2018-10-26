@@ -1,22 +1,32 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.Arrays;
+import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.db.TableImageHistory;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
@@ -27,6 +37,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class SettingsController extends BaseController {
 
+    final protected String TempDirKey;
+
     @FXML
     private ToggleGroup langGroup, alphaGroup, pdfMemGroup, hisGroup;
     @FXML
@@ -36,17 +48,29 @@ public class SettingsController extends BaseController {
     @FXML
     private CheckBox showCommentsCheck, stopAlarmCheck;
     @FXML
-    private TextField hisMaxInput;
+    private TextField hisMaxInput, tempDirInput;
     @FXML
     protected ComboBox<String> styleBox;
+    @FXML
+    protected Button hisClearButton, hisOkButton;
+    @FXML
+    protected HBox pdfMemBox, imageHisBox;
+
+    public SettingsController() {
+        TempDirKey = "TempDir";
+    }
 
     @Override
     protected void initializeNext() {
         try {
 
-            checkLanguage();
-            checkAlpha();
-            checkPdfMem();
+            langGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkLanguage();
+                }
+            });
 
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -54,16 +78,21 @@ public class SettingsController extends BaseController {
                     AppVaribles.setConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
                 }
             });
-            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
 
             showCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     AppVaribles.setConfigValue("ShowComments", showCommentsCheck.isSelected());
-                    AppVaribles.showComments = showCommentsCheck.isSelected();
                 }
             });
-            showCommentsCheck.setSelected(AppVaribles.showComments);
+
+            Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(pdfMemBox, tips);
+
+            tips = new Tooltip(getMessage("ImageHisComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(imageHisBox, tips);
 
             hisMaxInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -72,12 +101,24 @@ public class SettingsController extends BaseController {
                     checkMaxHis();
                 }
             });
-            hisMaxInput.setText(AppVaribles.getConfigValue("ImageMaxHisKey", "10"));
-            if (AppVaribles.getConfigBoolean("ImageHisKey")) {
-                maxHisRadio.setSelected(true);
-            } else {
-                noHisRadio.setSelected(true);
-            }
+
+            tempDirInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    try {
+                        final File file = new File(newValue);
+                        if (!file.exists() || !file.isDirectory()) {
+                            tempDirInput.setStyle(badStyle);
+                            return;
+                        }
+                        tempDirInput.setStyle(null);
+                        AppVaribles.setConfigValue(TempDirKey, file.getAbsolutePath());
+                    } catch (Exception e) {
+                    }
+                }
+
+            });
+            tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, CommonValues.UserFilePath));
 
             styleBox.getItems().addAll(Arrays.asList(
                     getMessage("DefaultStyle"), getMessage("caspianStyle"),
@@ -93,6 +134,40 @@ public class SettingsController extends BaseController {
                     }
                 }
             });
+
+            initValues();
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    protected void initValues() {
+        try {
+//            logger.debug("initValues");
+
+            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+
+            showCommentsCheck.setSelected(AppVaribles.isShowComments());
+
+            hisMaxInput.setText(AppVaribles.getConfigInt("MaxImageHistories", 20) + "");
+            if (AppVaribles.getConfigBoolean("ImageHis")) {
+                hisMaxInput.setDisable(false);
+                hisOkButton.setDisable(false);
+                hisClearButton.setDisable(false);
+                checkMaxHis();
+
+                maxHisRadio.setSelected(true);
+
+            } else {
+                hisMaxInput.setStyle(null);
+                hisMaxInput.setDisable(true);
+                hisOkButton.setDisable(true);
+                hisClearButton.setDisable(true);
+
+                noHisRadio.setSelected(true);
+            }
+
             String style = AppVaribles.getConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
             switch (style) {
                 case CommonValues.DefaultStyle:
@@ -125,6 +200,11 @@ public class SettingsController extends BaseController {
                 default:
                     break;
             }
+
+            checkLanguage();
+            checkAlpha();
+            checkPdfMem();
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -139,7 +219,7 @@ public class SettingsController extends BaseController {
     }
 
     protected void checkAlpha() {
-        if (AppVaribles.alphaAsBlack) {
+        if (AppVaribles.isAlphaAsBlack()) {
             alphaBlackRadio.setSelected(true);
         } else {
             alphaWhiteRadio.setSelected(true);
@@ -193,12 +273,11 @@ public class SettingsController extends BaseController {
 
     public void setStyle(String style) {
         try {
-            AppVaribles.currentStyle = style;
-            AppVaribles.setConfigValue("InterfaceStyle", AppVaribles.currentStyle);
+            AppVaribles.setConfigValue("InterfaceStyle", style);
             if (getParentController() != null) {
                 getParentController().setInterfaceStyle(style);
             }
-            setInterfaceStyle(AppVaribles.currentStyle);
+            setInterfaceStyle(style);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -209,7 +288,6 @@ public class SettingsController extends BaseController {
             int v = Integer.valueOf(hisMaxInput.getText());
             if (v > 0) {
                 hisMaxInput.setStyle(null);
-                AppVaribles.setConfigInt("ImageMaxHisKey", v);
             } else {
                 hisMaxInput.setStyle(badStyle);
             }
@@ -220,13 +298,13 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void setChinese(ActionEvent event) {
-        AppVaribles.setCurrentBundle("zh");
+        AppVaribles.setLanguage("zh");
         reload();
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
-        AppVaribles.setCurrentBundle("en");
+        AppVaribles.setLanguage("en");
         reload();
     }
 
@@ -238,9 +316,9 @@ public class SettingsController extends BaseController {
                 c.setParentFxml(parentFxml);
                 BaseController p;
                 if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-                    p = parentController.reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                    p = parentController.reloadStage(CommonValues.ImageManufactureFileFxml, parentController.getMyStage().getTitle());
                 } else {
-                    p = parentController.reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+                    p = parentController.reloadStage(parentFxml, parentController.getMyStage().getTitle());
                 }
                 c.setParentController(p);
                 c.setParentFxml(p.getMyFxml());
@@ -251,13 +329,11 @@ public class SettingsController extends BaseController {
     @FXML
     protected void replaceWhiteAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", false);
-        AppVaribles.alphaAsBlack = false;
     }
 
     @FXML
     protected void replaceBlackAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", true);
-        AppVaribles.alphaAsBlack = true;
     }
 
     @FXML
@@ -282,32 +358,104 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearSettings(ActionEvent event) {
-        try {
-            File configFile = new File(CommonValues.UserConfigFile);
-            if (!configFile.exists()) {
-                configFile.createNewFile();
-            } else {
-                try (FileWriter fileWriter = new FileWriter(configFile)) {
-                    fileWriter.write("");
-                    fileWriter.flush();
-                }
-                popInformation(AppVaribles.getMessage("Successful"));
-            }
-        } catch (Exception e) {
-            popError(e.toString());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            return;
         }
+        AppVaribles.clear();
+        reload();
+        popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    @FXML
+    protected void clearHistories(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            return;
+        }
+        new TableImageHistory().clear();
+        if (parentController != null && parentFxml != null
+                && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+            ImageManufactureController p = (ImageManufactureController) parentController;
+            p.updateHisBox();
+        }
+        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML
     protected void maxHisAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ImageHisKey", true);
+        AppVaribles.setConfigValue("ImageHis", true);
+        hisMaxInput.setDisable(false);
+        hisOkButton.setDisable(false);
+        hisClearButton.setDisable(false);
         checkMaxHis();
+        if (parentController != null && parentFxml != null
+                && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+            ImageManufactureController p = (ImageManufactureController) parentController;
+            p.updateHisBox();
+        }
+    }
+
+    @FXML
+    protected void setHisAction(ActionEvent event) {
+        try {
+            int v = Integer.valueOf(hisMaxInput.getText());
+            if (v > 0) {
+                hisMaxInput.setStyle(null);
+                AppVaribles.setConfigInt("MaxImageHistories", v);
+                if (parentController != null && parentFxml != null
+                        && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+                    ImageManufactureController p = (ImageManufactureController) parentController;
+                    p.updateHisBox();
+                }
+            } else {
+                hisMaxInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            hisMaxInput.setStyle(badStyle);
+        }
     }
 
     @FXML
     protected void noHisAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ImageHisKey", false);
+        AppVaribles.setConfigValue("ImageHis", false);
         hisMaxInput.setStyle(null);
+        hisMaxInput.setDisable(true);
+        hisOkButton.setDisable(true);
+        hisClearButton.setDisable(true);
+        if (parentController != null && parentFxml != null
+                && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+            ImageManufactureController p = (ImageManufactureController) parentController;
+            p.updateHisBox();
+        }
+    }
+
+    @FXML
+    protected void selectTemp(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = new File(AppVaribles.getConfigValue(TempDirKey, CommonValues.UserFilePath));
+            if (!path.isDirectory()) {
+                path = new File(CommonValues.UserFilePath);
+            }
+            chooser.setInitialDirectory(path);
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+
+            tempDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML

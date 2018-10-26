@@ -2,10 +2,7 @@ package mara.mybox.objects;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import mara.mybox.db.TableAlarmClock;
 import static mara.mybox.objects.AppVaribles.executorService;
 import static mara.mybox.objects.AppVaribles.scheduledTasks;
 import mara.mybox.tools.DateTools;
@@ -59,6 +57,21 @@ public final class AlarmClock {
     }
 
     public static List<AlarmClock> readAlarmClocks() {
+        List<AlarmClock> alarms = TableAlarmClock.read();
+        if (alarms != null) {
+            for (AlarmClock a : alarms) {
+                setExtraValues(a);
+                if (a.isIsActive()) {
+                    scehduleAlarmClock(a);
+                }
+            }
+            writeAlarmClocks(alarms);
+        }
+        return alarms;
+    }
+
+    // Keep this method to migrate data from config file to derby db.
+    public static List<AlarmClock> readAlarmClocksFromFile() {
         try {
             List<AlarmClock> alarms = new ArrayList();
             try (InputStream in = new BufferedInputStream(new FileInputStream(CommonValues.AlarmClocksFile))) {
@@ -94,10 +107,9 @@ public final class AlarmClock {
                     }
                 }
             }
-            AlarmClock.writeAlarmClocks(alarms);
             return alarms;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return null;
         }
     }
@@ -249,62 +261,7 @@ public final class AlarmClock {
     }
 
     public static boolean writeAlarmClocks(List<AlarmClock> alarms) {
-        try {
-            if (alarms == null || alarms.isEmpty()) {
-                return false;
-            }
-
-            Properties conf = new Properties();
-            try (InputStream in = new FileInputStream(CommonValues.AlarmClocksFile)) {
-                conf.load(in);
-            }
-            try (OutputStream out = new FileOutputStream(CommonValues.AlarmClocksFile)) {
-                for (AlarmClock theAlarm : alarms) {
-                    String value = "";
-                    if (theAlarm.getDescription() != null) {
-                        value += theAlarm.getDescription();
-                    } else {
-                        value += " ";
-                    }
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getAlarmType();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getStartTime();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.isIsActive();
-                    value += AlarmValueSeprator;
-                    if (theAlarm.getSound() != null) {
-                        value += theAlarm.getSound();
-                    } else {
-                        value += " ";
-                    }
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getEveryValue();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getLastTime();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getNextTime();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.isIsSoundLoop();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.isIsSoundContinully();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getSoundLoopTimes();
-                    value += AlarmValueSeprator;
-                    value += theAlarm.getVolume();
-
-                    conf.setProperty(theAlarm.getKey() + "", value);
-                }
-
-                conf.store(out, "Update " + alarms.size());
-
-            }
-            return true;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
-        }
+        return TableAlarmClock.write(alarms);
     }
 
     public static int findAlarmIndex(ObservableList<AlarmClock> alarms, long key) {
@@ -329,20 +286,13 @@ public final class AlarmClock {
             if (alarms == null || alarms.isEmpty()) {
                 return false;
             }
-            Properties conf = new Properties();
-            try (InputStream in = new FileInputStream(CommonValues.AlarmClocksFile)) {
-                conf.load(in);
-            }
-            try (OutputStream out = new FileOutputStream(CommonValues.AlarmClocksFile)) {
-                for (AlarmClock alarm : alarms) {
-                    ScheduledFuture future = scheduledTasks.get(alarm.getKey());
-                    if (future != null) {
-                        future.cancel(true);
-                        scheduledTasks.remove(alarm.getKey());
-                    }
-                    conf.remove(alarm.getKey() + "");
+            TableAlarmClock.delete(alarms);
+            for (AlarmClock alarm : alarms) {
+                ScheduledFuture future = scheduledTasks.get(alarm.getKey());
+                if (future != null) {
+                    future.cancel(true);
+                    scheduledTasks.remove(alarm.getKey());
                 }
-                conf.store(out, "Remove " + alarms.size());
             }
             return true;
         } catch (Exception e) {
@@ -359,10 +309,7 @@ public final class AlarmClock {
 
     public static boolean clearAllAlarmClocks() {
         try {
-            try (FileWriter fileWriter = new FileWriter(CommonValues.AlarmClocksFile)) {
-                fileWriter.write("");
-                fileWriter.flush();
-            }
+            new TableAlarmClock().clear();
             for (Long key : scheduledTasks.keySet()) {
                 ScheduledFuture future = scheduledTasks.get(key);
                 future.cancel(true);

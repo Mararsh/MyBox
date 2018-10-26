@@ -265,6 +265,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                 } else {
                     return null;
                 }
+                recordImageHistory(ImageOperationType.Effects, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

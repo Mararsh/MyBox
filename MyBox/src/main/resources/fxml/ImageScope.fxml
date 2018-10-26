@@ -59,7 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%CurrentScope" />
-                <TextField fx:id="currentInput" editable="false" styleClass="darkRed-emphase" stylesheets="@../styles/MyBox.css"   maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <TextField fx:id="currentInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="darkRed-emphase" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
             </children>
         </HBox>
         <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="170.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
@@ -94,6 +94,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <TextField fx:id="rightYInput" prefWidth="80.0" promptText="Y" />
                                         <Label prefWidth="20.0" text=" " />
                                         <CheckBox fx:id="rectangleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
+                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%RectangleLabel">
+                                            <padding>
+                                                <Insets left="20.0" />
+                                            </padding>
+                                        </Label>
                                     </items>
                                 </ToolBar>
                                 <ToolBar fx:id="circleBar">
@@ -105,6 +110,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <TextField fx:id="radiusInput" prefWidth="80.0" />
                                         <Label prefWidth="20.0" text=" " />
                                         <CheckBox fx:id="circleExcludedCheck" mnemonicParsing="false" text="%Excluded" />
+                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%CircleLabel">
+                                            <padding>
+                                                <Insets left="20.0" />
+                                            </padding>
+                                        </Label>
                                     </items>
                                 </ToolBar>
                             </children>
@@ -137,6 +147,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <Button mnemonicParsing="false" onAction="#setBlack" text="%Black" />
                                         <Button mnemonicParsing="false" onAction="#setWhite" text="%White" />
                                         <Button mnemonicParsing="false" onAction="#clearColors" text="%Clear" />
+                                        <Label text="%ColorLabel"  styleClass="blue-label" stylesheets="@../styles/MyBox.css">
+                                            <padding>
+                                                <Insets left="20.0" />
+                                            </padding>
+                                        </Label>
                                     </items>
                                 </ToolBar>
                                 <ToolBar fx:id="colorBar2" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">

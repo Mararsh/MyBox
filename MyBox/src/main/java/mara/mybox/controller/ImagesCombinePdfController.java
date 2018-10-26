@@ -577,9 +577,9 @@ public class ImagesCombinePdfController extends ImageBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(ImagesCombinePdfPathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(ImagesCombinePdfPathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
@@ -798,9 +798,9 @@ public class ImagesCombinePdfController extends ImageBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(ImageCombineTargetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(ImageCombineTargetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);

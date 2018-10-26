@@ -99,7 +99,7 @@ public class ImagesViewerController extends ImageViewerController {
             setBar.setDisable(true);
 
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVaribles.getConfigValue(LastPathKey, System.getProperty("user.home"));
+            String defaultPath = AppVaribles.getConfigValue(LastPathKey, CommonValues.UserFilePath);
             fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue(sourcePathKey, defaultPath)));
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             imageFileList = fileChooser.showOpenMultipleDialog(getMyStage());

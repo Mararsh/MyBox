@@ -10,15 +10,17 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
@@ -78,9 +80,9 @@ public class ImageManufactureCropController extends ImageManufactureController {
     protected void initCropTab() {
         try {
 
-//            Tooltip tips = new Tooltip(getMessage("CropComments"));
-//            tips.setFont(new Font(16));
-//            FxmlTools.setComments(cropBar, tips);
+            Tooltip tips = new Tooltip(getMessage("CropComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(cropBar, tips);
             cropLeftXInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -231,7 +233,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                         @Override
                         public void run() {
                             imageView.setImage(newImage);
-                            popInformation(AppVaribles.getMessage("CropComments"));
+//                            popInformation(AppVaribles.getMessage("CropComments"));
                         }
                     });
                 } catch (Exception e) {
@@ -297,6 +299,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 try {
                     final Image newImage = FxmlImageTools.cropImage(values.getCurrentImage(),
                             cropLeftX, cropLeftY, cropRightX, cropRightY);
+                    recordImageHistory(ImageOperationType.Crop, newImage);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

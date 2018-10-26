@@ -14,7 +14,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -156,13 +157,17 @@
                                         <Label text="\%" />
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%MaxMainMemPDF" />
-                                        <ComboBox fx:id="maxMemBox" prefWidth="150.0" />
-                                        <Label text="%TempDir" />
-                                        <TextField fx:id="tempDirInput" HBox.hgrow="ALWAYS" />
-                                        <Button mnemonicParsing="false" onAction="#selectTemp" text="%Select..." />
+                                        <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="pdfMemGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
+                                        <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
+                                        <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
                                     </children>
                                 </HBox>
                             </children>
@@ -203,7 +208,7 @@
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
                         <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
-                  <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
+                        <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
                             <HBox.margin>
                                 <Insets />

@@ -65,6 +65,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.db.TableBrowserUrls;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -213,7 +214,7 @@ public class HtmlEditorController extends TextEditorController {
             htmlEdior.setOnKeyReleased(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    logger.debug("setOnKeyReleased");
+//                    logger.debug("setOnKeyReleased");
                     checkHtmlEditorChanged();
                 }
             });
@@ -226,7 +227,7 @@ public class HtmlEditorController extends TextEditorController {
 
     private void checkHtmlEditorChanged() {
         int len = htmlEdior.getHtmlText().length();
-        logger.debug(isSettingValues + "  " + len + " " + lastHtmlLen);
+//        logger.debug(isSettingValues + "  " + len + " " + lastHtmlLen);
         if (!isSettingValues && len != lastHtmlLen) {
             fileChanged.set(true);
         }
@@ -273,37 +274,13 @@ public class HtmlEditorController extends TextEditorController {
                                 if (url.getProtocol().toLowerCase().startsWith("http")) {
                                     urlBox.getEditor().setStyle(null);
                                     isSettingValues = true;
+                                    urls = TableBrowserUrls.write(newValue);
                                     try {
-                                        if (!urls.contains(newValue)) {
-                                            urls.add(0, newValue);
-                                        } else {
-                                            int pos = urls.indexOf(newValue);
-                                            if (pos > 0) {
-                                                urls.set(pos, urls.get(0));
-                                                urls.set(0, newValue);
-                                            }
-                                        }
-                                        for (int i = urls.size() - 1; i > 10; i--) {
-                                            urls.remove(i);
-                                        }
-                                        try {
-                                            urlBox.getItems().clear();
-                                            urlBox.getItems().addAll(urls);
-                                            urlBox.getSelectionModel().select(0);
-                                        } catch (Exception e) {
-                                            logger.error(e.toString());
-                                        }
-                                        String urlsString = "";
-                                        for (String item : urls) {
-                                            if (urlsString.isEmpty()) {
-                                                urlsString = item;
-                                            } else {
-                                                urlsString += "####" + item;
-                                            }
-                                        }
-                                        AppVaribles.setConfigValue(HtmlLastUrlsKey, urlsString);
+                                        urlBox.getItems().clear();
+                                        urlBox.getItems().addAll(urls);
+                                        urlBox.getSelectionModel().select(0);
                                     } catch (Exception e) {
-                                        logger.debug(e.toString());
+                                        logger.error(e.toString());
                                     }
                                     isSettingValues = false;
                                 } else {
@@ -319,14 +296,8 @@ public class HtmlEditorController extends TextEditorController {
                     });
                 }
             });
-            String[] savedUrls = AppVaribles.getConfigValue(HtmlLastUrlsKey, "").split("####");
-            urls = new ArrayList<>();
-            if (savedUrls.length > 0) {
-                for (int i = 0; i < savedUrls.length && i < 10; i++) {
-                    if (!savedUrls[i].trim().isEmpty()) {
-                        urls.add(savedUrls[i].trim());
-                    }
-                }
+            urls = TableBrowserUrls.read();
+            if (!urls.isEmpty()) {
                 isSettingValues = true;
                 urlBox.getItems().addAll(urls);
                 isSettingValues = false;
@@ -523,7 +494,7 @@ public class HtmlEditorController extends TextEditorController {
 //            sourceFile = null;
 //            htmlEdior.setHtmlText("");
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -592,8 +563,7 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void updateBrowser(ActionEvent event
-    ) {
+    private void updateBrowser(ActionEvent event) {
         webEngine.loadContent(htmlEdior.getHtmlText());
 //        Platform.runLater(new Runnable() {
 //            @Override
@@ -612,7 +582,6 @@ public class HtmlEditorController extends TextEditorController {
     @FXML
     private void updateEditor() {
         try {
-            logger.debug("updateEditor");
             if (!checkSavingForNextAction()) {
                 return;
             }
@@ -620,7 +589,6 @@ public class HtmlEditorController extends TextEditorController {
 //            String contents = getBrowserContents();
 //            logger.debug(contents.length());
             String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-            logger.debug(contents.length());
 
             htmlEdior.setHtmlText(contents);
             codesArea.setText(contents);
@@ -655,7 +623,7 @@ public class HtmlEditorController extends TextEditorController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, System.getProperty("user.home")));
+                File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
                 fileChooser.setInitialDirectory(path);
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
@@ -691,7 +659,7 @@ public class HtmlEditorController extends TextEditorController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -742,10 +710,10 @@ public class HtmlEditorController extends TextEditorController {
         final FileChooser fileChooser = new FileChooser();
         File path;
         if (isOneImage) {
-            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, System.getProperty("user.home")));
+            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
         } else {
-            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, System.getProperty("user.home")));
+            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
         }
         fileChooser.setInitialDirectory(path);

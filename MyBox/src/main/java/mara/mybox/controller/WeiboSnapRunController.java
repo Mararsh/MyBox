@@ -384,7 +384,7 @@ public class WeiboSnapRunController extends BaseController {
             startTime = new Date().getTime();
             tempdir = parameters.getTempdir();
             if (tempdir == null || !tempdir.exists() || !tempdir.isDirectory()) {
-                tempdir = new File(System.getProperty("user.home"));
+                tempdir = new File(CommonValues.UserFilePath);
             } else if (!tempdir.exists()) {
                 tempdir.mkdirs();
             }

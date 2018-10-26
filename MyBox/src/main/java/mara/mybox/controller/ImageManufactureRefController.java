@@ -9,6 +9,7 @@ import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -84,9 +85,9 @@ public class ImageManufactureRefController extends ImageManufactureController {
     public void selectReference() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

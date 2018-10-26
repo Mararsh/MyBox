@@ -108,6 +108,12 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
             filtersOperationType = FiltersOperationType.Green;
         } else if (getMessage("Blue").equals(selected.getText())) {
             filtersOperationType = FiltersOperationType.Blue;
+        } else if (getMessage("RedInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.RedInvert;
+        } else if (getMessage("GreenInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.GreenInvert;
+        } else if (getMessage("BlueInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.BlueInvert;
         }
 
     }
@@ -157,6 +163,15 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
 
             } else if (filtersOperationType == FiltersOperationType.Blue) {
                 target = ImageConvertTools.keepBlue(source);
+
+            } else if (filtersOperationType == FiltersOperationType.RedInvert) {
+                target = ImageConvertTools.makeRedInvert(source);
+
+            } else if (filtersOperationType == FiltersOperationType.GreenInvert) {
+                target = ImageConvertTools.makeGreenInvert(source);
+
+            } else if (filtersOperationType == FiltersOperationType.BlueInvert) {
+                target = ImageConvertTools.makeBlueInvert(source);
 
             }
             return target;

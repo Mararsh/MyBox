@@ -96,7 +96,7 @@ public abstract class PdfBaseController extends BaseController {
             targetSelectionController.targetPrefixInput.setText(FileTools.getFilePrefix(filename));
         }
         if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-            targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
         }
     }
 

@@ -100,9 +100,9 @@ public class PdfSourceSelectionController extends BaseController {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

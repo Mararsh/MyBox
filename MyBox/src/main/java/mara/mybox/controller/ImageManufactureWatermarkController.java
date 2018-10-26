@@ -327,6 +327,7 @@ public class ImageManufactureWatermarkController extends ImageManufactureControl
                 final Image newImage = FxmlImageTools.addWatermark(values.getCurrentImage(), waterInput.getText(),
                         font, waterColorPicker.getValue(), waterX, waterY,
                         waterTransparent, waterShadow, waterAngle, outlineCheck.isSelected());
+                recordImageHistory(ImageOperationType.Watermark, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

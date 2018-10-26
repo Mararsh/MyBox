@@ -94,8 +94,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ToolBar fx:id="pixelsBar" disable="true" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                             <items>
                                                                 <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepRatio" />
-                                                                <Label text="%Width" />
                                                                 <ChoiceBox fx:id="ratioBox" prefWidth="140.0" />
+                                                                <Label text="%Width" />
                                                                 <TextField fx:id="widthInput" prefWidth="80.0" />
                                                                 <Label text="%Height" />
                                                                 <TextField fx:id="heightInput" prefWidth="80.0" />
@@ -149,7 +149,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                 <!--<ComboBox fx:id="hisBox" prefWidth="150.0" />-->
+                                <ComboBox fx:id="hisBox" prefWidth="150.0" />
  <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />

@@ -90,11 +90,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 opacityRadio.setDisable(false);
             }
 
-            colorScope = new ImageScope();
-            colorScope.setOperationType(OperationType.Color);
-            colorScope.setAllColors(true);
-            colorScope.setAreaScopeType(AreaScopeType.AllArea);
-
             isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -104,6 +99,11 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
     protected void initColorTab() {
         try {
+            colorScope = new ImageScope();
+            colorScope.setOperationType(OperationType.Color);
+            colorScope.setAllColors(true);
+            colorScope.setAreaScopeType(AreaScopeType.AllArea);
+
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -237,38 +237,86 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
     @FXML
     public void increaseColor() {
-        if (colorOperationType == ColorOperationType.Brightness) {
-            increaseBrightness();
-        } else if (colorOperationType == ColorOperationType.Sauration) {
-            increaseSaturate();
-        } else if (colorOperationType == ColorOperationType.Hue) {
-            increaseHue();
-        } else if (colorOperationType == ColorOperationType.Opacity) {
-            setOpacity();
-        } else if (colorOperationType == ColorOperationType.Red) {
-            increaseRed();
-        } else if (colorOperationType == ColorOperationType.Green) {
-            increaseGreen();
-        } else if (colorOperationType == ColorOperationType.Blue) {
-            increaseBlue();
-        }
+        Task increaseTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage;
+                if (colorOperationType == ColorOperationType.Brightness) {
+                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                } else if (colorOperationType == ColorOperationType.Sauration) {
+                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                } else if (colorOperationType == ColorOperationType.Hue) {
+                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), colorValue, colorScope);
+                } else if (colorOperationType == ColorOperationType.Opacity) {
+                    newImage = FxmlImageTools.setOpacity(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                } else if (colorOperationType == ColorOperationType.Red) {
+                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Green) {
+                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Blue) {
+                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                } else {
+                    return null;
+                }
+                recordImageHistory(ImageOperationType.Color, newImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        values.setUndoImage(values.getCurrentImage());
+                        values.setCurrentImage(newImage);
+                        imageView.setImage(newImage);
+                        setImageChanged(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(increaseTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(increaseTask);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
     @FXML
     public void decreaseColor() {
-        if (colorOperationType == ColorOperationType.Brightness) {
-            decreaseBrightness();
-        } else if (colorOperationType == ColorOperationType.Sauration) {
-            decreaseSaturate();
-        } else if (colorOperationType == ColorOperationType.Hue) {
-            decreaseHue();
-        } else if (colorOperationType == ColorOperationType.Red) {
-            decreaseRed();
-        } else if (colorOperationType == ColorOperationType.Green) {
-            decreaseGreen();
-        } else if (colorOperationType == ColorOperationType.Blue) {
-            decreaseBlue();
-        }
+        Task decreaseTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final Image newImage;
+                if (colorOperationType == ColorOperationType.Brightness) {
+                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
+                } else if (colorOperationType == ColorOperationType.Sauration) {
+                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
+                } else if (colorOperationType == ColorOperationType.Hue) {
+                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), 0 - colorValue, colorScope);
+                } else if (colorOperationType == ColorOperationType.Red) {
+                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Green) {
+                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Blue) {
+                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
+                } else {
+                    return null;
+                }
+                recordImageHistory(ImageOperationType.Color, newImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        values.setUndoImage(values.getCurrentImage());
+                        values.setCurrentImage(newImage);
+                        imageView.setImage(newImage);
+                        setImageChanged(true);
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(decreaseTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(decreaseTask);
+        thread.setDaemon(true);
+        thread.start();
+
     }
 
     @FXML
@@ -304,308 +352,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
         values.setCurrentScope(imageScope);
         colorScope = imageScope;
         setScopePane();
-    }
-
-    public void increaseHue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeHue(values.getCurrentImage(), colorValue, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseHue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeHue(values.getCurrentImage(), 0 - colorValue, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseSaturate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-    public void decreaseSaturate() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseBrightness() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseBrightness() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setOpacity() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.setOpacity(values.getCurrentImage(), colorValue / 100.0f, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseRed() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeRed(values.getCurrentImage(), colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseGreen() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void increaseBlue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseRed() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeRed(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseGreen() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void decreaseBlue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
 }

@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 
 /**
@@ -40,9 +41,9 @@ public class DirectoriesTableController extends FilesTableController {
     void addAction(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             chooser.setInitialDirectory(defaultPath);
             File directory = chooser.showDialog(getMyStage());

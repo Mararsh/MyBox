@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
@@ -37,7 +38,7 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
             );
 
             if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", System.getProperty("user.home")));
+                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", CommonValues.UserFilePath));
             }
         } catch (Exception e) {
             logger.error(e.toString());

@@ -5,6 +5,7 @@ import java.net.URI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FxmlTools;
 
@@ -17,9 +18,7 @@ import mara.mybox.tools.FxmlTools;
 public class AboutController extends BaseController {
 
     @FXML
-    private Label version;
-    @FXML
-    private Label date;
+    private Label version, date;
     @FXML
     private Hyperlink licenseLink, sourceLink, issuesLink, releasesLink, userGuideLink, cloudLink;
 
@@ -28,7 +27,8 @@ public class AboutController extends BaseController {
         version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
         userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
-                + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion + ".pdf");
+                + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion
+                + "-" + AppVaribles.getLanguage() + ".pdf");
 
         FxmlTools.miao8();
 

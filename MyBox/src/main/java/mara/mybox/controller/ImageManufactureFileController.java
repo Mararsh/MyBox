@@ -66,8 +66,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
                 }
             });
             try {
-                String v = AppVaribles.getConfigValue(ImageSaveAsKey, SaveAsType.Load + "");
-                int vv = Integer.valueOf(v);
+                int vv = AppVaribles.getConfigInt(ImageSaveAsKey, SaveAsType.Load);
                 values.setSaveAsType(vv);
                 if (vv == SaveAsType.Load) {
                     loadRadio.setSelected(true);

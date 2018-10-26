@@ -133,6 +133,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
         try {
             Image newImage = FxmlImageTools.addShadowFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
             if (newImage != null) {
+                recordImageHistory(ImageOperationType.Shadow, newImage);
                 values.setUndoImage(values.getCurrentImage());
                 values.setCurrentImage(newImage);
                 imageView.setImage(newImage);
@@ -146,6 +147,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
 
         Image newImage = FxmlImageTools.addShadowBigFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
         if (newImage != null) {
+            recordImageHistory(ImageOperationType.Shadow, newImage);
             values.setUndoImage(values.getCurrentImage());
             values.setCurrentImage(newImage);
             imageView.setImage(newImage);
@@ -158,6 +160,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.addShadow(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
+                recordImageHistory(ImageOperationType.Shadow, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

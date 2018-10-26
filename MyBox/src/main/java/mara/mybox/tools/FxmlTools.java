@@ -156,7 +156,7 @@ public class FxmlTools {
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (AppVaribles.showComments) {
+                if (AppVaribles.isShowComments()) {
                     tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
                 }
             }

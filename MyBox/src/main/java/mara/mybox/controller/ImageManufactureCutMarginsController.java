@@ -219,6 +219,7 @@ public class ImageManufactureCutMarginsController extends ImageManufactureContro
                                 cutMarginsTopCheck.isSelected(), cutMarginsBottomCheck.isSelected(),
                                 cutMarginsLeftCheck.isSelected(), cutMarginsRightCheck.isSelected());
                     }
+                    recordImageHistory(ImageOperationType.Cut_Margins, newImage);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

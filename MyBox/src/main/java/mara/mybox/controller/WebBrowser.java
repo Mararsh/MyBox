@@ -163,10 +163,10 @@ public class WebBrowser implements Initializable {
 //        final FileChooser fileChooser = new FileChooser();
 //        File path;
 //        if (isOneImage) {
-//            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, System.getProperty("user.home")));
+//            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
 //            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
 //        } else {
-//            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, System.getProperty("user.home")));
+//            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
 //            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
 //        }
 //        fileChooser.setInitialDirectory(path);

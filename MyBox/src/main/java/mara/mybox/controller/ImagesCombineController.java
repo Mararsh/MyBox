@@ -520,7 +520,7 @@ public class ImagesCombineController extends ImageViewerController {
                     }
                 }
             });
-            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
 
             openTargetButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
@@ -634,9 +634,9 @@ public class ImagesCombineController extends ImageViewerController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

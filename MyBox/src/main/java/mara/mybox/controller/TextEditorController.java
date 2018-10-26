@@ -22,6 +22,7 @@ import javafx.scene.input.InputEvent;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -101,7 +102,7 @@ public class TextEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -144,7 +145,7 @@ public class TextEditorController extends BaseController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
+                File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
                 fileChooser.setInitialDirectory(path);
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
@@ -173,7 +174,7 @@ public class TextEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());

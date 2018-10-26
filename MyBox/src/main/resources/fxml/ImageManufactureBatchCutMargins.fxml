@@ -161,12 +161,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="targetExistGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename" toggleGroup="$targetExistGroup" />
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
                                                 <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />

@@ -70,7 +70,7 @@ public class ImageConvertTools {
         if (!hasAlpha(source)) {
             return source;
         }
-        if (AppVaribles.alphaAsBlack) {
+        if (AppVaribles.isAlphaAsBlack()) {
             return ImageConvertTools.replaceAlphaAsBlack(source);
         } else {
             return ImageConvertTools.replaceAlphaAsWhite(source);
@@ -222,7 +222,7 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     float[] hsb = ImageColorTools.pixel2HSB(source.getRGB(i, j));
-                    float v = hsb[1] + change;
+                    float v = hsb[1] * (1.0f + change);
                     if (v > 1.0f) {
                         v = 1.0f;
                     }
@@ -252,7 +252,7 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     float[] hsb = ImageColorTools.pixel2HSB(source.getRGB(i, j));
-                    float v = hsb[2] + change;
+                    float v = hsb[2] * (1.0f + change);
                     if (v > 1.0f) {
                         v = 1.0f;
                     }
@@ -426,6 +426,78 @@ public class ImageConvertTools {
                 for (int i = 0; i < width; i++) {
                     Color color = new Color(source.getRGB(i, j));
                     Color newColor = new Color(255 - color.getRed(), 255 - color.getGreen(),
+                            255 - color.getBlue(), color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage makeRedInvert(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j));
+                    Color newColor = new Color(255 - color.getRed(), color.getGreen(),
+                            color.getBlue(), color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage makeGreenInvert(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j));
+                    Color newColor = new Color(color.getRed(), 255 - color.getGreen(),
+                            color.getBlue(), color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage makeBlueInvert(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j));
+                    Color newColor = new Color(color.getRed(), color.getGreen(),
                             255 - color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
                 }
@@ -1452,12 +1524,9 @@ public class ImageConvertTools {
                 index++;
             }
         }
-        String v = "";
         for (int k = 0; k < size; k++) {
             data[k] = data[k] / sum;
-            v += "  " + data[k];
         }
-//        logger.debug(v);
         return new Kernel(width, width, data);
     }
 

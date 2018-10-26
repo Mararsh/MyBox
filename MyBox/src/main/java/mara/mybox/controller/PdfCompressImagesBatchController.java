@@ -24,6 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
@@ -108,16 +109,16 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
     }
 
     @FXML
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(PdfCompressImagesSourcePathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

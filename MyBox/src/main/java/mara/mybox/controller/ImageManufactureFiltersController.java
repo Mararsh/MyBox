@@ -87,11 +87,6 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
 
             isSettingValues = true;
 
-            filtersScope = new ImageScope();
-            filtersScope.setOperationType(OperationType.Filters);
-            filtersScope.setAllColors(true);
-            filtersScope.setAreaScopeType(AreaScopeType.AllArea);
-
             isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -101,6 +96,11 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
 
     protected void initFiltersTab() {
         try {
+            filtersScope = new ImageScope();
+            filtersScope.setOperationType(OperationType.Filters);
+            filtersScope.setAllColors(true);
+            filtersScope.setAreaScopeType(AreaScopeType.AllArea);
+
             filtersGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -225,217 +225,32 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
 
     @FXML
     public void filtersAction() {
-        if (filtersOperationType == FiltersOperationType.Gray) {
-            setGray();
-        } else if (filtersOperationType == FiltersOperationType.Invert) {
-            setInvert();
-        } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
-            setBinary();
-        } else if (filtersOperationType == FiltersOperationType.Red) {
-            setRed();
-        } else if (filtersOperationType == FiltersOperationType.Green) {
-            setGreen();
-        } else if (filtersOperationType == FiltersOperationType.Blue) {
-            setBlue();
-        } else if (filtersOperationType == FiltersOperationType.RedInvert) {
-            setRedInvert();
-        } else if (filtersOperationType == FiltersOperationType.GreenInvert) {
-            setGreenInvert();
-        } else if (filtersOperationType == FiltersOperationType.BlueInvert) {
-            setBlueInvert();
-        }
-    }
-
-    public void setInvert() {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeInvert(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setGray() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeGray(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setBinary() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage
-                        = FxmlImageTools.makeBinaryFx(values.getCurrentImage(), threshold, filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setRed() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.keepRed(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setGreen() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.keepGreen(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setBlue() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.keepBlue(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setRedInvert() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeRedInvert(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setGreenInvert() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeGreenInvert(values.getCurrentImage(), filtersScope);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    public void setBlueInvert() {
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.makeBlueInvert(values.getCurrentImage(), filtersScope);
+                final Image newImage;
+                if (filtersOperationType == FiltersOperationType.Gray) {
+                    newImage = FxmlImageTools.makeGray(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.Invert) {
+                    newImage = FxmlImageTools.makeInvert(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
+                    newImage = FxmlImageTools.makeBinaryFx(values.getCurrentImage(), threshold, filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.Red) {
+                    newImage = FxmlImageTools.keepRed(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.Green) {
+                    newImage = FxmlImageTools.keepGreen(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.Blue) {
+                    newImage = FxmlImageTools.keepBlue(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.RedInvert) {
+                    newImage = FxmlImageTools.makeRedInvert(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.GreenInvert) {
+                    newImage = FxmlImageTools.makeGreenInvert(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.BlueInvert) {
+                    newImage = FxmlImageTools.makeBlueInvert(values.getCurrentImage(), filtersScope);
+                } else {
+                    return null;
+                }
+                recordImageHistory(ImageOperationType.Filters, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

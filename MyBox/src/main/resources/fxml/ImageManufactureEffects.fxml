@@ -80,11 +80,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                   </toggleGroup>
                                                               </RadioButton>
                                                               <HBox fx:id="blurBox" alignment="CENTER_LEFT" spacing="2.0" />
-                                                              <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup">
-                                                                  <padding>
-                                                                      <Insets left="10.0" />
-                                                                  </padding>
-                                                              </RadioButton>
+                                                              <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
                                                               <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
@@ -171,7 +167,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                 <!--<ComboBox fx:id="hisBox" prefWidth="150.0" />-->
+                                <ComboBox fx:id="hisBox" prefWidth="150.0" />
  <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />

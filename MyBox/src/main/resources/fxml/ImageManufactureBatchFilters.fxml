@@ -101,6 +101,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Invert" toggleGroup="$filtersGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%RedInvert" toggleGroup="$filtersGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%GreenInvert" toggleGroup="$filtersGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%BlueInvert" toggleGroup="$filtersGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
                                                 <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
                                                 <HBox fx:id="bwBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="ALWAYS">
                                                     <children>
@@ -151,12 +158,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" selected="true" text="%Replace">
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="targetExistGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename" toggleGroup="$targetExistGroup" />
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
                                                 <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />

@@ -142,8 +142,8 @@ public class AlarmClockTableController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        tableData.removeAll(selected);
         AlarmClock.deleteAlarmClocks(selected);
+        tableData.removeAll(selected);
     }
 
     @FXML

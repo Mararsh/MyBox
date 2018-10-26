@@ -8,13 +8,13 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
 
-[MyBox-3.8-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-3.8-exe.zip) 。
+[MyBox-3.9-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-3.9-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
-在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.8-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-3.8-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-3.8.jar</CODE></PRE>
+在已安装JRE或者JDK的环境下，可以下载jar包 [MyBox-3.9-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-3.9-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-3.9.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,19 +28,19 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-Overview.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-Overview.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-ImageTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.8/MyBox-UserGuide-3.8-ImageTools.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-ImageTools-zh.pdf)
 
-[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-PdfTools.pdf)
+[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
 
-[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.1/MyBox-UserGuide-3.1-DesktopTools.pdf)
+[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-NetworkTools.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.6-NetworkTools.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
 
 
 ## 当前版本
-当前是版本3.8，已实现的特点：
+当前是版本3.9，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -59,7 +59,7 @@
 	C. 效果：模糊、锐化、边沿检测、海报（减色）、阈值化。
 	D. 剪裁、换色、水印、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边。
 	E. 定义“范围”：区域（矩形或圆形）和颜色匹配。用于局部处理图像。
-	F. 图像处理上一步的“撤销”和“重做”。也可以随时恢复原图。
+	F. 图像处理上一步的“撤销”和“重做”。也可随时恢复原图。另外可保存修改历史，以退回到前面的修改；可以设置历史个数。
 	G. 确保大图片处理的正确性和性能。
 	H. 同目录下图像的导览
 	I. 选择是否显示对照图。可以选择其它图片为对照图。
@@ -100,7 +100,11 @@
 
 ## 开发日志
 ```
-2018-10-15 版本3.8 优化代码：拆分图像处理的大类为各功能的子类。
+2018-10-26 版本3.9  内嵌Derby数据库以保存程序数据；确保数据正确从配置文件迁移到数据库。
+图像处理：保存修改历史，以便退回到前面的修改；用户可以设置历史个数。
+用户手册的英文版。
+
+2018-10-15 版本3.9 优化代码：拆分图像处理的大类为各功能的子类。
 优化界面控件，使工具更易使用。设置快捷键。
 图像处理添加三个滤镜：红/蓝/绿的单通道反色。水印文字可以设置为“轮廓”。
 
@@ -222,6 +226,7 @@ MyBox使用NetBeans开发：
 	
 [log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
 	
+[Derby   http://db.apache.org/derby/](http://db.apache.org/derby/)
 
 ## 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)

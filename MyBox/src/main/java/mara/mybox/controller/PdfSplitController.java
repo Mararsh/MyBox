@@ -10,15 +10,23 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.getConfigValue;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -44,7 +52,13 @@ public class PdfSplitController extends PdfBaseController {
     @FXML
     private ToggleGroup splitGroup;
     @FXML
-    private TextField PagesNumberInput, FilesNumberInput, ListInput, authorInput, tempDirInput;
+    private TextField PagesNumberInput, FilesNumberInput, ListInput, authorInput;
+    @FXML
+    protected HBox pdfMemBox;
+    @FXML
+    private ToggleGroup pdfMemGroup;
+    @FXML
+    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
     public static class PdfSplitType {
 
@@ -122,6 +136,12 @@ public class PdfSplitController extends PdfBaseController {
                 }
             });
             authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+
+            Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(pdfMemBox, tips);
+
+            checkPdfMem();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -210,11 +230,49 @@ public class PdfSplitController extends PdfBaseController {
         }
     }
 
-//    @Override
-//    protected void sourceFileChanged(final File file) {
-//        super.sourceFileChanged(file);
-//
-//    }
+    protected void checkPdfMem() {
+        String pm = getConfigValue("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                pdfMem1GRadio.setSelected(true);
+                break;
+            case "2GB":
+                pdfMem2GRadio.setSelected(true);
+                break;
+            case "Unlimit":
+                pdfMemUnlimitRadio.setSelected(true);
+                break;
+            case "500MB":
+            default:
+                pdfMem500MRadio.setSelected(true);
+        }
+    }
+
+    @FXML
+    protected void PdfMem500MB(ActionEvent event) {
+        AppVaribles.setPdfMem("500MB");
+    }
+
+    @FXML
+    protected void PdfMem1GB(ActionEvent event) {
+        AppVaribles.setPdfMem("1GB");
+    }
+
+    @FXML
+    protected void PdfMem2GB(ActionEvent event) {
+        AppVaribles.setPdfMem("2GB");
+    }
+
+    @FXML
+    protected void pdfMemUnlimit(ActionEvent event) {
+        AppVaribles.setPdfMem("Unlimit");
+    }
+
+    @FXML
+    protected void mouseEnterPane(MouseEvent event) {
+        checkPdfMem();
+    }
+
     @Override
     protected void makeMoreParameters() {
         makeSingleParameters();
@@ -230,12 +288,7 @@ public class PdfSplitController extends PdfBaseController {
             currentParameters.currentTotalHandled = 0;
             currentParameters.targetPath = new File(currentParameters.targetPath).getAbsolutePath();
 
-            if (tempdir != null) {
-                if (!tempdir.exists()) {
-                    tempdir.mkdirs();
-                }
-            }
-            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(tempdir);
+            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getTempPathFile());
 
             updateInterface("Started");
             task = new Task<Void>() {

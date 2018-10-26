@@ -364,6 +364,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.scaleImage(values.getCurrentImage(), values.getImageInfo().getImageFormat(), scale);
+                recordImageHistory(ImageOperationType.Size, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -391,6 +392,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.scaleImage(values.getCurrentImage(), values.getImageInfo().getImageFormat(), width, height);
+                recordImageHistory(ImageOperationType.Size, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

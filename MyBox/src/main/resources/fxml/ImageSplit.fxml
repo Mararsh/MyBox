@@ -53,7 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="120.0" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="NEVER">
                     <children>
                         <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
                             <tabs>
@@ -76,95 +76,96 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
-                        <Tab fx:id="targetTab" text="%TargetFiles">
-                           <content>
-                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                 <children>
-                                    <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                                      <items>
-                                        <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
-                                      </items>
-                                    </ToolBar>
-                                    <ToolBar maxWidth="1.7976931348623157E308">
-                                      <items>
-                                          <Label text="%FilePath" />
-                                          <TextField fx:id="targetPathInput" prefWidth="300.0" />
-                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
-                                          <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" text="%Open" />
-                                          <Label text="%FileNamePrefix">
-                                             <padding>
-                                                <Insets left="20.0" />
-                                             </padding>
-                                          </Label>
-                                          <TextField fx:id="targetPrefixInput" prefWidth="180.0" />
-                                          <Label text="%FileType">
-                                             <padding>
-                                                <Insets left="20.0" />
-                                             </padding>
-                                          </Label>
-                                          <ComboBox fx:id="targetTypeBox" prefWidth="120.0" />
-                                      </items>
-                                    </ToolBar>
-                                 </children>
-                              </HBox>
-                           </content>
-                        </Tab>
-                        <Tab fx:id="equiTab" text="%Equipartition">
-                           <content>
-                              <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                 <children>
-                                    <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                                      <items>
-                                        <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
-                                      </items>
-                                    </ToolBar>
-                                    <ToolBar maxWidth="1.7976931348623157E308">
-                                      <items>
-                                          <Label text="%RowsNumber" />
-                                          <TextField fx:id="rowsNumberInput" prefWidth="50.0" />
-                                          <Label text="%ColumnsNumber" />
-                                          <TextField fx:id="colsNumberInput" prefWidth="50.0" />
-                                          <Button fx:id="equiOkButton" disable="true" mnemonicParsing="false" onAction="#equiOkAction" text="%OK" />
-                                          <Label text="%Predefined">
-                                             <padding>
-                                                <Insets left="20.0" />
-                                             </padding>
-                                          </Label>
-                                          <Button mnemonicParsing="false" onAction="#do42Action" text="4*2" />
-                                          <Button mnemonicParsing="false" onAction="#do43Action" text="4*3" />
-                                          <Button mnemonicParsing="false" onAction="#do44Action" text="4*4" />
-                                          <Button mnemonicParsing="false" onAction="#do13Action" text="1*3" />
-                                          <Button mnemonicParsing="false" onAction="#do31Action" text="3*1" />
-                                          <Button mnemonicParsing="false" onAction="#do12Action" text="1*2" />
-                                          <Button mnemonicParsing="false" onAction="#do21Action" text="2*1" />
-                                          <Button mnemonicParsing="false" onAction="#do32Action" text="3*2" />
-                                          <Button mnemonicParsing="false" onAction="#do23Action" text="2*3" />
-                                          <Button mnemonicParsing="false" onAction="#do22Action" text="2*2" />
-                                        <Button mnemonicParsing="false" onAction="#do33Action" text="3*3" />
-                                      </items>
-                                    </ToolBar>
-                                 </children>
-                              </HBox>
-                           </content>
-                        </Tab>
+                                <Tab fx:id="targetTab" text="%TargetFiles">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar maxWidth="1.7976931348623157E308">
+                                                    <items>
+                                                        <Label text="%FilePath" />
+                                                        <TextField fx:id="targetPathInput" prefWidth="300.0" />
+                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                                        <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" text="%Open" />
+                                                        <Label text="%FileNamePrefix">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <TextField fx:id="targetPrefixInput" prefWidth="180.0" />
+                                                        <Label text="%FileType">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <ComboBox fx:id="targetTypeBox" prefWidth="120.0" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="equiTab" text="%Equipartition">
+                                    <content>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar maxWidth="1.7976931348623157E308">
+                                                    <items>
+                                                        <Label text="%RowsNumber" />
+                                                        <TextField fx:id="rowsNumberInput" prefWidth="50.0" />
+                                                        <Label text="%ColumnsNumber" />
+                                                        <TextField fx:id="colsNumberInput" prefWidth="50.0" />
+                                                        <Button fx:id="equiOkButton" disable="true" mnemonicParsing="false" onAction="#equiOkAction" text="%OK" />
+                                                        <Label text="%Predefined">
+                                                            <padding>
+                                                                <Insets left="20.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <Button mnemonicParsing="false" onAction="#do42Action" text="4*2" />
+                                                        <Button mnemonicParsing="false" onAction="#do43Action" text="4*3" />
+                                                        <Button mnemonicParsing="false" onAction="#do44Action" text="4*4" />
+                                                        <Button mnemonicParsing="false" onAction="#do13Action" text="1*3" />
+                                                        <Button mnemonicParsing="false" onAction="#do31Action" text="3*1" />
+                                                        <Button mnemonicParsing="false" onAction="#do12Action" text="1*2" />
+                                                        <Button mnemonicParsing="false" onAction="#do21Action" text="2*1" />
+                                                        <Button mnemonicParsing="false" onAction="#do32Action" text="3*2" />
+                                                        <Button mnemonicParsing="false" onAction="#do23Action" text="2*3" />
+                                                        <Button mnemonicParsing="false" onAction="#do22Action" text="2*2" />
+                                                        <Button mnemonicParsing="false" onAction="#do33Action" text="3*3" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </content>
+                                </Tab>
                                 <Tab fx:id="customTab" text="%Custom">
                                     <content>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="defineOkButton" disable="true" mnemonicParsing="false" onAction="#defineOkAction" prefWidth="2.0" text=" " visible="false" />
+                                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SplitCustomLabel" />
+                                                        <Button fx:id="defineOkButton" disable="true" mnemonicParsing="false" onAction="#defineOkAction" prefWidth="1.0" text=" " visible="false" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar fx:id="customBar" maxWidth="1.7976931348623157E308">
                                                     <items>
-                                          <Label text="%SplittingRows" />
+                                                        <Label text="%SplittingRows" />
                                                         <TextField fx:id="rowsInput" prefWidth="200.0" promptText="%SplitByComma" />
-                                          <Button mnemonicParsing="false" onAction="#clearRows" text="%Clear" />
-                                          <Label prefWidth="20.0" text=" " />
-                                          <Label text="%SplittingColumns" />
+                                                        <Button mnemonicParsing="false" onAction="#clearRows" text="%Clear" />
+                                                        <Label prefWidth="20.0" text=" " />
+                                                        <Label text="%SplittingColumns" />
                                                         <TextField fx:id="colsInput" prefWidth="200.0" promptText="%SplitByComma" />
-                                          <Button mnemonicParsing="false" onAction="#clearCols" text="%Clear" />
+                                                        <Button mnemonicParsing="false" onAction="#clearCols" text="%Clear" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -185,11 +186,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                        <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
-                        <ComboBox fx:id="lineWidthBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
-                        <Label text="%LineWidth" />
-                        <ColorPicker fx:id="lineColorPicker" />
-                        <Label text="%LineColor" />
+                                <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
+                                <ComboBox fx:id="lineWidthBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
+                                <Label text="%LineWidth" />
+                                <ColorPicker fx:id="lineColorPicker" />
+                                <Label text="%LineColor" />
                                 <Button fx:id="imageButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
@@ -225,8 +226,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </padding>
     <bottom>
         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#8a2c2c" BorderPane.alignment="CENTER_LEFT">
-         <font>
-            <Font name="System Bold" size="17.0" />
-         </font></Label>
+            <font>
+                <Font name="System Bold" size="17.0" />
+            </font>
+        </Label>
     </bottom>
 </BorderPane>

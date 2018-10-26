@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 
 /**
@@ -69,9 +70,9 @@ public class ImageSourceFilesController extends ImageBaseController {
     protected void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

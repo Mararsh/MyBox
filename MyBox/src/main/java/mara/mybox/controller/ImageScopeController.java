@@ -143,7 +143,7 @@ public class ImageScopeController extends BaseController {
                             pixelPickingType = PixelPickingType.Circle;
                         }
                     }
-                    popInformation();
+//                    popInformation();
                 }
             });
 
@@ -1027,7 +1027,7 @@ public class ImageScopeController extends BaseController {
                         @Override
                         public void run() {
                             scopeView.setImage(newImage);
-                            popInformation();
+//                            popInformation();
                             showScopeText();
                         }
                     });

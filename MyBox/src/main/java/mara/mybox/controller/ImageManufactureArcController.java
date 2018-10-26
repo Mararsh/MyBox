@@ -133,6 +133,7 @@ public class ImageManufactureArcController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.addArc(values.getCurrentImage(), arc, arcColorPicker.getValue());
+                recordImageHistory(ImageOperationType.Arc, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -167,6 +168,7 @@ public class ImageManufactureArcController extends ImageManufactureController {
             return;
         }
 
+        recordImageHistory(ImageOperationType.Arc, newImage);
         values.setUndoImage(values.getCurrentImage());
         values.setCurrentImage(newImage);
         imageView.setImage(newImage);

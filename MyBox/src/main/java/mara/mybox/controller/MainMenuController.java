@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileWriter;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -48,7 +47,7 @@ public class MainMenuController extends BaseController {
                     checkAlpha();
                     checkPdfMem();
                     stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
-                    showCommentsCheck.setSelected(AppVaribles.showComments);
+                    showCommentsCheck.setSelected(AppVaribles.isShowComments());
                 }
             });
 
@@ -66,7 +65,7 @@ public class MainMenuController extends BaseController {
     }
 
     protected void checkAlpha() {
-        if (AppVaribles.alphaAsBlack) {
+        if (AppVaribles.isAlphaAsBlack()) {
             replaceBlackMenu.setSelected(true);
         } else {
             replaceWhiteMenu.setSelected(true);
@@ -98,21 +97,21 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void setChinese(ActionEvent event) {
-        AppVaribles.setCurrentBundle("zh");
+        AppVaribles.setLanguage("zh");
         if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-            reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+            reloadStage(CommonValues.ImageManufactureFileFxml, getParentController().getMyStage().getTitle());
         } else {
-            reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+            reloadStage(parentFxml, getParentController().getMyStage().getTitle());
         }
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
-        AppVaribles.setCurrentBundle("en");
+        AppVaribles.setLanguage("en");
         if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-            reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+            reloadStage(CommonValues.ImageManufactureFileFxml, getParentController().getMyStage().getTitle());
         } else {
-            reloadStage(parentFxml, AppVaribles.getMessage("AppTitle"));
+            reloadStage(parentFxml, getParentController().getMyStage().getTitle());
         }
     }
 
@@ -127,9 +126,9 @@ public class MainMenuController extends BaseController {
     }
 
     public void checkShowComments() {
-        AppVaribles.setConfigValue("ShowComments", showCommentsCheck.isSelected());
-        AppVaribles.showComments = showCommentsCheck.isSelected();
-        if (AppVaribles.showComments) {
+        boolean v = showCommentsCheck.isSelected();
+        AppVaribles.setConfigValue("ShowComments", v);
+        if (v) {
             popInformation(AppVaribles.getMessage("CommentsShown"));
         } else {
             popInformation(AppVaribles.getMessage("CommentsHidden"));
@@ -139,13 +138,11 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void replaceWhiteAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", false);
-        AppVaribles.alphaAsBlack = false;
     }
 
     @FXML
     protected void replaceBlackAction(ActionEvent event) {
         AppVaribles.setConfigValue("AlphaAsBlack", true);
-        AppVaribles.alphaAsBlack = true;
     }
 
     @FXML
@@ -170,20 +167,13 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void clearSettings(ActionEvent event) {
-        try {
-            File configFile = new File(CommonValues.UserConfigFile);
-            if (!configFile.exists()) {
-                configFile.createNewFile();
-            } else {
-                try (FileWriter fileWriter = new FileWriter(configFile)) {
-                    fileWriter.write("");
-                    fileWriter.flush();
-                }
-                popInformation(AppVaribles.getMessage("Successful"));
-            }
-        } catch (Exception e) {
-            popError(e.toString());
+        AppVaribles.clear();
+        String f = getParentController().getMyFxml();
+        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
+            f = CommonValues.ImageManufactureFileFxml;
         }
+        BaseController c = reloadStage(f, getParentController().getMyStage().getTitle());
+        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML
@@ -239,10 +229,9 @@ public class MainMenuController extends BaseController {
     @Override
     public void setInterfaceStyle(String style) {
         try {
-            AppVaribles.currentStyle = style;
-            AppVaribles.setConfigValue("InterfaceStyle", AppVaribles.currentStyle);
+            AppVaribles.setConfigValue("InterfaceStyle", style);
             if (parentController != null) {
-                parentController.setInterfaceStyle(AppVaribles.currentStyle);
+                parentController.setInterfaceStyle(style);
             }
         } catch (Exception e) {
             logger.error(e.toString());

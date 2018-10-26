@@ -129,6 +129,7 @@ public class ImageManufactureAddMarginsController extends ImageManufactureContro
                         addMarginsColorPicker.getValue(), addMarginWidth,
                         addMarginsTopCheck.isSelected(), addMarginsBottomCheck.isSelected(),
                         addMarginsLeftCheck.isSelected(), addMarginsRightCheck.isSelected());
+                recordImageHistory(ImageOperationType.Add_Margins, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

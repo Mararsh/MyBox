@@ -60,8 +60,6 @@ public class BaseController implements Initializable {
 
     protected static final Logger logger = LogManager.getLogger();
 
-    final protected String TempDirKey;
-
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
     protected String myFxml, parentFxml, currentStatus, baseTitle;
@@ -73,7 +71,7 @@ public class BaseController implements Initializable {
     protected Popup popup;
 
     protected boolean isPreview, targetIsFile, paused;
-    protected File sourceFile, targetPath, tempdir;
+    protected File sourceFile, targetPath;
     protected List<File> sourceFiles;
     protected ObservableList<FileInformation> sourceFilesInformation;
     protected String finalTargetName;
@@ -102,7 +100,7 @@ public class BaseController implements Initializable {
     @FXML
     protected VBox paraBox;
     @FXML
-    protected TextField previewInput, acumFromInput, digitInput, tempDirInput;
+    protected TextField previewInput, acumFromInput, digitInput;
     @FXML
     protected CheckBox fillZero, subdirCheck, appendDensity, appendColor, appendCompressionType, appendQuality, appendSize;
     @FXML
@@ -120,13 +118,12 @@ public class BaseController implements Initializable {
         appendDensityKey = "appendDensity";
         appendQualityKey = "appendQuality";
         appendSizeKey = "appendSize";
-        TempDirKey = "TempDirKey";
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            setInterfaceStyle(AppVaribles.currentStyle);
+            setInterfaceStyle(AppVaribles.getStyle());
 
             myFxml = FxmlTools.getFxmlPath(url.getPath());
             AppVaribles.currentController = this;
@@ -169,7 +166,7 @@ public class BaseController implements Initializable {
                         } else {
                             AppVaribles.setConfigValue(sourcePathKey, file.getParent());
                             if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                                targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+                                targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
                             }
                             if (targetPrefixInput != null) {
                                 targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
@@ -220,7 +217,7 @@ public class BaseController implements Initializable {
                             }
                         }
                     });
-                    targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+                    targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
                 }
             }
 
@@ -271,23 +268,6 @@ public class BaseController implements Initializable {
                 FxmlTools.setNonnegativeValidation(acumFromInput);
             }
 
-            if (tempDirInput != null) {
-                tempDirInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        try {
-                            final File file = new File(newValue);
-                            tempDirInput.setStyle(null);
-                            AppVaribles.setConfigValue(TempDirKey, file.getPath());
-
-                            tempdir = file;
-                        } catch (Exception e) {
-                        }
-                    }
-
-                });
-                tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-            }
             initializeNext();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -341,9 +321,9 @@ public class BaseController implements Initializable {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
@@ -376,9 +356,9 @@ public class BaseController implements Initializable {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
@@ -422,28 +402,6 @@ public class BaseController implements Initializable {
             }
 
 //            new ProcessBuilder("Explorer", targetPath.getText()).start();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void selectTemp(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(TempDirKey, System.getProperty("user.home")));
-            if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
-            }
-            chooser.setInitialDirectory(path);
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
-
-            tempDirInput.setText(directory.getPath());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -495,17 +453,6 @@ public class BaseController implements Initializable {
     public BaseController reloadStage(String newFxml, String title) {
         try {
             getMyStage();
-//            if (task != null && task.isRunning()) {
-//                openStage(newFxml, title, false);
-//                return;
-//            }
-//            if (parentController != null) {
-//                if (parentController.task != null && parentController.task.isRunning()) {
-//                    openStage(newFxml, title, false);
-//                    return;
-//                }
-//            }
-//            logger.debug("reloadStage:" + getClass());
             if (!stageReloading()) {
                 return null;
             }
@@ -527,9 +474,12 @@ public class BaseController implements Initializable {
                     }
                 }
             });
-//            if (!newFxml.equals(CommonValues.AlarmClockFxml)) {
-//                AppVaribles.alarmClockController = null;
-//            }
+//            myStage.setOnShown(new EventHandler<WindowEvent>() {
+//                @Override
+//                public void handle(WindowEvent e) {
+//                    logger.debug("setOnShown");
+//                }
+//            });
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -701,7 +651,7 @@ public class BaseController implements Initializable {
     }
 
     public void popInformation(String text) {
-        popInformation(text, AppVaribles.commentsDelay);
+        popInformation(text, AppVaribles.getCommentsDelay());
     }
 
     public void popInformation(String text, int delay) {
@@ -754,7 +704,7 @@ public class BaseController implements Initializable {
     }
 
     public void popError(String text) {
-        popError(text, AppVaribles.commentsDelay);
+        popError(text, AppVaribles.getCommentsDelay());
     }
 
     public void popError(String text, int delay) {

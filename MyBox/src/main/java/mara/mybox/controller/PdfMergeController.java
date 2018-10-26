@@ -17,26 +17,33 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.getConfigValue;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 
@@ -49,22 +56,24 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 public class PdfMergeController extends PdfBaseController {
 
     final private String AuthorKey;
-    private int pageWidth, pageHeight;
     private File targetFile;
-    private PDRectangle pageSize;
-    private boolean notChange;
-    private File tempdir;
 
     @FXML
     private Button openTargetButton, saveButton;
     @FXML
     private TableView<FileInformation> sourceTable;
     @FXML
-    private TableColumn<FileInformation, String> fileColumn, pixelsColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
+    private TableColumn<FileInformation, String> fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
     @FXML
-    private TextField authorInput, tempDirInput;
+    private TextField authorInput;
     @FXML
     private CheckBox deleteCheck;
+    @FXML
+    protected HBox pdfMemBox;
+    @FXML
+    private ToggleGroup pdfMemGroup;
+    @FXML
+    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
     public PdfMergeController() {
         AuthorKey = "AuthorKey";
@@ -164,15 +173,21 @@ public class PdfMergeController extends PdfBaseController {
         });
         authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
 
+        Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(pdfMemBox, tips);
+
+        checkPdfMem();
+
     }
 
     @FXML
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File defaultPath = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
-                defaultPath = new File(System.getProperty("user.home"));
+                defaultPath = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
@@ -291,13 +306,56 @@ public class PdfMergeController extends PdfBaseController {
         sourceTable.refresh();
     }
 
+    protected void checkPdfMem() {
+        String pm = getConfigValue("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                pdfMem1GRadio.setSelected(true);
+                break;
+            case "2GB":
+                pdfMem2GRadio.setSelected(true);
+                break;
+            case "Unlimit":
+                pdfMemUnlimitRadio.setSelected(true);
+                break;
+            case "500MB":
+            default:
+                pdfMem500MRadio.setSelected(true);
+        }
+    }
+
+    @FXML
+    protected void PdfMem500MB(ActionEvent event) {
+        AppVaribles.setPdfMem("500MB");
+    }
+
+    @FXML
+    protected void PdfMem1GB(ActionEvent event) {
+        AppVaribles.setPdfMem("1GB");
+    }
+
+    @FXML
+    protected void PdfMem2GB(ActionEvent event) {
+        AppVaribles.setPdfMem("2GB");
+    }
+
+    @FXML
+    protected void pdfMemUnlimit(ActionEvent event) {
+        AppVaribles.setPdfMem("Unlimit");
+    }
+
+    @FXML
+    protected void mouseEnterPane(MouseEvent event) {
+        checkPdfMem();
+    }
+
     @FXML
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
@@ -345,7 +403,7 @@ public class PdfMergeController extends PdfBaseController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(tempdir);
+                    final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getTempPathFile());
 
                     PDFMergerUtility mergePdf = new PDFMergerUtility();
                     for (FileInformation source : sourceFilesInformation) {

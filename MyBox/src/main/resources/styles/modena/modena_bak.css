@@ -1210,7 +1210,7 @@ is being used to size a border should also be in pixels.
     -fx-shape: "M-0.25,6.083c0.843-0.758,4.583,4.833,5.75,4.833S14.5-1.5,15.917-0.917c1.292,0.532-8.75,17.083-10.5,17.083C3,16.167-1.083,6.833-0.25,6.083z";
 }
 .progress-indicator > .percentage {
-    -fx-font-size: 15px; /* 11pt - 1 less than the default font */
+    -fx-font-size: 0.916667em; /* 11pt - 1 less than the default font */
     -fx-fill: -fx-text-background-color;
 }
 .progress-indicator:indeterminate > .spinner {
@@ -2154,7 +2154,7 @@ is being used to size a border should also be in pixels.
 }
 .pagination > .pagination-control {
     -fx-background-color: transparent;
-    -fx-font-size: 15px;
+    -fx-font-size: 0.82em;
 }
 .pagination > .pagination-control > .control-box {
     -fx-padding: 5px 0 0 0;
@@ -2451,7 +2451,7 @@ is being used to size a border should also be in pixels.
 }
 .table-view .column-header .sort-order,
 .tree-table-view .column-header .sort-order{
-    -fx-font-size: 15px; /* 11pt - 1 less than the default font */
+    -fx-font-size: 0.916667em; /* 11pt - 1 less than the default font */
 }
 .table-view .column-header .sort-order-dot,
 .tree-table-view .column-header .sort-order-dot {
@@ -2499,7 +2499,7 @@ is being used to size a border should also be in pixels.
 .table-view .empty-table,
 .tree-table-view .empty-table {
     -fx-background-color: white;
-    -fx-font-size: 15px; /* 14pt - 2 more than the default font */
+    -fx-font-size: 1.166667em; /* 14pt - 2 more than the default font */
 }
 
 /*******************************************************************************
@@ -2513,7 +2513,7 @@ is being used to size a border should also be in pixels.
     -fx-padding: 0;
 }
 .check-box-table-cell > .check-box {
-    -fx-font-size: 15px;
+    -fx-font-size: 0.8em;
     -fx-opacity: 1;
     -fx-padding: 0 0 1 0;
 }
@@ -2577,7 +2577,7 @@ is being used to size a border should also be in pixels.
     -fx-background-insets: 0;
     -fx-padding: 0.667em 0.75em 0.667em 0.75em; /* 10px */
     -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.5) , 10, 0.0 , 0 , 3 );
-    -fx-font-size: 15px;
+    -fx-font-size: 0.85em;
 }
 
 /*******************************************************************************
@@ -2587,16 +2587,16 @@ is being used to size a border should also be in pixels.
  ******************************************************************************/
 
 .chart {
-    -fx-padding: 15px;
+    -fx-padding: 5px;
 }
 .chart-plot-background {
     -fx-background-color: -fx-background;
 }
 .chart-content {
-    -fx-padding: 15px;
+    -fx-padding: 10px;
 }
 .chart-title {
-    -fx-font-size: 15px;
+    -fx-font-size: 1.4em;
 }
 .chart-legend {
     -fx-background-color: -fx-shadow-highlight-color,
@@ -2604,7 +2604,7 @@ is being used to size a border should also be in pixels.
         linear-gradient(from 0px 0px to 0px 4px, derive(-fx-background, -4%), derive(-fx-background, 10%));
     -fx-background-insets: 0 0 -1 0, 0,1;
     -fx-background-radius: 4,4,3;
-    -fx-padding: 15px;
+    -fx-padding: 6px;
 }
 
 /*******************************************************************************
@@ -3106,7 +3106,7 @@ is being used to size a border should also be in pixels.
 }
 .date-picker-popup > * > .day-name-cell,
 .date-picker-popup > * > .week-number-cell {
-    -fx-font-size: 15px;
+    -fx-font-size: 0.916667em;
 }
 .date-picker-popup > * > .week-number-cell {
     -fx-padding: 0.333333em 0.583333em 0.333333em 0.583333em; /* 4 7 4 7 */
@@ -3120,7 +3120,7 @@ is being used to size a border should also be in pixels.
     -fx-padding: 0.333333em 0.583333em 0.333333em 0.583333em; /* 4 7 4 7 */
     -fx-border-color: derive(-fx-selection-bar-non-focused, 60%);
     -fx-border-width: 1px;
-    -fx-font-size: 15px;
+    -fx-font-size: 1em;
     -fx-background: -fx-control-inner-background;
     -fx-background-color: -fx-background;
     -fx-text-fill: -fx-text-background-color;
@@ -3128,7 +3128,7 @@ is being used to size a border should also be in pixels.
 .date-picker-popup > * > .hijrah-day-cell {
     -fx-alignment: TOP_LEFT;
     -fx-padding: 0.083333em 0.333333em 0.083333em 0.333333em; /* 1 4 1 4 */
-    -fx-cell-size: 15px;
+    -fx-cell-size: 2.75em;
 }
 .date-picker-popup > * > .day-cell > .secondary-text {
     -fx-fill: #f3622d;
@@ -3383,7 +3383,7 @@ is being used to size a border should also be in pixels.
 }
 
 .dialog-pane:header .header-panel .label {
-    -fx-font-size: 15px; /* 14px */
+    -fx-font-size: 1.167em; /* 14px */
     -fx-wrap-text: true;
 }
 

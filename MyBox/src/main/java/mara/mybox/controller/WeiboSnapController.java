@@ -72,13 +72,19 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
-    private ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox, maxMemBox;
+    private ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
     @FXML
     private TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
     private HBox sizeBox;
     @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio;
+    @FXML
+    protected HBox pdfMemBox;
+    @FXML
+    private ToggleGroup pdfMemGroup;
+    @FXML
+    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
     public WeiboSnapController() {
         WeiboTargetPathKey = "WeiboTargetPathKey";
@@ -528,16 +534,6 @@ public class WeiboSnapController extends BaseController {
         });
         pdfScaleBox.getSelectionModel().select(0);
 
-        maxMemBox.getItems().addAll(Arrays.asList("500MB", "1GB", "2GB", "Unlimit"));
-        maxMemBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov,
-                    String oldValue, String newValue) {
-                AppVaribles.setPdfMem(newValue);
-            }
-        });
-        FxmlTools.setItemSelected(maxMemBox, getConfigValue("PdfMemDefault", "1GB"));
-
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -545,6 +541,12 @@ public class WeiboSnapController extends BaseController {
             }
         });
         authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+
+        tips = new Tooltip(getMessage("PdfMemComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(pdfMemBox, tips);
+
+        checkPdfMem();
 
     }
 
@@ -712,7 +714,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        pathInput.setText(AppVaribles.getConfigValue(WeiboTargetPathKey, System.getProperty("user.home")));
+        pathInput.setText(AppVaribles.getConfigValue(WeiboTargetPathKey, CommonValues.UserFilePath));
 
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -821,13 +823,51 @@ public class WeiboSnapController extends BaseController {
         }
     }
 
+    protected void checkPdfMem() {
+        String pm = getConfigValue("PdfMemDefault", "1GB");
+        switch (pm) {
+            case "1GB":
+                pdfMem1GRadio.setSelected(true);
+                break;
+            case "2GB":
+                pdfMem2GRadio.setSelected(true);
+                break;
+            case "Unlimit":
+                pdfMemUnlimitRadio.setSelected(true);
+                break;
+            case "500MB":
+            default:
+                pdfMem500MRadio.setSelected(true);
+        }
+    }
+
+    @FXML
+    protected void PdfMem500MB(ActionEvent event) {
+        AppVaribles.setPdfMem("500MB");
+    }
+
+    @FXML
+    protected void PdfMem1GB(ActionEvent event) {
+        AppVaribles.setPdfMem("1GB");
+    }
+
+    @FXML
+    protected void PdfMem2GB(ActionEvent event) {
+        AppVaribles.setPdfMem("2GB");
+    }
+
+    @FXML
+    protected void pdfMemUnlimit(ActionEvent event) {
+        AppVaribles.setPdfMem("Unlimit");
+    }
+
     @FXML
     protected void selectPath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(WeiboTargetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(WeiboTargetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
@@ -882,14 +922,14 @@ public class WeiboSnapController extends BaseController {
         imageSizeRadio.setSelected(true);
         MarginsBox.getSelectionModel().select("20");
         pdfScaleBox.getSelectionModel().select("60");
-        maxMemBox.getSelectionModel().select("1GB");
+        pdfMem1GRadio.setSelected(true);
         monthsPathsRadio.setSelected(true);
         pngRadio.setSelected(true);
     }
 
     @FXML
     protected void mouseEnterPane(MouseEvent event) {
-        FxmlTools.setItemSelected(maxMemBox, getConfigValue("PdfMemDefault", "1GB"));
+        checkPdfMem();
     }
 
     private WeiboSnapParameters makeParameters() {
@@ -928,7 +968,7 @@ public class WeiboSnapController extends BaseController {
             parameters.setSavePictures(pixCheck.isSelected());
             parameters.setExpandPicture(expandPicturesCheck.isSelected());
             parameters.setCategory(categoryType);
-            parameters.setTempdir(tempdir);
+            parameters.setTempdir(AppVaribles.getTempPathFile());
             parameters.setPdfScale(pdfScale);
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
             parameters.setFontName("幼圆");

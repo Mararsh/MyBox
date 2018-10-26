@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImageManufactureController;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.image.ImageValueTools;
@@ -38,20 +39,13 @@ public class MainApp extends Application {
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
 
+            ImageValueTools.registrySupportedImageFormats();
+
             File userPath = new File(CommonValues.UserFilePath);
             if (!userPath.exists()) {
                 userPath.mkdirs();
             }
-            File configFile = new File(CommonValues.UserConfigFile);
-            if (!configFile.exists()) {
-                configFile.createNewFile();
-            }
-            File alarmFile = new File(CommonValues.AlarmClocksFile);
-            if (!alarmFile.exists()) {
-                alarmFile.createNewFile();
-            }
-
-            ImageValueTools.registrySupportedImageFormats();
+            DerbyBase.initTables();
             AppVaribles.initAppVaribles();
 
 //            logger.debug(Screen.getPrimary().getDpi());
@@ -87,7 +81,7 @@ public class MainApp extends Application {
                 });
             }
             try {
-                pane.getStylesheets().add(getClass().getResource(AppVaribles.currentStyle).toExternalForm());
+                pane.getStylesheets().add(getClass().getResource(AppVaribles.getStyle()).toExternalForm());
             } catch (Exception e) {
                 logger.error(e.toString());
             }

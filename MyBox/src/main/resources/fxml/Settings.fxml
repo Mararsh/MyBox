@@ -62,7 +62,7 @@
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                        <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
                                 <Label text="%MaxMainMemPDF" />
                                 <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
@@ -95,7 +95,7 @@
                                 <RadioButton fx:id="alphaBlackRadio" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
                             </children>
                         </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                        <HBox fx:id="imageHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
                                 <RadioButton fx:id="maxHisRadio" mnemonicParsing="false" onAction="#maxHisAction" selected="true" text="%MaxHistories">
                            <toggleGroup>
@@ -103,7 +103,8 @@
                            </toggleGroup>
                                 </RadioButton>
                                 <TextField fx:id="hisMaxInput" prefHeight="30.0" prefWidth="54.0" text="10" />
-                                <Button mnemonicParsing="false" text="%ClearCahce" />
+                        <Button fx:id="hisOkButton" mnemonicParsing="false" onAction="#setHisAction" text="%OK" />
+                                <Button fx:id="hisClearButton" mnemonicParsing="false" onAction="#clearHistories" text="%Clear" />
                                 <RadioButton fx:id="noHisRadio" mnemonicParsing="false" onAction="#noHisAction" text="%NoHistories" toggleGroup="$hisGroup" />
                             </children>
                         </HBox>
@@ -116,7 +117,7 @@
         </TitledPane>
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
-                <Button mnemonicParsing="false" text="%ClearPersonalSettings" />
+                <Button mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                 <Button mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
             </children>
         </HBox>

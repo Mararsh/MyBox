@@ -1,6 +1,7 @@
 package mara.mybox.objects;
 
 import java.awt.Color;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -17,13 +18,13 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.8";
-    public static final String AppVersionDate = "2018-10-15";
+    public static final String AppVersion = "3.9";
+    public static final String AppVersionDate = "2018-10-26";
 
-    public static final String UserFilePath = System.getProperty("user.home") + "/mybox";
-    public static final String UserConfigFile = UserFilePath + "/.conf.properties";
-    public static final String AlarmClocksFile = UserFilePath + "/.alarmClocks";
-    public static final String DerbyDB = UserFilePath + "/mybox_derby";
+    public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
+    public static final String UserConfigFile = UserFilePath + File.separator + ".conf.properties";
+    public static final String AlarmClocksFile = UserFilePath + File.separator + ".alarmClocks";
+    public static final String DerbyDB = UserFilePath + File.separator + "mybox_derby";
 
     public static final Image AppIcon = new Image("img/mybox.png");
     public static final String MyBoxStyle = "/styles/MyBox.css";

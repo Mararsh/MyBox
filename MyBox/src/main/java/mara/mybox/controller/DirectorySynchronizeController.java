@@ -31,6 +31,7 @@ import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -85,7 +86,7 @@ public class DirectorySynchronizeController extends BaseController {
     protected void initializeNext() {
         try {
 
-            sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -101,7 +102,7 @@ public class DirectorySynchronizeController extends BaseController {
                 }
             });
 
-            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             targetPathInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -149,9 +150,9 @@ public class DirectorySynchronizeController extends BaseController {
     protected void selectSourcePath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
@@ -175,9 +176,9 @@ public class DirectorySynchronizeController extends BaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());

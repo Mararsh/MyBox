@@ -2,7 +2,11 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +31,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -41,12 +46,14 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.db.TableImageHistory;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.objects.ImageHistory;
 import mara.mybox.objects.ImageManufactureValues;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.ImageScope.OperationType;
@@ -74,6 +81,26 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected String initTab;
     protected TextField scopeText;
     protected int stageWidth, stageHeight;
+    protected String imageHistoriesPath;
+
+    protected List<String> imageHistories;
+
+    public static class ImageOperationType {
+
+        public static int Load = 0;
+        public static int Arc = 1;
+        public static int Color = 2;
+        public static int Crop = 3;
+        public static int Watermark = 4;
+        public static int Effects = 5;
+        public static int Filters = 6;
+        public static int Replace_Color = 7;
+        public static int Shadow = 8;
+        public static int Size = 9;
+        public static int Transform = 10;
+        public static int Cut_Margins = 11;
+        public static int Add_Margins = 12;
+    }
 
     protected class ImageManufactureParameters {
 
@@ -177,17 +204,52 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-//            hisBox.getItems().addAll(Arrays.asList(AppVaribles.getMessage("CacheSetting")));
-//            hisBox.valueProperty().addListener(new ChangeListener<String>() {
-//                @Override
-//                public void changed(ObservableValue ov, String oldValue, String newValue) {
-//
-//                }
-//            });
-//            hisBox.getSelectionModel().select(0);
+            tips = new Tooltip(getMessage("ImageHisComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(hisBox, tips);
+            hisBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    int index = newValue.intValue();
+                    if (index < 0 || imageHistories == null || imageHistories.size() <= index) {
+                        return;
+                    }
+//                    logger.debug(index + " " + imageHistories.get(index) + "  " + hisBox.getSelectionModel().getSelectedItem());
+                    setImage(new File(imageHistories.get(index)));
+                }
+            });
+            hisBox.setVisibleRowCount(AppVaribles.getConfigInt("MaxImageHistories", 20));
+            hisBox.setDisable(!AppVaribles.getConfigBoolean("ImageHis"));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    public void setImage(final File file) {
+        Task setTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                BufferedImage bufferImage = ImageIO.read(file);
+                final Image newImage = SwingFXUtils.toFXImage(bufferImage, null);
+//                recordImageHistory(ImageOperationType.Load, newImage);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        values.setUndoImage(values.getCurrentImage());
+                        values.setCurrentImage(newImage);
+                        imageView.setImage(newImage);
+                        setImageChanged(true);
+                        setBottomLabel();
+                    }
+                });
+                return null;
+            }
+        };
+        openHandlingStage(setTask, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(setTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     protected void checkReferenceImage() {
@@ -339,6 +401,95 @@ public abstract class ImageManufactureController extends ImageViewerController {
         setBottomLabel();
     }
 
+    protected void updateHisBox() {
+        if (!AppVaribles.getConfigBoolean("ImageHis")) {
+            hisBox.setDisable(true);
+            return;
+        }
+        hisBox.setDisable(false);
+        hisBox.getItems().clear();
+        List<ImageHistory> his = TableImageHistory.read(values.getSourceFile().getAbsolutePath());
+        List<String> hisStrings = new ArrayList<>();
+        imageHistories = new ArrayList<>();
+        for (ImageHistory r : his) {
+            String s;
+            if (r.getUpdate_type() == ImageOperationType.Load) {
+                s = AppVaribles.getMessage("Load");
+            } else if (r.getUpdate_type() == ImageOperationType.Add_Margins) {
+                s = AppVaribles.getMessage("AddMargins");
+            } else if (r.getUpdate_type() == ImageOperationType.Arc) {
+                s = AppVaribles.getMessage("Arc");
+            } else if (r.getUpdate_type() == ImageOperationType.Color) {
+                s = AppVaribles.getMessage("Color");
+            } else if (r.getUpdate_type() == ImageOperationType.Crop) {
+                s = AppVaribles.getMessage("Crop");
+            } else if (r.getUpdate_type() == ImageOperationType.Cut_Margins) {
+                s = AppVaribles.getMessage("CutMargins");
+            } else if (r.getUpdate_type() == ImageOperationType.Effects) {
+                s = AppVaribles.getMessage("Effects");
+            } else if (r.getUpdate_type() == ImageOperationType.Filters) {
+                s = AppVaribles.getMessage("Filters");
+            } else if (r.getUpdate_type() == ImageOperationType.Replace_Color) {
+                s = AppVaribles.getMessage("ReplaceColor");
+            } else if (r.getUpdate_type() == ImageOperationType.Shadow) {
+                s = AppVaribles.getMessage("Shadow");
+            } else if (r.getUpdate_type() == ImageOperationType.Size) {
+                s = AppVaribles.getMessage("Size");
+            } else if (r.getUpdate_type() == ImageOperationType.Transform) {
+                s = AppVaribles.getMessage("Transform");
+            } else if (r.getUpdate_type() == ImageOperationType.Watermark) {
+                s = AppVaribles.getMessage("Watermark");
+            } else {
+                continue;
+            }
+            s = DateTools.datetimeToString(r.getOperation_time()) + " " + s;
+            hisStrings.add(s);
+            imageHistories.add(r.getHistory_location());
+        }
+
+        hisBox.getItems().addAll(hisStrings);
+    }
+
+    protected void recordImageHistory(final int updateType, final Image newImage) {
+        if (values == null || values.getSourceFile() == null
+                || !AppVaribles.getConfigBoolean("ImageHis")
+                || updateType < 0 || newImage == null) {
+            return;
+        }
+        if (imageHistoriesPath == null) {
+            imageHistoriesPath = AppVaribles.getImageHisPath();
+        }
+        Task saveTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(newImage);
+                String filename = imageHistoriesPath + File.separator
+                        + FileTools.getFilePrefix(values.getSourceFile().getName())
+                        + "_" + (new Date().getTime()) + "_" + updateType
+                        + "_" + new Random().nextInt(1000) + ".png";
+                while (new File(filename).exists()) {
+                    filename = imageHistoriesPath + File.separator
+                            + FileTools.getFilePrefix(values.getSourceFile().getName())
+                            + "_" + (new Date().getTime()) + "_" + updateType
+                            + "_" + new Random().nextInt(1000) + ".png";
+                }
+                filename = new File(filename).getAbsolutePath();
+                ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                TableImageHistory.add(values.getSourceFile().getAbsolutePath(), updateType, filename);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateHisBox();
+                    }
+                });
+                return null;
+            }
+        };
+        Thread thread = new Thread(saveTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
     protected void switchTab(Tab newTab) {
 
         String tabName = null;
@@ -436,6 +587,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             if (fxml != null) {
                 values.setStageWidth(stageWidth);
                 values.setStageHeight(stageHeight);
+                values.setImageViewWidth((int) imageView.getFitWidth());
+                values.setImageViewHeight((int) imageView.getFitHeight());
                 ImageManufactureController controller
                         = (ImageManufactureController) reloadStage(fxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setValues(values);
@@ -520,12 +673,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
             image = values.getImage();
             imageInformation = values.getImageInfo();
 
-//            if (values.getStageWidth() > 0) {
-//                getMyStage().setWidth(values.getStageWidth());
-//            }
-//            if (values.getStageHeight() > 0) {
-//                getMyStage().setHeight(values.getStageHeight());
-//            }
             cropTab.setDisable(false);
             colorTab.setDisable(false);
             filtersTab.setDisable(false);
@@ -548,7 +695,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             imageView.setImage(values.getCurrentImage());
             imageView.setCursor(Cursor.OPEN_HAND);
-            fitSize();
             setBottomLabel();
             setImageChanged(values.isImageChanged());
 
@@ -568,6 +714,18 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     stageHeight = newHeight.intValue();
                 }
             });
+            if (values.getStageWidth() > getMyStage().getWidth()) {
+                getMyStage().setWidth(values.getStageWidth());
+            }
+            if (values.getStageHeight() > getMyStage().getHeight()) {
+                getMyStage().setHeight(values.getStageHeight());
+            }
+            if (values.getImageViewHeight() > 0) {
+                imageView.setFitHeight(values.getImageViewHeight());
+                imageView.setFitWidth(values.getImageViewWidth());
+            } else {
+                fitSize();
+            }
 
             isSettingValues = false;
 
@@ -591,6 +749,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setImageInfo(imageInformation);
             values.setCurrentImage(image);
             setImageChanged(false);
+//            recordImageHistory(ImageOperationType.Load, image);
+
+            updateHisBox();
 
             if (initTab != null) {
                 switchTab(initTab);
@@ -661,9 +822,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
     public void saveAs() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, System.getProperty("user.home")));
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
-                path = new File(System.getProperty("user.home"));
+                path = new File(CommonValues.UserFilePath);
             }
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);

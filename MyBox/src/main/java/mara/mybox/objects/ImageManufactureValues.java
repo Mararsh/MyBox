@@ -22,7 +22,7 @@ public class ImageManufactureValues {
     private Image image, refImage, undoImage, redoImage, cropImage, currentImage, scopeImage;
     private ImageFileInformation refInfo, scopeInfo, imageInfo;
     private boolean refSync, isConfirmBeforeSave, imageChanged, showRef;
-    private int stageWidth, stageHeight, saveAsType;
+    private int stageWidth, stageHeight, saveAsType, imageViewWidth, imageViewHeight;
 
     public ImageManufactureValues() {
     }
@@ -185,6 +185,22 @@ public class ImageManufactureValues {
 
     public void setShowRef(boolean showRef) {
         this.showRef = showRef;
+    }
+
+    public int getImageViewWidth() {
+        return imageViewWidth;
+    }
+
+    public void setImageViewWidth(int imageViewWidth) {
+        this.imageViewWidth = imageViewWidth;
+    }
+
+    public int getImageViewHeight() {
+        return imageViewHeight;
+    }
+
+    public void setImageViewHeight(int imageViewHeight) {
+        this.imageViewHeight = imageViewHeight;
     }
 
 }

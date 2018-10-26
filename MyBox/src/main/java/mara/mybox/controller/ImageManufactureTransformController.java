@@ -140,6 +140,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.rotateImage(values.getCurrentImage(), rotateAngle);
+                recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -165,6 +166,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.rotateImage(values.getCurrentImage(), 360 - rotateAngle);
+                recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -190,6 +192,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.horizontalImage(values.getCurrentImage());
+                recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -215,6 +218,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.verticalImage(values.getCurrentImage());
+                recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -240,6 +244,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.shearImage(values.getCurrentImage(), shearX, 0);
+                recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

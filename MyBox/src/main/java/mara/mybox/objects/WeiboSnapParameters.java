@@ -269,7 +269,7 @@ public class WeiboSnapParameters {
 
     public void setTempdir(File tempdir) {
         if (tempdir == null || !tempdir.exists() || !tempdir.isDirectory()) {
-            this.tempdir = new File(System.getProperty("user.home"));
+            this.tempdir = new File(CommonValues.UserFilePath);
         } else {
             this.tempdir = tempdir;
         }
