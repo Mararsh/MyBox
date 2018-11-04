@@ -36,7 +36,7 @@
 
 [桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.6/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
 
 
 ## 当前版本
