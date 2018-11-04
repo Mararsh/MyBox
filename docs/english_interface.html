@@ -39,12 +39,12 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-3.9-exe.zip">MyBox-3.9-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-4.0-exe.zip">MyBox-4.0-exe.zip</a></p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-3.9-jar.zip">MyBox-3.9-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-4.0-jar.zip">MyBox-4.0-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-3.9.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.0.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox" target=_Blank>Project Main Page</a></p>
@@ -55,8 +55,8 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-Overview-en.pdf" target=_Blank>Overview</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-ImageTools-en.pdf" target=_Blank>Image Tools</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-UserGuide-4.0-Overview-en.pdf" target=_Blank>Overview</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-UserGuide-4.0-ImageTools-en.pdf" target=_Blank>Image Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>PDF Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf" target=_Blank>Desktop Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>Network Tools</a></p>
@@ -77,9 +77,9 @@
 	H. Handle PDF files in batch way.
 	I. Set the Maximum main memory of PDF handling.
 2. Image Tools:
-	A. Increase/Decrease: Pixels size, saturaion, brightness,  hue, Red/Green/Blue channel.
-	B. Filters: Gray, invert, Red/Green/Blue invert, black-white, Red/Green/Blue channel
-	C. Effects: Blur, sharpen, edges detect, posterize(reduce colors), thresholding.
+	A. Increase/Decrease: Pixels size, saturaion, brightness,  hue, Red/Green/Blue/Yellow/Cyan/Magenta channel.
+	B. Filters: Gray, black-white, Sepia, invert, Red/Green/Blue invert, Red/Green/Blue channel
+	C. Effects: Blur, sharpen, emboss, edges detect, posterize(reduce colors), thresholding.
 	D. Crop, replace color,  watermark, arc, shadow, shear, vertical/horizantal mirror, rotate, cut margins, add margins.
 	E. Define “scope”: Area(Rectrangle or circle) and color matching. Used for handling image in part.
 	F. “Undo” and “Redo” of previous operation. Can recover original image at any time. 
@@ -90,11 +90,12 @@
 	J. View the image meta-data and image attributes.
 	K. Split the image. Support equal splitting and customized splitting.
 	L. Combine images. Support options like array ordering, background color, interval, margins, and size.
-	M. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
-	N. Convert image into other format, with options like color model, size, compression, quality, etc.
-	O. Handle images in batch way.
-	P. Color palette.
-	Q. Pixels calculator.
+	M. Blend images. Support options like defining intersect area, whether keep intersect area only, and multiple famous blending modes.
+	N. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
+	O. Convert image into other format, with options like color model, size, compression, quality, etc.
+	P. Handle images in batch way.
+	Q. Color palette.
+	R. Pixels calculator.
 3. Desktop Tools:
 	A. Rename Files/Directories, with options of files' name and ordering.  Renamed files can be recovered as original names in all or in part.
 	B. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, 
@@ -128,6 +129,12 @@
 
 
 <p class="p1" >Development Logs</p>
+
+<p class="paragraph">2018-11-04 v4.0 New channels of Image Color Adjustment: Yellow, Cyan, Magenta. Yellow channel can be used to generate warm-toned image.</BR>
+New filter of image: Sepia, which is used to make picture old.</BR>
+New image effect: Emboss. Options like direction,  radius, and whether changed as grayscale, can be set.</BR>
+Images blending. Options like defining intersected area and blending mode can be set.</BR>
+Online helps are enriched with important information.</p>
 
 <p class="paragraph">2018-10-26 v3.9 Embed Derby database to save program's data. Make sure data are migrated from configuration file to db correctly.</BR>
 Image manufacture: Record updating histories to return former status. Can set whether record histories or set the number of the updating histories.</BR>

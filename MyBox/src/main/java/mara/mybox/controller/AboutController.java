@@ -28,7 +28,7 @@ public class AboutController extends BaseController {
         date.setText(CommonValues.AppVersionDate);
         userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
                 + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion
-                + "-" + AppVaribles.getLanguage() + ".pdf");
+                + "-Overview-" + AppVaribles.getLanguage() + ".pdf");
 
         FxmlTools.miao8();
 

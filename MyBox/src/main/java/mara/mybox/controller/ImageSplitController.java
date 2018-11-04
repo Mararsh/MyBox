@@ -51,7 +51,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 
 /**
  * @Author Mara

@@ -22,7 +22,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
@@ -59,6 +59,10 @@ public class ImageManufactureColorController extends ImageManufactureController 
         public static int Red = 4;
         public static int Green = 5;
         public static int Blue = 6;
+        public static int Yellow = 7;
+        public static int Cyan = 8;
+        public static int Magenta = 9;
+        public static int RGB = 10;
 
     }
 
@@ -218,6 +222,50 @@ public class ImageManufactureColorController extends ImageManufactureController 
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("Yellow").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Yellow;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("Cyan").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Cyan;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("Magenta").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Magenta;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
+        } else if (getMessage("RGB").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.RGB;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+            colorDecreaseButton.setVisible(true);
+            colorIncreaseButton.setText(getMessage("Increase"));
         }
     }
 
@@ -237,24 +285,41 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
     @FXML
     public void increaseColor() {
+        applyChange(colorValue);
+    }
+
+    @FXML
+    public void decreaseColor() {
+        applyChange(0 - colorValue);
+    }
+
+    private void applyChange(final int change) {
         Task increaseTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 final Image newImage;
                 if (colorOperationType == ColorOperationType.Brightness) {
-                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), change / 100.0f, colorScope);
                 } else if (colorOperationType == ColorOperationType.Sauration) {
-                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), change / 100.0f, colorScope);
                 } else if (colorOperationType == ColorOperationType.Hue) {
-                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), colorValue, colorScope);
+                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), change, colorScope);
                 } else if (colorOperationType == ColorOperationType.Opacity) {
-                    newImage = FxmlImageTools.setOpacity(values.getCurrentImage(), colorValue / 100.0f, colorScope);
+                    newImage = FxmlImageTools.setOpacity(values.getCurrentImage(), change / 100.0f, colorScope);
                 } else if (colorOperationType == ColorOperationType.Red) {
-                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), change / 255.0, colorScope);
                 } else if (colorOperationType == ColorOperationType.Green) {
-                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), change / 255.0, colorScope);
                 } else if (colorOperationType == ColorOperationType.Blue) {
-                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), colorValue / 255.0, colorScope);
+                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), change / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Yellow) {
+                    newImage = FxmlImageTools.changeYellow(values.getCurrentImage(), change / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Cyan) {
+                    newImage = FxmlImageTools.changeCyan(values.getCurrentImage(), change / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.Magenta) {
+                    newImage = FxmlImageTools.changeMagenta(values.getCurrentImage(), change / 255.0, colorScope);
+                } else if (colorOperationType == ColorOperationType.RGB) {
+                    newImage = FxmlImageTools.changeRGB(values.getCurrentImage(), change / 255.0, colorScope);
                 } else {
                     return null;
                 }
@@ -273,47 +338,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
         };
         openHandlingStage(increaseTask, Modality.WINDOW_MODAL);
         Thread thread = new Thread(increaseTask);
-        thread.setDaemon(true);
-        thread.start();
-
-    }
-
-    @FXML
-    public void decreaseColor() {
-        Task decreaseTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                final Image newImage;
-                if (colorOperationType == ColorOperationType.Brightness) {
-                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
-                } else if (colorOperationType == ColorOperationType.Sauration) {
-                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), 0.0f - colorValue / 100.0f, colorScope);
-                } else if (colorOperationType == ColorOperationType.Hue) {
-                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), 0 - colorValue, colorScope);
-                } else if (colorOperationType == ColorOperationType.Red) {
-                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Green) {
-                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Blue) {
-                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), 0.0 - colorValue / 255.0, colorScope);
-                } else {
-                    return null;
-                }
-                recordImageHistory(ImageOperationType.Color, newImage);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(decreaseTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(decreaseTask);
         thread.setDaemon(true);
         thread.start();
 

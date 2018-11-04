@@ -180,6 +180,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
             }
         });
+
         MenuItem ImageCombine = new MenuItem(AppVaribles.getMessage("ImageCombine"));
         ImageCombine.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -187,6 +188,15 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
             }
         });
+
+        MenuItem ImagesBlend = new MenuItem(AppVaribles.getMessage("ImagesBlend"));
+        ImagesBlend.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImagesBlendFxml, AppVaribles.getMessage("ImagesBlend"));
+            }
+        });
+
         MenuItem imagesCombinePdf = new MenuItem(AppVaribles.getMessage("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -229,7 +239,8 @@ public class MyBoxController extends BaseController {
 
         imageMenu = new ContextMenu();
         imageMenu.getItems().addAll(ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
-                ImageSplit, ImageCombine, imagesCombinePdf, new SeparatorMenuItem(),
+                ImageSplit, ImageCombine, ImagesBlend, new SeparatorMenuItem(),
+                imagesCombinePdf, new SeparatorMenuItem(),
                 imageViewer, imagesViewer, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
                 colorPalette, pixelsCalculator);

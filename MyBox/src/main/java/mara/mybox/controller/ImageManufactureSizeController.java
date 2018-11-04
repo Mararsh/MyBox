@@ -30,7 +30,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 
 /**
  * @Author Mara

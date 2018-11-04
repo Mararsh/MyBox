@@ -60,7 +60,7 @@ import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FxmlTools;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -218,7 +218,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     setImage(new File(imageHistories.get(index)));
                 }
             });
-            hisBox.setVisibleRowCount(AppVaribles.getConfigInt("MaxImageHistories", 20));
+            hisBox.setVisibleRowCount(15);
             hisBox.setDisable(!AppVaribles.getConfigBoolean("ImageHis"));
 
         } catch (Exception e) {
@@ -402,7 +402,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void updateHisBox() {
-        if (!AppVaribles.getConfigBoolean("ImageHis")) {
+        if (!AppVaribles.getConfigBoolean("ImageHis") || values.getSourceFile() == null) {
             hisBox.setDisable(true);
             return;
         }
@@ -697,6 +697,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             imageView.setCursor(Cursor.OPEN_HAND);
             setBottomLabel();
             setImageChanged(values.isImageChanged());
+            updateHisBox();
 
             showRefCheck.setSelected(values.isShowRef());
 
@@ -1059,7 +1060,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
             if (showScopeCheck == null) {
                 return;
             }
-
             if (values.getCurrentScope() == null) {
                 values.setScopeImage(null);
                 values.setScopeInfo(null);

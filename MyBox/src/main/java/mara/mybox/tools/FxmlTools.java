@@ -286,15 +286,23 @@ public class FxmlTools {
     }
 
     public static File getUserFile(Class someClass, String resourceFile, String userFile) {
+        return getUserFile(someClass, resourceFile, userFile, false);
+    }
+
+    // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
+    public static File getUserFile(Class someClass, String resourceFile, String userFile,
+            boolean deleteExisted) {
         if (someClass == null || resourceFile == null || userFile == null) {
             return null;
         }
         File file = new File(UserFilePath + "/" + userFile);
         if (file.exists()) {
-            return file;
+            if (deleteExisted) {
+                file.delete();
+            } else {
+                return file;
+            }
         }
-//        return new File(someClass.getResource(resourceFile).toExternalForm());
-
         URL url = someClass.getResource(resourceFile);
         if (url.toString().startsWith("jar:")) {
             try {
@@ -306,7 +314,6 @@ public class FxmlTools {
                         out.write(bytes, 0, read);
                     }
                 }
-//                file.desleteOnExit();
             } catch (Exception e) {
                 logger.error(e.toString());
             }
@@ -317,7 +324,6 @@ public class FxmlTools {
         return file;
     }
 
-    // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
     public static File getResourceFile(Class someClass, String resourceFile) {
         if (someClass == null || resourceFile == null) {
             return null;

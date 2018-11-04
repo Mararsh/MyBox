@@ -88,6 +88,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <RadioButton mnemonicParsing="false" text="%BlueInvert" toggleGroup="$filtersGroup" />
                                                                 <RadioButton fx:id="grayRadio" mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
                                                                 <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$filtersGroup" />
                                                             </items>
                                                         </ToolBar>
                                                     </children>
@@ -105,10 +106,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <Button mnemonicParsing="false" onAction="#wholeFiltersScope" text="%WholeImage" />
                                                                 <HBox fx:id="bwBox" alignment="CENTER_RIGHT" spacing="10.0">
                                                                     <children>
-                                                                        <Label text="%Threshold" />
-                                                                        <Slider fx:id="binarySlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="55.0" />
-                                                                        <TextField fx:id="thresholdInput" prefWidth="60.0" />
-                                                                        <Label text="\%" />
+                                                                        <Label fx:id="scaleLabel" text="%Threshold" />
+                                                                        <Slider fx:id="scaleSlider" blockIncrement="5.0" max="95.0" min="5.0" showTickLabels="true" showTickMarks="true" value="55.0" />
+                                                                        <TextField fx:id="scaleInput" prefWidth="60.0" />
+                                                                        <Label fx:id="unitLabel" text="\%" />
                                                                         <Button fx:id="binaryCalculateButton" mnemonicParsing="false" onAction="#calculateThreshold" text="%Calculate" />
                                                                     </children>
                                                                     <padding>

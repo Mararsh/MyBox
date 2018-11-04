@@ -49,7 +49,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+@Author Mara
+@CreateDate 2018-6-13 20:18:17
+@License Apache License Version 2.0
+-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>图像的压缩类型</title>
+    <style type="text/css">
+        body {font-size:14px;
+              /*
+              font-family:
+                       -apple-system, BlinkMacSystemFont,
+                       "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+                       "Helvetica Neue", sans-serif;
+              */
+        }
+        p.p1 {text-indent: 0em; font-size:17px;font-weight:bold; color:darkgreen}
+        p.p2 {text-indent: 0em; font-size:15px;font-weight:bold}
+        p.p3 {text-indent: 0em; font-size:14px;font-weight:bold}
+        .article {width: 100%; margin:0 auto;font-size:14px;font-weight:normal;}
+        .paragraph {text-indent: 2em; font-size:14px;}
+        .link {text-indent: 6em; font-size:14px;}
+        .command {text-indent: 6em; font-size:14px; color:darkblue}
+        .pix {text-indent: 6em; }
+        .refer {text-indent: 6em; font-size:14px; color:darkblue}
+        ol.inside {list-style-position: inside; text-indent: 2em;}
+        .description {font-size:14px; padding: 5px; background-color:#336633; font-weight:bord; color: white}
+        .codes {font-size:14px; padding: 5px; background-color:black; font-weight:normal; color: #CCFF99}
+        .table1 {font-size:14px; width:90%; border-collapse:collapse; border:solid 1px;}
+        tr {border:solid#000 1px;}
+        td {border:solid#000 1px; }
+        .Header { font-weight:bold; text-align:center;}
+        .Data {font-weight:normal; text-align:left; }
+        ul.inside {list-style-position: inside; text-indent: 2em;}
+    </style>
+
+</head>
+<body class="article" >
+
+    </br></br>
+    <h2 align="center">图像的压缩类型</h2>
+    </br>
+
+    <div align="center" >
+        <table border=1 width="600">
+            <caption><b>图像格式"bmp"支持的压缩类型</b><BR>
+                基于类接口"com.github.jaiimageio.plugins.bmp.BMPImageWriteParam"整理<BR>
+            </caption>
+            <tr><th>压缩类型</th> <th>描述</th>  <th>图像类型</th></tr>
+            <tr><td>BI_RGB</td>  <td>Uncompressed RLE</td> <td><= 8-bits/sample</td></tr>
+            <tr><td>BI_RLE8</td> <td>8-bit Run Length Encoding</td> <td><= 8-bits/sample</td></tr>
+            <tr><td>BI_RLE4</td> <td>4-bit Run Length Encoding</td> <td><= 4-bits/sample</td></tr>
+            <tr><td>BI_BITFIELDS</td> <td>Packed data</td> <td> 16 or 32 bits/sample</td></tr>
+            <tr><td>BI_JPEG</td> <td>JPEG encoded</td> <td>grayscale or RGB image</td></tr>
+        </table>
+    </div>
+    <BR><BR>
+    <div  align="center">
+        <table border=1 width="90%">
+            <caption><b>图像格式"tif"/"tiff"支持的压缩类型</b><BR>
+                基于类接口"com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam"整理<BR>
+            </caption>
+            <tr><th>压缩类型</th> <th>描述</th> <th>参考</th></tr>
+            <tr>
+                <td>CCITT RLE</td>
+                <td>Modified Huffman compression</td>
+                <td>TIFF 6.0 Specification, Section 10</td>
+            </tr>
+            <tr>
+                <td>CCITT T.4</td>
+                <td>CCITT T.4 bilevel encoding/Group 3 facsimile compression</td>
+                <td>TIFF 6.0 Specification, Section 11</td>
+            </tr>
+            <tr>
+                <td>CCITT T.6</td>
+                <td>CCITT T.6 bilevel encoding/Group 4 facsimile compression</td>
+                <td>TIFF 6.0 Specification, Section 11</td></tr>
+            <tr>
+                <td>LZW</td>
+                <td>LZW compression</td>
+                <td>TIFF 6.0 Specification, Section 13</td></tr>
+            <tr>
+                <td>JPEG</td>
+                <td>"New" JPEG-in-TIFF compression</td>
+                <td><a href="ftp://ftp.sgi.com/graphics/tiff/TTN2.draft.txt">TIFF
+                        Technical Note #2</a></td>
+            </tr>
+            <tr>
+                <td>ZLib</td>
+                <td>"Deflate/Inflate" compression</td>
+                <td><a href="http://partners.adobe.com/asn/developer/pdfs/tn/TIFFphotoshop.pdf">
+                        Adobe Photoshop&#174; TIFF Technical Notes</a> (PDF)</td>
+            </tr>
+            <tr>
+                <td>PackBits</td>
+                <td>Byte-oriented, run length compression</td>
+                <td>TIFF 6.0 Specification, Section 9</td>
+            </tr>
+            <tr>
+                <td>Deflate</td>
+                <td>"Zip-in-TIFF" compression</td>
+                <td><a href="http://www.isi.edu/in-notes/rfc1950.txt">
+                        ZLIB Compressed Data Format Specification</a>,
+                    <a href="http://www.isi.edu/in-notes/rfc1951.txt">
+                        DEFLATE Compressed Data Format Specification</a></td>
+            </tr>
+            <tr>
+                <td>EXIF JPEG</td>
+                <td>EXIF-specific JPEG compression</td>
+                <td><a href="http://www.exif.org/Exif2-2.PDF">EXIF 2.2 Specification</a>
+                    (PDF), section 4.5.5, "Basic Structure of Thumbnail Data"</td>
+        </table>
+    </div>
+
+    </BR>
+
+
+
+
+</html>

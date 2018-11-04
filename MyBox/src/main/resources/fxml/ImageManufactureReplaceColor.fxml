@@ -104,6 +104,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                       <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForScope" text="%Transparent" />
                                                                       <Button mnemonicParsing="false" onAction="#whiteForScope" text="%White" />
                                                                       <Button mnemonicParsing="false" onAction="#blackForScope" text="%Black" />
+                                                      <Label fx:id="distanceLabel" text="%Distance" />
+                                                      <TextField fx:id="distanceInput" prefWidth="50.0" />
                                                    </children>
                                                    <padding>
                                                       <Insets right="20.0" />
@@ -114,7 +116,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
                                                                 <Button mnemonicParsing="false" onAction="#whiteForNew" text="%White" />
                                                                 <Button mnemonicParsing="false" onAction="#blackForNew" text="%Black" />
-                                                                <Label prefWidth="20.0" text=" " />
+                                                                <Label prefWidth="10.0" text=" " />
                                                             </items>
                                                         </ToolBar>
                                                         <ToolBar HBox.hgrow="NEVER">

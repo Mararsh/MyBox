@@ -83,6 +83,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                               <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
                                                               <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup">
                                                                   <padding>
                                                                       <Insets right="20.0" />

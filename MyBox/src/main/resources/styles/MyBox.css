@@ -23,6 +23,7 @@
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
     -fx-text-fill: #2e598a;
+    -fx-font-weight: bolder;
 }
 
 .copyable-blue-label, .copyable-blue-label:focused {

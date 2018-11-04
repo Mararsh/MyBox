@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+@Author Mara
+@CreateDate 2018-11-04
+@License Apache License Version 2.0
+-->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>How to pack execution program</title>
+    <style type="text/css">
+        body {font-size:14px;
+              /*
+              font-family:
+                       -apple-system, BlinkMacSystemFont,
+                       "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+                       "Helvetica Neue", sans-serif;
+              */
+        }
+        p.p1 {text-indent: 0em; font-size:17px;font-weight:bold; color:darkgreen}
+        p.p2 {text-indent: 0em; font-size:15px;font-weight:bold}
+        p.p3 {text-indent: 0em; font-size:14px;font-weight:bold}
+        .article {width: 100%; margin:0 auto;font-size:14px;font-weight:normal;}
+        .paragraph {text-indent: 2em; font-size:14px;}
+        .link {text-indent: 6em; font-size:14px;}
+        .command {text-indent: 6em; font-size:14px; color:darkblue}
+        .pix {text-indent: 6em; }
+        .refer {text-indent: 6em; font-size:14px; color:darkblue}
+        ol.inside {list-style-position: inside; text-indent: 2em;}
+        .description {font-size:14px; padding: 5px; background-color:#336633; font-weight:bord; color: white}
+        .codes {font-size:14px; padding: 5px; background-color:black; font-weight:normal; color: #CCFF99}
+        .table1 {font-size:14px; width:90%; border-collapse:collapse; border:solid 1px;}
+        tr {border:solid#000 1px;}
+        td {border:solid#000 1px; }
+        .Header { font-weight:bold; text-align:center;}
+        .Data {font-weight:normal; text-align:left; }
+        ul.inside {list-style-position: inside; text-indent: 2em;}
+    </style>
+</head>
+<body class="article" >
+
+    </br></br>
+    <h2 align="center">How to pack execution program</h2>
+    </br>
+
+    <P class="paragraph">Copy the compiled Jar fle to a temprary directory, like "D:\tmp\src". And execute following command, ("javapackager" is under bin path of JDK)</P>
+    <P class="command">
+        javapackager -deploy -native image -appclass mara.mybox.MainApp -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox
+    </P>
+    <P class="paragraph">The exe files are generated under "D:\tmp\out".</P>
+    <P class="paragraph">If this command asks for extra tools, download them as its prompts.</P>
+
+
+</html>

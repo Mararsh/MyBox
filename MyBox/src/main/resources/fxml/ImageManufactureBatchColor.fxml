@@ -46,9 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0"
-            onMouseEntered="#mouseEnterPane"  xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mara.mybox.controller.ImageManufactureBatchColorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchColorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -92,7 +90,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Brightness">
                                                     <toggleGroup>
@@ -104,6 +102,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
                                                 <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup">
                                                     <padding>
                                                         <Insets right="20.0" />
@@ -188,7 +190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ToggleGroup fx:id="targetExistGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
                                                 <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />

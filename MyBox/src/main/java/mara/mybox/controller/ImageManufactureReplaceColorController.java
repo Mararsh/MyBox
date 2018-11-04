@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -12,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
@@ -26,11 +28,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.tools.FxmlTools;
+import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -40,7 +43,7 @@ import mara.mybox.tools.FxmlTools;
  */
 public class ImageManufactureReplaceColorController extends ImageManufactureController {
 
-    protected int replaceColorScopeType;
+    protected int replaceColorScopeType, distance;
     protected ImageScope replaceColorScope;
 
     @FXML
@@ -56,7 +59,9 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
     @FXML
     protected HBox originalBox;
     @FXML
-    private Label replaceColorLabel;
+    private Label replaceColorLabel, distanceLabel;
+    @FXML
+    private TextField distanceInput;
 
     public static class ReplaceColorScopeType {
 
@@ -133,6 +138,20 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             });
             checkReplaceColorScope();
 
+            distanceInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkDistance();
+                }
+            });
+            distanceInput.setText("20");
+
+            replaceColorOkButton.disableProperty().bind(
+                    distanceInput.styleProperty().isEqualTo(badStyle)
+                            .or(Bindings.isEmpty(distanceInput.textProperty()))
+            );
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -146,18 +165,47 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
                 setScopeColor(scopeColorPicker.getValue());
                 originalBox.setDisable(false);
                 replaceColorLabel.setVisible(true);
+                distanceLabel.setText(getMessage("HueDistance"));
+                showScopeCheck.setDisable(true);
+                scopePaneValid = false;
+                super.setScopePane();
+
             } else if (AppVaribles.getMessage("Settings").equals(selected.getText())) {
                 originalBox.setDisable(true);
                 replaceColorLabel.setVisible(false);
+                distanceLabel.setText("");
+
             } else if (AppVaribles.getMessage("Color").equals(selected.getText())) {
                 replaceColorScopeType = ReplaceColorScopeType.Color;
                 setScopeColor(scopeColorPicker.getValue());
                 originalBox.setDisable(false);
                 replaceColorLabel.setVisible(true);
+                distanceLabel.setText(getMessage("ColorDistance"));
+                showScopeCheck.setDisable(true);
+                scopePaneValid = false;
+                super.setScopePane();
             }
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    protected void checkDistance() {
+        try {
+            distance = Integer.valueOf(distanceInput.getText());
+            distanceInput.setStyle(null);
+            if (distance >= 0 && distance <= 255) {
+                distanceInput.setStyle(null);
+                replaceColorScope.setColorDistance(distance);
+                replaceColorScope.setHueDistance(distance);
+            } else {
+                distanceInput.setStyle(badStyle);
+                distance = 0;
+            }
+        } catch (Exception e) {
+            distanceInput.setStyle(badStyle);
+            distance = 0;
         }
     }
 
@@ -170,11 +218,8 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
             replaceColorScope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
             if (replaceColorScopeType == ReplaceColorScopeType.Color) {
                 replaceColorScope.setMatchColor(true);
-                replaceColorScope.setColorDistance(0);
-                replaceColorScope.setColorExcluded(false);
             } else if (replaceColorScopeType == ReplaceColorScopeType.Hue) {
                 replaceColorScope.setMatchColor(false);
-                replaceColorScope.setHueDistance(0);
             } else {
                 return;
             }

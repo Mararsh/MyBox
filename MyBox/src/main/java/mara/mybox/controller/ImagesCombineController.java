@@ -1,13 +1,10 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -17,14 +14,9 @@ import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SplitPane;
@@ -39,7 +31,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -58,7 +50,7 @@ import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -69,10 +61,11 @@ import mara.mybox.tools.FxmlImageTools;
 public class ImagesCombineController extends ImageViewerController {
 
     protected String ImageCombineArrayTypeKey, ImageCombineCombineSizeTypeKey, ImageCombineColumnsKey, ImageCombineIntervalKey, ImageCombineMarginsKey;
-    protected String ImageCombineEachWidthKey, ImageCombineEachHeightKey, ImageCombineTotalWidthKey, ImageCombineTotalHeightKey, ImageCombineFileTypeKey;
+    protected String ImageCombineEachWidthKey, ImageCombineEachHeightKey, ImageCombineTotalWidthKey, ImageCombineTotalHeightKey;
     protected String ImageCombineBgColorKey;
 
     private ImageCombine imageCombine;
+    private File targetFile;
 
     @FXML
     private TabPane tabPane;
@@ -103,7 +96,7 @@ public class ImagesCombineController extends ImageViewerController {
     @FXML
     private VBox mainPane, imagesPane;
     @FXML
-    private Label sizeLabel;
+    private HBox toolBox;
 
     public ImagesCombineController() {
         ImageCombineArrayTypeKey = "ImageCombineArrayTypeKey";
@@ -115,7 +108,6 @@ public class ImagesCombineController extends ImageViewerController {
         ImageCombineColumnsKey = "ImageCombineColumnsKey";
         ImageCombineIntervalKey = "ImageCombineIntervalKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
-        ImageCombineFileTypeKey = "ImageCombineFileTypeKey";
         ImageCombineBgColorKey = "ImageCombineBgColorKey";
     }
 
@@ -490,51 +482,12 @@ public class ImagesCombineController extends ImageViewerController {
 
     private void initTargetSection() {
         try {
-            targetTypeBox.getItems().addAll(CommonValues.SupportedImages);
-            targetTypeBox.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov,
-                        String oldValue, String newValue) {
-                    AppVaribles.setConfigValue(ImageCombineFileTypeKey, newValue);
-                }
-            });
-            targetTypeBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineFileTypeKey, "png"));
-
-            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        final File file = new File(newValue);
-                        if (!file.exists() || !file.isDirectory()) {
-                            targetPathInput.setStyle(badStyle);
-                            targetPath = null;
-                            return;
-                        }
-                        targetPathInput.setStyle(null);
-                        AppVaribles.setConfigValue(targetPathKey, file.getPath());
-                        targetPath = file;
-                    } catch (Exception e) {
-                        targetPathInput.setStyle(badStyle);
-                        targetPath = null;
-                    }
-                }
-            });
-            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
-
-            openTargetButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-            );
-
-            toolbar.disableProperty().bind(
+            toolBox.disableProperty().bind(
                     Bindings.isEmpty(imageCombine.getSourceImages())
             );
 
             saveButton.disableProperty().bind(
                     Bindings.isEmpty(imageCombine.getSourceImages())
-                            .or(openTargetButton.disableProperty())
-                            .or(targetTypeBox.valueProperty().isNull())
             );
 
         } catch (Exception e) {
@@ -543,76 +496,57 @@ public class ImagesCombineController extends ImageViewerController {
     }
 
     @FXML
-    private void openTargetPath(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(targetPath.toURI());
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
     private void saveAction(ActionEvent event) {
         if (image == null) {
             return;
         }
-        Task saveTask = new Task<Void>() {
-            String filename;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    String format = targetTypeBox.getSelectionModel().getSelectedItem();
-                    filename = new File(targetPath.getAbsolutePath() + "/" + targetPrefixInput.getText() + "." + format).getAbsolutePath();
-                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
-                    ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle(getMyStage().getTitle());
-                        String info = MessageFormat.format(AppVaribles.getMessage("FileSaved"), filename);
-                        alert.setContentText(info);
-                        ButtonType buttonOpenInNewWindow = new ButtonType(AppVaribles.getMessage("OpenInNewWindow"));
-                        ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("Open"));
-                        ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
-                        alert.getButtonTypes().setAll(buttonOpenInNewWindow, buttonOpen, buttonClose);
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == buttonOpen) {
-                            try {
-                                if (!stageReloading()) {
-                                    return;
-                                }
-                                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
-                                Pane pane = fxmlLoader.load();
-                                final ImageManufactureController controller = fxmlLoader.getController();
-                                controller.setMyStage(myStage);
-                                myStage.setScene(new Scene(pane));
-                                myStage.setTitle(AppVaribles.getMessage("ImageManufacture"));
-                                controller.loadImage(filename);
-                            } catch (Exception e) {
-                                logger.error(e.toString());
-                            }
-                        } else if (result.get() == buttonOpenInNewWindow) {
-                            openImageManufactureInNew(filename);
-                        }
-                    }
-                });
-                return null;
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            if (!path.isDirectory()) {
+                path = new File(CommonValues.UserFilePath);
             }
-        };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
-        thread.setDaemon(true);
-        thread.start();
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            AppVaribles.setConfigValue(targetPathKey, file.getParent());
+            targetFile = file;
+
+            Task saveTask = new Task<Void>() {
+
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        String filename = targetFile.getAbsolutePath();
+                        String format = FileTools.getFileSuffix(filename);
+                        final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                        ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
+                    return null;
+                }
+            };
+            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(saveTask);
+            thread.setDaemon(true);
+            thread.start();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML
     private void newWindow(ActionEvent event) {
         showImageView(image);
+//        if (targetFile != null) {
+//            openImageManufactureInNew(targetFile.getAbsolutePath());
+//        } else if (image != null) {
+//            showImageView(image);
+//        }
     }
 
     @FXML
@@ -778,11 +712,11 @@ public class ImagesCombineController extends ImageViewerController {
                 || eachHeightInput.getStyle().equals(badStyle)) {
             image = null;
             imageView.setImage(null);
-            sizeLabel.setText("");
+            bottomLabel.setText("");
             return;
         }
 
-        sizeLabel.setText(AppVaribles.getMessage("Loading..."));
+        bottomLabel.setText(AppVaribles.getMessage("Loading..."));
 
         List<ImageFileInformation> sources = imageCombine.getSourceImages();
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
@@ -799,7 +733,7 @@ public class ImagesCombineController extends ImageViewerController {
         }
         imageView.setImage(image);
         fitSize();
-        sizeLabel.setText(AppVaribles.getMessage("CombinedSize") + ": "
+        bottomLabel.setText(AppVaribles.getMessage("CombinedSize") + ": "
                 + (int) image.getWidth() + "x" + (int) image.getHeight());
     }
 

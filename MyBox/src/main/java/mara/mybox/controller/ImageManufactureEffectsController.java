@@ -7,7 +7,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -18,8 +20,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.image.ImageConvertTools.Direction;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
@@ -31,13 +34,13 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureEffectsController extends ImageManufactureController {
 
-    protected int effectType, blurRadius, posterizingSize;
+    protected int effectType, intValue, direction;
     protected int threadholding, threadholdingSmall, threadholdingBig;
 
     @FXML
     protected ToggleGroup effectsGroup;
     @FXML
-    protected ComboBox blurRadiusBox, posterizingBox;
+    protected ComboBox intBox, stringBox;
     @FXML
     protected TextField thresholdingInput, thresholdingMinInput, thresholdingMaxInput;
     @FXML
@@ -45,15 +48,20 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
     @FXML
     protected Button effectsOkButton;
     @FXML
-    protected HBox blurBox, thresholdingBox, postBox;
+    protected HBox thresholdingBox;
+    @FXML
+    protected Label intLabel, stringLabel;
+    @FXML
+    protected CheckBox grayCheck;
 
     public static class EffectsOperationType {
 
         public static int Blur = 0;
         public static int Sharpen = 1;
-        public static int EdgeDetect = 2;
-        public static int Thresholding = 3;
-        public static int Posterizing = 4;
+        public static int Emboss = 2;
+        public static int EdgeDetect = 3;
+        public static int Thresholding = 4;
+        public static int Posterizing = 5;
 
     }
 
@@ -93,51 +101,69 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkEffetcssOperationType();
+                    checkEffetcsOperationType();
                 }
             });
-            checkEffetcssOperationType();
+            checkEffetcsOperationType();
 
-            blurRadiusBox.getItems().addAll(Arrays.asList("10", "5", "3", "8", "15", "20", "30"));
-            blurRadiusBox.valueProperty().addListener(new ChangeListener<String>() {
+            intBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    int defaultValue = 0;
+                    if (effectType == EffectsOperationType.Blur) {
+                        defaultValue = 1;
+                    } else if (effectType == EffectsOperationType.Posterizing) {
+                        defaultValue = 32;
+                    } else if (effectType == EffectsOperationType.Emboss) {
+                        defaultValue = 3;
+                    }
                     try {
-                        blurRadius = Integer.valueOf(newValue);
-                        if (blurRadius > 0) {
-                            blurRadiusBox.getEditor().setStyle(null);
-
+                        String v = newValue;
+                        int pos = v.indexOf(" ");
+                        if (pos > 0) {
+                            v = v.substring(0, pos);
+                        }
+                        intValue = Integer.valueOf(v);
+                        if (intValue > 0) {
+                            intBox.getEditor().setStyle(null);
                         } else {
-                            blurRadius = 1;
-                            blurRadiusBox.getEditor().setStyle(badStyle);
+                            intValue = defaultValue;
+                            intBox.getEditor().setStyle(badStyle);
                         }
                     } catch (Exception e) {
-                        blurRadius = 1;
-                        blurRadiusBox.getEditor().setStyle(badStyle);
+                        intValue = defaultValue;
+                        intBox.getEditor().setStyle(badStyle);
                     }
                 }
             });
-            blurRadiusBox.getSelectionModel().select(0);
 
-            posterizingBox.getItems().addAll(Arrays.asList("64", "32", "128", "16"));
-            posterizingBox.valueProperty().addListener(new ChangeListener<String>() {
+            stringBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        posterizingSize = Integer.valueOf(newValue);
-                        if (posterizingSize > 0) {
-                            posterizingBox.getEditor().setStyle(null);
-                        } else {
-                            posterizingSize = 32;
-                            posterizingBox.getEditor().setStyle(badStyle);
-                        }
-                    } catch (Exception e) {
-                        posterizingSize = 32;
-                        posterizingBox.getEditor().setStyle(badStyle);
+                    if (newValue == null || newValue.trim().isEmpty()) {
+                        return;
+                    }
+                    if (getMessage("Top").equals(newValue)) {
+                        direction = Direction.Top;
+                    } else if (getMessage("Bottom").equals(newValue)) {
+                        direction = Direction.Bottom;
+                    } else if (getMessage("Left").equals(newValue)) {
+                        direction = Direction.Top;
+                    } else if (getMessage("Right").equals(newValue)) {
+                        direction = Direction.Right;
+                    } else if (getMessage("LeftTop").equals(newValue)) {
+                        direction = Direction.LeftTop;
+                    } else if (getMessage("RightBottom").equals(newValue)) {
+                        direction = Direction.RightBottom;
+                    } else if (getMessage("LeftBottom").equals(newValue)) {
+                        direction = Direction.LeftBottom;
+                    } else if (getMessage("RightTop").equals(newValue)) {
+                        direction = Direction.RightTop;
+                    } else {
+                        direction = Direction.Top;
                     }
                 }
             });
-            posterizingBox.getSelectionModel().select(0);
 
             Tooltip tips = new Tooltip("0~255");
             tips.setFont(new Font(16));
@@ -221,24 +247,57 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
         }
     }
 
-    private void checkEffetcssOperationType() {
-        blurBox.setDisable(true);
+    private void checkEffetcsOperationType() {
+        intLabel.setText("");
+        intBox.setDisable(true);
+        stringLabel.setText("");
+        stringBox.setDisable(true);
         thresholdingBox.setDisable(true);
-        postBox.setDisable(true);
         thresholdingInput.setStyle(null);
         thresholdingMinInput.setStyle(null);
         thresholdingMaxInput.setStyle(null);
+        grayCheck.setDisable(true);
         RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
         if (getMessage("Blur").equals(selected.getText())) {
             effectType = EffectsOperationType.Blur;
-            blurBox.setDisable(false);
+            intLabel.setText(getMessage("Radius"));
+            intBox.setDisable(false);
+            intBox.getItems().clear();
+            intBox.getItems().addAll(Arrays.asList("10", "5", "3", "8", "15", "20", "30"));
+            intBox.setEditable(true);
+            intValue = 10;
+            intBox.getSelectionModel().select("10");
         } else if (getMessage("Sharpen").equals(selected.getText())) {
             effectType = EffectsOperationType.Sharpen;
         } else if (getMessage("EdgeDetection").equals(selected.getText())) {
             effectType = EffectsOperationType.EdgeDetect;
+        } else if (getMessage("Emboss").equals(selected.getText())) {
+            effectType = EffectsOperationType.Emboss;
+            intLabel.setText(getMessage("Radius"));
+            intBox.setDisable(false);
+            intBox.getItems().clear();
+            intBox.getItems().addAll(Arrays.asList("3", "5"));
+            intBox.setEditable(false);
+            intValue = 3;
+            intBox.getSelectionModel().select("3");
+            stringLabel.setText(getMessage("Direction"));
+            stringBox.setDisable(false);
+            stringBox.getItems().clear();
+            stringBox.getItems().addAll(Arrays.asList(getMessage("Top"), getMessage("Bottom"),
+                    getMessage("Left"), getMessage("Right"),
+                    getMessage("LeftTop"), getMessage("RightBottom"),
+                    getMessage("LeftBottom"), getMessage("RightTop")));
+            direction = Direction.Top;
+            stringBox.getSelectionModel().select(getMessage("Top"));
+            grayCheck.setDisable(false);
         } else if (getMessage("Posterizing").equals(selected.getText())) {
             effectType = EffectsOperationType.Posterizing;
-            postBox.setDisable(false);
+            intLabel.setText(getMessage("Size"));
+            intBox.setDisable(false);
+            intBox.getItems().clear();
+            intBox.getItems().addAll(Arrays.asList("64", "32", "128", "16"));
+            intBox.setEditable(false);
+            intBox.getSelectionModel().select("64");
         } else if (getMessage("Thresholding").equals(selected.getText())) {
             effectType = EffectsOperationType.Thresholding;
             thresholdingBox.setDisable(false);
@@ -253,15 +312,17 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             protected Void call() throws Exception {
                 final Image newImage;
                 if (effectType == EffectsOperationType.Blur) {
-                    newImage = FxmlImageTools.blurImage(values.getCurrentImage(), blurRadius);
+                    newImage = FxmlImageTools.blurImage(values.getCurrentImage(), intValue);
                 } else if (effectType == EffectsOperationType.Sharpen) {
                     newImage = FxmlImageTools.sharpenImage(values.getCurrentImage());
                 } else if (effectType == EffectsOperationType.EdgeDetect) {
                     newImage = FxmlImageTools.edgeDetectImage(values.getCurrentImage());
+                } else if (effectType == EffectsOperationType.Emboss) {
+                    newImage = FxmlImageTools.embossImage(values.getCurrentImage(), direction, intValue, grayCheck.isSelected());
                 } else if (effectType == EffectsOperationType.Thresholding) {
                     newImage = FxmlImageTools.thresholdingImage(values.getCurrentImage(), threadholding, threadholdingSmall, threadholdingBig);
                 } else if (effectType == EffectsOperationType.Posterizing) {
-                    newImage = FxmlImageTools.posterizingImage(values.getCurrentImage(), posterizingSize);
+                    newImage = FxmlImageTools.posterizingImage(values.getCurrentImage(), intValue);
                 } else {
                     return null;
                 }

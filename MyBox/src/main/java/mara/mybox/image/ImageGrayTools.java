@@ -79,7 +79,7 @@ public class ImageGrayTools {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
 //                    int r = 0xFF & grayImage.getRGB(i, j);
-                    int gray = ImageColorTools.pixel2GrayValue(grayImage.getRGB(i, j));
+                    int gray = ImageColorTools.grayPixel2GrayValue(grayImage.getRGB(i, j));
                     grayNumber[gray]++;
                 }
             }
@@ -123,6 +123,42 @@ public class ImageGrayTools {
 //            logger.debug("threshold:" + threshold);
             return threshold;
 
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return -1;
+        }
+    }
+
+    public static int getIterationBinary(BufferedImage grayImage) {
+        try {
+            int width = grayImage.getWidth();
+            int height = grayImage.getHeight();
+
+            int Threshold = 128;
+            int preThreshold = 256;
+
+            while (Math.abs(Threshold - preThreshold) > 4) {
+                int s1 = 0;
+                int s2 = 0;
+                int f1 = 0;
+                int f2 = 0;
+
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        int gray = grayImage.getRGB(x, y);
+                        if (gray < Threshold) {
+                            s1 += gray;
+                            f1++;
+                        } else {
+                            s2 += gray;
+                            f2++;
+                        }
+                    }
+                }
+                preThreshold = Threshold;
+                Threshold = (int) ((s1 / f1 + s2 / f2) / 2);
+            }
+            return Threshold;
         } catch (Exception e) {
             logger.error(e.toString());
             return -1;

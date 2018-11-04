@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import static mara.mybox.tools.FxmlImageTools.isColorMatch;
-import static mara.mybox.tools.FxmlImageTools.isHueMatch;
+import static mara.mybox.image.FxmlImageTools.isColorMatch;
+import static mara.mybox.image.FxmlImageTools.isHueMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,8 +51,8 @@ public class ImageScope {
         colors = new ArrayList();
         leftX = leftY = rightX = rightY = centerX = centerY = radius = -1;
         colorExcluded = rectangleExcluded = circleExcluded = false;
-        colorDistance = 0;
-        hueDistance = 5;
+        colorDistance = 20;
+        hueDistance = 20;
         opacity = 0.1;
     }
 

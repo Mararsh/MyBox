@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "3.9";
-    public static final String AppVersionDate = "2018-10-26";
+    public static final String AppVersion = "4.0";
+    public static final String AppVersionDate = "2018-11-04";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String UserConfigFile = UserFilePath + File.separator + ".conf.properties";
@@ -95,6 +95,7 @@ public class CommonValues {
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
+    public static final String ImagesBlendFxml = "/fxml/ImagesBlend.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";

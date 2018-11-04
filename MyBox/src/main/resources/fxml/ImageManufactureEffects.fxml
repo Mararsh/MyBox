@@ -81,6 +81,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                               </RadioButton>
                                                               <HBox fx:id="blurBox" alignment="CENTER_LEFT" spacing="2.0" />
                                                               <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
                                                               <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
                                                               <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
@@ -97,24 +98,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           </ToolBar>
                                           <ToolBar HBox.hgrow="NEVER">
                                             <items>
-                                                <HBox fx:id="blurBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                    <children>
-                                                      <Label text="%Radius" />
-                                                                      <ComboBox fx:id="blurRadiusBox" editable="true" prefWidth="80.0" />
+                                                      <Label fx:id="intLabel" text="%Radius" />
+                                                                      <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
+                                                      <Label fx:id="stringLabel" text="Label" />
+                                                      <ComboBox fx:id="stringBox" prefWidth="150.0" />
                                                    </children>
                                                    <padding>
                                                       <Insets left="10.0" right="10.0" />
                                                    </padding>
                                                 </HBox>
-                                                <HBox fx:id="postBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                   <children>
-                                                      <Label text="%Size" />
-                                                                    <ComboBox fx:id="posterizingBox" prefWidth="80.0" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
-                                                </HBox>
+                                                <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
                                                 <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
                                                    <children>
                                                       <Label text="%Threshold" />

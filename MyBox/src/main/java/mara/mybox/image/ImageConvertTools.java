@@ -27,7 +27,6 @@ import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.tools.FxmlImageTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +39,19 @@ import org.apache.logging.log4j.Logger;
 public class ImageConvertTools {
 
     private static final Logger logger = LogManager.getLogger();
+
+    public static class Direction {
+
+        public static int Top = 0;
+        public static int Bottom = 1;
+        public static int Left = 2;
+        public static int Right = 3;
+        public static int LeftTop = 4;
+        public static int RightBottom = 5;
+        public static int LeftBottom = 6;
+        public static int RightTop = 7;
+
+    }
 
     public static boolean hasAlpha(BufferedImage source) {
         switch (source.getType()) {
@@ -95,7 +107,7 @@ public class ImageConvertTools {
                     if (alpha == color) {
                         target.setRGB(i, j, black);
                     } else {
-                        Color c = new Color(color);
+                        Color c = new Color(color, true);
                         Color newColor = new Color(c.getRed(), c.getGreen(), c.getBlue());
                         target.setRGB(i, j, newColor.getRGB());
                     }
@@ -122,7 +134,7 @@ public class ImageConvertTools {
                     if (alpha == color) {
                         target.setRGB(i, j, white);
                     } else {
-                        Color c = new Color(color);
+                        Color c = new Color(color, true);
                         Color newColor = new Color(c.getRed(), c.getGreen(), c.getBlue());
                         target.setRGB(i, j, newColor.getRGB());
                     }
@@ -222,13 +234,7 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     float[] hsb = ImageColorTools.pixel2HSB(source.getRGB(i, j));
-                    float v = hsb[1] * (1.0f + change);
-                    if (v > 1.0f) {
-                        v = 1.0f;
-                    }
-                    if (v < 0.0f) {
-                        v = 0.0f;
-                    }
+                    float v = Math.min(Math.max(hsb[1] * (1.0f + change), 0.0f), 1.0f);
                     Color newColor = Color.getHSBColor(hsb[0], v, hsb[2]);
                     target.setRGB(i, j, newColor.getRGB());
                 }
@@ -252,13 +258,7 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     float[] hsb = ImageColorTools.pixel2HSB(source.getRGB(i, j));
-                    float v = hsb[2] * (1.0f + change);
-                    if (v > 1.0f) {
-                        v = 1.0f;
-                    }
-                    if (v < 0.0f) {
-                        v = 0.0f;
-                    }
+                    float v = Math.min(Math.max(hsb[2] * (1.0f + change), 0.0f), 1.0f);
                     Color newColor = Color.getHSBColor(hsb[0], hsb[1], v);
                     target.setRGB(i, j, newColor.getRGB());
                 }
@@ -312,15 +312,9 @@ public class ImageConvertTools {
             Color newColor;
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
-                    int v = color.getRed() + change;
-                    if (v > 255) {
-                        v = 255;
-                    }
-                    if (v < 0) {
-                        v = 0;
-                    }
-                    newColor = new Color(v, color.getGreen(), color.getBlue(), color.getAlpha());
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int red = Math.min(Math.max(color.getRed() + change, 0), 255);
+                    newColor = new Color(red, color.getGreen(), color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
                 }
             }
@@ -343,15 +337,9 @@ public class ImageConvertTools {
             Color newColor;
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
-                    int v = color.getGreen() + change;
-                    if (v > 255) {
-                        v = 255;
-                    }
-                    if (v < 0) {
-                        v = 0;
-                    }
-                    newColor = new Color(color.getRed(), v, color.getBlue(), color.getAlpha());
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int green = Math.min(Math.max(color.getGreen() + change, 0), 255);
+                    newColor = new Color(color.getRed(), green, color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
                 }
             }
@@ -374,15 +362,114 @@ public class ImageConvertTools {
             Color newColor;
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
-                    int v = color.getBlue() + change;
-                    if (v > 255) {
-                        v = 255;
-                    }
-                    if (v < 0) {
-                        v = 0;
-                    }
-                    newColor = new Color(color.getRed(), color.getGreen(), v, color.getAlpha());
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int blue = Math.min(Math.max(color.getBlue() + change, 0), 255);
+                    newColor = new Color(color.getRed(), color.getGreen(), blue, color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage changeYellow(BufferedImage source, int change) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Color newColor;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int red = Math.min(Math.max(color.getRed() + change, 0), 255);
+                    int green = Math.min(Math.max(color.getGreen() + change, 0), 255);
+                    newColor = new Color(red, green, color.getBlue(), color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage changeCyan(BufferedImage source, int change) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Color newColor;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int green = Math.min(Math.max(color.getGreen() + change, 0), 255);
+                    int blue = Math.min(Math.max(color.getBlue() + change, 0), 255);
+                    newColor = new Color(color.getRed(), green, blue, color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage changeMagenta(BufferedImage source, int change) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Color newColor;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int red = Math.min(Math.max(color.getRed() + change, 0), 255);
+                    int blue = Math.min(Math.max(color.getBlue() + change, 0), 255);
+                    newColor = new Color(red, color.getGreen(), blue, color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage changeRGB(BufferedImage source, int change) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Color newColor;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    Color color = new Color(source.getRGB(i, j), true);
+                    int red = Math.min(Math.max(color.getRed() + change, 0), 255);
+                    int green = Math.min(Math.max(color.getGreen() + change, 0), 255);
+                    int blue = Math.min(Math.max(color.getBlue() + change, 0), 255);
+                    newColor = new Color(red, green, blue, color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
                 }
             }
@@ -401,7 +488,7 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     int rgb = src.getRGB(i, j);
-                    Color color = new Color(rgb);
+                    Color color = new Color(rgb, true);
                     Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
                     target.setRGB(i, j, newcolor.getRGB());
                 }
@@ -424,7 +511,7 @@ public class ImageConvertTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
+                    Color color = new Color(source.getRGB(i, j), true);
                     Color newColor = new Color(255 - color.getRed(), 255 - color.getGreen(),
                             255 - color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
@@ -448,7 +535,7 @@ public class ImageConvertTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
+                    Color color = new Color(source.getRGB(i, j), true);
                     Color newColor = new Color(255 - color.getRed(), color.getGreen(),
                             color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
@@ -472,7 +559,7 @@ public class ImageConvertTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
+                    Color color = new Color(source.getRGB(i, j), true);
                     Color newColor = new Color(color.getRed(), 255 - color.getGreen(),
                             color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
@@ -496,7 +583,7 @@ public class ImageConvertTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
-                    Color color = new Color(source.getRGB(i, j));
+                    Color color = new Color(source.getRGB(i, j), true);
                     Color newColor = new Color(color.getRed(), color.getGreen(),
                             255 - color.getBlue(), color.getAlpha());
                     target.setRGB(i, j, newColor.getRGB());
@@ -567,6 +654,29 @@ public class ImageConvertTools {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     target.setRGB(i, j, source.getRGB(i, j) & 0xFF0000FF);
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage sepiaImage(BufferedImage source, int sepiaIntensity) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    int pixel = source.getRGB(i, j);
+                    Color newColor = ImageColorTools.pixel2Sepia(pixel, sepiaIntensity);
+                    target.setRGB(i, j, newColor.getRGB());
                 }
             }
             return target;
@@ -1147,7 +1257,7 @@ public class ImageConvertTools {
             for (int j = scope.getLeftY(); j <= scope.getRightY(); j++) {
                 for (int i = scope.getLeftX(); i <= scope.getRightX(); i++) {
                     int rgb = source.getRGB(i, j);
-                    Color color = new Color(rgb);
+                    Color color = new Color(rgb, true);
                     Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
                     target.setRGB(i, j, newcolor.getRGB());
                 }
@@ -1473,11 +1583,8 @@ public class ImageConvertTools {
         }
     }
 
-    public static BufferedImage applyFilter(BufferedImage source, Kernel filter) {
-        if (source == null) {
-            return null;
-        }
-        if (filter == null) {
+    public static BufferedImage applyConvolveOp(BufferedImage source, Kernel filter) {
+        if (source == null || filter == null) {
             return source;
         }
         ConvolveOp imageOp = new ConvolveOp(filter, ConvolveOp.EDGE_ZERO_FILL, null);
@@ -1485,10 +1592,7 @@ public class ImageConvertTools {
     }
 
     public static BufferedImage applyConvolveOp(BufferedImage source, ConvolveOp imageOp) {
-        if (source == null) {
-            return null;
-        }
-        if (imageOp == null) {
+        if (source == null || imageOp == null) {
             return source;
         }
         int width = source.getWidth();
@@ -1502,6 +1606,50 @@ public class ImageConvertTools {
         return target;
     }
 
+    public static BufferedImage applyConvolve(BufferedImage source, float[][] kernel) {
+        if (source == null || kernel == null || kernel.length == 0) {
+            return source;
+        }
+        try {
+            int imageWidth = source.getWidth();
+            int imageHeight = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            int kernelWidth = kernel.length;
+            int kernelHeight = kernel[0].length;
+            BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
+            for (int j = 0; j < imageHeight; j++) {
+                for (int i = 0; i < imageWidth; i++) {
+                    double red = 0.0, green = 0.0, blue = 0.0;
+                    for (int filterY = 0; filterY < kernelHeight; filterY++) {
+                        for (int filterX = 0; filterX < kernelWidth; filterX++) {
+                            int imageX = (i - kernelWidth / 2 + filterX + imageWidth) % imageWidth;
+                            int imageY = (j - kernelHeight / 2 + filterY + imageHeight) % imageHeight;
+                            Color color = new Color(source.getRGB(imageX, imageY), true);
+                            red += color.getRed() * kernel[filterY][filterX];
+                            green += color.getGreen() * kernel[filterY][filterX];
+                            blue += color.getBlue() * kernel[filterY][filterX];
+                        }
+                    }
+                    red = Math.min(Math.max(red, 0), 255);
+                    green = Math.min(Math.max(green, 0), 255);
+                    blue = Math.min(Math.max(blue, 0), 255);
+                    Color color = new Color(source.getRGB(i, j), true);
+                    Color newColor = new Color((int) red, (int) green, (int) blue, color.getAlpha());
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+
+    }
+
+    // https://lodev.org/cgtutor/filtering.html
     public static Kernel makeGaussFilter(int radius) {
         if (radius < 1) {
             return null;
@@ -1531,42 +1679,220 @@ public class ImageConvertTools {
     }
 
     public static BufferedImage blurImage(BufferedImage source, int radius) {
-//        float ninth = 1.0f / 9.0f;
-//        float[] blurKernel = {
-//            ninth, ninth, ninth,
-//            ninth, ninth, ninth,
-//            ninth, ninth, ninth
-//        };
-//        Kernel k = new Kernel(3, 3, blurKernel);
-
-        Kernel k = makeGaussFilter(radius);
-        BufferedImage target = applyFilter(source, k);
-        return target;
-    }
-
-// https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
-    public static BufferedImage sharpenImage(BufferedImage source) {
-        float[] sharpenKernel = {
-            0.0f, -1.0f, 0.0f,
-            -1.0f, 5.0f, -1.0f,
-            0.0f, -1.0f, 0.0f
+        float ninth = 1.0f / 9.0f;
+        float[][] blurKernel = {
+            {ninth, ninth, ninth},
+            {ninth, ninth, ninth},
+            {ninth, ninth, ninth}
         };
-        Kernel k = new Kernel(3, 3, sharpenKernel);
-
-        BufferedImage target = applyFilter(source, k);
+        Kernel k = makeGaussFilter(radius);
+        BufferedImage target = applyConvolveOp(source, k);
+//        BufferedImage target = applyConvolve(source, blurKernel);
         return target;
     }
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
-    public static BufferedImage edgeDetect(BufferedImage source) {
-        float[] edgeDetectKernel = {
-            0.0f, -1.0f, 0.0f,
-            -1.0f, 4.0f, -1.0f,
-            0.0f, -1.0f, 0.0f
+    public static BufferedImage sharpenImage(BufferedImage source) {
+        float[][] sharpenKernel1 = {
+            {0.0f, -1.0f, 0.0f},
+            {-1.0f, 5.0f, -1.0f},
+            {0.0f, -1.0f, 0.0f}
         };
-        Kernel k = new Kernel(3, 3, edgeDetectKernel);
+        float[] sharpenKernel2 = {
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, 9.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f
+        };
+        Kernel k = new Kernel(3, 3, sharpenKernel2);
+        BufferedImage target = applyConvolveOp(source, k);
+//        BufferedImage target = applyConvolve(source, sharpenKernel1);
+        return target;
+    }
 
-        BufferedImage target = applyFilter(source, k);
+    // https://en.wikipedia.org/wiki/Image_embossing
+    public static BufferedImage embossImage(BufferedImage source,
+            int direction, int size, boolean gray) {
+        if (size != 3 && size != 5) {
+            return source;
+        }
+        final float[] embossTopKernel = {
+            0, 1, 0,
+            0, 0, 0,
+            0, -1, 0
+        };
+        final float[] embossBottomKernel = {
+            0, -1, 0,
+            0, 0, 0,
+            0, 1, 0
+        };
+        final float[] embossLeftKernel = {
+            0, 0, 0,
+            1, 0, -1,
+            0, 0, 0
+        };
+        final float[] embossRightKernel = {
+            0, 0, 0,
+            -1, 0, 1,
+            0, 0, 0
+        };
+        final float[] embossLeftTopKernel = {
+            1, 0, 0,
+            0, 0, 0,
+            0, 0, -1
+        };
+        final float[] embossRightBottomKernel = {
+            -1, 0, 0,
+            0, 0, 0,
+            0, 0, 1
+        };
+        final float[] embossLeftBottomKernel = {
+            0, 0, -1,
+            0, 0, 0,
+            1, 0, 0
+        };
+        final float[] embossRightTopKernel = {
+            0, 0, 1,
+            0, 0, 0,
+            -1, 0, 0
+        };
+
+        final float[] embossTopKernel5 = {
+            0, 0, -1, 0, 0,
+            0, 0, -1, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 1, 0, 0
+        };
+        final float[] embossBottomKernel5 = {
+            0, 0, 1, 0, 0,
+            0, 0, 1, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, -1, 0, 0,
+            0, 0, -1, 0, 0
+        };
+        final float[] embossLeftKernel5 = {
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            1, 1, 0, -1, -1,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0
+        };
+        final float[] embossRightKernel5 = {
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            -1, -1, 0, 1, 1,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0
+        };
+        final float[] embossLeftTopKernel5 = {
+            1, 0, 0, 0, 0,
+            0, 1, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, -1, 0,
+            0, 0, 0, 0, -1
+        };
+        final float[] embossRightBottomKernel5 = {
+            -1, 0, 0, 0, 0,
+            0, -1, 0, 0, 0,
+            0, 0, 0, 0, 0,
+            0, 0, 0, 1, 0,
+            0, 0, 0, 0, 1
+        };
+        final float[] embossLeftBottomKernel5 = {
+            0, 0, 0, 0, -1,
+            0, 0, 0, -1, 0,
+            0, 0, 0, 0, 0,
+            0, 1, 0, 0, 0,
+            1, 0, 0, 0, 0
+        };
+        final float[] embossRightTopKernel5 = {
+            0, 0, 0, 0, 1,
+            0, 0, 0, 1, 0,
+            0, 0, 0, 0, 0,
+            0, -1, 0, 0, 0,
+            -1, 0, 0, 0, 0
+        };
+
+        Kernel k = null;
+        if (direction == Direction.Top) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossTopKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossTopKernel5);
+            }
+        } else if (direction == Direction.Bottom) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossBottomKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossBottomKernel5);
+            }
+        } else if (direction == Direction.Left) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossLeftKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossLeftKernel5);
+            }
+        } else if (direction == Direction.Right) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossRightKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossRightKernel5);
+            }
+        } else if (direction == Direction.LeftTop) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossLeftTopKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossLeftTopKernel5);
+            }
+        } else if (direction == Direction.RightBottom) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossRightBottomKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossRightBottomKernel5);
+            }
+        } else if (direction == Direction.LeftBottom) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossLeftBottomKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossLeftBottomKernel5);
+            }
+        } else if (direction == Direction.RightTop) {
+            if (size == 3) {
+                k = new Kernel(3, 3, embossRightTopKernel);
+            } else if (size == 5) {
+                k = new Kernel(5, 5, embossRightTopKernel5);
+            }
+        }
+
+        BufferedImage target = applyConvolveOp(source, k);
+        target = changeRGB(target, 128);
+        if (gray) {
+            return ImageGrayTools.color2Gray(target);
+        } else {
+            return target;
+        }
+    }
+
+    // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
+    public static BufferedImage edgeDetect(BufferedImage source) {
+        float[][] edgeDetectKernel1 = {
+            {0.0f, -1.0f, 0.0f},
+            {-1.0f, 4.0f, -1.0f},
+            {0.0f, -1.0f, 0.0f}
+        };
+        float[][] edgeDetectKernel3 = {
+            {-1.0f, -1.0f, -1.0f},
+            {-1.0f, 8.0f, -1.0f},
+            {-1.0f, -1.0f, -1.0f}
+        };
+        float[] edgeDetectKernel2 = {
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, 8.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f
+        };
+        Kernel k = new Kernel(3, 3, edgeDetectKernel2);
+        BufferedImage target = applyConvolveOp(source, k);
+//        BufferedImage target = applyConvolve(source, edgeDetectKernel3);
         return target;
     }
 

@@ -116,7 +116,6 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("10");
             }
-            increaseRadio.setDisable(false);
 
         } else if (getMessage("Saturation").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Sauration;
@@ -172,6 +171,46 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
 
         } else if (getMessage("Blue").equals(selected.getText())) {
             colorOperationType = ColorOperationType.Blue;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+
+        } else if (getMessage("Yellow").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Yellow;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+
+        } else if (getMessage("Cyan").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Cyan;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+
+        } else if (getMessage("Magenta").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.Magenta;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("10");
+            }
+
+        } else if (getMessage("RGB").equals(selected.getText())) {
+            colorOperationType = ColorOperationType.RGB;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -240,6 +279,18 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
 
             } else if (colorOperationType == ColorOperationType.Blue) {
                 target = ImageConvertTools.changeBlue(source, value);
+
+            } else if (colorOperationType == ColorOperationType.Yellow) {
+                target = ImageConvertTools.changeYellow(source, value);
+
+            } else if (colorOperationType == ColorOperationType.Cyan) {
+                target = ImageConvertTools.changeCyan(source, value);
+
+            } else if (colorOperationType == ColorOperationType.Magenta) {
+                target = ImageConvertTools.changeMagenta(source, value);
+
+            } else if (colorOperationType == ColorOperationType.RGB) {
+                target = ImageConvertTools.changeRGB(source, value);
 
             }
 

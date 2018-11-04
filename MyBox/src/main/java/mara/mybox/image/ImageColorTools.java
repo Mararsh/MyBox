@@ -38,7 +38,7 @@ public class ImageColorTools {
     }
 
     public static int RGB2GrayPixel(int r, int g, int b, int a) {
-        int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
+        int gray = RGB2GrayValue(r, g, b);
         return ImageColorTools.RGB2Pixel(gray, gray, gray, a);
     }
 
@@ -47,13 +47,20 @@ public class ImageColorTools {
         return RGB2GrayPixel(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
     }
 
+    // https://en.wikipedia.org/wiki/HSL_and_HSV#Lightness
+    // https://en.wikipedia.org/wiki/Grayscale
+    // Simplest：I =  ( R + G + B )  /  3
+    // PAL和NTSC(Video) Y'UV and Y'IQ primaries Rec.601 : Y ′ = 0.299 R ′ + 0.587 G ′ + 0.114 B ′
+    // HDTV(High Definiton TV) ITU-R primaries Rec.709:   Y ′ = 0.2126 R ′ + 0.7152 G ′ + 0.0722 B ′
+    // JDK internal: javafx.scene.paint.Color.grayscale() = 0.21 * red + 0.71 * green + 0.07 * blue
     public static int RGB2GrayValue(int r, int g, int b) {
-        int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
+        int gray = (2126 * r + 7152 * g + 722 * b) / 10000;
         return gray;
     }
 
     public static int pixel2GrayValue(int pixel) {
         Color c = new Color(pixel);
+
         return RGB2GrayValue(c.getRed(), c.getGreen(), c.getBlue());
     }
 
@@ -173,4 +180,35 @@ public class ImageColorTools {
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return Color.getHSBColor(hsb[0], hsb[1] * scale, hsb[2]);
     }
+
+    // https://stackoverflow.com/questions/21899824/java-convert-a-greyscale-and-sepia-version-of-an-image-with-bufferedimage/21900125#21900125
+    public static Color pixel2Sepia(int pixel, int sepiaIntensity) {
+        int sepiaDepth = 20;
+        int gray = pixel2GrayValue(pixel);
+        int r = gray, g = gray, b = gray;
+        r = r + (sepiaDepth * 2);
+        g = g + sepiaDepth;
+        if (r > 255) {
+            r = 255;
+        }
+        if (g > 255) {
+            g = 255;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+        // Darken blue color to increase sepia effect
+        b -= sepiaIntensity;
+        // normalize if out of bounds
+        if (b < 0) {
+            b = 0;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+        Color color = new Color(pixel, true);
+        Color newColor = new Color(r, g, b, color.getAlpha());
+        return newColor;
+    }
+
 }

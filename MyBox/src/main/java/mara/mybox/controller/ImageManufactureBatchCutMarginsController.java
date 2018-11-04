@@ -18,7 +18,7 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 

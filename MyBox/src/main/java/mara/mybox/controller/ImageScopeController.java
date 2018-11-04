@@ -43,7 +43,7 @@ import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 
 /**
  * @Author Mara
@@ -366,6 +366,7 @@ public class ImageScopeController extends BaseController {
                     checkColorDistance();
                 }
             });
+            hueDistanceInput.setText("20");
 
             hueDistanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -374,6 +375,7 @@ public class ImageScopeController extends BaseController {
                     checkHueDistance();
                 }
             });
+            hueDistanceInput.setText("20");
 
             colorsBox.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
                 @Override

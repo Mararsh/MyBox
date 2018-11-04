@@ -71,7 +71,8 @@
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageCombine" text="%ImageCombine" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
                         <SeparatorMenuItem mnemonicParsing="false" />
@@ -116,24 +117,24 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                  <Menu mnemonicParsing="false" text="%InterfaceStyle">
-                    <items>
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setDefaultStyle" text="%DefaultStyle">
-                                  <toggleGroup>
-                                      <ToggleGroup fx:id="styleGroup" />
-                                  </toggleGroup>
-                              </RadioMenuItem>
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setCaspianStyle" text="%caspianStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlackStyle" text="%WhiteOnBlackStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setPinkOnBlackStyle" text="%PinkOnBlackStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setYellowOnBlackStyle" text="%YellowOnBlackStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setGreenOnBlackStyle" text="%GreenOnBlackStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlueStyle" text="%WhiteOnBlueStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnGreenStyle" text="%WhiteOnGreenStyle" toggleGroup="$styleGroup" />
-                              <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnPurpleStyle" text="%WhiteOnVioletredStyle" toggleGroup="$styleGroup" />
-                    </items>
-                  </Menu>
-                  <SeparatorMenuItem mnemonicParsing="false" />
+                        <Menu mnemonicParsing="false" text="%InterfaceStyle">
+                            <items>
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setDefaultStyle" text="%DefaultStyle">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="styleGroup" />
+                                    </toggleGroup>
+                                </RadioMenuItem>
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setCaspianStyle" text="%caspianStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlackStyle" text="%WhiteOnBlackStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setPinkOnBlackStyle" text="%PinkOnBlackStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setYellowOnBlackStyle" text="%YellowOnBlackStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setGreenOnBlackStyle" text="%GreenOnBlackStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlueStyle" text="%WhiteOnBlueStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnGreenStyle" text="%WhiteOnGreenStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnPurpleStyle" text="%WhiteOnVioletredStyle" toggleGroup="$styleGroup" />
+                            </items>
+                        </Menu>
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <RadioMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite">
                             <toggleGroup>
                                 <ToggleGroup fx:id="alphaGroup" />
@@ -153,13 +154,13 @@
                         <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                     </items>
                 </Menu>
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showImageHelp" text="%ImageHelp" />
+                        <MenuItem mnemonicParsing="false" onAction="#showHelp" text="%Help" />
                         <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                     </items>
                 </Menu>

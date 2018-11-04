@@ -194,6 +194,9 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     public void fitSize() {
+        if (imageView.getImage() == null) {
+            return;
+        }
         if (scrollPane.getHeight() < imageView.getImage().getHeight()) {
             paneSize();
         } else {

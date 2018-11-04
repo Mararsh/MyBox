@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
 /**

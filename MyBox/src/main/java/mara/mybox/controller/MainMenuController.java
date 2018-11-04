@@ -13,9 +13,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.FxmlTools;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
+import mara.mybox.tools.FxmlTools;
 
 /**
  * @Author Mara
@@ -479,8 +479,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageCombine(ActionEvent event) {
+    private void openImagesCombine(ActionEvent event) {
         reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
+    }
+
+    @FXML
+    private void openImagesBlend(ActionEvent event) {
+        reloadStage(CommonValues.ImagesBlendFxml, AppVaribles.getMessage("ImagesBlend"));
     }
 
     @FXML
@@ -542,10 +547,32 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void showImageHelp(ActionEvent event) {
+    private void showHelp(ActionEvent event) {
         try {
-            File help = FxmlTools.getUserFile(getClass(), "/docs/ImageHelp.html", "ImageHelp.html");
-            Desktop.getDesktop().browse(help.toURI());
+            String lang = AppVaribles.getLanguage();
+            File mybox_help = FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/ImageCompressionType_" + lang + ".html", "ImageCompressionType_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/AboutImageBlending_" + lang + ".html", "AboutImageBlending_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/AboutColorDistance_" + lang + ".html", "AboutColorDistance_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/AboutImageGrayscale_" + lang + ".html", "AboutImageGrayscale_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/HowPackExe_" + lang + ".html", "HowPackExe_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/ImageMetaData_" + lang + ".html", "ImageMetaData_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/ImageSepia_" + lang + ".html", "ImageSepia_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/Java2D_" + lang + ".html", "Java2D_" + lang + ".html", true);
+            Desktop.getDesktop().browse(mybox_help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }

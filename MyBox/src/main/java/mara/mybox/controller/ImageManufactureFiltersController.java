@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -22,7 +23,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
-import mara.mybox.tools.FxmlImageTools;
+import mara.mybox.image.FxmlImageTools;
 import mara.mybox.tools.FxmlTools;
 import static mara.mybox.tools.FxmlTools.badStyle;
 
@@ -35,12 +36,12 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 public class ImageManufactureFiltersController extends ImageManufactureController {
 
     protected ImageScope filtersScope;
-    protected int filtersOperationType, threshold;
+    protected int filtersOperationType, scaleValue;
 
     @FXML
     protected ToggleGroup filtersGroup;
     @FXML
-    protected Slider binarySlider;
+    protected Slider scaleSlider;
     @FXML
     protected Button binaryCalculateButton, binaryOkButton, filtersScopeButton;
     @FXML
@@ -48,7 +49,9 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
     @FXML
     protected HBox bwBox;
     @FXML
-    protected TextField thresholdInput;
+    protected TextField scaleInput;
+    @FXML
+    protected Label scaleLabel, unitLabel;
 
     public static class FiltersOperationType {
 
@@ -61,6 +64,7 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
         public static int RedInvert = 6;
         public static int GreenInvert = 7;
         public static int BlueInvert = 8;
+        public static int Sepia = 9;
 
     }
 
@@ -110,20 +114,19 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
             });
             checkFiltersOperationType();
 
-            binarySlider.valueProperty().addListener(new ChangeListener<Number>() {
+            scaleSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    threshold = newValue.intValue();
-                    thresholdInput.setText(threshold + "");
+                    scaleValue = newValue.intValue();
+                    scaleInput.setText(scaleValue + "");
                 }
             });
-            binarySlider.setValue(50);
 
-            thresholdInput.textProperty().addListener(new ChangeListener<String>() {
+            scaleInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkThresholdInput();
+                    checkValueInput();
                 }
             });
 
@@ -142,43 +145,66 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
     }
 
     private void checkFiltersOperationType() {
+        binaryCalculateButton.setDisable(true);
+        scaleLabel.setText("");
+        scaleSlider.setDisable(true);
+        scaleInput.setDisable(true);
+        scaleInput.setStyle(null);
+        unitLabel.setText("");
         RadioButton selected = (RadioButton) filtersGroup.getSelectedToggle();
         if (getMessage("BlackOrWhite").equals(selected.getText())) {
             filtersOperationType = FiltersOperationType.BlackOrWhite;
-            bwBox.setDisable(false);
-        } else {
-            if (getMessage("Gray").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Gray;
-            } else if (getMessage("Invert").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Invert;
-            } else if (getMessage("Red").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Red;
-            } else if (getMessage("Green").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Green;
-            } else if (getMessage("Blue").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.Blue;
-            } else if (getMessage("RedInvert").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.RedInvert;
-            } else if (getMessage("GreenInvert").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.GreenInvert;
-            } else if (getMessage("BlueInvert").equals(selected.getText())) {
-                filtersOperationType = FiltersOperationType.BlueInvert;
-            }
-            bwBox.setDisable(true);
+            binaryCalculateButton.setDisable(false);
+            scaleLabel.setText(getMessage("Threshold"));
+            scaleSlider.setDisable(false);
+            scaleSlider.setMax(99);
+            scaleSlider.setMin(1);
+            scaleSlider.setBlockIncrement(1);
+            scaleSlider.setValue(50);
+            scaleInput.setDisable(false);
+            unitLabel.setText("%");
+            checkValueInput();
+        } else if (getMessage("Gray").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Gray;
+        } else if (getMessage("Invert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Invert;
+        } else if (getMessage("Red").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Red;
+        } else if (getMessage("Green").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Green;
+        } else if (getMessage("Blue").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Blue;
+        } else if (getMessage("RedInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.RedInvert;
+        } else if (getMessage("GreenInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.GreenInvert;
+        } else if (getMessage("BlueInvert").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.BlueInvert;
+        } else if (getMessage("Sepia").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Sepia;
+            scaleLabel.setText(getMessage("Intensity"));
+            scaleSlider.setDisable(false);
+            scaleSlider.setMax(255);
+            scaleSlider.setMin(0);
+            scaleSlider.setBlockIncrement(1);
+            scaleSlider.setValue(80);
+            scaleInput.setDisable(false);
+            checkValueInput();
         }
+
     }
 
-    private void checkThresholdInput() {
+    private void checkValueInput() {
         try {
-            threshold = Integer.valueOf(thresholdInput.getText());
-            if (threshold >= 0 && threshold <= binarySlider.getMax()) {
-                thresholdInput.setStyle(null);
-                binarySlider.setValue(threshold);
+            scaleValue = Integer.valueOf(scaleInput.getText());
+            if (scaleValue >= 0 && scaleValue <= scaleSlider.getMax()) {
+                scaleInput.setStyle(null);
+                scaleSlider.setValue(scaleValue);
             } else {
-                thresholdInput.setStyle(badStyle);
+                scaleInput.setStyle(badStyle);
             }
         } catch (Exception e) {
-            thresholdInput.setStyle(badStyle);
+            scaleInput.setStyle(badStyle);
         }
     }
 
@@ -218,9 +244,9 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
 
     @FXML
     public void calculateThreshold() {
-        threshold = ImageGrayTools.calculateThreshold(values.getSourceFile());
-        threshold = threshold * 100 / 256;
-        binarySlider.setValue(threshold);
+        scaleValue = ImageGrayTools.calculateThreshold(values.getSourceFile());
+        scaleValue = scaleValue * 100 / 256;
+        scaleSlider.setValue(scaleValue);
     }
 
     @FXML
@@ -234,7 +260,7 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
                 } else if (filtersOperationType == FiltersOperationType.Invert) {
                     newImage = FxmlImageTools.makeInvert(values.getCurrentImage(), filtersScope);
                 } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
-                    newImage = FxmlImageTools.makeBinaryFx(values.getCurrentImage(), threshold, filtersScope);
+                    newImage = FxmlImageTools.makeBinaryFx(values.getCurrentImage(), filtersScope, scaleValue);
                 } else if (filtersOperationType == FiltersOperationType.Red) {
                     newImage = FxmlImageTools.keepRed(values.getCurrentImage(), filtersScope);
                 } else if (filtersOperationType == FiltersOperationType.Green) {
@@ -247,6 +273,8 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
                     newImage = FxmlImageTools.makeGreenInvert(values.getCurrentImage(), filtersScope);
                 } else if (filtersOperationType == FiltersOperationType.BlueInvert) {
                     newImage = FxmlImageTools.makeBlueInvert(values.getCurrentImage(), filtersScope);
+                } else if (filtersOperationType == FiltersOperationType.Sepia) {
+                    newImage = FxmlImageTools.makeSepia(values.getCurrentImage(), filtersScope, scaleValue);
                 } else {
                     return null;
                 }
