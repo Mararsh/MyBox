@@ -13,9 +13,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -39,6 +41,8 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     private TableView<FileInformation> sourceTable;
     @FXML
     private TableColumn<FileInformation, String> fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
+    @FXML
+    protected Button addButton, clearButton, openButton, deleteButton, upButton, downButton;
 
     public PdfCompressImagesBatchController() {
 
@@ -84,9 +88,31 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                     }
                 }
             });
+            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    private void checkTableSelected() {
+        ObservableList<FileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
+        if (selected != null && selected.size() > 0) {
+            openButton.setDisable(false);
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            deleteButton.setDisable(false);
+        } else {
+            openButton.setDisable(true);
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+            deleteButton.setDisable(true);
         }
     }
 

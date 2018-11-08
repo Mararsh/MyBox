@@ -25,7 +25,12 @@ public class TableImageHistory extends DerbyBase {
 
     public TableImageHistory() {
         Table_Name = "image_history";
-        KeyString = "image_location, history_location";
+        Keys = new ArrayList() {
+            {
+                add("image_location");
+                add("history_location");
+            }
+        };
         Create_Table_Statement
                 = " CREATE TABLE image_history ( "
                 + "  image_location  VARCHAR(1024) NOT NULL, "

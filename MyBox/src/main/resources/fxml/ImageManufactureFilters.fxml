@@ -80,15 +80,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                         <ToggleGroup fx:id="filtersGroup" />
                                                                     </toggleGroup>
                                                                 </RadioButton>
+                                                                <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$filtersGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$filtersGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%Invert" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%RedInvert" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%GreenInvert" toggleGroup="$filtersGroup" />
                                                                 <RadioButton mnemonicParsing="false" text="%BlueInvert" toggleGroup="$filtersGroup" />
                                                                 <RadioButton fx:id="grayRadio" mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
                                                                 <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$filtersGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$filtersGroup" />
                                                             </items>
                                                         </ToolBar>
                                                     </children>
@@ -125,13 +128,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </VBox>
                                     </content>
                                 </Tab>
+                                <Tab fx:id="convolutionTab" text="%Convolution" />
                                 <Tab fx:id="replaceColorTab" text="%ReplaceColor" />
                                 <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="coverTab" text="%Cover" />
                                 <Tab fx:id="arcTab" text="%Arc" />
                                 <Tab fx:id="shadowTab" text="%Shadow" />
                                 <Tab fx:id="transformTab" text="%Transform" />
-                                <Tab fx:id="cutMarginsTab" text="%CutMargins" />
-                                <Tab fx:id="addMarginsTab" text="%AddMargins" />
+                                <Tab fx:id="marginsTab" text="%Margins" />
                                 <Tab fx:id="viewTab" text="%View" />
                                 <Tab fx:id="refTab" text="%Reference" />
                                 <Tab fx:id="browseTab" text="%Browse" />
@@ -156,7 +160,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <ComboBox fx:id="hisBox" prefWidth="150.0" />
- <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />

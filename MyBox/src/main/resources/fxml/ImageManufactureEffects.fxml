@@ -62,84 +62,85 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="cropTab" text="%Crop" />
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects">
-                           <content>
-                              <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
-                                 <children>
-                                              <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <ToolBar HBox.hgrow="ALWAYS">
-                                                          <items>
-                                                <RadioButton mnemonicParsing="false" text=" " visible="false" />
-                                                          </items>
-                                                      </ToolBar>
-                                                      <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
-                                                          <items>
-                                                              <RadioButton mnemonicParsing="false" selected="true" text="%Blur">
-                                                                  <toggleGroup>
-                                                                      <ToggleGroup fx:id="effectsGroup" />
-                                                                  </toggleGroup>
-                                                              </RadioButton>
-                                                              <HBox fx:id="blurBox" alignment="CENTER_LEFT" spacing="2.0" />
-                                                              <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
-                                                              <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
-                                                              <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
-                                                              <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
-                                                          </items>
-                                                      </ToolBar>
-                                                  </children>
-                                              </HBox>
-                                    <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
-                                       <children>
-                                          <ToolBar HBox.hgrow="ALWAYS">
-                                            <items>
-                                              <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                                            </items>
-                                          </ToolBar>
-                                          <ToolBar HBox.hgrow="NEVER">
-                                            <items>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                   <children>
-                                                      <Label fx:id="intLabel" text="%Radius" />
-                                                                      <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
-                                                      <Label fx:id="stringLabel" text="Label" />
-                                                      <ComboBox fx:id="stringBox" prefWidth="150.0" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
+                                    <content>
+                                        <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                            <items>
+                                                                <RadioButton mnemonicParsing="false" text=" " visible="false" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                            <items>
+                                                                <RadioButton mnemonicParsing="false" selected="true" text="%Blur">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="effectsGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <HBox fx:id="blurBox" alignment="CENTER_LEFT" spacing="2.0" />
+                                                                <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
+                                                                <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
+                                                                <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
+                                                            </items>
+                                                        </ToolBar>
+                                                    </children>
                                                 </HBox>
-                                                <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
-                                                <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                   <children>
-                                                      <Label text="%Threshold" />
-                                                                      <TextField fx:id="thresholdingInput" prefWidth="60.0" promptText="0~255" />
-                                                                      <Label text="%SmallValue" />
-                                                                      <TextField fx:id="thresholdingMinInput" prefWidth="60.0" promptText="0~255" />
-                                                                      <Label text="%BigValue" />
-                                                                      <TextField fx:id="thresholdingMaxInput" prefWidth="60.0" promptText="0~255" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets left="10.0" right="10.0" />
-                                                   </padding>
+                                                <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
+                                                    <children>
+                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                            <items>
+                                                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <ToolBar HBox.hgrow="NEVER">
+                                                            <items>
+                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label fx:id="intLabel" text="%Radius" />
+                                                                        <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
+                                                                        <Label fx:id="stringLabel" text="Label" />
+                                                                        <ComboBox fx:id="stringBox" prefWidth="150.0" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets left="10.0" right="10.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                                <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
+                                                                <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%Threshold" />
+                                                                        <TextField fx:id="thresholdingInput" prefWidth="60.0" promptText="0~255" />
+                                                                        <Label text="%SmallValue" />
+                                                                        <TextField fx:id="thresholdingMinInput" prefWidth="60.0" promptText="0~255" />
+                                                                        <Label text="%BigValue" />
+                                                                        <TextField fx:id="thresholdingMaxInput" prefWidth="60.0" promptText="0~255" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets left="10.0" right="10.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                                <Button fx:id="effectsOkButton" mnemonicParsing="false" onAction="#effectsAction" text="%OK" />
+                                                            </items>
+                                                        </ToolBar>
+                                                    </children>
                                                 </HBox>
-                                                              <Button fx:id="effectsOkButton" mnemonicParsing="false" onAction="#effectsAction" text="%OK" />
-                                            </items>
-                                          </ToolBar>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </content>
+                                            </children>
+                                        </VBox>
+                                    </content>
                                 </Tab>
-                                <Tab fx:id="filtersTab" text="%Filters" />
+                               <Tab fx:id="filtersTab" text="%Filters" />
+                                <Tab fx:id="convolutionTab" text="%Convolution" />
                                 <Tab fx:id="replaceColorTab" text="%ReplaceColor" />
                                 <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="coverTab" text="%Cover" />
                                 <Tab fx:id="arcTab" text="%Arc" />
                                 <Tab fx:id="shadowTab" text="%Shadow" />
                                 <Tab fx:id="transformTab" text="%Transform" />
-                                <Tab fx:id="cutMarginsTab" text="%CutMargins" />
-                                <Tab fx:id="addMarginsTab" text="%AddMargins" />
+                                <Tab fx:id="marginsTab" text="%Margins" />
                                 <Tab fx:id="viewTab" text="%View" />
                                 <Tab fx:id="refTab" text="%Reference" />
                                 <Tab fx:id="browseTab" text="%Browse" />
@@ -163,7 +164,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <ComboBox fx:id="hisBox" prefWidth="150.0" />
- <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />

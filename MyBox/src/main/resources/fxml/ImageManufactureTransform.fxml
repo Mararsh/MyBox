@@ -62,9 +62,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="cropTab" text="%Crop" />
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects" />
-                                <Tab fx:id="filtersTab" text="%Filters" />
+                               <Tab fx:id="filtersTab" text="%Filters" />
+                                <Tab fx:id="convolutionTab" text="%Convolution" />
                                 <Tab fx:id="replaceColorTab" text="%ReplaceColor" />
                                 <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="coverTab" text="%Cover" />
                                 <Tab fx:id="arcTab" text="%Arc" />
                                 <Tab fx:id="shadowTab" text="%Shadow" />
                                 <Tab fx:id="transformTab" text="%Transform">
@@ -78,15 +80,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar fx:id="transformBar">
                                                     <items>
-                                                        <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
-                                                        <Button fx:id="shearButton" mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
-                                                        <Label text="%Mirror">
-                                                            <padding>
-                                                                <Insets left="30.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <Button mnemonicParsing="false" onAction="#horizontalAction" text="%Horizontal" />
-                                                        <Button mnemonicParsing="false" onAction="#verticalAction" text="%Vertical" />
+                                                        <HBox fx:id="tranBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
+                                                                <Button fx:id="shearButton" mnemonicParsing="false" onAction="#shearAction" text="%Shear" />
+                                                                <Label text="%Mirror">
+                                                                    <padding>
+                                                                        <Insets left="30.0" />
+                                                                    </padding>
+                                                                </Label>
+                                                                <Button mnemonicParsing="false" onAction="#horizontalAction" text="%Horizontal" />
+                                                                <Button mnemonicParsing="false" onAction="#verticalAction" text="%Vertical" />
+                                                            </children>
+                                                        </HBox>
                                                         <Label text="%RotateAngle">
                                                             <padding>
                                                                 <Insets left="30.0" />
@@ -102,8 +108,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="cutMarginsTab" text="%CutMargins" />
-                                <Tab fx:id="addMarginsTab" text="%AddMargins" />
+                                <Tab fx:id="marginsTab" text="%Margins" />
                                 <Tab fx:id="viewTab" text="%View" />
                                 <Tab fx:id="refTab" text="%Reference" />
                                 <Tab fx:id="browseTab" text="%Browse" />
@@ -127,7 +132,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <ComboBox fx:id="hisBox" prefWidth="150.0" />
- <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />

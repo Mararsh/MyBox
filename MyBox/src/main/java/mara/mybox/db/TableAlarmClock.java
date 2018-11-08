@@ -22,7 +22,11 @@ public class TableAlarmClock extends DerbyBase {
 
     public TableAlarmClock() {
         Table_Name = "Alarm_Clock";
-        KeyString = "key_value";
+        Keys = new ArrayList() {
+            {
+                add("key_value");
+            }
+        };
 
         Create_Table_Statement
                 = " CREATE TABLE Alarm_Clock ( "

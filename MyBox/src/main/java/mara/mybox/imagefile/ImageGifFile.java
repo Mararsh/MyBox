@@ -1,10 +1,13 @@
 package mara.mybox.imagefile;
 
+import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriter;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi;
-import com.sun.imageio.plugins.gif.GIFImageMetadata;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+//import com.sun.imageio.plugins.gif.GIFImageMetadata;
+//import com.sun.imageio.plugins.gif.GIFImageReader;
+//import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -46,6 +49,51 @@ public class ImageGifFile {
         }
     }
 
+//    public static void writeGifFile(File file) {
+//        try {
+//
+//
+//
+//            FileImageInputStream in = null;
+//            FileImageOutputStream out = null;
+//
+//            in = new FileImageInputStream(file);
+//            ImageReaderSpi readerSpi = new GIFImageReaderSpi();
+//            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
+//            gifReader.setInput(in);
+//            int num = gifReader.getNumImages(true);
+//            int frame = 10;
+//// 要取的帧数要小于总帧数
+//            if (num > frame) {
+//                ImageWriterSpi writerSpi = new GIFImageWriterSpi();
+//                GIFImageWriter writer = (GIFImageWriter) writerSpi.createWriterInstance();
+//                for (int i = 0; i < num; i++) {
+//                    if (i == frame) {
+//                        String target;
+//                        File newfile = new File(target);
+//                        out = new FileImageOutputStream(newfile);
+//                        writer.setOutput(out);
+////    读取读取帧的图片
+//                        writer.write(gifReader.read(i));
+//
+//                    }
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            logger.error(e.toString());
+//            return;
+//        }
+//    }
+//
+//    public static int gifFrameCount(byte data[]) throws IOException {
+//        ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
+//        ImageInputStream ciis = ImageIO.createImageInputStream(new ByteArrayInputStream(data));
+//        reader.setInput(ciis, false);
+//        int noi = reader.getNumImages(true);
+//        ciis.close();
+//        return noi;
+//    }
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/gif_metadata.html#image
     public static void writeGifImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {

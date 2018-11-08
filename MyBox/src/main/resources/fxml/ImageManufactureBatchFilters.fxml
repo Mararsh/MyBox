@@ -62,7 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -97,11 +97,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ToggleGroup fx:id="filtersGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
+                                    <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$filtersGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$filtersGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$filtersGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Invert" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%RedInvert" toggleGroup="$filtersGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%GreenInvert" toggleGroup="$filtersGroup" />
@@ -110,6 +111,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
+                                                <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$filtersGroup" />
+                                    <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$filtersGroup" />
                                                 <HBox fx:id="bwBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <Label fx:id="valueLabel" text="%Threshold" />

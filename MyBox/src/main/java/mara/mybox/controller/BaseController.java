@@ -66,7 +66,7 @@ public class BaseController implements Initializable {
     protected Stage myStage;
     protected Alert loadingAlert;
     protected Task<Void> task;
-    protected BaseController parentController;
+    protected BaseController parentController, myController;
     protected Timer popupTimer;
     protected Popup popup;
 
@@ -126,6 +126,7 @@ public class BaseController implements Initializable {
             setInterfaceStyle(AppVaribles.getStyle());
 
             myFxml = FxmlTools.getFxmlPath(url.getPath());
+            myController = this;
             AppVaribles.currentController = this;
             AppVaribles.alarmClockController = null;
             if (mainMenuController != null) {
@@ -1487,6 +1488,14 @@ public class BaseController implements Initializable {
 
     public void setPopup(Popup popup) {
         this.popup = popup;
+    }
+
+    public BaseController getMyController() {
+        return myController;
+    }
+
+    public void setMyController(BaseController myController) {
+        this.myController = myController;
     }
 
 }

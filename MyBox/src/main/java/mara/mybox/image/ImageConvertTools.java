@@ -23,10 +23,12 @@ import javafx.embed.swing.SwingFXUtils;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.AlphaColor;
+import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageScope;
+import mara.mybox.tools.ValueTools;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -663,6 +665,69 @@ public class ImageConvertTools {
         }
     }
 
+    public static BufferedImage keepYellow(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    target.setRGB(i, j, source.getRGB(i, j) & 0xFFFFFF00);
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage keepCyan(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    target.setRGB(i, j, source.getRGB(i, j) & 0xFF00FFFF);
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage keepMagenta(BufferedImage source) {
+        try {
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    target.setRGB(i, j, source.getRGB(i, j) & 0xFFFF00FF);
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static BufferedImage sepiaImage(BufferedImage source, int sepiaIntensity) {
         try {
             int width = source.getWidth();
@@ -1125,10 +1190,23 @@ public class ImageConvertTools {
         }
     }
 
-    public static BufferedImage addWatermarkImage(BufferedImage source, BufferedImage water, int x, int y) {
+    public static BufferedImage addPicture(BufferedImage source,
+            BufferedImage picture, int x, int y, int w, int h,
+            boolean keepRatio, float transparent) {
         try {
+            if (w <= 0 || h <= 0 || picture == null || picture.getWidth() == 0) {
+                return source;
+            }
             int width = source.getWidth();
             int height = source.getHeight();
+            int ah = h, aw = w;
+            if (keepRatio) {
+                if (w * 1.0f / h > picture.getWidth() * 1.0f / picture.getHeight()) {
+                    ah = (int) (picture.getHeight() * w / picture.getWidth());
+                } else {
+                    aw = (int) (picture.getWidth() * h / picture.getHeight());
+                }
+            }
             int imageType = source.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
@@ -1136,7 +1214,8 @@ public class ImageConvertTools {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            g.drawImage(water, x, y, null);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparent));
+            g.drawImage(picture, x, y, aw, ah, null);
             g.dispose();
             return target;
         } catch (Exception e) {
@@ -1649,6 +1728,7 @@ public class ImageConvertTools {
 
     }
 
+    // https://en.wikipedia.org/wiki/Kernel_(image_processing)
     // https://lodev.org/cgtutor/filtering.html
     public static Kernel makeGaussFilter(int radius) {
         if (radius < 1) {
@@ -1679,12 +1759,6 @@ public class ImageConvertTools {
     }
 
     public static BufferedImage blurImage(BufferedImage source, int radius) {
-        float ninth = 1.0f / 9.0f;
-        float[][] blurKernel = {
-            {ninth, ninth, ninth},
-            {ninth, ninth, ninth},
-            {ninth, ninth, ninth}
-        };
         Kernel k = makeGaussFilter(radius);
         BufferedImage target = applyConvolveOp(source, k);
 //        BufferedImage target = applyConvolve(source, blurKernel);
@@ -1692,20 +1766,17 @@ public class ImageConvertTools {
     }
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
+    // https://en.wikipedia.org/wiki/Kernel_(image_processing)
     public static BufferedImage sharpenImage(BufferedImage source) {
-        float[][] sharpenKernel1 = {
-            {0.0f, -1.0f, 0.0f},
-            {-1.0f, 5.0f, -1.0f},
-            {0.0f, -1.0f, 0.0f}
+        float[] unsharpMaskingKernel = {
+            -1 / 256.0f, -4 / 256.0f, -6 / 256.0f, -4 / 256.0f, -1 / 256.0f,
+            -4 / 256.0f, -16 / 256.0f, -24 / 256.0f, -16 / 256.0f, -4 / 256.0f,
+            -6 / 256.0f, -24 / 256.0f, 476 / 256.0f, -24 / 256.0f, -6 / 256.0f,
+            -4 / 256.0f, -16 / 256.0f, -24 / 256.0f, -16 / 256.0f, -4 / 256.0f,
+            -1 / 256.0f, -4 / 256.0f, -6 / 256.0f, -4 / 256.0f, -1 / 256.0f
         };
-        float[] sharpenKernel2 = {
-            -1.0f, -1.0f, -1.0f,
-            -1.0f, 9.0f, -1.0f,
-            -1.0f, -1.0f, -1.0f
-        };
-        Kernel k = new Kernel(3, 3, sharpenKernel2);
+        Kernel k = new Kernel(5, 5, unsharpMaskingKernel);
         BufferedImage target = applyConvolveOp(source, k);
-//        BufferedImage target = applyConvolve(source, sharpenKernel1);
         return target;
     }
 
@@ -1875,16 +1946,6 @@ public class ImageConvertTools {
 
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
     public static BufferedImage edgeDetect(BufferedImage source) {
-        float[][] edgeDetectKernel1 = {
-            {0.0f, -1.0f, 0.0f},
-            {-1.0f, 4.0f, -1.0f},
-            {0.0f, -1.0f, 0.0f}
-        };
-        float[][] edgeDetectKernel3 = {
-            {-1.0f, -1.0f, -1.0f},
-            {-1.0f, 8.0f, -1.0f},
-            {-1.0f, -1.0f, -1.0f}
-        };
         float[] edgeDetectKernel2 = {
             -1.0f, -1.0f, -1.0f,
             -1.0f, 8.0f, -1.0f,
@@ -1928,6 +1989,32 @@ public class ImageConvertTools {
             logger.debug(e.toString());
             return null;
         }
+    }
+
+    public static BufferedImage applyConvolutionKernel(BufferedImage source, ConvolutionKernel convolutionKernel) {
+        BufferedImage clearedSource;
+        int type = convolutionKernel.getType();
+        if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
+                || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
+            clearedSource = clearAlpha(source);
+        } else {
+            clearedSource = source;
+        }
+        float[] k = ValueTools.matrix2Array(convolutionKernel.getMatrix());
+        if (k == null) {
+            return clearedSource;
+        }
+        int w = convolutionKernel.getWidth();
+        int h = convolutionKernel.getHeight();
+        Kernel kernel = new Kernel(w, h, k);
+        BufferedImage target = applyConvolveOp(clearedSource, kernel);
+        if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
+            target = changeRGB(target, 128);
+            if (convolutionKernel.getGray() > 0) {
+                target = ImageGrayTools.color2Gray(target);
+            }
+        }
+        return target;
     }
 
 }

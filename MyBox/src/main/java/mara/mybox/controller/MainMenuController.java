@@ -2,10 +2,13 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
@@ -14,6 +17,7 @@ import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.db.DerbyBase;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
 import mara.mybox.tools.FxmlTools;
 
@@ -167,7 +171,15 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void clearSettings(ActionEvent event) {
-        AppVaribles.clear();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            return;
+        }
+        DerbyBase.dropTables();
+        DerbyBase.initTables();
         String f = getParentController().getMyFxml();
         if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
             f = CommonValues.ImageManufactureFileFxml;
@@ -360,6 +372,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageManufactureConvolution(ActionEvent event) {
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("convolution");
+    }
+
+    @FXML
     private void openImageManufactureReplaceColor(ActionEvent event) {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
@@ -371,6 +390,13 @@ public class MainMenuController extends BaseController {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("watermark");
+    }
+
+    @FXML
+    private void openImageManufactureCover(ActionEvent event) {
+        ImageManufactureFileController controller
+                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+        controller.setInitTab("cover");
     }
 
     @FXML
@@ -395,17 +421,10 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureCutMargins(ActionEvent event) {
+    private void openImageManufactureMargins(ActionEvent event) {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("cutMargins");
-    }
-
-    @FXML
-    private void openImageManufactureAddMargins(ActionEvent event) {
-        ImageManufactureFileController controller
-                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("addMargins");
+        controller.setInitTab("margins");
     }
 
     @FXML
@@ -436,6 +455,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageManufactureBatchFilters(ActionEvent event) {
         reloadStage(CommonValues.ImageManufactureBatchFiltersFxml, AppVaribles.getMessage("ImageManufactureBatchFilters"));
+    }
+
+    @FXML
+    private void openImageManufactureBatchConvolution(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchConvolutionFxml, AppVaribles.getMessage("ImageManufactureBatchConvolution"));
     }
 
     @FXML
@@ -486,6 +510,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImagesBlend(ActionEvent event) {
         reloadStage(CommonValues.ImagesBlendFxml, AppVaribles.getMessage("ImagesBlend"));
+    }
+
+    @FXML
+    private void openConvolutionKernelManager(ActionEvent event) {
+        reloadStage(CommonValues.ConvolutionKernelManagerFxml, AppVaribles.getMessage("ConvolutionKernelManager"));
     }
 
     @FXML
@@ -572,6 +601,8 @@ public class MainMenuController extends BaseController {
                     "/docs/ImageSepia_" + lang + ".html", "ImageSepia_" + lang + ".html", true);
             FxmlTools.getUserFile(getClass(),
                     "/docs/Java2D_" + lang + ".html", "Java2D_" + lang + ".html", true);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/Convolution_" + lang + ".html", "Convolution_" + lang + ".html", true);
             Desktop.getDesktop().browse(mybox_help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());

@@ -28,7 +28,7 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                        <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                         <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />

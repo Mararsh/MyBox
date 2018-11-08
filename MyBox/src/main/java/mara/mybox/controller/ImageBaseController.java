@@ -142,6 +142,33 @@ public abstract class ImageBaseController extends BaseController {
         thread.start();
     }
 
+    public void loadImage(final String fileName) {
+        try {
+            sourceFile = new File(fileName).getAbsoluteFile(); // Must convert to AbsoluteFile!
+            if (sourceFileInput != null) {
+                sourceFileInput.setText(sourceFile.getAbsolutePath());
+            } else {
+                loadImage(sourceFile, false);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void loadImage(File sourceFile, Image image, ImageFileInformation imageInformation) {
+        this.sourceFile = sourceFile;
+        this.imageInformation = imageInformation;
+        this.image = image;
+        afterImageLoaded();
+    }
+
+    public void loadImage(final Image inImage) {
+        sourceFile = null;
+        imageInformation = null;
+        image = inImage;
+        afterImageLoaded();
+    }
+
     protected void afterImageLoaded() {
 
     }

@@ -13,6 +13,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
@@ -39,6 +40,8 @@ public class ImageManufactureTransformController extends ImageManufactureControl
     protected Slider angleSlider;
     @FXML
     protected Button leftButton, rightButton, shearButton;
+    @FXML
+    protected HBox tranBox;
 
     public ImageManufactureTransformController() {
     }
@@ -75,7 +78,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             Tooltip tips = new Tooltip(getMessage("transformComments"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(transformBar, tips);
+            FxmlTools.setComments(tranBox, tips);
 
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",

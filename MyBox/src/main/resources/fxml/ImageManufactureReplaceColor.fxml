@@ -62,7 +62,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="cropTab" text="%Crop" />
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects" />
-                                <Tab fx:id="filtersTab" text="%Filters" />
+                               <Tab fx:id="filtersTab" text="%Filters" />
+                                <Tab fx:id="convolutionTab" text="%Convolution" />
                                 <Tab fx:id="replaceColorTab" text="%ReplaceColor">
                                     <content>
                                         <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
@@ -97,20 +98,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         </ToolBar>
                                                         <ToolBar fx:id="replaceColorBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                                             <items>
-                                                <HBox fx:id="originalBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                   <children>
-                                                      <Label text="%OriginalColor" />
-                                                                      <ColorPicker fx:id="scopeColorPicker" />
-                                                                      <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForScope" text="%Transparent" />
-                                                                      <Button mnemonicParsing="false" onAction="#whiteForScope" text="%White" />
-                                                                      <Button mnemonicParsing="false" onAction="#blackForScope" text="%Black" />
-                                                      <Label fx:id="distanceLabel" text="%Distance" />
-                                                      <TextField fx:id="distanceInput" prefWidth="50.0" />
-                                                   </children>
-                                                   <padding>
-                                                      <Insets right="20.0" />
-                                                   </padding>
-                                                </HBox>
+                                                                <HBox fx:id="originalBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label text="%OriginalColor" />
+                                                                        <ColorPicker fx:id="scopeColorPicker" />
+                                                                        <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForScope" text="%Transparent" />
+                                                                        <Button mnemonicParsing="false" onAction="#whiteForScope" text="%White" />
+                                                                        <Button mnemonicParsing="false" onAction="#blackForScope" text="%Black" />
+                                                                        <Label fx:id="distanceLabel" text="%Distance" />
+                                                                        <TextField fx:id="distanceInput" prefWidth="50.0" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets right="20.0" />
+                                                                    </padding>
+                                                                </HBox>
                                                                 <Label text="%NewColor" />
                                                                 <ColorPicker fx:id="newColorPicker" />
                                                                 <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
@@ -131,11 +132,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     </content>
                                 </Tab>
                                 <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="coverTab" text="%Cover" />
                                 <Tab fx:id="arcTab" text="%Arc" />
                                 <Tab fx:id="shadowTab" text="%Shadow" />
                                 <Tab fx:id="transformTab" text="%Transform" />
-                                <Tab fx:id="cutMarginsTab" text="%CutMargins" />
-                                <Tab fx:id="addMarginsTab" text="%AddMargins" />
+                                <Tab fx:id="marginsTab" text="%Margins" />
                                 <Tab fx:id="viewTab" text="%View" />
                                 <Tab fx:id="refTab" text="%Reference" />
                                 <Tab fx:id="browseTab" text="%Browse" />
@@ -160,7 +161,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <ComboBox fx:id="hisBox" prefWidth="150.0" />
- <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />

@@ -85,7 +85,8 @@ public class ImagesCombinePdfController extends ImageBaseController {
     protected boolean isImageSize;
 
     @FXML
-    private Button addButton, openTargetButton, saveButton, deleteButton, clearButton;
+    private Button addButton, openTargetButton, saveButton, deleteButton,
+            clearButton, openButton, loadButton, upButton, downButton;
     @FXML
     private TableView<ImageFileInformation> sourceTable;
     @FXML
@@ -171,6 +172,13 @@ public class ImagesCombinePdfController extends ImageBaseController {
                     }
                 }
             });
+            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
             loadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -186,6 +194,23 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    private void checkTableSelected() {
+        ObservableList<ImageFileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
+        if (selected != null && selected.size() > 0) {
+            openButton.setDisable(false);
+            loadButton.setDisable(false);
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            deleteButton.setDisable(false);
+        } else {
+            openButton.setDisable(true);
+            loadButton.setDisable(true);
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+            deleteButton.setDisable(true);
         }
     }
 

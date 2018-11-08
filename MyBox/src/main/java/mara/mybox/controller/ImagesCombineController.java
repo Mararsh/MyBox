@@ -10,6 +10,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -152,6 +153,13 @@ public class ImagesCombineController extends ImageViewerController {
 
             sourceTable.setItems(imageCombine.getSourceImages());
             sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
             imageCombine.getSourceImages().addListener(new ListChangeListener<ImageFileInformation>() {
                 @Override
@@ -162,6 +170,19 @@ public class ImagesCombineController extends ImageViewerController {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    private void checkTableSelected() {
+        ObservableList<ImageFileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
+        if (selected != null && selected.size() > 0) {
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            deleteButton.setDisable(false);
+        } else {
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+            deleteButton.setDisable(true);
         }
     }
 
@@ -705,6 +726,11 @@ public class ImagesCombineController extends ImageViewerController {
     }
 
     private void combineImages() {
+        if (imageCombine.getSourceImages() == null || imageCombine.getSourceImages().isEmpty()) {
+            clearButton.setDisable(true);
+        } else {
+            clearButton.setDisable(false);
+        }
         if (imageCombine.getSourceImages() == null || imageCombine.getSourceImages().isEmpty()
                 || totalWidthInput.getStyle().equals(badStyle)
                 || totalHeightInput.getStyle().equals(badStyle)

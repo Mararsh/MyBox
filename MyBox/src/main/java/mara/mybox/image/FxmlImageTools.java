@@ -2,6 +2,7 @@ package mara.mybox.image;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -26,6 +27,7 @@ import javafx.scene.text.Text;
 import mara.mybox.image.ImageBlendTools.ImagesBlendMode;
 import mara.mybox.image.ImageBlendTools.ImagesRelativeLocation;
 import mara.mybox.image.ImageConvertTools;
+import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageScope;
@@ -458,7 +460,7 @@ public class FxmlImageTools {
         return newImage;
     }
 
-    public static Image replaceColors(Image image, Color newColor, ImageScope scope) {
+    public static Image keepYellow(Image image, ImageScope scope) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -470,6 +472,71 @@ public class FxmlImageTools {
                     pixelWriter.setColor(x, y, color);
                     continue;
                 }
+                if (scope.inScope(x, y, color)) {
+                    Color newColor = new Color(color.getRed(), color.getGreen(), 0, color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image keepCyan(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    Color newColor = new Color(0, color.getGreen(), color.getBlue(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image keepMagenta(Image image, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
+                if (color == Color.TRANSPARENT) {
+                    pixelWriter.setColor(x, y, color);
+                    continue;
+                }
+                if (scope.inScope(x, y, color)) {
+                    Color newColor = new Color(color.getRed(), 0, color.getBlue(), color.getOpacity());
+                    pixelWriter.setColor(x, y, newColor);
+                } else {
+                    pixelWriter.setColor(x, y, color);
+                }
+            }
+        }
+        return newImage;
+    }
+
+    public static Image replaceColors(Image image, Color newColor, ImageScope scope) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                Color color = pixelReader.getColor(x, y);
                 if (scope.inScope(x, y, color)) {
                     pixelWriter.setColor(x, y, newColor);
                 } else {
@@ -797,13 +864,119 @@ public class FxmlImageTools {
         }
     }
 
+    public static Image makeMosaic(Image image, int leftX, int leftY, int rightX, int rightY, int size) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, (int) image.getWidth(), (int) image.getHeight(), pixelReader, 0, 0);
+
+        for (int y = leftY; y <= rightY; y += size) {
+            for (int x = leftX; x <= rightX; x += size) {
+                for (int mx = x; mx <= Math.min((int) image.getWidth() - 1, x + size); mx++) {
+                    for (int my = y; my <= Math.min((int) image.getHeight() - 1, y + size); my++) {
+                        pixelWriter.setColor(mx, my, pixelReader.getColor(x, y));
+                    }
+                }
+            }
+        }
+
+        return newImage;
+
+    }
+
+    public static Image makeMosaic(Image image, int centerX, int centerY, int radius, int size) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, (int) image.getWidth(), (int) image.getHeight(), pixelReader, 0, 0);
+
+        for (int x = Math.max(0, centerX - radius); x <= Math.min((int) image.getWidth() - 1, centerX + radius); x += size) {
+            for (int y = Math.max(0, centerY - radius); y <= Math.min((int) image.getHeight() - 1, centerY + radius); y += size) {
+                for (int mx = x; mx <= Math.min((int) image.getWidth() - 1, x + size); mx++) {
+                    for (int my = y; my <= Math.min((int) image.getHeight() - 1, y + size); my++) {
+                        long r = Math.round(Math.sqrt((mx - centerX) * (mx - centerX) + (my - centerY) * (my - centerY)));
+                        if (r > radius) {
+                            continue;
+                        }
+                        pixelWriter.setColor(mx, my, pixelReader.getColor(x, y));
+                    }
+                }
+            }
+        }
+
+        return newImage;
+
+    }
+
+    public static Image makeFrosted(Image image, int leftX, int leftY, int rightX, int rightY, int size) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, (int) image.getWidth(), (int) image.getHeight(), pixelReader, 0, 0);
+
+        for (int y = leftY; y <= rightY; y += size) {
+            for (int x = leftX; x <= rightX; x += size) {
+                for (int mx = x; mx <= x + size; mx++) {
+                    for (int my = y; my <= y + size; my++) {
+                        int fx = x + new Random().nextInt(size);
+                        int fy = y + new Random().nextInt(size);
+                        pixelWriter.setColor(mx, my, pixelReader.getColor(fx, fy));
+                    }
+                }
+            }
+        }
+
+        return newImage;
+
+    }
+
+    public static Image makeFrosted(Image image, int centerX, int centerY, int radius, int size) {
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
+        PixelWriter pixelWriter = newImage.getPixelWriter();
+        pixelWriter.setPixels(0, 0, (int) image.getWidth(), (int) image.getHeight(), pixelReader, 0, 0);
+
+        for (int x = Math.max(0, centerX - radius); x <= Math.min((int) image.getWidth() - 1, centerX + radius); x += size) {
+            for (int y = Math.max(0, centerY - radius); y <= Math.min((int) image.getHeight() - 1, centerY + radius); y += size) {
+                for (int mx = x; mx <= Math.min((int) image.getWidth() - 1, x + size); mx++) {
+                    for (int my = y; my <= Math.min((int) image.getHeight() - 1, y + size); my++) {
+                        long r = Math.round(Math.sqrt((mx - centerX) * (mx - centerX) + (my - centerY) * (my - centerY)));
+                        if (r > radius) {
+                            continue;
+                        }
+                        int fx = x + new Random().nextInt(size);
+                        int fy = y + new Random().nextInt(size);
+                        pixelWriter.setColor(mx, my, pixelReader.getColor(fx, fy));
+                    }
+                }
+            }
+        }
+
+        return newImage;
+
+    }
+
+    public static Image addPicture(Image image, Image picture, int x, int y, int w, int h,
+            boolean keepRatio, float transparent) {
+        if (image == null) {
+            return null;
+        }
+        if (picture == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage pic = SwingFXUtils.fromFXImage(picture, null);
+        BufferedImage target = ImageConvertTools.addPicture(source, pic, x, y, w, h, keepRatio, transparent);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
     public static Image cutMarginsByWidth(Image image, int MarginWidth,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
 
         try {
             int imageWidth = (int) image.getWidth();
             int imageHeight = (int) image.getHeight();
-            PixelReader pixelReader = image.getPixelReader();
 
             int top = 0, bottom = imageHeight - 1, left = 0, right = imageWidth - 1;
             if (cutTop) {
@@ -826,7 +999,7 @@ public class FxmlImageTools {
 
     }
 
-    public static Image cutMarginsByColor(Image image, Color color,
+    public static Image cutMarginsByColor(Image image, Color mColor, int colorDistance,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
 
         try {
@@ -837,15 +1010,15 @@ public class FxmlImageTools {
             int top = 0, bottom = height - 1, left = 0, right = width - 1;
             if (cutTop) {
                 for (int j = 0; j < height; j++) {
-                    boolean hasValue = false;
+                    boolean notMatch = false;
                     for (int i = 0; i < width; i++) {
-                        if (!pixelReader.getColor(i, j).equals(color)) {
-//                            logger.debug("hasValue: " + i + " " + j + " " + color);
-                            hasValue = true;
+                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+//                            logger.debug("notMatch: " + i + " " + j + " " + color);
+                            notMatch = true;
                             break;
                         }
                     }
-                    if (hasValue) {
+                    if (notMatch) {
                         top = j;
                         break;
                     }
@@ -857,14 +1030,14 @@ public class FxmlImageTools {
             }
             if (cutBottom) {
                 for (int j = height - 1; j >= 0; j--) {
-                    boolean hasValue = false;
+                    boolean notMatch = false;
                     for (int i = 0; i < width; i++) {
-                        if (!pixelReader.getColor(i, j).equals(color)) {
-                            hasValue = true;
+                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                            notMatch = true;
                             break;
                         }
                     }
-                    if (hasValue) {
+                    if (notMatch) {
                         bottom = j;
                         break;
                     }
@@ -876,14 +1049,14 @@ public class FxmlImageTools {
             }
             if (cutLeft) {
                 for (int i = 0; i < width; i++) {
-                    boolean hasValue = false;
+                    boolean notMatch = false;
                     for (int j = 0; j < height; j++) {
-                        if (!pixelReader.getColor(i, j).equals(color)) {
-                            hasValue = true;
+                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                            notMatch = true;
                             break;
                         }
                     }
-                    if (hasValue) {
+                    if (notMatch) {
                         left = i;
                         break;
                     }
@@ -895,14 +1068,14 @@ public class FxmlImageTools {
             }
             if (cutRight) {
                 for (int i = width - 1; i >= 0; i--) {
-                    boolean hasValue = false;
+                    boolean notMatch = false;
                     for (int j = 0; j < height; j++) {
-                        if (!pixelReader.getColor(i, j).equals(color)) {
-                            hasValue = true;
+                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                            notMatch = true;
                             break;
                         }
                     }
-                    if (hasValue) {
+                    if (notMatch) {
                         right = i;
                         break;
                     }
@@ -1854,6 +2027,16 @@ public class FxmlImageTools {
         if (target == null) {
             target = source1;
         }
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image applyConvolutionKernel(Image image, ConvolutionKernel kernel) {
+        if (image == null || kernel == null) {
+            return null;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = ImageConvertTools.applyConvolutionKernel(source, kernel);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

@@ -39,12 +39,12 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-4.0-exe.zip">MyBox-4.0-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-4.1-exe.zip">MyBox-4.1-exe.zip</a></p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-4.0-jar.zip">MyBox-4.0-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-4.1-jar.zip">MyBox-4.1-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.0.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.1.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox" target=_Blank>Project Main Page</a></p>
@@ -55,15 +55,15 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-UserGuide-4.0-Overview-en.pdf" target=_Blank>Overview</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.0/MyBox-UserGuide-4.0-ImageTools-en.pdf" target=_Blank>Image Tools</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-Overview-en.pdf" target=_Blank>Overview</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-ImageTools-en.pdf" target=_Blank>Image Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>PDF Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf" target=_Blank>Desktop Tools</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>Network Tools</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.0. It includes the following features: </p>
+<p class="paragraph">Current version is 4.1. It includes the following features: </p>
 <PRE>
 1. PDF Tools:
 	A. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
@@ -78,9 +78,9 @@
 	I. Set the Maximum main memory of PDF handling.
 2. Image Tools:
 	A. Increase/Decrease: Pixels size, saturaion, brightness,  hue, Red/Green/Blue/Yellow/Cyan/Magenta channel.
-	B. Filters: Gray, black-white, Sepia, invert, Red/Green/Blue invert, Red/Green/Blue channel
+	B. Filters: Gray, black-white, Sepia, invert, Red/Green/Blue invert, Red/Green/Blue/Yellow/Cyan/Magenta channel
 	C. Effects: Blur, sharpen, emboss, edges detect, posterize(reduce colors), thresholding.
-	D. Crop, replace color,  watermark, arc, shadow, shear, vertical/horizantal mirror, rotate, cut margins, add margins.
+	D. Crop, replace color,  watermark, cover, arc, shadow, shear, vertical/horizantal mirror, rotate, margins, and convolution.
 	E. Define “scope”: Area(Rectrangle or circle) and color matching. Used for handling image in part.
 	F. “Undo” and “Redo” of previous operation. Can recover original image at any time. 
 	   Can record some updating histories of image manufacture, to return to former updating. User can set the number of updating histories.
@@ -94,8 +94,9 @@
 	N. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
 	O. Convert image into other format, with options like color model, size, compression, quality, etc.
 	P. Handle images in batch way.
-	Q. Color palette.
-	R. Pixels calculator.
+	Q. Color palette
+	R. Pixels calculator
+	S. Convolution Kernels Manager
 3. Desktop Tools:
 	A. Rename Files/Directories, with options of files' name and ordering.  Renamed files can be recovered as original names in all or in part.
 	B. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, 
@@ -129,6 +130,11 @@
 
 
 <p class="p1" >Development Logs</p>
+
+<p class="paragraph">2018-11-08 v4.1 Image Manufacture type of “Cover”. Following can be set on an image: mosaic rectangle, mosaic circle, frosted rectangle, frosted circle, or picture. Area and size can be set for masaic or frosted cover. Internal pictures or user's pictures can be selected as cover, with options of size and opacity. </BR>
+Image Manufacture type of “Convolution”. Convolution kernels can be picked to apply upon images. Batch way is supported.</BR>
+Convolution Kernels Manager. Kernels for image handling can be created/edited/deleted/copied. The matrix can be normalized automatically. The kernel can be tested. Example kernels are provided.</BR>
+New Image filters: Yellow/Cyan/Magenta channels.</p>
 
 <p class="paragraph">2018-11-04 v4.0 New channels of Image Color Adjustment: Yellow, Cyan, Magenta. Yellow channel can be used to generate warm-toned image.</BR>
 New filter of image: Sepia, which is used to make picture old.</BR>

@@ -47,6 +47,7 @@ import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.db.TableImageHistory;
+import mara.mybox.db.TableImageInit;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -100,6 +101,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
         public static int Transform = 10;
         public static int Cut_Margins = 11;
         public static int Add_Margins = 12;
+        public static int Cover = 13;
+        public static int Convolution = 14;
     }
 
     protected class ImageManufactureParameters {
@@ -109,9 +112,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ToolBar hotBar;
     @FXML
-    protected Tab fileTab, viewTab, colorTab, filtersTab, watermarkTab, cropTab, arcTab, shadowTab, effectsTab;
+    protected Tab fileTab, viewTab, colorTab, filtersTab, watermarkTab, coverTab, cropTab,
+            arcTab, shadowTab, effectsTab, convolutionTab;
     @FXML
-    protected Tab replaceColorTab, sizeTab, refTab, browseTab, transformTab, cutMarginsTab, addMarginsTab;
+    protected Tab replaceColorTab, sizeTab, refTab, browseTab, transformTab, marginsTab;
     @FXML
     protected Label tipsLabel;
     @FXML
@@ -153,15 +157,16 @@ public abstract class ImageManufactureController extends ImageViewerController {
             colorTab.setDisable(true);
             effectsTab.setDisable(true);
             filtersTab.setDisable(true);
+            convolutionTab.setDisable(true);
             replaceColorTab.setDisable(true);
             sizeTab.setDisable(true);
             refTab.setDisable(true);
             transformTab.setDisable(true);
             watermarkTab.setDisable(true);
+            coverTab.setDisable(true);
             arcTab.setDisable(true);
             shadowTab.setDisable(true);
-            cutMarginsTab.setDisable(true);
-            addMarginsTab.setDisable(true);
+            marginsTab.setDisable(true);
             cropTab.setDisable(true);
 
             hotBar.setDisable(true);
@@ -211,7 +216,16 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     int index = newValue.intValue();
-                    if (index < 0 || imageHistories == null || imageHistories.size() <= index) {
+                    if (index < 0 || hisBox.getItems() == null) {
+                        return;
+                    }
+                    if (index == hisBox.getItems().size() - 1) {
+                        BaseController c = openStage(CommonValues.SettingsFxml, true);
+                        c.setParentController(getMyController());
+                        c.setParentFxml(getMyFxml());
+                        return;
+                    }
+                    if (imageHistories == null || imageHistories.size() <= index) {
                         return;
                     }
 //                    logger.debug(index + " " + imageHistories.get(index) + "  " + hisBox.getSelectionModel().getSelectedItem());
@@ -250,6 +264,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
         Thread thread = new Thread(setTask);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    public void showRef() {
+        showRefCheck.setSelected(true);
     }
 
     protected void checkReferenceImage() {
@@ -386,19 +404,24 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected void setImageChanged(boolean imageChanged) {
         values.setImageChanged(imageChanged);
         if (imageChanged) {
-            saveButton.setDisable(false);
+            if (values.getSourceFile() != null) {
+                saveButton.setDisable(false);
+                getMyStage().setTitle(getBaseTitle() + "  " + values.getSourceFile().getAbsolutePath() + "*");
+                setBottomLabel();
+            }
             recoverButton.setDisable(false);
             undoButton.setDisable(false);
             redoButton.setDisable(true);
-            getMyStage().setTitle(getBaseTitle() + "  " + values.getSourceFile().getAbsolutePath() + "*");
+
         } else {
             saveButton.setDisable(true);
             recoverButton.setDisable(true);
             if (values.getSourceFile() != null) {
                 getMyStage().setTitle(getBaseTitle() + "  " + values.getSourceFile().getAbsolutePath());
+                setBottomLabel();
             }
         }
-        setBottomLabel();
+
     }
 
     protected void updateHisBox() {
@@ -408,7 +431,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
         hisBox.setDisable(false);
         hisBox.getItems().clear();
-        List<ImageHistory> his = TableImageHistory.read(values.getSourceFile().getAbsolutePath());
+        String fname = values.getSourceFile().getAbsolutePath();
+        List<ImageHistory> his = TableImageHistory.read(fname);
         List<String> hisStrings = new ArrayList<>();
         imageHistories = new ArrayList<>();
         for (ImageHistory r : his) {
@@ -429,6 +453,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 s = AppVaribles.getMessage("Effects");
             } else if (r.getUpdate_type() == ImageOperationType.Filters) {
                 s = AppVaribles.getMessage("Filters");
+            } else if (r.getUpdate_type() == ImageOperationType.Convolution) {
+                s = AppVaribles.getMessage("Convolution");
             } else if (r.getUpdate_type() == ImageOperationType.Replace_Color) {
                 s = AppVaribles.getMessage("ReplaceColor");
             } else if (r.getUpdate_type() == ImageOperationType.Shadow) {
@@ -439,6 +465,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 s = AppVaribles.getMessage("Transform");
             } else if (r.getUpdate_type() == ImageOperationType.Watermark) {
                 s = AppVaribles.getMessage("Watermark");
+            } else if (r.getUpdate_type() == ImageOperationType.Cover) {
+                s = AppVaribles.getMessage("Cover");
             } else {
                 continue;
             }
@@ -446,7 +474,13 @@ public abstract class ImageManufactureController extends ImageViewerController {
             hisStrings.add(s);
             imageHistories.add(r.getHistory_location());
         }
-
+        ImageHistory init = TableImageInit.read(fname);
+        if (init != null) {
+            String s = DateTools.datetimeToString(init.getOperation_time()) + " " + AppVaribles.getMessage("Load");
+            hisStrings.add(s);
+            imageHistories.add(init.getHistory_location());
+        }
+        hisStrings.add(AppVaribles.getMessage("SettingsDot"));
         hisBox.getItems().addAll(hisStrings);
     }
 
@@ -462,26 +496,34 @@ public abstract class ImageManufactureController extends ImageViewerController {
         Task saveTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(newImage);
-                String filename = imageHistoriesPath + File.separator
-                        + FileTools.getFilePrefix(values.getSourceFile().getName())
-                        + "_" + (new Date().getTime()) + "_" + updateType
-                        + "_" + new Random().nextInt(1000) + ".png";
-                while (new File(filename).exists()) {
-                    filename = imageHistoriesPath + File.separator
+                try {
+                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(newImage);
+                    String filename = imageHistoriesPath + File.separator
                             + FileTools.getFilePrefix(values.getSourceFile().getName())
                             + "_" + (new Date().getTime()) + "_" + updateType
                             + "_" + new Random().nextInt(1000) + ".png";
-                }
-                filename = new File(filename).getAbsolutePath();
-                ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
-                TableImageHistory.add(values.getSourceFile().getAbsolutePath(), updateType, filename);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateHisBox();
+                    while (new File(filename).exists()) {
+                        filename = imageHistoriesPath + File.separator
+                                + FileTools.getFilePrefix(values.getSourceFile().getName())
+                                + "_" + (new Date().getTime()) + "_" + updateType
+                                + "_" + new Random().nextInt(1000) + ".png";
                     }
-                });
+                    filename = new File(filename).getAbsolutePath();
+                    ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
+                    if (updateType == ImageOperationType.Load) {
+                        TableImageInit.write(values.getSourceFile().getAbsolutePath(), filename);
+                    } else {
+                        TableImageHistory.add(values.getSourceFile().getAbsolutePath(), updateType, filename);
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateHisBox();
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
                 return null;
             }
         };
@@ -501,6 +543,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             tabName = "crop";
         } else if (filtersTab.equals(newTab)) {
             tabName = "filters";
+        } else if (convolutionTab.equals(newTab)) {
+            tabName = "convolution";
         } else if (effectsTab.equals(newTab)) {
             tabName = "effects";
         } else if (colorTab.equals(newTab)) {
@@ -509,16 +553,16 @@ public abstract class ImageManufactureController extends ImageViewerController {
             tabName = "replaceColor";
         } else if (watermarkTab.equals(newTab)) {
             tabName = "watermark";
+        } else if (coverTab.equals(newTab)) {
+            tabName = "cover";
         } else if (arcTab.equals(newTab)) {
             tabName = "arc";
         } else if (shadowTab.equals(newTab)) {
             tabName = "shadow";
         } else if (transformTab.equals(newTab)) {
             tabName = "transform";
-        } else if (cutMarginsTab.equals(newTab)) {
-            tabName = "cutMargins";
-        } else if (addMarginsTab.equals(newTab)) {
-            tabName = "addMargins";
+        } else if (marginsTab.equals(newTab)) {
+            tabName = "margins";
         } else if (viewTab.equals(newTab)) {
             tabName = "view";
         } else if (refTab.equals(newTab)) {
@@ -549,6 +593,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "filters":
                     fxml = CommonValues.ImageManufactureFiltersFxml;
                     break;
+                case "convolution":
+                    fxml = CommonValues.ImageManufactureConvolutionFxml;
+                    break;
                 case "effects":
                     fxml = CommonValues.ImageManufactureEffectsFxml;
                     break;
@@ -557,6 +604,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
                 case "watermark":
                     fxml = CommonValues.ImageManufactureWatermarkFxml;
+                    break;
+                case "cover":
+                    fxml = CommonValues.ImageManufactureCoverFxml;
                     break;
                 case "arc":
                     fxml = CommonValues.ImageManufactureArcFxml;
@@ -567,11 +617,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "transform":
                     fxml = CommonValues.ImageManufactureTransformFxml;
                     break;
-                case "cutMargins":
-                    fxml = CommonValues.ImageManufactureCutMarginsFxml;
-                    break;
-                case "addMargins":
-                    fxml = CommonValues.ImageManufactureAddMarginsFxml;
+                case "margins":
+                    fxml = CommonValues.ImageManufactureMarginsFxml;
                     break;
                 case "view":
                     fxml = CommonValues.ImageManufactureViewFxml;
@@ -600,7 +647,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void setTab(String tab) {
+    public void setTab(String tab) {
         try {
             if (tab == null) {
                 return;
@@ -622,6 +669,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "filters":
                     tabPane.getSelectionModel().select(filtersTab);
                     break;
+                case "convolution":
+                    tabPane.getSelectionModel().select(convolutionTab);
+                    break;
                 case "effects":
                     tabPane.getSelectionModel().select(effectsTab);
                     break;
@@ -630,6 +680,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
                 case "watermark":
                     tabPane.getSelectionModel().select(watermarkTab);
+                    break;
+                case "cover":
+                    tabPane.getSelectionModel().select(coverTab);
                     break;
                 case "arc":
                     tabPane.getSelectionModel().select(arcTab);
@@ -640,11 +693,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "transform":
                     tabPane.getSelectionModel().select(transformTab);
                     break;
-                case "cutMargins":
-                    tabPane.getSelectionModel().select(cutMarginsTab);
-                    break;
-                case "addMargins":
-                    tabPane.getSelectionModel().select(addMarginsTab);
+                case "margins":
+                    tabPane.getSelectionModel().select(marginsTab);
                     break;
                 case "view":
                     tabPane.getSelectionModel().select(viewTab);
@@ -676,6 +726,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             cropTab.setDisable(false);
             colorTab.setDisable(false);
             filtersTab.setDisable(false);
+            convolutionTab.setDisable(false);
             effectsTab.setDisable(false);
             arcTab.setDisable(false);
             shadowTab.setDisable(false);
@@ -685,8 +736,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             hotBar.setDisable(false);
             transformTab.setDisable(false);
             watermarkTab.setDisable(false);
-            cutMarginsTab.setDisable(false);
-            addMarginsTab.setDisable(false);
+            coverTab.setDisable(false);
+            marginsTab.setDisable(false);
             viewTab.setDisable(false);
             browseTab.setDisable(false);
 
@@ -749,10 +800,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setImage(image);
             values.setImageInfo(imageInformation);
             values.setCurrentImage(image);
+            values.setRefImage(image);
             setImageChanged(false);
-//            recordImageHistory(ImageOperationType.Load, image);
+            if (sourceFile == null) {
+                saveButton.setDisable(true);
+                hisBox.setDisable(true);
+            }
 
-            updateHisBox();
+            recordImageHistory(ImageOperationType.Load, image);
 
             if (initTab != null) {
                 switchTab(initTab);

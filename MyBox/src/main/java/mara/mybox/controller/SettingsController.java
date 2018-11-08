@@ -21,7 +21,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableImageHistory;
+import mara.mybox.db.TableImageInit;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -365,7 +367,8 @@ public class SettingsController extends BaseController {
         if (result.get() != ButtonType.OK) {
             return;
         }
-        AppVaribles.clear();
+        DerbyBase.dropTables();
+        DerbyBase.initTables();
         reload();
         popInformation(AppVaribles.getMessage("Successful"));
     }
@@ -379,6 +382,7 @@ public class SettingsController extends BaseController {
         if (result.get() != ButtonType.OK) {
             return;
         }
+        new TableImageInit().clear();
         new TableImageHistory().clear();
         if (parentController != null && parentFxml != null
                 && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {

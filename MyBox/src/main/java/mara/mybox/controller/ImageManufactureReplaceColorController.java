@@ -100,7 +100,6 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
                 transForScopeButton.setDisable(false);
                 transForNewButton.setDisable(false);
             }
-            popInformation(getMessage("ClickForReplaceColor"));
 
             isSettingValues = false;
         } catch (Exception e) {

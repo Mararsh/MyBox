@@ -35,7 +35,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 public class ImageManufactureColorController extends ImageManufactureController {
 
     protected ImageScope colorScope;
-    protected int colorOperationType, colorValue;
+    protected int colorValue;
+    private ColorOperationType colorOperationType;
 
     @FXML
     protected Slider colorSlider;
@@ -50,20 +51,18 @@ public class ImageManufactureColorController extends ImageManufactureController 
     @FXML
     protected Label colorUnit;
 
-    public static class ColorOperationType {
-
-        public static int Brightness = 0;
-        public static int Sauration = 1;
-        public static int Hue = 2;
-        public static int Opacity = 3;
-        public static int Red = 4;
-        public static int Green = 5;
-        public static int Blue = 6;
-        public static int Yellow = 7;
-        public static int Cyan = 8;
-        public static int Magenta = 9;
-        public static int RGB = 10;
-
+    public enum ColorOperationType {
+        Brightness,
+        Sauration,
+        Hue,
+        Opacity,
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Cyan,
+        Magenta,
+        RGB
     }
 
     public ImageManufactureColorController() {

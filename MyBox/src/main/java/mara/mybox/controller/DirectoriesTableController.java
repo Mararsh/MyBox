@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,6 +32,13 @@ public class DirectoriesTableController extends FilesTableController {
 
             filesTableView.setItems(tableData);
             filesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            filesTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
         } catch (Exception e) {
             logger.error(e.toString());

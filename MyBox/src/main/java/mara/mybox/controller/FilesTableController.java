@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -57,9 +59,29 @@ public class FilesTableController extends BaseController {
 
             filesTableView.setItems(tableData);
             filesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            filesTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    protected void checkTableSelected() {
+        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
+        if (selected != null && selected.size() > 0) {
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            deleteButton.setDisable(false);
+        } else {
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+            deleteButton.setDisable(true);
         }
     }
 
@@ -147,22 +169,32 @@ public class FilesTableController extends BaseController {
     void clearAction(ActionEvent event) {
         tableData.clear();
         addButton.setDisable(false);
-        deleteButton.setDisable(false);
-        upButton.setDisable(false);
-        downButton.setDisable(false);
-        recoveryAllButton.setDisable(true);
-        recoverySelectedButton.setDisable(true);
+        deleteButton.setDisable(true);
+        upButton.setDisable(true);
+        downButton.setDisable(true);
+        if (recoveryAllButton != null) {
+            recoveryAllButton.setDisable(true);
+        }
+        if (recoverySelectedButton != null) {
+            recoverySelectedButton.setDisable(true);
+        }
     }
 
     @FXML
     void deleteAction(ActionEvent event) {
-        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
             return;
         }
-        for (FileInformation d : selected) {
-            tableData.remove(d);
+        for (int i = selected.size() - 1; i >= 0; i--) {
+            int index = selected.get(i);
+            if (index < 0 || index > tableData.size() - 1) {
+                continue;
+            }
+            tableData.remove(index);
         }
+        filesTableView.refresh();
     }
 
     @FXML

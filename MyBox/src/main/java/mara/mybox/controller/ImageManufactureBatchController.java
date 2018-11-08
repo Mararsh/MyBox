@@ -68,7 +68,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
     @FXML
     protected TextField targetSuffixInput;
     @FXML
-    protected Button addButton, upButton, downButton, deleteButton, clearButton, browseButton;
+    protected Button addButton, upButton, downButton, deleteButton, clearButton, browseButton, openButton;
     @FXML
     protected RadioButton blackRadio, whiteRadio;
 
@@ -124,9 +124,31 @@ public class ImageManufactureBatchController extends ImageBaseController {
                     }
                 }
             });
+            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    checkTableSelected();
+                }
+            });
+            checkTableSelected();
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    private void checkTableSelected() {
+        ObservableList<FileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
+        if (selected != null && selected.size() > 0) {
+            openButton.setDisable(false);
+            upButton.setDisable(false);
+            downButton.setDisable(false);
+            deleteButton.setDisable(false);
+        } else {
+            openButton.setDisable(true);
+            upButton.setDisable(true);
+            downButton.setDisable(true);
+            deleteButton.setDisable(true);
         }
     }
 

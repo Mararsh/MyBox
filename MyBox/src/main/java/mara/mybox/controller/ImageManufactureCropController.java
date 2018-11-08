@@ -70,7 +70,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
             isSettingValues = false;
 
-            popInformation(getMessage("CropComments"));
         } catch (Exception e) {
             logger.debug(e.toString());
         }

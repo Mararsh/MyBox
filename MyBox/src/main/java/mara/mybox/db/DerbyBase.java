@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import mara.mybox.objects.CommonValues;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,8 @@ public class DerbyBase {
     protected static final String dbName = CommonValues.DerbyDB;
     protected static final String parameters = ";user=mara;password=mybox;create=true";
 
-    protected String Table_Name, KeyString, Create_Table_Statement;
+    protected String Table_Name, Create_Table_Statement;
+    protected List<String> Keys;
 
     public static void loadDriver() {
         try {
@@ -42,9 +44,28 @@ public class DerbyBase {
             new TableAlarmClock().init(statement);
             new TableBrowserUrls().init(statement);
             new TableImageHistory().init(statement);
+            new TableConvolutionKernel().init(statement);
+            new TableFloatMatrix().init(statement);
+            new TableImageInit().init(statement);
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean dropTables() {
+        try {
+            new TableUserConf().drop();
+            new TableAlarmClock().drop();
+            new TableBrowserUrls().drop();
+            new TableImageHistory().drop();
+            new TableConvolutionKernel().drop();
+            new TableFloatMatrix().drop();
+            new TableImageInit().drop();
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
             return false;
         }
     }
@@ -66,6 +87,18 @@ public class DerbyBase {
         try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM " + Table_Name;
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public boolean drop() {
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+                Statement statement = conn.createStatement()) {
+            String sql = "DROP TABLE " + Table_Name;
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {

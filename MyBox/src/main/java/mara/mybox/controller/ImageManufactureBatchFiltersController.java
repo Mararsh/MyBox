@@ -27,7 +27,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureBatchFiltersController extends ImageManufactureBatchController {
 
-    private int intValue, filtersOperationType;
+    private int intValue;
+    private FiltersOperationType filtersOperationType;
 
     @FXML
     private ToggleGroup filtersGroup;
@@ -126,6 +127,12 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
             filtersOperationType = FiltersOperationType.Green;
         } else if (getMessage("Blue").equals(selected.getText())) {
             filtersOperationType = FiltersOperationType.Blue;
+        } else if (getMessage("Yellow").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Yellow;
+        } else if (getMessage("Cyan").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Cyan;
+        } else if (getMessage("Magenta").equals(selected.getText())) {
+            filtersOperationType = FiltersOperationType.Magenta;
         } else if (getMessage("RedInvert").equals(selected.getText())) {
             filtersOperationType = FiltersOperationType.RedInvert;
         } else if (getMessage("GreenInvert").equals(selected.getText())) {
@@ -171,41 +178,54 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
-            if (filtersOperationType == FiltersOperationType.Gray) {
-                target = ImageGrayTools.color2Gray(source);
-
-            } else if (filtersOperationType == FiltersOperationType.Invert) {
-                target = ImageConvertTools.makeInvert(source);
-
-            } else if (filtersOperationType == FiltersOperationType.BlackOrWhite) {
-
-                if (intValue < 0) {
-                    target = ImageGrayTools.color2Binary(source);
-                } else {
-                    target = ImageGrayTools.color2BinaryWithPercentage(source, intValue);
+            if (null != filtersOperationType) {
+                switch (filtersOperationType) {
+                    case Gray:
+                        target = ImageGrayTools.color2Gray(source);
+                        break;
+                    case Invert:
+                        target = ImageConvertTools.makeInvert(source);
+                        break;
+                    case BlackOrWhite:
+                        if (intValue < 0) {
+                            target = ImageGrayTools.color2Binary(source);
+                        } else {
+                            target = ImageGrayTools.color2BinaryWithPercentage(source, intValue);
+                        }
+                        break;
+                    case Red:
+                        target = ImageConvertTools.keepRed(source);
+                        break;
+                    case Green:
+                        target = ImageConvertTools.keepGreen(source);
+                        break;
+                    case Blue:
+                        target = ImageConvertTools.keepBlue(source);
+                        break;
+                    case Yellow:
+                        target = ImageConvertTools.keepYellow(source);
+                        break;
+                    case Cyan:
+                        target = ImageConvertTools.keepCyan(source);
+                        break;
+                    case Magenta:
+                        target = ImageConvertTools.keepMagenta(source);
+                        break;
+                    case RedInvert:
+                        target = ImageConvertTools.makeRedInvert(source);
+                        break;
+                    case GreenInvert:
+                        target = ImageConvertTools.makeGreenInvert(source);
+                        break;
+                    case BlueInvert:
+                        target = ImageConvertTools.makeBlueInvert(source);
+                        break;
+                    case Sepia:
+                        target = ImageConvertTools.sepiaImage(source, intValue);
+                        break;
+                    default:
+                        break;
                 }
-
-            } else if (filtersOperationType == FiltersOperationType.Red) {
-                target = ImageConvertTools.keepRed(source);
-
-            } else if (filtersOperationType == FiltersOperationType.Green) {
-                target = ImageConvertTools.keepGreen(source);
-
-            } else if (filtersOperationType == FiltersOperationType.Blue) {
-                target = ImageConvertTools.keepBlue(source);
-
-            } else if (filtersOperationType == FiltersOperationType.RedInvert) {
-                target = ImageConvertTools.makeRedInvert(source);
-
-            } else if (filtersOperationType == FiltersOperationType.GreenInvert) {
-                target = ImageConvertTools.makeGreenInvert(source);
-
-            } else if (filtersOperationType == FiltersOperationType.BlueInvert) {
-                target = ImageConvertTools.makeBlueInvert(source);
-
-            } else if (filtersOperationType == FiltersOperationType.Sepia) {
-                target = ImageConvertTools.sepiaImage(source, intValue);
-
             }
             return target;
         } catch (Exception e) {

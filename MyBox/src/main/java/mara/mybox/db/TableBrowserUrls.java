@@ -22,7 +22,11 @@ public class TableBrowserUrls extends DerbyBase {
 
     public TableBrowserUrls() {
         Table_Name = "Browser_URLs";
-        KeyString = "address";
+        Keys = new ArrayList() {
+            {
+                add("address");
+            }
+        };
         Create_Table_Statement
                 = " CREATE TABLE Browser_URLs ( "
                 + "  address  VARCHAR(1024) NOT NULL PRIMARY KEY, "

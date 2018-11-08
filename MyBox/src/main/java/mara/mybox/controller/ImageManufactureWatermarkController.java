@@ -272,7 +272,6 @@ public class ImageManufactureWatermarkController extends ImageManufactureControl
         isSettingValues = true;
         waterXInput.setText(x + "");
         waterYInput.setText(y + "");
-        popInformation(getMessage("ClickImageForWatermark"));
         isSettingValues = false;
 
         addWatermark();

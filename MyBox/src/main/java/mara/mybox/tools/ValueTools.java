@@ -46,4 +46,36 @@ public class ValueTools {
         return (double) Math.round(invalue * 10000.0) / 10000.0;
     }
 
+    public static float[] matrix2Array(float[][] m) {
+        if (m == null || m.length == 0 || m[0].length == 0) {
+            return null;
+        }
+        int h = m.length;
+        int w = m[0].length;
+        float[] a = new float[w * h];
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                a[j * w + i] = m[j][i];
+            }
+        }
+        return a;
+    }
+
+    public static float[][] array2Matrix(float[] a, int w) {
+        if (a == null || a.length == 0 || w < 1) {
+            return null;
+        }
+        int h = a.length / w;
+        if (h < 1) {
+            return null;
+        }
+        float[][] m = new float[h][w];
+        for (int j = 0; j < h; j++) {
+            for (int i = 0; i < w; i++) {
+                m[j][i] = a[j * w + i];
+            }
+        }
+        return m;
+    }
+
 }

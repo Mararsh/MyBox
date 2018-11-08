@@ -62,7 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -100,10 +100,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <RadioButton mnemonicParsing="false" text="%Saturation" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$colorGroup" />
                                                 <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
                                     <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
                                     <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
                                     <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
                                     <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
                                                 <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup">

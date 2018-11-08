@@ -39,7 +39,7 @@ public class FxmlTools {
 
     private static final Logger logger = LogManager.getLogger();
 
-    public static String badStyle = "-fx-text-box-border: red;";
+    public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
 
     public static void miao3() {
         playSound("/sound/miao3.mp3", "miao3.mp3");

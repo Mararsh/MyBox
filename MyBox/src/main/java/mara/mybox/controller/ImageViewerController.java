@@ -14,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -292,33 +291,6 @@ public class ImageViewerController extends ImageBaseController {
             upButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveUp")));
             downButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveDown")));
         }
-    }
-
-    public void loadImage(final String fileName) {
-        try {
-            sourceFile = new File(fileName).getAbsoluteFile(); // Must convert to AbsoluteFile!
-            if (sourceFileInput != null) {
-                sourceFileInput.setText(sourceFile.getAbsolutePath());
-            } else {
-                loadImage(sourceFile, false);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void loadImage(Image inImage) {
-        sourceFile = null;
-        imageInformation = null;
-        image = inImage;
-        afterImageLoaded();
-    }
-
-    public void loadImage(File sourceFile, Image image, ImageFileInformation imageInformation) {
-        this.sourceFile = sourceFile;
-        this.imageInformation = imageInformation;
-        this.image = image;
-        afterImageLoaded();
     }
 
     public void showImageInformation(ImageFileInformation info) {

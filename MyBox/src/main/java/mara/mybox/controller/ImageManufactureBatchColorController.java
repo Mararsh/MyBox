@@ -25,8 +25,9 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureBatchColorController extends ImageManufactureBatchController {
 
-    private int colorValue, colorOperationType;
+    private int colorValue;
     private boolean isIncrease;
+    private ColorOperationType colorOperationType;
 
     @FXML
     private ToggleGroup colorGroup, opGroup;

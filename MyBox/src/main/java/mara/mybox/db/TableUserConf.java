@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.ConfigTools;
@@ -20,7 +21,11 @@ public class TableUserConf extends DerbyBase {
 
     public TableUserConf() {
         Table_Name = "User_Conf";
-        KeyString = "key_Name";
+        Keys = new ArrayList() {
+            {
+                add("key_Name");
+            }
+        };
         Create_Table_Statement
                 = " CREATE TABLE User_Conf ( "
                 + "  key_Name  VARCHAR(50) NOT NULL PRIMARY KEY, "

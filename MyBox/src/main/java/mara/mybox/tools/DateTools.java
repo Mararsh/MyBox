@@ -43,6 +43,10 @@ public class DateTools {
         return dateString;
     }
 
+    public static String stringToString(String theDate) {
+        return datetimeToString(stringToDatetime(theDate));
+    }
+
     public static Date localDate2Date(LocalDate localDate) {
         try {
             ZoneId zoneId = ZoneId.systemDefault();

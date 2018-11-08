@@ -6,26 +6,26 @@
 
 <VBox fx:id="filesTablePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.DirectoriesTableController">
     <children>
-          <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-              <items>
-                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                  <Button mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
-                  <Button mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
-                  <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                  <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoverAll" />
-                  <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverSelected" />
-              </items>
-          </ToolBar>
-          <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-              <content>
-                  <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                      <columns>
-                          <TableColumn fx:id="handledColumn" prefWidth="294.0" text="%Handled" />
-                          <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="600.0" text="%Directory" />
-                      </columns>
-                  </TableView>
-              </content>
-          </ScrollPane>
+        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+            <items>
+                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
+                <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoverAll" />
+                <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverSelected" />
+            </items>
+        </ToolBar>
+        <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+            <content>
+                <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                    <columns>
+                        <TableColumn fx:id="handledColumn" prefWidth="294.0" text="%Handled" />
+                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="600.0" text="%Directory" />
+                    </columns>
+                </TableView>
+            </content>
+        </ScrollPane>
     </children>
 </VBox>
