@@ -44,7 +44,6 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -71,9 +70,9 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
@@ -119,13 +118,11 @@ public class HtmlEditorController extends TextEditorController {
     @FXML
     private ScrollPane scrollPane;
     @FXML
-    private HBox browserActionBar;
+    private ToolBar snapBar;
     @FXML
     private ToggleGroup snapGroup;
     @FXML
     private CheckBox windowSizeCheck;
-    @FXML
-    private ToolBar snapBar;
 
     public HtmlEditorController() {
 
@@ -346,7 +343,20 @@ public class HtmlEditorController extends TextEditorController {
                 @Override
                 public void changed(ObservableValue ov, State oldState, State newState) {
 //                    logger.debug(newState.name());
+                    snapBar.setDisable(true);
                     switch (newState) {
+                        case READY:
+                            bottomText.setText("");
+                            loadButton.setText(getMessage("Load"));
+                            break;
+                        case SCHEDULED:
+                            bottomText.setText("");
+                            loadButton.setText(getMessage("Stop"));
+                            break;
+                        case RUNNING:
+                            bottomText.setText(AppVaribles.getMessage("Loading..."));
+                            loadButton.setText(getMessage("Stop"));
+                            break;
                         case SUCCEEDED:
 //                            logger.debug((String) webEngine.executeScript("document.cookie;"));
 //                            logger.debug((String) webEngine.executeScript("document.referrer;"));
@@ -405,20 +415,26 @@ public class HtmlEditorController extends TextEditorController {
                                 } catch (Exception e) {
                                     fontSize = 14;
                                 }
-                                browserActionBar.setDisable(false);
                                 bottomText.setText(AppVaribles.getMessage("Loaded"));
                                 if (loadingController != null && loadingController.getMyStage() != null) {
                                     loadingController.getMyStage().close();
                                 }
+                                loadButton.setText(getMessage("Load"));
+                                snapBar.setDisable(false);
                             }
 
                             break;
-                        case RUNNING:
-                            bottomText.setText(AppVaribles.getMessage("Loading..."));
-                            browserActionBar.setDisable(true);
+                        case CANCELLED:
+                            bottomText.setText(getMessage("Canceled"));
+                            loadButton.setText(getMessage("Load"));
+                            break;
+                        case FAILED:
+                            bottomText.setText(getMessage("Failed"));
+                            loadButton.setText(getMessage("Load"));
                             break;
                         default:
-                            browserActionBar.setDisable(true);
+                            bottomText.setText("");
+                            loadButton.setText(getMessage("Load"));
                             break;
                     }
 
@@ -536,6 +552,10 @@ public class HtmlEditorController extends TextEditorController {
 
     @FXML
     private void loadAction(ActionEvent event) {
+        if (loadButton.getText().equals(getMessage("Stop"))) {
+            webEngine.getLoadWorker().cancel();
+            return;
+        }
         isLoadingWeiboPassport = false;
         loadingController = openHandlingStage(Modality.NONE, AppVaribles.getMessage("Loading..."));
         bottomText.setText(AppVaribles.getMessage("Loading..."));
@@ -957,6 +977,11 @@ public class HtmlEditorController extends TextEditorController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+
+    }
+
+    public void loadHtml(File file) {
+        webEngine.load(file.toURI().toString());
 
     }
 

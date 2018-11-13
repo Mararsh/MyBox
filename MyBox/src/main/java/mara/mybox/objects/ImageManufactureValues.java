@@ -17,10 +17,10 @@ public class ImageManufactureValues {
     private static final Logger logger = LogManager.getLogger();
 
     private File sourceFile;
-    private ImageScope currentScope;
+    private ImageScope scope;
     private File refFile;
-    private Image image, refImage, undoImage, redoImage, cropImage, currentImage, scopeImage;
-    private ImageFileInformation refInfo, scopeInfo, imageInfo;
+    private Image image, refImage, undoImage, redoImage, cropImage, currentImage;
+    private ImageFileInformation refInfo, imageInfo;
     private boolean refSync, isConfirmBeforeSave, imageChanged, showRef;
     private int stageWidth, stageHeight, saveAsType, imageViewWidth, imageViewHeight;
 
@@ -51,12 +51,12 @@ public class ImageManufactureValues {
         this.imageInfo = imageInfo;
     }
 
-    public ImageScope getCurrentScope() {
-        return currentScope;
+    public ImageScope getScope() {
+        return scope;
     }
 
-    public void setCurrentScope(ImageScope currentScope) {
-        this.currentScope = currentScope;
+    public void setScope(ImageScope scope) {
+        this.scope = scope;
     }
 
     public File getRefFile() {
@@ -107,28 +107,12 @@ public class ImageManufactureValues {
         this.currentImage = currentImage;
     }
 
-    public Image getScopeImage() {
-        return scopeImage;
-    }
-
-    public void setScopeImage(Image scopeImage) {
-        this.scopeImage = scopeImage;
-    }
-
     public ImageFileInformation getRefInfo() {
         return refInfo;
     }
 
     public void setRefInfo(ImageFileInformation refInfo) {
         this.refInfo = refInfo;
-    }
-
-    public ImageFileInformation getScopeInfo() {
-        return scopeInfo;
-    }
-
-    public void setScopeInfo(ImageFileInformation scopeInfo) {
-        this.scopeInfo = scopeInfo;
     }
 
     public boolean isRefSync() {

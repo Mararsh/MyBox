@@ -31,7 +31,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.FxmlImageTools;
+import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.image.ImageBlendTools.ImagesBlendMode;
 import mara.mybox.image.ImageBlendTools.ImagesRelativeLocation;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -40,7 +40,7 @@ import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara

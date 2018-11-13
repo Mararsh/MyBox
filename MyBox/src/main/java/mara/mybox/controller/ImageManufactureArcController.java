@@ -18,8 +18,8 @@ import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.image.FxmlImageTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara

@@ -166,6 +166,41 @@ public class ImageColorTools {
         return Math.abs(getHue(color1) - getHue(color2)) <= distance;
     }
 
+    public static boolean matchColor(Color color1, Color color2,
+            int distance, boolean isColor, boolean excluded) {
+        boolean isMatch;
+        if (isColor) {
+            isMatch = ImageColorTools.isColorMatch(color1, color2, distance);
+        } else {
+            isMatch = ImageColorTools.isHueMatch(color1, color2, distance);
+        }
+        if (!excluded) {
+            return isMatch;
+        } else {
+            return !isMatch;
+        }
+    }
+
+    public static boolean matchColor(Color color1, Color color2,
+            int distance, boolean excluded) {
+        boolean isMatch = ImageColorTools.isColorMatch(color1, color2, distance);
+        if (!excluded) {
+            return isMatch;
+        } else {
+            return !isMatch;
+        }
+    }
+
+    public static boolean matchHue(Color color1, Color color2,
+            int distance, boolean excluded) {
+        boolean isMatch = ImageColorTools.isHueMatch(color1, color2, distance);
+        if (!excluded) {
+            return isMatch;
+        } else {
+            return !isMatch;
+        }
+    }
+
     public static int getHue(Color color) {
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return (int) (hsb[0] * 360);

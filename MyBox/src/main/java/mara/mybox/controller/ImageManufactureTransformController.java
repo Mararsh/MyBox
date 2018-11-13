@@ -18,9 +18,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTransformTools;
 
 /**
  * @Author Mara
@@ -142,7 +142,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.rotateImage(values.getCurrentImage(), rotateAngle);
+                final Image newImage = FxmlTransformTools.rotateImage(values.getCurrentImage(), rotateAngle);
                 recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -168,7 +168,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.rotateImage(values.getCurrentImage(), 360 - rotateAngle);
+                final Image newImage = FxmlTransformTools.rotateImage(values.getCurrentImage(), 360 - rotateAngle);
                 recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -194,7 +194,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.horizontalImage(values.getCurrentImage());
+                final Image newImage = FxmlTransformTools.horizontalImage(values.getCurrentImage());
                 recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -220,7 +220,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.verticalImage(values.getCurrentImage());
+                final Image newImage = FxmlTransformTools.verticalImage(values.getCurrentImage());
                 recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -246,7 +246,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.shearImage(values.getCurrentImage(), shearX, 0);
+                final Image newImage = FxmlTransformTools.shearImage(values.getCurrentImage(), shearX, 0);
                 recordImageHistory(ImageOperationType.Transform, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

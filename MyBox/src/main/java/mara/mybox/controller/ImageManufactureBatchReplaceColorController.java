@@ -18,11 +18,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageReplaceColorTools;
 
 /**
  * @Author Mara
@@ -184,7 +184,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
-        BufferedImage target = ImageConvertTools.replaceColor(source,
+        BufferedImage target = ImageReplaceColorTools.replaceColor(source,
                 FxmlImageTools.colorConvert(oldColorPicker.getValue()),
                 FxmlImageTools.colorConvert(newColorPicker.getValue()),
                 distance, isColor, excludeCheck.isSelected());

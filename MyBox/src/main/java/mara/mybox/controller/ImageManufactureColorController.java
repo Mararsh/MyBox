@@ -14,17 +14,18 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.fxml.FxmlAdjustColorTools;
+import mara.mybox.fxml.FxmlAdjustColorTools.ColorOperationType;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.ImageScope.ScopeType;
 
 /**
  * @Author Mara
@@ -34,7 +35,6 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureColorController extends ImageManufactureController {
 
-    protected ImageScope colorScope;
     protected int colorValue;
     private ColorOperationType colorOperationType;
 
@@ -45,25 +45,11 @@ public class ImageManufactureColorController extends ImageManufactureController 
     @FXML
     protected TextField colorInput;
     @FXML
-    protected Button colorScopeButton, colorDecreaseButton, colorIncreaseButton;
+    protected Button colorDecreaseButton, colorIncreaseButton;
     @FXML
     protected RadioButton opacityRadio;
     @FXML
     protected Label colorUnit;
-
-    public enum ColorOperationType {
-        Brightness,
-        Sauration,
-        Hue,
-        Opacity,
-        Red,
-        Green,
-        Blue,
-        Yellow,
-        Cyan,
-        Magenta,
-        RGB
-    }
 
     public ImageManufactureColorController() {
     }
@@ -78,35 +64,8 @@ public class ImageManufactureColorController extends ImageManufactureController 
         }
     }
 
-    @Override
-    protected void initInterface() {
-        try {
-            if (values == null || values.getImage() == null) {
-                return;
-            }
-            super.initInterface();
-
-            isSettingValues = true;
-            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                opacityRadio.setDisable(true);
-            } else {
-                opacityRadio.setDisable(false);
-            }
-
-            isSettingValues = false;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
     protected void initColorTab() {
         try {
-            colorScope = new ImageScope();
-            colorScope.setOperationType(OperationType.Color);
-            colorScope.setAllColors(true);
-            colorScope.setAreaScopeType(AreaScopeType.AllArea);
-
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -133,13 +92,40 @@ public class ImageManufactureColorController extends ImageManufactureController 
             });
             checkColorInput();
 
-            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-            stips.setFont(new Font(16));
-            FxmlTools.setComments(colorScopeButton, stips);
+            Tooltip tips = new Tooltip(getMessage("CTRL+a"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(colorIncreaseButton, tips);
+
+            tips = new Tooltip(getMessage("CTRL+q"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(colorDecreaseButton, tips);
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    protected void initInterface() {
+        try {
+            if (values == null || values.getImage() == null) {
+                return;
+            }
+            super.initInterface();
+            values.getScope().setOperationType(OperationType.Color);
+
+            isSettingValues = true;
+            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+                opacityRadio.setDisable(true);
+            } else {
+                opacityRadio.setDisable(false);
+            }
+
+            isSettingValues = false;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
     }
 
     private void checkColorOperationType() {
@@ -151,7 +137,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -162,7 +148,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -173,7 +159,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText(getMessage("Degree"));
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -183,9 +169,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
+            colorInput.setText("50");
             colorDecreaseButton.setVisible(false);
             colorIncreaseButton.setText(getMessage("OK"));
         } else if (getMessage("Red").equals(selected.getText())) {
@@ -195,7 +179,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -206,7 +190,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -217,7 +201,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -228,7 +212,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -239,7 +223,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -250,7 +234,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -261,7 +245,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
             colorDecreaseButton.setVisible(true);
             colorIncreaseButton.setText(getMessage("Increase"));
@@ -292,35 +276,63 @@ public class ImageManufactureColorController extends ImageManufactureController 
         applyChange(0 - colorValue);
     }
 
+    @Override
+    protected void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        if (event.isControlDown()) {
+            switch (key) {
+                case "a":
+                case "A":
+                    increaseColor();
+                    break;
+                case "q":
+                case "Q":
+                    decreaseColor();
+                    break;
+            }
+        }
+    }
+
     private void applyChange(final int change) {
+        if (null == colorOperationType || scope == null) {
+            return;
+        }
         Task increaseTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
+                double value;
+                switch (colorOperationType) {
+                    case Brightness:
+                    case Sauration:
+                    case Opacity:
+                        value = change / 100.0f;
+                        break;
+                    case Hue:
+                        value = change;
+                        break;
+                    case Red:
+                    case Green:
+                    case Blue:
+                    case Yellow:
+                    case Cyan:
+                    case Magenta:
+                    case RGB:
+                        value = change / 255.0;
+                        break;
+                    default:
+                        return null;
+                }
                 final Image newImage;
-                if (colorOperationType == ColorOperationType.Brightness) {
-                    newImage = FxmlImageTools.changeBrightness(values.getCurrentImage(), change / 100.0f, colorScope);
-                } else if (colorOperationType == ColorOperationType.Sauration) {
-                    newImage = FxmlImageTools.changeSaturate(values.getCurrentImage(), change / 100.0f, colorScope);
-                } else if (colorOperationType == ColorOperationType.Hue) {
-                    newImage = FxmlImageTools.changeHue(values.getCurrentImage(), change, colorScope);
-                } else if (colorOperationType == ColorOperationType.Opacity) {
-                    newImage = FxmlImageTools.setOpacity(values.getCurrentImage(), change / 100.0f, colorScope);
-                } else if (colorOperationType == ColorOperationType.Red) {
-                    newImage = FxmlImageTools.changeRed(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Green) {
-                    newImage = FxmlImageTools.changeGreen(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Blue) {
-                    newImage = FxmlImageTools.changeBlue(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Yellow) {
-                    newImage = FxmlImageTools.changeYellow(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Cyan) {
-                    newImage = FxmlImageTools.changeCyan(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.Magenta) {
-                    newImage = FxmlImageTools.changeMagenta(values.getCurrentImage(), change / 255.0, colorScope);
-                } else if (colorOperationType == ColorOperationType.RGB) {
-                    newImage = FxmlImageTools.changeRGB(values.getCurrentImage(), change / 255.0, colorScope);
+                if (scope.getScopeType() == ScopeType.Matting) {
+                    newImage = FxmlAdjustColorTools.ajustColorByMatting(values.getCurrentImage(),
+                            colorOperationType, value, scope.getPoints(), scope.getColorDistance());
                 } else {
-                    return null;
+                    newImage = FxmlAdjustColorTools.ajustColorByScope(values.getCurrentImage(),
+                            colorOperationType, value, scope);
                 }
                 recordImageHistory(ImageOperationType.Color, newImage);
                 Platform.runLater(new Runnable() {
@@ -340,41 +352,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
         thread.setDaemon(true);
         thread.start();
 
-    }
-
-    @FXML
-    public void setColorScope() {
-        setScope(colorScope);
-    }
-
-    @Override
-    protected void setScopePane() {
-        try {
-            showScopeCheck.setDisable(false);
-            values.setCurrentScope(colorScope);
-            scopePaneValid = true;
-            super.setScopePane();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void wholeColorScope() {
-        colorScope = new ImageScope();
-        colorScope.setOperationType(OperationType.Color);
-        colorScope.setAllColors(true);
-        colorScope.setAreaScopeType(AreaScopeType.AllArea);
-        setScopePane();
-
-    }
-
-    @Override
-    public void scopeDetermined(ImageScope imageScope) {
-        values.setCurrentScope(imageScope);
-        colorScope = imageScope;
-        setScopePane();
     }
 
 }

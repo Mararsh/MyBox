@@ -1,39 +1,26 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageScope;
-import mara.mybox.image.FxmlImageTools;
+import mara.mybox.fxml.FxmlReplaceColorTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.objects.ImageScope;
 
 /**
  * @Author Mara
@@ -43,32 +30,12 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureReplaceColorController extends ImageManufactureController {
 
-    protected int replaceColorScopeType, distance;
-    protected ImageScope replaceColorScope;
-
-    @FXML
-    protected ToggleGroup replaceScopeGroup;
     @FXML
     protected ToolBar replaceColorBar;
     @FXML
-    protected ColorPicker newColorPicker, scopeColorPicker;
+    protected ColorPicker newColorPicker;
     @FXML
-    protected Button transForScopeButton, transForNewButton, replaceColorOkButton;
-    @FXML
-    protected RadioButton replaceColorSetting;
-    @FXML
-    protected HBox originalBox;
-    @FXML
-    private Label replaceColorLabel, distanceLabel;
-    @FXML
-    private TextField distanceInput;
-
-    public static class ReplaceColorScopeType {
-
-        public static int Color = 0;
-        public static int Hue = 1;
-        public static int Settings = 2;
-    }
+    protected Button transForNewButton, okButton;
 
     public ImageManufactureReplaceColorController() {
     }
@@ -90,14 +57,13 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
                 return;
             }
             super.initInterface();
+            values.getScope().setOperationType(ImageScope.OperationType.ReplaceColor);
 
             isSettingValues = true;
             if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                transForScopeButton.setDisable(true);
                 transForNewButton.setDisable(true);
 
             } else {
-                transForScopeButton.setDisable(false);
                 transForNewButton.setDisable(false);
             }
 
@@ -110,152 +76,24 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
 
     protected void initReplaceColorTab() {
         try {
+            scopeColorString = getMessage("ReplaceColorClickForColor");
+            scopeAllString = getMessage("ColorLabel");
+            promptLabel.setText(scopeAllString);
 
-            Tooltip tips = new Tooltip(getMessage("ClickForReplaceColor"));
+            Tooltip tips = new Tooltip(getMessage("CTRL+a"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(replaceColorBar, tips);
+            FxmlTools.quickTooltip(okButton, tips);
 
-            replaceColorScope = new ImageScope();
-            replaceColorScope.setOperationType(ImageScope.OperationType.ReplaceColor);
-            replaceColorScope.setAllColors(false);
-            replaceColorScope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-
-            replaceScopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkReplaceColorScope();
-                }
-            });
-
-            scopeColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> ov,
-                        Color oldValue, Color newValue) {
-                    setScopeColor(newValue);
-                }
-            });
-            checkReplaceColorScope();
-
-            distanceInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkDistance();
-                }
-            });
-            distanceInput.setText("20");
-
-            replaceColorOkButton.disableProperty().bind(
-                    distanceInput.styleProperty().isEqualTo(badStyle)
-                            .or(Bindings.isEmpty(distanceInput.textProperty()))
+            okButton.disableProperty().bind(
+                    scopeLeftXInput.styleProperty().isEqualTo(badStyle)
+                            .or(scopeLeftYInput.styleProperty().isEqualTo(badStyle))
+                            .or(scopeRightXInput.styleProperty().isEqualTo(badStyle))
+                            .or(scopeRightYInput.styleProperty().isEqualTo(badStyle))
             );
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    private void checkReplaceColorScope() {
-        try {
-            RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("Hue").equals(selected.getText())) {
-                replaceColorScopeType = ReplaceColorScopeType.Hue;
-                setScopeColor(scopeColorPicker.getValue());
-                originalBox.setDisable(false);
-                replaceColorLabel.setVisible(true);
-                distanceLabel.setText(getMessage("HueDistance"));
-                showScopeCheck.setDisable(true);
-                scopePaneValid = false;
-                super.setScopePane();
-
-            } else if (AppVaribles.getMessage("Settings").equals(selected.getText())) {
-                originalBox.setDisable(true);
-                replaceColorLabel.setVisible(false);
-                distanceLabel.setText("");
-
-            } else if (AppVaribles.getMessage("Color").equals(selected.getText())) {
-                replaceColorScopeType = ReplaceColorScopeType.Color;
-                setScopeColor(scopeColorPicker.getValue());
-                originalBox.setDisable(false);
-                replaceColorLabel.setVisible(true);
-                distanceLabel.setText(getMessage("ColorDistance"));
-                showScopeCheck.setDisable(true);
-                scopePaneValid = false;
-                super.setScopePane();
-            }
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void checkDistance() {
-        try {
-            distance = Integer.valueOf(distanceInput.getText());
-            distanceInput.setStyle(null);
-            if (distance >= 0 && distance <= 255) {
-                distanceInput.setStyle(null);
-                replaceColorScope.setColorDistance(distance);
-                replaceColorScope.setHueDistance(distance);
-            } else {
-                distanceInput.setStyle(badStyle);
-                distance = 0;
-            }
-        } catch (Exception e) {
-            distanceInput.setStyle(badStyle);
-            distance = 0;
-        }
-    }
-
-    private void setScopeColor(Color color) {
-        try {
-            if (replaceColorScopeType == ReplaceColorScopeType.Settings) {
-                return;
-            }
-            replaceColorScope.setAllColors(false);
-            replaceColorScope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-            if (replaceColorScopeType == ReplaceColorScopeType.Color) {
-                replaceColorScope.setMatchColor(true);
-            } else if (replaceColorScopeType == ReplaceColorScopeType.Hue) {
-                replaceColorScope.setMatchColor(false);
-            } else {
-                return;
-            }
-            replaceColorScope.setColorExcluded(false);
-            List<Color> colors = new ArrayList<>();
-            colors.add(color);
-            replaceColorScope.setColors(colors);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void setScopeForReplaceColor() {
-        replaceColorScopeType = ReplaceColorScopeType.Settings;
-        setScope(replaceColorScope);
-    }
-
-    @Override
-    protected void setScopePane() {
-        try {
-            showScopeCheck.setDisable(false);
-            values.setCurrentScope(replaceColorScope);
-            scopePaneValid = (replaceColorScopeType == ReplaceColorScopeType.Settings);
-            super.setScopePane();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void scopeDetermined(ImageScope imageScope) {
-        values.setCurrentScope(imageScope);
-        replaceColorScope = imageScope;
-        setScopePane();
     }
 
     @FXML
@@ -273,50 +111,66 @@ public class ImageManufactureReplaceColorController extends ImageManufactureCont
         newColorPicker.setValue(Color.BLACK);
     }
 
-    @FXML
-    public void transparentForScope() {
-        scopeColorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void whiteForScope() {
-        scopeColorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    public void blackForScope() {
-        scopeColorPicker.setValue(Color.BLACK);
-    }
-
-    @FXML
     @Override
-    public void clickImage(MouseEvent event) {
-        if (values.getCurrentImage() == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        imageView.setCursor(Cursor.HAND);
+    public void clickImageForAll(MouseEvent event, Color color) {
+        newColorPicker.setValue(color);
+    }
 
-        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / imageView.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / imageView.getBoundsInLocal().getHeight());
-        PixelReader pixelReader = values.getCurrentImage().getPixelReader();
-        Color color = pixelReader.getColor(x, y);
-
+    @Override
+    public void clickImageForColor(MouseEvent event, Color color) {
         if (event.getButton() == MouseButton.PRIMARY) {
-            scopeColorPicker.setValue(color);
+            scope.addColor(color);
+            indicateColor();
 
         } else if (event.getButton() == MouseButton.SECONDARY) {
             newColorPicker.setValue(color);
         }
+    }
 
+    @Override
+    protected void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        if (event.isControlDown()) {
+            switch (key) {
+                case "a":
+                case "A":
+                    replaceColorAction();
+                    break;
+            }
+        }
     }
 
     @FXML
     public void replaceColorAction() {
+        if (scope == null || (task != null && task.isRunning())) {
+            return;
+        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.replaceColors(values.getCurrentImage(), newColorPicker.getValue(), replaceColorScope);
+                final Image newImage;
+                switch (scope.getScopeType()) {
+                    case Matting:
+                        newImage = FxmlReplaceColorTools.replaceColorsMatting(values.getCurrentImage(),
+                                newColorPicker.getValue(), scope.getPoints(), scope.getColorDistance());
+                        break;
+                    case Rectangle:
+                        newImage = FxmlReplaceColorTools.replaceColorsRectangle(values.getCurrentImage(),
+                                newColorPicker.getValue(), scope.getRectangle());
+                        break;
+                    case Circle:
+                        newImage = FxmlReplaceColorTools.replaceColorsCircle(values.getCurrentImage(),
+                                newColorPicker.getValue(), scope.getCircle());
+                        break;
+                    default:
+                        newImage = FxmlReplaceColorTools.replaceColors(values.getCurrentImage(),
+                                newColorPicker.getValue(), scope);
+                        break;
+                }
                 recordImageHistory(ImageOperationType.Replace_Color, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

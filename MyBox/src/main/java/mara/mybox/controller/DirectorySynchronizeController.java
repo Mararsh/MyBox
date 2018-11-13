@@ -35,8 +35,8 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
 
 /**

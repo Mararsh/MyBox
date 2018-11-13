@@ -12,7 +12,7 @@ import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara

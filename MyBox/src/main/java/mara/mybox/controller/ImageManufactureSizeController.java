@@ -29,8 +29,8 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
-import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.image.FxmlImageTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
 
 /**
  * @Author Mara

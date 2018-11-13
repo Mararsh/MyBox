@@ -62,7 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -98,7 +98,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Clarity" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
                                                 <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
@@ -106,21 +107,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                                             <children>
-                                                  <Label fx:id="intLabel" text="%Radius" />
-                                                  <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
-                                    <Label fx:id="stringLabel" text="Label" />
-                                    <ComboBox fx:id="stringBox" prefWidth="150.0" />
-                                    <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
-                                    <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
-                                       <children>
-                                          <Label text="%Threshold" />
+                                                <Label fx:id="intLabel" text="%Radius" />
+                                                <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
+                                                <Label fx:id="stringLabel" text="Label" />
+                                                <ComboBox fx:id="stringBox" prefWidth="150.0" />
+                                                <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
+                                                <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%Threshold" />
                                                         <TextField fx:id="thresholdingInput" prefWidth="60.0" promptText="0~255" />
                                                         <Label text="%SmallValue" />
                                                         <TextField fx:id="thresholdingMinInput" prefWidth="60.0" promptText="0~255" />
                                                         <Label text="%BigValue" />
                                                         <TextField fx:id="thresholdingMaxInput" prefWidth="60.0" promptText="0~255" />
-                                       </children>
-                                    </HBox>
+                                                    </children>
+                                                </HBox>
                                             </children>
                                         </HBox>
                                     </children>

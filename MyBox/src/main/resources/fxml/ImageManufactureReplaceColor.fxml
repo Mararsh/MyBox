@@ -46,14 +46,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureReplaceColorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureReplaceColorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="120.0" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="125.0" VBox.vgrow="NEVER">
                     <children>
                         <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
                             <tabs>
@@ -62,29 +62,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="cropTab" text="%Crop" />
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects" />
-                               <Tab fx:id="filtersTab" text="%Filters" />
+                                <Tab fx:id="filtersTab" text="%Filters" />
                                 <Tab fx:id="convolutionTab" text="%Convolution" />
                                 <Tab fx:id="replaceColorTab" text="%ReplaceColor">
                                     <content>
                                         <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
-                                                <HBox nodeOrientation="LEFT_TO_RIGHT">
+                                                <HBox alignment="CENTER_RIGHT">
                                                     <children>
-                                                        <ToolBar prefWidth="10.0" HBox.hgrow="ALWAYS">
+                                                        <ToolBar HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Label fx:id="replaceColorLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ClickForReplaceColor" />
+                                                                <Button mnemonicParsing="false" text=" " visible="false" />
                                                             </items>
                                                         </ToolBar>
-                                                        <ToolBar HBox.hgrow="NEVER">
+                                                        <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                                             <items>
-                                                                <Label text="%Scope" />
-                                                                <RadioButton mnemonicParsing="false" selected="true" text="%Color">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="replaceScopeGroup" />
-                                                                    </toggleGroup>
-                                                                </RadioButton>
-                                                                <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$replaceScopeGroup" />
-                                                                <RadioButton fx:id="replaceColorSetting" mnemonicParsing="false" onMouseClicked="#setScopeForReplaceColor" text="%Setting" toggleGroup="$replaceScopeGroup" />
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label text="%Scope" />
+                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%All">
+                                                                            <toggleGroup>
+                                                                                <ToggleGroup fx:id="scopeGroup" />
+                                                                            </toggleGroup>
+                                                                        </RadioButton>
+                                                                        <RadioButton mnemonicParsing="false" text="%Matting" toggleGroup="$scopeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="%Rectangle" toggleGroup="$scopeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="%Circle" toggleGroup="$scopeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="%Color" toggleGroup="$scopeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$scopeGroup" />
+                                                                        <RadioButton mnemonicParsing="false" text="%Setting" toggleGroup="$scopeGroup" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets right="20.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                                <HBox fx:id="scopeSettingBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                                    <children>
+                                                                        <Label fx:id="scopeLeftLabel" text="%LeftTop" />
+                                                                        <TextField fx:id="scopeLeftXInput" prefHeight="30.0" prefWidth="60.0" />
+                                                                        <TextField fx:id="scopeLeftYInput" prefWidth="60.0" />
+                                                                        <Label fx:id="scopeRightLabel" text="%RightBottom" />
+                                                                        <TextField fx:id="scopeRightXInput" prefWidth="60.0" />
+                                                                        <TextField fx:id="scopeRightYInput" prefWidth="60.0" />
+                                                                        <Button fx:id="scopeClearButton" mnemonicParsing="false" onAction="#clearScope" text="%Clear" />
+                                                                    </children>
+                                                                </HBox>
                                                             </items>
                                                         </ToolBar>
                                                     </children>
@@ -93,36 +115,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     <children>
                                                         <ToolBar HBox.hgrow="ALWAYS">
                                                             <items>
+                                                                <Label fx:id="promptLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                                                                 <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
                                                             </items>
                                                         </ToolBar>
                                                         <ToolBar fx:id="replaceColorBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                                             <items>
-                                                                <HBox fx:id="originalBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="%OriginalColor" />
-                                                                        <ColorPicker fx:id="scopeColorPicker" />
-                                                                        <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForScope" text="%Transparent" />
-                                                                        <Button mnemonicParsing="false" onAction="#whiteForScope" text="%White" />
-                                                                        <Button mnemonicParsing="false" onAction="#blackForScope" text="%Black" />
-                                                                        <Label fx:id="distanceLabel" text="%Distance" />
-                                                                        <TextField fx:id="distanceInput" prefWidth="50.0" />
-                                                                    </children>
-                                                                    <padding>
-                                                                        <Insets right="20.0" />
-                                                                    </padding>
-                                                                </HBox>
                                                                 <Label text="%NewColor" />
                                                                 <ColorPicker fx:id="newColorPicker" />
                                                                 <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
                                                                 <Button mnemonicParsing="false" onAction="#whiteForNew" text="%White" />
                                                                 <Button mnemonicParsing="false" onAction="#blackForNew" text="%Black" />
-                                                                <Label prefWidth="10.0" text=" " />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar HBox.hgrow="NEVER">
-                                                            <items>
-                                                                <Button fx:id="replaceColorOkButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
+                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#replaceColorAction" text="%OK" />
                                                             </items>
                                                         </ToolBar>
                                                     </children>
@@ -131,7 +135,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </VBox>
                                     </content>
                                 </Tab>
-                                <Tab fx:id="watermarkTab" text="%Watermark" />
+                                <Tab fx:id="textTab" text="%Text" />
                                 <Tab fx:id="coverTab" text="%Cover" />
                                 <Tab fx:id="arcTab" text="%Arc" />
                                 <Tab fx:id="shadowTab" text="%Shadow" />
@@ -155,16 +159,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                             <items>
                                 <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ShowReference" />
-                                <CheckBox fx:id="showScopeCheck" disable="true" mnemonicParsing="false" selected="true" text="%ShowScope" />
+                                <CheckBox fx:id="showScopeCheck" mnemonicParsing="false" text="%ShowScope" />
                                 <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                 <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                <ComboBox fx:id="hisBox" prefWidth="150.0" />
+                                <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
                                 <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
-                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%RecoverCtrl" />
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%SaveCtrl" />
+                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>

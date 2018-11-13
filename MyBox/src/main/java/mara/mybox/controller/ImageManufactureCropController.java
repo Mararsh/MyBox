@@ -19,9 +19,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlScopeTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.objects.Rectangle;
 
 /**
  * @Author Mara
@@ -32,7 +34,6 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 public class ImageManufactureCropController extends ImageManufactureController {
 
     protected int cropLeftX, cropLeftY, cropRightX, cropRightY;
-    protected boolean areaValid;
 
     @FXML
     protected TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
@@ -67,8 +68,8 @@ public class ImageManufactureCropController extends ImageManufactureController {
             cropRightYInput.setText(values.getImageInfo().getyPixels() * 3 / 4 + "");
             cropLeftXInput.setText(values.getImageInfo().getxPixels() / 4 + "");
             cropLeftYInput.setText(values.getImageInfo().getyPixels() / 4 + "");
-
             isSettingValues = false;
+            checkCropValues();
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -128,10 +129,12 @@ public class ImageManufactureCropController extends ImageManufactureController {
     }
 
     protected void checkCropValues() {
-        areaValid = true;
+        if (isSettingValues) {
+            return;
+        }
+        boolean areaValid = true;
         try {
             cropLeftX = Integer.valueOf(cropLeftXInput.getText());
-            cropLeftXInput.setStyle(null);
             if (cropLeftX >= 0 && cropLeftX <= values.getCurrentImage().getWidth()) {
                 cropLeftXInput.setStyle(null);
             } else {
@@ -145,7 +148,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropLeftY = Integer.valueOf(cropLeftYInput.getText());
-            cropLeftYInput.setStyle(null);
             if (cropLeftY >= 0 && cropLeftY <= values.getCurrentImage().getHeight()) {
                 cropLeftYInput.setStyle(null);
             } else {
@@ -159,7 +161,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropRightX = Integer.valueOf(cropRightXInput.getText());
-            cropRightXInput.setStyle(null);
             if (cropRightX >= 0 && cropRightX <= values.getCurrentImage().getWidth()) {
                 cropRightXInput.setStyle(null);
             } else {
@@ -173,7 +174,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropRightY = Integer.valueOf(cropRightYInput.getText());
-            cropRightYInput.setStyle(null);
             if (cropRightY >= 0 && cropRightY <= values.getCurrentImage().getHeight()) {
                 cropRightYInput.setStyle(null);
             } else {
@@ -186,34 +186,24 @@ public class ImageManufactureCropController extends ImageManufactureController {
         }
 
         if (cropLeftX >= cropRightX) {
-            cropLeftXInput.setStyle(badStyle);
             cropRightXInput.setStyle(badStyle);
             areaValid = false;
         }
 
         if (cropLeftY >= cropRightY) {
-            cropLeftYInput.setStyle(badStyle);
             cropRightYInput.setStyle(badStyle);
             areaValid = false;
         }
 
-        if (!isSettingValues) {
-            if (!areaValid) {
-                popError(getMessage("InvalidRectangle"));
-                return;
-            }
-            showCropScope();
+        if (areaValid) {
+            indicateCropScope();
+        } else {
+            popError(getMessage("InvalidRectangle"));
         }
 
     }
 
-    protected void showCropScope() {
-        if (!areaValid) {
-            imageView.setImage(values.getCurrentImage());
-            popInformation(getMessage("CropComments"));
-            return;
-        }
-
+    protected void indicateCropScope() {
         if (task != null && task.isRunning()) {
             return;
         }
@@ -222,12 +212,12 @@ public class ImageManufactureCropController extends ImageManufactureController {
             protected Void call() throws Exception {
                 try {
                     int lineWidth = 1;
-                    if (values.getCurrentImage().getWidth() >= 100) {
-                        lineWidth = (int) values.getCurrentImage().getWidth() / 100;
+                    if (values.getCurrentImage().getWidth() >= 200) {
+                        lineWidth = (int) values.getCurrentImage().getWidth() / 200;
                     }
-                    final Image newImage = FxmlImageTools.indicateArea(values.getCurrentImage(),
+                    final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
                             Color.RED, lineWidth,
-                            cropLeftX, cropLeftY, cropRightX, cropRightY);
+                            new Rectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -266,12 +256,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
             cropRightYInput.setText(y + "");
             isSettingValues = false;
 
-            if (!areaValid) {
-                popError(getMessage("InvalidRectangle"));
-            } else if (task == null || !task.isRunning()) {
-                showCropScope();
-            }
-
         } else if (event.getButton() == MouseButton.PRIMARY) {
 
             isSettingValues = true;
@@ -279,20 +263,19 @@ public class ImageManufactureCropController extends ImageManufactureController {
             cropLeftYInput.setText(y + "");
             isSettingValues = false;
 
-            if (!areaValid) {
-                popError(getMessage("InvalidRectangle"));
-            } else if (task == null || !task.isRunning()) {
-                showCropScope();
-            }
         }
+
+        checkCropValues();
 
     }
 
     @FXML
     public void cropAction() {
         imageView.setCursor(Cursor.OPEN_HAND);
-
-        Task cropTask = new Task<Void>() {
+        if (task != null && task.isRunning()) {
+            return;
+        }
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
@@ -323,8 +306,8 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 return null;
             }
         };
-        openHandlingStage(cropTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(cropTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

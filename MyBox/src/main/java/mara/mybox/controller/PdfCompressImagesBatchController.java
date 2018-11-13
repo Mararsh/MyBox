@@ -28,7 +28,7 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * FXML Controller class

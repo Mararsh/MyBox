@@ -12,10 +12,10 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.AppVaribles;
-import mara.mybox.image.FxmlImageTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageMarginsTools;
 
 /**
  * @Author Mara
@@ -151,7 +151,7 @@ public class ImageManufactureBatchAddMarginsController extends ImageManufactureB
             if (!checkMargins()) {
                 return null;
             }
-            BufferedImage target = ImageConvertTools.addMargins(source,
+            BufferedImage target = ImageMarginsTools.addMargins(source,
                     FxmlImageTools.colorConvert(addMarginsColorPicker.getValue()), addMarginWidth,
                     addMarginsTopCheck.isSelected(), addMarginsBottomCheck.isSelected(),
                     addMarginsLeftCheck.isSelected(), addMarginsRightCheck.isSelected());

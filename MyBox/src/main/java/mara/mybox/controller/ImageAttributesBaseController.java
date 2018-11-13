@@ -13,7 +13,7 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.image.ImageValueTools;
 import org.apache.pdfbox.rendering.ImageType;
 

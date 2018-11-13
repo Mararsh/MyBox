@@ -25,7 +25,7 @@ import mara.mybox.image.ImageGrayTools;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;

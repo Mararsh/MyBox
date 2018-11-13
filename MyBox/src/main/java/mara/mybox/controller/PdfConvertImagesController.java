@@ -10,7 +10,7 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;

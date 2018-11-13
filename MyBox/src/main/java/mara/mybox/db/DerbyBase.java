@@ -5,7 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.ConvolutionKernel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -70,6 +72,25 @@ public class DerbyBase {
         }
     }
 
+    public static boolean checkUpdates() {
+        try {
+            if (!AppVaribles.getConfigBoolean("UpdatedTables4.2", false)) {
+                logger.debug("Updating TableConvolutionKernel 4.2");
+                List<ConvolutionKernel> records = TableConvolutionKernel.read();
+                TableConvolutionKernel t = new TableConvolutionKernel();
+                t.drop();
+                t.init();
+                if (TableConvolutionKernel.write(records)) {
+                    AppVaribles.setConfigValue("UpdatedTables4.2", true);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
     public boolean init(Statement statement) {
         try {
             if (statement == null) {
@@ -79,6 +100,17 @@ public class DerbyBase {
             return true;
         } catch (Exception e) {
 //            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public boolean init() {
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+                Statement statement = conn.createStatement()) {
+            statement.executeUpdate(Create_Table_Statement);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
             return false;
         }
     }

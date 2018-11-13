@@ -67,7 +67,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                   </VBox>
                      </content>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Options" VBox.vgrow="NEVER">
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>

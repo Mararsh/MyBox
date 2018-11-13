@@ -22,7 +22,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara

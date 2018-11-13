@@ -73,16 +73,27 @@
                                           <RadioButton mnemonicParsing="false" text="%None" toggleGroup="$typeGroup" />
                                        </children>
                                     </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
                                                         <Label text="%Height" />
                                                         <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
                                           <Label text="%OddNumber" />
+                                       </children>
+                                    </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                          <Label text="%Edges" />
+                                          <RadioButton fx:id="zeroRadio" mnemonicParsing="false" selected="true" text="%FillZero2">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="edgesGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton fx:id="keepRadio" mnemonicParsing="false" text="%KeepValues" toggleGroup="$edgesGroup" />
                                           <CheckBox fx:id="grayCheck" mnemonicParsing="false" text="%Gray">
                                              <HBox.margin>
-                                                <Insets left="30.0" />
+                                                <Insets left="60.0" />
                                              </HBox.margin>
                                           </CheckBox>
                                                     </children>
@@ -107,6 +118,7 @@
                                         <HBox fx:id="actionBox" alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
                                     <Button mnemonicParsing="false" onAction="#testAction" text="%Test" />
+                                    <Button fx:id="gaussButton" mnemonicParsing="false" onAction="#gaussianDistribution" text="%GaussianDistribution" />
                                                 <Button mnemonicParsing="false" onAction="#normalization" text="%Normalization" />
                                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                                             </children>

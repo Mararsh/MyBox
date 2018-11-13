@@ -26,6 +26,13 @@
     -fx-font-weight: bolder;
 }
 
+.darkRed-label, .darkRed-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: #961c1c;
+    -fx-font-weight: bolder;
+}
+
 .copyable-blue-label, .copyable-blue-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;

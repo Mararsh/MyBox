@@ -49,8 +49,9 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.objects.ConvolutionKernel.Convolution_Type;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -61,7 +62,7 @@ import static mara.mybox.tools.FxmlTools.badStyle;
 public class ConvolutionKernelManagerController extends BaseController {
 
     protected ObservableList<ConvolutionKernel> tableData = FXCollections.observableArrayList();
-    private int width, height, type;
+    private int width, height, type, edge_Op;
     private boolean isSettingValues, matrixValid;
     private GridPane matrixPane;
     private TextField[][] matrixInputs;
@@ -74,7 +75,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private Button editButton, deleteButton, saveButton, copyButton;
+    private Button editButton, deleteButton, saveButton, copyButton, gaussButton;
     @FXML
     private TableView<ConvolutionKernel> tableView;
     @FXML
@@ -82,7 +83,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private TableColumn<ConvolutionKernel, Integer> widthColumn, heightColumn;
     @FXML
-    private ToggleGroup typeGroup;
+    private ToggleGroup typeGroup, edgesGroup;
     @FXML
     private TextField nameInput, desInput;
     @FXML
@@ -93,6 +94,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     private ScrollPane scrollPane;
     @FXML
     private CheckBox grayCheck;
+    @FXML
+    private RadioButton zeroRadio, keepRadio;
 
     @Override
     protected void initializeNext() {
@@ -235,6 +238,15 @@ public class ConvolutionKernelManagerController extends BaseController {
             });
             checkType();
 
+            edgesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkEdges();
+                }
+            });
+            checkEdges();
+
             actionBox.setDisable(true);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -268,6 +280,24 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
     }
 
+    private void checkEdges() {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
+            RadioButton selected = (RadioButton) edgesGroup.getSelectedToggle();
+            if (selected == null) {
+                return;
+            }
+            if (getMessage("KeepValues").equals(selected.getText())) {
+                edge_Op = ConvolutionKernel.Edge_Op.COPY;
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     private void checkSize() {
         try {
             width = Integer.valueOf((String) widthBox.getSelectionModel().getSelectedItem());
@@ -295,6 +325,12 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (isSettingValues) {
             return;
         }
+        if (width == height && width > 2) {
+            gaussButton.setDisable(false);
+        } else {
+            gaussButton.setDisable(true);
+        }
+
         initMatrix();
 
     }
@@ -428,6 +464,11 @@ public class ConvolutionKernelManagerController extends BaseController {
         } else {
             FxmlTools.setRadioSelected(typeGroup, getMessage("None"));
         }
+        if (kernel.getEdge() == ConvolutionKernel.Edge_Op.COPY) {
+            keepRadio.fire();
+        } else {
+            zeroRadio.fire();
+        }
         grayCheck.setSelected(kernel.getGray() > 0);
         nameInput.setDisable(true);
         matrixValues = null;
@@ -541,11 +582,28 @@ public class ConvolutionKernelManagerController extends BaseController {
         isSettingValues = true;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
-                matrixInputs[j][i].setText(matrixValues[j][i] / sum + "");
+                matrixInputs[j][i].setText(ValueTools.roundFloat5(matrixValues[j][i] / sum) + "");
             }
         }
         isSettingValues = false;
         checkMatrix();
+    }
+
+    @FXML
+    private void gaussianDistribution() {
+        if (width != height || width < 3) {
+            gaussButton.setDisable(true);
+            return;
+        }
+        float[][] m = ConvolutionKernel.makeGaussMatrix(width / 2);
+        isSettingValues = true;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                matrixInputs[j][i].setText(m[j][i] + "");
+            }
+        }
+        matrixValues = m;
+        isSettingValues = false;
     }
 
     @FXML
@@ -586,6 +644,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         kernel.setHeight(height);
         kernel.setType(type);
         kernel.setGray(grayCheck.isSelected() ? 1 : 0);
+        kernel.setEdge(edge_Op);
         kernel.setDescription(description);
         if (kernel.getCreateTime() == null || kernel.getCreateTime().isEmpty()) {
             kernel.setCreateTime(DateTools.datetimeToString(new Date()));
@@ -607,7 +666,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         c.loadImage(new Image("img/p3.png"));
         c.setTab("convolution");
         c.showRef();
-        c.applyKernel(kernel);
+        c.selectKernel(kernel);
     }
 
     @FXML

@@ -25,9 +25,9 @@ import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.image.FxmlImageTools;
+import mara.mybox.fxml.FxmlMarginsTools;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -252,20 +252,20 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                     } else {
                         switch (opType) {
                             case CutMarginsByWidth:
-                                newImage = FxmlImageTools.cutMarginsByWidth(values.getCurrentImage(), width,
+                                newImage = FxmlMarginsTools.cutMarginsByWidth(values.getCurrentImage(), width,
                                         marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                         marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                                 recordImageHistory(ImageOperationType.Cut_Margins, newImage);
                                 break;
                             case CutMarginsByColor:
-                                newImage = FxmlImageTools.cutMarginsByColor(values.getCurrentImage(),
+                                newImage = FxmlMarginsTools.cutMarginsByColor(values.getCurrentImage(),
                                         marginsColorPicker.getValue(), distance,
                                         marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                         marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                                 recordImageHistory(ImageOperationType.Cut_Margins, newImage);
                                 break;
                             case AddMargins:
-                                newImage = FxmlImageTools.addMarginsFx(values.getCurrentImage(),
+                                newImage = FxmlMarginsTools.addMarginsFx(values.getCurrentImage(),
                                         marginsColorPicker.getValue(), width,
                                         marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                         marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());

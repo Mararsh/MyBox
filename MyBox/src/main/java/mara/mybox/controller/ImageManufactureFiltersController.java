@@ -14,18 +14,19 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.fxml.FxmlFilterTools;
+import mara.mybox.fxml.FxmlFilterTools.FiltersOperationType;
 import mara.mybox.image.ImageGrayTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.ImageScope.AreaScopeType;
 import mara.mybox.objects.ImageScope.OperationType;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.objects.ImageScope.ScopeType;
 
 /**
  * @Author Mara
@@ -35,7 +36,6 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureFiltersController extends ImageManufactureController {
 
-    protected ImageScope filtersScope;
     protected int scaleValue;
     private FiltersOperationType filtersOperationType;
 
@@ -44,7 +44,7 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
     @FXML
     protected Slider scaleSlider;
     @FXML
-    protected Button binaryCalculateButton, binaryOkButton, filtersScopeButton;
+    protected Button binaryCalculateButton, okButton;
     @FXML
     protected RadioButton grayRadio, bwRadio;
     @FXML
@@ -53,22 +53,6 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
     protected TextField scaleInput;
     @FXML
     protected Label scaleLabel, unitLabel;
-
-    public enum FiltersOperationType {
-        Gray,
-        Invert,
-        BlackOrWhite,
-        Red,
-        Green,
-        Blue,
-        RedInvert,
-        GreenInvert,
-        BlueInvert,
-        Sepia,
-        Yellow,
-        Cyan,
-        Magenta
-    }
 
     public ImageManufactureFiltersController() {
     }
@@ -90,6 +74,7 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
                 return;
             }
             super.initInterface();
+            values.getScope().setOperationType(OperationType.Filters);
 
             isSettingValues = true;
 
@@ -102,10 +87,6 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
 
     protected void initFiltersTab() {
         try {
-            filtersScope = new ImageScope();
-            filtersScope.setOperationType(OperationType.Filters);
-            filtersScope.setAllColors(true);
-            filtersScope.setAreaScopeType(AreaScopeType.AllArea);
 
             filtersGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -132,14 +113,14 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
                 }
             });
 
-            Tooltip stips = new Tooltip(getMessage("ScopeComments"));
-            stips.setFont(new Font(16));
-            FxmlTools.setComments(filtersScopeButton, stips);
-
-            stips = new Tooltip(getMessage("GrayBinaryComments"));
+            Tooltip stips = new Tooltip(getMessage("GrayBinaryComments"));
             stips.setFont(new Font(16));
             FxmlTools.setComments(grayRadio, stips);
             FxmlTools.setComments(bwRadio, stips);
+
+            Tooltip tips = new Tooltip(getMessage("CTRL+a"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(okButton, tips);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -217,98 +198,44 @@ public class ImageManufactureFiltersController extends ImageManufactureControlle
     }
 
     @FXML
-    public void setFiltersScope() {
-        setScope(filtersScope);
-    }
-
-    @Override
-    protected void setScopePane() {
-        try {
-            showScopeCheck.setDisable(false);
-            values.setCurrentScope(filtersScope);
-            scopePaneValid = true;
-            super.setScopePane();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void scopeDetermined(ImageScope imageScope) {
-        values.setCurrentScope(imageScope);
-        filtersScope = imageScope;
-        setScopePane();
-    }
-
-    @FXML
-    public void wholeFiltersScope() {
-        filtersScope = new ImageScope();
-        filtersScope.setOperationType(OperationType.Filters);
-        filtersScope.setAllColors(true);
-        filtersScope.setAreaScopeType(AreaScopeType.AllArea);
-        setScopePane();
-    }
-
-    @FXML
     public void calculateThreshold() {
         scaleValue = ImageGrayTools.calculateThreshold(values.getSourceFile());
         scaleValue = scaleValue * 100 / 256;
         scaleSlider.setValue(scaleValue);
     }
 
+    @Override
+    protected void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        if (event.isControlDown()) {
+            switch (key) {
+                case "a":
+                case "A":
+                    filtersAction();
+                    break;
+            }
+        }
+    }
+
     @FXML
     public void filtersAction() {
+        if (null == filtersOperationType || scope == null) {
+            return;
+        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 final Image newImage;
-                if (null == filtersOperationType) {
-                    return null;
+                if (scope.getScopeType() == ScopeType.Matting) {
+                    newImage = FxmlFilterTools.filterColorByMatting(values.getCurrentImage(),
+                            filtersOperationType, scaleValue, scope.getPoints(), scope.getColorDistance());
                 } else {
-                    switch (filtersOperationType) {
-                        case Gray:
-                            newImage = FxmlImageTools.makeGray(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Invert:
-                            newImage = FxmlImageTools.makeInvert(values.getCurrentImage(), filtersScope);
-                            break;
-                        case BlackOrWhite:
-                            newImage = FxmlImageTools.makeBinaryFx(values.getCurrentImage(), filtersScope, scaleValue);
-                            break;
-                        case Red:
-                            newImage = FxmlImageTools.keepRed(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Green:
-                            newImage = FxmlImageTools.keepGreen(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Blue:
-                            newImage = FxmlImageTools.keepBlue(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Yellow:
-                            newImage = FxmlImageTools.keepYellow(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Cyan:
-                            newImage = FxmlImageTools.keepCyan(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Magenta:
-                            newImage = FxmlImageTools.keepMagenta(values.getCurrentImage(), filtersScope);
-                            break;
-                        case RedInvert:
-                            newImage = FxmlImageTools.makeRedInvert(values.getCurrentImage(), filtersScope);
-                            break;
-                        case GreenInvert:
-                            newImage = FxmlImageTools.makeGreenInvert(values.getCurrentImage(), filtersScope);
-                            break;
-                        case BlueInvert:
-                            newImage = FxmlImageTools.makeBlueInvert(values.getCurrentImage(), filtersScope);
-                            break;
-                        case Sepia:
-                            newImage = FxmlImageTools.makeSepia(values.getCurrentImage(), filtersScope, scaleValue);
-                            break;
-                        default:
-                            return null;
-                    }
+                    newImage = FxmlFilterTools.filterColorByScope(values.getCurrentImage(),
+                            filtersOperationType, scaleValue, scope);
                 }
                 recordImageHistory(ImageOperationType.Filters, newImage);
                 Platform.runLater(new Runnable() {

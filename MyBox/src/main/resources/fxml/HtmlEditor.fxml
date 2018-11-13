@@ -95,14 +95,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                               <ToolBar fx:id="browserToolbar" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                 <items>
                                           <Label text="%WebAddress" />
-                                    <ComboBox fx:id="urlBox" editable="true" prefHeight="30.0" prefWidth="484.0" />
+                                    <ComboBox fx:id="urlBox" editable="true" prefWidth="450.0" />
                                           <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" text="%Load" />
                                     <Button mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
                                     <Button fx:id="updateEditorButton" mnemonicParsing="false" onAction="#updateEditor" text="%UpdateEditor" />
                                   <Button mnemonicParsing="false" onAction="#updateBrowser" text="%LoadEditorContents" />
                                 </items>
                               </ToolBar>
-                              <HBox fx:id="browserActionBar" alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                  <children>
                                     <ToolBar HBox.hgrow="ALWAYS">
                                       <items>
@@ -112,7 +112,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           <Button mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                       </items>
                                     </ToolBar>
-                                    <ToolBar fx:id="snapBar" HBox.hgrow="NEVER">
+                                    <ToolBar fx:id="snapBar" disable="true" HBox.hgrow="NEVER">
                                       <items>
                                           <Label text="%LoadRetryDelay" />
                                           <ComboBox fx:id="delayBox" editable="true" prefWidth="100.0" />

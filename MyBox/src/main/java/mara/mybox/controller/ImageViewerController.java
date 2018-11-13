@@ -27,7 +27,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 
 /**
  * @Author Mara
@@ -49,7 +49,8 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     protected VBox contentBox;
     @FXML
-    protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton, previousButton, nextButton;
+    protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton,
+            previousButton, nextButton, wButton, oButton;
     @FXML
     protected Button tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
     @FXML

@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;

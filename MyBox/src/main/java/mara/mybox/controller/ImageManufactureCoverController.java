@@ -35,11 +35,11 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.FxmlImageTools;
+import mara.mybox.fxml.FxmlCoverTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -556,23 +556,23 @@ public class ImageManufactureCoverController extends ImageManufactureController 
                     } else {
                         switch (opType) {
                             case MosaicRectangle:
-                                newImage = FxmlImageTools.makeMosaic(values.getCurrentImage(),
+                                newImage = FxmlCoverTools.makeMosaic(values.getCurrentImage(),
                                         leftX, leftY, rightX, rightY, size);
                                 break;
                             case MosaicCircle:
-                                newImage = FxmlImageTools.makeMosaic(values.getCurrentImage(),
+                                newImage = FxmlCoverTools.makeMosaic(values.getCurrentImage(),
                                         leftX, leftY, radius, size);
                                 break;
                             case FrostedRectangle:
-                                newImage = FxmlImageTools.makeFrosted(values.getCurrentImage(),
+                                newImage = FxmlCoverTools.makeFrosted(values.getCurrentImage(),
                                         leftX, leftY, rightX, rightY, size);
                                 break;
                             case FrostedCircle:
-                                newImage = FxmlImageTools.makeFrosted(values.getCurrentImage(),
+                                newImage = FxmlCoverTools.makeFrosted(values.getCurrentImage(),
                                         leftX, leftY, radius, size);
                                 break;
                             case Picture:
-                                newImage = FxmlImageTools.addPicture(values.getCurrentImage(),
+                                newImage = FxmlCoverTools.addPicture(values.getCurrentImage(),
                                         picture, leftX, leftY, rightX - leftX + 1, rightY - leftY + 1,
                                         ratioCheck.isSelected(), alpha);
                                 break;

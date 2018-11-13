@@ -8,7 +8,7 @@ import javafx.scene.control.Toggle;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 
 /**
  * @Author Mara

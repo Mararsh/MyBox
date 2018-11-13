@@ -12,10 +12,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.controller.ImageManufactureColorController.ColorOperationType;
-import mara.mybox.image.ImageConvertTools;
+import mara.mybox.fxml.FxmlAdjustColorTools.ColorOperationType;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageAdjustColorTools;
 
 /**
  * @Author Mara
@@ -253,46 +253,52 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
 //    }
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
+        if (null == colorOperationType) {
+            return null;
+        }
         try {
             int value = colorValue;
             if (!isIncrease) {
                 value = 0 - colorValue;
             }
             BufferedImage target = null;
-            if (colorOperationType == ColorOperationType.Brightness) {
-                target = ImageConvertTools.changeBrightness(source, value / 100.0f);
-
-            } else if (colorOperationType == ColorOperationType.Sauration) {
-                target = ImageConvertTools.changeSaturate(source, value / 100.0f);
-
-            } else if (colorOperationType == ColorOperationType.Hue) {
-                target = ImageConvertTools.changeHue(source, value / 360f);
-
-            } else if (colorOperationType == ColorOperationType.Opacity) {
-                int v = (int) ((colorValue * 255 / 100.0f));
-                target = ImageConvertTools.addAlpha(source, v);
-
-            } else if (colorOperationType == ColorOperationType.Red) {
-                target = ImageConvertTools.changeRed(source, value);
-
-            } else if (colorOperationType == ColorOperationType.Green) {
-                target = ImageConvertTools.changeGreen(source, value);
-
-            } else if (colorOperationType == ColorOperationType.Blue) {
-                target = ImageConvertTools.changeBlue(source, value);
-
-            } else if (colorOperationType == ColorOperationType.Yellow) {
-                target = ImageConvertTools.changeYellow(source, value);
-
-            } else if (colorOperationType == ColorOperationType.Cyan) {
-                target = ImageConvertTools.changeCyan(source, value);
-
-            } else if (colorOperationType == ColorOperationType.Magenta) {
-                target = ImageConvertTools.changeMagenta(source, value);
-
-            } else if (colorOperationType == ColorOperationType.RGB) {
-                target = ImageConvertTools.changeRGB(source, value);
-
+            switch (colorOperationType) {
+                case Brightness:
+                    target = ImageAdjustColorTools.changeBrightness(source, value / 100.0f);
+                    break;
+                case Sauration:
+                    target = ImageAdjustColorTools.changeSaturate(source, value / 100.0f);
+                    break;
+                case Hue:
+                    target = ImageAdjustColorTools.changeHue(source, value / 360f);
+                    break;
+                case Opacity:
+                    int v = (int) ((colorValue * 255 / 100.0f));
+                    target = ImageAdjustColorTools.addAlpha(source, v);
+                    break;
+                case Red:
+                    target = ImageAdjustColorTools.changeRed(source, value);
+                    break;
+                case Green:
+                    target = ImageAdjustColorTools.changeGreen(source, value);
+                    break;
+                case Blue:
+                    target = ImageAdjustColorTools.changeBlue(source, value);
+                    break;
+                case Yellow:
+                    target = ImageAdjustColorTools.changeYellow(source, value);
+                    break;
+                case Cyan:
+                    target = ImageAdjustColorTools.changeCyan(source, value);
+                    break;
+                case Magenta:
+                    target = ImageAdjustColorTools.changeMagenta(source, value);
+                    break;
+                case RGB:
+                    target = ImageAdjustColorTools.changeRGB(source, value);
+                    break;
+                default:
+                    break;
             }
 
             return target;

@@ -13,10 +13,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ConvolutionKernel;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageEffectTools;
 
 /**
  * @Author Mara
@@ -114,7 +114,7 @@ public class ImageManufactureBatchConvolutionController extends ImageManufacture
             return null;
         }
         try {
-            BufferedImage target = ImageConvertTools.applyConvolutionKernel(source, currentKernel);
+            BufferedImage target = ImageEffectTools.applyConvolution(source, currentKernel);
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

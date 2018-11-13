@@ -11,6 +11,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
+import mara.mybox.objects.ImageScope;
 
 /**
  * @Author Mara
@@ -48,6 +49,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
         try {
             initCommon();
             initFileTab();
+            values.setScope(new ImageScope());
         } catch (Exception e) {
             logger.error(e.toString());
         }

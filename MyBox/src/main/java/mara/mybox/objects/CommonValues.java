@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.1";
-    public static final String AppVersionDate = "2018-11-09";
+    public static final String AppVersion = "4.2";
+    public static final String AppVersionDate = "2018-11-13";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String UserConfigFile = UserFilePath + File.separator + ".conf.properties";
@@ -70,7 +70,7 @@ public class CommonValues {
     public static final String ImageManufactureFiltersFxml = "/fxml/ImageManufactureFilters.fxml";
     public static final String ImageManufactureConvolutionFxml = "/fxml/ImageManufactureConvolution.fxml";
     public static final String ImageManufactureReplaceColorFxml = "/fxml/ImageManufactureReplaceColor.fxml";
-    public static final String ImageManufactureWatermarkFxml = "/fxml/ImageManufactureWatermark.fxml";
+    public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
     public static final String ImageManufactureCoverFxml = "/fxml/ImageManufactureCover.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
@@ -89,7 +89,7 @@ public class CommonValues {
     public static final String ImageManufactureBatchFiltersFxml = "/fxml/ImageManufactureBatchFilters.fxml";
     public static final String ImageManufactureBatchConvolutionFxml = "/fxml/ImageManufactureBatchConvolution.fxml";
     public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
-    public static final String ImageManufactureBatchWatermarkFxml = "/fxml/ImageManufactureBatchWatermark.fxml";
+    public static final String ImageManufactureBatchTextFxml = "/fxml/ImageManufactureBatchText.fxml";
     public static final String ImageManufactureBatchArcFxml = "/fxml/ImageManufactureBatchArc.fxml";
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";

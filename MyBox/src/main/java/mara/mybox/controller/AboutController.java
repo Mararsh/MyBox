@@ -7,7 +7,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 
 /**
  * @Author Mara

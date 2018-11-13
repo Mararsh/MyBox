@@ -7,9 +7,9 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import static mara.mybox.fxml.FxmlColorTools.rgb2AlphaHex;
+import static mara.mybox.fxml.FxmlColorTools.rgb2Hex;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.tools.FxmlTools.rgb2AlphaHex;
-import static mara.mybox.tools.FxmlTools.rgb2Hex;
 
 /**
  * @Author Mara

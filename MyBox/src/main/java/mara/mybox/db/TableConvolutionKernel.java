@@ -34,6 +34,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 + "  height  INT  NOT NULL,  "
                 + "  type SMALLINT, "
                 + "  gray SMALLINT, "
+                + "  edge SMALLINT, "
                 + "  modify_time TIMESTAMP, "
                 + "  create_time TIMESTAMP, "
                 + "  description VARCHAR(1024)  "
@@ -56,6 +57,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 record.setHeight(h);
                 record.setType(kResult.getInt("type"));
                 record.setGray(kResult.getInt("gray"));
+                record.setEdge(kResult.getInt("edge"));
                 Date t = kResult.getTimestamp("create_time");
                 if (t != null) {
                     record.setCreateTime(DateTools.datetimeToString(t));
@@ -108,6 +110,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 record.setHeight(h);
                 record.setType(kResult.getInt("type"));
                 record.setGray(kResult.getInt("gray"));
+                record.setEdge(kResult.getInt("edge"));
                 Date t = kResult.getTimestamp("create_time");
                 if (t != null) {
                     record.setCreateTime(DateTools.datetimeToString(t));
@@ -168,14 +171,15 @@ public class TableConvolutionKernel extends DerbyBase {
                         + " , height=" + record.getHeight()
                         + " , type=" + record.getType()
                         + " , gray=" + record.getGray()
+                        + " , edge=" + record.getEdge()
                         + " , create_time='" + record.getCreateTime() + "'"
                         + " , modify_time='" + record.getModifyTime() + "'"
                         + " , description='" + record.getDescription() + "'"
                         + " WHERE name='" + record.getName() + "'";
             } else {
-                sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, create_time, modify_time, description) VALUES('"
+                sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, edge, create_time, modify_time, description) VALUES('"
                         + record.getName() + "', " + record.getWidth() + ", " + record.getHeight() + ", "
-                        + record.getType() + ", " + record.getGray() + ", '"
+                        + record.getType() + ", " + record.getGray() + ", " + record.getEdge() + ", '"
                         + record.getCreateTime() + "',  '" + record.getModifyTime() + "', '"
                         + record.getDescription() + "')";
             }
@@ -189,15 +193,19 @@ public class TableConvolutionKernel extends DerbyBase {
 
     public static boolean writeExamples() {
         ConvolutionKernel.makeExample();
+        return write(ConvolutionKernel.ExampleKernels);
+    }
+
+    public static boolean write(List<ConvolutionKernel> records) {
         try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
                 Statement statement = conn.createStatement()) {
             String sql;
-            for (ConvolutionKernel k : ConvolutionKernel.ExampleKernels) {
+            for (ConvolutionKernel k : records) {
                 sql = " SELECT width FROM Convolution_Kernel WHERE name='" + k.getName() + "'";
                 if (!statement.executeQuery(sql).next()) {
-                    sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, create_time, modify_time, description) VALUES('"
+                    sql = "INSERT INTO Convolution_Kernel(name, width , height, type, gray, edge, create_time, modify_time, description) VALUES('"
                             + k.getName() + "', " + k.getWidth() + ", " + k.getHeight() + ", "
-                            + k.getType() + ", " + k.getGray() + ", '"
+                            + k.getType() + ", " + k.getGray() + ", " + k.getEdge() + ", '"
                             + k.getCreateTime() + "',  '" + k.getModifyTime() + "', '"
                             + k.getDescription() + "')";
                     statement.executeUpdate(sql);

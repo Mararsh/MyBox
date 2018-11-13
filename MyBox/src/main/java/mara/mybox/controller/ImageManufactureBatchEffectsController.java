@@ -19,8 +19,10 @@ import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.controller.ImageManufactureEffectsController.EffectsOperationType;
 import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageEffectTools;
+import mara.mybox.objects.ConvolutionKernel;
 
 /**
  * @Author Mara
@@ -30,7 +32,8 @@ import static mara.mybox.tools.FxmlTools.badStyle;
  */
 public class ImageManufactureBatchEffectsController extends ImageManufactureBatchController {
 
-    protected int threadholding, threadholdingMin, threadholdingMax, effectType, intValue, direction;
+    private EffectsOperationType effectType;
+    protected int threadholding, threadholdingMin, threadholdingMax, intValue, direction;
 
     @FXML
     protected ToggleGroup effectsGroup;
@@ -85,12 +88,20 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     int defaultValue = 0;
-                    if (effectType == EffectsOperationType.Blur) {
-                        defaultValue = 1;
-                    } else if (effectType == EffectsOperationType.Posterizing) {
-                        defaultValue = 32;
-                    } else if (effectType == EffectsOperationType.Emboss) {
-                        defaultValue = 3;
+                    if (null != effectType) {
+                        switch (effectType) {
+                            case Blur:
+                                defaultValue = 1;
+                                break;
+                            case Posterizing:
+                                defaultValue = 32;
+                                break;
+                            case Emboss:
+                                defaultValue = 3;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                     try {
                         String v = newValue;
@@ -238,6 +249,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getSelectionModel().select("10");
         } else if (getMessage("Sharpen").equals(selected.getText())) {
             effectType = EffectsOperationType.Sharpen;
+        } else if (getMessage("Clarity").equals(selected.getText())) {
+            effectType = EffectsOperationType.Clarity;
         } else if (getMessage("EdgeDetection").equals(selected.getText())) {
             effectType = EffectsOperationType.EdgeDetect;
         } else if (getMessage("Emboss").equals(selected.getText())) {
@@ -278,24 +291,32 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
-            if (effectType == EffectsOperationType.Blur) {
-                target = ImageConvertTools.blurImage(source, intValue);
-
-            } else if (effectType == EffectsOperationType.Sharpen) {
-                target = ImageConvertTools.sharpenImage(source);
-
-            } else if (effectType == EffectsOperationType.EdgeDetect) {
-                target = ImageConvertTools.edgeDetect(ImageConvertTools.clearAlpha(source));
-
-            } else if (effectType == EffectsOperationType.Thresholding) {
-                target = ImageConvertTools.thresholding(ImageConvertTools.removeAlpha(source), threadholding, threadholdingMin, threadholdingMax);
-
-            } else if (effectType == EffectsOperationType.Posterizing) {
-                target = ImageConvertTools.posterizing(ImageConvertTools.removeAlpha(source), intValue);
-
-            } else if (effectType == EffectsOperationType.Emboss) {
-                target = ImageConvertTools.embossImage(ImageConvertTools.removeAlpha(source), direction, intValue, grayCheck.isSelected());
-
+            if (null != effectType) {
+                switch (effectType) {
+                    case Blur:
+                        target = ImageEffectTools.applyConvolution(source, ConvolutionKernel.makeGaussKernel(intValue));
+                        break;
+                    case Sharpen:
+                        target = ImageEffectTools.applyConvolution(source, ConvolutionKernel.makeSharpen3b());
+                        break;
+                    case Clarity:
+                        target = ImageEffectTools.applyConvolution(source, ConvolutionKernel.makeUnsharpMasking5());
+                        break;
+                    case EdgeDetect:
+                        target = ImageEffectTools.applyConvolution(source, ConvolutionKernel.makeEdgeDetection3b());
+                        break;
+                    case Emboss:
+                        target = ImageEffectTools.applyConvolution(source, ConvolutionKernel.makeEmbossKernel(direction, intValue, grayCheck.isSelected()));
+                        break;
+                    case Thresholding:
+                        target = ImageEffectTools.thresholding(ImageConvertTools.removeAlpha(source), threadholding, threadholdingMin, threadholdingMax);
+                        break;
+                    case Posterizing:
+                        target = ImageEffectTools.posterizing(ImageConvertTools.removeAlpha(source), intValue);
+                        break;
+                    default:
+                        break;
+                }
             }
             return target;
         } catch (Exception e) {

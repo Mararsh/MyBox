@@ -11,9 +11,11 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.FileInformation;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -30,7 +32,9 @@ public class DirectoriessRenameController extends FilesRenameController {
     protected Map<String, Map<String, String>> newNames;
 
     @FXML
-    private CheckBox subCheck;
+    private CheckBox subCheck, nameCheck;
+    @FXML
+    private TextField nameInput;
 
     @Override
     protected void initializeNext() {
@@ -94,16 +98,29 @@ public class DirectoriessRenameController extends FilesRenameController {
             }
             digitInput.setText(digit + "");
 
+            String[] names = nameInput.getText().trim().split("\\s+");
             for (File file : files) {
                 if (file.isFile()) {
+                    dirFiles++;
+                    currentTotalHandled++;
                     String originalName = file.getAbsolutePath();
+                    if (nameCheck.isSelected() && names.length > 0) {
+                        boolean isValid = false;
+                        for (String name : names) {
+                            if (FileTools.getFileName(originalName).contains(name)) {
+                                isValid = true;
+                                break;
+                            }
+                        }
+                        if (!isValid) {
+                            continue;
+                        }
+                    }
                     String newName = renameFile(file);
                     if (newName != null) {
                         dirRenamed++;
                         currentNewNames.put(newName, originalName);
                     }
-                    dirFiles++;
-                    currentTotalHandled++;
                 } else if (subCheck.isSelected()) {
                     renameDirectory(file);
                 }

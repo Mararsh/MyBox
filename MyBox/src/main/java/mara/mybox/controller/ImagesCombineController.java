@@ -50,8 +50,8 @@ import mara.mybox.objects.ImageCombine.ArrayType;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
-import mara.mybox.image.FxmlImageTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
 
 /**
  * @Author Mara

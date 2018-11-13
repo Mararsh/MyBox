@@ -16,7 +16,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.tools.ValueTools;
 
 /**

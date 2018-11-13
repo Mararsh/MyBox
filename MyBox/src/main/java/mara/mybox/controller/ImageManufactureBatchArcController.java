@@ -18,9 +18,9 @@ import javafx.scene.text.Font;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara

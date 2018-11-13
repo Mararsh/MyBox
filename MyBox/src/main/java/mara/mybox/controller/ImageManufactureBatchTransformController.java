@@ -13,9 +13,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageTransformTools;
 
 /**
  * @Author Mara
@@ -167,16 +167,16 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = ImageConvertTools.shearImage(source, shearX, 0);
+                target = ImageTransformTools.shearImage(source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = ImageConvertTools.verticalMirrorImage(source);
+                target = ImageTransformTools.verticalMirrorImage(source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = ImageConvertTools.horizontalMirrorImage(source);
+                target = ImageTransformTools.horizontalMirrorImage(source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = ImageConvertTools.rotateImage(source, rotateAngle);
+                target = ImageTransformTools.rotateImage(source, rotateAngle);
             }
 
             return target;

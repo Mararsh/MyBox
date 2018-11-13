@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.util.Optional;
 import javafx.event.ActionEvent;
@@ -19,7 +18,8 @@ import mara.mybox.objects.CommonValues;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.db.DerbyBase;
 import static mara.mybox.objects.AppVaribles.getConfigValue;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.objects.CommonValues.UserFilePath;
 
 /**
  * @Author Mara
@@ -47,17 +47,22 @@ public class MainMenuController extends BaseController {
             settingsMenu.setOnShowing(new EventHandler<Event>() {
                 @Override
                 public void handle(Event e) {
-                    checkLanguage();
-                    checkAlpha();
-                    checkPdfMem();
-                    stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
-                    showCommentsCheck.setSelected(AppVaribles.isShowComments());
+                    checkSettings();
                 }
             });
+            checkSettings();
 
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+    }
+
+    private void checkSettings() {
+        checkLanguage();
+        checkAlpha();
+        checkPdfMem();
+        stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+        showCommentsCheck.setSelected(AppVaribles.isShowComments());
     }
 
     protected void checkLanguage() {
@@ -386,10 +391,10 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureWatermark(ActionEvent event) {
+    private void openImageManufactureText(ActionEvent event) {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("watermark");
+        controller.setInitTab("text");
     }
 
     @FXML
@@ -468,8 +473,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureBatchWatermark(ActionEvent event) {
-        reloadStage(CommonValues.ImageManufactureBatchWatermarkFxml, AppVaribles.getMessage("ImageManufactureBatchWatermark"));
+    private void openImageManufactureBatchText(ActionEvent event) {
+        reloadStage(CommonValues.ImageManufactureBatchTextFxml, AppVaribles.getMessage("ImageManufactureBatchText"));
     }
 
     @FXML
@@ -579,31 +584,31 @@ public class MainMenuController extends BaseController {
     private void showHelp(ActionEvent event) {
         try {
             String lang = AppVaribles.getLanguage();
+            Boolean updated = AppVaribles.getConfigBoolean("UpdatedHelps4.2", false);
+            if (!updated) {
+                logger.debug("Updating Helps 4.2");
+                File file = new File(UserFilePath);
+                if (file.exists()) {
+                    File[] files = file.listFiles();
+                    for (File f : files) {
+                        if (f.getAbsolutePath().endsWith(".html")) {
+                            f.delete();
+                        }
+                    }
+                }
+                AppVaribles.setConfigValue("UpdatedHelps4.2", true);
+            }
             File mybox_help = FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", true);
+                    "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
             FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", true);
+                    "/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", !updated);
             FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/ImageCompressionType_" + lang + ".html", "ImageCompressionType_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/AboutImageBlending_" + lang + ".html", "AboutImageBlending_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/AboutColorDistance_" + lang + ".html", "AboutColorDistance_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/AboutImageGrayscale_" + lang + ".html", "AboutImageGrayscale_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/HowPackExe_" + lang + ".html", "HowPackExe_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/ImageMetaData_" + lang + ".html", "ImageMetaData_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/ImageSepia_" + lang + ".html", "ImageSepia_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/Java2D_" + lang + ".html", "Java2D_" + lang + ".html", true);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/Convolution_" + lang + ".html", "Convolution_" + lang + ".html", true);
-            Desktop.getDesktop().browse(mybox_help.toURI());
+                    "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", !updated);
+            HtmlEditorController controller
+                    = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml, false);
+            controller.switchBroswerTab();
+            controller.loadHtml(mybox_help);
+//            Desktop.getDesktop().browse(mybox_help.toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }

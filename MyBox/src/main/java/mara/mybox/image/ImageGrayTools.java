@@ -172,7 +172,6 @@ public class ImageGrayTools {
 
     public static BufferedImage color2BinaryWithThreshold(BufferedImage image, int threshold) {
         try {
-            logger.error("color2BinaryWithThreshold:" + threshold);
             int width = image.getWidth();
             int height = image.getHeight();
             BufferedImage binaryImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);

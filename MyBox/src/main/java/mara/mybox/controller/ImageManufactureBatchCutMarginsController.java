@@ -15,12 +15,12 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.image.FxmlImageTools;
-import mara.mybox.tools.FxmlTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageMarginsTools;
 
 /**
  * @Author Mara
@@ -195,12 +195,12 @@ public class ImageManufactureBatchCutMarginsController extends ImageManufactureB
             }
             BufferedImage target;
             if (cutMarginsByWidth) {
-                target = ImageConvertTools.cutMargins(source,
+                target = ImageMarginsTools.cutMargins(source,
                         cutMarginWidth,
                         cutMarginsTopCheck.isSelected(), cutMarginsBottomCheck.isSelected(),
                         cutMarginsLeftCheck.isSelected(), cutMarginsRightCheck.isSelected());
             } else {
-                target = ImageConvertTools.cutMargins(source,
+                target = ImageMarginsTools.cutMargins(source,
                         FxmlImageTools.colorConvert(cutMarginsColorPicker.getValue()),
                         cutMarginsTopCheck.isSelected(), cutMarginsBottomCheck.isSelected(),
                         cutMarginsLeftCheck.isSelected(), cutMarginsRightCheck.isSelected());

@@ -56,12 +56,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Insets bottom="20.0" />
             </VBox.margin>
         </Label>
-        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-            <children>
-                <Label text="%CurrentScope" />
-                <TextField fx:id="currentInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="darkRed-emphase" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-            </children>
-        </HBox>
         <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="170.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
             <tabs>
                 <Tab fx:id="areaTab" text="%AreaScope">
@@ -132,11 +126,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToggleGroup fx:id="colorGroup" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton fx:id="selectedColorsRadio" mnemonicParsing="false" text="%SelectedColors" toggleGroup="$colorGroup">
-                                            <padding>
-                                                <Insets right="20.0" />
-                                            </padding>
-                                        </RadioButton>
+                                        <RadioButton fx:id="matchColorRadio" mnemonicParsing="false" text="%MatchingColor" toggleGroup="$colorGroup" />
+                                        <RadioButton fx:id="matchHueRadio" mnemonicParsing="false" text="%MatchingHue" toggleGroup="$colorGroup" />
+                              <Label fx:id="colorTipsLabel" text="%Tips">
+                                 <padding>
+                                    <Insets left="30.0" />
+                                 </padding>
+                              </Label>
                                     </items>
                                 </ToolBar>
                                 <ToolBar fx:id="colorBar1" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
@@ -147,7 +143,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <Button mnemonicParsing="false" onAction="#setBlack" text="%Black" />
                                         <Button mnemonicParsing="false" onAction="#setWhite" text="%White" />
                                         <Button mnemonicParsing="false" onAction="#clearColors" text="%Clear" />
-                                        <Label text="%ColorLabel"  styleClass="blue-label" stylesheets="@../styles/MyBox.css">
+                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ColorLabel">
                                             <padding>
                                                 <Insets left="20.0" />
                                             </padding>
@@ -156,14 +152,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </ToolBar>
                                 <ToolBar fx:id="colorBar2" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <RadioButton fx:id="colorDistanceRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ColorDistance">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="distanceGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <TextField fx:id="colorDistanceInput" prefWidth="45.0" />
-                                        <RadioButton fx:id="hueDistanceRadio" mnemonicParsing="false" text="%HueDistance" toggleGroup="$distanceGroup" />
-                                        <TextField fx:id="hueDistanceInput" disable="true" prefWidth="45.0" />
+                                        <Label text="%Distance" />
+                                        <TextField fx:id="colorDistanceInput" prefHeight="30.0" prefWidth="66.0" />
                                         <Label prefWidth="20.0" text=" " />
                                         <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%Excluded" />
                                     </items>
@@ -185,27 +175,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </ToolBar>
                 <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                     <items>
-                        <Button mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                        <Button mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                        <Button mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                        <Button mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                  <Label fx:id="scopeTipsLabel" text="%Tips" />
+                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                        <Button fx:id="paneButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                        <Button fx:id="imageButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                         <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" text="%OK" />
                     </items>
                 </ToolBar>
             </children>
         </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f4f4f4;" VBox.vgrow="NEVER">
+            <children>
+                <Label text="%CurrentScope" />
+                <TextField fx:id="currentInput" editable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
         <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
-                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                    <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="589.0" text="%OriginalImage" VBox.vgrow="NEVER" />
-                        <ScrollPane fx:id="imagePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                            <content>
-                                <ImageView fx:id="imageView" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickRef" pickOnBounds="true" preserveRatio="true" />
-                            </content>
-                        </ScrollPane>
-                    </children>
-                </VBox>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="%Scope" textAlignment="CENTER" VBox.vgrow="NEVER" />
@@ -216,6 +203,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <Cursor fx:constant="OPEN_HAND" />
                                     </cursor>
                                 </ImageView>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="589.0" text="%OriginalImage" VBox.vgrow="NEVER" />
+                        <ScrollPane fx:id="imagePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ImageView fx:id="imageView" fitHeight="1.0" fitWidth="1.0" onMouseClicked="#clickRef" pickOnBounds="true" preserveRatio="true" />
                             </content>
                         </ScrollPane>
                     </children>

@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>MyBox帮助</title>
         <style type="text/css">
             body {font-size:14px;
                   /*
@@ -32,22 +33,178 @@
     </head>
     <body class="article" >
 
-        </br></br>
-        <h2 align="center">MyBox</h2>
-        </br>
+        <div id="about">
+            <br><br>
+            <h2 align="center">MyBox</h2>
+            <br>
+            <P class="p1">关于MyBox</P>
+            <P class="paragraph">这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。</P>
+            <P class="paragraph">项目主页: </P>
+            <p class="link"><a href="https://github.com/Mararsh/MyBox" target=_blank>https://github.com/Mararsh/MyBox</a></p>
+            <P class="paragraph">MyBox使用NetBeans开发：</P>
+            <p class="link"><a href="https://netbeans.org/" target=_blank>https://netbeans.org/</a></p>
+            <P class="paragraph">基于以下开源软件/开源库：</P>
+            <p class="link">JavaFx  <a href="https://docs.oracle.com/javafx/2/" target=_blank>https://docs.oracle.com/javafx/2/</a></p>
+            <p class="link">PDFBox  <a href="https://pdfbox.apache.org/" target=_blank>https://pdfbox.apache.org/</a></p>
+            <p class="link">jai-imageio  <a href="https://github.com/jai-imageio/jai-imageio-core" target=_blank>https://github.com/jai-imageio/jai-imageio-core</a></p>
+            <p class="link">javazoom  <a href="http://www.javazoom.net/index.shtml" target=_blank>http://www.javazoom.net/index.shtml</a></p>
+            <p class="link">log4j  <a href="https://logging.apache.org/log4j/2.x/" target=_blank>https://logging.apache.org/log4j/2.x/</a></p>
+            <p class="link">Derby  <a href="http://db.apache.org/derby/" target=_blank>http://db.apache.org/derby/</a></p>
+        </div>
 
-        <P class="paragraph">这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。</P>
-        <P class="paragraph">项目主页: </P>
-        <p class="link"><a href="https://github.com/Mararsh/MyBox" target==_blank>https://github.com/Mararsh/MyBox</a></p>
-        <P class="paragraph">MyBox使用NetBeans开发：</P>
-        <p class="link"><a href="https://netbeans.org/" target==_blank>https://netbeans.org/</a></p>
-        <P class="paragraph">基于以下开源软件/开源库：</P>
-        <p class="link">JavaFx  <a href="https://docs.oracle.com/javafx/2/" target==_blank>https://docs.oracle.com/javafx/2/</a></p>
-        <p class="link">PDFBox  <a href="https://pdfbox.apache.org/" target==_blank>https://pdfbox.apache.org/</a></p>
-        <p class="link">jai-imageio  <a href="https://github.com/jai-imageio/jai-imageio-core" target==_blank>https://github.com/jai-imageio/jai-imageio-core</a></p>
-        <p class="link">javazoom  <a href="http://www.javazoom.net/index.shtml" target==_blank>http://www.javazoom.net/index.shtml</a></p>
-        <p class="link">log4j  <a href="https://logging.apache.org/log4j/2.x/" target==_blank>https://logging.apache.org/log4j/2.x/</a></p>
-        <p class="link">Derby  <a href="http://db.apache.org/derby/" target==_blank>http://db.apache.org/derby/</a></p>
+        <br><br>
+        <div id="MetaData">
+            <P class="p1">图像的元数据</P>
+            <p class="link"><a href="https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html" target=_blank>
+                    https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html</a></p>
+            <p class="link"><a href="https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/gif_metadata.html" target=_blank>
+                    https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/gif_metadata.html</a></p>
+            <p class="link"><a href="https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html" target=_blank>
+                    https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html</a></p>
+            <p class="link"><a href="https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html" target=_blank>
+                    https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html</a></p>
+            <p class="link"><a href="https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html" target=_blank>
+                    https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html</a></p>
+        </div>
 
+        <br><br>
+        <div id="Compression">
+            <P class="p1">图像的压缩类型</P>
+            <div align="center" >
+                <table border=1 width="600">
+                    <caption><b>图像格式"bmp"支持的压缩类型</b><BR>
+                        基于类接口"com.github.jaiimageio.plugins.bmp.BMPImageWriteParam"整理<BR>
+                    </caption>
+                    <tr><th>压缩类型</th> <th>描述</th>  <th>图像类型</th></tr>
+                    <tr><td>BI_RGB</td>  <td>Uncompressed RLE</td> <td><= 8-bits/sample</td></tr>
+                    <tr><td>BI_RLE8</td> <td>8-bit Run Length Encoding</td> <td><= 8-bits/sample</td></tr>
+                    <tr><td>BI_RLE4</td> <td>4-bit Run Length Encoding</td> <td><= 4-bits/sample</td></tr>
+                    <tr><td>BI_BITFIELDS</td> <td>Packed data</td> <td> 16 or 32 bits/sample</td></tr>
+                    <tr><td>BI_JPEG</td> <td>JPEG encoded</td> <td>grayscale or RGB image</td></tr>
+                </table>
+            </div>
+            <BR><BR>
+            <div  align="center">
+                <table border=1 width="90%">
+                    <caption><b>图像格式"tif"/"tiff"支持的压缩类型</b><BR>
+                        基于类接口"com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam"整理<BR>
+                    </caption>
+                    <tr><th>压缩类型</th> <th>描述</th> <th>参考</th></tr>
+                    <tr>
+                        <td>CCITT RLE</td>
+                        <td>Modified Huffman compression</td>
+                        <td>TIFF 6.0 Specification, Section 10</td>
+                    </tr>
+                    <tr>
+                        <td>CCITT T.4</td>
+                        <td>CCITT T.4 bilevel encoding/Group 3 facsimile compression</td>
+                        <td>TIFF 6.0 Specification, Section 11</td>
+                    </tr>
+                    <tr>
+                        <td>CCITT T.6</td>
+                        <td>CCITT T.6 bilevel encoding/Group 4 facsimile compression</td>
+                        <td>TIFF 6.0 Specification, Section 11</td></tr>
+                    <tr>
+                        <td>LZW</td>
+                        <td>LZW compression</td>
+                        <td>TIFF 6.0 Specification, Section 13</td></tr>
+                    <tr>
+                        <td>JPEG</td>
+                        <td>"New" JPEG-in-TIFF compression</td>
+                        <td><a href="ftp://ftp.sgi.com/graphics/tiff/TTN2.draft.txt">TIFF
+                                Technical Note #2</a></td>
+                    </tr>
+                    <tr>
+                        <td>ZLib</td>
+                        <td>"Deflate/Inflate" compression</td>
+                        <td><a href="http://partners.adobe.com/asn/developer/pdfs/tn/TIFFphotoshop.pdf">
+                                Adobe Photoshop&#174; TIFF Technical Notes</a> (PDF)</td>
+                    </tr>
+                    <tr>
+                        <td>PackBits</td>
+                        <td>Byte-oriented, run length compression</td>
+                        <td>TIFF 6.0 Specification, Section 9</td>
+                    </tr>
+                    <tr>
+                        <td>Deflate</td>
+                        <td>"Zip-in-TIFF" compression</td>
+                        <td><a href="http://www.isi.edu/in-notes/rfc1950.txt">
+                                ZLIB Compressed Data Format Specification</a>,
+                            <a href="http://www.isi.edu/in-notes/rfc1951.txt">
+                                DEFLATE Compressed Data Format Specification</a></td>
+                    </tr>
+                    <tr>
+                        <td>EXIF JPEG</td>
+                        <td>EXIF-specific JPEG compression</td>
+                        <td><a href="http://www.exif.org/Exif2-2.PDF">EXIF 2.2 Specification</a>
+                            (PDF), section 4.5.5, "Basic Structure of Thumbnail Data"</td>
+                </table>
+            </div>
+        </div>
 
+        <br><br>
+        <div id="Grayscale">
+            <P class="p1">关于图像的灰度</P>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/HSL_and_HSV" target=_blank>https://en.wikipedia.org/wiki/HSL_and_HSV</a></p>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Grayscale" target=_blank>https://en.wikipedia.org/wiki/Grayscale</a></p>
+        </div>
+
+        <br><br>
+        <div id="ColorDistance">
+            <P class="p1">关于颜色距离</P>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Color_difference" target=_blank>https://en.wikipedia.org/wiki/Color_difference</a></p>
+        </div>
+
+        <br><br>
+        <div id="Sepia">
+            <P class="p1">如何把图像转变成褐色</P>
+            <p class="link"><a href="https://stackoverflow.com/questions/21899824/java-convert-a-greyscale-and-sepia-version-of-an-image-with-bufferedimage/21900125#21900125" target=_blank>
+                    https://stackoverflow.com/questions/21899824/java-convert-a-greyscale-and-sepia-version-of-an-image-with-bufferedimage/21900125#21900125</a></p>
+        </div>
+
+        <br><br>
+        <div id="Blending">
+            <P class="p1">关于图像的混合模式</P>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Blend_modes" target=_blank>https://en.wikipedia.org/wiki/Blend_modes</a></p>
+            <p class="link"><a href="https://baike.baidu.com/item/%E6%B7%B7%E5%90%88%E6%A8%A1%E5%BC%8F/6700481?fr=aladdin" target=_blank>https://baike.baidu.com/item/混合模式/6700481?fr=aladdin</a></p>
+            <p class="link"><a href="https://blog.csdn.net/bravebean/article/details/51392440" target=_blank>https://blog.csdn.net/bravebean/article/details/51392440</a></p>
+            <p class="link"><a href="https://www.cnblogs.com/bigdream6/p/8385886.html" target=_blank>https://www.cnblogs.com/bigdream6/p/8385886.html</a></p>
+        </div>
+
+        <br><br>
+        <div id="Java2D">
+            <P class="p1">如何运用Java 2D</P>
+            <p class="link"><a href="https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html" target=_blank>
+                    https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html</a></p>
+        </div>
+
+        <br><br>
+        <div id="Convolution">
+            <P class="p1">关于卷积</P>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Convolution" target=_blank>
+                    https://en.wikipedia.org/wiki/Convolution</a></p>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing)" target=_blank>
+                    https://en.wikipedia.org/wiki/Kernel_(image_processing)</a></p>
+            <p class="link"><a href="http://colah.github.io/posts/2014-07-Understanding-Convolutions/" target=_blank>
+                    http://colah.github.io/posts/2014-07-Understanding-Convolutions/</a></p>
+        </div>
+
+        <br><br>
+        <div id="FloodFill">
+            <P class="p1">关于漫灌算法（魔术棒抠图）</P>
+            <p class="link"><a href="https://en.wikipedia.org/wiki/Flood_fill" target=_blank>https://en.wikipedia.org/wiki/Flood_fill</a></p>
+        </div>
+
+        <br><br>
+        <div id="PackExe">
+            <P class="p1">如何打包成exe程序</P>
+            <P class="paragraph">把编译后的jar文件复制到一个临时目录下，如“D:\tmp\src”，然后执行以下命令：（命令“javapackager”在JDK的bin目录下）</P>
+            <P class="command">
+                javapackager -deploy -native image -appclass mara.mybox.MainApp -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox
+            </P>
+            <P class="paragraph">可运行的exe文件就生成在目录“D:\tmp\out”下了。</P>
+            <P class="paragraph">如果此命令提示缺少辅助工具，则按提示下载。</P>
+        </div>
+
+    </body>
 </html>

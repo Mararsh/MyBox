@@ -13,11 +13,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.controller.ImageManufactureFiltersController.FiltersOperationType;
-import mara.mybox.image.ImageConvertTools;
+import mara.mybox.fxml.FxmlFilterTools.FiltersOperationType;
 import mara.mybox.image.ImageGrayTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageFilterTools;
 
 /**
  * @Author Mara
@@ -176,6 +176,9 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
+        if (null == filtersOperationType) {
+            return source;
+        }
         try {
             BufferedImage target = null;
             if (null != filtersOperationType) {
@@ -184,7 +187,7 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
                         target = ImageGrayTools.color2Gray(source);
                         break;
                     case Invert:
-                        target = ImageConvertTools.makeInvert(source);
+                        target = ImageFilterTools.makeInvert(source);
                         break;
                     case BlackOrWhite:
                         if (intValue < 0) {
@@ -194,34 +197,34 @@ public class ImageManufactureBatchFiltersController extends ImageManufactureBatc
                         }
                         break;
                     case Red:
-                        target = ImageConvertTools.keepRed(source);
+                        target = ImageFilterTools.keepRed(source);
                         break;
                     case Green:
-                        target = ImageConvertTools.keepGreen(source);
+                        target = ImageFilterTools.keepGreen(source);
                         break;
                     case Blue:
-                        target = ImageConvertTools.keepBlue(source);
+                        target = ImageFilterTools.keepBlue(source);
                         break;
                     case Yellow:
-                        target = ImageConvertTools.keepYellow(source);
+                        target = ImageFilterTools.keepYellow(source);
                         break;
                     case Cyan:
-                        target = ImageConvertTools.keepCyan(source);
+                        target = ImageFilterTools.keepCyan(source);
                         break;
                     case Magenta:
-                        target = ImageConvertTools.keepMagenta(source);
+                        target = ImageFilterTools.keepMagenta(source);
                         break;
                     case RedInvert:
-                        target = ImageConvertTools.makeRedInvert(source);
+                        target = ImageFilterTools.makeRedInvert(source);
                         break;
                     case GreenInvert:
-                        target = ImageConvertTools.makeGreenInvert(source);
+                        target = ImageFilterTools.makeGreenInvert(source);
                         break;
                     case BlueInvert:
-                        target = ImageConvertTools.makeBlueInvert(source);
+                        target = ImageFilterTools.makeBlueInvert(source);
                         break;
                     case Sepia:
-                        target = ImageConvertTools.sepiaImage(source, intValue);
+                        target = ImageFilterTools.sepiaImage(source, intValue);
                         break;
                     default:
                         break;

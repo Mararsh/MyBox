@@ -329,13 +329,13 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageWatermarkMenu = new MenuItem(AppVaribles.getMessage("Watermark"));
-        imageWatermarkMenu.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem imageTextMenu = new MenuItem(AppVaribles.getMessage("Text"));
+        imageTextMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 ImageManufactureFileController controller
                         = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-                controller.setInitTab("watermark");
+                controller.setInitTab("text");
             }
         });
 
@@ -391,7 +391,7 @@ public class MyBoxController extends BaseController {
 
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
         manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu, imageFiltersMenu,
-                imageConvolutionMenu, imageReplaceColorMenu, imageWatermarkMenu, imageCoverMenu, imageArcMenu, imageShadowMenu,
+                imageConvolutionMenu, imageReplaceColorMenu, imageTextMenu, imageCoverMenu, imageArcMenu, imageShadowMenu,
                 imageTransformMenu, imageMarginsMenu);
         return manufactureSubMenu;
 
@@ -455,11 +455,11 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageWatermarkMenu = new MenuItem(AppVaribles.getMessage("Watermark"));
-        imageWatermarkMenu.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem imageTextMenu = new MenuItem(AppVaribles.getMessage("Text"));
+        imageTextMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageManufactureBatchWatermarkFxml, AppVaribles.getMessage("ImageManufactureBatchWatermark"));
+                reloadStage(CommonValues.ImageManufactureBatchTextFxml, AppVaribles.getMessage("ImageManufactureBatchText"));
             }
         });
 
@@ -505,7 +505,7 @@ public class MyBoxController extends BaseController {
 
         Menu manufactureBatchMenu = new Menu(AppVaribles.getMessage("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu, imageFiltersMenu,
-                imageConvolutionMenu, imageReplaceColorMenu, imageWatermarkMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
+                imageConvolutionMenu, imageReplaceColorMenu, imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
         return manufactureBatchMenu;
 

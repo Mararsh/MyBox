@@ -33,7 +33,7 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.tools.ValueTools;
 
 /**

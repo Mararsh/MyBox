@@ -46,7 +46,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureConvolution" text="%Convolution" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureReplaceColor" text="%ReplaceColor" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureWatermark" text="%Watermark" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureText" text="%Text" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCover" text="%Cover" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureShadow" text="%Shadow" />
@@ -63,7 +63,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchConvolution" text="%Convolution" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchWatermark" text="%Watermark" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />

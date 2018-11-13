@@ -17,7 +17,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**

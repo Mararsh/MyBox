@@ -47,6 +47,7 @@ public class MainApp extends Application {
             }
             DerbyBase.initTables();
             AppVaribles.initAppVaribles();
+            DerbyBase.checkUpdates();
 
 //            logger.debug(Screen.getPrimary().getDpi());
             FXMLLoader fxmlLoader;

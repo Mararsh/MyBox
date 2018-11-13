@@ -10,7 +10,7 @@ import mara.mybox.objects.AlarmClock;
 import static mara.mybox.objects.AlarmClock.getTypeString;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.tools.SoundTools;
 
 /**

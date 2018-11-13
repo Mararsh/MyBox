@@ -15,7 +15,7 @@ import javafx.scene.control.CheckBox;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.tools.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.cos.COSName;

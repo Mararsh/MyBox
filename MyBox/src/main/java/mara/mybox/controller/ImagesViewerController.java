@@ -27,7 +27,7 @@ import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FxmlTools;
+import mara.mybox.fxml.FxmlTools;
 
 /**
  * @Author Mara

@@ -7,14 +7,14 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.1-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-4.1-exe.zip) 。
+[MyBox-4.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.1-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-4.1-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.1.jar</CODE></PRE>
+[MyBox-4.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.2.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,9 +28,9 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-Overview-zh.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.1/MyBox-UserGuide-4.1-ImageTools-zh.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-zh.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
 
@@ -40,7 +40,7 @@
 
 
 ## 当前版本
-当前是版本4.1，已实现的特点：
+当前是版本4.2，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -55,10 +55,11 @@
 	I. 可设置PDF处理的主内存使用量。
 2. 图像工具：
 	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿/黄/青/紫通道。
-	B. 滤镜：灰色、褐色、反色、红/蓝/绿反色、黑白色、红/蓝/绿/黄/青/紫通道。
-	C. 效果：模糊、锐化、浮雕、边沿检测、海报（减色）、阈值化。
+	B. 滤镜：灰色、黑白色、褐色、红/蓝/绿/黄/青/紫通道、反色、红/蓝/绿反色。
+	C. 效果：模糊、锐化、清晰、浮雕、边沿检测、海报（减色）、阈值化。
 	D. 剪裁、换色、水印、覆盖、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边、卷积。
-	E. 定义“范围”：区域（矩形或圆形）和颜色匹配。用于局部处理图像。
+	E. 范围：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。
+	   范围可作用于：颜色增减、滤镜、效果、换色、卷积。可简单通过左右键点击来确定范围。
 	F. 图像处理上一步的“撤销”和“重做”。也可随时恢复原图。另外可保存修改历史，以退回到前面的修改；可以设置历史个数。
 	G. 确保大图片处理的正确性和性能。
 	H. 同目录下图像的导览
@@ -73,6 +74,7 @@
 	Q. 调色盘
 	R. 像素计算器
 	S. 卷积核管理器
+	T. 快捷键
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
@@ -94,7 +96,7 @@
 		g. 实时显示处理进度。
 		h. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
 		i. 可以设置错误时重试次数。
-5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。
+5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。尚不能处理动态gif。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 7. 设置：切换中英文、是否显示注释、PDF处理的最大主内存、如何处理透明通道、退出程序时是否关闭闹钟、清除个人设置。
 8. 多种界面皮肤。
@@ -102,6 +104,14 @@
 
 ## 开发日志
 ```
+2018-11-13 版本4.2 图像处理的“范围”：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。
+“抠图”如PhotoShop的魔术棒或者windows画图的油漆桶。
+“范围”可应用于：色彩增减、滤镜、效果、卷积、换色。可简单通过左右键点击来确定范围。
+卷积管理器：可自动填写高斯分布值；添加处理边缘像素的选项。
+目录重命名：可设置关键字列表来过滤要处理的文件。
+调整和优化图像处理的代码。
+更多的快捷键。
+
 2018-11-08 版本4.1 图像的“覆盖”处理。可在图像上覆盖：矩形马赛克、圆形马赛克、矩形磨砂玻璃、圆形磨砂玻璃、或者图片。
 可设置马赛克或磨砂玻璃的范围和粒度；可选内部图片或用户自己的图片；可设置图片的大小和透明度。
 图像的“卷积”处理。可选择卷积核来加工图像。可批量处理。
