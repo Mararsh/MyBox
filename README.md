@@ -266,7 +266,7 @@ MyBox使用NetBeans开发：
 	
 [Derby   http://db.apache.org/derby/](http://db.apache.org/derby/)
 
-[GifDecoder   https://github.com/DhyanB/Open-Imaging)
+[GifDecoder   https://github.com/DhyanB/Open-Imaging/](https://github.com/DhyanB/Open-Imaging/)
 
 
 ## 主界面
