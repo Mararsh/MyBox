@@ -46,7 +46,7 @@ public class TableImageHistory extends DerbyBase {
         if (image == null || image.trim().isEmpty()) {
             return records;
         }
-        int max = AppVaribles.getConfigInt("MaxImageHistories", Default_Max_Histories);
+        int max = AppVaribles.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
         try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_history WHERE image_location='" + image + "' ORDER BY operation_time DESC";

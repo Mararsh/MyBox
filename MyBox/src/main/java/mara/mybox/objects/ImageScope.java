@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import static mara.mybox.fxml.FxmlImageTools.isColorMatch;
-import static mara.mybox.fxml.FxmlImageTools.isHueMatch;
+import mara.mybox.fxml.FxmlColorTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,68 +21,62 @@ public class ImageScope {
 
     private OperationType operationType;
     private ScopeType scopeType;
-    private AreaScopeType areaScopeType;
     private ColorScopeType colorScopeType;
     private List<Color> colors;
-    private List<Point> points;
-    private Rectangle rectangle;
-    private Circle circle;
-    private int colorDistance, hueDistance;
-    private boolean mattingExcluded;
+    private List<IntPoint> points;
+    private IntRectangle rectangle;
+    private IntCircle circle;
+    private double colorDistance;
+    private int hueDistance;
+    private boolean areaExcluded, colorExcluded;
     private Image image;
     private double opacity;
 
     public enum OperationType {
-        Invalid, Color, ReplaceColor, Crop, Filters, Effects, Convolution
+        Invalid, Color, Effects, ReplaceColor, Convolution
     }
 
     public enum ScopeType {
-        Invalid, All, Matting, Color, Hue, Rectangle, Circle, Settings
-    }
-
-    public enum AreaScopeType {
-        Invalid, AllArea, Rectangle, RectangleExlcuded, Circle, CircleExcluded
+        Invalid, All, Matting, Rectangle, Circle, Color, RectangleColor, CircleColor
     }
 
     public enum ColorScopeType {
-        Invalid, AllColor, Color, ColorExcluded, Hue, HueExcluded
+        Invalid, AllColor, Color, Red, Green, Blue, Brightness, Saturation, Hue
     }
 
     public ImageScope() {
         operationType = OperationType.Invalid;
         scopeType = ScopeType.All;
-        areaScopeType = AreaScopeType.AllArea;
         colorScopeType = ColorScopeType.AllColor;
         colors = new ArrayList();
         points = new ArrayList();
-        rectangle = new Rectangle();
-        circle = new Circle();
-        mattingExcluded = false;
-        colorDistance = 20;
-        hueDistance = 20;
+        colorDistance = 50 / 255.0;
+        hueDistance = 10;
         opacity = 0.3;
+        areaExcluded = colorExcluded = false;
+        rectangle = new IntRectangle();
+        circle = new IntCircle();
     }
 
     public ImageScope(Image image) {
         operationType = OperationType.Invalid;
         scopeType = ScopeType.All;
-        areaScopeType = AreaScopeType.AllArea;
         colorScopeType = ColorScopeType.AllColor;
         colors = new ArrayList();
         points = new ArrayList();
-        mattingExcluded = false;
-        colorDistance = 20;
-        hueDistance = 20;
+        colorDistance = 50 / 255.0;
+        hueDistance = 10;
         opacity = 0.3;
+        areaExcluded = colorExcluded = false;
         if (image != null) {
             this.image = image;
-            rectangle = new Rectangle((int) (image.getWidth() / 4), (int) (image.getHeight() / 4),
+            rectangle = new IntRectangle((int) (image.getWidth() / 4), (int) (image.getHeight() / 4),
                     (int) (image.getWidth() * 3 / 4), (int) (image.getHeight() * 3 / 4));
-            circle = new Circle((int) (image.getWidth() / 2), (int) (image.getHeight() / 2),
+            circle = new IntCircle((int) (image.getWidth() / 2), (int) (image.getHeight() / 2),
                     (int) (image.getHeight() / 4));
         } else {
-            rectangle = new Rectangle();
-            circle = new Circle();
+            rectangle = new IntRectangle();
+            circle = new IntCircle();
         }
     }
 
@@ -91,9 +84,8 @@ public class ImageScope {
         ImageScope scope = new ImageScope(image);
         scope.setOperationType(operationType);
         scope.setScopeType(scopeType);
-        scope.setAreaScopeType(areaScopeType);
         scope.setColorScopeType(colorScopeType);
-        List<Point> npoints = new ArrayList<>();
+        List<IntPoint> npoints = new ArrayList<>();
         if (points != null) {
             npoints.addAll(points);
         }
@@ -107,29 +99,56 @@ public class ImageScope {
         scope.setCircle(circle.cloneValues());
         scope.setColorDistance(colorDistance);
         scope.setHueDistance(hueDistance);
-        scope.setMattingExcluded(mattingExcluded);
+        scope.setColorExcluded(colorExcluded);
+        scope.setAreaExcluded(areaExcluded);
         scope.setOpacity(opacity);
         return scope;
     }
 
     public boolean inScope(int x, int y, Color color) {
-        return inAreaScope(x, y) && inColorScope(color);
-    }
-
-    public boolean inAreaScope(int x, int y) {
-        switch (areaScopeType) {
-            case AllArea:
+        if (null == scopeType) {
+            return true;
+        }
+        boolean inArea;
+        switch (scopeType) {
+            case All:
                 return true;
             case Rectangle:
-                return rectangle.include(x, y);
-            case RectangleExlcuded:
-                return !rectangle.include(x, y);
+                if (areaExcluded) {
+                    return !rectangle.include(x, y);
+                } else {
+                    return rectangle.include(x, y);
+                }
             case Circle:
-                return circle.include(x, y);
-            case CircleExcluded:
-                return !circle.include(x, y);
+                if (areaExcluded) {
+                    return !circle.include(x, y);
+                } else {
+                    return circle.include(x, y);
+                }
+            case Color:
+                return inColorScope(color);
+            case RectangleColor:
+                if (areaExcluded) {
+                    inArea = !rectangle.include(x, y);
+                } else {
+                    inArea = rectangle.include(x, y);
+                }
+                if (!inArea) {
+                    return false;
+                }
+                return inColorScope(color);
+            case CircleColor:
+                if (areaExcluded) {
+                    inArea = !circle.include(x, y);
+                } else {
+                    inArea = circle.include(x, y);
+                }
+                if (!inArea) {
+                    return false;
+                }
+                return inColorScope(color);
             default:
-                return false;
+                return true;
         }
     }
 
@@ -138,39 +157,123 @@ public class ImageScope {
             case AllColor:
                 return true;
             case Color:
-                for (Color oColor : colors) {
-                    if (isColorMatch(color, oColor, colorDistance)) {
-                        return true;
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isColorMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
                     }
-                }
-                return false;
-            case ColorExcluded:
-                for (Color oColor : colors) {
-                    if (isColorMatch(color, oColor, colorDistance)) {
-                        return false;
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isColorMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return true;
+            case Red:
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isRedMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isRedMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            case Green:
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isGreenMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isGreenMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            case Blue:
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isBlueMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isBlueMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            case Brightness:
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isBrightnessMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isBrightnessMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            case Saturation:
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isSaturationMatch(color, oColor, colorDistance)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isSaturationMatch(color, oColor, colorDistance)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
             case Hue:
-                for (Color oColor : colors) {
-                    if (isHueMatch(color, oColor, hueDistance)) {
-                        return true;
+                if (colorExcluded) {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isHueMatch(color, oColor, hueDistance)) {
+                            return false;
+                        }
                     }
-                }
-                return false;
-            case HueExcluded:
-                for (Color oColor : colors) {
-                    if (isHueMatch(color, oColor, hueDistance)) {
-                        return false;
+                    return true;
+                } else {
+                    for (Color oColor : colors) {
+                        if (FxmlColorTools.isHueMatch(color, oColor, hueDistance)) {
+                            return true;
+                        }
                     }
+                    return false;
                 }
-                return true;
             default:
                 return false;
         }
     }
 
-    public void addPoints(Point point) {
+    public void addPoints(IntPoint point) {
         if (point == null) {
             return;
         }
@@ -186,7 +289,7 @@ public class ImageScope {
         if (x < 0 || y < 0) {
             return;
         }
-        Point point = new Point(x, y);
+        IntPoint point = new IntPoint(x, y);
         addPoints(point);
     }
 
@@ -212,7 +315,7 @@ public class ImageScope {
 
     public void setCircleCenter(int x, int y) {
         if (circle == null) {
-            circle = new Circle();
+            circle = new IntCircle();
         }
         circle.setCenterX(x);
         circle.setCenterY(y);
@@ -220,90 +323,81 @@ public class ImageScope {
 
     public void setCircleRadius(int r) {
         if (circle == null) {
-            circle = new Circle();
+            circle = new IntCircle();
         }
         circle.setRadius(r);
     }
 
     public String getScopeText() {
         String s = "";
-        if (scopeType == ImageScope.ScopeType.All) {
-            s = getMessage("WholeImage");
-        } else if (scopeType == ImageScope.ScopeType.Matting) {
-            String pointsString = "";
-            if (points.isEmpty()) {
-                pointsString += getMessage("None");
-            } else {
-                for (Point p : points) {
-                    pointsString += "(" + p.getX() + "," + p.getY() + ") ";
-                }
-            }
-            s = getMessage("Points") + ":" + pointsString;
-            s += " " + getMessage("ColorDistance") + ":" + colorDistance;
-        } else {
-            switch (areaScopeType) {
-                case AllArea:
-                    s = getMessage("AllArea");
+        if (null != scopeType) {
+            switch (scopeType) {
+                case All:
+                    s = getMessage("WholeImage");
                     break;
-                case Rectangle:
-                    s = getMessage("SelectedRectangle") + ":("
-                            + rectangle.getLeftX() + "," + rectangle.getLeftY()
-                            + ")-(" + rectangle.getRightX() + "," + rectangle.getRightY() + ")";
-                    break;
-                case RectangleExlcuded:
-                    s = getMessage("SelectedRectangle") + ":("
-                            + rectangle.getLeftX() + "," + rectangle.getLeftY()
-                            + ")-(" + rectangle.getRightX() + "," + rectangle.getRightY() + ")";
-                    s += " " + getMessage("Excluded");
-                    break;
-                case Circle:
-                    s = getMessage("SelectedCircle") + ":("
-                            + circle.getCenterX() + "," + circle.getCenterY()
-                            + ")-" + circle.getRadius();
-                    break;
-                case CircleExcluded:
-                    s = getMessage("SelectedCircle") + ":("
-                            + circle.getCenterX() + "," + circle.getCenterY()
-                            + ")-" + circle.getRadius();
-                    s += " " + getMessage("Excluded");
-                    break;
-                default:
-                    break;
-            }
-
-            String colorString = "";
-            if (colors.isEmpty()) {
-                colorString += getMessage("None") + " ";
-            } else {
-                for (Color c : colors) {
-                    colorString += c.toString() + " ";
-                }
-            }
-            switch (colorScopeType) {
-                case AllColor:
-                    s += " " + getMessage("AllColors");
+                case Matting:
+                    String pointsString = "";
+                    if (points.isEmpty()) {
+                        pointsString += getMessage("None");
+                    } else {
+                        for (IntPoint p : points) {
+                            pointsString += "(" + p.getX() + "," + p.getY() + ") ";
+                        }
+                    }
+                    s = getMessage("Points") + ":" + pointsString;
+                    s += " " + getMessage("ColorDistance") + ":" + (int) (colorDistance * 255);
                     break;
                 case Color:
-                    s += " " + getMessage("SelectedColors") + ":" + colorString;
-                    s += getMessage("ColorDistance") + ":" + colorDistance;
-                    break;
-                case ColorExcluded:
-                    s += " " + getMessage("SelectedColors") + ":" + colorString;
-                    s += getMessage("ColorDistance") + ":" + colorDistance;
-                    s += " " + getMessage("Excluded");
-                    break;
-                case Hue:
-                    s += " " + getMessage("SelectedColors") + ":" + colorString;
-                    s += getMessage("HueDistance") + ":" + hueDistance;
-                    break;
-                case HueExcluded:
-                    s += " " + getMessage("SelectedColors") + ":" + colorString;
-                    s += getMessage("HueDistance") + ":" + hueDistance;
-                    s += " " + getMessage("Excluded");
+                    s = getScopeColorText();
                     break;
                 default:
                     break;
             }
+        }
+        return s;
+    }
+
+    public String getScopeColorText() {
+        String s = "";
+        String colorString = "";
+        if (colors.isEmpty()) {
+            colorString += getMessage("None") + " ";
+        } else {
+            for (Color c : colors) {
+                colorString += c.toString() + " ";
+            }
+        }
+        switch (colorScopeType) {
+            case AllColor:
+                s += " " + getMessage("AllColors");
+                break;
+            case Color:
+            case Red:
+            case Green:
+            case Blue:
+                s += " " + getMessage("SelectedColors") + ":" + colorString;
+                s += getMessage("ColorDistance") + ":" + (int) (colorDistance * 255);
+                if (colorExcluded) {
+                    s += " " + getMessage("Excluded");
+                }
+                break;
+            case Brightness:
+            case Saturation:
+                s += " " + getMessage("SelectedColors") + ":" + colorString;
+                s += getMessage("ColorDistance") + ":" + (int) (colorDistance * 100);
+                if (colorExcluded) {
+                    s += " " + getMessage("Excluded");
+                }
+                break;
+            case Hue:
+                s += " " + getMessage("SelectedColors") + ":" + colorString;
+                s += getMessage("HueDistance") + ":" + hueDistance;
+                if (colorExcluded) {
+                    s += " " + getMessage("Excluded");
+                }
+                break;
+            default:
+                break;
         }
         return s;
     }
@@ -316,19 +410,19 @@ public class ImageScope {
         this.colors = colors;
     }
 
-    public Rectangle getRectangle() {
+    public IntRectangle getRectangle() {
         return rectangle;
     }
 
-    public void setRectangle(Rectangle rectangle) {
+    public void setRectangle(IntRectangle rectangle) {
         this.rectangle = rectangle;
     }
 
-    public Circle getCircle() {
+    public IntCircle getCircle() {
         return circle;
     }
 
-    public void setCircle(Circle circle) {
+    public void setCircle(IntCircle circle) {
         this.circle = circle;
     }
 
@@ -340,11 +434,11 @@ public class ImageScope {
         this.image = image;
     }
 
-    public int getColorDistance() {
+    public double getColorDistance() {
         return colorDistance;
     }
 
-    public void setColorDistance(int colorDistance) {
+    public void setColorDistance(double colorDistance) {
         this.colorDistance = colorDistance;
     }
 
@@ -380,14 +474,6 @@ public class ImageScope {
         this.scopeType = scopeType;
     }
 
-    public AreaScopeType getAreaScopeType() {
-        return areaScopeType;
-    }
-
-    public void setAreaScopeType(AreaScopeType areaScopeType) {
-        this.areaScopeType = areaScopeType;
-    }
-
     public ColorScopeType getColorScopeType() {
         return colorScopeType;
     }
@@ -396,19 +482,27 @@ public class ImageScope {
         this.colorScopeType = colorScopeType;
     }
 
-    public boolean isMattingExcluded() {
-        return mattingExcluded;
+    public boolean isAreaExcluded() {
+        return areaExcluded;
     }
 
-    public void setMattingExcluded(boolean mattingExcluded) {
-        this.mattingExcluded = mattingExcluded;
+    public void setAreaExcluded(boolean areaExcluded) {
+        this.areaExcluded = areaExcluded;
     }
 
-    public List<Point> getPoints() {
+    public boolean isColorExcluded() {
+        return colorExcluded;
+    }
+
+    public void setColorExcluded(boolean colorExcluded) {
+        this.colorExcluded = colorExcluded;
+    }
+
+    public List<IntPoint> getPoints() {
         return points;
     }
 
-    public void setPoints(List<Point> points) {
+    public void setPoints(List<IntPoint> points) {
         this.points = points;
     }
 

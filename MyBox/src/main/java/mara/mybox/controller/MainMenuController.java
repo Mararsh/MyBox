@@ -1,13 +1,9 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
@@ -16,10 +12,7 @@ import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.db.DerbyBase;
-import static mara.mybox.objects.AppVaribles.getConfigValue;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.objects.CommonValues.UserFilePath;
+import static mara.mybox.objects.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -61,7 +54,7 @@ public class MainMenuController extends BaseController {
         checkLanguage();
         checkAlpha();
         checkPdfMem();
-        stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+        stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
         showCommentsCheck.setSelected(AppVaribles.isShowComments());
     }
 
@@ -82,7 +75,7 @@ public class MainMenuController extends BaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = getConfigValue("PdfMemDefault", "1GB");
+        String pm = getUserConfigValue("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdf1gbRadio.setSelected(true);
@@ -126,7 +119,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void setStopAlarm(ActionEvent event) {
-        AppVaribles.setConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
+        AppVaribles.setUserConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
     }
 
     @FXML
@@ -136,7 +129,7 @@ public class MainMenuController extends BaseController {
 
     public void checkShowComments() {
         boolean v = showCommentsCheck.isSelected();
-        AppVaribles.setConfigValue("ShowComments", v);
+        AppVaribles.setUserConfigValue("ShowComments", v);
         if (v) {
             popInformation(AppVaribles.getMessage("CommentsShown"));
         } else {
@@ -146,12 +139,12 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void replaceWhiteAction(ActionEvent event) {
-        AppVaribles.setConfigValue("AlphaAsBlack", false);
+        AppVaribles.setUserConfigValue("AlphaAsBlack", false);
     }
 
     @FXML
     protected void replaceBlackAction(ActionEvent event) {
-        AppVaribles.setConfigValue("AlphaAsBlack", true);
+        AppVaribles.setUserConfigValue("AlphaAsBlack", true);
     }
 
     @FXML
@@ -172,25 +165,6 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void pdfMemUnlimit(ActionEvent event) {
         AppVaribles.setPdfMem("Unlimit");
-    }
-
-    @FXML
-    protected void clearSettings(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClear"));
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
-            return;
-        }
-        DerbyBase.dropTables();
-        DerbyBase.initTables();
-        String f = getParentController().getMyFxml();
-        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
-            f = CommonValues.ImageManufactureFileFxml;
-        }
-        BaseController c = reloadStage(f, getParentController().getMyStage().getTitle());
-        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML
@@ -246,13 +220,25 @@ public class MainMenuController extends BaseController {
     @Override
     public void setInterfaceStyle(String style) {
         try {
-            AppVaribles.setConfigValue("InterfaceStyle", style);
+            AppVaribles.setUserConfigValue("InterfaceStyle", style);
             if (parentController != null) {
                 parentController.setInterfaceStyle(style);
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    protected void clearSettings(ActionEvent event) {
+        super.clearSettings(event);
+        String f = getParentController().getMyFxml();
+        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
+            f = CommonValues.ImageManufactureFileFxml;
+        }
+        BaseController c = reloadStage(f, getParentController().getMyStage().getTitle());
+        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML
@@ -370,24 +356,10 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureFilters(ActionEvent event) {
-        ImageManufactureFileController controller
-                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("filters");
-    }
-
-    @FXML
     private void openImageManufactureConvolution(ActionEvent event) {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("convolution");
-    }
-
-    @FXML
-    private void openImageManufactureReplaceColor(ActionEvent event) {
-        ImageManufactureFileController controller
-                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("replaceColor");
     }
 
     @FXML
@@ -458,11 +430,6 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openImageManufactureBatchFilters(ActionEvent event) {
-        reloadStage(CommonValues.ImageManufactureBatchFiltersFxml, AppVaribles.getMessage("ImageManufactureBatchFilters"));
-    }
-
-    @FXML
     private void openImageManufactureBatchConvolution(ActionEvent event) {
         reloadStage(CommonValues.ImageManufactureBatchConvolutionFxml, AppVaribles.getMessage("ImageManufactureBatchConvolution"));
     }
@@ -510,6 +477,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImagesCombine(ActionEvent event) {
         reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
+    }
+
+    @FXML
+    private void openImageGifViewer(ActionEvent event) {
+        reloadStage(CommonValues.ImageGifViewerFxml, AppVaribles.getMessage("ImageGifViewer"));
+    }
+
+    @FXML
+    private void openImageGifEditer(ActionEvent event) {
+        reloadStage(CommonValues.ImageGifEditerFxml, AppVaribles.getMessage("ImageGifEditer"));
     }
 
     @FXML
@@ -578,41 +555,6 @@ public class MainMenuController extends BaseController {
     private void openWeiboSnap(ActionEvent event) {
         WeiboSnapController controller
                 = (WeiboSnapController) reloadStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"));
-    }
-
-    @FXML
-    private void showHelp(ActionEvent event) {
-        try {
-            String lang = AppVaribles.getLanguage();
-            Boolean updated = AppVaribles.getConfigBoolean("UpdatedHelps4.2", false);
-            if (!updated) {
-                logger.debug("Updating Helps 4.2");
-                File file = new File(UserFilePath);
-                if (file.exists()) {
-                    File[] files = file.listFiles();
-                    for (File f : files) {
-                        if (f.getAbsolutePath().endsWith(".html")) {
-                            f.delete();
-                        }
-                    }
-                }
-                AppVaribles.setConfigValue("UpdatedHelps4.2", true);
-            }
-            File mybox_help = FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", !updated);
-            FxmlTools.getUserFile(getClass(),
-                    "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", !updated);
-            HtmlEditorController controller
-                    = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml, false);
-            controller.switchBroswerTab();
-            controller.loadHtml(mybox_help);
-//            Desktop.getDesktop().browse(mybox_help.toURI());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
     }
 
     @FXML

@@ -12,7 +12,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.fxml.FxmlAdjustColorTools.ColorOperationType;
+import mara.mybox.fxml.FxmlAdjustColorTools.ColorActionType;
+import mara.mybox.fxml.FxmlAdjustColorTools.ColorObjectType;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.image.ImageAdjustColorTools;
@@ -27,12 +28,13 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
 
     private int colorValue;
     private boolean isIncrease;
-    private ColorOperationType colorOperationType;
+    private ColorObjectType colorOperationType;
+    private ColorActionType colorActionType;
 
     @FXML
     private ToggleGroup colorGroup, opGroup;
     @FXML
-    private RadioButton redRadio, opacityRadio, increaseRadio, decreaseRadio;
+    private RadioButton setRadio, invertRadio, increaseRadio, decreaseRadio, filterRadio;
     @FXML
     private Slider colorSlider;
     @FXML
@@ -68,10 +70,10 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkColorOperationType();
+                    checkColorObjectType();
                 }
             });
-            checkColorOperationType();
+            checkColorObjectType();
 
             colorSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -94,52 +96,114 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkColorOperationType2();
+                    checkColorActionType();
                 }
             });
-            checkColorOperationType2();
+            checkColorActionType();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void checkColorOperationType() {
+    private void checkColorObjectType() {
+
+        setRadio.setDisable(false);
+        invertRadio.setDisable(false);
+        filterRadio.setDisable(false);
         increaseRadio.setDisable(false);
         decreaseRadio.setDisable(false);
+        setRadio.setSelected(true);
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (getMessage("Brightness").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Brightness;
+            colorOperationType = ColorObjectType.Brightness;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
-
+            filterRadio.setDisable(true);
+            invertRadio.setDisable(true);
         } else if (getMessage("Saturation").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Sauration;
+            colorOperationType = ColorObjectType.Sauration;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText("%");
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
-
+            filterRadio.setDisable(true);
+            invertRadio.setDisable(true);
         } else if (getMessage("Hue").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Hue;
+            colorOperationType = ColorObjectType.Hue;
             colorSlider.setMax(359);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
             colorUnit.setText(getMessage("Degree"));
             if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
+                colorInput.setText("50");
             }
-
+            filterRadio.setDisable(true);
+            invertRadio.setDisable(true);
+        } else if (getMessage("Red").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Red;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
+        } else if (getMessage("Green").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Green;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
+        } else if (getMessage("Blue").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Blue;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
+        } else if (getMessage("Yellow").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Yellow;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
+        } else if (getMessage("Cyan").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Cyan;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
+        } else if (getMessage("Magenta").equals(selected.getText())) {
+            colorOperationType = ColorObjectType.Magenta;
+            colorSlider.setMax(255);
+            colorSlider.setMin(1);
+            colorSlider.setBlockIncrement(1);
+            colorUnit.setText("");
+            if (colorInput.getText().trim().isEmpty()) {
+                colorInput.setText("50");
+            }
         } else if (getMessage("Opacity").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Opacity;
+            colorOperationType = ColorObjectType.Opacity;
             colorSlider.setMax(100);
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
@@ -147,71 +211,12 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("50");
             }
+            invertRadio.setDisable(true);
+            filterRadio.setDisable(true);
             increaseRadio.setDisable(true);
             decreaseRadio.setDisable(true);
-
-        } else if (getMessage("Red").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Red;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
-        } else if (getMessage("Green").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Green;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
-        } else if (getMessage("Blue").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Blue;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
-        } else if (getMessage("Yellow").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Yellow;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
-        } else if (getMessage("Cyan").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Cyan;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
-        } else if (getMessage("Magenta").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.Magenta;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("10");
-            }
-
         } else if (getMessage("RGB").equals(selected.getText())) {
-            colorOperationType = ColorOperationType.RGB;
+            colorOperationType = ColorObjectType.RGB;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -219,7 +224,9 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             if (colorInput.getText().trim().isEmpty()) {
                 colorInput.setText("10");
             }
-
+            setRadio.setDisable(true);
+            filterRadio.setDisable(true);
+            invertRadio.setSelected(true);
         }
     }
 
@@ -237,72 +244,55 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
         }
     }
 
-    private void checkColorOperationType2() {
+    private void checkColorActionType() {
         RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
-        isIncrease = getMessage("Increase").equals(selected.getText());
+        if (getMessage("Set").equals(selected.getText())) {
+            colorActionType = ColorActionType.Set;
+        } else if (getMessage("Increase").equals(selected.getText())) {
+            colorActionType = ColorActionType.Increase;
+        } else if (getMessage("Decrease").equals(selected.getText())) {
+            colorActionType = ColorActionType.Decrease;
+        } else if (getMessage("Filter").equals(selected.getText())) {
+            colorActionType = ColorActionType.Filter;
+        } else if (getMessage("Invert").equals(selected.getText())) {
+            colorActionType = ColorActionType.Invert;
+        } else {
+            colorActionType = null;
+        }
     }
 
-//    @Override
-//    protected String handleCurrentFile() {
-//        if (colorOperationType == ImageManufactureController.ColorOperationType.Opacity) {
-//            if (CommonValues.NoAlphaImages.contains(targetFormat)) {
-//                return AppVaribles.getMessage("NotSupported");
-//            }
-//        }
-//        return super.handleCurrentFile();
-//    }
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
-        if (null == colorOperationType) {
+        if (null == colorOperationType || colorActionType == null) {
             return null;
         }
         try {
-            int value = colorValue;
-            if (!isIncrease) {
+            float value = colorValue;
+            if (colorActionType == ColorActionType.Decrease) {
                 value = 0 - colorValue;
             }
-            BufferedImage target = null;
             switch (colorOperationType) {
                 case Brightness:
-                    target = ImageAdjustColorTools.changeBrightness(source, value / 100.0f);
-                    break;
                 case Sauration:
-                    target = ImageAdjustColorTools.changeSaturate(source, value / 100.0f);
-                    break;
-                case Hue:
-                    target = ImageAdjustColorTools.changeHue(source, value / 360f);
+                    value = value / 100.0f;
                     break;
                 case Opacity:
-                    int v = (int) ((colorValue * 255 / 100.0f));
-                    target = ImageAdjustColorTools.addAlpha(source, v);
+                    value = value * 255 / 100.0f;
+                    break;
+                case Hue:
+                    value = value / 360.0f;
                     break;
                 case Red:
-                    target = ImageAdjustColorTools.changeRed(source, value);
-                    break;
                 case Green:
-                    target = ImageAdjustColorTools.changeGreen(source, value);
-                    break;
                 case Blue:
-                    target = ImageAdjustColorTools.changeBlue(source, value);
-                    break;
                 case Yellow:
-                    target = ImageAdjustColorTools.changeYellow(source, value);
-                    break;
                 case Cyan:
-                    target = ImageAdjustColorTools.changeCyan(source, value);
-                    break;
                 case Magenta:
-                    target = ImageAdjustColorTools.changeMagenta(source, value);
-                    break;
                 case RGB:
-                    target = ImageAdjustColorTools.changeRGB(source, value);
-                    break;
-                default:
                     break;
             }
-
+            BufferedImage target = ImageAdjustColorTools.changeColor(source, colorOperationType, colorActionType, value);
             return target;
-
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

@@ -8,9 +8,8 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import static mara.mybox.fxml.FxmlImageTools.isColorMatch;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.Point;
+import mara.mybox.objects.IntPoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,11 +65,11 @@ public class FxmlFilterTools {
     }
 
     public static Image filterColorByMatting(Image source, FiltersOperationType type, double value,
-            List<Point> points, int distance) {
+            List<IntPoint> points, double distance) {
         try {
             if (source == null
                     || points == null || points.isEmpty()
-                    || distance < 0 || distance > 255) {
+                    || distance < 0 || distance > 1) {
                 return source;
             }
             int width = (int) source.getWidth();
@@ -81,13 +80,13 @@ public class FxmlFilterTools {
             pixelWriter.setPixels(0, 0, width, height, pixelReader, 0, 0);
 
             boolean[][] visited = new boolean[height][width];
-            Queue<mara.mybox.objects.Point> queue = new LinkedList<>();
+            Queue<mara.mybox.objects.IntPoint> queue = new LinkedList<>();
 
-            for (mara.mybox.objects.Point point : points) {
+            for (mara.mybox.objects.IntPoint point : points) {
                 Color startColor = pixelReader.getColor(point.getX(), point.getY());
                 queue.add(point);
                 while (!queue.isEmpty()) {
-                    mara.mybox.objects.Point p = queue.remove();
+                    mara.mybox.objects.IntPoint p = queue.remove();
                     int x = p.getX(), y = p.getY();
                     if (x < 0 || x >= width || y < 0 || y >= height
                             || visited[y][x]) {
@@ -95,13 +94,13 @@ public class FxmlFilterTools {
                     }
                     visited[y][x] = true;
                     Color color = pixelReader.getColor(x, y);
-                    if (isColorMatch(color, startColor, distance)) {
+                    if (FxmlColorTools.isColorMatch(color, startColor, distance)) {
                         Color newColor = filterColor(color, type, value);
                         pixelWriter.setColor(x, y, newColor);
-                        queue.add(new mara.mybox.objects.Point(x + 1, y));
-                        queue.add(new mara.mybox.objects.Point(x - 1, y));
-                        queue.add(new mara.mybox.objects.Point(x, y + 1));
-                        queue.add(new mara.mybox.objects.Point(x, y - 1));
+                        queue.add(new mara.mybox.objects.IntPoint(x + 1, y));
+                        queue.add(new mara.mybox.objects.IntPoint(x - 1, y));
+                        queue.add(new mara.mybox.objects.IntPoint(x, y + 1));
+                        queue.add(new mara.mybox.objects.IntPoint(x, y - 1));
                     }
                 }
             }

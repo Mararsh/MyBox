@@ -328,12 +328,12 @@
                 <Insets bottom="2.0" left="2.0" right="2.0" top="10.0" />
             </VBox.margin>
         </TabPane>
-        <TextField fx:id="targetLabel" editable="false" styleClass="copyable-blue-label" stylesheets="@../styles/MyBox.css" text="Label">
+        <TextField fx:id="targetLabel" editable="false" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
             <font>
                 <Font size="18.0" />
             </font>
         </TextField>
-        <TextField fx:id="adjustLabel" editable="false" styleClass="copyable-darkRed-label" stylesheets="@../styles/MyBox.css" text="Label">
+        <TextField fx:id="adjustLabel" editable="false" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="Label">
             <font>
                 <Font size="18.0" />
             </font>

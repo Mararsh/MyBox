@@ -70,7 +70,7 @@ public class ImageSourceFilesController extends ImageBaseController {
     protected void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -82,8 +82,8 @@ public class ImageSourceFilesController extends ImageBaseController {
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(sourcePathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(sourcePathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);

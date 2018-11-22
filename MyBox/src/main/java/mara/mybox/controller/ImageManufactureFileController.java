@@ -68,7 +68,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
                 }
             });
             try {
-                int vv = AppVaribles.getConfigInt(ImageSaveAsKey, SaveAsType.Load);
+                int vv = AppVaribles.getUserConfigInt(ImageSaveAsKey, SaveAsType.Load);
                 values.setSaveAsType(vv);
                 if (vv == SaveAsType.Load) {
                     loadRadio.setSelected(true);
@@ -84,11 +84,11 @@ public class ImageManufactureFileController extends ImageManufactureController {
             saveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setConfigValue(ImageSaveConfirmKey, saveCheck.isSelected());
+                    AppVaribles.setUserConfigValue(ImageSaveConfirmKey, saveCheck.isSelected());
                     values.setIsConfirmBeforeSave(saveCheck.isSelected());
                 }
             });
-            saveCheck.setSelected(AppVaribles.getConfigBoolean(ImageSaveConfirmKey));
+            saveCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageSaveConfirmKey));
             values.setIsConfirmBeforeSave(saveCheck.isSelected());
 
         } catch (Exception e) {
@@ -100,15 +100,15 @@ public class ImageManufactureFileController extends ImageManufactureController {
         try {
             RadioButton selected = (RadioButton) saveAsGroup.getSelectedToggle();
             if (AppVaribles.getMessage("LoadAfterSaveAs").equals(selected.getText())) {
-                AppVaribles.setConfigValue(ImageSaveAsKey, SaveAsType.Load + "");
+                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Load + "");
                 values.setSaveAsType(SaveAsType.Load);
 
             } else if (AppVaribles.getMessage("OpenAfterSaveAs").equals(selected.getText())) {
-                AppVaribles.setConfigValue(ImageSaveAsKey, SaveAsType.Open + "");
+                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Open + "");
                 values.setSaveAsType(SaveAsType.Open);
 
             } else if (AppVaribles.getMessage("JustSaveAs").equals(selected.getText())) {
-                AppVaribles.setConfigValue(ImageSaveAsKey, SaveAsType.None + "");
+                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.None + "");
                 values.setSaveAsType(SaveAsType.None);
             }
         } catch (Exception e) {

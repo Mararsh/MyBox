@@ -54,9 +54,6 @@ public class ImageViewerIController extends ImageViewerController {
                 + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getxPixels() + "x" + imageInformation.getyPixels() + "  "
                 + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(imageInformation.getFile().length()) + "  "
                 + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(imageInformation.getFile().lastModified());
-        if (!isRefer) {
-            str += "  " + AppVaribles.getMessage("ImagesComments");
-        }
         parentController.bottomLabel.setText(str);
     }
 

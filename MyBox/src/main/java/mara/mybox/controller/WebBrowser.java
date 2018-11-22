@@ -96,7 +96,7 @@ public class WebBrowser implements Initializable {
                         URL url = new URL(newValue);
                         if (url.getProtocol().toLowerCase().startsWith("http")) {
                             urlBox.getEditor().setStyle(null);
-                            AppVaribles.setConfigValue(WebBrowserLastUrlKey, newValue);
+                            AppVaribles.setUserConfigValue(WebBrowserLastUrlKey, newValue);
                             if (!urlBox.getItems().contains(newValue)) {
                                 urlBox.getItems().add(newValue);
                             }
@@ -108,7 +108,7 @@ public class WebBrowser implements Initializable {
                     }
                 }
             });
-            String savedUrl = AppVaribles.getConfigValue(WebBrowserLastUrlKey, "");
+            String savedUrl = AppVaribles.getUserConfigValue(WebBrowserLastUrlKey, "");
             if (!savedUrl.isEmpty()) {
                 urlBox.getItems().add(savedUrl);
             }
@@ -163,10 +163,10 @@ public class WebBrowser implements Initializable {
 //        final FileChooser fileChooser = new FileChooser();
 //        File path;
 //        if (isOneImage) {
-//            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
+//            path = new File(AppVaribles.getUserConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
 //            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
 //        } else {
-//            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
+//            path = new File(AppVaribles.getUserConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
 //            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
 //        }
 //        fileChooser.setInitialDirectory(path);
@@ -174,11 +174,11 @@ public class WebBrowser implements Initializable {
 //        if (file == null) {
 //            return;
 //        }
-//        AppVaribles.setConfigValue(LastPathKey, file.getParent());
+//        AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
 //        if (isOneImage) {
-//            AppVaribles.setConfigValue(HtmlImagePathKey, file.getParent());
+//            AppVaribles.setUserConfigValue(HtmlImagePathKey, file.getParent());
 //        } else {
-//            AppVaribles.setConfigValue(HtmlPdfPathKey, file.getParent());
+//            AppVaribles.setUserConfigValue(HtmlPdfPathKey, file.getParent());
 //        }
 //        targetFile = file;
 //        images = new ArrayList();

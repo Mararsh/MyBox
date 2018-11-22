@@ -42,6 +42,7 @@ public class DerbyBase {
         loadDriver();
         try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
                 Statement statement = conn.createStatement()) {
+            new TableSystemConf().init(statement);
             new TableUserConf().init(statement);
             new TableAlarmClock().init(statement);
             new TableBrowserUrls().init(statement);
@@ -58,6 +59,7 @@ public class DerbyBase {
 
     public static boolean dropTables() {
         try {
+            new TableSystemConf().drop();
             new TableUserConf().drop();
             new TableAlarmClock().drop();
             new TableBrowserUrls().drop();
@@ -72,16 +74,33 @@ public class DerbyBase {
         }
     }
 
+    public static boolean clearData() {
+        try {
+            new TableUserConf().clear();
+            new TableAlarmClock().clear();
+            new TableBrowserUrls().clear();
+            new TableImageHistory().clear();
+            new TableConvolutionKernel().clear();
+            new TableFloatMatrix().clear();
+            new TableImageInit().clear();
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
     public static boolean checkUpdates() {
         try {
-            if (!AppVaribles.getConfigBoolean("UpdatedTables4.2", false)) {
+            if (!AppVaribles.getUserConfigBoolean("UpdatedTables4.2", false)) {
                 logger.debug("Updating TableConvolutionKernel 4.2");
                 List<ConvolutionKernel> records = TableConvolutionKernel.read();
                 TableConvolutionKernel t = new TableConvolutionKernel();
                 t.drop();
                 t.init();
                 if (TableConvolutionKernel.write(records)) {
-                    AppVaribles.setConfigValue("UpdatedTables4.2", true);
+                    AppVaribles.setSystemConfigValue("UpdatedTables4.2", true);
+                    AppVaribles.setUserConfigValue("UpdatedTables4.2", true);
                 }
             }
             return true;

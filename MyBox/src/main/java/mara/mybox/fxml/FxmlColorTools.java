@@ -26,6 +26,51 @@ public class FxmlColorTools {
                 (int) (color.getBlue() * 255));
     }
 
+    // https://en.wikipedia.org/wiki/Color_difference
+    public static double calculateColorDistance2(Color color1, Color color2) {
+        if (color1 == color2) {
+            return 0;
+        }
+        double v = 2 * Math.pow(color1.getRed() - color2.getRed(), 2)
+                + 4 * Math.pow(color1.getGreen() - color2.getGreen(), 2)
+                + 3 * Math.pow(color1.getBlue() - color2.getBlue(), 2);
+        return v;
+    }
+
+    //distance: 0.0 - 1.0
+    public static boolean isColorMatch(Color color1, Color color2, double distance) {
+        if (color1 == color2) {
+            return true;
+        } else if (distance == 0) {
+            return false;
+        }
+        return calculateColorDistance2(color1, color2) <= Math.pow(distance, 2);
+    }
+
+    public static boolean isRedMatch(Color color1, Color color2, double distance) {
+        return Math.abs(color1.getRed() - color2.getRed()) <= distance;
+    }
+
+    public static boolean isGreenMatch(Color color1, Color color2, double distance) {
+        return Math.abs(color1.getGreen() - color2.getGreen()) <= distance;
+    }
+
+    public static boolean isBlueMatch(Color color1, Color color2, double distance) {
+        return Math.abs(color1.getBlue() - color2.getBlue()) <= distance;
+    }
+
+    public static boolean isHueMatch(Color color1, Color color2, int distance) {
+        return Math.abs(color1.getHue() - color2.getHue()) <= distance;
+    }
+
+    public static boolean isBrightnessMatch(Color color1, Color color2, double distance) {
+        return Math.abs(color1.getBrightness() - color2.getBrightness()) <= distance;
+    }
+
+    public static boolean isSaturationMatch(Color color1, Color color2, double distance) {
+        return Math.abs(color1.getSaturation() - color2.getSaturation()) <= distance;
+    }
+
     public static Color thresholdingColor(Color inColor,
             int threshold, int smallValue, int bigValue) {
         if (inColor == Color.TRANSPARENT) {
@@ -71,6 +116,17 @@ public class FxmlColorTools {
         blue = Math.min(Math.max(v / 255.0, 0.0), 1.0);
 
         Color newColor = new Color(red, green, blue, inColor.getOpacity());
+        return newColor;
+    }
+
+    public static Color pixel2Sepia(Color color, double sepiaIntensity) {
+        double sepiaDepth = 20;
+        double gray = color.grayscale().getRed() * 255;
+        double r = gray, g = gray, b = gray;
+        r = Math.min(r + (sepiaDepth * 2), 255);
+        g = Math.min(g + sepiaDepth, 255);
+        b = Math.min(Math.max(b - sepiaIntensity, 0), 255);
+        Color newColor = new Color(r / 255.0f, g / 255.0f, b / 255.0f, color.getOpacity());
         return newColor;
     }
 

@@ -221,26 +221,9 @@ public class ImageColorTools {
         int sepiaDepth = 20;
         int gray = pixel2GrayValue(pixel);
         int r = gray, g = gray, b = gray;
-        r = r + (sepiaDepth * 2);
-        g = g + sepiaDepth;
-        if (r > 255) {
-            r = 255;
-        }
-        if (g > 255) {
-            g = 255;
-        }
-        if (b > 255) {
-            b = 255;
-        }
-        // Darken blue color to increase sepia effect
-        b -= sepiaIntensity;
-        // normalize if out of bounds
-        if (b < 0) {
-            b = 0;
-        }
-        if (b > 255) {
-            b = 255;
-        }
+        r = Math.min(r + (sepiaDepth * 2), 255);
+        g = Math.min(g + sepiaDepth, 255);
+        b = Math.min(Math.max(b - sepiaIntensity, 0), 255);
         Color color = new Color(pixel, true);
         Color newColor = new Color(r, g, b, color.getAlpha());
         return newColor;

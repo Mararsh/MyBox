@@ -39,12 +39,12 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-exe.zip">MyBox-4.2-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-exe.zip">MyBox-4.3-exe.zip</a></p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-jar.zip">MyBox-4.2-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-jar.zip">MyBox-4.3-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.2.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.3.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox" target=_Blank>Project Main Page</a></p>
@@ -55,15 +55,15 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.2. It includes the following features: </p>
+<p class="paragraph">Current version is 4.3. It includes the following features: </p>
 <PRE>
 1. PDF Tools:
 	A. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
@@ -77,29 +77,35 @@
 	H. Handle PDF files in batch way.
 	I. Set the Maximum main memory of PDF handling.
 2. Image Tools:
-	A. Increase/Decrease: Pixels size, saturaion, brightness,  hue, Red/Green/Blue/Yellow/Cyan/Magenta channel.
-	B. Filters: Gray, black-white, Sepia, invert, Red/Green/Blue invert, Red/Green/Blue/Yellow/Cyan/Magenta channel
-	C. Effects: Blur, sharpen, emboss, edges detect, posterize(reduce colors), thresholding.
-	D. Crop, replace color,  watermark, cover, arc, shadow, shear, vertical/horizantal mirror, rotate, margins, and convolution.
-	E. “Scope”: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. 
-	   Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. 
-	   The scope can be determined by clicking image..
-	F. “Undo” and “Redo” of previous operation. Can recover original image at any time. 
-	   Can record some updating histories of image manufacture, to return to former updating. User can set the number of updating histories.
+	A. Adjust size: Scale by ratio, or set pixels with 4 types of keeping aspect ratio.
+	B. Adjust color: Increase, decrease, set, filter, or invert value of 
+		saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, or RGB itself.
+	C. Make effects: Blur, clarity, sharpen, emboss, edges detect, posterize(reduce colors), thresholding, gray, black-white, Sepia. 
+		Convolution can be defined and referred to make more effects
+	D. Other operations: Crop, text, cover(Mosaic/Frosted/Picture ), arc, shadow, shear, mirror, rotate, cut margins, add margins. 
+		Options can be set.
+	E. “Scope”: All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectrangle, Color Matching in Circle.
+		Color Matching can be against saturaion, brightness, hue, RGB, or Red/Green/Blue channel. 
+		Scope can be applied for Color Adjustment, Effects, and Convolution. 
+		Scope can be determined by simply clicking image. Parameters like points set of matting and colors list of color matching can be set easily. 
+		All scope can be set as Excluded.
+	F. “Undo” and “Redo” of previous operation. Original image can be recoverred at any time.
+		Updated histories can be saved automatically and set back. Number of updated histories can be set.
 	G. Make sure correctness and performance of manufacture of big image.
 	H. Browse images under same directory.
 	I. Select whether show reference image. Can select other pictures as the reference image.
 	J. View the image meta-data and image attributes.
-	K. Split the image. Support equal splitting and customized splitting.
-	L. Combine images. Support options like array ordering, background color, interval, margins, and size.
-	M. Blend images. Support options like defining intersect area, whether keep intersect area only, and multiple famous blending modes.
-	N. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
-	O. Convert image into other format, with options like color model, size, compression, quality, etc.
-	P. Handle images in batch way.
-	Q. Color palette
-	R. Pixels calculator
-	S. Convolution Kernels Manager
-	T. Shortcuts
+	K. View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
+	L. Split the image. Support equal splitting and customized splitting.
+	M. Combine images. Support options like array ordering, background color, interval, margins,and size.
+	N. Blend images. Support options like defining the intersected area, and multiple famous blending modes
+	O. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
+	P. Convert image into other format, with options like color model, size, compression, quality, etc.
+	Q. Handle images in batch way.
+	R. Color palette
+	S. Pixels calculator
+	T. Convolution Kernels Manager
+	U. Shortcuts
 3. Desktop Tools:
 	A. Rename Files/Directories, with options of files' name and ordering.  Renamed files can be recovered as original names in all or in part.
 	B. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, 
@@ -133,6 +139,11 @@
 
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2018-11-22 v4.3 Support animated Gif. View: set interval, pause/continue, go special frame, next/previous frame. Extract: set from/to frames, target files' type. Create/Edit: add/delete images, adjust orders, set interval, whether loop, keep images' size or set images' size, save as, what you see is what you get.</BR>
+Easier and better Scope for Image Manufacture. Type:All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectangle, Color Matching in Circle. Color Matching can be against red/green/blue channel, saturation, brightness, hue, or whole RGB. Points set of matting and colors set of color matching can be
+added/deleted easily. All type of scope can be set as Excluded. </BR>
+Merge functions of “Color”, “Filter”, “Effect”, and “Replace Color”, to reduce interface elements and user inputs.</BR>
+Multiple Images Viewer: Number of files in each screen can be set; pictures are shown in balanced sizes.</p>
 
 <p class="paragraph">2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. “Matting” is like Magic Wand of PhotoShop or “Bucket Fill” of Paint on Windows.</BR>
 Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. The scope can be determined by clicking image.</BR>

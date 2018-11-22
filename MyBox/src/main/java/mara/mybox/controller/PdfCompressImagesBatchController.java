@@ -128,21 +128,21 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                         return;
                     }
                     targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue(targetPathKey, file.getPath());
+                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
                     targetPath = file;
                     targetPathChanged();
                 } catch (Exception e) {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
     }
 
     @FXML
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -154,8 +154,8 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(PdfCompressImagesSourcePathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(PdfCompressImagesSourcePathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);

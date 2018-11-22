@@ -8,8 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.objects.Circle;
-import mara.mybox.objects.Rectangle;
+import mara.mybox.objects.IntCircle;
+import mara.mybox.objects.IntRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,7 @@ public class ImageScopeTools {
     private static final Logger logger = LogManager.getLogger();
 
     public static BufferedImage indicateRectangle(BufferedImage source,
-            Color color, int lineWidth, Rectangle rect) {
+            Color color, int lineWidth, IntRectangle rect) {
         try {
 
             int width = source.getWidth();
@@ -56,7 +56,7 @@ public class ImageScopeTools {
     }
 
     public static BufferedImage indicateCircle(BufferedImage source,
-            Color color, int lineWidth, Circle circle) {
+            Color color, int lineWidth, IntCircle circle) {
         try {
             if (!circle.isValid()) {
                 return source;

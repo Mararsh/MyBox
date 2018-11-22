@@ -169,8 +169,7 @@ public class ImageManufactureConvolutionController extends ImageManufactureContr
                     if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
                         newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), currentKernel);
                     } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                        newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), currentKernel,
-                                scope.getPoints(), scope.getColorDistance());
+                        newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), currentKernel, scope);
                     } else {
                         newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), currentKernel, scope);
                     }

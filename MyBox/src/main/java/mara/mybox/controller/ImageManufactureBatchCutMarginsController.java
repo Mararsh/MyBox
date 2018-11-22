@@ -78,7 +78,7 @@ public class ImageManufactureBatchCutMarginsController extends ImageManufactureB
                     checkCutMarginType();
                 }
             });
-            FxmlTools.setRadioSelected(cutMarginGroup, AppVaribles.getConfigValue(ImageCutMarginsTypeKey, getMessage("ByWidth")));
+            FxmlTools.setRadioSelected(cutMarginGroup, AppVaribles.getUserConfigValue(ImageCutMarginsTypeKey, getMessage("ByWidth")));
             cutMarginsByWidth = cutMarginsByWidthRadio.isSelected();
 
             cutMarginBox.getItems().addAll(Arrays.asList("5", "10", "2", "15", "20", "30", "1"));
@@ -137,7 +137,7 @@ public class ImageManufactureBatchCutMarginsController extends ImageManufactureB
 
     private void checkCutMarginType() {
         RadioButton selected = (RadioButton) cutMarginGroup.getSelectedToggle();
-        AppVaribles.setConfigValue(ImageCutMarginsTypeKey, selected.getText());
+        AppVaribles.setUserConfigValue(ImageCutMarginsTypeKey, selected.getText());
         if (getMessage("ByWidth").equals(selected.getText())) {
             cutMarginBox.setDisable(false);
             checkMargins();

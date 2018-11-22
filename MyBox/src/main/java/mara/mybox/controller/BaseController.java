@@ -40,6 +40,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -47,6 +48,7 @@ import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.objects.CommonValues.UserFilePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,7 +69,7 @@ public class BaseController implements Initializable {
     protected Alert loadingAlert;
     protected Task<Void> task;
     protected BaseController parentController, myController;
-    protected Timer popupTimer;
+    protected Timer popupTimer, timer;
     protected Popup popup;
 
     protected boolean isPreview, targetIsFile, paused;
@@ -127,7 +129,6 @@ public class BaseController implements Initializable {
 
             myFxml = FxmlTools.getFxmlPath(url.getPath());
             myController = this;
-            AppVaribles.currentController = this;
             AppVaribles.alarmClockController = null;
             if (mainMenuController != null) {
                 mainMenuController.setParentFxml(myFxml);
@@ -163,11 +164,11 @@ public class BaseController implements Initializable {
                             parentController.sourceFileChanged(file);
                         }
                         if (file.isDirectory()) {
-                            AppVaribles.setConfigValue(sourcePathKey, file.getPath());
+                            AppVaribles.setUserConfigValue(sourcePathKey, file.getPath());
                         } else {
-                            AppVaribles.setConfigValue(sourcePathKey, file.getParent());
+                            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
                             if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                                targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+                                targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
                             }
                             if (targetPrefixInput != null) {
                                 targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
@@ -191,7 +192,7 @@ public class BaseController implements Initializable {
             sourceFilesInformation = FXCollections.observableArrayList();
 
             if (subdirCheck != null) {
-                subdirCheck.setSelected(AppVaribles.getConfigBoolean(creatSubdirKey));
+                subdirCheck.setSelected(AppVaribles.getUserConfigBoolean(creatSubdirKey));
             }
 
             if (targetSelectionController != null) {
@@ -208,9 +209,9 @@ public class BaseController implements Initializable {
                                 }
                                 targetSelectionController.targetPathInput.setStyle(null);
                                 if (file.isDirectory()) {
-                                    AppVaribles.setConfigValue(targetPathKey, file.getPath());
+                                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
                                 } else {
-                                    AppVaribles.setConfigValue(targetPathKey, file.getParent());
+                                    AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
                                 }
                                 targetPath = file;
                                 targetPathChanged();
@@ -218,31 +219,31 @@ public class BaseController implements Initializable {
                             }
                         }
                     });
-                    targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+                    targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
                 }
             }
 
             if (appendSize != null) {
-                appendSize.setSelected(AppVaribles.getConfigBoolean(appendSizeKey));
+                appendSize.setSelected(AppVaribles.getUserConfigBoolean(appendSizeKey));
             }
             if (appendColor != null) {
-                appendColor.setSelected(AppVaribles.getConfigBoolean(appendColorKey));
+                appendColor.setSelected(AppVaribles.getUserConfigBoolean(appendColorKey));
             }
             if (appendCompressionType != null) {
-                appendCompressionType.setSelected(AppVaribles.getConfigBoolean(appendCompressionTypeKey));
+                appendCompressionType.setSelected(AppVaribles.getUserConfigBoolean(appendCompressionTypeKey));
             }
             if (appendQuality != null) {
-                appendQuality.setSelected(AppVaribles.getConfigBoolean(appendQualityKey));
+                appendQuality.setSelected(AppVaribles.getUserConfigBoolean(appendQualityKey));
             }
             if (appendDensity != null) {
-                appendDensity.setSelected(AppVaribles.getConfigBoolean(appendDensityKey));
+                appendDensity.setSelected(AppVaribles.getUserConfigBoolean(appendDensityKey));
             }
             if (fillZero != null) {
-                fillZero.setSelected(AppVaribles.getConfigBoolean(fillZeroKey));
+                fillZero.setSelected(AppVaribles.getUserConfigBoolean(fillZeroKey));
             }
 
             if (previewInput != null) {
-                previewInput.setText(AppVaribles.getConfigValue(previewKey, "0"));
+                previewInput.setText(AppVaribles.getUserConfigValue(previewKey, "0"));
                 FxmlTools.setNonnegativeValidation(previewInput);
                 previewInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -250,7 +251,7 @@ public class BaseController implements Initializable {
                         if (newValue == null || newValue.isEmpty()) {
                             return;
                         }
-                        AppVaribles.setConfigValue(previewKey, newValue);
+                        AppVaribles.setUserConfigValue(previewKey, newValue);
                     }
                 });
             }
@@ -322,7 +323,7 @@ public class BaseController implements Initializable {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -333,8 +334,8 @@ public class BaseController implements Initializable {
                 return;
             }
             sourceFile = file;
-            AppVaribles.setConfigValue(LastPathKey, sourceFile.getParent());
-            AppVaribles.setConfigValue(sourcePathKey, sourceFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, sourceFile.getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, sourceFile.getParent());
 
             if (sourceFileInput != null) {
                 sourceFileInput.setText(sourceFile.getAbsolutePath());
@@ -357,7 +358,7 @@ public class BaseController implements Initializable {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -366,8 +367,8 @@ public class BaseController implements Initializable {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(targetPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(targetPathKey, directory.getPath());
 
             targetPathInput.setText(directory.getPath());
         } catch (Exception e) {
@@ -419,6 +420,112 @@ public class BaseController implements Initializable {
             task.cancel();
         } else {
             updateInterface("Canceled");
+        }
+    }
+
+    @FXML
+    protected void showHelp(ActionEvent event) {
+        try {
+            File help = checkHelps();
+            if (help != null) {
+                HtmlEditorController controller
+                        = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml, false);
+                controller.switchBroswerTab();
+                controller.loadHtml(help);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void clearSettings(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            return;
+        }
+        DerbyBase.clearData();
+        clearTempFiles();
+        AppVaribles.initAppVaribles();
+        popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    @FXML
+    protected void openUserPath(ActionEvent event) {
+        try {
+            Desktop.getDesktop().browse(new File(UserFilePath).toURI());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void showHelpExternal(ActionEvent event) {
+        try {
+            File help = checkHelps();
+            if (help != null) {
+                Desktop.getDesktop().browse(help.toURI());
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected File checkHelps() {
+        try {
+            String lang = AppVaribles.getLanguage();
+            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.3", false);
+            if (!updated) {
+                logger.debug("Updating Helps 4.3");
+                clearHelps();
+                AppVaribles.setSystemConfigValue("UpdatedHelps4.3", true);
+            }
+            File mybox_help = FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", !updated);
+            FxmlTools.getUserFile(getClass(),
+                    "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", !updated);
+            return mybox_help;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    protected void clearHelps() {
+        try {
+            File file = new File(UserFilePath);
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File f : files) {
+                    if (f.getAbsolutePath().endsWith(".html")) {
+                        f.delete();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void clearTempFiles() {
+        try {
+            File file = new File(UserFilePath);
+            if (file.exists()) {
+                File[] files = file.listFiles();
+                for (File f : files) {
+                    if (f.isFile()) {
+                        f.delete();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
@@ -506,6 +613,7 @@ public class BaseController implements Initializable {
             Pane pane = fxmlLoader.load();
             final BaseController controller = fxmlLoader.getController();
             Stage stage = new Stage();
+            controller.setMyStage(stage);
 
             Scene scene = new Scene(pane);
             stage.initModality(Modality.NONE);
@@ -556,6 +664,9 @@ public class BaseController implements Initializable {
 //            logger.debug("stageClosing:" + getClass());
 
             hidePopup();
+            if (timer != null) {
+                timer.cancel();
+            }
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
@@ -568,6 +679,7 @@ public class BaseController implements Initializable {
                     return false;
                 }
             }
+
             if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
 //                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 //                alert.setTitle(AppVaribles.getMessage("AppTitle"));
@@ -580,7 +692,7 @@ public class BaseController implements Initializable {
 //                Optional<ButtonType> result = alert.showAndWait();
 //                if (result.get() == buttonStopAlarmsExit) {
 
-                if (AppVaribles.getConfigBoolean("StopAlarmsWhenExit")) {
+                if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVaribles.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
                         future.cancel(true);

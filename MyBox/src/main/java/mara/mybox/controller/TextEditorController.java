@@ -102,15 +102,15 @@ public class TextEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(TextFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(TextFilePathKey, file.getParent());
             sourceFile = file;
 
             StringBuilder contents = new StringBuilder();
@@ -145,15 +145,15 @@ public class TextEditorController extends BaseController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
+                File path = new File(AppVaribles.getUserConfigValue(TextFilePathKey, CommonValues.UserFilePath));
                 fileChooser.setInitialDirectory(path);
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
                 if (file == null) {
                     return;
                 }
-                AppVaribles.setConfigValue(LastPathKey, file.getParent());
-                AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
+                AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+                AppVaribles.setUserConfigValue(TextFilePathKey, file.getParent());
                 sourceFile = file;
             }
             try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, false))) {
@@ -174,15 +174,15 @@ public class TextEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(TextFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(TextFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(TextFilePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(TextFilePathKey, file.getParent());
             sourceFile = file;
             try (BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile, false))) {
                 out.write(textArea.getText());

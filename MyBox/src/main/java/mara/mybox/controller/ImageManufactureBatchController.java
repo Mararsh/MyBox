@@ -172,9 +172,9 @@ public class ImageManufactureBatchController extends ImageBaseController {
         }
         RadioButton selected = (RadioButton) alphaGroup.getSelectedToggle();
         if (getMessage("ReplaceAlphaAsBlack").equals(selected.getText())) {
-            AppVaribles.setConfigValue("AlphaAsBlack", true);
+            AppVaribles.setUserConfigValue("AlphaAsBlack", true);
         } else {
-            AppVaribles.setConfigValue("AlphaAsBlack", false);
+            AppVaribles.setUserConfigValue("AlphaAsBlack", false);
         }
     }
 
@@ -189,12 +189,12 @@ public class ImageManufactureBatchController extends ImageBaseController {
                         return;
                     }
                     targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue(targetPathKey, file.getPath());
+                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
                 } catch (Exception e) {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
 
         targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -264,7 +264,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
     protected void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -276,8 +276,8 @@ public class ImageManufactureBatchController extends ImageBaseController {
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(sourcePathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(sourcePathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);
@@ -382,8 +382,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
     @FXML
     protected void browseAction() {
         try {
-            int cols = generatedFiles.size();
-            if (cols == 0) {
+            if (generatedFiles == null || generatedFiles.isEmpty()) {
                 return;
             }
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
@@ -403,10 +402,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
             stage.setTitle(AppVaribles.getMessage("MultipleImagesViewer"));
             stage.show();
 
-            if (cols > 6) {
-                cols = 6;
-            }
-            controller.loadImages(generatedFiles, cols);
+            controller.loadImages(generatedFiles);
         } catch (Exception e) {
         }
     }

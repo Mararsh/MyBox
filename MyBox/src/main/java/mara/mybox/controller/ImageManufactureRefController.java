@@ -85,7 +85,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
     public void selectReference() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -96,8 +96,8 @@ public class ImageManufactureRefController extends ImageManufactureController {
                 return;
             }
             values.setRefFile(file);
-            AppVaribles.setConfigValue(LastPathKey, values.getSourceFile().getParent());
-            AppVaribles.setConfigValue(sourcePathKey, values.getSourceFile().getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, values.getSourceFile().getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, values.getSourceFile().getParent());
 
             loadReferenceImage();
 

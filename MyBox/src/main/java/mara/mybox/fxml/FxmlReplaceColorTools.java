@@ -8,11 +8,10 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import static mara.mybox.fxml.FxmlImageTools.isColorMatch;
-import mara.mybox.objects.Circle;
+import mara.mybox.objects.IntCircle;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.Point;
-import mara.mybox.objects.Rectangle;
+import mara.mybox.objects.IntPoint;
+import mara.mybox.objects.IntRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,7 +44,7 @@ public class FxmlReplaceColorTools {
         return newImage;
     }
 
-    public static Image replaceColorsRectangle(Image image, Color newColor, Rectangle rect) {
+    public static Image replaceColorsRectangle(Image image, Color newColor, IntRectangle rect) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -62,7 +61,7 @@ public class FxmlReplaceColorTools {
         return newImage;
     }
 
-    public static Image replaceColorsCircle(Image image, Color newColor, Circle circle) {
+    public static Image replaceColorsCircle(Image image, Color newColor, IntCircle circle) {
         PixelReader pixelReader = image.getPixelReader();
         WritableImage newImage = new WritableImage((int) image.getWidth(), (int) image.getHeight());
         PixelWriter pixelWriter = newImage.getPixelWriter();
@@ -80,11 +79,11 @@ public class FxmlReplaceColorTools {
     }
 
     public static Image replaceColorsMatting(Image source, Color newColor,
-            List<Point> points, int distance) {
+            List<IntPoint> points, double distance) {
         try {
             if (source == null
                     || points == null || points.isEmpty()
-                    || distance < 0 || distance > 255) {
+                    || distance < 0 || distance > 1) {
                 return source;
             }
             int width = (int) source.getWidth();
@@ -95,13 +94,12 @@ public class FxmlReplaceColorTools {
             pixelWriter.setPixels(0, 0, width, height, pixelReader, 0, 0);
 
             boolean[][] visited = new boolean[height][width];
-            Queue<Point> queue = new LinkedList<>();
-
-            for (Point point : points) {
+            Queue<IntPoint> queue = new LinkedList<>();
+            for (IntPoint point : points) {
                 Color startColor = pixelReader.getColor(point.getX(), point.getY());
                 queue.add(point);
                 while (!queue.isEmpty()) {
-                    Point p = queue.remove();
+                    IntPoint p = queue.remove();
                     int x = p.getX(), y = p.getY();
                     if (x < 0 || x >= width || y < 0 || y >= height
                             || visited[y][x]) {
@@ -109,12 +107,12 @@ public class FxmlReplaceColorTools {
                     }
                     visited[y][x] = true;
                     Color pixelColor = pixelReader.getColor(x, y);
-                    if (isColorMatch(pixelColor, startColor, distance)) {
+                    if (FxmlColorTools.isColorMatch(pixelColor, startColor, distance)) {
                         pixelWriter.setColor(x, y, newColor);
-                        queue.add(new Point(x + 1, y));
-                        queue.add(new Point(x - 1, y));
-                        queue.add(new Point(x, y + 1));
-                        queue.add(new Point(x, y - 1));
+                        queue.add(new IntPoint(x + 1, y));
+                        queue.add(new IntPoint(x - 1, y));
+                        queue.add(new IntPoint(x, y + 1));
+                        queue.add(new IntPoint(x, y - 1));
                     }
                 }
             }

@@ -50,7 +50,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
                 checkDensity();
             }
         });
-        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getConfigValue(PdfConvertDensityKey, "72dpi"));
+        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getUserConfigValue(PdfConvertDensityKey, "72dpi"));
         checkDensity();
         densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -59,7 +59,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
                 checkDensity();
             }
         });
-        densityInput.setText(AppVaribles.getConfigValue(PdfConvertDensityInputKey, null));
+        densityInput.setText(AppVaribles.getUserConfigValue(PdfConvertDensityInputKey, null));
         FxmlTools.setNonnegativeValidation(densityInput);
 
     }
@@ -73,7 +73,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             try {
                 inputValue = Integer.parseInt(densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setConfigValue(PdfConvertDensityInputKey, inputValue + "");
+                    AppVaribles.setUserConfigValue(PdfConvertDensityInputKey, inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -83,14 +83,14 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     attributes.setDensity(inputValue);
-                    AppVaribles.setConfigValue(PdfConvertDensityKey, s);
+                    AppVaribles.setUserConfigValue(PdfConvertDensityKey, s);
                 } else {
                     densityInput.setStyle(FxmlTools.badStyle);
                 }
 
             } else {
                 attributes.setDensity(Integer.parseInt(s.substring(0, s.length() - 3)));
-                AppVaribles.setConfigValue(PdfConvertDensityKey, s);
+                AppVaribles.setUserConfigValue(PdfConvertDensityKey, s);
             }
         } catch (Exception e) {
             logger.error(e.toString());

@@ -3,61 +3,40 @@
     -fx-font-size: 15px;
 }
 
-.boldbutton {
-    -fx-font-weight: bold;
-}
-
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
 }
 
-.copyable-red-label, .copyable-red-label:focused {
-    -fx-background-color: transparent ;
-    -fx-background-insets: 0px ;
-    -fx-text-fill: #942828;
-    -fx-font-size: 16px;
-}
 
 .blue-label, .blue-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
     -fx-text-fill: #2e598a;
+}
+
+.bold-blue-label, .bold-blue-label:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: #2e598a;
     -fx-font-weight: bolder;
 }
+
 
 .darkRed-label, .darkRed-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
     -fx-text-fill: #961c1c;
-    -fx-font-weight: bolder;
 }
 
-.copyable-blue-label, .copyable-blue-label:focused {
-    -fx-background-color: transparent ;
-    -fx-background-insets: 0px ;
-    -fx-text-fill: #2e598a;
-    -fx-font-size: 16px;
-}
 
-.copyable-darkRed-label, .copyable-darkRed-label:focused {
+.bold-darkRed-label, .bold-darkRed-label:focused {
     -fx-background-color: transparent ;
     -fx-background-insets: 0px ;
     -fx-text-fill: #961c1c;
-    -fx-font-size: 16px;
-}
-
-.darkRed-error {
-    -fx-text-fill: #961c1c;
-    -fx-font-size: 16px;
     -fx-font-weight: bolder;
 }
 
 
-.darkRed-emphase {
-    -fx-text-fill: #961c1c;
-    -fx-font-size: 16px;
-    -fx-font-weight: bolder;
-}
 
 

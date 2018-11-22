@@ -12,7 +12,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import static mara.mybox.fxml.FxmlImageTools.cropImage;
-import static mara.mybox.fxml.FxmlImageTools.isColorMatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,11 +63,12 @@ public class FxmlMarginsTools {
             PixelReader pixelReader = image.getPixelReader();
 
             int top = 0, bottom = height - 1, left = 0, right = width - 1;
+            double d = colorDistance / 255.0;
             if (cutTop) {
                 for (int j = 0; j < height; j++) {
                     boolean notMatch = false;
                     for (int i = 0; i < width; i++) {
-                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                        if (!FxmlColorTools.isColorMatch(pixelReader.getColor(i, j), mColor, d)) {
 //                            logger.debug("notMatch: " + i + " " + j + " " + color);
                             notMatch = true;
                             break;
@@ -88,7 +88,7 @@ public class FxmlMarginsTools {
                 for (int j = height - 1; j >= 0; j--) {
                     boolean notMatch = false;
                     for (int i = 0; i < width; i++) {
-                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                        if (!FxmlColorTools.isColorMatch(pixelReader.getColor(i, j), mColor, d)) {
                             notMatch = true;
                             break;
                         }
@@ -107,7 +107,7 @@ public class FxmlMarginsTools {
                 for (int i = 0; i < width; i++) {
                     boolean notMatch = false;
                     for (int j = 0; j < height; j++) {
-                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                        if (!FxmlColorTools.isColorMatch(pixelReader.getColor(i, j), mColor, d)) {
                             notMatch = true;
                             break;
                         }
@@ -126,7 +126,7 @@ public class FxmlMarginsTools {
                 for (int i = width - 1; i >= 0; i--) {
                     boolean notMatch = false;
                     for (int j = 0; j < height; j++) {
-                        if (!isColorMatch(pixelReader.getColor(i, j), mColor, colorDistance)) {
+                        if (!FxmlColorTools.isColorMatch(pixelReader.getColor(i, j), mColor, d)) {
                             notMatch = true;
                             break;
                         }

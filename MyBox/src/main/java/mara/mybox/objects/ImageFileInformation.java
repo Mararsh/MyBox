@@ -1,5 +1,6 @@
 package mara.mybox.objects;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.scene.image.Image;
 import mara.mybox.tools.FileTools;
@@ -19,6 +20,7 @@ public class ImageFileInformation extends FileInformation {
     private boolean hasAlpha, isLossless;
     private String metaData, filename, pixels;
     private Image image;
+    private BufferedImage bufferedImage;
     private ImageFileInformation self;
 
     public ImageFileInformation() {
@@ -174,7 +176,9 @@ public class ImageFileInformation extends FileInformation {
     }
 
     public String getFilename() {
-        filename = file.getAbsolutePath();
+        if (filename == null) {
+            filename = file.getAbsolutePath();
+        }
         return filename;
     }
 
@@ -183,15 +187,26 @@ public class ImageFileInformation extends FileInformation {
     }
 
     public String getPixels() {
-        if (xPixels == 0 && yPixels == 0) {
-            return "";
+        if (pixels == null) {
+            if (xPixels == 0 && yPixels == 0) {
+                pixels = "";
+            } else {
+                pixels = xPixels + "x" + yPixels;
+            }
         }
-        pixels = xPixels + "x" + yPixels;
         return pixels;
     }
 
     public void setPixels(String pixels) {
         this.pixels = pixels;
+    }
+
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
+    }
+
+    public void setBufferedImage(BufferedImage bufferedImage) {
+        this.bufferedImage = bufferedImage;
     }
 
 }

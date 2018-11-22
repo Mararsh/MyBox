@@ -7,14 +7,14 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-exe.zip) 。
+[MyBox-4.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-4.2-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.2.jar</CODE></PRE>
+[MyBox-4.3-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.3.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -28,9 +28,9 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-Overview-zh.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.2/MyBox-UserGuide-4.2-ImageTools-zh.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-zh.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
 
@@ -40,7 +40,7 @@
 
 
 ## 当前版本
-当前是版本4.2，已实现的特点：
+当前是版本4.3，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -54,27 +54,33 @@
 	H. PDF的批量处理。
 	I. 可设置PDF处理的主内存使用量。
 2. 图像工具：
-	A. 增减：像素大小、饱和度、明暗、色相、红/蓝/绿/黄/青/紫通道。
-	B. 滤镜：灰色、黑白色、褐色、红/蓝/绿/黄/青/紫通道、反色、红/蓝/绿反色。
-	C. 效果：模糊、锐化、清晰、浮雕、边沿检测、海报（减色）、阈值化。
-	D. 剪裁、换色、水印、覆盖、圆角、阴影、斜拉、水平/垂直镜像、旋转、切边、加边、卷积。
-	E. 范围：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。
-	   范围可作用于：颜色增减、滤镜、效果、换色、卷积。可简单通过左右键点击来确定范围。
-	F. 图像处理上一步的“撤销”和“重做”。也可随时恢复原图。另外可保存修改历史，以退回到前面的修改；可以设置历史个数。
+	A. 调整图像的大小：按比例收缩、或设置像素。四种保持宽高比的选项。
+	B. 调整图像的颜色：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相，进行增加、减少、设值、过滤、取反色的操作。
+	C. 制作效果：模糊、清晰、锐化、浮雕、边沿检测、海报（减色）、阈值化、灰色、黑白色、褐色。
+		也可以通过定义和选择卷积核来制作效果。
+	D. 其它图像处理操作：剪裁、文字、覆盖（马赛克/磨砂/图片）、圆角、阴影、斜拉、镜像、旋转、切边、加边。
+		多种参数可设置。
+	E. 图像操作的范围：全部、矩形、圆形、抠图、颜色匹配、矩形中颜色匹配、圆形中颜色匹配。
+		颜色匹配可以针对：红/蓝/绿通道、饱和度、明暗、色相，色距可定义。
+		范围可作用于：颜色调整、效果、和卷积。
+		可简单通过左右键点击来确定范围，范围的参数（如抠图的点集和颜色集合）可设置。均可反选。
+	F. 对上一步的撤销和重做。也可以随时恢复原图。
+		修改历史可自动保存，以便退回到前面的修改；可设置修改历史的个数。
 	G. 确保大图片处理的正确性和性能。
-	H. 同目录下图像的导览
+	H. 同目录下图像的导览。
 	I. 选择是否显示对照图。可以选择其它图片为对照图。
 	J. 查看图片的元数据和属性。
-	K. 图片的分割。支持均等分割和定制分割。
-	L. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
-	M. 图片的混合。支持设定位置、是否只保留交叉区域、和多种常用的图像混合模式。
-	N. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
-	O. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-	P. 图像的批量处理。
-	Q. 调色盘
-	R. 像素计算器
-	S. 卷积核管理器
-	T. 快捷键
+	K. 查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸。
+	L. 图片的分割。支持均等分割和定制分割。
+	M. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
+	N. 图片的混合。支持选择交叉区域、多种混合模式。
+	O. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
+	P. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
+	Q. 图像的批量处理。
+	R. 调色盘
+	S. 像素计算器
+	T. 卷积核管理器
+	U. 快捷键
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
@@ -104,6 +110,14 @@
 
 ## 开发日志
 ```
+2018-11-22 版本4.3 支持动画Gif。查看动画Gif：设置间隔、暂停/继续、显示指定帧并导览上下帧。
+提取动画Gif：可选择起止帧、文件类型。
+创建/编辑动画Gif：增删图片、调整顺序、设置间隔、是否循环、选择保持图片尺寸、或统一设置图片尺寸、另存，所见即所得。
+更简洁更强力的图像处理“范围”：全部、矩形、圆形、抠图、颜色匹配、矩形中颜色匹配、圆形中颜色匹配；
+颜色匹配可针对：红/蓝/绿通道、饱和度、明暗、色相；可方便地增减抠图的点集和颜色列表；均可反选。
+归并图像处理的“颜色”、“滤镜”、“效果”、“换色”，以减少界面选择和用户输入。
+多图查看界面：可调整每屏文件数；更均匀地显示图片。
+
 2018-11-13 版本4.2 图像处理的“范围”：全部、抠图、矩形、圆形、色彩匹配、色相匹配、矩形/圆形累加色彩/色相匹配。
 “抠图”如PhotoShop的魔术棒或者windows画图的油漆桶。
 “范围”可应用于：色彩增减、滤镜、效果、卷积、换色。可简单通过左右键点击来确定范围。
@@ -251,6 +265,9 @@ MyBox使用NetBeans开发：
 [log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
 	
 [Derby   http://db.apache.org/derby/](http://db.apache.org/derby/)
+
+[GifDecoder   https://github.com/DhyanB/Open-Imaging)
+
 
 ## 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)

@@ -62,10 +62,10 @@ public class ImageManufactureBrowseController extends ImageManufactureController
                         Toggle old_toggle, Toggle new_toggle) {
                     checkImageNevigator();
                     RadioButton selected = (RadioButton) sortGroup.getSelectedToggle();
-                    AppVaribles.setConfigValue(ImageSortTypeKey, selected.getText());
+                    AppVaribles.setUserConfigValue(ImageSortTypeKey, selected.getText());
                 }
             });
-            FxmlTools.setRadioSelected(sortGroup, AppVaribles.getConfigValue(ImageSortTypeKey, getMessage("FileName")));
+            FxmlTools.setRadioSelected(sortGroup, AppVaribles.getUserConfigValue(ImageSortTypeKey, getMessage("FileName")));
 
         } catch (Exception e) {
             logger.error(e.toString());

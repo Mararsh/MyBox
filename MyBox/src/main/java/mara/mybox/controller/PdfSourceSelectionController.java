@@ -76,9 +76,9 @@ public class PdfSourceSelectionController extends BaseController {
                     sourceFileInput.setStyle(null);
                     parentController.sourceFile = file;
                     if (file.isDirectory()) {
-                        AppVaribles.setConfigValue(parentController.sourcePathKey, file.getPath());
+                        AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getPath());
                     } else {
-                        AppVaribles.setConfigValue(parentController.sourcePathKey, file.getParent());
+                        AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getParent());
                     }
                     loadPdfInformation();
                 }
@@ -100,7 +100,7 @@ public class PdfSourceSelectionController extends BaseController {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -111,8 +111,8 @@ public class PdfSourceSelectionController extends BaseController {
                 return;
             }
             parentController.sourceFile = file;
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(parentController.sourcePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getParent());
 
             if (sourceFileInput != null) {
                 sourceFileInput.setText(file.getAbsolutePath());

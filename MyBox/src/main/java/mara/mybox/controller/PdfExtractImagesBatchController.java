@@ -23,8 +23,8 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
     protected void initializeNext2() {
         try {
 
-            appendPageNumber.setSelected(AppVaribles.getConfigBoolean("pei_appendPageNumber"));
-            appendIndex.setSelected(AppVaribles.getConfigBoolean("pei_appendIndex"));
+            appendPageNumber.setSelected(AppVaribles.getUserConfigBoolean("pei_appendPageNumber"));
+            appendIndex.setSelected(AppVaribles.getUserConfigBoolean("pei_appendIndex"));
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(filesTableController.getFilesTableView().getItems())
@@ -38,7 +38,7 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
             );
 
             if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", CommonValues.UserFilePath));
+                targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue("pdfTargetPath", CommonValues.UserFilePath));
             }
         } catch (Exception e) {
             logger.error(e.toString());

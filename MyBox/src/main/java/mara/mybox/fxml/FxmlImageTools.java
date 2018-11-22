@@ -115,30 +115,6 @@ public class FxmlImageTools {
         return target;
     }
 
-    // https://en.wikipedia.org/wiki/Color_difference
-    public static double calculateColorDistance2(Color color1, Color color2) {
-        if (color1 == color2) {
-            return 0;
-        }
-        double v = 2 * Math.pow(color1.getRed() * 255 - color2.getRed() * 255, 2)
-                + 4 * Math.pow(color1.getGreen() * 255 - color2.getGreen() * 255, 2)
-                + 3 * Math.pow(color1.getBlue() * 255 - color2.getBlue() * 255, 2);
-        return v;
-    }
-
-    public static boolean isColorMatch(Color color1, Color color2, int distance) {
-        if (color1 == color2) {
-            return true;
-        } else if (distance == 0) {
-            return false;
-        }
-        return calculateColorDistance2(color1, color2) <= Math.pow(distance, 2);
-    }
-
-    public static boolean isHueMatch(Color color1, Color color2, int distance) {
-        return Math.abs(color1.getHue() - color2.getHue()) <= distance;
-    }
-
     public static Image scaleImage(Image image, String format, float scale) {
         int targetW = (int) Math.round(image.getWidth() * scale);
         int targetH = (int) Math.round(image.getHeight() * scale);

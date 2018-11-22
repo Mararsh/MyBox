@@ -153,18 +153,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%SplitCustomLabel" />
+                                                        <Label styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%SplitCustomLabel" />
                                                         <Button fx:id="defineOkButton" disable="true" mnemonicParsing="false" onAction="#defineOkAction" prefWidth="1.0" text=" " visible="false" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar fx:id="customBar" maxWidth="1.7976931348623157E308">
                                                     <items>
                                                         <Label text="%SplittingRows" />
-                                                        <TextField fx:id="rowsInput" prefWidth="200.0" promptText="%SplitByComma" />
+                                                        <TextField fx:id="rowsInput" prefWidth="150.0" promptText="%SplitByComma" />
                                                         <Button mnemonicParsing="false" onAction="#clearRows" text="%Clear" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Label text="%SplittingColumns" />
-                                                        <TextField fx:id="colsInput" prefWidth="200.0" promptText="%SplitByComma" />
+                                                        <TextField fx:id="colsInput" prefWidth="150.0" promptText="%SplitByComma" />
                                                         <Button mnemonicParsing="false" onAction="#clearCols" text="%Clear" />
                                                     </items>
                                                 </ToolBar>

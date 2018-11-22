@@ -50,7 +50,7 @@ public class DirectoriesTableController extends FilesTableController {
     void addAction(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -59,8 +59,8 @@ public class DirectoriesTableController extends FilesTableController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(parentController.sourcePathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(parentController.sourcePathKey, directory.getPath());
 
             if (findData(directory.getAbsolutePath()) != null) {
                 return;

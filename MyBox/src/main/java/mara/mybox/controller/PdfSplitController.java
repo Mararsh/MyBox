@@ -22,7 +22,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getConfigValue;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
@@ -36,6 +35,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import static mara.mybox.objects.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -132,10 +132,10 @@ public class PdfSplitController extends PdfBaseController {
             authorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    AppVaribles.setConfigValue(AuthorKey, newValue);
+                    AppVaribles.setUserConfigValue(AuthorKey, newValue);
                 }
             });
-            authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+            authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
@@ -231,7 +231,7 @@ public class PdfSplitController extends PdfBaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = getConfigValue("PdfMemDefault", "1GB");
+        String pm = getUserConfigValue("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdfMem1GRadio.setSelected(true);

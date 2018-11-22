@@ -354,7 +354,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_checkDensity();
             }
         });
-//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getConfigValue("density", null));
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getUserConfigValue("density", null));
         cp_checkDensity();
         cp_densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -363,7 +363,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_checkDensity();
             }
         });
-//        cp_densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
+//        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
         FxmlTools.setNonnegativeValidation(cp_densityInput);
 
         cp_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -402,7 +402,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_inchX = Float.valueOf(newValue);
                     cp_widthInches.setStyle(null);
-                    AppVaribles.setConfigValue("widthInches", cp_inchX + "");
+                    AppVaribles.setUserConfigValue("widthInches", cp_inchX + "");
                     if (cp_useInch) {
                         cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
                         cp_widthCM.setStyle(null);
@@ -414,7 +414,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_widthInches.setText(AppVaribles.getConfigValue("widthInches", "1"));
+//        cp_widthInches.setText(AppVaribles.getUserConfigValue("widthInches", "1"));
 
         cp_heightInches.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -423,7 +423,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_inchY = Float.valueOf(newValue);
                     cp_heightInches.setStyle(null);
-                    AppVaribles.setConfigValue("heightInches", cp_inchY + "");
+                    AppVaribles.setUserConfigValue("heightInches", cp_inchY + "");
                     if (cp_useInch) {
                         cp_heightCM.setText(Math.round(cp_inchY * 254.0f) / 100.0f + "");
                         cp_heightCM.setStyle(null);
@@ -435,7 +435,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_heightInches.setText(AppVaribles.getConfigValue("heightInches", "1.5"));
+//        cp_heightInches.setText(AppVaribles.getUserConfigValue("heightInches", "1.5"));
 
         cp_widthCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -444,7 +444,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_cmX = Float.valueOf(newValue);
                     cp_widthCM.setStyle(null);
-                    AppVaribles.setConfigValue("widthCM", cp_cmX + "");
+                    AppVaribles.setUserConfigValue("widthCM", cp_cmX + "");
                     if (!cp_useInch) {
                         cp_widthInches.setText(Math.round(cp_cmX * 100 / 2.54f) / 100.0f + "");
                         cp_widthInches.setStyle(null);
@@ -456,7 +456,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_widthCM.setText(AppVaribles.getConfigValue("widthCM", "21.0"));
+//        cp_widthCM.setText(AppVaribles.getUserConfigValue("widthCM", "21.0"));
 
         cp_heightCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -465,7 +465,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_cmY = Float.valueOf(newValue);
                     cp_heightCM.setStyle(null);
-                    AppVaribles.setConfigValue("heightCM", cp_cmY + "");
+                    AppVaribles.setUserConfigValue("heightCM", cp_cmY + "");
                     if (!cp_useInch) {
                         cp_heightInches.setText(Math.round(cp_cmY * 100 / 2.54f) / 100.0f + "");
                         cp_heightInches.setStyle(null);
@@ -477,7 +477,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_heightCM.setText(AppVaribles.getConfigValue("heightCM", "29.7"));
+//        cp_heightCM.setText(AppVaribles.getUserConfigValue("heightCM", "29.7"));
     }
 
     private void init_cs() {
@@ -516,7 +516,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_checkDensity();
             }
         });
-//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getConfigValue("density", null));
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getUserConfigValue("density", null));
         cs_checkDensity();
         cs_densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -525,7 +525,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_checkDensity();
             }
         });
-//        cp_densityInput.setText(AppVaribles.getConfigValue("densityInput", null));
+//        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
         FxmlTools.setNonnegativeValidation(cs_densityInput);
 
     }
@@ -595,7 +595,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_inchX = Float.valueOf(newValue);
                     cd_widthInches.setStyle(null);
-                    AppVaribles.setConfigValue("widthInches", cd_inchX + "");
+                    AppVaribles.setUserConfigValue("widthInches", cd_inchX + "");
                     if (cd_useInch) {
                         cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
                         cd_widthCM.setStyle(null);
@@ -607,7 +607,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_widthInches.setText(AppVaribles.getConfigValue("widthInches", "1"));
+//        cd_widthInches.setText(AppVaribles.getUserConfigValue("widthInches", "1"));
 
         cd_heightInches.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -616,7 +616,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_inchY = Float.valueOf(newValue);
                     cd_heightInches.setStyle(null);
-                    AppVaribles.setConfigValue("heightInches", cd_inchY + "");
+                    AppVaribles.setUserConfigValue("heightInches", cd_inchY + "");
                     if (cd_useInch) {
                         cd_heightCM.setText(Math.round(cd_inchY * 254.0f) / 100.0f + "");
                         cd_heightCM.setStyle(null);
@@ -628,7 +628,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_heightInches.setText(AppVaribles.getConfigValue("heightInches", "1.5"));
+//        cd_heightInches.setText(AppVaribles.getUserConfigValue("heightInches", "1.5"));
 
         cd_widthCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -637,7 +637,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_cmX = Float.valueOf(newValue);
                     cd_widthCM.setStyle(null);
-                    AppVaribles.setConfigValue("widthCM", cd_cmX + "");
+                    AppVaribles.setUserConfigValue("widthCM", cd_cmX + "");
                     if (!cd_useInch) {
                         cd_widthInches.setText(Math.round(cd_cmX * 100 / 2.54f) / 100.0f + "");
                         cd_widthInches.setStyle(null);
@@ -649,7 +649,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_widthCM.setText(AppVaribles.getConfigValue("widthCM", "21.0"));
+//        cd_widthCM.setText(AppVaribles.getUserConfigValue("widthCM", "21.0"));
 
         cd_heightCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -658,7 +658,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_cmY = Float.valueOf(newValue);
                     cd_heightCM.setStyle(null);
-                    AppVaribles.setConfigValue("heightCM", cd_cmY + "");
+                    AppVaribles.setUserConfigValue("heightCM", cd_cmY + "");
                     if (!cd_useInch) {
                         cd_heightInches.setText(Math.round(cd_cmY * 100 / 2.54f) / 100.0f + "");
                         cd_heightInches.setStyle(null);
@@ -670,7 +670,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_heightCM.setText(AppVaribles.getConfigValue("heightCM", "29.7"));
+//        cd_heightCM.setText(AppVaribles.getUserConfigValue("heightCM", "29.7"));
 
     }
 
@@ -795,7 +795,7 @@ public class PixelsCalculationController extends BaseController {
             try {
                 inputValue = Integer.parseInt(cp_densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setConfigValue("densityInput", inputValue + "");
+                    AppVaribles.setUserConfigValue("densityInput", inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -805,7 +805,7 @@ public class PixelsCalculationController extends BaseController {
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cp_density = inputValue;
-                    AppVaribles.setConfigValue("density", s);
+                    AppVaribles.setUserConfigValue("density", s);
                 } else {
                     cp_density = 0;
                     cp_densityInput.setStyle(FxmlTools.badStyle);
@@ -813,7 +813,7 @@ public class PixelsCalculationController extends BaseController {
 
             } else {
                 cp_density = Integer.parseInt(s.substring(0, s.length() - 3));
-                AppVaribles.setConfigValue("density", s);
+                AppVaribles.setUserConfigValue("density", s);
             }
             cp_calculateValues();
 
@@ -850,7 +850,7 @@ public class PixelsCalculationController extends BaseController {
             try {
                 inputValue = Integer.parseInt(cs_densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setConfigValue("densityInput", inputValue + "");
+                    AppVaribles.setUserConfigValue("densityInput", inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -860,7 +860,7 @@ public class PixelsCalculationController extends BaseController {
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cs_density = inputValue;
-                    AppVaribles.setConfigValue("density", s);
+                    AppVaribles.setUserConfigValue("density", s);
                 } else {
                     cs_density = 0;
                     cs_densityInput.setStyle(FxmlTools.badStyle);
@@ -868,7 +868,7 @@ public class PixelsCalculationController extends BaseController {
 
             } else {
                 cs_density = Integer.parseInt(s.substring(0, s.length() - 3));
-                AppVaribles.setConfigValue("density", s);
+                AppVaribles.setUserConfigValue("density", s);
             }
             cs_calculateValues();
 

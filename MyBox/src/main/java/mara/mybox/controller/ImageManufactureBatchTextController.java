@@ -151,7 +151,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                         waterShadow = Integer.valueOf(newValue);
                         if (waterShadow >= 0) {
                             waterShadowBox.getEditor().setStyle(null);
-                            AppVaribles.setConfigValue(ImageTextShadowKey, newValue);
+                            AppVaribles.setUserConfigValue(ImageTextShadowKey, newValue);
                         } else {
                             waterShadow = 0;
                             waterShadowBox.getEditor().setStyle(badStyle);
@@ -162,7 +162,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            waterShadowBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageTextShadowKey, "0"));
+            waterShadowBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageTextShadowKey, "0"));
 
             List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
@@ -171,11 +171,11 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageFontFamilyKey, fontNames[0]));
+            waterFamilyBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
             waterFamilyBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    AppVaribles.setConfigValue(ImageFontFamilyKey, newValue);
+                    AppVaribles.setUserConfigValue(ImageFontFamilyKey, newValue);
                 }
             });
 
@@ -183,10 +183,10 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                 @Override
                 public void changed(ObservableValue<? extends Color> observable,
                         Color oldValue, Color newValue) {
-                    AppVaribles.setConfigValue(ImageTextColorKey, newValue.toString());
+                    AppVaribles.setUserConfigValue(ImageTextColorKey, newValue.toString());
                 }
             });
-            waterColorPicker.setValue(Color.web(AppVaribles.getConfigValue(ImageTextColorKey, "#FFFFFF")));
+            waterColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FFFFFF")));
 
             waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "75", "120", "135"));
             waterAngleBox.setVisibleRowCount(10);

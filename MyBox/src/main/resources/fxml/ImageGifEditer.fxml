@@ -14,16 +14,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesCombineController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageGifEditerController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
+                  <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+              </items>
+            </ToolBar>
                 <SplitPane fx:id="splitPane" dividerPositions="0.278391167192429" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox fx:id="valuesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
@@ -45,70 +51,28 @@
                         </VBox>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <TitledPane maxWidth="1.7976931348623157E308" text="%ArrayOptions" VBox.vgrow="NEVER">
+                                <TitledPane maxWidth="1.7976931348623157E308" text="%Options" VBox.vgrow="NEVER">
                                     <content>
                                         <VBox spacing="10.0">
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
-                                                        <RadioButton fx:id="arrayColumnRadio" mnemonicParsing="false" selected="true" text="%SingleColumn">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="arrayGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="arrayRowRadio" mnemonicParsing="false" text="%SingleRow" toggleGroup="$arrayGroup" />
-                                                        <RadioButton fx:id="arrayColumnsRadio" mnemonicParsing="false" text="%ColumnsNumber" toggleGroup="$arrayGroup" />
-                                                        <ComboBox fx:id="columnsBox" disable="true" editable="true" prefWidth="100.0" />
+                                          <Label text="%IntervalMilliseconds" />
+                                                        <ComboBox fx:id="intervalCBox" editable="true" prefWidth="100.0" />
+                                          <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <Label text="%Background" />
-                                                        <ColorPicker fx:id="bgPicker" />
-                                                        <Button mnemonicParsing="false" onAction="#bgTransparent" text="%Transparent" />
-                                                        <Button mnemonicParsing="false" onAction="#bgWhite" text="%White" />
-                                                        <Button mnemonicParsing="false" onAction="#bgBlack" text="%Black" />
-                                                        <Label text="%Interval">
-                                                            <padding>
-                                                                <Insets left="40.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <ComboBox fx:id="intervalBox" editable="true" prefWidth="80.0" />
-                                                        <Label text="%Margins" />
-                                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane maxWidth="1.7976931348623157E308" text="%SizeOptions" VBox.vgrow="NEVER">
-                                    <content>
-                                        <VBox spacing="10.0">
-                                            <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <RadioButton fx:id="keepSizeRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepSize">
-                                                            <toggleGroup>
-                                                                <ToggleGroup fx:id="sizeGroup" />
-                                                            </toggleGroup>
-                                                        </RadioButton>
-                                                        <RadioButton fx:id="sizeBiggerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%AlignAsBigger" toggleGroup="$sizeGroup" />
-                                                        <RadioButton fx:id="sizeSmallerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%AlignAsSmaller" toggleGroup="$sizeGroup" />
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <RadioButton fx:id="eachWidthRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%EachWidth" toggleGroup="$sizeGroup" />
-                                                        <TextField fx:id="eachWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
-                                                        <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%EachHeight" toggleGroup="$sizeGroup" />
-                                                        <TextField fx:id="eachHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
-                                                        <RadioButton fx:id="totalWidthRadio" mnemonicParsing="false" text="%TotalWidth" toggleGroup="$sizeGroup" />
-                                                        <TextField fx:id="totalWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
-                                                        <RadioButton fx:id="totalHeightRadio" mnemonicParsing="false" text="%TotalHeight" toggleGroup="$sizeGroup" />
-                                                        <TextField fx:id="totalHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
-                                                    </children>
-                                                </HBox>
+                                       <children>
+                                          <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
+                                             <toggleGroup>
+                                                <ToggleGroup fx:id="sizeGroup" />
+                                             </toggleGroup>
+                                          </RadioButton>
+                                          <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup" />
+                                          <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width" />
+                                          <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height" />
+                                       </children></HBox>
                                             </children>
                                         </VBox>
                                     </content>
@@ -122,11 +86,13 @@
                                         </Label>
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" text="%OpenInNewWindow" />
+                                    <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopAction" text="%Stop" />
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                                 <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                    <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
+                                    <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
                                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                                             </children>
                                         </HBox>

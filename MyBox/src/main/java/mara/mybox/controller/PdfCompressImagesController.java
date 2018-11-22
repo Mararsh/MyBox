@@ -132,10 +132,10 @@ public class PdfCompressImagesController extends PdfBaseController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setConfigValue(AuthorKey, newValue);
+                AppVaribles.setUserConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -203,7 +203,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                         return;
                     }
                     targetFileInput.setStyle(null);
-                    AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
+                    AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
                 } catch (Exception e) {
                     targetFile = null;
                     targetFileInput.setStyle(badStyle);
@@ -222,7 +222,7 @@ public class PdfCompressImagesController extends PdfBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -233,8 +233,8 @@ public class PdfCompressImagesController extends PdfBaseController {
                 return;
             }
             targetFile = file;
-            AppVaribles.setConfigValue(LastPathKey, targetFile.getParent());
-            AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
 
             if (targetFileInput != null) {
                 targetFileInput.setText(targetFile.getAbsolutePath());

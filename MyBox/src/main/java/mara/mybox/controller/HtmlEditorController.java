@@ -99,7 +99,6 @@ public class HtmlEditorController extends TextEditorController {
     private Stage snapingStage;
     private LoadingController loadingController;
     private float zoomScale;
-    private Timer timer;
 
     @FXML
     private Button saveButton, openButton, createButton, loadButton, updateEditorButton, snapsotButton;
@@ -310,7 +309,7 @@ public class HtmlEditorController extends TextEditorController {
                         if (delay > 0) {
                             delayBox.getEditor().setStyle(null);
                             delay = delay * 1000;
-                            AppVaribles.setConfigValue(HtmlSnapDelayKey, newValue);
+                            AppVaribles.setUserConfigValue(HtmlSnapDelayKey, newValue);
                         } else {
                             delay = 2000;
                             delayBox.getEditor().setStyle(badStyle);
@@ -322,7 +321,7 @@ public class HtmlEditorController extends TextEditorController {
                     }
                 }
             });
-            delayBox.getSelectionModel().select(AppVaribles.getConfigValue(HtmlSnapDelayKey, "2"));
+            delayBox.getSelectionModel().select(AppVaribles.getUserConfigValue(HtmlSnapDelayKey, "2"));
 
             snapGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -362,12 +361,15 @@ public class HtmlEditorController extends TextEditorController {
 //                            logger.debug((String) webEngine.executeScript("document.referrer;"));
                             if (isLoadingWeiboPassport) {
                                 isLoadingWeiboPassport = false;
-                                Timer loadTimer = new Timer();
+                                if (timer != null) {
+                                    timer.cancel();
+                                }
+                                timer = new Timer();
                                 if (NetworkTools.isOtherPlatforms()) {
-                                    loadTimer.schedule(new TimerTask() {
+                                    timer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            AppVaribles.setConfigValue("WeiboPassportChecked", "true");
+                                            AppVaribles.setUserConfigValue("WeiboPassportChecked", "true");
                                             logger.debug(checkWeiboPassport());
                                             Platform.runLater(new Runnable() {
                                                 @Override
@@ -384,7 +386,7 @@ public class HtmlEditorController extends TextEditorController {
                                     }, 10000);
 
                                 } else {
-                                    loadTimer.schedule(new TimerTask() {
+                                    timer.schedule(new TimerTask() {
                                         private boolean done = false;
 
                                         @Override
@@ -510,15 +512,15 @@ public class HtmlEditorController extends TextEditorController {
 //            sourceFile = null;
 //            htmlEdior.setHtmlText("");
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(HtmlFilePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
             sourceFile = file;
 
             StringBuilder contents = new StringBuilder();
@@ -643,15 +645,15 @@ public class HtmlEditorController extends TextEditorController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+                File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
                 fileChooser.setInitialDirectory(path);
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
                 if (file == null) {
                     return;
                 }
-                AppVaribles.setConfigValue(LastPathKey, file.getParent());
-                AppVaribles.setConfigValue(HtmlFilePathKey, file.getParent());
+                AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+                AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
                 sourceFile = file;
             }
             String contents;
@@ -679,15 +681,15 @@ public class HtmlEditorController extends TextEditorController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(HtmlFilePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
             sourceFile = file;
             String contents;
             if (AppVaribles.getMessage("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
@@ -730,10 +732,10 @@ public class HtmlEditorController extends TextEditorController {
         final FileChooser fileChooser = new FileChooser();
         File path;
         if (isOneImage) {
-            path = new File(AppVaribles.getConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
+            path = new File(AppVaribles.getUserConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
         } else {
-            path = new File(AppVaribles.getConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
+            path = new File(AppVaribles.getUserConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
         }
         fileChooser.setInitialDirectory(path);
@@ -741,11 +743,11 @@ public class HtmlEditorController extends TextEditorController {
         if (file == null) {
             return;
         }
-        AppVaribles.setConfigValue(LastPathKey, file.getParent());
+        AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
         if (isOneImage) {
-            AppVaribles.setConfigValue(HtmlImagePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(HtmlImagePathKey, file.getParent());
         } else {
-            AppVaribles.setConfigValue(HtmlPdfPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(HtmlPdfPathKey, file.getParent());
         }
         targetFile = file;
         images = new ArrayList();
@@ -779,6 +781,9 @@ public class HtmlEditorController extends TextEditorController {
             snapingStage.setScene(new Scene(pane));
             snapingStage.show();
 
+            if (timer != null) {
+                timer.cancel();
+            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
@@ -852,6 +857,9 @@ public class HtmlEditorController extends TextEditorController {
             bottomText.setText(AppVaribles.getMessage("SnapingImage..."));
             final SnapshotParameters parameters = new SnapshotParameters();
             parameters.setFill(Color.TRANSPARENT);
+            if (timer != null) {
+                timer.cancel();
+            }
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

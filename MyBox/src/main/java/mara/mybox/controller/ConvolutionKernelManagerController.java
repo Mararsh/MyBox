@@ -350,6 +350,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         if (matrixValues == null) {
             matrixValues = new float[height][width];
+            matrixValues[width % 2][height % 2] = 1;
         } else if (height != matrixValues.length || width != matrixValues[0].length) {
             float[][] old = matrixValues;
             matrixValues = new float[height][width];
@@ -420,7 +421,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     private void checkKernel() {
-        actionBox.setDisable(!matrixValid || name == null || name.isEmpty());
+        actionBox.setDisable(!matrixValid);
+        saveButton.setDisable(!matrixValid || name == null || name.isEmpty());
     }
 
     @FXML
@@ -433,7 +435,6 @@ public class ConvolutionKernelManagerController extends BaseController {
         heightBox.getSelectionModel().select("3");
         FxmlTools.setRadioSelected(typeGroup, getMessage("None"));
         matrixValues = null;
-        matrixValues = new float[height][width];
         nameInput.setDisable(false);
         isSettingValues = false;
         initMatrix();
@@ -607,6 +608,37 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
+    private void zeroAction() {
+        if (width < 3 || height < 3) {
+            return;
+        }
+        matrixValues = new float[height][width];
+        isSettingValues = true;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                matrixInputs[j][i].setText("0");
+            }
+        }
+        isSettingValues = false;
+    }
+
+    @FXML
+    private void oneAction() {
+        if (width < 3 || height < 3) {
+            return;
+        }
+        matrixValues = new float[height][width];
+        isSettingValues = true;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                matrixValues[j][i] = 1;
+                matrixInputs[j][i].setText("1");
+            }
+        }
+        isSettingValues = false;
+    }
+
+    @FXML
     private void examplesAction(ActionEvent event) {
 
         Task saveTask = new Task<Void>() {
@@ -635,8 +667,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     private boolean pickKernel() {
-        if (kernel == null || matrixValues == null
-                || !matrixValid || name == null || name.isEmpty()) {
+        if (kernel == null || matrixValues == null || !matrixValid) {
             return false;
         }
         kernel.setName(name);
@@ -671,7 +702,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     @FXML
     private void saveAction(ActionEvent event) {
-        if (!pickKernel()) {
+        if (!pickKernel() || name == null || name.isEmpty()) {
             return;
         }
         Task saveTask = new Task<Void>() {

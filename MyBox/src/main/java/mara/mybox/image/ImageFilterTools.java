@@ -242,27 +242,4 @@ public class ImageFilterTools {
         }
     }
 
-    public static BufferedImage sepiaImage(BufferedImage source, int sepiaIntensity) {
-        try {
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
-                    int pixel = source.getRGB(i, j);
-                    Color newColor = ImageColorTools.pixel2Sepia(pixel, sepiaIntensity);
-                    target.setRGB(i, j, newColor.getRGB());
-                }
-            }
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
 }

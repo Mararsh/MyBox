@@ -350,7 +350,7 @@ public class ImagesBlendController extends ImageViewerController {
     private void selectForegroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -361,8 +361,8 @@ public class ImagesBlendController extends ImageViewerController {
                 return;
             }
             foreFile = file;
-            AppVaribles.setConfigValue(LastPathKey, foreFile.getParent());
-            AppVaribles.setConfigValue(sourcePathKey, foreFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, foreFile.getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, foreFile.getParent());
 
             final String fileName = file.getPath();
             Task loadTask = new Task<Void>() {
@@ -431,7 +431,7 @@ public class ImagesBlendController extends ImageViewerController {
     private void selectBackgroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -442,8 +442,8 @@ public class ImagesBlendController extends ImageViewerController {
                 return;
             }
             backFile = file;
-            AppVaribles.setConfigValue(LastPathKey, backFile.getParent());
-            AppVaribles.setConfigValue(sourcePathKey, backFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, backFile.getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, backFile.getParent());
 
             final String fileName = file.getPath();
             Task loadTask = new Task<Void>() {
@@ -524,7 +524,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -534,7 +534,7 @@ public class ImagesBlendController extends ImageViewerController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(targetPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
             targetFile = file;
 
             Task saveTask = new Task<Void>() {

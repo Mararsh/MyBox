@@ -22,10 +22,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.fxml.FxmlEffectTools;
+import mara.mybox.fxml.FxmlEffectTools.EffectsOperationType;
 import mara.mybox.image.ImageConvertTools.Direction;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.image.ImageGrayTools;
 import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.objects.ImageScope;
 
@@ -50,17 +52,13 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
     @FXML
     protected RadioButton thresholdingRadio;
     @FXML
-    protected Button okButton;
+    protected Button okButton, calculateButton;
     @FXML
-    protected HBox thresholdingBox;
+    protected HBox thresholdingBox1, thresholdingBox2;
     @FXML
-    protected Label intLabel, stringLabel;
+    protected Label intLabel, stringLabel, smallLabel, bigLabel, thresholdLabel;
     @FXML
     protected CheckBox grayCheck;
-
-    public enum EffectsOperationType {
-        Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Posterizing
-    }
 
     public ImageManufactureEffectsController() {
     }
@@ -155,7 +153,6 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
             Tooltip tips = new Tooltip("0~255");
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(thresholdingInput, tips);
             FxmlTools.quickTooltip(thresholdingMinInput, tips);
             FxmlTools.quickTooltip(thresholdingMaxInput, tips);
 
@@ -165,14 +162,27 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
             tips = new Tooltip(getMessage("ThresholdingComments"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(thresholdingBox, tips);
             FxmlTools.setComments(thresholdingRadio, tips);
 
             thresholdingInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkThresholding();
+                    if (null != effectType) {
+                        switch (effectType) {
+                            case Thresholding:
+                                checkThresholding();
+                                break;
+                            case BlackOrWhite:
+                                checkThresholdForBW();
+                                break;
+                            case Sepia:
+                                checkDensityForSepia();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             });
             thresholdingInput.setText("128");
@@ -224,49 +234,21 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     }
 
-    private void checkThresholding() {
-        try {
-            threadholding = Integer.valueOf(thresholdingInput.getText());
-            if (threadholding >= 0 && threadholding <= 255) {
-                thresholdingInput.setStyle(null);
-            } else {
-                thresholdingInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            thresholdingInput.setStyle(badStyle);
-        }
-        try {
-            threadholdingSmall = Integer.valueOf(thresholdingMinInput.getText());
-            if (threadholdingSmall >= 0 && threadholdingSmall <= 255) {
-                thresholdingMinInput.setStyle(null);
-            } else {
-                thresholdingMinInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            thresholdingMinInput.setStyle(badStyle);
-        }
-        try {
-            threadholdingBig = Integer.valueOf(thresholdingMaxInput.getText());
-            if (threadholdingBig >= 0 && threadholdingBig <= 255) {
-                thresholdingMaxInput.setStyle(null);
-            } else {
-                thresholdingMaxInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            thresholdingMaxInput.setStyle(badStyle);
-        }
-    }
-
     private void checkEffetcsOperationType() {
         intLabel.setText("");
-        intBox.setDisable(true);
         stringLabel.setText("");
+        smallLabel.setText("");
+        bigLabel.setText("");
+        thresholdLabel.setText("");
+        intBox.setDisable(true);
         stringBox.setDisable(true);
-        thresholdingBox.setDisable(true);
+        thresholdingBox1.setDisable(true);
+        thresholdingBox2.setDisable(true);
         thresholdingInput.setStyle(null);
         thresholdingMinInput.setStyle(null);
         thresholdingMaxInput.setStyle(null);
         grayCheck.setDisable(true);
+        calculateButton.setDisable(true);
         RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
         if (getMessage("Blur").equals(selected.getText())) {
             effectType = EffectsOperationType.Blur;
@@ -312,9 +294,112 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             intBox.getSelectionModel().select("64");
         } else if (getMessage("Thresholding").equals(selected.getText())) {
             effectType = EffectsOperationType.Thresholding;
-            thresholdingBox.setDisable(false);
+            thresholdLabel.setText(getMessage("Threshold"));
+            smallLabel.setText(getMessage("SmallValue"));
+            bigLabel.setText(getMessage("BigValue"));
+            thresholdingBox1.setDisable(false);
+            thresholdingBox2.setDisable(false);
             checkThresholding();
+            Tooltip tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(thresholdingInput, tips);
+        } else if (getMessage("Gray").equals(selected.getText())) {
+            effectType = EffectsOperationType.Gray;
+
+        } else if (getMessage("BlackOrWhite").equals(selected.getText())) {
+            effectType = EffectsOperationType.BlackOrWhite;
+            thresholdingBox1.setDisable(false);
+            thresholdLabel.setText(getMessage("Threshold"));
+            thresholdingInput.setText("50");
+            smallLabel.setText("%");
+            calculateButton.setDisable(false);
+            checkThresholdForBW();
+            Tooltip tips = new Tooltip("0~100");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(thresholdingInput, tips);
+
+        } else if (getMessage("Sepia").equals(selected.getText())) {
+            effectType = EffectsOperationType.Sepia;
+            thresholdingBox1.setDisable(false);
+            thresholdLabel.setText(getMessage("Intensity"));
+            thresholdingInput.setText("80");
+            checkDensityForSepia();
+            Tooltip tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(thresholdingInput, tips);
         }
+    }
+
+    private void checkThresholding() {
+        try {
+            threadholding = Integer.valueOf(thresholdingInput.getText());
+            if (threadholding >= 0 && threadholding <= 255) {
+                thresholdingInput.setStyle(null);
+            } else {
+                popError("0~100");
+                thresholdingInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            popError("0~100");
+            thresholdingInput.setStyle(badStyle);
+        }
+        try {
+            threadholdingSmall = Integer.valueOf(thresholdingMinInput.getText());
+            if (threadholdingSmall >= 0 && threadholdingSmall <= 255) {
+                thresholdingMinInput.setStyle(null);
+            } else {
+                thresholdingMinInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            thresholdingMinInput.setStyle(badStyle);
+        }
+        try {
+            threadholdingBig = Integer.valueOf(thresholdingMaxInput.getText());
+            if (threadholdingBig >= 0 && threadholdingBig <= 255) {
+                thresholdingMaxInput.setStyle(null);
+            } else {
+                thresholdingMaxInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            thresholdingMaxInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkThresholdForBW() {
+        try {
+            threadholding = Integer.valueOf(thresholdingInput.getText());
+            if (threadholding >= 0 && threadholding <= 100) {
+                thresholdingInput.setStyle(null);
+            } else {
+                thresholdingInput.setStyle(badStyle);
+                popError("0~100");
+            }
+        } catch (Exception e) {
+            popError("0~100");
+            thresholdingInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkDensityForSepia() {
+        try {
+            threadholding = Integer.valueOf(thresholdingInput.getText());
+            if (threadholding >= 0 && threadholding <= 255) {
+                thresholdingInput.setStyle(null);
+            } else {
+                popError("0~255");
+                thresholdingInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            popError("0~255");
+            thresholdingInput.setStyle(badStyle);
+        }
+    }
+
+    @FXML
+    private void calculateAction() {
+        int scaleValue = ImageGrayTools.calculateThreshold(values.getSourceFile());
+        scaleValue = scaleValue * 100 / 256;
+        thresholdingInput.setText(scaleValue + "");
     }
 
     @Override
@@ -350,81 +435,35 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                 switch (effectType) {
                     case Blur:
                         convolutionKernel = ConvolutionKernel.makeGaussKernel(intValue);
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), convolutionKernel,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), convolutionKernel, scope);
-                        }
+                        newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case Sharpen:
                         convolutionKernel = ConvolutionKernel.makeSharpen3b();
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), convolutionKernel,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), convolutionKernel, scope);
-                        }
+                        newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case Clarity:
                         convolutionKernel = ConvolutionKernel.makeUnsharpMasking5();
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), convolutionKernel,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), convolutionKernel, scope);
-                        }
+                        newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case EdgeDetect:
                         convolutionKernel = ConvolutionKernel.makeEdgeDetection3b();
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), convolutionKernel,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), convolutionKernel, scope);
-                        }
+                        newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case Emboss:
                         convolutionKernel = ConvolutionKernel.makeEmbossKernel(direction, intValue, grayCheck.isSelected());
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), convolutionKernel,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), convolutionKernel, scope);
-                        }
+                        newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case Thresholding:
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.thresholdingImage(values.getCurrentImage(),
-                                    threadholding, threadholdingSmall, threadholdingBig);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.thresholdingByMatting(values.getCurrentImage(),
-                                    threadholding, threadholdingSmall, threadholdingBig,
-                                    scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.thresholdingByScope(values.getCurrentImage(),
-                                    threadholding, threadholdingSmall, threadholdingBig, scope);
-                        }
+                        newImage = FxmlEffectTools.thresholdingImage(values.getCurrentImage(),
+                                threadholding, threadholdingSmall, threadholdingBig, scope);
                         break;
                     case Posterizing:
-                        if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
-                            newImage = FxmlEffectTools.posterizingImage(values.getCurrentImage(), intValue);
-                        } else if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
-                            newImage = FxmlEffectTools.posterizingByMatting(values.getCurrentImage(),
-                                    intValue, scope.getPoints(), scope.getColorDistance());
-                        } else {
-                            newImage = FxmlEffectTools.posterizingByScope(values.getCurrentImage(), intValue, scope);
-                        }
+                        newImage = FxmlEffectTools.posterizingImage(values.getCurrentImage(), intValue, scope);
+                        break;
+                    case Gray:
+                    case BlackOrWhite:
+                    case Sepia:
+                        newImage = FxmlEffectTools.makeColor(values.getCurrentImage(), effectType, threadholding, scope);
                         break;
                     default:
                         return null;

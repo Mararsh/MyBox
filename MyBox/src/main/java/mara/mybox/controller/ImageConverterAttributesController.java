@@ -108,7 +108,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                 checkRatioAdjustion();
             }
         });
-        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getConfigValue("ic_ratioAdjustion", getMessage("BaseOnWidth")));
+        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getUserConfigValue("ic_ratioAdjustion", getMessage("BaseOnWidth")));
         checkRatioAdjustion();
 
         attributes.setSourceWidth(0);
@@ -164,7 +164,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
         try {
             RadioButton selected = (RadioButton) ratioGroup.getSelectedToggle();
             String s = selected.getText();
-            AppVaribles.setConfigValue("ic_ratioAdjustion", s);
+            AppVaribles.setUserConfigValue("ic_ratioAdjustion", s);
             if (getMessage("BaseOnWidth").equals(s)) {
                 attributes.setRatioAdjustion(KeepRatioType.BaseOnWidth);
             } else if (getMessage("BaseOnHeight").equals(s)) {

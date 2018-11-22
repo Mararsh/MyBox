@@ -93,7 +93,7 @@ public class ImageManufactureArcController extends ImageManufactureController {
                         arc = Integer.valueOf(newValue);
                         if (arc >= 0) {
                             arcBox.getEditor().setStyle(null);
-                            AppVaribles.setConfigValue(ImageArcKey, newValue);
+                            AppVaribles.setUserConfigValue(ImageArcKey, newValue);
                         } else {
                             arc = 0;
                             arcBox.getEditor().setStyle(badStyle);

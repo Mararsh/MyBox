@@ -46,8 +46,8 @@ public class PdfExtractImagesController extends PdfBaseController {
     protected void initializeNext2() {
         try {
 
-            appendPageNumber.setSelected(AppVaribles.getConfigBoolean("PdfAppendPageNumber"));
-            appendIndex.setSelected(AppVaribles.getConfigBoolean("PdfAppendIndex"));
+            appendPageNumber.setSelected(AppVaribles.getUserConfigBoolean("PdfAppendPageNumber"));
+            appendIndex.setSelected(AppVaribles.getUserConfigBoolean("PdfAppendIndex"));
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
@@ -82,8 +82,8 @@ public class PdfExtractImagesController extends PdfBaseController {
     @Override
     protected void doCurrentProcess() {
         try {
-            AppVaribles.setConfigValue("pei_appendPageNumber", appendPageNumber.isSelected());
-            AppVaribles.setConfigValue("pei_appendIndex", appendIndex.isSelected());
+            AppVaribles.setUserConfigValue("pei_appendPageNumber", appendPageNumber.isSelected());
+            AppVaribles.setUserConfigValue("pei_appendIndex", appendIndex.isSelected());
             if (currentParameters == null) {
                 return;
             }

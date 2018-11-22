@@ -4,8 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,6 +31,7 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
  * @Author Mara
@@ -37,41 +41,75 @@ import mara.mybox.fxml.FxmlTools;
  */
 public class ImagesViewerController extends ImageViewerController {
 
-    private List<File> imageFileList;
+    private final ObservableList<File> imageFileList = FXCollections.observableArrayList();
     private int rowsNum, colsNum, filesNumber;
     private List<Pane> imagePaneList;
     private List<ImageViewerIController> imageControllerList;
     protected List<File> nextFiles, previousFiles;
     protected String ImageSortTypeKey = "ImageSortType";
-    private int cols;
+    private boolean isSettingValues;
 
     @FXML
     protected VBox imagesPane;
     @FXML
     protected Button selectButton;
     @FXML
-    protected ToolBar setBar, opBar;
+    protected ToolBar setBar;
     @FXML
-    protected ComboBox colsBox;
+    protected ComboBox<String> colsnumBox, filesBox;
     @FXML
     private CheckBox eachCheck;
+    @FXML
+    private HBox opBox;
 
     @Override
     protected void initializeNext2() {
         try {
             fileExtensionFilter = CommonValues.ImageExtensionFilter;
 
-            List<Integer> values = Arrays.asList(3, 4, 2, 5, 6, 1, 7, 8, 9, 10, 12, 16);
-            colsBox.getItems().addAll(values);
-            colsBox.setVisibleRowCount(values.size());
-            colsBox.valueProperty().addListener(new ChangeListener<Integer>() {
+            List<String> values = Arrays.asList("3", "4", "2", "5", "6", "1", "7", "8", "9", "10",
+                    "16", "25", "20", "12", "15");
+            colsnumBox.getItems().addAll(values);
+            colsnumBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, Integer oldValue, Integer newValue) {
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        cols = newValue;
-                        createImagesPane();
+                        if (isSettingValues) {
+                            return;
+                        }
+                        colsNum = Integer.valueOf(newValue);
+                        if (colsNum > 0) {
+                            colsnumBox.getEditor().setStyle(null);
+                            makeImagesPane(); // ????? colsnumBox Can not be editable due to unkown issue cause by this call.
+                        } else {
+                            colsnumBox.getEditor().setStyle(badStyle);
+                        }
                     } catch (Exception e) {
-                        cols = -1;
+                        colsnumBox.getEditor().setStyle(badStyle);
+                    }
+                }
+            });
+
+            List<String> fvalues = Arrays.asList("9", "4", "8", "6", "10", "16", "2", "12", "15", "25",
+                    "36", "30", "24");
+            filesBox.getItems().addAll(fvalues);
+            filesBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        filesNumber = Integer.valueOf(newValue);
+                        if (filesNumber > 0) {
+                            filesBox.getEditor().setStyle(null);
+                            makeNevigator(true);
+                            makeImagesPane();
+                        } else {
+                            filesBox.getEditor().setStyle(badStyle);
+                        }
+                    } catch (Exception e) {
+                        filesBox.getEditor().setStyle(badStyle);
                     }
                 }
             });
@@ -80,12 +118,23 @@ public class ImagesViewerController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable,
                         Boolean oldValue, Boolean newValue) {
-                    createImagesPane();
+                    makeImagesPane();
                 }
             });
 
             FxmlTools.quickTooltip(selectButton, new Tooltip(AppVaribles.getMessage("ImagesMutipleTips")));
             setTips();
+
+            opBox.disableProperty().bind(
+                    Bindings.isEmpty(imageFileList)
+            );
+            navBar.disableProperty().bind(
+                    Bindings.isEmpty(imageFileList)
+            );
+            setBar.disableProperty().bind(
+                    Bindings.isEmpty(imageFileList)
+            );
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -94,26 +143,33 @@ public class ImagesViewerController extends ImageViewerController {
     @FXML
     protected void selectImages(ActionEvent event) {
         try {
-            opBar.setDisable(true);
-            navBar.setDisable(true);
-            setBar.setDisable(true);
 
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVaribles.getConfigValue(LastPathKey, CommonValues.UserFilePath);
-            fileChooser.setInitialDirectory(new File(AppVaribles.getConfigValue(sourcePathKey, defaultPath)));
+            String defaultPath = AppVaribles.getUserConfigValue(LastPathKey, CommonValues.UserFilePath);
+            fileChooser.setInitialDirectory(new File(AppVaribles.getUserConfigValue(sourcePathKey, defaultPath)));
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            imageFileList = fileChooser.showOpenMultipleDialog(getMyStage());
-            makeImagesPane();
-            filesNumber = 0;
-            if (imageFileList == null || imageFileList.isEmpty()) {
+            List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
+            if (files == null || files.isEmpty()) {
                 return;
             }
+            isSettingValues = true;
+            imageFileList.clear();
+            imageFileList.addAll(files);
             filesNumber = imageFileList.size();
-            checkImagesNevigator();
+            if (!filesBox.getItems().contains(filesNumber + "")) {
+                filesBox.getItems().add(0, filesNumber + "");
+            }
+            filesBox.getSelectionModel().select(filesNumber + "");
+            colsNum = (int) Math.sqrt(filesNumber);
+            colsNum = Math.max(colsNum, (int) (filesNumber / colsNum));
+            colsnumBox.getSelectionModel().select(colsNum + "");
+            isSettingValues = false;
+            makeNevigator(false);
+            makeImagesPane();
+
             String path = imageFileList.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(sourcePathKey, path);
-            bottomLabel.setText(AppVaribles.getMessage("ImagesComments"));
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(sourcePathKey, path);
 
         } catch (Exception e) {
 //            logger.error(e.toString());
@@ -263,9 +319,10 @@ public class ImagesViewerController extends ImageViewerController {
     public void nextAction() {
         if (nextFiles != null) {
             previousFiles = imageFileList;
-            imageFileList = nextFiles;
-            checkImagesNevigator();
-            createImagesPane();
+            imageFileList.clear();
+            imageFileList.addAll(nextFiles);
+            makeNevigator(false);
+            makeImagesPane();
         }
     }
 
@@ -274,37 +331,21 @@ public class ImagesViewerController extends ImageViewerController {
     public void previousAction() {
         if (previousFiles != null) {
             nextFiles = imageFileList;
-            imageFileList = previousFiles;
-            checkImagesNevigator();
-            createImagesPane();
+            imageFileList.clear();
+            imageFileList.addAll(previousFiles);
+            makeNevigator(false);
+            makeImagesPane();
         }
     }
 
     private void makeImagesPane() {
-        if (imageFileList == null || imageFileList.isEmpty()) {
-            return;
-        }
-        try {
-            int num = imageFileList.size();
-            cols = (int) Math.sqrt(num);
-            colsBox.getSelectionModel().select(cols);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void makeImagesPane(int cols) {
-        colsBox.getSelectionModel().select(new Integer(cols));
-    }
-
-    private void createImagesPane() {
-        if (cols <= 0) {
+        if (colsNum <= 0) {
             return;
         }
         imagesPane.getChildren().clear();
         imagePaneList = new ArrayList();
         imageControllerList = new ArrayList();
+        rowsNum = 0;
         if (imageFileList == null || imageFileList.isEmpty()) {
             return;
         }
@@ -313,14 +354,15 @@ public class ImagesViewerController extends ImageViewerController {
 
             HBox line = new HBox();
             for (int i = 0; i < num; i++) {
-                if (i % cols == 0) {
+                if (i % colsNum == 0) {
                     line = new HBox();
                     line.setAlignment(Pos.TOP_CENTER);
                     line.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-                    line.setSpacing(10);
+                    line.setSpacing(5);
                     imagesPane.getChildren().add(line);
                     VBox.setVgrow(line, Priority.ALWAYS);
                     HBox.setHgrow(line, Priority.ALWAYS);
+                    rowsNum++;
                 }
 
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerIFxml), AppVaribles.CurrentBundle);
@@ -336,13 +378,16 @@ public class ImagesViewerController extends ImageViewerController {
                 VBox.setVgrow(imagePane, Priority.ALWAYS);
                 HBox.setHgrow(imagePane, Priority.ALWAYS);
                 line.getChildren().add(imagePane);
-                imagePane.setPrefWidth(line.getWidth() / cols - 10);
-//                imagePane.setPrefHeight(imagesPane.getHeight() / 2 - 10);
-
                 imagePaneList.add(imagePane);
                 imageControllerList.add(imageController);
             }
 
+            double w = imagesPane.getWidth() / colsNum - 5;
+            double h = imagesPane.getHeight() / rowsNum - 5;
+            for (Pane p : imagePaneList) {
+                p.setPrefWidth(w);
+                p.setPrefHeight(h);
+            }
             paneSize();
 
         } catch (Exception e) {
@@ -350,18 +395,12 @@ public class ImagesViewerController extends ImageViewerController {
         }
     }
 
-    private void checkImagesNevigator() {
-        if (imageFileList == null || imageFileList.isEmpty()) {
+    private void makeNevigator(boolean reload) {
+        if ((imageFileList == null || imageFileList.isEmpty()) && (filesNumber <= 0)) {
             previousFiles = null;
             nextFiles = null;
-            opBar.setDisable(true);
-            navBar.setDisable(true);
-            setBar.setDisable(true);
             return;
         }
-        opBar.setDisable(false);
-        navBar.setDisable(false);
-        setBar.setDisable(false);
         previousButton.setDisable(true);
         nextButton.setDisable(true);
         LoadingController loadingController = null;
@@ -378,20 +417,40 @@ public class ImagesViewerController extends ImageViewerController {
                     sortedFiles.add(file);
                 }
             }
-            if (sortedFiles.size() > filesNumber) {
-                RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-                if (getMessage("OriginalFileName").equals(sort.getText())) {
-                    FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
+            RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
+            if (getMessage("OriginalFileName").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
 
-                } else if (getMessage("CreateTime").equals(sort.getText())) {
-                    FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
+            } else if (getMessage("CreateTime").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
 
-                } else if (getMessage("ModifyTime").equals(sort.getText())) {
-                    FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
+            } else if (getMessage("ModifyTime").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
 
-                } else if (getMessage("Size").equals(sort.getText())) {
-                    FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
+            } else if (getMessage("Size").equals(sort.getText())) {
+                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
+            }
+
+            if (reload) {
+                int start = sortedFiles.indexOf(firstFile);
+                imageFileList.clear();
+                for (int k = start; k < sortedFiles.size(); k++) {
+                    imageFileList.add(sortedFiles.get(k));
+                    if (imageFileList.size() == filesNumber) {
+                        break;
+                    }
                 }
+                if (imageFileList.size() < filesNumber) {
+                    for (int k = start - 1; k >= 0; k--) {
+                        imageFileList.add(0, sortedFiles.get(k));
+                        if (imageFileList.size() == filesNumber) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (sortedFiles.size() > filesNumber) {
 
                 for (int i = 0; i < sortedFiles.size(); i++) {
                     if (sortedFiles.get(i).getAbsoluteFile().equals(firstFile.getAbsoluteFile())) {
@@ -445,14 +504,10 @@ public class ImagesViewerController extends ImageViewerController {
 
     public void loadImages(File path, int number) {
         try {
-            opBar.setDisable(true);
-            navBar.setDisable(true);
-            setBar.setDisable(true);
-
+            imageFileList.clear();
             if (path == null || !path.isDirectory() || !path.exists() || number <= 0) {
                 return;
             }
-            imageFileList = new ArrayList<>();
             for (File file : path.listFiles()) {
                 if (file.isFile() && FileTools.isSupportedImage(file)) {
                     imageFileList.add(file);
@@ -461,14 +516,25 @@ public class ImagesViewerController extends ImageViewerController {
                     break;
                 }
             }
-            makeImagesPane();
-            filesNumber = imageFileList.size();
             if (imageFileList.isEmpty()) {
                 return;
             }
+            isSettingValues = true;
+            filesNumber = imageFileList.size();
+            if (!filesBox.getItems().contains(filesNumber + "")) {
+                filesBox.getItems().add(0, filesNumber + "");
+            }
+            filesBox.getSelectionModel().select(filesNumber + "");
+            colsNum = (int) Math.sqrt(filesNumber);
+            colsNum = Math.max(colsNum, (int) (filesNumber / colsNum));
+            if (!colsnumBox.getItems().contains(colsNum + "")) {
+                colsnumBox.getItems().add(0, colsNum + "");
+            }
+            colsnumBox.getSelectionModel().select(colsNum + "");
+            isSettingValues = false;
+            makeNevigator(false);
+            makeImagesPane();
 
-            bottomLabel.setText(AppVaribles.getMessage("ImagesComments"));
-            checkImagesNevigator();
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -476,28 +542,50 @@ public class ImagesViewerController extends ImageViewerController {
 
     public void loadImages(List<String> fileNames, int cols) {
         try {
-            opBar.setDisable(true);
-            navBar.setDisable(true);
-            setBar.setDisable(true);
-
-            if (fileNames == null) {
+            imageFileList.clear();
+            if (fileNames == null || cols <= 0) {
                 return;
             }
-            imageFileList = new ArrayList<>();
             for (String name : fileNames) {
                 File file = new File(name);
                 if (file.isFile() && FileTools.isSupportedImage(file)) {
                     imageFileList.add(file);
                 }
             }
-            makeImagesPane(cols);
-
-            filesNumber = imageFileList.size();
             if (imageFileList.isEmpty()) {
                 return;
             }
-            bottomLabel.setText(AppVaribles.getMessage("ImagesComments"));
-            checkImagesNevigator();
+            isSettingValues = true;
+            filesNumber = imageFileList.size();
+            if (!filesBox.getItems().contains(filesNumber + "")) {
+                filesBox.getItems().add(0, filesNumber + "");
+            }
+            filesBox.getSelectionModel().select(filesNumber + "");
+            colsNum = cols;
+            if (!colsnumBox.getItems().contains(colsNum + "")) {
+                colsnumBox.getItems().add(0, colsNum + "");
+            }
+            colsnumBox.getSelectionModel().select(colsNum + "");
+            isSettingValues = false;
+            makeNevigator(false);
+            makeImagesPane();
+
+        } catch (Exception e) {
+//            logger.error(e.toString());
+        }
+    }
+
+    public void loadImages(List<String> fileNames) {
+        try {
+            logger.debug(fileNames);
+            if (fileNames == null || fileNames.isEmpty()) {
+                return;
+            }
+            int cols = (int) Math.sqrt(fileNames.size());
+            cols = Math.max(cols, (int) (fileNames.size() / cols));
+            logger.debug(cols);
+            loadImages(fileNames, cols);
+
         } catch (Exception e) {
 //            logger.error(e.toString());
         }

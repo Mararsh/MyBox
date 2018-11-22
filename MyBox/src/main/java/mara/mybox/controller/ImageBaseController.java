@@ -183,7 +183,7 @@ public abstract class ImageBaseController extends BaseController {
 
         if (fillZero != null) {
             actualParameters.fill = fillZero.isSelected();
-            AppVaribles.setConfigValue(fillZeroKey, actualParameters.fill);
+            AppVaribles.setUserConfigValue(fillZeroKey, actualParameters.fill);
         }
 
         if (targetSelectionController != null) {
@@ -191,7 +191,7 @@ public abstract class ImageBaseController extends BaseController {
             actualParameters.targetPath = actualParameters.targetRootPath;
             if (targetSelectionController.subdirCheck != null) {
                 actualParameters.createSubDir = targetSelectionController.subdirCheck.isSelected();
-                AppVaribles.setConfigValue(creatSubdirKey, actualParameters.createSubDir);
+                AppVaribles.setUserConfigValue(creatSubdirKey, actualParameters.createSubDir);
             }
         }
         if (targetPrefixInput != null) {
@@ -204,10 +204,10 @@ public abstract class ImageBaseController extends BaseController {
             actualParameters.aCompression = appendCompressionType.isSelected();
             actualParameters.aQuality = appendQuality.isSelected();
 
-            AppVaribles.setConfigValue(appendSizeKey, actualParameters.aSize);
-            AppVaribles.setConfigValue(appendColorKey, actualParameters.aColor);
-            AppVaribles.setConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
-            AppVaribles.setConfigValue(appendQualityKey, actualParameters.aQuality);
+            AppVaribles.setUserConfigValue(appendSizeKey, actualParameters.aSize);
+            AppVaribles.setUserConfigValue(appendColorKey, actualParameters.aColor);
+            AppVaribles.setUserConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
+            AppVaribles.setUserConfigValue(appendQualityKey, actualParameters.aQuality);
         }
 
         makeMoreParameters();

@@ -7,17 +7,17 @@ package mara.mybox.objects;
  * @Description
  * @License Apache License Version 2.0
  */
-public class Rectangle {
+public class IntRectangle {
 
     private int leftX, leftY, rightX, rightY, width, height;
     private int maxX, maxY;
 
-    public Rectangle() {
+    public IntRectangle() {
         maxX = Integer.MAX_VALUE;
         maxY = Integer.MAX_VALUE;
     }
 
-    public Rectangle(int x1, int y1, int x2, int y2) {
+    public IntRectangle(int x1, int y1, int x2, int y2) {
         maxX = Integer.MAX_VALUE;
         maxY = Integer.MAX_VALUE;
         leftX = x1;
@@ -26,7 +26,7 @@ public class Rectangle {
         rightY = y2;
     }
 
-    public Rectangle(int maxX, int maxY, int x1, int y1, int x2, int y2) {
+    public IntRectangle(int maxX, int maxY, int x1, int y1, int x2, int y2) {
         this.maxX = maxX;
         this.maxY = maxY;
         leftX = x1;
@@ -35,8 +35,8 @@ public class Rectangle {
         rightY = y2;
     }
 
-    public Rectangle cloneValues() {
-        return new Rectangle(maxX, maxY, leftX, leftY, rightX, rightY);
+    public IntRectangle cloneValues() {
+        return new IntRectangle(maxX, maxY, leftX, leftY, rightX, rightY);
     }
 
     public boolean isValid() {

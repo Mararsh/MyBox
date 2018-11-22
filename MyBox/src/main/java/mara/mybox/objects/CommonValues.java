@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.2";
-    public static final String AppVersionDate = "2018-11-13";
+    public static final String AppVersion = "4.3";
+    public static final String AppVersionDate = "2018-11-22";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String UserConfigFile = UserFilePath + File.separator + ".conf.properties";
@@ -67,9 +67,7 @@ public class CommonValues {
     public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
     public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
     public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
-    public static final String ImageManufactureFiltersFxml = "/fxml/ImageManufactureFilters.fxml";
     public static final String ImageManufactureConvolutionFxml = "/fxml/ImageManufactureConvolution.fxml";
-    public static final String ImageManufactureReplaceColorFxml = "/fxml/ImageManufactureReplaceColor.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
     public static final String ImageManufactureCoverFxml = "/fxml/ImageManufactureCover.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
@@ -86,7 +84,6 @@ public class CommonValues {
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
     public static final String ImageManufactureBatchColorFxml = "/fxml/ImageManufactureBatchColor.fxml";
     public static final String ImageManufactureBatchEffectsFxml = "/fxml/ImageManufactureBatchEffects.fxml";
-    public static final String ImageManufactureBatchFiltersFxml = "/fxml/ImageManufactureBatchFilters.fxml";
     public static final String ImageManufactureBatchConvolutionFxml = "/fxml/ImageManufactureBatchConvolution.fxml";
     public static final String ImageManufactureBatchReplaceColorFxml = "/fxml/ImageManufactureBatchReplaceColor.fxml";
     public static final String ImageManufactureBatchTextFxml = "/fxml/ImageManufactureBatchText.fxml";
@@ -97,9 +94,10 @@ public class CommonValues {
     public static final String ImageManufactureBatchCutMarginsFxml = "/fxml/ImageManufactureBatchCutMargins.fxml";
     public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
-    public static final String ImageScopeFxml = "/fxml/ImageScope.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
     public static final String ImagesBlendFxml = "/fxml/ImagesBlend.fxml";
+    public static final String ImageGifViewerFxml = "/fxml/ImageGifViewer.fxml";
+    public static final String ImageGifEditerFxml = "/fxml/ImageGifEditer.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";

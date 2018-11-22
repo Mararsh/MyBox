@@ -125,7 +125,7 @@ public class FilesArrangeController extends BaseController {
     }
 
     private void initDirTab() {
-        sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+        sourcePathInput.setText(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
         sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -136,12 +136,12 @@ public class FilesArrangeController extends BaseController {
                     return;
                 }
                 sourcePathInput.setStyle(null);
-                AppVaribles.setConfigValue(LastPathKey, newValue);
-                AppVaribles.setConfigValue(sourcePathKey, newValue);
+                AppVaribles.setUserConfigValue(LastPathKey, newValue);
+                AppVaribles.setUserConfigValue(sourcePathKey, newValue);
             }
         });
 
-        targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
         targetPathInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -152,8 +152,8 @@ public class FilesArrangeController extends BaseController {
                     return;
                 }
                 targetPathInput.setStyle(null);
-                AppVaribles.setConfigValue(LastPathKey, newValue);
-                AppVaribles.setConfigValue(targetPathKey, newValue);
+                AppVaribles.setUserConfigValue(LastPathKey, newValue);
+                AppVaribles.setUserConfigValue(targetPathKey, newValue);
             }
         });
 
@@ -165,10 +165,10 @@ public class FilesArrangeController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean old_toggle, Boolean new_toggle) {
-                AppVaribles.setConfigValue(FileArrangeSubdirKey, isCopy);
+                AppVaribles.setUserConfigValue(FileArrangeSubdirKey, isCopy);
             }
         });
-        subdirCheck.setSelected(AppVaribles.getConfigBoolean(FileArrangeSubdirKey, true));
+        subdirCheck.setSelected(AppVaribles.getUserConfigBoolean(FileArrangeSubdirKey, true));
 
         filesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -176,10 +176,10 @@ public class FilesArrangeController extends BaseController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
                 isCopy = getMessage("Copy").equals(selected.getText());
-                AppVaribles.setConfigValue(FileArrangeCopyKey, isCopy);
+                AppVaribles.setUserConfigValue(FileArrangeCopyKey, isCopy);
             }
         });
-        if (AppVaribles.getConfigBoolean(FileArrangeCopyKey, true)) {
+        if (AppVaribles.getUserConfigBoolean(FileArrangeCopyKey, true)) {
             copyRadio.setSelected(true);
             isCopy = true;
         } else {
@@ -194,7 +194,7 @@ public class FilesArrangeController extends BaseController {
                 checkReplaceType();
             }
         });
-        String replaceSelect = AppVaribles.getConfigValue(FileArrangeExistedKey, "ReplaceModified");
+        String replaceSelect = AppVaribles.getUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         switch (replaceSelect) {
             case "ReplaceModified":
                 replaceModifiedRadio.setSelected(true);
@@ -217,10 +217,10 @@ public class FilesArrangeController extends BaseController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) byGroup.getSelectedToggle();
                 byModifyTime = getMessage("ModifyTime").equals(selected.getText());
-                AppVaribles.setConfigValue(FileArrangeModifyTimeKey, byModifyTime);
+                AppVaribles.setUserConfigValue(FileArrangeModifyTimeKey, byModifyTime);
             }
         });
-        if (AppVaribles.getConfigBoolean(FileArrangeModifyTimeKey, true)) {
+        if (AppVaribles.getUserConfigBoolean(FileArrangeModifyTimeKey, true)) {
             modifiyTimeRadio.setSelected(true);
             byModifyTime = true;
         } else {
@@ -235,7 +235,7 @@ public class FilesArrangeController extends BaseController {
                 checkDirType();
             }
         });
-        String dirSelect = AppVaribles.getConfigValue(FileArrangeCategoryKey, "Month");
+        String dirSelect = AppVaribles.getUserConfigValue(FileArrangeCategoryKey, "Month");
         switch (dirSelect) {
             case "Year":
                 yearRadio.setSelected(true);
@@ -255,19 +255,19 @@ public class FilesArrangeController extends BaseController {
         RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
         if (getMessage("ReplaceModified").equals(selected.getText())) {
             replaceType = ReplaceType.ReplaceModified;
-            AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         } else if (getMessage("NotCopy").equals(selected.getText())) {
             replaceType = ReplaceType.NotCopy;
-            AppVaribles.setConfigValue(FileArrangeExistedKey, "NotCopy");
+            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "NotCopy");
         } else if (getMessage("Replace").equals(selected.getText())) {
             replaceType = ReplaceType.Replace;
-            AppVaribles.setConfigValue(FileArrangeExistedKey, "Replace");
+            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "Replace");
         } else if (getMessage("Rename").equals(selected.getText())) {
             replaceType = ReplaceType.Rename;
-            AppVaribles.setConfigValue(FileArrangeExistedKey, "Rename");
+            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "Rename");
         } else {
             replaceType = ReplaceType.ReplaceModified;
-            AppVaribles.setConfigValue(FileArrangeExistedKey, "ReplaceModified");
+            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         }
 
     }
@@ -276,16 +276,16 @@ public class FilesArrangeController extends BaseController {
         RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
         if (getMessage("Year").equals(selected.getText())) {
             dirType = DirType.Year;
-            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Year");
+            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Year");
         } else if (getMessage("Month").equals(selected.getText())) {
             dirType = DirType.Month;
-            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Month");
         } else if (getMessage("Day").equals(selected.getText())) {
             dirType = DirType.Day;
-            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Day");
+            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Day");
         } else {
             dirType = DirType.Month;
-            AppVaribles.setConfigValue(FileArrangeCategoryKey, "Month");
+            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Month");
         }
     }
 
@@ -293,7 +293,7 @@ public class FilesArrangeController extends BaseController {
     protected void selectSourcePath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -316,7 +316,7 @@ public class FilesArrangeController extends BaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }

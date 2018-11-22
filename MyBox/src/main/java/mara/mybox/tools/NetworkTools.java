@@ -70,10 +70,10 @@ public class NetworkTools {
                     + "/.mara.mybox.MainApp/webview/localstorage/https_passport.weibo.com_0.localstorage";
 
         } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-            return AppVaribles.getConfigBoolean("WeiboPassportChecked", false);
+            return AppVaribles.getUserConfigBoolean("WeiboPassportChecked", false);
 
         } else {
-            return AppVaribles.getConfigBoolean("WeiboPassportChecked", false);
+            return AppVaribles.getUserConfigBoolean("WeiboPassportChecked", false);
         }
         return new File(passport).exists();
     }

@@ -3,24 +3,29 @@ package mara.mybox.imagefile;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageMetadata;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriter;
 import com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi;
-import com.sun.imageio.plugins.gif.GIFImageReader;
-import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
-//import com.sun.imageio.plugins.gif.GIFImageMetadata;
-//import com.sun.imageio.plugins.gif.GIFImageReader;
-//import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
+import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.ValueTools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import thridparty.GifDecoder;
+import thridparty.GifDecoder.GifImage;
 
 /**
  * @Author Mara
@@ -35,13 +40,53 @@ public class ImageGifFile {
 
     public static GIFImageMetadata getGifMetadata(File file) {
         try {
+//            ImageReaderSpi readerSpi = new GIFImageReaderSpi();
+//            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
 
-            GIFImageReaderSpi spi = new GIFImageReaderSpi();
-            GIFImageReader reader = new GIFImageReader(spi);
+            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 GIFImageMetadata metadata = (GIFImageMetadata) reader.getImageMetadata(0);
                 return metadata;
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<BufferedImage> readGifFile(String src) {
+        try {
+            List<BufferedImage> images = new ArrayList<>();
+            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
+            boolean broken = false;
+            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(src))) {
+                reader.setInput(in, false);
+                int count = 0;
+                while (true) {
+                    try {
+                        BufferedImage m = reader.read(count);
+                        if (m != null) {
+                            images.add(m);
+                            count++;
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
+//                        logger.error(e.toString());
+                        if (!e.toString().contains("Attempt to read past end of image sequence!")) {
+                            broken = true;
+                        }
+                        break;
+                    }
+                }
+                reader.dispose();
+                if (broken) {
+                    return readBrokenGifFile(src);
+                } else {
+                    return images;
+                }
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -49,64 +94,142 @@ public class ImageGifFile {
         }
     }
 
-//    public static void writeGifFile(File file) {
-//        try {
-//
-//
-//
-//            FileImageInputStream in = null;
-//            FileImageOutputStream out = null;
-//
-//            in = new FileImageInputStream(file);
-//            ImageReaderSpi readerSpi = new GIFImageReaderSpi();
-//            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
-//            gifReader.setInput(in);
-//            int num = gifReader.getNumImages(true);
-//            int frame = 10;
-//// 要取的帧数要小于总帧数
-//            if (num > frame) {
-//                ImageWriterSpi writerSpi = new GIFImageWriterSpi();
-//                GIFImageWriter writer = (GIFImageWriter) writerSpi.createWriterInstance();
-//                for (int i = 0; i < num; i++) {
-//                    if (i == frame) {
-//                        String target;
-//                        File newfile = new File(target);
-//                        out = new FileImageOutputStream(newfile);
-//                        writer.setOutput(out);
-////    读取读取帧的图片
-//                        writer.write(gifReader.read(i));
-//
-//                    }
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            return;
-//        }
-//    }
-//
-//    public static int gifFrameCount(byte data[]) throws IOException {
-//        ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
-//        ImageInputStream ciis = ImageIO.createImageInputStream(new ByteArrayInputStream(data));
-//        reader.setInput(ciis, false);
-//        int noi = reader.getNumImages(true);
-//        ciis.close();
-//        return noi;
-//    }
+    // https://stackoverflow.com/questions/22259714/arrayindexoutofboundsexception-4096-while-reading-gif-file
+    // https://github.com/DhyanB/Open-Imaging
+    public static List<BufferedImage> readBrokenGifFile(String src) {
+        try {
+            List<BufferedImage> images = new ArrayList<>();
+            try (FileInputStream in = new FileInputStream(src)) {
+                final GifImage gif = GifDecoder.read(in);
+                final int frameCount = gif.getFrameCount();
+                for (int i = 0; i < frameCount; i++) {
+                    final BufferedImage img = gif.getFrame(i);
+                    images.add(img);
+                }
+            }
+            return images;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<String> extractGifImages(File source, File target,
+            int from, int to) {
+        try {
+            logger.debug(from + " " + to);
+            if (source == null || target == null || from < 0 || to < 0 || from > to) {
+                return null;
+            }
+            List<BufferedImage> images = readGifFile(source.getAbsolutePath());
+            int size = images.size();
+            if (images == null || images.isEmpty() || from >= size || to >= size) {
+                return null;
+            }
+            String filePrefix = FileTools.getFilePrefix(target.getAbsolutePath());
+            String format = FileTools.getFileSuffix(target.getAbsolutePath());
+            if (!CommonValues.SupportedImages.contains(format)) {
+                return null;
+            }
+            String filename;
+            int digit = (size + "").length();
+            List<String> names = new ArrayList<>();
+            for (int i = from; i <= to; i++) {
+                filename = filePrefix + "-" + ValueTools.fillNumber(i, digit) + "." + format;
+                ImageFileWriters.writeImageFile(images.get(i), format, filename);
+                names.add(filename);
+            }
+            return names;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    // https://www.programcreek.com/java-api-examples/javax.imageio.ImageWriter
+    // http://www.java2s.com/Code/Java/2D-Graphics-GUI/GiffileEncoder.htm
+    // https://programtalk.com/python-examples/com.sun.media.imageioimpl.plugins.gif.GIFImageWriterSpi/
+    // https://www.jianshu.com/p/df52f1511cf8
+    // http://giflib.sourceforge.net/whatsinagif/index.html
+    public static boolean writeGifImagesFile(List<BufferedImage> images,
+            File outFile, int interval, boolean loop) {
+        try {
+            if (images == null || outFile == null) {
+                return false;
+            }
+            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
+            GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
+
+            ImageWriteParam param = gifWriter.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionType("LZW");
+            param.setCompressionQuality(1);
+
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(outFile)) {
+                String delay;
+                if (interval > 0) {
+                    delay = interval / 10 + "";
+                } else {
+                    delay = "100";
+                }
+                gifWriter.setOutput(out);
+                gifWriter.prepareWriteSequence(null);
+                GIFImageMetadata metaData
+                        = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
+                String format = metaData.getNativeMetadataFormatName();
+                IIOMetadataNode tree = (IIOMetadataNode) metaData.getAsTree(format);
+                IIOMetadataNode graphicsControlExtensionNode = new IIOMetadataNode("GraphicControlExtension");
+                graphicsControlExtensionNode.setAttribute("delayTime", delay);
+                graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
+                graphicsControlExtensionNode.setAttribute("userInputFlag", "false");
+                graphicsControlExtensionNode.setAttribute("transparentColorFlag", "false");
+                graphicsControlExtensionNode.setAttribute("delayTime", delay);
+                graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
+                tree.appendChild(graphicsControlExtensionNode);
+                if (loop) {
+                    IIOMetadataNode applicationExtensionsNode = new IIOMetadataNode("ApplicationExtensions");
+                    IIOMetadataNode applicationExtensionNode = new IIOMetadataNode("ApplicationExtension");
+                    applicationExtensionNode.setAttribute("applicationID", "NETSCAPE");
+                    applicationExtensionNode.setAttribute("authenticationCode", "2.0");
+                    byte[] k = {1, 0, 0};
+                    applicationExtensionNode.setUserObject(k);
+                    applicationExtensionsNode.appendChild(applicationExtensionNode);
+                    tree.appendChild(applicationExtensionsNode);
+                }
+                metaData.mergeTree(format, tree);
+
+//                    Element tree = (Element) metaData.getAsTree(format);
+//                    Element node = (Element) tree.getElementsByTagName("GraphicControlExtension").item(0);
+//                    node.setAttribute("delayTime", delay);
+//                    metaData.mergeTree(format, tree);
+                for (BufferedImage image : images) {
+                    gifWriter.writeToSequence(new IIOImage(image, null, metaData), param);
+                }
+                gifWriter.endWriteSequence();
+                out.flush();
+            }
+            gifWriter.dispose();
+            return true;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/gif_metadata.html#image
     public static void writeGifImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {
         try {
 
-            GIFImageWriterSpi tiffspi = new GIFImageWriterSpi();
-            GIFImageWriter writer = new GIFImageWriter(tiffspi);
+            GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
+            GIFImageWriter writer = new GIFImageWriter(gifspi);
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (attributes.getCompressionType() != null) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 logger.error(attributes.getCompressionType());
                 param.setCompressionType(attributes.getCompressionType());
-                param.setCompressionQuality(attributes.getQuality() / 100.0f);
+                param.setCompressionQuality(1);
             }
 
             GIFImageMetadata metaData;

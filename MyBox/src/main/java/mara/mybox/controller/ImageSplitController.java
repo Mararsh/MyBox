@@ -207,7 +207,7 @@ public class ImageSplitController extends ImageViewerController {
                         return;
                     }
                     targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue(targetPathKey, file.getPath());
+                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
                     targetPath = file;
                 } catch (Exception e) {
                     targetPathInput.setStyle(badStyle);
@@ -552,7 +552,7 @@ public class ImageSplitController extends ImageViewerController {
                         try {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setTitle(getMyStage().getTitle());
-                            String info = MessageFormat.format(AppVaribles.getMessage("SplitResult"),
+                            String info = MessageFormat.format(AppVaribles.getMessage("GeneratedFilesResult"),
                                     fileNames.size(), "\"" + targetPath.getAbsolutePath() + "\"");
                             int num = fileNames.size();
                             if (num > 10) {

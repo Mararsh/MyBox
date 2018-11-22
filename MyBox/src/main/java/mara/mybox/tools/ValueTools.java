@@ -1,5 +1,7 @@
 package mara.mybox.tools;
 
+import java.util.Random;
+
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 17:43:53
@@ -7,6 +9,11 @@ package mara.mybox.tools;
  * @License Apache License Version 2.0
  */
 public class ValueTools {
+
+    public static int getRandomInt(int max) {
+        Random r = new Random();
+        return r.nextInt(max);
+    }
 
     public static String fillNumber(int value, int digit) {
         String v = value + "";

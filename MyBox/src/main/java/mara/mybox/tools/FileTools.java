@@ -114,6 +114,14 @@ public class FileTools {
         return fname;
     }
 
+    public static File getTempFile() {
+        File file = new File(UserFilePath + "/temp" + new Date().getTime() + ValueTools.getRandomInt(100));
+        while (file.exists()) {
+            file = new File(UserFilePath + "/temp" + new Date().getTime() + ValueTools.getRandomInt(100));
+        }
+        return file;
+    }
+
     public static boolean isPDF(String filename) {
         String suffix = getFileSuffix(filename);
         if (suffix == null) {

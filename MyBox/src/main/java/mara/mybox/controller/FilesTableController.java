@@ -89,7 +89,7 @@ public class FilesTableController extends BaseController {
     void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -101,8 +101,8 @@ public class FilesTableController extends BaseController {
             }
 
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(parentController.sourcePathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(parentController.sourcePathKey, path);
             for (File file : files) {
                 if (findData(file.getAbsolutePath()) != null) {
                     continue;

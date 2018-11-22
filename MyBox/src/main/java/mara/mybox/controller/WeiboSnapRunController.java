@@ -269,7 +269,7 @@ public class WeiboSnapRunController extends BaseController {
                                     loadTimer.schedule(new TimerTask() {
                                         @Override
                                         public void run() {
-                                            AppVaribles.setConfigValue("WeiboPassportChecked", "true");
+                                            AppVaribles.setUserConfigValue("WeiboPassportChecked", "true");
 //                                        logger.debug(checkWeiboPassport());
                                             Platform.runLater(new Runnable() {
                                                 @Override
@@ -583,11 +583,11 @@ public class WeiboSnapRunController extends BaseController {
             }
 
             currentMonth = parameters.getStartMonth();
-            currentPage = AppVaribles.getConfigInt("WeiBoCurrentPageKey", 1) - 1;
+            currentPage = AppVaribles.getUserConfigInt("WeiBoCurrentPageKey", 1) - 1;
             if (currentPage < 0) {
                 currentPage = 0;
             }
-            currentMonthPageCount = AppVaribles.getConfigInt("WeiBoCurrentMonthPageCountKey", 1);
+            currentMonthPageCount = AppVaribles.getUserConfigInt("WeiBoCurrentMonthPageCountKey", 1);
             if (currentMonthPageCount < 1) {
                 currentMonthPageCount = 1;
             }
@@ -626,12 +626,12 @@ public class WeiboSnapRunController extends BaseController {
                     return;
                 }
                 currentPage = 0;
-                AppVaribles.setConfigInt("WeiBoCurrentPageKey", currentPage);
+                AppVaribles.setUserConfigInt("WeiBoCurrentPageKey", currentPage);
                 currentMonthPageCount = 1;
                 loadNextPage();
                 return;
             }
-            AppVaribles.setConfigInt("WeiBoCurrentPageKey", currentPage);
+            AppVaribles.setUserConfigInt("WeiBoCurrentPageKey", currentPage);
             currentMonthString = DateTools.dateToMonthString(currentMonth);
             currentAddress = parameters.getWebAddress() + "?is_all=1&stat_date="
                     + currentMonthString.replace("-", "")
@@ -859,7 +859,7 @@ public class WeiboSnapRunController extends BaseController {
                                                             try {
                                                                 currentPage = Integer.valueOf(s1.substring(0, pos2));
                                                                 currentMonthPageCount = Integer.valueOf(s1.substring(pos2 + "&amp;countPage=".length(), pos3));
-                                                                AppVaribles.setConfigInt("WeiBoCurrentMonthPageCountKey", currentMonthPageCount);
+                                                                AppVaribles.setUserConfigInt("WeiBoCurrentMonthPageCountKey", currentMonthPageCount);
                                                                 mainCompleted();
                                                             } catch (Exception e) {
 //                                                            loadFailed = loadCompleted = true;
@@ -1295,9 +1295,9 @@ public class WeiboSnapRunController extends BaseController {
             if (parent != null) {
                 parent.setDuration(currentMonthString, "");
             }
-            AppVaribles.setConfigValue("WeiboLastStartMonthKey", currentMonthString);
-            AppVaribles.setConfigValue("WeiBoCurrentPageKey", currentPage + "");
-            AppVaribles.setConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
+            AppVaribles.setUserConfigValue("WeiboLastStartMonthKey", currentMonthString);
+            AppVaribles.setUserConfigValue("WeiBoCurrentPageKey", currentPage + "");
+            AppVaribles.setUserConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
             if (parameters.isOpenPathWhenStop()) {
                 Desktop.getDesktop().browse(rootPath.toURI());
             }

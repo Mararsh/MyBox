@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import mara.mybox.controller.AlarmClockController;
-import mara.mybox.controller.BaseController;
+import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import static mara.mybox.objects.CommonValues.BundleEnUS;
 import static mara.mybox.objects.CommonValues.BundleEsES;
@@ -29,10 +29,10 @@ public class AppVaribles {
 
     private static final Logger logger = LogManager.getLogger();
     public static ResourceBundle CurrentBundle;
-    public static Map<String, String> configValues;
+    public static Map<String, String> userConfigValues;
+    public static Map<String, String> systemConfigValues;
     public static ScheduledExecutorService executorService;
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
-    public static BaseController currentController;
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting PdfMemUsage;
 
@@ -40,7 +40,8 @@ public class AppVaribles {
     }
 
     public static void initAppVaribles() {
-        configValues = new HashMap();
+        userConfigValues = new HashMap();
+        systemConfigValues = new HashMap();
         getBundle();
         getPdfMem();
     }
@@ -51,14 +52,14 @@ public class AppVaribles {
     }
 
     public static String getLanguage() {
-        return getConfigValue("language", Locale.getDefault().getLanguage().toLowerCase());
+        return getUserConfigValue("language", Locale.getDefault().getLanguage().toLowerCase());
     }
 
     public static ResourceBundle setLanguage(String lang) {
         if (lang == null) {
             lang = Locale.getDefault().getLanguage().toLowerCase();
         }
-        setConfigValue("language", lang);
+        AppVaribles.setUserConfigValue("language", lang);
         return getBundle();
     }
 
@@ -123,35 +124,35 @@ public class AppVaribles {
     public static MemoryUsageSetting setPdfMem(String value) {
         switch (value) {
             case "1GB":
-                AppVaribles.setConfigValue("PdfMemDefault", "1GB");
+                AppVaribles.setUserConfigValue("PdfMemDefault", "1GB");
                 AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
                 break;
             case "2GB":
-                AppVaribles.setConfigValue("PdfMemDefault", "2GB");
+                AppVaribles.setUserConfigValue("PdfMemDefault", "2GB");
                 AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
                 break;
             case "Unlimit":
-                AppVaribles.setConfigValue("PdfMemDefault", "Unlimit");
+                AppVaribles.setUserConfigValue("PdfMemDefault", "Unlimit");
                 AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
                 break;
             case "500MB":
             default:
-                AppVaribles.setConfigValue("PdfMemDefault", "500MB");
+                AppVaribles.setUserConfigValue("PdfMemDefault", "500MB");
                 AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
         }
         return AppVaribles.PdfMemUsage;
     }
 
     public static MemoryUsageSetting getPdfMem() {
-        return setPdfMem(getConfigValue("PdfMemDefault", "1GB"));
+        return setPdfMem(getUserConfigValue("PdfMemDefault", "1GB"));
     }
 
     public static String getStyle() {
-        return getConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
+        return getUserConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
     }
 
     public static String getTempPath() {
-        return getConfigValue("TempDir", CommonValues.UserFilePath);
+        return getUserConfigValue("TempDir", CommonValues.UserFilePath);
     }
 
     public static File getTempPathFile() {
@@ -172,26 +173,26 @@ public class AppVaribles {
     }
 
     public static int getCommentsDelay() {
-        return getConfigInt("CommentsDelay", 3000);
+        return getUserConfigInt("CommentsDelay", 3000);
     }
 
     public static boolean isShowComments() {
-        return getConfigBoolean("ShowComments", true);
+        return AppVaribles.getUserConfigBoolean("ShowComments", true);
     }
 
     public static boolean isAlphaAsBlack() {
-        return getConfigBoolean("AlphaAsBlack", false);
+        return AppVaribles.getUserConfigBoolean("AlphaAsBlack", false);
     }
 
-    public static String getConfigValue(String key, String defaultValue) {
+    public static String getUserConfigValue(String key, String defaultValue) {
         try {
-//            logger.debug("getConfigValue:" + key);
+//            logger.debug("getUserConfigValue:" + key);
             String value;
-            if (configValues.containsKey(key)) {
-                value = configValues.get(key);
+            if (userConfigValues.containsKey(key)) {
+                value = userConfigValues.get(key);
             } else {
                 value = TableUserConf.read(key, defaultValue);
-                configValues.put(key, value);
+                userConfigValues.put(key, value);
             }
             return value;
         } catch (Exception e) {
@@ -200,14 +201,14 @@ public class AppVaribles {
         }
     }
 
-    public static int getConfigInt(String key, int defaultValue) {
+    public static int getUserConfigInt(String key, int defaultValue) {
         try {
             int v;
-            if (configValues.containsKey(key)) {
-                v = Integer.valueOf(configValues.get(key));
+            if (userConfigValues.containsKey(key)) {
+                v = Integer.valueOf(userConfigValues.get(key));
             } else {
                 v = TableUserConf.readInt(key, defaultValue);
-                configValues.put(key, v + "");
+                userConfigValues.put(key, v + "");
             }
             return v;
         } catch (Exception e) {
@@ -216,14 +217,14 @@ public class AppVaribles {
         }
     }
 
-    public static boolean getConfigBoolean(String key, boolean defaultValue) {
+    public static boolean getUserConfigBoolean(String key, boolean defaultValue) {
         try {
             boolean v;
-            if (configValues.containsKey(key)) {
-                v = configValues.get(key).equals("true");
+            if (userConfigValues.containsKey(key)) {
+                v = userConfigValues.get(key).equals("true");
             } else {
                 v = TableUserConf.readBoolean(key, defaultValue);
-                configValues.put(key, v ? "true" : "false");
+                userConfigValues.put(key, v ? "true" : "false");
             }
             return v;
         } catch (Exception e) {
@@ -232,31 +233,111 @@ public class AppVaribles {
         }
     }
 
-    public static boolean getConfigBoolean(String key) {
-        return getConfigBoolean(key, true);
+    public static boolean getUserConfigBoolean(String key) {
+        return AppVaribles.getUserConfigBoolean(key, true);
     }
 
-    public static boolean setConfigValue(String key, String value) {
+    public static boolean setUserConfigValue(String key, String value) {
         if (TableUserConf.write(key, value) > 0) {
-            configValues.put(key, value);
+            userConfigValues.put(key, value);
             return true;
         } else {
             return false;
         }
     }
 
-    public static boolean setConfigInt(String key, int value) {
+    public static boolean setUserConfigInt(String key, int value) {
         if (TableUserConf.write(key, value) > 0) {
-            configValues.put(key, value + "");
+            userConfigValues.put(key, value + "");
             return true;
         } else {
             return false;
         }
     }
 
-    public static boolean setConfigValue(String key, boolean value) {
+    public static boolean setUserConfigValue(String key, boolean value) {
         if (TableUserConf.write(key, value) > 0) {
-            configValues.put(key, value ? "true" : "false");
+            userConfigValues.put(key, value ? "true" : "false");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static String getSystemConfigValue(String key, String defaultValue) {
+        try {
+//            logger.debug("getSystemConfigValue:" + key);
+            String value;
+            if (systemConfigValues.containsKey(key)) {
+                value = systemConfigValues.get(key);
+            } else {
+                value = TableSystemConf.read(key, defaultValue);
+                systemConfigValues.put(key, value);
+            }
+            return value;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static int getSystemConfigInt(String key, int defaultValue) {
+        try {
+            int v;
+            if (systemConfigValues.containsKey(key)) {
+                v = Integer.valueOf(systemConfigValues.get(key));
+            } else {
+                v = TableSystemConf.readInt(key, defaultValue);
+                systemConfigValues.put(key, v + "");
+            }
+            return v;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static boolean getSystemConfigBoolean(String key, boolean defaultValue) {
+        try {
+            boolean v;
+            if (systemConfigValues.containsKey(key)) {
+                v = systemConfigValues.get(key).equals("true");
+            } else {
+                v = TableSystemConf.readBoolean(key, defaultValue);
+                systemConfigValues.put(key, v ? "true" : "false");
+            }
+            return v;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return defaultValue;
+        }
+    }
+
+    public static boolean getSystemConfigBoolean(String key) {
+        return AppVaribles.getSystemConfigBoolean(key, true);
+    }
+
+    public static boolean setSystemConfigValue(String key, String value) {
+        if (TableSystemConf.write(key, value) > 0) {
+            systemConfigValues.put(key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setSystemConfigInt(String key, int value) {
+        if (TableSystemConf.write(key, value) > 0) {
+            systemConfigValues.put(key, value + "");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setSystemConfigValue(String key, boolean value) {
+        if (TableSystemConf.write(key, value) > 0) {
+            systemConfigValues.put(key, value ? "true" : "false");
             return true;
         } else {
             return false;

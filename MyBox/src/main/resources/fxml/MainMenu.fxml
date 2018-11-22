@@ -43,9 +43,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureConvolution" text="%Convolution" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureReplaceColor" text="%ReplaceColor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureText" text="%Text" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCover" text="%Cover" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
@@ -60,7 +58,6 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchFilters" text="%Filters" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchConvolution" text="%Convolution" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
@@ -72,17 +69,19 @@
                             </items>
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageGifViewer" text="%ImageGifViewer" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
                         <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
                         <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                        <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
                         <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
@@ -156,6 +155,7 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
                         <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
@@ -164,6 +164,7 @@
                 <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showHelp" text="%Help" />
+                        <MenuItem mnemonicParsing="false" onAction="#showHelpExternal" text="%HelpInExternal" />
                         <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                     </items>
                 </Menu>

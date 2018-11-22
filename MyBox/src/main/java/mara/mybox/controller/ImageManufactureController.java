@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -12,18 +14,21 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -41,15 +46,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.db.TableImageHistory;
@@ -68,7 +72,10 @@ import mara.mybox.fxml.FxmlTools;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.Rectangle;
+import mara.mybox.objects.ImageScope.ColorScopeType;
+import mara.mybox.objects.ImageScope.OperationType;
+import mara.mybox.objects.ImageScope.ScopeType;
+import mara.mybox.objects.IntRectangle;
 
 /**
  * @Author Mara
@@ -87,13 +94,20 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected boolean isSettingValues, isSwitchingTab;
 
     protected String initTab;
-    protected TextField scopeText;
     protected int stageWidth, stageHeight;
     protected String imageHistoriesPath;
     protected List<String> imageHistories;
 
     protected ImageScope scope;
-    protected String scopeColorString, scopeAllString;
+
+    protected TextField scopeLeftXInput, scopeLeftYInput, scopeRightXInput, scopeRightYInput;
+    protected TextField scopeRadiusInput, scopeCenterXInput, scopeCenterYInput, scopeDistanceInput;
+    protected ComboBox scopeMatchBox, scopePointsBox;
+    protected ComboBox<Color> scopeColorsBox;
+    protected HBox scopeColorSettingBox, scopeAreaSettingBox, imageLabelBox2;
+    protected CheckBox scopeColorExcludedCheck, scopeAreaExcludedCheck;
+    protected Button scopeClearButton, scopeDeleteButton;
+    protected Label scopePromptLabel;
 
     public static class ImageOperationType {
 
@@ -103,8 +117,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
         public static int Crop = 3;
         public static int Text = 4;
         public static int Effects = 5;
-        public static int Filters = 6;
-        public static int Replace_Color = 7;
         public static int Shadow = 8;
         public static int Size = 9;
         public static int Transform = 10;
@@ -121,13 +133,13 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ToolBar hotBar;
     @FXML
-    protected Tab fileTab, viewTab, colorTab, filtersTab, textTab, coverTab, cropTab,
-            arcTab, shadowTab, effectsTab, convolutionTab, replaceColorTab, sizeTab, refTab,
+    protected Tab fileTab, viewTab, colorTab, textTab, coverTab, cropTab,
+            arcTab, shadowTab, effectsTab, convolutionTab, sizeTab, refTab,
             browseTab, transformTab, marginsTab;
     @FXML
-    protected Label tipsLabel, scopeLeftLabel, scopeRightLabel, promptLabel;
+    protected Label tipsLabel, promptLabel, imageLabel;
     @FXML
-    protected Button selectRefButton, saveButton, recoverButton, undoButton, redoButton, scopeClearButton;
+    protected Button selectRefButton, saveButton, recoverButton, undoButton, redoButton;
     @FXML
     protected CheckBox showRefCheck, showScopeCheck;
     @FXML
@@ -135,7 +147,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected TabPane tabPane;
     @FXML
-    protected HBox hotBox, scopeSettingBox;
+    protected HBox hotBox, imageLabelBox;
     @FXML
     protected VBox imageBox;
     @FXML
@@ -143,20 +155,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ToggleGroup scopeGroup;
     @FXML
-    protected TextField scopeLeftXInput, scopeLeftYInput, scopeRightXInput, scopeRightYInput;
+    protected ColorPicker colorPicker;
 
     public ImageManufactureController() {
         sourcePathKey = "ImageSourcePathKey";
 
-    }
-
-    @Override
-    protected void initializeNext2() {
-        try {
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     protected void initCommon() {
@@ -168,9 +171,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             viewTab.setDisable(true);
             colorTab.setDisable(true);
             effectsTab.setDisable(true);
-            filtersTab.setDisable(true);
             convolutionTab.setDisable(true);
-            replaceColorTab.setDisable(true);
             sizeTab.setDisable(true);
             refTab.setDisable(true);
             transformTab.setDisable(true);
@@ -219,11 +220,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     if (index < 0 || hisBox.getItems() == null) {
                         return;
                     }
-                    if (index == hisBox.getItems().size() - 1) {
+                    if (getMessage("SettingsDot").equals(hisBox.getItems().get(index))) {
                         BaseController c = openStage(CommonValues.SettingsFxml, true);
                         c.setParentController(getMyController());
                         c.setParentFxml(getMyFxml());
                         return;
+                    } else if (getMessage("OpenPathDot").equals(hisBox.getItems().get(index))) {
+                        try {
+                            Desktop.getDesktop().browse(new File(AppVaribles.getImageHisPath()).toURI());
+                        } catch (Exception e) {
+                            logger.error(e.toString());
+                        }
                     }
                     if (imageHistories == null || imageHistories.size() <= index) {
                         return;
@@ -233,49 +240,45 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
             hisBox.setVisibleRowCount(15);
-            hisBox.setDisable(!AppVaribles.getConfigBoolean("ImageHis"));
+            hisBox.setDisable(!AppVaribles.getUserConfigBoolean("ImageHis"));
 
-            tips = new Tooltip(getMessage("CTRL+s"));
+            tips = new Tooltip("CTRL+s");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(saveButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+r"));
+            tips = new Tooltip("CTRL+r");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(recoverButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+y"));
+            tips = new Tooltip("CTRL+y");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(redoButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+z"));
+            tips = new Tooltip("CTRL+z");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(undoButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+1"));
+            tips = new Tooltip("CTRL+1");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(oButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+2"));
+            tips = new Tooltip("CTRL+2");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(wButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+3"));
+            tips = new Tooltip("CTRL+3");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(inButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+4"));
+            tips = new Tooltip("CTRL+4");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(outButton, tips);
 
-            tips = new Tooltip(getMessage("CTRL+h"));
+            tips = new Tooltip("CTRL+h");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(hisBox, tips);
 
             if (showScopeCheck != null && scopeGroup != null) {
-                tips = new Tooltip(getMessage("CTRL+x"));
-                tips.setFont(new Font(16));
-                FxmlTools.quickTooltip(scopeClearButton, tips);
-
                 tips = new Tooltip(getMessage("ShowScopeComments"));
                 tips.setFont(new Font(16));
                 FxmlTools.setComments(showScopeCheck, tips);
@@ -297,96 +300,126 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
     }
 
+    protected void initInterface() {
+        try {
+            if (values == null || values.getImage() == null) {
+                return;
+            }
+            isSettingValues = true;
+
+            sourceFile = values.getSourceFile();
+            image = values.getImage();
+            imageInformation = values.getImageInfo();
+
+            cropTab.setDisable(false);
+            colorTab.setDisable(false);
+            convolutionTab.setDisable(false);
+            effectsTab.setDisable(false);
+            arcTab.setDisable(false);
+            shadowTab.setDisable(false);
+            sizeTab.setDisable(false);
+            refTab.setDisable(false);
+            hotBar.setDisable(false);
+            transformTab.setDisable(false);
+            textTab.setDisable(false);
+            coverTab.setDisable(false);
+            marginsTab.setDisable(false);
+            viewTab.setDisable(false);
+            browseTab.setDisable(false);
+
+            undoButton.setDisable(true);
+            redoButton.setDisable(true);
+
+            imageView.setImage(values.getCurrentImage());
+            imageView.setCursor(Cursor.OPEN_HAND);
+            setBottomLabel();
+            setImageChanged(values.isImageChanged());
+            updateHisBox();
+
+            showRefCheck.setSelected(values.isShowRef());
+
+            getMyStage().widthProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observableValue,
+                        Number oldWidth, Number newWidth) {
+                    stageWidth = newWidth.intValue();
+                }
+            });
+            getMyStage().heightProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observableValue,
+                        Number oldHeight, Number newHeight) {
+                    stageHeight = newHeight.intValue();
+                }
+            });
+            if (values.getStageWidth() > getMyStage().getWidth()) {
+                getMyStage().setWidth(values.getStageWidth());
+            }
+            if (values.getStageHeight() > getMyStage().getHeight()) {
+                getMyStage().setHeight(values.getStageHeight());
+            }
+            if (values.getImageViewHeight() > 0) {
+                imageView.setFitHeight(values.getImageViewHeight());
+                imageView.setFitWidth(values.getImageViewWidth());
+            } else {
+                fitSize();
+            }
+
+            values.setScope(new ImageScope(image));
+            scope = values.getScope();
+            checkScopeType();
+
+            imageView.requestFocus();
+
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    @Override
+    public void afterImageLoaded() {
+        try {
+            super.afterImageLoaded();
+            if (image == null) {
+                return;
+            }
+            isSettingValues = true;
+
+            values.setSourceFile(sourceFile);
+            values.setImage(image);
+            values.setImageInfo(imageInformation);
+            values.setCurrentImage(image);
+            values.setRefImage(image);
+            setImageChanged(false);
+            values.setScope(new ImageScope(image));
+            scope = values.getScope();
+
+            recordImageHistory(ImageOperationType.Load, image);
+
+            if (initTab != null) {
+                switchTab(initTab);
+            } else {
+                initInterface();
+            }
+
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
     protected void initScopeBar() {
         try {
-            scopeColorString = getMessage("ColorLabel");
-            scopeAllString = "";
 
             scopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkScope();
-                }
-            });
-
-            scopeLeftXInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    if (!isSettingValues && values != null && scope != null) {
-                        switch (scope.getScopeType()) {
-                            case Matting:
-                                checkMatting();
-                                break;
-                            case Rectangle:
-                                checkRectangle();
-                                break;
-                            case Circle:
-                                checkCircle();
-                                break;
-                            case Color:
-                            case Hue:
-                                checkDistance();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            });
-
-            scopeLeftYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    if (!isSettingValues && values != null && scope != null) {
-                        switch (scope.getScopeType()) {
-                            case Rectangle:
-                                checkRectangle();
-                                break;
-                            case Circle:
-                                checkCircle();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            });
-
-            scopeRightXInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    if (!isSettingValues && values != null && scope != null) {
-                        switch (scope.getScopeType()) {
-                            case Rectangle:
-                                checkRectangle();
-                                break;
-                            case Circle:
-                                checkCircle();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            });
-
-            scopeRightYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    if (!isSettingValues && values != null && scope != null) {
-                        switch (scope.getScopeType()) {
-                            case Rectangle:
-                                checkRectangle();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                    checkScopeType();
                 }
             });
 
@@ -395,141 +428,42 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void checkScope() {
+    protected void checkScopeType() {
         try {
             if (showScopeCheck == null || values == null || scope == null) {
                 return;
             }
             scope.setImage(values.getCurrentImage());
             imageView.setImage(values.getCurrentImage());
-            scopeLeftXInput.setStyle(null);
-            scopeLeftYInput.setStyle(null);
-            scopeRightXInput.setStyle(null);
-            scopeRightYInput.setStyle(null);
-            scopeClearButton.setDisable(true);
             scope.clearColors();
             scope.clearPoints();
 
             RadioButton selected = (RadioButton) scopeGroup.getSelectedToggle();
             if (AppVaribles.getMessage("All").equals(selected.getText())) {
                 scope.setScopeType(ImageScope.ScopeType.All);
-                scope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-                scope.setColorScopeType(ImageScope.ColorScopeType.AllColor);
-
-                scopeSettingBox.setDisable(true);
                 showScopeCheck.setDisable(true);
                 hideScopePane();
-                promptLabel.setText(scopeAllString);
 
             } else {
-                scopeSettingBox.setDisable(false);
 
-                if (AppVaribles.getMessage("Settings").equals(selected.getText())) {
-                    scope.setScopeType(ImageScope.ScopeType.Settings);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.AllColor);
-                    promptLabel.setText(scopeAllString);
-
-                    scopeSetting();
-
-                } else if (AppVaribles.getMessage("Matting").equals(selected.getText())) {
+                if (AppVaribles.getMessage("Matting").equals(selected.getText())) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.Color);
 
-                    scopeLeftLabel.setText(getMessage("ColorDistance"));
-                    scopeRightLabel.setText("");
-                    scopeLeftXInput.setDisable(false);
-                    scopeLeftYInput.setDisable(true);
-                    scopeRightXInput.setDisable(true);
-                    scopeRightYInput.setDisable(true);
-                    isSettingValues = true;
-                    scopeLeftXInput.setText("50");
-                    isSettingValues = false;
-                    checkMatting();
-
-                    scopeClearButton.setDisable(false);
-                    promptLabel.setText(getMessage("MattingComments"));
-
-                } else if (AppVaribles.getMessage("Hue").equals(selected.getText())) {
-                    scope.setScopeType(ImageScope.ScopeType.Hue);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
-
-                    scopeLeftLabel.setText(getMessage("HueDistance"));
-                    scopeRightLabel.setText("");
-                    scopeLeftXInput.setDisable(false);
-                    scopeLeftYInput.setDisable(true);
-                    scopeRightXInput.setDisable(true);
-                    scopeRightYInput.setDisable(true);
-                    isSettingValues = true;
-                    scopeLeftXInput.setText("5");
-                    isSettingValues = false;
-                    checkDistance();
-
-                    scopeClearButton.setDisable(false);
-                    promptLabel.setText(scopeColorString);
-
-                } else if (AppVaribles.getMessage("Color").equals(selected.getText())) {
-                    scope.setScopeType(ImageScope.ScopeType.Color);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.AllArea);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-
-                    scopeLeftLabel.setText(getMessage("ColorDistance"));
-                    scopeRightLabel.setText("");
-                    scopeLeftXInput.setDisable(false);
-                    scopeLeftYInput.setDisable(true);
-                    scopeRightXInput.setDisable(true);
-                    scopeRightYInput.setDisable(true);
-                    isSettingValues = true;
-                    scopeLeftXInput.setText("50");
-                    isSettingValues = false;
-                    checkDistance();
-
-                    scopeClearButton.setDisable(false);
-                    promptLabel.setText(scopeColorString);
-
-                } else if (AppVaribles.getMessage("Rectangle").equals(selected.getText())) {
+                } else if (getMessage("Rectangle").equals(selected.getText())) {
                     scope.setScopeType(ImageScope.ScopeType.Rectangle);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.Rectangle);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.AllColor);
 
-                    scopeLeftLabel.setText(getMessage("LeftTop"));
-                    scopeRightLabel.setText(getMessage("RightBottom"));
-                    scopeLeftXInput.setDisable(false);
-                    scopeLeftYInput.setDisable(false);
-                    scopeRightXInput.setDisable(false);
-                    scopeRightYInput.setDisable(false);
-                    isSettingValues = true;
-                    scopeLeftXInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
-                    scopeLeftYInput.setText((int) (values.getCurrentImage().getHeight() / 4) + "");
-                    scopeRightXInput.setText((int) (values.getCurrentImage().getWidth() * 3 / 4) + "");
-                    scopeRightYInput.setText((int) (values.getCurrentImage().getHeight() * 3 / 4) + "");
-                    isSettingValues = false;
-                    checkRectangle();
-
-                    promptLabel.setText(getMessage("ScopeRectangleComments"));
-
-                } else if (AppVaribles.getMessage("Circle").equals(selected.getText())) {
+                } else if (getMessage("Circle").equals(selected.getText())) {
                     scope.setScopeType(ImageScope.ScopeType.Circle);
-                    scope.setAreaScopeType(ImageScope.AreaScopeType.Circle);
-                    scope.setColorScopeType(ImageScope.ColorScopeType.AllColor);
 
-                    scopeLeftLabel.setText(getMessage("Center"));
-                    scopeRightLabel.setText(getMessage("Radius"));
-                    scopeLeftXInput.setDisable(false);
-                    scopeLeftYInput.setDisable(false);
-                    scopeRightXInput.setDisable(false);
-                    scopeRightYInput.setDisable(true);
-                    isSettingValues = true;
-                    scopeLeftXInput.setText((int) (values.getCurrentImage().getWidth() / 2) + "");
-                    scopeLeftYInput.setText((int) (values.getCurrentImage().getHeight() / 2) + "");
-                    scopeRightXInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
-                    scopeRightYInput.setText("");
-                    isSettingValues = false;
-                    checkCircle();
+                } else if (getMessage("ColorMatching").equals(selected.getText())) {
+                    scope.setScopeType(ImageScope.ScopeType.Color);
 
-                    promptLabel.setText(getMessage("ScopeCircleComments"));
+                } else if (getMessage("RectangleColor").equals(selected.getText())) {
+                    scope.setScopeType(ImageScope.ScopeType.RectangleColor);
+
+                } else if (getMessage("CircleColor").equals(selected.getText())) {
+                    scope.setScopeType(ImageScope.ScopeType.CircleColor);
+
                 }
 
                 showScopeCheck.setDisable(false);
@@ -537,52 +471,100 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 showScopePane();
             }
 
-            bottomLabel.setText(AppVaribles.getMessage("ScopeComments2"));
+            showLabels();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void checkDistance() {
-        try {
-            if (scopeLeftXInput.isDisable() || isSettingValues) {
-                return;
-            }
-            int distance = Integer.valueOf(scopeLeftXInput.getText());
-            if (distance >= 0 && distance <= 255) {
-                scopeLeftXInput.setStyle(null);
-                scope.setColorDistance(distance);
-                scope.setHueDistance(distance);
-                indicateColor();
-            } else {
-                scopeLeftXInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            scopeLeftXInput.setStyle(badStyle);
+    protected void checkMatchType() {
+        String matchType = (String) scopeMatchBox.getSelectionModel().getSelectedItem();
+        Tooltip tips;
+        if (getMessage("Color").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Color);
+            tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Hue").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Hue);
+            tips = new Tooltip("0~360");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Red").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Red);
+            tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Green").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Green);
+            tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Blue").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Blue);
+            tips = new Tooltip("0~255");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Brightness").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Brightness);
+            tips = new Tooltip("0~100");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
+        } else if (getMessage("Saturation").equals(matchType)) {
+            scope.setColorScopeType(ColorScopeType.Saturation);
+            tips = new Tooltip("0~100");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(scopeDistanceInput, tips);
         }
+        checkDistanceValue();
     }
 
-    protected void checkMatting() {
+    protected boolean checkDistanceValue() {
         try {
-            if (scopeLeftXInput.isDisable() || isSettingValues) {
-                return;
+            if (scope.getColorScopeType() == null) {
+                return false;
             }
-            int distance = Integer.valueOf(scopeLeftXInput.getText());
-            if (distance >= 0 && distance <= 255) {
-                scopeLeftXInput.setStyle(null);
-                scope.setColorDistance(distance);
-                indicateMatting();
-            } else {
-                scopeLeftXInput.setStyle(badStyle);
+            int distance = Integer.valueOf(scopeDistanceInput.getText());
+            boolean valid = true;
+            switch (scope.getColorScopeType()) {
+                case Hue:
+                    if (distance >= 0 && distance <= 360) {
+                        scopeDistanceInput.setStyle(null);
+                        scope.setHueDistance(distance);
+                    } else {
+                        scopeDistanceInput.setStyle(badStyle);
+                        valid = false;
+                    }
+                    break;
+                case Brightness:
+                case Saturation:
+                    if (distance >= 0 && distance <= 100) {
+                        scopeDistanceInput.setStyle(null);
+                        scope.setColorDistance(distance / 100.0);
+                    } else {
+                        scopeDistanceInput.setStyle(badStyle);
+                        valid = false;
+                    }
+                    break;
+                default:
+                    if (distance >= 0 && distance <= 255) {
+                        scopeDistanceInput.setStyle(null);
+                        scope.setColorDistance(distance / 255.0);
+                    } else {
+                        scopeDistanceInput.setStyle(badStyle);
+                        valid = false;
+                    }
             }
+            return valid;
         } catch (Exception e) {
-            scopeLeftXInput.setStyle(badStyle);
+            scopeDistanceInput.setStyle(badStyle);
+            return false;
         }
     }
 
     protected void checkRectangle() {
-        if (scopeLeftXInput.isDisable() || isSettingValues) {
+        if (isSettingValues) {
             return;
         }
         boolean areaValid = true;
@@ -648,7 +630,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
 
         if (areaValid) {
-            scope.setRectangle(new Rectangle(leftX, leftY, rightX, rightY));
+            scope.setRectangle(new IntRectangle(leftX, leftY, rightX, rightY));
             indicateRectangle();
         } else {
             popError(getMessage("InvalidRectangle"));
@@ -657,35 +639,35 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void checkCircle() {
-        if (scopeLeftXInput.isDisable() || isSettingValues) {
+        if (isSettingValues) {
             return;
         }
         boolean areaValid = true;
-        int x = -1, y = -1, r = -1;
+        int x = -1, y = -1, r;
 
         try {
-            x = Integer.valueOf(scopeLeftXInput.getText());
+            x = Integer.valueOf(scopeCenterXInput.getText());
             if (x >= 0 && x <= values.getCurrentImage().getWidth()) {
-                scopeLeftXInput.setStyle(null);
+                scopeCenterXInput.setStyle(null);
             } else {
                 areaValid = false;
-                scopeLeftXInput.setStyle(badStyle);
+                scopeCenterXInput.setStyle(badStyle);
             }
         } catch (Exception e) {
             areaValid = false;
-            scopeLeftXInput.setStyle(badStyle);
+            scopeCenterXInput.setStyle(badStyle);
         }
         try {
-            y = Integer.valueOf(scopeLeftYInput.getText());
+            y = Integer.valueOf(scopeCenterYInput.getText());
             if (y >= 0 && y <= values.getCurrentImage().getHeight()) {
-                scopeLeftYInput.setStyle(null);
+                scopeCenterYInput.setStyle(null);
             } else {
                 areaValid = false;
-                scopeLeftYInput.setStyle(badStyle);
+                scopeCenterYInput.setStyle(badStyle);
             }
         } catch (Exception e) {
             areaValid = false;
-            scopeLeftYInput.setStyle(badStyle);
+            scopeCenterYInput.setStyle(badStyle);
         }
 
         if (areaValid) {
@@ -693,17 +675,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
 
         try {
-            r = Integer.valueOf(scopeRightXInput.getText());
+            r = Integer.valueOf(scopeRadiusInput.getText());
             if (r > 0) {
-                scopeRightXInput.setStyle(null);
+                scopeRadiusInput.setStyle(null);
                 scope.setCircleRadius(r);
             } else {
                 areaValid = false;
-                scopeRightXInput.setStyle(badStyle);
+                scopeRadiusInput.setStyle(badStyle);
             }
         } catch (Exception e) {
             areaValid = false;
-            scopeRightXInput.setStyle(badStyle);
+            scopeRadiusInput.setStyle(badStyle);
         }
 
         if (areaValid) {
@@ -711,11 +693,40 @@ public abstract class ImageManufactureController extends ImageViewerController {
         } else {
             popError(getMessage("InvalidCircle"));
         }
+    }
 
+    protected void indicateScope() {
+        if (null != scope.getScopeType()) {
+            switch (scope.getScopeType()) {
+                case All:
+                    break;
+                case Matting:
+                    indicateMatting();
+                    break;
+                case Rectangle:
+                    indicateRectangle();
+                    break;
+                case Circle:
+                    indicateCircle();
+                    break;
+                case Color:
+                    indicateColor();
+                    break;
+                case RectangleColor:
+                    indicateRectangle();
+                    break;
+                case CircleColor:
+                    indicateCircle();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     protected void indicateRectangle() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Rectangle) {
+        if (scope.getScopeType() != ScopeType.Rectangle
+                && scope.getScopeType() != ScopeType.RectangleColor) {
             return;
         }
         if (task != null && task.isRunning()) {
@@ -731,15 +742,16 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     }
                     final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
                             Color.RED, lineWidth, scope.getRectangle());
-                    final Image scopeImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
-                    scope.setImage(scopeImage);
+                    Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    final Image rectImage = FxmlScopeTools.indicateRectangle(scopedImage,
+                            Color.RED, lineWidth, scope.getRectangle());
+                    scope.setImage(rectImage);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             imageView.setImage(newImage);
                             if (scopeView != null) {
-                                scopeView.setImage(scopeImage);
-                                scopeText.setText(scope.getScopeText());
+                                scopeView.setImage(rectImage);
                             }
                         }
                     });
@@ -756,7 +768,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void indicateCircle() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Circle) {
+        if (scope.getScopeType() != ScopeType.Circle
+                && scope.getScopeType() != ScopeType.CircleColor) {
             return;
         }
         if (task != null && task.isRunning()) {
@@ -772,15 +785,16 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     }
                     final Image newImage = FxmlScopeTools.indicateCircle(values.getCurrentImage(),
                             Color.RED, lineWidth, scope.getCircle());
-                    final Image scopeImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
-                    scope.setImage(scopeImage);
+                    Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    final Image circledImage = FxmlScopeTools.indicateCircle(scopedImage,
+                            Color.RED, lineWidth, scope.getCircle());
+                    scope.setImage(circledImage);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             imageView.setImage(newImage);
                             if (scopeView != null) {
-                                scopeView.setImage(scopeImage);
-                                scopeText.setText(scope.getScopeText());
+                                scopeView.setImage(circledImage);
                             }
                         }
                     });
@@ -797,7 +811,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void indicateMatting() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Matting) {
+        if (scope.getScopeType() != ScopeType.Matting) {
             return;
         }
         if (task != null && task.isRunning()) {
@@ -814,7 +828,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         public void run() {
                             if (scopeView != null) {
                                 scopeView.setImage(scopeImage);
-                                scopeText.setText(scope.getScopeText());
                             }
                         }
                     });
@@ -831,8 +844,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void indicateColor() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Hue
-                && scope.getScopeType() != ImageScope.ScopeType.Color) {
+        if (scope.getScopeType() != ScopeType.Color) {
             return;
         }
         if (task != null && task.isRunning()) {
@@ -849,41 +861,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         public void run() {
                             if (scopeView != null) {
                                 scopeView.setImage(scopeImage);
-                                scopeText.setText(scope.getScopeText());
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private void indicateSetting() {
-        if (scope.getScopeType() != ImageScope.ScopeType.Settings) {
-            return;
-        }
-        if (task != null && task.isRunning()) {
-            return;
-        }
-        task = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    final Image scopeImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
-                    scope.setImage(scopeImage);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (scopeView != null) {
-                                scopeView.setImage(scopeImage);
-                                scopeText.setText(scope.getScopeText());
                             }
                         }
                     });
@@ -1092,11 +1069,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     indicateCircle();
                     break;
                 case Color:
-                case Hue:
                     indicateColor();
-                    break;
-                case Settings:
-                    indicateSetting();
                     break;
                 default:
                     break;
@@ -1106,7 +1079,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     protected void updateHisBox() {
-        if (!AppVaribles.getConfigBoolean("ImageHis") || values.getSourceFile() == null) {
+        if (!AppVaribles.getUserConfigBoolean("ImageHis") || values.getSourceFile() == null) {
             hisBox.setDisable(true);
             return;
         }
@@ -1132,12 +1105,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 s = AppVaribles.getMessage("CutMargins");
             } else if (r.getUpdate_type() == ImageOperationType.Effects) {
                 s = AppVaribles.getMessage("Effects");
-            } else if (r.getUpdate_type() == ImageOperationType.Filters) {
-                s = AppVaribles.getMessage("Filters");
             } else if (r.getUpdate_type() == ImageOperationType.Convolution) {
                 s = AppVaribles.getMessage("Convolution");
-            } else if (r.getUpdate_type() == ImageOperationType.Replace_Color) {
-                s = AppVaribles.getMessage("ReplaceColor");
             } else if (r.getUpdate_type() == ImageOperationType.Shadow) {
                 s = AppVaribles.getMessage("Shadow");
             } else if (r.getUpdate_type() == ImageOperationType.Size) {
@@ -1161,13 +1130,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
             hisStrings.add(s);
             imageHistories.add(init.getHistory_location());
         }
+        hisStrings.add(AppVaribles.getMessage("OpenPathDot"));
         hisStrings.add(AppVaribles.getMessage("SettingsDot"));
         hisBox.getItems().addAll(hisStrings);
     }
 
     protected void recordImageHistory(final int updateType, final Image newImage) {
         if (values == null || values.getSourceFile() == null
-                || !AppVaribles.getConfigBoolean("ImageHis")
+                || !AppVaribles.getUserConfigBoolean("ImageHis")
                 || updateType < 0 || newImage == null) {
             return;
         }
@@ -1222,16 +1192,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
             tabName = "size";
         } else if (cropTab.equals(newTab)) {
             tabName = "crop";
-        } else if (filtersTab.equals(newTab)) {
-            tabName = "filters";
         } else if (convolutionTab.equals(newTab)) {
             tabName = "convolution";
         } else if (effectsTab.equals(newTab)) {
             tabName = "effects";
         } else if (colorTab.equals(newTab)) {
             tabName = "color";
-        } else if (replaceColorTab.equals(newTab)) {
-            tabName = "replaceColor";
         } else if (textTab.equals(newTab)) {
             tabName = "text";
         } else if (coverTab.equals(newTab)) {
@@ -1271,17 +1237,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "color":
                     fxml = CommonValues.ImageManufactureColorFxml;
                     break;
-                case "filters":
-                    fxml = CommonValues.ImageManufactureFiltersFxml;
-                    break;
                 case "convolution":
                     fxml = CommonValues.ImageManufactureConvolutionFxml;
                     break;
                 case "effects":
                     fxml = CommonValues.ImageManufactureEffectsFxml;
-                    break;
-                case "replaceColor":
-                    fxml = CommonValues.ImageManufactureReplaceColorFxml;
                     break;
                 case "text":
                     fxml = CommonValues.ImageManufactureTextFxml;
@@ -1317,7 +1277,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 values.setStageHeight(stageHeight);
                 values.setImageViewWidth((int) imageView.getFitWidth());
                 values.setImageViewHeight((int) imageView.getFitHeight());
-                values.setScope(scope);
                 ImageManufactureController controller
                         = (ImageManufactureController) reloadStage(fxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setValues(values);
@@ -1348,17 +1307,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case "color":
                     tabPane.getSelectionModel().select(colorTab);
                     break;
-                case "filters":
-                    tabPane.getSelectionModel().select(filtersTab);
-                    break;
                 case "convolution":
                     tabPane.getSelectionModel().select(convolutionTab);
                     break;
                 case "effects":
                     tabPane.getSelectionModel().select(effectsTab);
-                    break;
-                case "replaceColor":
-                    tabPane.getSelectionModel().select(replaceColorTab);
                     break;
                 case "text":
                     tabPane.getSelectionModel().select(textTab);
@@ -1392,124 +1345,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-    }
-
-    protected void initInterface() {
-        try {
-            if (values == null || values.getImage() == null) {
-                return;
-            }
-            isSettingValues = true;
-
-            sourceFile = values.getSourceFile();
-            image = values.getImage();
-            imageInformation = values.getImageInfo();
-
-            cropTab.setDisable(false);
-            colorTab.setDisable(false);
-            filtersTab.setDisable(false);
-            convolutionTab.setDisable(false);
-            effectsTab.setDisable(false);
-            arcTab.setDisable(false);
-            shadowTab.setDisable(false);
-            replaceColorTab.setDisable(false);
-            sizeTab.setDisable(false);
-            refTab.setDisable(false);
-            hotBar.setDisable(false);
-            transformTab.setDisable(false);
-            textTab.setDisable(false);
-            coverTab.setDisable(false);
-            marginsTab.setDisable(false);
-            viewTab.setDisable(false);
-            browseTab.setDisable(false);
-
-            undoButton.setDisable(true);
-            redoButton.setDisable(true);
-
-            imageView.setImage(values.getCurrentImage());
-            imageView.setCursor(Cursor.OPEN_HAND);
-            setBottomLabel();
-            setImageChanged(values.isImageChanged());
-            updateHisBox();
-
-            showRefCheck.setSelected(values.isShowRef());
-
-            getMyStage().widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observableValue,
-                        Number oldWidth, Number newWidth) {
-                    stageWidth = newWidth.intValue();
-                }
-            });
-            getMyStage().heightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observableValue,
-                        Number oldHeight, Number newHeight) {
-                    stageHeight = newHeight.intValue();
-                }
-            });
-            if (values.getStageWidth() > getMyStage().getWidth()) {
-                getMyStage().setWidth(values.getStageWidth());
-            }
-            if (values.getStageHeight() > getMyStage().getHeight()) {
-                getMyStage().setHeight(values.getStageHeight());
-            }
-            if (values.getImageViewHeight() > 0) {
-                imageView.setFitHeight(values.getImageViewHeight());
-                imageView.setFitWidth(values.getImageViewWidth());
-            } else {
-                fitSize();
-            }
-
-            isSettingValues = false;
-
-            scope = values.getScope();
-            if (scope != null) {
-                checkScope();
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
-    @Override
-    public void afterImageLoaded() {
-        try {
-            super.afterImageLoaded();
-            if (image == null) {
-                return;
-            }
-            isSettingValues = true;
-
-            values.setSourceFile(sourceFile);
-            values.setImage(image);
-            values.setImageInfo(imageInformation);
-            values.setCurrentImage(image);
-            values.setRefImage(image);
-            setImageChanged(false);
-            values.setScope(new ImageScope(image));
-
-            recordImageHistory(ImageOperationType.Load, image);
-
-            if (initTab != null) {
-                switchTab(initTab);
-            } else {
-                initInterface();
-            }
-
-            isSettingValues = false;
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    public void scopeDetermined(ImageScope imageScope) {
-        values.setScope(imageScope);
-        scope = imageScope;
-        showScopePane();
     }
 
     //  Hotbar Methods
@@ -1572,7 +1407,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     public void saveAs() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -1582,7 +1417,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(targetPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
 
             Task saveTask = new Task<Void>() {
                 @Override
@@ -1699,43 +1534,154 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
     @FXML
     public void clickImage(MouseEvent event) {
-        handleClick(imageView, event);
-    }
-
-    public void clickImageForAll(MouseEvent event, Color color) {
-
-    }
-
-    public void clickImageForColor(MouseEvent event, Color color) {
-        scope.addColor(color);
-        indicateColor();
-    }
-
-    public void handleClick(ImageView view, MouseEvent event) {
         if (values == null || values.getCurrentImage() == null || scope == null) {
-            view.setCursor(Cursor.OPEN_HAND);
+            imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        view.setCursor(Cursor.HAND);
+        imageView.setCursor(Cursor.HAND);
 
-        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / view.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / view.getBoundsInLocal().getHeight());
+        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / imageView.getBoundsInLocal().getWidth());
+        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / imageView.getBoundsInLocal().getHeight());
         PixelReader pixelReader = values.getCurrentImage().getPixelReader();
         Color color = pixelReader.getColor(x, y);
 
         switch (scope.getScopeType()) {
             case All:
-            case Settings:
-                clickImageForAll(event, color);
+                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    colorPicker.setValue(color);
+                }
                 break;
 
             case Color:
-            case Hue:
-                clickImageForColor(event, color);
+                if (scope.getOperationType() == OperationType.ReplaceColor
+                        && event.getButton() == MouseButton.SECONDARY) {
+                    colorPicker.setValue(color);
+                } else {
+                    scope.addColor(color);
+                    scopeColorsBox.getItems().add(color);
+                    scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
+                    scopeColorsBox.setVisibleRowCount(15);
+                    indicateColor();
+                }
+                break;
+
+            case Matting:
+                if (scope.getOperationType() == OperationType.ReplaceColor
+                        && event.getButton() == MouseButton.SECONDARY) {
+                    colorPicker.setValue(color);
+                } else {
+                    scope.addPoints(x, y);
+                    scopePointsBox.getItems().add(x + "," + y);
+                    scopePointsBox.getSelectionModel().select(scopePointsBox.getItems().size() - 1);
+                    scopePointsBox.setVisibleRowCount(15);
+                    indicateMatting();
+                }
+                break;
+
+            case Rectangle:
+                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    colorPicker.setValue(color);
+                } else {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        isSettingValues = true;
+                        scopeLeftXInput.setText(x + "");
+                        scopeLeftYInput.setText(y + "");
+                        isSettingValues = false;
+
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        isSettingValues = true;
+                        scopeRightXInput.setText(x + "");
+                        scopeRightYInput.setText(y + "");
+                        isSettingValues = false;
+                    }
+                    checkRectangle();
+                }
+                break;
+
+            case Circle:
+                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    colorPicker.setValue(color);
+                } else {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        isSettingValues = true;
+                        scopeCenterXInput.setText(x + "");
+                        scopeCenterYInput.setText(y + "");
+                        isSettingValues = false;
+
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        isSettingValues = true;
+                        int cx = scope.getCircle().getCenterX();
+                        int cy = scope.getCircle().getCenterY();
+                        long r = Math.round(Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)));
+                        scopeRadiusInput.setText(r + "");
+                        isSettingValues = false;
+
+                    }
+                    checkCircle();
+                }
+                break;
+
+            case RectangleColor:
+                if (scope.getOperationType() == OperationType.ReplaceColor
+                        && event.getButton() == MouseButton.SECONDARY) {
+                    colorPicker.setValue(color);
+                } else {
+                    scope.addColor(color);
+                    scopeColorsBox.getItems().add(color);
+                    scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
+                    scopeColorsBox.setVisibleRowCount(15);
+
+                    checkRectangle();
+                }
+                break;
+
+            case CircleColor:
+                if (scope.getOperationType() == OperationType.ReplaceColor
+                        && event.getButton() == MouseButton.SECONDARY) {
+                    colorPicker.setValue(color);
+                } else {
+                    scope.addColor(color);
+                    scopeColorsBox.getItems().add(color);
+                    scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
+                    scopeColorsBox.setVisibleRowCount(15);
+
+                    checkCircle();
+                }
+                break;
+
+            default:
+                break;
+
+        }
+    }
+
+    public void scopeViewClicked(MouseEvent event) {
+        if (scopeView == null || values == null
+                || values.getCurrentImage() == null || scope == null) {
+            scopeView.setCursor(Cursor.OPEN_HAND);
+            return;
+        }
+        scopeView.setCursor(Cursor.HAND);
+
+        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / scopeView.getBoundsInLocal().getWidth());
+        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / scopeView.getBoundsInLocal().getHeight());
+        PixelReader pixelReader = values.getCurrentImage().getPixelReader();
+        Color color = pixelReader.getColor(x, y);
+
+        switch (scope.getScopeType()) {
+            case Color:
+                scope.addColor(color);
+                scopeColorsBox.getItems().add(color);
+                scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
+                scopeColorsBox.setVisibleRowCount(15);
+                indicateColor();
                 break;
 
             case Matting:
                 scope.addPoints(x, y);
+                scopePointsBox.getItems().add(x + "," + y);
+                scopePointsBox.getSelectionModel().select(scopePointsBox.getItems().size() - 1);
+                scopePointsBox.setVisibleRowCount(15);
                 indicateMatting();
                 break;
 
@@ -1758,8 +1704,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             case Circle:
                 if (event.getButton() == MouseButton.PRIMARY) {
                     isSettingValues = true;
-                    scopeLeftXInput.setText(x + "");
-                    scopeLeftYInput.setText(y + "");
+                    scopeCenterXInput.setText(x + "");
+                    scopeCenterYInput.setText(y + "");
                     isSettingValues = false;
 
                 } else if (event.getButton() == MouseButton.SECONDARY) {
@@ -1767,15 +1713,51 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     int cx = scope.getCircle().getCenterX();
                     int cy = scope.getCircle().getCenterY();
                     long r = Math.round(Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)));
-                    scopeRightXInput.setText(r + "");
+                    scopeRadiusInput.setText(r + "");
                     isSettingValues = false;
 
                 }
                 checkCircle();
                 break;
-            default:
+
+            case RectangleColor:
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    isSettingValues = true;
+                    scopeLeftXInput.setText(x + "");
+                    scopeLeftYInput.setText(y + "");
+                    isSettingValues = false;
+
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    isSettingValues = true;
+                    scopeRightXInput.setText(x + "");
+                    scopeRightYInput.setText(y + "");
+                    isSettingValues = false;
+                }
+
+                checkRectangle();
                 break;
 
+            case CircleColor:
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    isSettingValues = true;
+                    scopeCenterXInput.setText(x + "");
+                    scopeCenterYInput.setText(y + "");
+                    isSettingValues = false;
+
+                } else if (event.getButton() == MouseButton.SECONDARY) {
+                    isSettingValues = true;
+                    int cx = scope.getCircle().getCenterX();
+                    int cy = scope.getCircle().getCenterY();
+                    long r = Math.round(Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)));
+                    scopeRadiusInput.setText(r + "");
+                    isSettingValues = false;
+
+                }
+                checkCircle();
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -1822,12 +1804,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
         scope.clearPoints();
         switch (scope.getScopeType()) {
             case All:
-            case Settings:
-
                 break;
 
             case Color:
-            case Hue:
                 indicateColor();
                 break;
 
@@ -1836,11 +1815,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case Rectangle:
-                indicateRectangle();
-                break;
 
+                indicateRectangle();
+
+                break;
             case Circle:
+
                 indicateCircle();
+
                 break;
 
             default:
@@ -1918,53 +1900,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    private void scopeSetting() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageScopeFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final ImageScopeController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getMyStage());
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            stage.show();
-
-            String title = AppVaribles.getMessage("ImageManufactureScope");
-            switch (scope.getOperationType()) {
-                case Color:
-                    title += " - " + AppVaribles.getMessage("Color");
-                    break;
-                case ReplaceColor:
-                    title += " - " + AppVaribles.getMessage("ReplaceColor");
-                    break;
-                case Filters:
-                    title += " - " + AppVaribles.getMessage("Filters");
-                    break;
-                case Crop:
-                    title += " - " + AppVaribles.getMessage("Crop");
-                    break;
-                default:
-                    break;
-            }
-            controller.loadImage(this, scope, title);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     protected void showScopePane() {
         try {
             if (showScopeCheck == null || !showScopeCheck.isSelected()
@@ -1986,38 +1921,622 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 scopeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        handleClick(scopeView, event);
+                        scopeViewClicked(event);
                     }
                 });
                 scopePane.setContent(scopeView);
+                Tooltip stips = new Tooltip(getMessage("ScopeImageComments"));
+                stips.setFont(new Font(16));
+                FxmlTools.quickTooltip(scopeView, stips);
+            }
+            scopeView.setImage(scope.getImage());
+
+            if (scopeColorSettingBox == null) {
+                scopeColorSettingBox = new HBox();
+                VBox.setVgrow(scopeColorSettingBox, Priority.NEVER);
+                HBox.setHgrow(scopeColorSettingBox, Priority.ALWAYS);
+                scopeColorSettingBox.setSpacing(5);
+                scopeColorSettingBox.setAlignment(Pos.CENTER_LEFT);
+            }
+
+            if (scopeAreaSettingBox == null) {
+                scopeAreaSettingBox = new HBox();
+                VBox.setVgrow(scopeAreaSettingBox, Priority.NEVER);
+                HBox.setHgrow(scopeAreaSettingBox, Priority.ALWAYS);
+                scopeAreaSettingBox.setSpacing(5);
+                scopeAreaSettingBox.setAlignment(Pos.CENTER_LEFT);
             }
 
             if (scopeBox == null) {
                 scopeBox = new VBox();
                 VBox.setVgrow(scopeBox, Priority.ALWAYS);
                 HBox.setHgrow(scopeBox, Priority.ALWAYS);
-                scopeText = new TextField();
-                scopeText.setAlignment(Pos.CENTER_LEFT);
-                scopeText.setEditable(false);
-                scopeText.setStyle("-fx-text-fill: #2e598a; -fx-background: #f4f4f4;");
-                VBox.setVgrow(scopeText, Priority.NEVER);
-                HBox.setHgrow(scopeText, Priority.ALWAYS);
-                scopeBox.getChildren().add(0, scopeText);
-                scopeBox.getChildren().add(1, scopePane);
+                scopeBox.setSpacing(5);
             }
-            scopeText.setText(scope.getScopeText());
-
-            Tooltip stips = new Tooltip(getMessage("ScopeImageComments"));
-            stips.setFont(new Font(16));
-            FxmlTools.quickTooltip(scopeBox, stips);
-
-            scopeView.setImage(scope.getImage());
+            scopeBox.getChildren().clear();
+            scopeBox.getChildren().add(scopePane);
 
             if (!splitPane.getItems().contains(scopeBox)) {
                 splitPane.getItems().add(0, scopeBox);
             }
 
             adjustSplitPane();
+
+            if (scopeClearButton == null) {
+                scopeClearButton = new Button(getMessage("Clear"));
+            }
+            scopeClearButton.setOnAction(null);
+            if (scopeDeleteButton == null) {
+                scopeDeleteButton = new Button(getMessage("Del"));
+            }
+            scopeDeleteButton.setOnAction(null);
+            if (scopeColorExcludedCheck == null) {
+                scopeColorExcludedCheck = new CheckBox(getMessage("Excluded"));
+                scopeColorExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable,
+                            Boolean oldValue, Boolean newValue) {
+                        scope.setColorExcluded(newValue);
+                        indicateScope();
+                    }
+                });
+            }
+            if (scopeAreaExcludedCheck == null) {
+                scopeAreaExcludedCheck = new CheckBox(getMessage("Excluded"));
+                scopeAreaExcludedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> observable,
+                            Boolean oldValue, Boolean newValue) {
+                        scope.setAreaExcluded(newValue);
+                        indicateScope();
+                    }
+                });
+            }
+            if (scopeMatchBox == null) {
+                scopeMatchBox = new ComboBox();
+                scopeMatchBox.setPrefWidth(100);
+                scopeMatchBox.getItems().addAll(Arrays.asList(
+                        getMessage("Color"), getMessage("Hue"), getMessage("Red"), getMessage("Green"),
+                        getMessage("Blue"), getMessage("Brightness"), getMessage("Saturation")
+                ));
+                scopeMatchBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkMatchType();
+                        checkDistanceValue();
+                        if (!isSettingValues) {
+                            indicateScope();
+                        }
+                    }
+                });
+
+                scopeDistanceInput = new TextField();
+                scopeDistanceInput.setPrefWidth(45);
+                scopeDistanceInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkDistanceValue();
+                        if (!isSettingValues) {
+                            indicateScope();
+                        }
+                    }
+                });
+
+                Tooltip tips = new Tooltip(getMessage("ColorMatchComments"));
+                tips.setFont(new Font(16));
+                FxmlTools.setComments(scopeMatchBox, tips);
+            }
+
+            if (scopeLeftXInput == null) {
+                scopeLeftXInput = new TextField();
+                scopeLeftXInput.setPrefWidth(70);
+                scopeLeftXInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkRectangle();
+                    }
+                });
+            }
+            if (scopeLeftYInput == null) {
+                scopeLeftYInput = new TextField();
+                scopeLeftYInput.setPrefWidth(70);
+                scopeLeftYInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkRectangle();
+                    }
+                });
+            }
+            if (scopeRightXInput == null) {
+                scopeRightXInput = new TextField();
+                scopeRightXInput.setPrefWidth(70);
+                scopeRightXInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkRectangle();
+                    }
+                });
+            }
+            if (scopeRightYInput == null) {
+                scopeRightYInput = new TextField();
+                scopeRightYInput.setPrefWidth(70);
+                scopeRightYInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkRectangle();
+                    }
+                });
+            }
+            if (scopeCenterXInput == null) {
+                scopeCenterXInput = new TextField();
+                scopeCenterXInput.setPrefWidth(70);
+                scopeCenterXInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkCircle();
+                    }
+                });
+            }
+            if (scopeCenterYInput == null) {
+                scopeCenterYInput = new TextField();
+                scopeCenterYInput.setPrefWidth(70);
+                scopeCenterYInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkCircle();
+                    }
+                });
+            }
+            if (scopeRadiusInput == null) {
+                scopeRadiusInput = new TextField();
+                scopeRadiusInput.setPrefWidth(70);
+                scopeRadiusInput.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable,
+                            String oldValue, String newValue) {
+                        checkCircle();
+                    }
+                });
+            }
+            if (scopeColorsBox == null) {
+                scopeColorsBox = new ComboBox();
+                scopeColorsBox.setPrefWidth(80);
+                scopeColorsBox.setButtonCell(new ListCell<Color>() {
+                    private final Rectangle rectangle;
+
+                    {
+                        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                        rectangle = new Rectangle(30, 20);
+                    }
+
+                    @Override
+                    protected void updateItem(Color item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            rectangle.setFill(item);
+                            setGraphic(rectangle);
+                        }
+                    }
+                });
+                scopeColorsBox.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
+                    @Override
+                    public ListCell<Color> call(ListView<Color> p) {
+                        ListCell<Color> cell = new ListCell<Color>() {
+                            private final Rectangle rectangle;
+
+                            {
+                                setContentDisplay(ContentDisplay.LEFT);
+                                rectangle = new Rectangle(30, 20);
+                            }
+
+                            @Override
+                            protected void updateItem(Color item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item == null || empty) {
+                                    setGraphic(null);
+                                } else {
+                                    rectangle.setFill(item);
+                                    setGraphic(rectangle);
+                                    setText(item.toString());
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
+
+            if (imageLabelBox2 == null) {
+                imageLabelBox2 = new HBox();
+                VBox.setVgrow(imageLabelBox2, Priority.NEVER);
+                HBox.setHgrow(imageLabelBox2, Priority.ALWAYS);
+                imageLabelBox2.setSpacing(5);
+                imageLabelBox2.setAlignment(Pos.CENTER_LEFT);
+                scopePromptLabel = new Label();
+                scopePromptLabel.setStyle("-fx-text-fill: #2e598a;-fx-font-weight: bolder;");
+                imageLabelBox2.getChildren().add(scopePromptLabel);
+                Button b = new Button("");
+                b.setVisible(false);
+                imageLabelBox2.getChildren().add(b);
+            }
+            if (imageBox.getChildren().contains(imageLabelBox2)) {
+                imageBox.getChildren().remove(imageLabelBox2);
+            }
+            scopeColorSettingBox.getChildren().clear();
+            scopeAreaSettingBox.getChildren().clear();
+            switch (scope.getScopeType()) {
+                case Matting:
+                    scopeBox.getChildren().add(0, scopeColorSettingBox);
+                    if (scopePointsBox == null) {
+                        scopePointsBox = new ComboBox();
+                        scopePointsBox.setPrefWidth(80);
+                    }
+                    scopePointsBox.getItems().clear();
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Points")));
+                    scopeColorSettingBox.getChildren().add(scopePointsBox);
+                    scopeColorSettingBox.getChildren().add(scopeDeleteButton);
+                    scopeDeleteButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            int index = scopePointsBox.getSelectionModel().getSelectedIndex();
+                            if (index >= 0) {
+                                isSettingValues = true;
+                                scope.getPoints().remove(index);
+                                scopePointsBox.getItems().remove(index);
+                                int size = scopePointsBox.getItems().size();
+                                if (size > 0) {
+                                    if (index > size - 1) {
+                                        scopePointsBox.getSelectionModel().select(index - 1);
+                                    } else {
+                                        scopePointsBox.getSelectionModel().select(index);
+                                    }
+                                }
+                                isSettingValues = false;
+                                indicateMatting();
+                            }
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(scopeClearButton);
+                    scopeClearButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            isSettingValues = true;
+                            scope.getPoints().clear();
+                            scopePointsBox.getItems().clear();
+                            isSettingValues = false;
+                            indicateMatting();
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Match")));
+                    scopeColorSettingBox.getChildren().add(scopeMatchBox);
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Distance")));
+                    scopeColorSettingBox.getChildren().add(scopeDistanceInput);
+                    scopeColorSettingBox.getChildren().add(scopeColorExcludedCheck);
+                    isSettingValues = true;
+                    scopeMatchBox.getSelectionModel().select(0);
+                    scopeDistanceInput.setText("50");
+                    isSettingValues = false;
+                    indicateMatting();
+                    break;
+
+                case Rectangle:
+                    scopeBox.getChildren().add(0, scopeAreaSettingBox);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("LeftTop")));
+                    scopeAreaSettingBox.getChildren().add(scopeLeftXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeLeftYInput);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("RightBottom")));
+                    scopeAreaSettingBox.getChildren().add(scopeRightXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeRightYInput);
+                    scopeAreaSettingBox.getChildren().add(scopeAreaExcludedCheck);
+                    isSettingValues = true;
+                    scopeLeftXInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
+                    scopeLeftYInput.setText((int) (values.getCurrentImage().getHeight() / 4) + "");
+                    scopeRightXInput.setText((int) (values.getCurrentImage().getWidth() * 3 / 4) + "");
+                    scopeRightYInput.setText((int) (values.getCurrentImage().getHeight() * 3 / 4) + "");
+                    isSettingValues = false;
+                    checkRectangle();
+                    break;
+
+                case Circle:
+                    scopeBox.getChildren().add(0, scopeAreaSettingBox);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("Center")));
+                    scopeAreaSettingBox.getChildren().add(scopeCenterXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeCenterYInput);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("Radius")));
+                    scopeAreaSettingBox.getChildren().add(scopeRadiusInput);
+                    scopeAreaSettingBox.getChildren().add(scopeAreaExcludedCheck);
+                    isSettingValues = true;
+                    scopeCenterXInput.setText((int) (values.getCurrentImage().getWidth() / 2) + "");
+                    scopeCenterYInput.setText((int) (values.getCurrentImage().getHeight() / 2) + "");
+                    scopeRadiusInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
+                    isSettingValues = false;
+                    checkCircle();
+                    break;
+
+                case Color:
+                    scopeBox.getChildren().add(0, scopeColorSettingBox);
+                    scopeColorsBox.getItems().clear();
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Colors")));
+                    scopeColorSettingBox.getChildren().add(scopeColorsBox);
+                    scopeColorSettingBox.getChildren().add(scopeDeleteButton);
+                    scopeDeleteButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            int index = scopeColorsBox.getSelectionModel().getSelectedIndex();
+                            if (index >= 0) {
+                                isSettingValues = true;
+                                scope.getColors().remove(index);
+                                scopeColorsBox.getItems().remove(index);
+                                int size = scopeColorsBox.getItems().size();
+                                if (size > 0) {
+                                    if (index > size - 1) {
+                                        scopeColorsBox.getSelectionModel().select(index - 1);
+                                    } else {
+                                        scopeColorsBox.getSelectionModel().select(index);
+                                    }
+                                }
+                                isSettingValues = false;
+                                indicateColor();
+                            }
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(scopeClearButton);
+                    scopeClearButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            isSettingValues = true;
+                            scope.getColors().clear();
+                            scopeColorsBox.getItems().clear();
+                            isSettingValues = false;
+                            indicateColor();
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Match")));
+                    scopeColorSettingBox.getChildren().add(scopeMatchBox);
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Distance")));
+                    scopeColorSettingBox.getChildren().add(scopeDistanceInput);
+                    scopeColorSettingBox.getChildren().add(scopeColorExcludedCheck);
+                    isSettingValues = true;
+                    scopeMatchBox.getSelectionModel().select(0);
+                    scopeDistanceInput.setText("50");
+                    isSettingValues = false;
+                    indicateColor();
+                    break;
+
+                case RectangleColor:
+                    scopeBox.getChildren().add(0, scopeColorSettingBox);
+                    scopeColorsBox.getItems().clear();
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Colors")));
+                    scopeColorSettingBox.getChildren().add(scopeColorsBox);
+                    scopeColorSettingBox.getChildren().add(scopeDeleteButton);
+                    scopeDeleteButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            int index = scopeColorsBox.getSelectionModel().getSelectedIndex();
+                            if (index >= 0) {
+                                isSettingValues = true;
+                                scope.getColors().remove(index);
+                                scopeColorsBox.getItems().remove(index);
+                                int size = scopeColorsBox.getItems().size();
+                                if (size > 0) {
+                                    if (index > size - 1) {
+                                        scopeColorsBox.getSelectionModel().select(index - 1);
+                                    } else {
+                                        scopeColorsBox.getSelectionModel().select(index);
+                                    }
+                                }
+                                isSettingValues = false;
+                                indicateRectangle();
+                            }
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(scopeClearButton);
+                    scopeClearButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            isSettingValues = true;
+                            scope.getColors().clear();
+                            scopeColorsBox.getItems().clear();
+                            isSettingValues = false;
+                            indicateRectangle();
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Match")));
+                    scopeColorSettingBox.getChildren().add(scopeMatchBox);
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Distance")));
+                    scopeColorSettingBox.getChildren().add(scopeDistanceInput);
+                    scopeColorSettingBox.getChildren().add(scopeColorExcludedCheck);
+
+                    scopeBox.getChildren().add(0, scopeAreaSettingBox);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("LeftTop")));
+                    scopeAreaSettingBox.getChildren().add(scopeLeftXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeLeftYInput);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("RightBottom")));
+                    scopeAreaSettingBox.getChildren().add(scopeRightXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeRightYInput);
+                    scopeAreaSettingBox.getChildren().add(scopeAreaExcludedCheck);
+
+                    imageBox.getChildren().add(1, imageLabelBox2);
+
+                    isSettingValues = true;
+                    scopeMatchBox.getSelectionModel().select(0);
+                    scopeDistanceInput.setText("50");
+                    scopeLeftXInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
+                    scopeLeftYInput.setText((int) (values.getCurrentImage().getHeight() / 4) + "");
+                    scopeRightXInput.setText((int) (values.getCurrentImage().getWidth() * 3 / 4) + "");
+                    scopeRightYInput.setText((int) (values.getCurrentImage().getHeight() * 3 / 4) + "");
+                    isSettingValues = false;
+                    checkRectangle();
+                    break;
+
+                case CircleColor:
+                    scopeBox.getChildren().add(0, scopeColorSettingBox);
+                    scopeColorsBox.getItems().clear();
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Colors")));
+                    scopeColorSettingBox.getChildren().add(scopeColorsBox);
+                    scopeColorSettingBox.getChildren().add(scopeDeleteButton);
+                    scopeDeleteButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            int index = scopeColorsBox.getSelectionModel().getSelectedIndex();
+                            if (index >= 0) {
+                                isSettingValues = true;
+                                scope.getColors().remove(index);
+                                scopeColorsBox.getItems().remove(index);
+                                int size = scopeColorsBox.getItems().size();
+                                if (size > 0) {
+                                    if (index > size - 1) {
+                                        scopeColorsBox.getSelectionModel().select(index - 1);
+                                    } else {
+                                        scopeColorsBox.getSelectionModel().select(index);
+                                    }
+                                }
+                                isSettingValues = false;
+                                indicateCircle();
+                            }
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(scopeClearButton);
+                    scopeClearButton.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            isSettingValues = true;
+                            scope.getColors().clear();
+                            scopeColorsBox.getItems().clear();
+                            isSettingValues = false;
+                            indicateCircle();
+                        }
+                    });
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Match")));
+                    scopeColorSettingBox.getChildren().add(scopeMatchBox);
+                    scopeColorSettingBox.getChildren().add(new Label(getMessage("Distance")));
+                    scopeColorSettingBox.getChildren().add(scopeDistanceInput);
+                    scopeColorSettingBox.getChildren().add(scopeColorExcludedCheck);
+
+                    scopeBox.getChildren().add(0, scopeAreaSettingBox);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("Center")));
+                    scopeAreaSettingBox.getChildren().add(scopeCenterXInput);
+                    scopeAreaSettingBox.getChildren().add(scopeCenterYInput);
+                    scopeAreaSettingBox.getChildren().add(new Label(getMessage("Radius")));
+                    scopeAreaSettingBox.getChildren().add(scopeRadiusInput);
+                    scopeAreaSettingBox.getChildren().add(scopeAreaExcludedCheck);
+
+                    imageBox.getChildren().add(1, imageLabelBox2);
+
+                    isSettingValues = true;
+                    scopeMatchBox.getSelectionModel().select(0);
+                    scopeDistanceInput.setText("50");
+                    scopeCenterXInput.setText((int) (values.getCurrentImage().getWidth() / 2) + "");
+                    scopeCenterYInput.setText((int) (values.getCurrentImage().getHeight() / 2) + "");
+                    scopeRadiusInput.setText((int) (values.getCurrentImage().getWidth() / 4) + "");
+                    isSettingValues = false;
+                    checkCircle();
+                    break;
+
+                default:
+                    hideScopePane();
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected void showLabels() {
+        try {
+            if (values == null || scope == null || scope.getOperationType() == null) {
+                return;
+            }
+
+            imageLabelBox.setAlignment(Pos.CENTER_LEFT);
+            imageLabel.setStyle("-fx-text-fill: #2e598a;-fx-font-weight: bolder;");
+
+            switch (scope.getScopeType()) {
+                case All:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        imageLabel.setText(getMessage("ClickCurrentForNewColor"));
+                    } else {
+                        imageLabelBox.setAlignment(Pos.CENTER);
+                        imageLabel.setStyle("-fx-text-fill: #2e598a;");
+                        imageLabel.setText(getMessage("CurrentImage"));
+                    }
+                    promptLabel.setText("");
+                    break;
+                case Matting:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText(getMessage("MattingComments2"));
+                        imageLabel.setText(getMessage("ClickCurrentForColors"));
+                    } else {
+                        promptLabel.setText(getMessage("MattingComments"));
+                        imageLabel.setText(getMessage("BothImagesCanClicked"));
+                    }
+                    break;
+
+                case Rectangle:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText(getMessage("ClickForRectangle"));
+                        imageLabel.setText(getMessage("ClickCurrentForNewColor"));
+                    } else {
+                        promptLabel.setText(getMessage("ClickForRectangle"));
+                        imageLabel.setText(getMessage("BothImagesCanClicked"));
+                    }
+                    break;
+
+                case Circle:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText(getMessage("ClickForCircle"));
+                        imageLabel.setText(getMessage("ClickCurrentForNewColor"));
+                    } else {
+                        promptLabel.setText(getMessage("ClickForCircle"));
+                        imageLabel.setText(getMessage("BothImagesCanClicked"));
+                    }
+                    break;
+
+                case Color:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText(getMessage("ClickScopeForColorMatch"));
+                        imageLabel.setText(getMessage("ClickCurrentForColors"));
+                    } else {
+                        promptLabel.setText(getMessage("ClickImagesPickColors"));
+                        imageLabel.setText(getMessage("BothImagesCanClicked"));
+                    }
+                    break;
+
+                case RectangleColor:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText("");
+                        imageLabel.setText(getMessage("ClickScopeForRectangle"));
+                        scopePromptLabel.setText(getMessage("ClickCurrentForColors"));
+                    } else {
+                        promptLabel.setText("");
+                        imageLabel.setText(getMessage("ClickScopeForRectangle"));
+                        scopePromptLabel.setText(getMessage("ClickCurrentForColorMatch"));
+                    }
+                    break;
+
+                case CircleColor:
+                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                        promptLabel.setText("");
+                        imageLabel.setText(getMessage("ClickScopeForCircle"));
+                        scopePromptLabel.setText(getMessage("ClickCurrentForColors"));
+                    } else {
+                        promptLabel.setText("");
+                        imageLabel.setText(getMessage("ClickScopeForCircle"));
+                        scopePromptLabel.setText(getMessage("ClickCurrentForColorMatch"));
+                    }
+                    break;
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -2032,6 +2551,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
             }
             if (scopeBox != null && splitPane.getItems().contains(scopeBox)) {
                 splitPane.getItems().remove(scopeBox);
+            }
+
+            if (imageLabelBox2 != null && imageBox.getChildren().contains(imageLabelBox2)) {
+                imageBox.getChildren().remove(imageLabelBox2);
             }
             adjustSplitPane();
         } catch (Exception e) {
@@ -2075,7 +2598,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     public boolean checkSavingBeforeExit() {
-        if (values.isImageChanged()) {
+        if (values != null && values.isImageChanged()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("ImageChanged"));

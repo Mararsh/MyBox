@@ -21,15 +21,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getConfigValue;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.objects.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -77,14 +76,14 @@ public class SettingsController extends BaseController {
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
+                    AppVaribles.setUserConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
                 }
             });
 
             showCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setConfigValue("ShowComments", showCommentsCheck.isSelected());
+                    AppVaribles.setUserConfigValue("ShowComments", showCommentsCheck.isSelected());
                 }
             });
 
@@ -114,13 +113,13 @@ public class SettingsController extends BaseController {
                             return;
                         }
                         tempDirInput.setStyle(null);
-                        AppVaribles.setConfigValue(TempDirKey, file.getAbsolutePath());
+                        AppVaribles.setUserConfigValue(TempDirKey, file.getAbsolutePath());
                     } catch (Exception e) {
                     }
                 }
 
             });
-            tempDirInput.setText(AppVaribles.getConfigValue(TempDirKey, CommonValues.UserFilePath));
+            tempDirInput.setText(AppVaribles.getUserConfigValue(TempDirKey, CommonValues.UserFilePath));
 
             styleBox.getItems().addAll(Arrays.asList(
                     getMessage("DefaultStyle"), getMessage("caspianStyle"),
@@ -148,12 +147,12 @@ public class SettingsController extends BaseController {
         try {
 //            logger.debug("initValues");
 
-            stopAlarmCheck.setSelected(AppVaribles.getConfigBoolean("StopAlarmsWhenExit"));
+            stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
 
             showCommentsCheck.setSelected(AppVaribles.isShowComments());
 
-            hisMaxInput.setText(AppVaribles.getConfigInt("MaxImageHistories", 20) + "");
-            if (AppVaribles.getConfigBoolean("ImageHis")) {
+            hisMaxInput.setText(AppVaribles.getUserConfigInt("MaxImageHistories", 20) + "");
+            if (AppVaribles.getUserConfigBoolean("ImageHis")) {
                 hisMaxInput.setDisable(false);
                 hisOkButton.setDisable(false);
                 hisClearButton.setDisable(false);
@@ -170,7 +169,7 @@ public class SettingsController extends BaseController {
                 noHisRadio.setSelected(true);
             }
 
-            String style = AppVaribles.getConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
+            String style = AppVaribles.getUserConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
             switch (style) {
                 case CommonValues.DefaultStyle:
                     styleBox.getSelectionModel().select(AppVaribles.getMessage("DefaultStyle"));
@@ -229,7 +228,7 @@ public class SettingsController extends BaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = getConfigValue("PdfMemDefault", "1GB");
+        String pm = getUserConfigValue("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdfMem1GRadio.setSelected(true);
@@ -275,7 +274,7 @@ public class SettingsController extends BaseController {
 
     public void setStyle(String style) {
         try {
-            AppVaribles.setConfigValue("InterfaceStyle", style);
+            AppVaribles.setUserConfigValue("InterfaceStyle", style);
             if (getParentController() != null) {
                 getParentController().setInterfaceStyle(style);
             }
@@ -330,12 +329,12 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void replaceWhiteAction(ActionEvent event) {
-        AppVaribles.setConfigValue("AlphaAsBlack", false);
+        AppVaribles.setUserConfigValue("AlphaAsBlack", false);
     }
 
     @FXML
     protected void replaceBlackAction(ActionEvent event) {
-        AppVaribles.setConfigValue("AlphaAsBlack", true);
+        AppVaribles.setUserConfigValue("AlphaAsBlack", true);
     }
 
     @FXML
@@ -359,21 +358,6 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void clearSettings(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClear"));
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() != ButtonType.OK) {
-            return;
-        }
-        DerbyBase.dropTables();
-        DerbyBase.initTables();
-        reload();
-        popInformation(AppVaribles.getMessage("Successful"));
-    }
-
-    @FXML
     protected void clearHistories(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
@@ -394,7 +378,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void maxHisAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ImageHis", true);
+        AppVaribles.setUserConfigValue("ImageHis", true);
         hisMaxInput.setDisable(false);
         hisOkButton.setDisable(false);
         hisClearButton.setDisable(false);
@@ -412,7 +396,7 @@ public class SettingsController extends BaseController {
             int v = Integer.valueOf(hisMaxInput.getText());
             if (v > 0) {
                 hisMaxInput.setStyle(null);
-                AppVaribles.setConfigInt("MaxImageHistories", v);
+                AppVaribles.setUserConfigInt("MaxImageHistories", v);
                 if (parentController != null && parentFxml != null
                         && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
                     ImageManufactureController p = (ImageManufactureController) parentController;
@@ -428,7 +412,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void noHisAction(ActionEvent event) {
-        AppVaribles.setConfigValue("ImageHis", false);
+        AppVaribles.setUserConfigValue("ImageHis", false);
         hisMaxInput.setStyle(null);
         hisMaxInput.setDisable(true);
         hisOkButton.setDisable(true);
@@ -444,7 +428,7 @@ public class SettingsController extends BaseController {
     protected void selectTemp(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(TempDirKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(TempDirKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -453,13 +437,31 @@ public class SettingsController extends BaseController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(TempDirKey, directory.getPath());
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(TempDirKey, directory.getPath());
 
             tempDirInput.setText(directory.getPath());
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    protected void clearSettings(ActionEvent event) {
+        super.clearSettings(event);
+        BaseController c = getParentController();
+        String f = c.getMyFxml();
+        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
+            f = CommonValues.ImageManufactureFileFxml;
+        }
+        c.reloadStage(f, c.getMyStage().getTitle());
+        f = getMyFxml();
+        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
+            f = CommonValues.ImageManufactureFileFxml;
+        }
+        reloadStage(f, getMyStage().getTitle());
+        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML

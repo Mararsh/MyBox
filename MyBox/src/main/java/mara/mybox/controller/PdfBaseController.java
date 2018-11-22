@@ -96,7 +96,7 @@ public abstract class PdfBaseController extends BaseController {
             targetSelectionController.targetPrefixInput.setText(FileTools.getFilePrefix(filename));
         }
         if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-            targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class PdfBaseController extends BaseController {
 
         if (fillZero != null) {
             actualParameters.fill = fillZero.isSelected();
-            AppVaribles.setConfigValue(fillZeroKey, actualParameters.fill);
+            AppVaribles.setUserConfigValue(fillZeroKey, actualParameters.fill);
         }
 
         if (targetSelectionController != null) {
@@ -152,7 +152,7 @@ public abstract class PdfBaseController extends BaseController {
             actualParameters.targetPath = actualParameters.targetRootPath;
             if (targetSelectionController.subdirCheck != null) {
                 actualParameters.createSubDir = targetSelectionController.subdirCheck.isSelected();
-                AppVaribles.setConfigValue(creatSubdirKey, actualParameters.createSubDir);
+                AppVaribles.setUserConfigValue(creatSubdirKey, actualParameters.createSubDir);
             }
         }
 
@@ -162,10 +162,10 @@ public abstract class PdfBaseController extends BaseController {
             actualParameters.aCompression = appendCompressionType.isSelected();
             actualParameters.aQuality = appendQuality.isSelected();
 
-            AppVaribles.setConfigValue(appendDensityKey, actualParameters.aDensity);
-            AppVaribles.setConfigValue(appendColorKey, actualParameters.aColor);
-            AppVaribles.setConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
-            AppVaribles.setConfigValue(appendQualityKey, actualParameters.aQuality);
+            AppVaribles.setUserConfigValue(appendDensityKey, actualParameters.aDensity);
+            AppVaribles.setUserConfigValue(appendColorKey, actualParameters.aColor);
+            AppVaribles.setUserConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
+            AppVaribles.setUserConfigValue(appendQualityKey, actualParameters.aQuality);
         }
 
         makeMoreParameters();
@@ -184,9 +184,9 @@ public abstract class PdfBaseController extends BaseController {
         actualParameters.sourceFile = sourceSelectionController.pdfInformation.getFile();
 
         actualParameters.fromPage = sourceSelectionController.readFromPage();
-//        AppVaribles.setConfigInt(PdfSourceFromKey, actualParameters.fromPage);
+//        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.fromPage);
         actualParameters.toPage = sourceSelectionController.readToPage();
-//        AppVaribles.setConfigInt(PdfSourceFromKey, actualParameters.toPage);
+//        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.toPage);
         actualParameters.currentNameNumber = actualParameters.acumFrom;
         actualParameters.password = sourceSelectionController.readPassword();
         actualParameters.startPage = actualParameters.fromPage;

@@ -59,13 +59,17 @@ public class ImageViewerController extends ImageBaseController {
     protected ToggleGroup sortGroup;
 
     @Override
-    protected void initializeNext2() {
+    protected void initializeNext() {
         try {
 
-            toolbar.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
+            if (toolbar != null && imageView != null) {
+                toolbar.disableProperty().bind(
+                        Bindings.isNull(imageView.imageProperty())
+                );
+            }
 //            setTips();
+
+            initializeNext2();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -75,9 +79,9 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void sourceFileChanged(final File file) {
         if (file.isDirectory()) {
-            AppVaribles.setConfigValue(sourcePathKey, file.getPath());
+            AppVaribles.setUserConfigValue(sourcePathKey, file.getPath());
         } else {
-            AppVaribles.setConfigValue(sourcePathKey, file.getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
         }
         loadImage(file, false);
     }
@@ -157,12 +161,12 @@ public class ImageViewerController extends ImageBaseController {
     public void zoomIn() {
         double currentWidth = imageView.getFitWidth();
         if (currentWidth == -1) {
-            currentWidth = image.getWidth();
+            currentWidth = imageView.getImage().getWidth();
         }
         imageView.setFitWidth(currentWidth * (1 + zoomStep / 100.0f));
         double currentHeight = imageView.getFitHeight();
         if (currentHeight == -1) {
-            currentHeight = image.getHeight();
+            currentHeight = imageView.getImage().getHeight();
         }
         imageView.setFitHeight(currentHeight * (1 + zoomStep / 100.0f));
     }
@@ -171,12 +175,12 @@ public class ImageViewerController extends ImageBaseController {
     public void zoomOut() {
         double currentWidth = imageView.getFitWidth();
         if (currentWidth == -1) {
-            currentWidth = image.getWidth();
+            currentWidth = imageView.getImage().getWidth();
         }
         imageView.setFitWidth(currentWidth * (1 - zoomStep / 100.0f));
         double currentHeight = imageView.getFitHeight();
         if (currentHeight == -1) {
-            currentHeight = image.getHeight();
+            currentHeight = imageView.getImage().getHeight();
         }
         imageView.setFitHeight(currentHeight * (1 - zoomStep / 100.0f));
     }

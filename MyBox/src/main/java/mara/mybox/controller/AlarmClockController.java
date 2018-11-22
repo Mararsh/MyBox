@@ -478,7 +478,7 @@ public class AlarmClockController extends BaseController {
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 defaultPath = "C:\\Windows\\media";
             }
-            File path = new File(AppVaribles.getConfigValue(SystemMediaPathKey, defaultPath));
+            File path = new File(AppVaribles.getUserConfigValue(SystemMediaPathKey, defaultPath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -488,8 +488,8 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(SystemMediaPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(SystemMediaPathKey, file.getParent());
 
             wavInput.setText(file.getAbsolutePath());
             play(file, null);
@@ -503,7 +503,7 @@ public class AlarmClockController extends BaseController {
     private void selectMusic(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(MusicPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(MusicPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -513,8 +513,8 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setConfigValue(MusicPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            AppVaribles.setUserConfigValue(MusicPathKey, file.getParent());
 
             mp3Input.setText(file.getAbsolutePath());
             play(file, null);

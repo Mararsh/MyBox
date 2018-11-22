@@ -7,23 +7,23 @@ package mara.mybox.objects;
  * @Description
  * @License Apache License Version 2.0
  */
-public class Circle {
+public class IntCircle {
 
     private int centerX, centerY, radius, radius2;
 
-    public Circle() {
+    public IntCircle() {
 
     }
 
-    public Circle(int x, int y, int r) {
+    public IntCircle(int x, int y, int r) {
         centerX = x;
         centerY = y;
         radius = r;
         radius2 = r * r;
     }
 
-    public Circle cloneValues() {
-        return new Circle(centerX, centerY, radius);
+    public IntCircle cloneValues() {
+        return new IntCircle(centerX, centerY, radius);
     }
 
     public boolean isValid() {

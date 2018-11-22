@@ -38,7 +38,7 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
             );
 
             if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-                targetSelectionController.targetPathInput.setText(AppVaribles.getConfigValue("pdfTargetPath", CommonValues.UserFilePath));
+                targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue("pdfTargetPath", CommonValues.UserFilePath));
             }
         } catch (Exception e) {
             logger.error(e.toString());

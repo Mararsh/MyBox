@@ -10,12 +10,12 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import static mara.mybox.fxml.FxmlImageTools.isColorMatch;
+import static mara.mybox.fxml.FxmlColorTools.isColorMatch;
 import mara.mybox.image.ImageScopeTools;
-import mara.mybox.objects.Circle;
+import mara.mybox.objects.IntCircle;
 import mara.mybox.objects.ImageScope;
-import mara.mybox.objects.Point;
-import mara.mybox.objects.Rectangle;
+import mara.mybox.objects.IntPoint;
+import mara.mybox.objects.IntRectangle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +31,7 @@ public class FxmlScopeTools {
     private static final Logger logger = LogManager.getLogger();
 
     public static Image indicateRectangle(Image image,
-            Color color, int lineWidth, Rectangle rect) {
+            Color color, int lineWidth, IntRectangle rect) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateRectangle(source,
                 FxmlImageTools.colorConvert(color), lineWidth, rect);
@@ -40,7 +40,7 @@ public class FxmlScopeTools {
     }
 
     public static Image indicateCircle(Image image,
-            Color color, int lineWidth, Circle circle) {
+            Color color, int lineWidth, IntCircle circle) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateCircle(source,
                 FxmlImageTools.colorConvert(color), lineWidth, circle);
@@ -49,9 +49,7 @@ public class FxmlScopeTools {
     }
 
     public static Image scopeImage(Image image, ImageScope scope) {
-        if ((scope.getScopeType() == ImageScope.ScopeType.All
-                || (scope.getAreaScopeType() == ImageScope.AreaScopeType.AllArea
-                && scope.getColorScopeType() == ImageScope.ColorScopeType.AllColor))) {
+        if (scope.getScopeType() == ImageScope.ScopeType.All) {
             return image;
         }
         PixelReader pixelReader = image.getPixelReader();
@@ -66,8 +64,8 @@ public class FxmlScopeTools {
                     pixelWriter.setColor(x, y, color);
                     continue;
                 }
-                Color opacityColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
                 if (!scope.inScope(x, y, color)) {
+                    Color opacityColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
                     pixelWriter.setColor(x, y, opacityColor);
                 } else {
                     pixelWriter.setColor(x, y, color);
@@ -91,15 +89,21 @@ public class FxmlScopeTools {
             WritableImage newImage = new WritableImage(width, height);
             PixelWriter pixelWriter = newImage.getPixelWriter();
             double opacity = scope.getOpacity();
-            for (int y = 0; y < source.getHeight(); y++) {
-                for (int x = 0; x < source.getWidth(); x++) {
-                    Color color = pixelReader.getColor(x, y);
-                    if (color == Color.TRANSPARENT) {
-                        pixelWriter.setColor(x, y, color);
-                        continue;
+
+            boolean excluded = scope.isColorExcluded();
+            if (excluded) {
+                pixelWriter.setPixels(0, 0, width, height, pixelReader, 0, 0);
+            } else {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        Color color = pixelReader.getColor(x, y);
+                        if (color == Color.TRANSPARENT) {
+                            pixelWriter.setColor(x, y, color);
+                            continue;
+                        }
+                        Color newColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
+                        pixelWriter.setColor(x, y, newColor);
                     }
-                    Color newColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
-                    pixelWriter.setColor(x, y, newColor);
                 }
             }
             if (scope.getPoints() == null || scope.getPoints().isEmpty()) {
@@ -107,15 +111,15 @@ public class FxmlScopeTools {
             }
 
             boolean[][] visited = new boolean[height][width];
-            Queue<Point> queue = new LinkedList<>();
-            List<Point> points = scope.getPoints();
-            int distance = scope.getColorDistance();
+            Queue<IntPoint> queue = new LinkedList<>();
+            List<IntPoint> points = scope.getPoints();
+            double distance = scope.getColorDistance();
 
-            for (Point point : points) {
+            for (IntPoint point : points) {
                 Color startColor = pixelReader.getColor(point.getX(), point.getY());
                 queue.add(point);
                 while (!queue.isEmpty()) {
-                    mara.mybox.objects.Point p = queue.remove();
+                    mara.mybox.objects.IntPoint p = queue.remove();
                     int x = p.getX(), y = p.getY();
                     if (x < 0 || x >= width || y < 0 || y >= height
                             || visited[y][x]) {
@@ -124,12 +128,18 @@ public class FxmlScopeTools {
                     visited[y][x] = true;
                     Color pixelColor = pixelReader.getColor(x, y);
                     if (isColorMatch(pixelColor, startColor, distance)) {
-                        pixelWriter.setColor(x, y, pixelColor);
-                        queue.add(new mara.mybox.objects.Point(x + 1, y));
-                        queue.add(new mara.mybox.objects.Point(x - 1, y));
-                        queue.add(new mara.mybox.objects.Point(x, y + 1));
-                        queue.add(new mara.mybox.objects.Point(x, y - 1));
+                        if (excluded) {
+                            Color newColor = new Color(pixelColor.getRed(), pixelColor.getGreen(), pixelColor.getBlue(), opacity);
+                            pixelWriter.setColor(x, y, newColor);
+                        } else {
+                            pixelWriter.setColor(x, y, pixelColor);
+                        }
+                        queue.add(new mara.mybox.objects.IntPoint(x + 1, y));
+                        queue.add(new mara.mybox.objects.IntPoint(x - 1, y));
+                        queue.add(new mara.mybox.objects.IntPoint(x, y + 1));
+                        queue.add(new mara.mybox.objects.IntPoint(x, y - 1));
                     }
+
                 }
             }
 

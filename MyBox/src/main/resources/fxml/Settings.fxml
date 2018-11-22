@@ -66,9 +66,10 @@
                             <children>
                                 <Label text="%MaxMainMemPDF" />
                                 <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="pdfMemGroup" />
-                           </toggleGroup></RadioButton>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="pdfMemGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
                                 <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
                                 <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
                                 <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
@@ -98,12 +99,12 @@
                         <HBox fx:id="imageHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
                                 <RadioButton fx:id="maxHisRadio" mnemonicParsing="false" onAction="#maxHisAction" selected="true" text="%MaxHistories">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="hisGroup" />
-                           </toggleGroup>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="hisGroup" />
+                                    </toggleGroup>
                                 </RadioButton>
                                 <TextField fx:id="hisMaxInput" prefHeight="30.0" prefWidth="54.0" text="10" />
-                        <Button fx:id="hisOkButton" mnemonicParsing="false" onAction="#setHisAction" text="%OK" />
+                                <Button fx:id="hisOkButton" mnemonicParsing="false" onAction="#setHisAction" text="%OK" />
                                 <Button fx:id="hisClearButton" mnemonicParsing="false" onAction="#clearHistories" text="%Clear" />
                                 <RadioButton fx:id="noHisRadio" mnemonicParsing="false" onAction="#noHisAction" text="%NoHistories" toggleGroup="$hisGroup" />
                             </children>
@@ -118,6 +119,7 @@
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
+                <Button mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
                 <Button mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
             </children>
         </HBox>

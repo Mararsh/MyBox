@@ -91,7 +91,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
                         shadow = Integer.valueOf(newValue);
                         if (shadow >= 0) {
                             shadowBox.getEditor().setStyle(null);
-                            AppVaribles.setConfigValue(ImageShadowKey, newValue);
+                            AppVaribles.setUserConfigValue(ImageShadowKey, newValue);
                         } else {
                             shadow = 0;
                             shadowBox.getEditor().setStyle(badStyle);

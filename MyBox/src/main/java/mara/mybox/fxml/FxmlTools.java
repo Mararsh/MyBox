@@ -124,6 +124,7 @@ public class FxmlTools {
 
     // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay
     public static void quickTooltip(final Node node, final Tooltip tooltip) {
+        node.setOnMouseMoved(null);
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -139,6 +140,7 @@ public class FxmlTools {
     }
 
     public static void setComments(final Node node, final Tooltip tooltip) {
+        node.setOnMouseMoved(null);
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {

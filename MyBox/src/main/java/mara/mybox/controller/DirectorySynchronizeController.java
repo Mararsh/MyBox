@@ -86,7 +86,7 @@ public class DirectorySynchronizeController extends BaseController {
     protected void initializeNext() {
         try {
 
-            sourcePathInput.setText(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            sourcePathInput.setText(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -97,12 +97,12 @@ public class DirectorySynchronizeController extends BaseController {
                         return;
                     }
                     sourcePathInput.setStyle(null);
-                    AppVaribles.setConfigValue(LastPathKey, newValue);
-                    AppVaribles.setConfigValue(sourcePathKey, newValue);
+                    AppVaribles.setUserConfigValue(LastPathKey, newValue);
+                    AppVaribles.setUserConfigValue(sourcePathKey, newValue);
                 }
             });
 
-            targetPathInput.setText(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             targetPathInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -113,8 +113,8 @@ public class DirectorySynchronizeController extends BaseController {
                         return;
                     }
                     targetPathInput.setStyle(null);
-                    AppVaribles.setConfigValue(LastPathKey, newValue);
-                    AppVaribles.setConfigValue(targetPathKey, newValue);
+                    AppVaribles.setUserConfigValue(LastPathKey, newValue);
+                    AppVaribles.setUserConfigValue(targetPathKey, newValue);
                 }
             });
 
@@ -150,7 +150,7 @@ public class DirectorySynchronizeController extends BaseController {
     protected void selectSourcePath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -159,8 +159,8 @@ public class DirectorySynchronizeController extends BaseController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(sourcePathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(sourcePathKey, directory.getPath());
 
             sourcePathInput.setText(directory.getPath());
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class DirectorySynchronizeController extends BaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -185,8 +185,8 @@ public class DirectorySynchronizeController extends BaseController {
             if (directory == null) {
                 return;
             }
-            AppVaribles.setConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setConfigValue(targetPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(targetPathKey, directory.getPath());
 
             targetPathInput.setText(directory.getPath());
         } catch (Exception e) {

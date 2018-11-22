@@ -32,7 +32,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getConfigValue;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
@@ -46,6 +45,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import static mara.mybox.objects.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -145,7 +145,7 @@ public class PdfMergeController extends PdfBaseController {
                             return;
                         }
                         targetFileInput.setStyle(null);
-                        AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
+                        AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
                     } catch (Exception e) {
                         targetFile = null;
                         targetFileInput.setStyle(badStyle);
@@ -168,10 +168,10 @@ public class PdfMergeController extends PdfBaseController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setConfigValue(AuthorKey, newValue);
+                AppVaribles.setUserConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
         Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
         tips.setFont(new Font(16));
@@ -185,7 +185,7 @@ public class PdfMergeController extends PdfBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -197,8 +197,8 @@ public class PdfMergeController extends PdfBaseController {
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(targetPathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(targetPathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);
@@ -307,7 +307,7 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     protected void checkPdfMem() {
-        String pm = getConfigValue("PdfMemDefault", "1GB");
+        String pm = getUserConfigValue("PdfMemDefault", "1GB");
         switch (pm) {
             case "1GB":
                 pdfMem1GRadio.setSelected(true);
@@ -353,7 +353,7 @@ public class PdfMergeController extends PdfBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -364,8 +364,8 @@ public class PdfMergeController extends PdfBaseController {
                 return;
             }
             targetFile = file;
-            AppVaribles.setConfigValue(LastPathKey, targetFile.getParent());
-            AppVaribles.setConfigValue(targetPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
 
             if (targetFileInput != null) {
                 targetFileInput.setText(targetFile.getAbsolutePath());

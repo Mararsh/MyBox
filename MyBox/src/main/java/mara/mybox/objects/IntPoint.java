@@ -7,11 +7,11 @@ package mara.mybox.objects;
  * @Description
  * @License Apache License Version 2.0
  */
-public class Point {
+public class IntPoint {
 
     private int x, y;
 
-    public Point(int x, int y) {
+    public IntPoint(int x, int y) {
         this.x = x;
         this.y = y;
     }

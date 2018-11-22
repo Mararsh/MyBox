@@ -23,7 +23,7 @@ import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.Rectangle;
+import mara.mybox.objects.IntRectangle;
 
 /**
  * @Author Mara
@@ -217,7 +217,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                     }
                     final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
                             Color.RED, lineWidth,
-                            new Rectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
+                            new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

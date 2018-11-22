@@ -183,10 +183,10 @@ public class ImagesCombinePdfController extends ImageBaseController {
             loadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setConfigValue(ImageCombineLoadImagesKey, loadCheck.isSelected());
+                    AppVaribles.setUserConfigValue(ImageCombineLoadImagesKey, loadCheck.isSelected());
                 }
             });
-            loadCheck.setSelected(AppVaribles.getConfigBoolean(ImageCombineLoadImagesKey));
+            loadCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageCombineLoadImagesKey));
 
             Tooltip tips = new Tooltip(getMessage("LoadImagesComments"));
             tips.setFont(new Font(16));
@@ -228,7 +228,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                         return;
                     }
                     targetFileInput.setStyle(null);
-                    AppVaribles.setConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
+                    AppVaribles.setUserConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
                 } catch (Exception e) {
                     targetFile = null;
                     targetFileInput.setStyle(badStyle);
@@ -368,7 +368,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
                         MarginsBox.getEditor().setStyle(null);
-                        AppVaribles.setConfigValue(ImageCombineMarginsKey, newValue);
+                        AppVaribles.setUserConfigValue(ImageCombineMarginsKey, newValue);
                     } else {
                         marginSize = 0;
                         MarginsBox.getEditor().setStyle(badStyle);
@@ -380,7 +380,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 }
             }
         });
-        MarginsBox.getSelectionModel().select(AppVaribles.getConfigValue(ImageCombineMarginsKey, "20"));
+        MarginsBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageCombineMarginsKey, "20"));
 
         if (fontBox != null) {
             fontBox.getItems().addAll(Arrays.asList(
@@ -408,10 +408,10 @@ public class ImagesCombinePdfController extends ImageBaseController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setConfigValue(AuthorKey, newValue);
+                AppVaribles.setUserConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -438,7 +438,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
             checkCustomValues();
         }
 
-//        AppVaribles.setConfigValue(ImageCombineSizeKey, selected.getText());
+//        AppVaribles.setUserConfigValue(ImageCombineSizeKey, selected.getText());
     }
 
     private int calculateCmPixels(float cm, int dpi) {
@@ -602,7 +602,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getConfigValue(ImagesCombinePdfPathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(ImagesCombinePdfPathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -614,8 +614,8 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 return;
             }
             String path = files.get(0).getParent();
-            AppVaribles.setConfigValue(LastPathKey, path);
-            AppVaribles.setConfigValue(ImagesCombinePdfPathKey, path);
+            AppVaribles.setUserConfigValue(LastPathKey, path);
+            AppVaribles.setUserConfigValue(ImagesCombinePdfPathKey, path);
             loadImages(files);
 
         } catch (Exception e) {
@@ -823,7 +823,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(ImageCombineTargetPathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(ImageCombineTargetPathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -834,8 +834,8 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 return;
             }
             targetFile = file;
-            AppVaribles.setConfigValue(LastPathKey, targetFile.getParent());
-            AppVaribles.setConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
 
             if (targetFileInput != null) {
                 targetFileInput.setText(targetFile.getAbsolutePath());

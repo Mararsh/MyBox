@@ -480,7 +480,7 @@ public class ImageManufactureCoverController extends ImageManufactureController 
     private void selectPicture(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!path.isDirectory()) {
                 path = new File(CommonValues.UserFilePath);
             }
@@ -491,8 +491,8 @@ public class ImageManufactureCoverController extends ImageManufactureController 
                 return;
             }
             File picFile = file;
-            AppVaribles.setConfigValue(LastPathKey, picFile.getParent());
-            AppVaribles.setConfigValue(sourcePathKey, picFile.getParent());
+            AppVaribles.setUserConfigValue(LastPathKey, picFile.getParent());
+            AppVaribles.setUserConfigValue(sourcePathKey, picFile.getParent());
 
             final String fileName = file.getPath();
             Task loadTask = new Task<Void>() {

@@ -113,7 +113,7 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkDistance();
+                    checkColor();
                 }
             });
             distanceInput.setText("20");
@@ -164,7 +164,7 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
             widthBox.setDisable(true);
             marginWidthBox.getEditor().setStyle(null);
             promptLabel.setVisible(true);
-            checkDistance();
+            checkColor();
         }
     }
 
@@ -184,7 +184,7 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
         }
     }
 
-    protected void checkDistance() {
+    protected void checkColor() {
         try {
             distance = Integer.valueOf(distanceInput.getText());
             distanceInput.setStyle(null);
