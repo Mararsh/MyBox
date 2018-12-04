@@ -26,7 +26,7 @@ public class ImageReplaceColorTools {
             int newValue = newColor.getRGB();
             int imageType = source.getType();
             if (newColor.getRGB() == AlphaColor.getRGB()) {
-                imageType = BufferedImage.TYPE_4BYTE_ABGR;
+                imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(width, height, imageType);
             for (int j = 0; j < height; j++) {

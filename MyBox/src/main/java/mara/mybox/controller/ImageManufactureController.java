@@ -131,7 +131,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    protected ToolBar hotBar;
+    protected ToolBar fileBar, hotBar;
     @FXML
     protected Tab fileTab, viewTab, colorTab, textTab, coverTab, cropTab,
             arcTab, shadowTab, effectsTab, convolutionTab, sizeTab, refTab,
@@ -141,7 +141,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected Button selectRefButton, saveButton, recoverButton, undoButton, redoButton;
     @FXML
-    protected CheckBox showRefCheck, showScopeCheck;
+    protected CheckBox showRefCheck, showScopeCheck, saveCheck;
     @FXML
     protected SplitPane splitPane;
     @FXML
@@ -377,39 +377,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
             logger.debug(e.toString());
         }
 
-    }
-
-    @Override
-    public void afterImageLoaded() {
-        try {
-            super.afterImageLoaded();
-            if (image == null) {
-                return;
-            }
-            isSettingValues = true;
-
-            values.setSourceFile(sourceFile);
-            values.setImage(image);
-            values.setImageInfo(imageInformation);
-            values.setCurrentImage(image);
-            values.setRefImage(image);
-            setImageChanged(false);
-            values.setScope(new ImageScope(image));
-            scope = values.getScope();
-
-            recordImageHistory(ImageOperationType.Load, image);
-
-            if (initTab != null) {
-                switchTab(initTab);
-            } else {
-                initInterface();
-            }
-
-            isSettingValues = false;
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
     }
 
     protected void initScopeBar() {
@@ -929,10 +896,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
                                 return;
                             }
                             String str = AppVaribles.getMessage("Format") + ":" + values.getRefInfo().getImageFormat() + "  "
-                                    + AppVaribles.getMessage("Pixels") + ":" + values.getRefInfo().getxPixels() + "x" + values.getRefInfo().getyPixels();
-                            if (values.getRefInfo().getFile() != null) {
-                                str += "  " + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(values.getRefInfo().getFile().length()) + "  "
-                                        + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(values.getRefInfo().getFile().lastModified());
+                                    + AppVaribles.getMessage("Pixels") + ":" + values.getRefInfo().getWidth() + "x" + values.getRefInfo().getHeight();
+                            if (values.getRefFile() != null) {
+                                str += "  " + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(values.getRefFile().length()) + "  "
+                                        + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(values.getRefFile().lastModified());
                             }
                             bottomLabel.setText(str);
                         }
@@ -962,11 +929,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     refView.setImage(values.getRefImage());
                     if (values.getRefInfo() != null) {
 //                            logger.debug(scrollPane.getHeight() + " " + refInfo.getyPixels());
-                        if (scrollPane.getHeight() < values.getRefInfo().getyPixels()) {
+                        if (scrollPane.getHeight() < values.getRefInfo().getHeight()) {
                             refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
 //                                refView.setFitWidth(scrollPane.getWidth() - 1);
                         } else {
-                            refView.setFitHeight(values.getRefInfo().getyPixels());
+                            refView.setFitHeight(values.getRefInfo().getHeight());
 //                                refView.setFitWidth(refInfo.getxPixels());
                         }
                     }
@@ -1000,30 +967,30 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setRefImage(image);
             values.setRefInfo(values.getImageInfo());
             refView.setImage(image);
-            if (scrollPane.getHeight() < values.getImageInfo().getyPixels()) {
+            if (scrollPane.getHeight() < values.getImageInfo().getWidth()) {
                 refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
                 refView.setFitWidth(scrollPane.getWidth() - 1);
             } else {
-                refView.setFitHeight(values.getImageInfo().getyPixels());
-                refView.setFitWidth(values.getImageInfo().getxPixels());
+                refView.setFitHeight(values.getImageInfo().getHeight());
+                refView.setFitWidth(values.getImageInfo().getWidth());
             }
             return;
         }
         Task refTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                values.setRefInfo(ImageFileReaders.readImageMetaData(values.getRefFile().getAbsolutePath()));
+                values.setRefInfo(ImageFileReaders.readImageFileMetaData(values.getRefFile().getAbsolutePath()).getImageInformation());
                 values.setRefImage(SwingFXUtils.toFXImage(ImageIO.read(values.getRefFile()), null));
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         refView.setImage(values.getRefImage());
-                        if (refPane.getHeight() < values.getRefInfo().getyPixels()) {
+                        if (refPane.getHeight() < values.getRefInfo().getHeight()) {
                             refView.setFitHeight(refPane.getHeight() - 5);
                             refView.setFitWidth(refPane.getWidth() - 1);
                         } else {
-                            refView.setFitHeight(values.getRefInfo().getyPixels());
-                            refView.setFitWidth(values.getRefInfo().getxPixels());
+                            refView.setFitHeight(values.getRefInfo().getHeight());
+                            refView.setFitWidth(values.getRefInfo().getWidth());
                         }
                         setBottomLabel();
                     }
@@ -1281,7 +1248,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         = (ImageManufactureController) reloadStage(fxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setValues(values);
                 controller.setTab(tabName);
+                controller.xZoomStep = xZoomStep;
+                controller.yZoomStep = yZoomStep;
                 controller.initInterface();
+
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1382,7 +1352,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 String format = values.getImageInfo().getImageFormat();
                 final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(values.getCurrentImage());
                 ImageFileWriters.writeImageFile(bufferedImage, format, values.getSourceFile().getAbsolutePath());
-                imageInformation = ImageFileReaders.readImageMetaData(values.getSourceFile().getAbsolutePath());
+                imageInformation = ImageFileReaders.readImageFileMetaData(values.getSourceFile().getAbsolutePath()).getImageInformation();
                 image = values.getCurrentImage();
                 values.setImage(image);
                 values.setImageInfo(imageInformation);
@@ -1404,6 +1374,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void saveAs() {
         try {
             final FileChooser fileChooser = new FileChooser();
@@ -1435,6 +1406,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                             } else if (values.getSaveAsType() == ImageManufactureFileController.SaveAsType.Open) {
                                 openImageManufactureInNew(file.getAbsolutePath());
                             }
+                            popInformation(AppVaribles.getMessage("Successful"));
                         }
                     });
                     return null;
@@ -1458,11 +1430,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
             super.zoomIn();
             if (values.isRefSync() && refView != null) {
                 refView.setFitWidth(imageView.getFitWidth());
-                refView.setFitHeight(imageView.getFitWidth());
+//                refView.setFitHeight(imageView.getFitWidth());
             }
             if (scopeView != null) {
                 scopeView.setFitWidth(imageView.getFitWidth());
-                scopeView.setFitHeight(imageView.getFitHeight());
+//                scopeView.setFitHeight(imageView.getFitHeight());
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1475,11 +1447,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
         super.zoomOut();
         if (values.isRefSync() && refView != null) {
             refView.setFitWidth(imageView.getFitWidth());
-            refView.setFitHeight(imageView.getFitWidth());
+//            refView.setFitHeight(imageView.getFitWidth());
         }
         if (scopeView != null) {
             scopeView.setFitWidth(imageView.getFitWidth());
-            scopeView.setFitHeight(imageView.getFitHeight());
+//            scopeView.setFitHeight(imageView.getFitHeight());
         }
     }
 
@@ -1524,9 +1496,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
             str = AppVaribles.getMessage("CurrentPixels") + ":" + (int) values.getCurrentImage().getWidth() + "x" + (int) values.getCurrentImage().getHeight();
         } else {
             str = AppVaribles.getMessage("Format") + ":" + values.getImageInfo().getImageFormat() + "  "
-                    + AppVaribles.getMessage("Pixels") + ":" + values.getImageInfo().getxPixels() + "x" + values.getImageInfo().getyPixels() + "  "
-                    + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(values.getImageInfo().getFile().length()) + "  "
-                    + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(values.getImageInfo().getFile().lastModified()) + "  "
+                    + AppVaribles.getMessage("Pixels") + ":" + values.getImageInfo().getWidth() + "x" + values.getImageInfo().getHeight() + "  "
+                    + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(values.getSourceFile().length()) + "  "
+                    + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(values.getSourceFile().lastModified()) + "  "
                     + AppVaribles.getMessage("CurrentPixels") + ":" + (int) values.getCurrentImage().getWidth() + "x" + (int) values.getCurrentImage().getHeight();
         }
         bottomLabel.setText(str);

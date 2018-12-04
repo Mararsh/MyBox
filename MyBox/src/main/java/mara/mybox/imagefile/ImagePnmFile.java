@@ -94,6 +94,7 @@ public class ImagePnmFile {
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 PNMMetadata metadata = (PNMMetadata) reader.getImageMetadata(0);
+                reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {

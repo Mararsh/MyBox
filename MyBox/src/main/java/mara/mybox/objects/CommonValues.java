@@ -18,10 +18,11 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.3";
-    public static final String AppVersionDate = "2018-11-22";
+    public static final String AppVersion = "4.4";
+    public static final String AppVersionDate = "2018-12-03";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
+    public static final String TempPath = UserFilePath + File.separator + "temp";
     public static final String UserConfigFile = UserFilePath + File.separator + ".conf.properties";
     public static final String AlarmClocksFile = UserFilePath + File.separator + ".alarmClocks";
     public static final String DerbyDB = UserFilePath + File.separator + "mybox_derby";
@@ -95,9 +96,12 @@ public class CommonValues {
     public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
+    public static final String ImageSampleFxml = "/fxml/ImageSample.fxml";
     public static final String ImagesBlendFxml = "/fxml/ImagesBlend.fxml";
     public static final String ImageGifViewerFxml = "/fxml/ImageGifViewer.fxml";
     public static final String ImageGifEditerFxml = "/fxml/ImageGifEditer.fxml";
+    public static final String ImageTiffEditerFxml = "/fxml/ImageTiffEditer.fxml";
+    public static final String ImageFramesViewerFxml = "/fxml/ImageFramesViewer.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
@@ -134,9 +138,23 @@ public class CommonValues {
 
     public static final int InvalidValue = -9999999;
 
+    public static final int MaxImageSampleWidth = 4096;
+
     public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList() {
         {
             add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> TiffExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("tif/tiff", "*.tif", "*.tiff"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> GifExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
         }
     };
 

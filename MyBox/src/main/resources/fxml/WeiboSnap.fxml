@@ -14,8 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -126,7 +125,7 @@
                                             </toggleGroup>
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                        <ComboBox fx:id="standardSizeBox" disable="true" prefHeight="30.0" prefWidth="215.0" />
+                                        <ComboBox fx:id="standardSizeBox" disable="true" prefHeight="30.0" prefWidth="180.0" />
                                         <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
                                         <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
                                         <Label text="%UnitPixels" />

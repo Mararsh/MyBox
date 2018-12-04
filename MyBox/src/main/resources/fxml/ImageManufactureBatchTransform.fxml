@@ -62,7 +62,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -92,17 +93,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                                             <children>
-                                    <RadioButton mnemonicParsing="false" selected="true" text="%Shear">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="transformGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                                  <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
-                                    <RadioButton mnemonicParsing="false" text="%VerticalMirror" toggleGroup="$transformGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%HorizontalMirror" toggleGroup="$transformGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%RotateAngle" toggleGroup="$transformGroup" />
-                                                  <Slider fx:id="angleSlider" blockIncrement="1.0" max="359.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="90.0" />
-                                                  <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%Shear">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="transformGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <ComboBox fx:id="shearBox" editable="true" prefWidth="100.0" />
+                                                <RadioButton mnemonicParsing="false" text="%VerticalMirror" toggleGroup="$transformGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%HorizontalMirror" toggleGroup="$transformGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%RotateAngle" toggleGroup="$transformGroup" />
+                                                <Slider fx:id="angleSlider" blockIncrement="1.0" max="359.0" min="1.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="90.0" />
+                                                <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">

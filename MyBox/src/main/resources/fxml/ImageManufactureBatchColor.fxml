@@ -62,7 +62,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -92,7 +93,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                    <Label text="%Object" />
+                                                <Label text="%Object" />
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Brightness">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="colorGroup" />
@@ -101,31 +102,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <RadioButton mnemonicParsing="false" text="%Saturation" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$colorGroup" />
                                                 <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
                                                 <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Label text="%Operation" />
-                                    <RadioButton fx:id="setRadio" mnemonicParsing="false" selected="true" text="%Set">
+                                                <Label text="%Operation" />
+                                                <RadioButton fx:id="setRadio" mnemonicParsing="false" selected="true" text="%Set">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="opGroup" />
                                                     </toggleGroup>
-                                    </RadioButton>
+                                                </RadioButton>
                                                 <RadioButton fx:id="increaseRadio" mnemonicParsing="false" text="%Increase" toggleGroup="$opGroup" />
                                                 <RadioButton fx:id="decreaseRadio" mnemonicParsing="false" text="%Decrease" toggleGroup="$opGroup" />
-                                    <RadioButton fx:id="filterRadio" mnemonicParsing="false" text="%Filter" toggleGroup="$opGroup" />
-                                    <RadioButton fx:id="invertRadio" mnemonicParsing="false" text="%Invert" toggleGroup="$opGroup" />
+                                                <RadioButton fx:id="filterRadio" mnemonicParsing="false" text="%Filter" toggleGroup="$opGroup" />
+                                                <RadioButton fx:id="invertRadio" mnemonicParsing="false" text="%Invert" toggleGroup="$opGroup" />
                                             </children>
                                         </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                 <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
                                                 <Slider fx:id="colorSlider" blockIncrement="1.0" minorTickCount="1" prefHeight="44.0" prefWidth="150.0" showTickLabels="true" showTickMarks="true" value="5.0">
                                                     <HBox.margin>
                                                         <Insets />
@@ -137,8 +138,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </HBox.margin>
                                                 </TextField>
                                                 <Label fx:id="colorUnit" text=" " />
-                                 </children>
-                              </HBox>
+                                            </children>
+                                        </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <RadioButton fx:id="whiteRadio" mnemonicParsing="false" selected="true" text="%ReplaceAlphaAsWhite">

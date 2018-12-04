@@ -67,10 +67,10 @@ public class ImageManufactureShadowController extends ImageManufactureController
             }
 
             shadowBox.getItems().clear();
-            shadowBox.getItems().addAll(Arrays.asList(values.getImageInfo().getxPixels() / 100 + "",
-                    values.getImageInfo().getxPixels() / 50 + "",
-                    values.getImageInfo().getxPixels() / 200 + "",
-                    values.getImageInfo().getxPixels() / 30 + "",
+            shadowBox.getItems().addAll(Arrays.asList(values.getImageInfo().getWidth() / 100 + "",
+                    values.getImageInfo().getWidth() / 50 + "",
+                    values.getImageInfo().getWidth() / 200 + "",
+                    values.getImageInfo().getWidth() / 30 + "",
                     "0", "4", "5", "3", "2", "1", "6"));
             shadowBox.getSelectionModel().select(0);
 

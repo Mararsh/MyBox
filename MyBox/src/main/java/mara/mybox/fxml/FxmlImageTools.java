@@ -29,7 +29,7 @@ import mara.mybox.image.ImageBlendTools.ImagesRelativeLocation;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageScopeTools;
 import mara.mybox.objects.ImageCombine;
-import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.objects.ImageInformation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -420,14 +420,14 @@ public class FxmlImageTools {
 
     public static Image indicateSplit(Image image,
             List<Integer> rows, List<Integer> cols,
-            Color lineColor, int lineWidth, boolean showSize) {
+            Color lineColor, int lineWidth, boolean showSize, double scale) {
         if (rows == null || cols == null
                 || rows.size() < 2 || cols.size() < 2) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = ImageScopeTools.indicateSplit(source, rows, cols,
-                FxmlImageTools.colorConvert(lineColor), lineWidth, showSize);
+                FxmlImageTools.colorConvert(lineColor), lineWidth, showSize, scale);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -552,7 +552,7 @@ public class FxmlImageTools {
 
     // This way may fail for big image
     public static Image combineSingleColumnFx(ImageCombine imageCombine,
-            List<ImageFileInformation> images) {
+            List<ImageInformation> images) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -563,23 +563,23 @@ public class FxmlImageTools {
             double totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
-                for (ImageFileInformation image : images) {
-                    imageWidth = (int) image.getImage().getWidth();
+                for (ImageInformation image : images) {
+                    imageWidth = (int) image.getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
                 }
             }
             if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
-                for (ImageFileInformation image : images) {
-                    imageWidth = (int) image.getImage().getWidth();
+                for (ImageInformation image : images) {
+                    imageWidth = (int) image.getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
                 }
             }
             for (int i = 0; i < images.size(); i++) {
-                ImageFileInformation imageInfo = images.get(i);
+                ImageInformation imageInfo = images.get(i);
                 Image image = imageInfo.getImage();
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(true);
@@ -628,7 +628,7 @@ public class FxmlImageTools {
 
     // This way may fail for big image
     public static Image combineSingleRowFx(ImageCombine imageCombine,
-            List<ImageFileInformation> images, boolean isPart) {
+            List<ImageInformation> images, boolean isPart) {
         if (images == null || images.isEmpty()) {
             return null;
         }
@@ -641,23 +641,23 @@ public class FxmlImageTools {
             }
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
-                for (ImageFileInformation image : images) {
-                    imageHeight = (int) image.getImage().getHeight();
+                for (ImageInformation image : images) {
+                    imageHeight = (int) image.getHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
                     }
                 }
             }
             if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
-                for (ImageFileInformation image : images) {
-                    imageHeight = (int) image.getImage().getHeight();
+                for (ImageInformation image : images) {
+                    imageHeight = (int) image.getHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
                     }
                 }
             }
             for (int i = 0; i < images.size(); i++) {
-                ImageFileInformation imageInfo = images.get(i);
+                ImageInformation imageInfo = images.get(i);
                 Image image = imageInfo.getImage();
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(true);

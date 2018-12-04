@@ -69,13 +69,29 @@
                             </items>
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageGifViewer" text="%ImageGifViewer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
+                        <Menu mnemonicParsing="false" text="%MultipleFramesImageFile">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openImageFramesViewer" text="%ImageFramesViewer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageTiffEditer" text="%ImageTiffEditer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageGifViewer" text="%ImageGifViewer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
+                            </items>
+                        </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                        <Menu mnemonicParsing="false" text="%MergeImages">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                            </items>
+                        </Menu>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <Menu mnemonicParsing="false" text="%ImagePart">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
+                            </items>
+                        </Menu>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />

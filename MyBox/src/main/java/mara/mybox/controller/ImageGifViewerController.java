@@ -1,13 +1,10 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -16,29 +13,21 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -51,7 +40,7 @@ public class ImageGifViewerController extends ImageViewerController {
 
     protected Image[] images;
     protected int currentIndex, interval, fromIndex, toIndex, totalNumber;
-    private boolean isSettingValues;
+    protected boolean isSettingValues;
 
     @FXML
     protected ComboBox<String> intervalCBox, frameBox;
@@ -62,16 +51,12 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     protected Label promptLabel, commentsLabel;
     @FXML
-    private ComboBox<String> targetTypeBox;
+    protected ComboBox<String> targetTypeBox;
     @FXML
-    private TextField fromInput, toInput;
+    protected TextField fromInput, toInput;
 
     public ImageGifViewerController() {
-        fileExtensionFilter = new ArrayList() {
-            {
-                add(new FileChooser.ExtensionFilter("*.gif", "*.GIF"));
-            }
-        };
+        fileExtensionFilter = CommonValues.GifExtensionFilter;
     }
 
     @Override
@@ -203,8 +188,9 @@ public class ImageGifViewerController extends ImageViewerController {
             task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
-                    imageInformation = ImageFileReaders.readImageMetaData(fileName);
-                    List<BufferedImage> bimages = ImageGifFile.readGifFile(fileName);
+                    ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
+                    imageInformation = imageFileInformation.getImageInformation();
+                    List<BufferedImage> bimages = ImageFileReaders.readFrames("gif", fileName);
                     if (bimages == null) {
                         return null;
                     }
@@ -261,8 +247,7 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             frameBox.getItems().clear();
             frameBox.getItems().addAll(frames);
-            getMyStage().setTitle(AppVaribles.getMessage("ImageGifViewer") + "  "
-                    + sourceFile.getAbsolutePath());
+            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -313,7 +298,6 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     public void extractAction() {
         try {
-            logger.debug(totalNumber + " " + fromIndex + " " + toIndex);
             if (sourceFile == null || images.length == 0
                     || totalNumber <= 0 || fromIndex > toIndex) {
                 return;
@@ -324,69 +308,12 @@ public class ImageGifViewerController extends ImageViewerController {
                     String fileName = targetPath.getAbsolutePath() + "/"
                             + targetPrefixInput.getText()
                             + "." + targetTypeBox.getSelectionModel().getSelectedItem();
-                    final List<String> names
+                    final List<String> filenames
                             = ImageGifFile.extractGifImages(sourceFile, new File(fileName), fromIndex, toIndex);
-                    if (names == null) {
-                        return null;
-                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle(getMyStage().getTitle());
-                                String info = MessageFormat.format(AppVaribles.getMessage("GeneratedFilesResult"),
-                                        names.size(), "\"" + targetPath.getAbsolutePath() + "\"");
-                                int num = names.size();
-                                if (num > 10) {
-                                    num = 10;
-                                }
-                                for (int i = 0; i < num; i++) {
-                                    info += "\n    " + names.get(i);
-                                }
-                                if (names.size() > num) {
-                                    info += "\n    ......";
-                                }
-                                alert.setContentText(info);
-                                ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("OpenTargetPath"));
-                                ButtonType buttonBrowse = new ButtonType(AppVaribles.getMessage("Browse"));
-                                ButtonType buttonBrowseNew = new ButtonType(AppVaribles.getMessage("BrowseInNew"));
-                                ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
-                                alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
-                                Optional<ButtonType> result = alert.showAndWait();
-                                if (result.get() == buttonOpen) {
-                                    Desktop.getDesktop().browse(targetPath.toURI());
-                                } else if (result.get() == buttonBrowse) {
-                                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-                                    Pane pane = fxmlLoader.load();
-                                    final ImagesViewerController controller = fxmlLoader.getController();
-                                    controller.setMyStage(myStage);
-                                    myStage.setScene(new Scene(pane));
-                                    myStage.setTitle(AppVaribles.getMessage("MultipleImagesViewer"));
-                                    controller.loadImages(names);
-                                } else if (result.get() == buttonBrowseNew) {
-                                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-                                    Pane pane = fxmlLoader.load();
-                                    final ImagesViewerController controller = fxmlLoader.getController();
-                                    Stage stage = new Stage();
-                                    controller.setMyStage(stage);
-                                    stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                                        @Override
-                                        public void handle(WindowEvent event) {
-                                            if (!controller.stageClosing()) {
-                                                event.consume();
-                                            }
-                                        }
-                                    });
-                                    stage.setScene(new Scene(pane));
-                                    stage.setTitle(AppVaribles.getMessage("MultipleImagesViewer"));
-                                    stage.show();
-                                    controller.loadImages(names);
-                                }
-
-                            } catch (Exception e) {
-                            }
-
+                            multipleFilesGenerated(filenames);
                         }
                     });
                     return null;

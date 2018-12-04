@@ -60,6 +60,7 @@ public class ImagePcxFile {
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 PCXMetadata metadata = (PCXMetadata) reader.getImageMetadata(0);
+                reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {

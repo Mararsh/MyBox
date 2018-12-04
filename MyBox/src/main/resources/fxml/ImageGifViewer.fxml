@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select..." />
+                                <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Open" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="infoBar" HBox.hgrow="NEVER">
@@ -79,16 +79,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar maxWidth="1.7976931348623157E308">
                             <items>
-                                <Label text="%FilePath" />
+                                <Label text="%FilePath" /> 
                                 <TextField fx:id="targetPathInput" prefWidth="150.0" />
                                 <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
                                 <Label text="%FileNamePrefix" />
                                 <TextField fx:id="targetPrefixInput" prefWidth="80.0" />
-                        <Label text="%ExtractGifComments" />
-                        <Label text="%From" />
-                        <TextField fx:id="fromInput" prefWidth="40.0" />
-                        <Label text="%To" />
-                        <TextField fx:id="toInput" prefWidth="50.0" />
+                                <Label text="%ExtractGifComments" />
+                                <Label text="%From" />
+                                <TextField fx:id="fromInput" prefWidth="40.0" />
+                                <Label text="%To" />
+                                <TextField fx:id="toInput" prefWidth="50.0" />
                                 <Label text="%Type" />
                                 <ComboBox fx:id="targetTypeBox" prefWidth="100.0" />
                                 <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" text="%Extract" />

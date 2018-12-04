@@ -1,9 +1,15 @@
 package mara.mybox.controller;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.concurrent.Task;
@@ -11,20 +17,28 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 import mara.mybox.objects.ImageAttributes;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.ImageInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.ValueTools;
 
@@ -36,9 +50,10 @@ import mara.mybox.tools.ValueTools;
  */
 public abstract class ImageBaseController extends BaseController {
 
-    protected ImageFileInformation imageInformation;
+    protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
+    protected Map<String, Long> sizes;
 
     protected class ProcessParameters {
 
@@ -115,24 +130,61 @@ public abstract class ImageBaseController extends BaseController {
 
     public void loadImage(final File file, final boolean onlyInformation) {
         sourceFile = file;
+        imageInformation = null;
+        image = null;
         final String fileName = file.getPath();
+        getMyStage().setTitle(getBaseTitle() + " " + fileName);
         Task loadTask = new Task<Void>() {
+
             @Override
-            protected Void call() throws Exception {
-                imageInformation = ImageFileReaders.readImageMetaData(fileName);
-                String format = FileTools.getFileSuffix(fileName).toLowerCase();
-                if (!"raw".equals(format) && !onlyInformation) {
-                    BufferedImage bufferImage = ImageIO.read(file);
-                    image = SwingFXUtils.toFXImage(bufferImage, null);
-//                    image = new Image(file.getAbsolutePath());
-                    imageInformation.setImage(image);
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        afterImageLoaded();
+            protected Void call() {
+                try {
+                    ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
+                    if (imageFileInformation == null
+                            || imageFileInformation.getImagesInformation() == null
+                            || imageFileInformation.getImagesInformation().isEmpty()) {
+                        return null;
                     }
-                });
+                    imageInformation = imageFileInformation.getImageInformation();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            afterInfoLoaded();
+                        }
+                    });
+                    if (imageFileInformation.getImagesInformation().size() > 1) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                handleMultipleImages();
+                            }
+                        });
+                        return null;
+                    }
+                    sizes = new HashMap<>();
+                    boolean needSampled = ImageFileReaders.needSampled(imageInformation, 1, sizes);
+                    String format = FileTools.getFileSuffix(fileName).toLowerCase();
+                    if (!"raw".equals(format) && !onlyInformation) {
+                        BufferedImage bufferImage;
+                        if (needSampled) {
+                            bufferImage = ImageFileReaders.readFileByWidth(format, fileName, sizes.get("sampledWidth").intValue());
+                        } else {
+                            bufferImage = ImageIO.read(file);
+                        }
+                        image = SwingFXUtils.toFXImage(bufferImage, null);
+                        imageInformation.setImage(image);
+                        imageInformation.setIsSampled(needSampled);
+                    }
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            afterImageLoaded();
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
                 return null;
             }
         };
@@ -155,10 +207,17 @@ public abstract class ImageBaseController extends BaseController {
         }
     }
 
-    public void loadImage(File sourceFile, Image image, ImageFileInformation imageInformation) {
+    public void loadImage(File sourceFile, Image image, ImageInformation imageInformation) {
         this.sourceFile = sourceFile;
         this.imageInformation = imageInformation;
         this.image = image;
+        afterImageLoaded();
+    }
+
+    public void loadImage(ImageInformation imageInformation) {
+        this.sourceFile = new File(imageInformation.getFilename());
+        this.imageInformation = imageInformation;
+        this.image = imageInformation.getImage();
         afterImageLoaded();
     }
 
@@ -169,7 +228,147 @@ public abstract class ImageBaseController extends BaseController {
         afterImageLoaded();
     }
 
+    protected void afterInfoLoaded() {
+
+    }
+
     protected void afterImageLoaded() {
+
+    }
+
+    protected void handleMultipleImages() {
+
+    }
+
+    protected void showImageInformation(ImageInformation info) {
+        try {
+            if (info == null) {
+                return;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageInformationFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            final ImageInformationController controller = fxmlLoader.getController();
+            Stage imageInformationStage = new Stage();
+            controller.setMyStage(imageInformationStage);
+            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
+            imageInformationStage.setTitle(getMyStage().getTitle());
+            imageInformationStage.initModality(Modality.NONE);
+            imageInformationStage.initStyle(StageStyle.DECORATED);
+            imageInformationStage.initOwner(null);
+            imageInformationStage.getIcons().add(CommonValues.AppIcon);
+            imageInformationStage.setScene(new Scene(root));
+            imageInformationStage.show();
+
+            controller.loadInformation(info);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void showImageMetaData(ImageInformation info) {
+        try {
+            if (info == null) {
+                return;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageMetaDataFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            final ImageMetaDataController controller = fxmlLoader.getController();
+            Stage imageInformationStage = new Stage();
+            controller.setMyStage(imageInformationStage);
+            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
+            imageInformationStage.setTitle(getMyStage().getTitle());
+            imageInformationStage.initModality(Modality.NONE);
+            imageInformationStage.initStyle(StageStyle.DECORATED);
+            imageInformationStage.initOwner(null);
+            imageInformationStage.getIcons().add(CommonValues.AppIcon);
+            imageInformationStage.setScene(new Scene(root));
+            imageInformationStage.show();
+
+            controller.loadData(info);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void multipleFilesGenerated(final List<String> fileNames) {
+        try {
+            if (fileNames == null || fileNames.isEmpty()) {
+                return;
+            }
+            String path = new File(fileNames.get(0)).getParent();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(getMyStage().getTitle());
+            String info = MessageFormat.format(AppVaribles.getMessage("GeneratedFilesResult"),
+                    fileNames.size(), "\"" + path + "\"");
+            int num = fileNames.size();
+            if (num > 10) {
+                num = 10;
+            }
+            for (int i = 0; i < num; i++) {
+                info += "\n    " + fileNames.get(i);
+            }
+            if (fileNames.size() > num) {
+                info += "\n    ......";
+            }
+            getMyStage();
+            alert.setContentText(info);
+            ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("OpenTargetPath"));
+            ButtonType buttonBrowse = new ButtonType(AppVaribles.getMessage("Browse"));
+            ButtonType buttonBrowseNew = new ButtonType(AppVaribles.getMessage("BrowseInNew"));
+            ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
+            alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonOpen) {
+                Desktop.getDesktop().browse(new File(path).toURI());
+            } else if (result.get() == buttonBrowse) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
+                Pane pane = fxmlLoader.load();
+                final ImagesViewerController controller = fxmlLoader.getController();
+                controller.setMyStage(myStage);
+                myStage.setScene(new Scene(pane));
+                controller.setBaseTitle(AppVaribles.getMessage("MultipleImagesViewer"));
+                controller.loadImages(fileNames);
+            } else if (result.get() == buttonBrowseNew) {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
+                Pane pane = fxmlLoader.load();
+                final ImagesViewerController controller = fxmlLoader.getController();
+                Stage stage = new Stage();
+                controller.setMyStage(stage);
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                    @Override
+                    public void handle(WindowEvent event) {
+                        if (!controller.stageClosing()) {
+                            event.consume();
+                        }
+                    }
+                });
+                stage.setScene(new Scene(pane));
+                stage.show();
+                controller.setBaseTitle(AppVaribles.getMessage("MultipleImagesViewer"));
+                controller.loadImages(fileNames);
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
 
     }
 
@@ -397,11 +596,11 @@ public abstract class ImageBaseController extends BaseController {
         operationBarController.statusLabel.setText(s);
     }
 
-    public ImageFileInformation getImageInformation() {
+    public ImageInformation getImageInformation() {
         return imageInformation;
     }
 
-    public void setImageInformation(ImageFileInformation imageInformation) {
+    public void setImageInformation(ImageInformation imageInformation) {
         this.imageInformation = imageInformation;
     }
 
@@ -459,6 +658,14 @@ public abstract class ImageBaseController extends BaseController {
 
     public void setImageView(ImageView imageView) {
         this.imageView = imageView;
+    }
+
+    public Map<String, Long> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(Map<String, Long> sizes) {
+        this.sizes = sizes;
     }
 
 }

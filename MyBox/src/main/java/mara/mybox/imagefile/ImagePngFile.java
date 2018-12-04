@@ -12,9 +12,9 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageFileInformation;
 import static mara.mybox.image.ImageValueTools.dpi2dpm;
 import static mara.mybox.image.ImageValueTools.dpm2dpi;
+import mara.mybox.objects.ImageInformation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,7 +88,8 @@ public class ImagePngFile {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html#image
-    public static void explainPngMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
+    public static void explainPngMetaData(Map<String, Map<String, Map<String, String>>> metaData,
+            ImageInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_png_1.0")) {
                 return;
@@ -98,10 +99,10 @@ public class ImagePngFile {
             if (javax_imageio_png.containsKey("IHDR")) {
                 Map<String, String> IHDR = javax_imageio_png.get("IHDR");
                 if (IHDR.containsKey("width")) {
-                    info.setxPixels(Integer.valueOf(IHDR.get("width")));
+                    info.setWidth(Integer.valueOf(IHDR.get("width")));
                 }
                 if (IHDR.containsKey("height")) {
-                    info.setyPixels(Integer.valueOf(IHDR.get("height")));
+                    info.setHeight(Integer.valueOf(IHDR.get("height")));
                 }
                 if (IHDR.containsKey("bitDepth")) {
                     info.setBitDepth(IHDR.get("bitDepth"));
@@ -122,18 +123,18 @@ public class ImagePngFile {
                     if (pHYs.containsKey("pixelsPerUnitXAxis")) {
                         int v = Integer.valueOf(pHYs.get("pixelsPerUnitXAxis"));
                         if (isMeter) {
-                            info.setxDensity(dpm2dpi(v));  // resolution value should be dpi
+                            info.setwDensity(dpm2dpi(v));  // resolution value should be dpi
                         } else {
-                            info.setxDensity(v);
+                            info.setwDensity(v);
                         }
 //                        logger.debug("pixelsPerUnitXAxis:" + info.gethResolution());
                     }
                     if (pHYs.containsKey("pixelsPerUnitYAxis")) {
                         int v = Integer.valueOf(pHYs.get("pixelsPerUnitYAxis"));
                         if (isMeter) {
-                            info.setyDensity(dpm2dpi(v));   // resolution value should be dpi
+                           info.sethDensity(dpm2dpi(v));   // resolution value should be dpi
                         } else {
-                            info.setyDensity(v);
+                           info.sethDensity(v);
                         }
 //                        logger.debug("pixelsPerUnitYAxis:" + info.getvResolution());
                     }

@@ -37,6 +37,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import mara.mybox.tools.PdfTools.PdfImageFormat;
 
 /**
  * @Author Mara
@@ -57,7 +58,8 @@ public class WeiboSnapController extends BaseController {
     private WeiboSnapParameters parameters;
     private Date startMonth, endMonth;
     private float zoomScale, speed;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, pdfScale;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, pdfScale;
+    private PdfImageFormat format;
 
     @FXML
     private ToggleGroup sizeGroup, formatGroup, categoryGroup;
@@ -370,12 +372,12 @@ public class WeiboSnapController extends BaseController {
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
         if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Original;
+            format = PdfImageFormat.Original;
         } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Tiff;
+            format = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
         } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Jpeg;
+            format = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
         }
@@ -431,7 +433,7 @@ public class WeiboSnapController extends BaseController {
         checkPageSize();
 
         standardSizeBox.getItems().addAll(Arrays.asList(
-                "A4-横向 (16k)  29.7cm x 21.0cm",
+                "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
                 "A4 (16k) 21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
@@ -588,65 +590,66 @@ public class WeiboSnapController extends BaseController {
         } catch (Exception e) {
         }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        s = s.substring(0, s.indexOf(" "));
-        switch (s) {
-            case "A4":
-                pageWidth = calculateCmPixels(21.0f, dpi);
-                pageHeight = calculateCmPixels(29.7f, dpi);
-                break;
-            case "A4-横向":
-                pageWidth = calculateCmPixels(29.7f, dpi);
-                pageHeight = calculateCmPixels(21.0f, dpi);
-                break;
-            case "A5":
-                pageWidth = calculateCmPixels(14.8f, dpi);
-                pageHeight = calculateCmPixels(21.0f, dpi);
-                break;
-            case "A6":
-                pageWidth = calculateCmPixels(10.5f, dpi);
-                pageHeight = calculateCmPixels(14.8f, dpi);
-                break;
-            case "A3":
-                pageWidth = calculateCmPixels(29.7f, dpi);
-                pageHeight = calculateCmPixels(42.0f, dpi);
-                break;
-            case "A2":
-                pageWidth = calculateCmPixels(42.0f, dpi);
-                pageHeight = calculateCmPixels(59.4f, dpi);
-                break;
-            case "A1":
-                pageWidth = calculateCmPixels(59.4f, dpi);
-                pageHeight = calculateCmPixels(84.1f, dpi);
-                break;
+        if (s.startsWith("A4-" + getMessage("Horizontal"))) {
+            pageWidth = calculateCmPixels(29.7f, dpi);
+            pageHeight = calculateCmPixels(21.0f, dpi);
+        } else {
+            s = s.substring(0, s.indexOf(" "));
+            switch (s) {
+                case "A4":
+                    pageWidth = calculateCmPixels(21.0f, dpi);
+                    pageHeight = calculateCmPixels(29.7f, dpi);
+                    break;
+                case "A5":
+                    pageWidth = calculateCmPixels(14.8f, dpi);
+                    pageHeight = calculateCmPixels(21.0f, dpi);
+                    break;
+                case "A6":
+                    pageWidth = calculateCmPixels(10.5f, dpi);
+                    pageHeight = calculateCmPixels(14.8f, dpi);
+                    break;
+                case "A3":
+                    pageWidth = calculateCmPixels(29.7f, dpi);
+                    pageHeight = calculateCmPixels(42.0f, dpi);
+                    break;
+                case "A2":
+                    pageWidth = calculateCmPixels(42.0f, dpi);
+                    pageHeight = calculateCmPixels(59.4f, dpi);
+                    break;
+                case "A1":
+                    pageWidth = calculateCmPixels(59.4f, dpi);
+                    pageHeight = calculateCmPixels(84.1f, dpi);
+                    break;
 
-            case "A0":
-                pageWidth = calculateCmPixels(84.1f, dpi);
-                pageHeight = calculateCmPixels(118.9f, dpi);
-                break;
-            case "B5":
-                pageWidth = calculateCmPixels(17.6f, dpi);
-                pageHeight = calculateCmPixels(25.0f, dpi);
-                break;
-            case "B4":
-                pageWidth = calculateCmPixels(25.0f, dpi);
-                pageHeight = calculateCmPixels(35.3f, dpi);
-                break;
-            case "B2":
-                pageWidth = calculateCmPixels(35.3f, dpi);
-                pageHeight = calculateCmPixels(50.0f, dpi);
-                break;
-            case "C4":
-                pageWidth = calculateCmPixels(22.9f, dpi);
-                pageHeight = calculateCmPixels(32.4f, dpi);
-                break;
-            case "C5":
-                pageWidth = calculateCmPixels(16.2f, dpi);
-                pageHeight = calculateCmPixels(22.9f, dpi);
-                break;
-            case "C6":
-                pageWidth = calculateCmPixels(11.4f, dpi);
-                pageHeight = calculateCmPixels(16.2f, dpi);
-                break;
+                case "A0":
+                    pageWidth = calculateCmPixels(84.1f, dpi);
+                    pageHeight = calculateCmPixels(118.9f, dpi);
+                    break;
+                case "B5":
+                    pageWidth = calculateCmPixels(17.6f, dpi);
+                    pageHeight = calculateCmPixels(25.0f, dpi);
+                    break;
+                case "B4":
+                    pageWidth = calculateCmPixels(25.0f, dpi);
+                    pageHeight = calculateCmPixels(35.3f, dpi);
+                    break;
+                case "B2":
+                    pageWidth = calculateCmPixels(35.3f, dpi);
+                    pageHeight = calculateCmPixels(50.0f, dpi);
+                    break;
+                case "C4":
+                    pageWidth = calculateCmPixels(22.9f, dpi);
+                    pageHeight = calculateCmPixels(32.4f, dpi);
+                    break;
+                case "C5":
+                    pageWidth = calculateCmPixels(16.2f, dpi);
+                    pageHeight = calculateCmPixels(22.9f, dpi);
+                    break;
+                case "C6":
+                    pageWidth = calculateCmPixels(11.4f, dpi);
+                    pageHeight = calculateCmPixels(16.2f, dpi);
+                    break;
+            }
         }
         customWidthInput.setText(pageWidth + "");
         customHeightInput.setText(pageHeight + "");

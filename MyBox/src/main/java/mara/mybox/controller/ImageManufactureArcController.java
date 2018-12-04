@@ -70,10 +70,10 @@ public class ImageManufactureArcController extends ImageManufactureController {
             }
 
             arcBox.getItems().clear();
-            arcBox.getItems().addAll(Arrays.asList(values.getImageInfo().getxPixels() / 6 + "",
-                    values.getImageInfo().getxPixels() / 8 + "",
-                    values.getImageInfo().getxPixels() / 4 + "",
-                    values.getImageInfo().getxPixels() / 10 + "",
+            arcBox.getItems().addAll(Arrays.asList(values.getImageInfo().getWidth() / 6 + "",
+                    values.getImageInfo().getWidth() / 8 + "",
+                    values.getImageInfo().getWidth() / 4 + "",
+                    values.getImageInfo().getWidth() / 10 + "",
                     "0", "15", "30", "50", "150", "300", "10", "3"));
             arcBox.getSelectionModel().select(0);
 

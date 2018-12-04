@@ -62,7 +62,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -92,51 +93,51 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                    <Label text="%Text" />
-                                                  <TextField fx:id="waterInput" maxWidth="1.7976931348623157E308" promptText="%Text" text="MyBox" HBox.hgrow="ALWAYS" />
-                                    <Label text="%FontFamily" />
-                                                  <ChoiceBox fx:id="waterFamilyBox" prefHeight="30.0" prefWidth="132.0" />
-                                    <Label text="%FontSize" />
-                                                  <ComboBox fx:id="waterSizeBox" editable="true" prefHeight="30.0" prefWidth="83.0" promptText="%Size" />
-                                    <Label text="%FontStyle" />
-                                                  <ChoiceBox fx:id="waterStyleBox" prefHeight="30.0" prefWidth="115.0" />
+                                                <Label text="%Text" />
+                                                <TextField fx:id="waterInput" maxWidth="1.7976931348623157E308" promptText="%Text" text="MyBox" HBox.hgrow="ALWAYS" />
+                                                <Label text="%FontFamily" />
+                                                <ChoiceBox fx:id="waterFamilyBox" prefHeight="30.0" prefWidth="132.0" />
+                                                <Label text="%FontSize" />
+                                                <ComboBox fx:id="waterSizeBox" editable="true" prefHeight="30.0" prefWidth="83.0" promptText="%Size" />
+                                                <Label text="%FontStyle" />
+                                                <ChoiceBox fx:id="waterStyleBox" prefHeight="30.0" prefWidth="115.0" />
                                             </children>
                                         </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                 <children>
-                                    <Label text="%FontColor" />
-                                                  <ColorPicker fx:id="waterColorPicker" />
-                                                  <Label text="%Shadow" />
-                                                  <ComboBox fx:id="waterShadowBox" editable="true" prefHeight="30.0" prefWidth="85.0" />
-                                                  <Label text="%Angle" />
-                                                  <ComboBox fx:id="waterAngleBox" editable="true" prefHeight="30.0" prefWidth="82.0" />
-                                                  <Label text="%Transparent" />
-                                                  <ComboBox fx:id="waterTransparentBox" editable="true" prefHeight="30.0" prefWidth="82.0" />
-                                 </children>
-                              </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                 <children>
-                                    <Label text="%Position" />
-                                    <RadioButton mnemonicParsing="false" selected="true" text="%RightBottom">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="positionGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" />
-                                    <Label text="%Margins">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <TextField fx:id="marginInput" prefHeight="30.0" prefWidth="50.0" text="20" />
-                                    <RadioButton mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" />
-                                    <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" />
-                                                  <TextField fx:id="waterXInput" prefHeight="30.0" prefWidth="71.0" promptText="X" />
-                                                  <TextField fx:id="waterYInput" prefHeight="30.0" prefWidth="78.0" promptText="Y" />
-                                 </children>
-                              </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%FontColor" />
+                                                <ColorPicker fx:id="waterColorPicker" />
+                                                <Label text="%Shadow" />
+                                                <ComboBox fx:id="waterShadowBox" editable="true" prefHeight="30.0" prefWidth="85.0" />
+                                                <Label text="%Angle" />
+                                                <ComboBox fx:id="waterAngleBox" editable="true" prefHeight="30.0" prefWidth="82.0" />
+                                                <Label text="%Transparent" />
+                                                <ComboBox fx:id="waterTransparentBox" editable="true" prefHeight="30.0" prefWidth="82.0" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%Position" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%RightBottom">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="positionGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" />
+                                                <Label text="%Margins">
+                                                    <HBox.margin>
+                                                        <Insets left="10.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="marginInput" prefHeight="30.0" prefWidth="50.0" text="20" />
+                                                <RadioButton mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" />
+                                                <TextField fx:id="waterXInput" prefHeight="30.0" prefWidth="71.0" promptText="X" />
+                                                <TextField fx:id="waterYInput" prefHeight="30.0" prefWidth="78.0" promptText="Y" />
+                                            </children>
+                                        </HBox>
 
                                     </children>
                                 </VBox>

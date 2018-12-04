@@ -12,7 +12,6 @@ import javafx.scene.control.Button;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.image.ImageConvertTools;
-import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageAttributes;
@@ -81,8 +80,8 @@ public class ImageConverterController extends ImageBaseController {
         if (imageInformation != null) {
             viewButton.setDisable(false);
             imageConverterAttributesController.getOriginalButton().setDisable(false);
-            imageConverterAttributesController.getAttributes().setSourceWidth(imageInformation.getxPixels());
-            imageConverterAttributesController.getAttributes().setSourceHeight(imageInformation.getyPixels());
+            imageConverterAttributesController.getAttributes().setSourceWidth(imageInformation.getWidth());
+            imageConverterAttributesController.getAttributes().setSourceHeight(imageInformation.getHeight());
             imageConverterAttributesController.setOriginalSize();
             imageConverterAttributesController.getRatioBox().setDisable(false);
         }
@@ -148,38 +147,22 @@ public class ImageConverterController extends ImageBaseController {
 
                 private boolean handleCurrentFile() {
                     try {
-                        BufferedImage bufferImage = ImageIO.read(currentParameters.sourceFile);
+                        BufferedImage bufferedImage = ImageIO.read(currentParameters.sourceFile);
                         int w = attributes.getTargetWidth();
                         int h = attributes.getTargetHeight();
                         if (w <= 0 && currentParameters.isBatch) {
-                            w = bufferImage.getWidth();
+                            w = bufferedImage.getWidth();
                         }
                         if (h <= 0 && currentParameters.isBatch) {
-                            h = bufferImage.getHeight();
+                            h = bufferedImage.getHeight();
                         }
                         currentParameters.finalTargetName = makeFilename(w, h);
                         if (currentParameters.finalTargetName == null) {
                             return false;
                         }
-                        BufferedImage newImage = ImageConvertTools.scaleImage(bufferImage, w, h);
-                        int color = bufferImage.getType();
-                        if (ImageType.BINARY == attributes.getColorSpace()) {
-                            if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
-                                    && attributes.getThreshold() >= 0) {
-                                newImage = ImageGrayTools.color2BinaryWithPercentage(newImage, attributes.getThreshold());
-
-                            } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
-                                newImage = ImageGrayTools.color2BinaryByCalculation(newImage);
-
-                            } else if (color != BufferedImage.TYPE_BYTE_BINARY) {
-                                newImage = ImageGrayTools.color2Binary(newImage);
-                            }
-                        } else if (color != BufferedImage.TYPE_BYTE_GRAY && ImageType.GRAY == attributes.getColorSpace()) {
-                            newImage = ImageGrayTools.color2Gray(newImage);
-                        }
-
-//                        ImageIO.write(newImage, attributes.getImageFormat(), new File(targetFile));
-                        ImageFileWriters.writeImageFile(newImage, attributes, currentParameters.finalTargetName);
+                        bufferedImage = ImageConvertTools.scaleImage(bufferedImage, w, h);
+                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
+                        ImageFileWriters.writeImageFile(bufferedImage, attributes, currentParameters.finalTargetName);
                         return true;
                     } catch (Exception e) {
                         logger.error(e.toString());

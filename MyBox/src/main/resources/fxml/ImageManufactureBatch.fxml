@@ -62,6 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
                                                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
@@ -105,28 +106,28 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
-                                    <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction" text="%Browse" />
+                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction" text="%Browse" />
                                                 <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
                                             </children>
                                         </HBox>
-                              <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                 <children>
-                                    <Label text="%FileType" />
-                                    <RadioButton mnemonicParsing="false" selected="true" text="%OriginalType">
-                                       <toggleGroup>
-                                          <ToggleGroup fx:id="fileTypeGroup" />
-                                       </toggleGroup>
-                                    </RadioButton>
-                                    <RadioButton mnemonicParsing="false" text="png" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
-                                    <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
-                                 </children>
-                              </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%FileType" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%OriginalType">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="fileTypeGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="png" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="jpg" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="bmp" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="tif" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="gif" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton fx:id="pcxRadio" mnemonicParsing="false" text="pcx" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="pnm" toggleGroup="$fileTypeGroup" />
+                                                <RadioButton mnemonicParsing="false" text="wbmp" toggleGroup="$fileTypeGroup" />
+                                            </children>
+                                        </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%ExistedFiles" />

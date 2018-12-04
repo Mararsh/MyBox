@@ -53,65 +53,50 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
                     <children>
-                        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
-                            <tabs>
-                                <Tab fx:id="sourceTab" text="%SourceFile">
-                                    <content>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308">
+                        <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
+                            <items>
+                                <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Open" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                            <items>
+                                <Button fx:id="imagesButton" mnemonicParsing="false" onAction="#saveAsImagesAction" text="%SaveAsImages" />
+                                <Button fx:id="tiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction" text="%SaveAsTiff" />
+                                <Button fx:id="pdfButton" mnemonicParsing="false" onAction="#saveAsPdfAction" text="%SaveAsPDF" />
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="160.0" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab fx:id="splitTab" text="%SplitOptions">
+                            <content>
+                                <VBox>
+                                    <children>
+                                        <HBox nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
-                                                <ToolBar fx:id="sourceBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
+                                                <ToolBar HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
-                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                                                        <RadioButton mnemonicParsing="false" text=" " visible="false" />
                                                     </items>
                                                 </ToolBar>
-                                                <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                <ToolBar HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
+                                                        <RadioButton mnemonicParsing="false" text="%Customize">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="splitGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%DivideEqually" toggleGroup="$splitGroup" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
                                         </HBox>
-                                    </content>
-                                </Tab>
-                                <Tab fx:id="targetTab" text="%TargetFiles">
-                                    <content>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                            <children>
-                                                <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                                                    <items>
-                                                        <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
-                                                    </items>
-                                                </ToolBar>
-                                                <ToolBar maxWidth="1.7976931348623157E308">
-                                                    <items>
-                                                        <Label text="%FilePath" />
-                                                        <TextField fx:id="targetPathInput" prefWidth="300.0" />
-                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
-                                                        <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTargetPath" text="%Open" />
-                                                        <Label text="%FileNamePrefix">
-                                                            <padding>
-                                                                <Insets left="20.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <TextField fx:id="targetPrefixInput" prefWidth="180.0" />
-                                                        <Label text="%FileType">
-                                                            <padding>
-                                                                <Insets left="20.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <ComboBox fx:id="targetTypeBox" prefWidth="120.0" />
-                                                    </items>
-                                                </ToolBar>
-                                            </children>
-                                        </HBox>
-                                    </content>
-                                </Tab>
-                                <Tab fx:id="equiTab" text="%Equipartition">
-                                    <content>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                        <HBox fx:id="equalBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
@@ -124,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <TextField fx:id="rowsNumberInput" prefWidth="50.0" />
                                                         <Label text="%ColumnsNumber" />
                                                         <TextField fx:id="colsNumberInput" prefWidth="50.0" />
-                                                        <Button fx:id="equiOkButton" disable="true" mnemonicParsing="false" onAction="#equiOkAction" text="%OK" />
+                                                        <Button fx:id="equiOkButton" mnemonicParsing="false" onAction="#equiOkAction" text="%OK" />
                                                         <Label text="%Predefined">
                                                             <padding>
                                                                 <Insets left="20.0" />
@@ -145,16 +130,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                             </children>
                                         </HBox>
-                                    </content>
-                                </Tab>
-                                <Tab fx:id="customTab" text="%Custom">
-                                    <content>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
+                                        <HBox fx:id="customBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
                                                         <Label styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%SplitCustomLabel" />
-                                                        <Button fx:id="defineOkButton" disable="true" mnemonicParsing="false" onAction="#defineOkAction" prefWidth="1.0" text=" " visible="false" />
+                                                        <Button mnemonicParsing="false" text=" " visible="false" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar fx:id="customBar" maxWidth="1.7976931348623157E308">
@@ -170,13 +151,184 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                             </children>
                                         </HBox>
-                                    </content>
-                                </Tab>
-                            </tabs>
-                        </TabPane>
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_LEFT">
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="tiffTab" text="%TiffOptions">
+                            <content>
+                                <VBox fx:id="tiffBox">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <RadioButton mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%ImageColor" />
+                                                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Colorful">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="colorGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="ARGB" mnemonicParsing="false" text="%ColorAlpha" toggleGroup="$colorGroup" />
+                                                        <RadioButton fx:id="Gray" mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$colorGroup" />
+                                                        <RadioButton fx:id="Binary" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="compressBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="1" GridPane.rowIndex="3" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <RadioButton mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%CompressionType" />
+                                          <HBox fx:id="compressionBox" spacing="5.0">
+                                             <children>
+                                                              <RadioButton mnemonicParsing="false" selected="true" text="%None">
+                                                                  <toggleGroup>
+                                                                      <ToggleGroup fx:id="compressionGroup" />
+                                                                  </toggleGroup>
+                                                              </RadioButton>
+                                             </children>
+                                          </HBox>
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="binaryBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%BinaryAlgorithm" />
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%Default">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="binaryGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
+                                                        <TextField fx:id="tiffThresholdInput" prefHeight="30.0" prefWidth="50.0" />
+                                                        <Label text="\%" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="pdfTab" text="%PdfOptions">
+                            <content>
+                                <VBox fx:id="pdfBox" nodeOrientation="LEFT_TO_RIGHT">
+                                    <children>
+                                        <HBox fx:id="sizeBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%PageSize" />
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%ImagesSize">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="sizeGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
+                                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
+                                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
+                                                        <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
+                                                        <Label text="%UnitPixels" />
+                                                        <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
+                                                        <TextField fx:id="customHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets />
+                                            </VBox.margin>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%Format" />
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%PNG">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="formatGroup" />
+                                                            </toggleGroup> 
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
+                                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="80.0" />
+                                                        <Label text="\%">
+                                                            <padding>
+                                                                <Insets right="10.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
+                                                        <TextField fx:id="pdfThresholdInput" prefWidth="60.0" />
+                                                        <Label text="\%" />
+                                                        <Label text="%EmptyForDefault" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                                            <children>
+                                                <ToolBar HBox.hgrow="ALWAYS">
+                                                    <items>
+                                                        <Button mnemonicParsing="false" text=" " visible="false" />
+                                                    </items>
+                                                </ToolBar>
+                                                <ToolBar HBox.hgrow="NEVER">
+                                                    <items>
+                                                        <Label text="%PageMargin" />
+                                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
+                                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber" />
+                                                        <Label text="%Author">
+                                                            <padding>
+                                                                <Insets left="10.0" />
+                                                            </padding>
+                                                        </Label>
+                                                        <TextField fx:id="authorInput" prefWidth="100.0" />
+                                                        <Label text="%PageHeader" />
+                                                        <TextField fx:id="headerInput" prefHeight="30.0" prefWidth="200.0" />
+                                                        <Label text="%FontFile" />
+                                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="150.0" />
+                                                    </items>
+                                                </ToolBar>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+                <HBox fx:id="showBox" alignment="CENTER_LEFT">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
@@ -185,7 +337,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                                 <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
                                 <ComboBox fx:id="lineWidthBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                 <Label text="%LineWidth" />
@@ -199,19 +350,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                     </children>
                 </HBox>
-                <SplitPane fx:id="splitPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <items>
-                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                            <content>
-                                <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                                    <cursor>
-                                        <Cursor fx:constant="OPEN_HAND" />
-                                    </cursor>
-                                </ImageView>
-                            </content>
-                        </ScrollPane>
-                    </items>
-                </SplitPane>
+                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                    <content>
+                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
+                        </ImageView>
+                    </content>
+                </ScrollPane>
             </children>
             <BorderPane.margin>
                 <Insets />
@@ -225,10 +372,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#8a2c2c" BorderPane.alignment="CENTER_LEFT">
-            <font>
-                <Font name="System Bold" size="17.0" />
-            </font>
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
         </Label>
     </bottom>
 </BorderPane>

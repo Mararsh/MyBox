@@ -20,7 +20,7 @@ public class ImageManufactureValues {
     private ImageScope scope;
     private File refFile;
     private Image image, refImage, undoImage, redoImage, cropImage, currentImage;
-    private ImageFileInformation refInfo, imageInfo;
+    private ImageInformation refInfo, imageInfo;
     private boolean refSync, isConfirmBeforeSave, imageChanged, showRef;
     private int stageWidth, stageHeight, saveAsType, imageViewWidth, imageViewHeight;
 
@@ -41,14 +41,6 @@ public class ImageManufactureValues {
 
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    public ImageFileInformation getImageInfo() {
-        return imageInfo;
-    }
-
-    public void setImageInfo(ImageFileInformation imageInfo) {
-        this.imageInfo = imageInfo;
     }
 
     public ImageScope getScope() {
@@ -107,12 +99,20 @@ public class ImageManufactureValues {
         this.currentImage = currentImage;
     }
 
-    public ImageFileInformation getRefInfo() {
+    public ImageInformation getRefInfo() {
         return refInfo;
     }
 
-    public void setRefInfo(ImageFileInformation refInfo) {
+    public void setRefInfo(ImageInformation refInfo) {
         this.refInfo = refInfo;
+    }
+
+    public ImageInformation getImageInfo() {
+        return imageInfo;
+    }
+
+    public void setImageInfo(ImageInformation imageInfo) {
+        this.imageInfo = imageInfo;
     }
 
     public boolean isRefSync() {

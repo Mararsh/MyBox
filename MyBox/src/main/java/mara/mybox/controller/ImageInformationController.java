@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.objects.ImageInformation;
 
 /**
  * @Author Mara
@@ -57,7 +58,7 @@ public class ImageInformationController extends BaseController {
     @FXML
     private TextField lossless;
     @FXML
-    private TextField ImageOrientation;
+    private TextField ImageOrientation, NumberOfImages, IndexOfImage;
 
     @FXML
     private void closeStage(MouseEvent event) {
@@ -68,25 +69,26 @@ public class ImageInformationController extends BaseController {
         }
     }
 
-    public void loadInformation(ImageFileInformation info) {
+    public void loadInformation(ImageInformation info) {
         try {
-            File file = info.getFile();
+            ImageFileInformation finfo = info.getImageFileInformation();
+            File file = finfo.getFile();
             FilesPath.setText(file.getParent());
             FileName.setText(file.getName());
-            CreateTime.setText(info.getCreateTime());
-            ModifyTime.setText(info.getModifyTime());
-            FileSize.setText(info.getFileSize());
-            xPixels.setText(info.getxPixels() + "");
-            yPixels.setText(info.getyPixels() + "");
-            if (info.getxDensity() > 0) {
-                xDensity.setText(info.getxDensity() + " dpi");
-                float xinch = info.getxPixels() / info.getxDensity();
+            CreateTime.setText(finfo.getCreateTime());
+            ModifyTime.setText(finfo.getModifyTime());
+            FileSize.setText(finfo.getFileSize());
+            xPixels.setText(info.getWidth() + "");
+            yPixels.setText(info.getHeight() + "");
+            if (info.getwDensity() > 0) {
+                xDensity.setText(info.getwDensity() + " dpi");
+                float xinch = info.getWidth() / info.getwDensity();
                 xSize.setText(xinch + " " + AppVaribles.getMessage("inches")
                         + " = " + (xinch * 2.54) + " " + AppVaribles.getMessage("centimetres"));
             }
-            if (info.getyDensity() > 0) {
-                yDensity.setText(info.getyDensity() + " dpi");
-                float yinch = info.getyPixels() / info.getyDensity();
+            if (info.gethDensity() > 0) {
+                yDensity.setText(info.gethDensity() + " dpi");
+                float yinch = info.getHeight() / info.gethDensity();
                 ySize.setText(yinch + " " + AppVaribles.getMessage("inches")
                         + " = " + (yinch * 2.54) + " " + AppVaribles.getMessage("centimetres"));
             }
@@ -98,6 +100,8 @@ public class ImageInformationController extends BaseController {
             lossless.setText(AppVaribles.getMessage(info.isIsLossless() + ""));
             ImageOrientation.setText(info.getImageRotation());
             ImageFormat.setText(info.getImageFormat() + " " + info.getExtraFormat());
+            NumberOfImages.setText(info.getImageFileInformation().getNumberOfImages() + "");
+            IndexOfImage.setText(info.getIndex() + "");
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -51,9 +51,9 @@ public class ImageViewerIController extends ImageViewerController {
     @FXML
     void imageEntered(MouseEvent event) {
         String str = AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  "
-                + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getxPixels() + "x" + imageInformation.getyPixels() + "  "
-                + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(imageInformation.getFile().length()) + "  "
-                + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(imageInformation.getFile().lastModified());
+                + AppVaribles.getMessage("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  "
+                + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
+                + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
         parentController.bottomLabel.setText(str);
     }
 

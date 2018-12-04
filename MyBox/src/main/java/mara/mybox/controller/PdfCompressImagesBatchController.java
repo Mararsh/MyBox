@@ -42,7 +42,7 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     @FXML
     private TableColumn<FileInformation, String> fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
     @FXML
-    protected Button addButton, clearButton, openButton, deleteButton, upButton, downButton;
+    protected Button addButton, clearButton, openButton, deleteButton, upButton, downButton, insertButton;
 
     public PdfCompressImagesBatchController() {
 
@@ -102,18 +102,13 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     }
 
     private void checkTableSelected() {
-        ObservableList<FileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
-        if (selected != null && selected.size() > 0) {
-            openButton.setDisable(false);
-            upButton.setDisable(false);
-            downButton.setDisable(false);
-            deleteButton.setDisable(false);
-        } else {
-            openButton.setDisable(true);
-            upButton.setDisable(true);
-            downButton.setDisable(true);
-            deleteButton.setDisable(true);
-        }
+        ObservableList<Integer> selected = sourceTable.getSelectionModel().getSelectedIndices();
+        boolean none = (selected == null || selected.isEmpty());
+        insertButton.setDisable(none);
+        openButton.setDisable(none);
+        upButton.setDisable(none);
+        downButton.setDisable(none);
+        deleteButton.setDisable(none);
     }
 
     @Override
@@ -140,6 +135,20 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
 
     @FXML
     private void addAction(ActionEvent event) {
+        addAction(sourceFilesInformation.size());
+    }
+
+    @FXML
+    void insertAction(ActionEvent event) {
+        int index = sourceTable.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addAction(index);
+        } else {
+            insertButton.setDisable(true);
+        }
+    }
+
+    private void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File defaultPath = new File(AppVaribles.getUserConfigValue(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
@@ -161,7 +170,11 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                 FileInformation info = new FileInformation(file);
                 infos.add(info);
             }
-            sourceFilesInformation.addAll(infos);
+            if (index < 0 || index >= sourceFilesInformation.size()) {
+                sourceFilesInformation.addAll(infos);
+            } else {
+                sourceFilesInformation.addAll(index, infos);
+            }
             sourceTable.refresh();
 
         } catch (Exception e) {

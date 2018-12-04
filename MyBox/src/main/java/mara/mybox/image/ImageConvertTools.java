@@ -12,17 +12,22 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.AlphaColor;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
-import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.objects.ImageInformation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sun.awt.image.IntegerComponentRaster;
 
 /**
  * @Author Mara
@@ -429,7 +434,7 @@ public class ImageConvertTools {
     }
 
     public static javafx.scene.image.Image combineSingleColumn(ImageCombine imageCombine,
-            List<ImageFileInformation> images, boolean isPart, boolean careTotal) {
+            List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -438,7 +443,7 @@ public class ImageConvertTools {
             int totalWidth = 0, totalHeight = 0, maxWidth = 0, minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == CombineSizeType.AlignAsBigger) {
-                for (ImageFileInformation image : images) {
+                for (ImageInformation image : images) {
                     imageWidth = (int) image.getImage().getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
@@ -446,7 +451,7 @@ public class ImageConvertTools {
                 }
             }
             if (sizeType == CombineSizeType.AlignAsSmaller) {
-                for (ImageFileInformation image : images) {
+                for (ImageInformation image : images) {
                     imageWidth = (int) image.getImage().getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
@@ -458,7 +463,7 @@ public class ImageConvertTools {
             List<Integer> widths = new ArrayList();
             List<Integer> heights = new ArrayList();
             for (int i = 0; i < images.size(); i++) {
-                ImageFileInformation imageInfo = images.get(i);
+                ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 imageWidth = (int) image.getWidth();
                 imageHeight = (int) image.getHeight();
@@ -515,7 +520,7 @@ public class ImageConvertTools {
     }
 
     public static javafx.scene.image.Image combineSingleRow(ImageCombine imageCombine,
-            List<ImageFileInformation> images, boolean isPart, boolean careTotal) {
+            List<ImageInformation> images, boolean isPart, boolean careTotal) {
         if (imageCombine == null || images == null) {
             return null;
         }
@@ -528,7 +533,7 @@ public class ImageConvertTools {
                 y = 0;
             }
             if (sizeType == CombineSizeType.AlignAsBigger) {
-                for (ImageFileInformation image : images) {
+                for (ImageInformation image : images) {
                     imageHeight = (int) image.getImage().getHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
@@ -536,7 +541,7 @@ public class ImageConvertTools {
                 }
             }
             if (sizeType == CombineSizeType.AlignAsSmaller) {
-                for (ImageFileInformation image : images) {
+                for (ImageInformation image : images) {
                     imageHeight = (int) image.getImage().getHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
@@ -548,7 +553,7 @@ public class ImageConvertTools {
             List<Integer> widths = new ArrayList();
             List<Integer> heights = new ArrayList();
             for (int i = 0; i < images.size(); i++) {
-                ImageFileInformation imageInfo = images.get(i);
+                ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 imageWidth = (int) image.getWidth();
                 imageHeight = (int) image.getHeight();
@@ -601,7 +606,7 @@ public class ImageConvertTools {
         }
     }
 
-    public static javafx.scene.image.Image combineImages(List<ImageFileInformation> images,
+    public static javafx.scene.image.Image combineImages(List<ImageInformation> images,
             int totalWidth, int totalHeight, Color bgColor,
             List<Integer> xs, List<Integer> ys, List<Integer> widths, List<Integer> heights,
             int trueTotalWidth, int trueTotalHeight,
@@ -618,7 +623,7 @@ public class ImageConvertTools {
             g.fillRect(0, 0, totalWidth, totalHeight);
 
             for (int i = 0; i < images.size(); i++) {
-                ImageFileInformation imageInfo = images.get(i);
+                ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
                 BufferedImage source = SwingFXUtils.fromFXImage(image, null);
                 g.drawImage(source, xs.get(i), ys.get(i), widths.get(i), heights.get(i), null);
@@ -636,6 +641,58 @@ public class ImageConvertTools {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static WritableImage toFXImage(BufferedImage bimg, WritableImage wimg) {
+        int bw = bimg.getWidth();
+        int bh = bimg.getHeight();
+        logger.debug(bw + " x " + bh + " = " + bw * bh);
+        switch (bimg.getType()) {
+            case BufferedImage.TYPE_INT_ARGB:
+            case BufferedImage.TYPE_INT_ARGB_PRE:
+                break;
+            default:
+                BufferedImage converted
+                        = new BufferedImage(bw, bh, BufferedImage.TYPE_INT_ARGB_PRE);
+                Graphics2D g2d = converted.createGraphics();
+                g2d.drawImage(bimg, 0, 0, null);
+                g2d.dispose();
+                bimg = converted;
+                break;
+        }
+        // assert(bimg.getType == TYPE_INT_ARGB[_PRE]);
+        if (wimg != null) {
+            int iw = (int) wimg.getWidth();
+            int ih = (int) wimg.getHeight();
+            if (iw < bw || ih < bh) {
+                wimg = null;
+            } else if (bw < iw || bh < ih) {
+                int empty[] = new int[iw];
+                PixelWriter pw = wimg.getPixelWriter();
+                PixelFormat<IntBuffer> pf = PixelFormat.getIntArgbPreInstance();
+                if (bw < iw) {
+                    pw.setPixels(bw, 0, iw - bw, bh, pf, empty, 0, 0);
+                }
+                if (bh < ih) {
+                    pw.setPixels(0, bh, iw, ih - bh, pf, empty, 0, 0);
+                }
+            }
+        }
+        if (wimg == null) {
+            wimg = new WritableImage(bw, bh);
+        }
+        PixelWriter pw = wimg.getPixelWriter();
+        IntegerComponentRaster icr = (IntegerComponentRaster) bimg.getRaster();
+        int data[] = icr.getDataStorage();
+        logger.debug("data.length = " + data.length);
+        int offset = icr.getDataOffset(0);
+        int scan = icr.getScanlineStride();
+        logger.debug(offset + " " + scan);
+        PixelFormat<IntBuffer> pf = (bimg.isAlphaPremultiplied()
+                ? PixelFormat.getIntArgbPreInstance()
+                : PixelFormat.getIntArgbInstance());
+        pw.setPixels(0, 0, bw, bh, pf, data, offset, scan);
+        return wimg;
     }
 
 }

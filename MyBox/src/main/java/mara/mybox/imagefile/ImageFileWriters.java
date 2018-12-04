@@ -23,16 +23,18 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageConvertTools;
+import mara.mybox.image.ImageGrayTools;
 import mara.mybox.objects.ImageAttributes;
 import static mara.mybox.imagefile.ImageBmpFile.writeBmpImageFile;
 import static mara.mybox.imagefile.ImageJpegFile.writeJPEGImageFile;
 import static mara.mybox.imagefile.ImagePngFile.writePNGImageFile;
 import static mara.mybox.imagefile.ImageRawFile.writeRawImageFile;
-import static mara.mybox.imagefile.ImageTiffFile.writeTiffImageFile;
 import static mara.mybox.imagefile.ImagePcxFile.writePcxImageFile;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static mara.mybox.imagefile.ImageTiffFile.writeTiffImage;
+import org.apache.pdfbox.rendering.ImageType;
 
 /**
  * @Author Mara
@@ -108,7 +110,7 @@ public class ImageFileWriters {
 //                    displayMetadata(outFile);
                 case "tif":
                 case "tiff":
-                    return writeTiffImageFile(image, attributes, file);
+                    return writeTiffImage(image, attributes, file);
 //                    displayTiffMetadata(outFile);
 //                    displayMetadata(outFile);
                 case "raw":
@@ -272,5 +274,34 @@ public class ImageFileWriters {
 //                HorizontalPixelSize.setAttribute("value", pixelSizeMm + "");
 //                Element VerticalPixelSize = (Element) tree.getElementsByTagName("VerticalPixelSize").item(0);
 //                VerticalPixelSize.setAttribute("value", pixelSizeMm + "");
+
+    public static BufferedImage convertColor(BufferedImage bufferedImage, ImageAttributes attributes) {
+        try {
+            if (bufferedImage == null || attributes == null || attributes.getColorSpace() == null) {
+                return bufferedImage;
+            }
+            int color = bufferedImage.getType();
+            if (ImageType.BINARY == attributes.getColorSpace()) {
+                if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
+                        && attributes.getThreshold() >= 0) {
+                    bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, attributes.getThreshold());
+
+                } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                    bufferedImage = ImageGrayTools.color2BinaryByCalculation(bufferedImage);
+
+                } else if (color != BufferedImage.TYPE_BYTE_BINARY) {
+                    bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
+                }
+            } else if (ImageType.GRAY == attributes.getColorSpace() && color != BufferedImage.TYPE_BYTE_GRAY) {
+                bufferedImage = ImageGrayTools.color2Gray(bufferedImage);
+            } else if (ImageType.RGB == attributes.getColorSpace()) {
+                bufferedImage = ImageConvertTools.clearAlpha(bufferedImage);
+            }
+            return bufferedImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return bufferedImage;
+        }
+    }
 
 }

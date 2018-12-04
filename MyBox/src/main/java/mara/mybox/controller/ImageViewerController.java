@@ -1,33 +1,39 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
+import mara.mybox.imagefile.ImageFileWriters;
 
 /**
  * @Author Mara
@@ -38,7 +44,7 @@ import mara.mybox.fxml.FxmlTools;
 public class ImageViewerController extends ImageBaseController {
 
     protected double mouseX, mouseY;
-    protected int zoomStep = 10;
+    protected int xZoomStep = 50, yZoomStep = 50;
     protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
 
@@ -61,7 +67,6 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     protected void initializeNext() {
         try {
-
             if (toolbar != null && imageView != null) {
                 toolbar.disableProperty().bind(
                         Bindings.isNull(imageView.imageProperty())
@@ -87,31 +92,63 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @Override
+    protected void afterInfoLoaded() {
+        if (infoBar != null) {
+            infoBar.setDisable(imageInformation == null);
+        }
+        if (infoButton != null) {
+            infoButton.setDisable(imageInformation == null);
+        }
+        if (metaButton != null) {
+            metaButton.setDisable(imageInformation == null);
+        }
+
+    }
+
+    @Override
     public void afterImageLoaded() {
         try {
+            afterInfoLoaded();
             if (image == null) {
                 return;
             }
+
             imageView.setPreserveRatio(true);
             imageView.setImage(image);
+            xZoomStep = (int) image.getWidth() / 10;
+            yZoomStep = (int) image.getHeight() / 10;
+
             fitSize();
             if (imageFile != null && sourceFile != null) {
                 imageFile.setText(sourceFile.getName());
             }
-            if (infoButton != null) {
-                infoButton.setDisable(imageInformation == null);
-            }
-            if (metaButton != null) {
-                metaButton.setDisable(imageInformation == null);
+
+            if (imageInformation != null && imageInformation.isIsSampled()) {
+                handleSampledImage();
+                if (imageFile != null && sourceFile != null) {
+                    imageFile.setText(sourceFile.getName() + " " + getMessage("Sampled"));
+                }
+            } else {
+                if (sourceFile != null) {
+                    if (imageInformation != null && imageInformation.getIndex() > 0) {
+                        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
+                                + " - " + getMessage("Image") + " " + imageInformation.getIndex());
+                    } else {
+                        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
+                    }
+                } else {
+                    getMyStage().setTitle(getBaseTitle());
+                }
+                if (bottomLabel != null) {
+                    bottomLabel.setText("");
+                }
             }
 
             if (sourceFile != null && navBar != null) {
                 navBar.setDisable(false);
                 checkImageNevigator();
             }
-            if (infoBar != null && imageInformation != null) {
-                infoBar.setDisable(false);
-            }
+
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
@@ -119,15 +156,102 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
-//    @FXML
-//    public void imageMousePressed(MouseEvent event) {
-//        mouseX = event.getX();
-//        mouseY = event.getY();
-//    }
-//    @FXML
-//    public void imageMouseReleased(MouseEvent event) {
-//        FxmlTools.setScrollPane(scrollPane, mouseX - event.getX(), mouseY - event.getY());
-//    }
+    protected void handleSampledImage() {
+//            logger.debug(availableMem + "  " + pixelsSize + "  " + requiredMem + " " + sampledWidth + " " + sampledSize);
+        if (imageInformation.getIndex() > 0) {
+            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
+                    + " - " + getMessage("Image") + " " + imageInformation.getIndex() + " " + getMessage("Sampled"));
+        } else {
+            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " " + getMessage("Sampled"));
+        }
+
+        if (sizes == null) {
+            if (bottomLabel != null) {
+                bottomLabel.setText(getMessage("ImageSampled"));
+            }
+            return;
+        }
+
+        int sampledSize = (int) (image.getWidth() * image.getHeight() * imageInformation.getColorChannels() / (1014 * 1024));
+        String msg = MessageFormat.format(getMessage("ImageTooLarge"),
+                imageInformation.getWidth(), imageInformation.getHeight(), imageInformation.getColorChannels(),
+                sizes.get("pixelsSize"), sizes.get("requiredMem"), sizes.get("availableMem"),
+                (int) image.getWidth(), (int) image.getHeight(), sampledSize);
+
+        if (bottomLabel != null) {
+            bottomLabel.setText(msg);
+        }
+
+        VBox box = new VBox();
+        Label label = new Label(msg);
+        Hyperlink helpLink = new Hyperlink(getMessage("Help"));
+        helpLink.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                showHelp(event);
+            }
+        });
+        box.getChildren().add(label);
+        box.getChildren().add(helpLink);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(getMyStage().getTitle());
+        alert.getDialogPane().setPrefWidth(800);
+        alert.getDialogPane().setContent(box);
+        alert.setContentText(msg);
+
+        ButtonType buttonExit = new ButtonType(AppVaribles.getMessage("Exit"));
+        ButtonType buttonSplit = new ButtonType(AppVaribles.getMessage("ImageSplit"));
+        ButtonType buttonSample = new ButtonType(AppVaribles.getMessage("ImageSubsample"));
+        ButtonType buttonView = new ButtonType(AppVaribles.getMessage("ImageViewer"));
+        ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("SaveSampledImage"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        alert.getButtonTypes().setAll(buttonExit, buttonSample, buttonSplit, buttonView, buttonSave, buttonCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonExit) {
+            closeStage();
+
+        } else if (result.get() == buttonSplit) {
+            ImageSplitController controller
+                    = (ImageSplitController) reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
+            controller.setSizes(sizes);
+            controller.loadImage(sourceFile, image, imageInformation);
+
+        } else if (result.get() == buttonSample) {
+            ImageSampleController controller
+                    = (ImageSampleController) reloadStage(CommonValues.ImageSampleFxml, AppVaribles.getMessage("ImageSubsample"));
+            controller.setSizes(sizes);
+            controller.loadImage(sourceFile, image, imageInformation);
+
+        } else if (result.get() == buttonView) {
+            ImageViewerController controller
+                    = (ImageViewerController) reloadStage(CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
+            controller.loadImage(sourceFile, image, imageInformation);
+        } else if (result.get() == buttonSave) {
+            saveAs();
+        }
+
+    }
+
+    @Override
+    protected void handleMultipleImages() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getMyStage().getTitle());
+        alert.setContentText(getMessage("MultipleFramesImagesInfo"));
+
+        ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonSure) {
+            final ImageFramesViewerController controller
+                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml, false, true);
+            controller.setBaseTitle(AppVaribles.getMessage("ImageFramesViewer"));
+            controller.openFile(sourceFile);
+        }
+    }
+
     @FXML
     public void popImageInformation() {
         showImageInformation(imageInformation);
@@ -163,12 +287,12 @@ public class ImageViewerController extends ImageBaseController {
         if (currentWidth == -1) {
             currentWidth = imageView.getImage().getWidth();
         }
-        imageView.setFitWidth(currentWidth * (1 + zoomStep / 100.0f));
+        imageView.setFitWidth(currentWidth + xZoomStep);
         double currentHeight = imageView.getFitHeight();
         if (currentHeight == -1) {
             currentHeight = imageView.getImage().getHeight();
         }
-        imageView.setFitHeight(currentHeight * (1 + zoomStep / 100.0f));
+        imageView.setFitHeight(currentHeight + yZoomStep);
     }
 
     @FXML
@@ -177,31 +301,38 @@ public class ImageViewerController extends ImageBaseController {
         if (currentWidth == -1) {
             currentWidth = imageView.getImage().getWidth();
         }
-        imageView.setFitWidth(currentWidth * (1 - zoomStep / 100.0f));
+        if (currentWidth <= xZoomStep) {
+            return;
+        }
+        imageView.setFitWidth(currentWidth - xZoomStep);
         double currentHeight = imageView.getFitHeight();
         if (currentHeight == -1) {
             currentHeight = imageView.getImage().getHeight();
         }
-        imageView.setFitHeight(currentHeight * (1 - zoomStep / 100.0f));
+        if (currentHeight <= yZoomStep) {
+            return;
+        }
+        imageView.setFitHeight(currentHeight - yZoomStep);
     }
 
     @FXML
     public void imageSize() {
-        imageView.setFitHeight(-1);
         imageView.setFitWidth(-1);
+        imageView.setFitHeight(-1);
     }
 
     @FXML
     public void paneSize() {
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
         imageView.setFitWidth(scrollPane.getWidth() - 1);
+        imageView.setFitHeight(scrollPane.getHeight() - 5);
     }
 
     public void fitSize() {
         if (imageView.getImage() == null) {
             return;
         }
-        if (scrollPane.getHeight() < imageView.getImage().getHeight()) {
+        if (scrollPane.getHeight() < imageView.getImage().getHeight()
+                || scrollPane.getWidth() < imageView.getImage().getWidth()) {
             paneSize();
         } else {
             imageSize();
@@ -252,6 +383,63 @@ public class ImageViewerController extends ImageBaseController {
         imageView.setRotate(currentAngle);
     }
 
+    @FXML
+    public void saveAs() {
+        try {
+            if (imageInformation.isIsSampled()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(getMyStage().getTitle());
+                alert.setContentText(getMessage("SureSaveSampled"));
+
+                ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+                alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonCancel) {
+                    return;
+                }
+            }
+
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+            if (!path.isDirectory()) {
+                path = new File(CommonValues.UserFilePath);
+            }
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+
+            Task saveTask = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    String format = FileTools.getFileSuffix(file.getName());
+                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            popInformation(AppVaribles.getMessage("Successful"));
+                        }
+                    });
+                    return null;
+                }
+            };
+            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(saveTask);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
     public void setQuickTips() {
         if (iButton != null) {
             FxmlTools.quickTooltip(iButton, new Tooltip(AppVaribles.getMessage("ImageInformation")));
@@ -295,74 +483,6 @@ public class ImageViewerController extends ImageBaseController {
             mlButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveLeft")));
             upButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveUp")));
             downButton.setTooltip(new Tooltip(AppVaribles.getMessage("MoveDown")));
-        }
-    }
-
-    public void showImageInformation(ImageFileInformation info) {
-        try {
-            if (info == null) {
-                return;
-            }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageInformationFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageInformationController controller = fxmlLoader.getController();
-            Stage imageInformationStage = new Stage();
-            controller.setMyStage(imageInformationStage);
-            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            imageInformationStage.setTitle(getMyStage().getTitle());
-            imageInformationStage.initModality(Modality.NONE);
-            imageInformationStage.initStyle(StageStyle.DECORATED);
-            imageInformationStage.initOwner(null);
-            imageInformationStage.getIcons().add(CommonValues.AppIcon);
-            imageInformationStage.setScene(new Scene(root));
-            imageInformationStage.show();
-
-            controller.loadInformation(info);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void showImageMetaData(ImageFileInformation info) {
-        try {
-            if (info == null) {
-                return;
-            }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageMetaDataFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageMetaDataController controller = fxmlLoader.getController();
-            Stage imageInformationStage = new Stage();
-            controller.setMyStage(imageInformationStage);
-            imageInformationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            imageInformationStage.setTitle(getMyStage().getTitle());
-            imageInformationStage.initModality(Modality.NONE);
-            imageInformationStage.initStyle(StageStyle.DECORATED);
-            imageInformationStage.initOwner(null);
-            imageInformationStage.getIcons().add(CommonValues.AppIcon);
-            imageInformationStage.setScene(new Scene(root));
-            imageInformationStage.show();
-
-            controller.loadData(info);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 
@@ -507,6 +627,22 @@ public class ImageViewerController extends ImageBaseController {
 
     public void setrButton(Button rButton) {
         this.rButton = rButton;
+    }
+
+    public int getxZoomStep() {
+        return xZoomStep;
+    }
+
+    public void setxZoomStep(int xZoomStep) {
+        this.xZoomStep = xZoomStep;
+    }
+
+    public int getyZoomStep() {
+        return yZoomStep;
+    }
+
+    public void setyZoomStep(int yZoomStep) {
+        this.yZoomStep = yZoomStep;
     }
 
 }

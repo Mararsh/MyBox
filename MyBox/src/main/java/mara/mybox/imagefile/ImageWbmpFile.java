@@ -26,6 +26,7 @@ public class ImageWbmpFile {
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 WBMPMetadata metadata = (WBMPMetadata) reader.getImageMetadata(0);
+                reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {

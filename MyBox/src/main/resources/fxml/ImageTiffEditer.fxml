@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageGifEditerController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageTiffEditerController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -43,25 +43,51 @@
                     <content>
                         <VBox fx:id="optionsBox" spacing="10.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="1" VBox.vgrow="NEVER">
                                     <children>
-                                        <Label text="%IntervalMilliseconds" />
-                                        <ComboBox fx:id="intervalCBox" editable="true" prefWidth="100.0" />
-                                        <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
+                                        <Label text="%ImageColor" GridPane.rowIndex="1" />
+                                        <RadioButton fx:id="RGB" mnemonicParsing="false" selected="true" text="%Colorful">
                                             <toggleGroup>
-                                                <ToggleGroup fx:id="sizeGroup" />
+                                                <ToggleGroup fx:id="colorGroup" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup" />
-                                        <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width" />
-                                        <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height" />
+                                        <RadioButton fx:id="ARGB" mnemonicParsing="false" text="%ColorAlpha" toggleGroup="$colorGroup" />
+                                        <RadioButton fx:id="Gray" mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$colorGroup" />
+                                        <RadioButton fx:id="Binary" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
+                                    </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                                </HBox>
+                                <HBox fx:id="compressBox" alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <children>
+                                        <Label text="%CompressionType" GridPane.rowIndex="3" />
+                                        <HBox fx:id="compressionBox" spacing="10.0">
+                                            <children>
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%None">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="compressionGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                            </children>
+                                        </HBox>
                                     </children>
                                 </HBox>
+                                <HBox fx:id="binaryBox" alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="%BinaryAlgorithm" GridPane.rowIndex="5" />
+                                        <RadioButton mnemonicParsing="false" selected="true" text="%Default">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="binaryGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
+                                        <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
+                                        <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" />
+                                        <Label text="\%" />
+                                    </children>
+                                </HBox>
+
                             </children>
                         </VBox>
                     </content>
@@ -93,7 +119,7 @@
                                         <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
                                         <TableColumn fx:id="sizeColumn" prefWidth="150.0" text="%Pixels" />
                                         <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Color" />
-                                        <TableColumn fx:id="fileColumn" prefWidth="550.0" text="%File" />
+                                        <TableColumn fx:id="fileColumn" prefWidth="450.0" text="%File" />
                                         <TableColumn fx:id="indexColumn" text="%Index" />
                                     </columns>
                                 </TableView>

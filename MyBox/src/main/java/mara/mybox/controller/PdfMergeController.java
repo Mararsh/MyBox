@@ -185,7 +185,7 @@ public class PdfMergeController extends PdfBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
             if (!defaultPath.isDirectory()) {
                 defaultPath = new File(CommonValues.UserFilePath);
             }
@@ -198,7 +198,7 @@ public class PdfMergeController extends PdfBaseController {
             }
             String path = files.get(0).getParent();
             AppVaribles.setUserConfigValue(LastPathKey, path);
-            AppVaribles.setUserConfigValue(targetPathKey, path);
+            AppVaribles.setUserConfigValue(sourcePathKey, path);
             List<FileInformation> infos = new ArrayList<>();
             for (File file : files) {
                 FileInformation info = new FileInformation(file);

@@ -86,29 +86,9 @@ public class ImageScopeTools {
         }
     }
 
-//    public static BufferedImage showScope(BufferedImage source, ImageScope scope) {
-//        try {
-//            int width = source.getWidth();
-//            int height = source.getHeight();
-//            int alpha = (int) Math.round(scope.getOpacity() * 255);
-//            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//            for (int j = scope.getLeftY(); j <= scope.getRightY(); j++) {
-//                for (int i = scope.getLeftX(); i <= scope.getRightX(); i++) {
-//                    int rgb = source.getRGB(i, j);
-//                    Color color = new Color(rgb, true);
-//                    Color newcolor = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-//                    target.setRGB(i, j, newcolor.getRGB());
-//                }
-//            }
-//            return target;
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            return source;
-//        }
-//    }
     public static BufferedImage indicateSplit(BufferedImage source,
             List<Integer> rows, List<Integer> cols,
-            Color lineColor, int lineWidth, boolean showSize) {
+            Color lineColor, int lineWidth, boolean showSize, double scale) {
         try {
             if (rows == null || cols == null) {
                 return source;
@@ -132,14 +112,14 @@ public class ImageScopeTools {
             g.setStroke(stroke);
 
             for (int i = 0; i < rows.size(); i++) {
-                int row = rows.get(i);
+                int row = (int) (rows.get(i) / scale);
                 if (row <= 0 || row >= height - 1) {
                     continue;
                 }
                 g.drawLine(0, row, width, row);
             }
             for (int i = 0; i < cols.size(); i++) {
-                int col = cols.get(i);
+                int col = (int) (cols.get(i) / scale);
                 if (col <= 0 || col >= width - 1) {
                     continue;
                 }

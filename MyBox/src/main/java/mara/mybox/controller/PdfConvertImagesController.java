@@ -14,7 +14,6 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.image.ImageGrayTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;

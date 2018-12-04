@@ -82,10 +82,10 @@ public class ImageManufactureSizeController extends ImageManufactureController {
 
             isSettingValues = true;
 
-            widthInput.setText(values.getImageInfo().getxPixels() + "");
-            heightInput.setText(values.getImageInfo().getyPixels() + "");
-            attributes.setSourceWidth(values.getImageInfo().getxPixels());
-            attributes.setSourceHeight(values.getImageInfo().getyPixels());
+            widthInput.setText(values.getImageInfo().getWidth() + "");
+            heightInput.setText(values.getImageInfo().getHeight() + "");
+            attributes.setSourceWidth(values.getImageInfo().getWidth());
+            attributes.setSourceHeight(values.getImageInfo().getHeight());
 
             isSettingValues = false;
         } catch (Exception e) {
@@ -260,8 +260,8 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             height = Integer.valueOf(heightInput.getText());
             attributes.setTargetWidth(width);
             attributes.setTargetHeight(height);
-            int sourceX = values.getImageInfo().getxPixels();
-            int sourceY = values.getImageInfo().getyPixels();
+            int sourceX = values.getImageInfo().getWidth();
+            int sourceY = values.getImageInfo().getHeight();
             if (noRatio || !keepRatioCheck.isSelected() || sourceX <= 0 || sourceY <= 0) {
                 return;
             }
@@ -304,11 +304,11 @@ public class ImageManufactureSizeController extends ImageManufactureController {
     @FXML
     protected void setOriginalSize() {
         noRatio = true;
-        if (values.getImageInfo().getxPixels() > 0) {
-            widthInput.setText(values.getImageInfo().getxPixels() + "");
+        if (values.getImageInfo().getWidth() > 0) {
+            widthInput.setText(values.getImageInfo().getWidth() + "");
         }
-        if (values.getImageInfo().getyPixels() > 0) {
-            heightInput.setText(values.getImageInfo().getyPixels() + "");
+        if (values.getImageInfo().getHeight() > 0) {
+            heightInput.setText(values.getImageInfo().getHeight() + "");
         }
         noRatio = false;
     }

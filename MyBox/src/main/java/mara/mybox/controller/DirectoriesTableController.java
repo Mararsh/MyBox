@@ -45,9 +45,8 @@ public class DirectoriesTableController extends FilesTableController {
         }
     }
 
-    @FXML
     @Override
-    void addAction(ActionEvent event) {
+    void addAction(int index) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
             File defaultPath = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
@@ -66,7 +65,11 @@ public class DirectoriesTableController extends FilesTableController {
                 return;
             }
             FileInformation d = new FileInformation(directory);
-            tableData.add(d);
+            if (index < 0 || index >= tableData.size()) {
+                tableData.add(d);
+            } else {
+                tableData.add(index, d);
+            }
         } catch (Exception e) {
 //            logger.error(e.toString());
         }

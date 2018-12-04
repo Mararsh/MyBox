@@ -64,10 +64,10 @@ public class ImageManufactureCropController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
-            cropRightXInput.setText(values.getImageInfo().getxPixels() * 3 / 4 + "");
-            cropRightYInput.setText(values.getImageInfo().getyPixels() * 3 / 4 + "");
-            cropLeftXInput.setText(values.getImageInfo().getxPixels() / 4 + "");
-            cropLeftYInput.setText(values.getImageInfo().getyPixels() / 4 + "");
+            cropRightXInput.setText(values.getImageInfo().getWidth() * 3 / 4 + "");
+            cropRightYInput.setText(values.getImageInfo().getHeight() * 3 / 4 + "");
+            cropLeftXInput.setText(values.getImageInfo().getWidth() / 4 + "");
+            cropLeftYInput.setText(values.getImageInfo().getHeight() / 4 + "");
             isSettingValues = false;
             checkCropValues();
 

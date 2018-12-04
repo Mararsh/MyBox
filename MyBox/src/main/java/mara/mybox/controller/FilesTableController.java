@@ -33,7 +33,7 @@ public class FilesTableController extends BaseController {
     @FXML
     protected Pane filesTablePane;
     @FXML
-    protected Button addButton, clearButton, deleteButton, upButton, downButton;
+    protected Button addButton, clearButton, deleteButton, upButton, downButton, insertButton;
     @FXML
     protected Button recoveryAllButton, recoverySelectedButton;
     @FXML
@@ -73,20 +73,30 @@ public class FilesTableController extends BaseController {
     }
 
     protected void checkTableSelected() {
-        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
-        if (selected != null && selected.size() > 0) {
-            upButton.setDisable(false);
-            downButton.setDisable(false);
-            deleteButton.setDisable(false);
-        } else {
-            upButton.setDisable(true);
-            downButton.setDisable(true);
-            deleteButton.setDisable(true);
-        }
+        ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
+        boolean none = (selected == null || selected.isEmpty());
+        insertButton.setDisable(none);
+        upButton.setDisable(none);
+        downButton.setDisable(none);
+        deleteButton.setDisable(none);
     }
 
     @FXML
     void addAction(ActionEvent event) {
+        addAction(tableData.size());
+    }
+
+    @FXML
+    void insertAction(ActionEvent event) {
+        int index = filesTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addAction(index);
+        } else {
+            insertButton.setDisable(true);
+        }
+    }
+
+    void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File defaultPath = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
@@ -103,13 +113,23 @@ public class FilesTableController extends BaseController {
             String path = files.get(0).getParent();
             AppVaribles.setUserConfigValue(LastPathKey, path);
             AppVaribles.setUserConfigValue(parentController.sourcePathKey, path);
+            List<FileInformation> newfiles = new ArrayList<>();
             for (File file : files) {
-                if (findData(file.getAbsolutePath()) != null) {
-                    continue;
-                }
+//                if (findData(file.getAbsolutePath()) != null) {
+//                    continue;
+//                }
                 FileInformation newFile = new FileInformation(file);
-                tableData.add(newFile);
+                newfiles.add(newFile);
             }
+            if (newfiles.isEmpty()) {
+                return;
+            }
+            if (index < 0 || index >= tableData.size()) {
+                tableData.addAll(newfiles);
+            } else {
+                tableData.addAll(index, newfiles);
+            }
+            filesTableView.refresh();
 
         } catch (Exception e) {
 //            logger.error(e.toString());

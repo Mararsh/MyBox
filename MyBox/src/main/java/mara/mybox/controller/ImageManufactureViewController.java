@@ -17,7 +17,7 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
  */
 public class ImageManufactureViewController extends ImageManufactureController {
 
-    private final int moveStep = 40;
+    private int moveStep, zoomStep;
 
     @FXML
     protected Slider zoomSlider;
@@ -37,24 +37,10 @@ public class ImageManufactureViewController extends ImageManufactureController {
         }
     }
 
-//    @Override
-//    protected void initInterface() {
-//        try {
-//            if (values == null || values.getImage() == null) {
-//                return;
-//            }
-//            super.initInterface();
-//
-//            isSettingValues = true;
-//
-//            isSettingValues = false;
-//        } catch (Exception e) {
-//            logger.debug(e.toString());
-//        }
-//
-//    }
     protected void initViewTab() {
         try {
+
+            moveStep = 40;
 
             zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -78,12 +64,36 @@ public class ImageManufactureViewController extends ImageManufactureController {
         }
     }
 
+    @Override
+    protected void initInterface() {
+        try {
+            if (values == null || values.getImage() == null) {
+                return;
+            }
+            super.initInterface();
+            zoomStep = (int) image.getWidth() / xZoomStep;
+            stepInput.setText(zoomStep + "");
+
+            isSettingValues = true;
+
+            isSettingValues = false;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
     private void checkStepInput() {
         try {
-            zoomStep = Integer.valueOf(stepInput.getText());
-            if (zoomStep > 0) {
+            int v = Integer.valueOf(stepInput.getText());
+            if (v > 0) {
+                zoomStep = v;
                 stepInput.setStyle(null);
                 zoomSlider.setValue(zoomStep);
+                if (image != null) {
+                    xZoomStep = (int) image.getWidth() * zoomStep / 100;
+                    yZoomStep = (int) image.getHeight() * zoomStep / 100;
+                }
             } else {
                 stepInput.setStyle(badStyle);
             }

@@ -35,6 +35,7 @@ import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import mara.mybox.tools.PdfTools.PdfImageFormat;
 
 /**
  * @Author Mara
@@ -45,8 +46,9 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 public class PdfCompressImagesController extends PdfBaseController {
 
     protected String PdfCompressImagesSourcePathKey, AuthorKey;
-    protected int jpegQuality, format, threshold;
+    protected int jpegQuality, threshold;
     protected File targetFile;
+    protected PdfImageFormat format;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -54,13 +56,6 @@ public class PdfCompressImagesController extends PdfBaseController {
     protected ComboBox<String> jpegBox;
     @FXML
     protected TextField thresholdInput, authorInput;
-
-    public static class PdfImageFormat {
-
-        public static int Tiff = 1;
-        public static int Jpeg = 2;
-
-    }
 
     public PdfCompressImagesController() {
         PdfCompressImagesSourcePathKey = "PdfCompressImagesSourcePathKey";
@@ -146,10 +141,10 @@ public class PdfCompressImagesController extends PdfBaseController {
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
         if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Tiff;
+            format = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
         } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
-            format = ImagesCombinePdfController.PdfImageFormat.Jpeg;
+            format = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
         }
@@ -392,7 +387,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                             PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
                             BufferedImage sourceImage = pdxObject.getImage();
                             PDImageXObject newObject = null;
-                            if (format == ImagesCombinePdfController.PdfImageFormat.Tiff) {
+                            if (format == PdfImageFormat.Tiff) {
                                 BufferedImage newImage;
                                 if (threshold < 0) {
                                     newImage = ImageGrayTools.color2Binary(sourceImage);
@@ -400,7 +395,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                                     newImage = ImageGrayTools.color2BinaryWithPercentage(sourceImage, threshold);
                                 }
                                 newObject = CCITTFactory.createFromImage(document, newImage);
-                            } else if (format == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
+                            } else if (format == PdfImageFormat.Jpeg) {
                                 newObject = JPEGFactory.createFromImage(document, sourceImage, jpegQuality / 100f);
                             }
                             if (newObject != null) {

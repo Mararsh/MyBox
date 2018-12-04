@@ -92,7 +92,7 @@ public class DerbyBase {
 
     public static boolean checkUpdates() {
         try {
-            if (!AppVaribles.getUserConfigBoolean("UpdatedTables4.2", false)) {
+            if (!AppVaribles.getSystemConfigBoolean("UpdatedTables4.2", false)) {
                 logger.debug("Updating TableConvolutionKernel 4.2");
                 List<ConvolutionKernel> records = TableConvolutionKernel.read();
                 TableConvolutionKernel t = new TableConvolutionKernel();
@@ -100,7 +100,6 @@ public class DerbyBase {
                 t.init();
                 if (TableConvolutionKernel.write(records)) {
                     AppVaribles.setSystemConfigValue("UpdatedTables4.2", true);
-                    AppVaribles.setUserConfigValue("UpdatedTables4.2", true);
                 }
             }
             return true;

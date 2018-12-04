@@ -13,8 +13,8 @@
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.3-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.3.jar</CODE></PRE>
+[MyBox-4.4-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-4.4-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.4.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -26,11 +26,13 @@
 
 [云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)
 
+[在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html](https://mararsh.github.io/MyBox/mybox_help_zh.html)
+
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-Overview-zh.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-UserGuide-4.3-ImageTools-zh.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-zh.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
 
@@ -40,7 +42,7 @@
 
 
 ## 当前版本
-当前是版本4.3，已实现的特点：
+当前是版本4.4，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -54,33 +56,48 @@
 	H. PDF的批量处理。
 	I. 可设置PDF处理的主内存使用量。
 2. 图像工具：
-	A. 调整图像的大小：按比例收缩、或设置像素。四种保持宽高比的选项。
-	B. 调整图像的颜色：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相，进行增加、减少、设值、过滤、取反色的操作。
-	C. 制作效果：模糊、清晰、锐化、浮雕、边沿检测、海报（减色）、阈值化、灰色、黑白色、褐色。
-		也可以通过定义和选择卷积核来制作效果。
-	D. 其它图像处理操作：剪裁、文字、覆盖（马赛克/磨砂/图片）、圆角、阴影、斜拉、镜像、旋转、切边、加边。
-		多种参数可设置。
-	E. 图像操作的范围：全部、矩形、圆形、抠图、颜色匹配、矩形中颜色匹配、圆形中颜色匹配。
-		颜色匹配可以针对：红/蓝/绿通道、饱和度、明暗、色相，色距可定义。
-		范围可作用于：颜色调整、效果、和卷积。
-		可简单通过左右键点击来确定范围，范围的参数（如抠图的点集和颜色集合）可设置。均可反选。
-	F. 对上一步的撤销和重做。也可以随时恢复原图。
-		修改历史可自动保存，以便退回到前面的修改；可设置修改历史的个数。
-	G. 确保大图片处理的正确性和性能。
-	H. 同目录下图像的导览。
-	I. 选择是否显示对照图。可以选择其它图片为对照图。
-	J. 查看图片的元数据和属性。
-	K. 查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸。
-	L. 图片的分割。支持均等分割和定制分割。
-	M. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
-	N. 图片的混合。支持选择交叉区域、多种混合模式。
-	O. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
-	P. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-	Q. 图像的批量处理。
-	R. 调色盘
-	S. 像素计算器
-	T. 卷积核管理器
-	U. 快捷键
+	A. 图像处理
+		1）调整图像的大小：按比例收缩、或设置像素。四种保持宽高比的选项。
+		2）调整图像的颜色：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相，
+			进行增加、减少、设值、过滤、取反色的操作
+		3）制作效果：模糊、清晰、锐化、浮雕、边沿检测、海报（减色）、阈值化、灰色、黑白色、褐色。
+			也可以通过定义和选择卷积核来制作效果。
+		4）其它图像处理操作：剪裁、文字、覆盖（马赛克/磨砂/图片）、圆角、阴影、斜拉、镜像、旋转、切边、加边。
+			多种参数可设置。
+		5）图像操作的范围：全部、矩形、圆形、抠图、颜色匹配、矩形中颜色匹配、圆形中颜色匹配。
+			颜色匹配可以针对：红/蓝/绿通道、饱和度、明暗、色相，色距可定义。
+			范围可作用于：颜色调整、效果、和卷积。可简单通过左右键点击来确定范围，
+			范围的参数（如抠图的点集和颜色集合）可设置。均可反选。
+		6）对上一步的撤销和重做。也可以随时恢复原图。修改历史可自动保存，以便退回到前面的修改；
+			可设置修改历史的个数。
+		7）同目录下图像的导览。
+		8）选择是否显示对照图。可以选择其它图片为对照图。
+	B. 图像的批量处理。
+	C. 多帧图像文件
+		1）查看、提取多帧图像文件
+		2）创建、编辑多帧tiff文件
+		3）查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸
+	D. 多图合一
+		1）图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
+		2）图片的混合。支持选择交叉区域、多种混合模式。
+		3）将多个图片合成PDF文件
+	E. 图像局部化
+		1）图像的分割。支持均等分割和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
+		2）图像的降采样。可以设置采样区域、采样比例。
+	F. 大图片的处理
+		1）评估加载整个图像所需内存,判断能否加载整个图像。
+		2）若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。
+		3）若内存可能溢出，则采样读取图像数据做下一步处理。
+		4）采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。
+		5）采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。
+		6）一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像。
+	G.查看图片的元数据和属性。
+	H.同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
+	I. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
+	J. 调色盘
+	K.像素计算器
+	L. 卷积核管理器
+	M.快捷键
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
@@ -110,6 +127,12 @@
 
 ## 开发日志
 ```
+2018-12-03 版本4.4 多帧图像文件的查看、提取、创建、编辑。支持多帧Tiff文件。
+对于所有以图像文件为输入的操作，处理多帧图像文件的情形。
+对于所有以图像文件为输入的操作，处理极大图像（加载所需内存超出可用内存）的情形。自动评估、判断、给出提示信息和下一步处理的选择。
+对于极大图像，支持局部读取、边读边写的图像分割，可保存为多个图像文件、多帧Tiff、或者PDF。
+对于极大图像，支持降采样。可设置采样区域和采样比率。
+
 2018-11-22 版本4.3 支持动画Gif。查看动画Gif：设置间隔、暂停/继续、显示指定帧并导览上下帧。
 提取动画Gif：可选择起止帧、文件类型。
 创建/编辑动画Gif：增删图片、调整顺序、设置间隔、是否循环、选择保持图片尺寸、或统一设置图片尺寸、另存，所见即所得。
@@ -247,9 +270,11 @@
 ```
 
 ## 实现基础
-MyBox使用NetBeans开发：
+MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
 
 [https://netbeans.org/](https://netbeans.org/)
+
+[https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html](https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html)
 
 
 基于以下开源软件/开源库：

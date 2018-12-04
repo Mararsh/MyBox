@@ -4,20 +4,21 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="filesTablePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
+<VBox fx:id="filesTablePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
     <children>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-            <children>
-                <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                    <items>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+          <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+              <items>
+                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                  <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
                   <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                   <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
-                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                    </items>
-                </ToolBar>
-                <TableView fx:id="filesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                  <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+              </items>
+          </ToolBar>
+      <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+         <content>
+                <TableView fx:id="filesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
                     <columns>
                         <TableColumn fx:id="handledColumn" prefWidth="150.0" text="%Handled" />
                         <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="600.0" text="%FileName" />
@@ -27,7 +28,7 @@
                         <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
                     </columns>
                 </TableView>
-            </children>
-        </VBox>
+         </content>
+      </ScrollPane>
     </children>
-</HBox>
+</VBox>

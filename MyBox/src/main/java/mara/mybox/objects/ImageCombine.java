@@ -1,7 +1,5 @@
 package mara.mybox.objects;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +15,6 @@ public class ImageCombine {
 
     private static final Logger logger = LogManager.getLogger();
 
-    protected ObservableList<ImageFileInformation> sourceImages = FXCollections.observableArrayList();
     private int columnsValue, intervalValue, MarginsValue, arrayType, sizeType;
     private int eachWidthValue, eachHeightValue, totalWidthValue, totalHeightValue;
     private Color bgColor = Color.WHITE;
@@ -42,14 +39,6 @@ public class ImageCombine {
 
     public ImageCombine() {
 
-    }
-
-    public ObservableList<ImageFileInformation> getSourceImages() {
-        return sourceImages;
-    }
-
-    public void setSourceImages(ObservableList<ImageFileInformation> sourceImages) {
-        this.sourceImages = sourceImages;
     }
 
     public int getColumnsValue() {

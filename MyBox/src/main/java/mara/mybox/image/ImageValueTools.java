@@ -126,15 +126,15 @@ public class ImageValueTools {
                         return types;
                     }
                     case GRAY: {
-                        String[] types = {"ZLib", "Deflate", "LZW", "JPEG", "PackBits"};
+                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG", "PackBits"};
                         return types;
                     }
                     case RGB: {
-                        String[] types = {"ZLib", "Deflate", "LZW", "JPEG", "PackBits"};
+                        String[] types = {"LZW", "ZLib", "Deflate", "JPEG", "PackBits"};
                         return types;
                     }
                     case ARGB: {
-                        String[] types = {"ZLib", "Deflate", "LZW", "PackBits"};
+                        String[] types = {"LZW", "ZLib", "Deflate", "PackBits"};
                         return types;
                     }
                     default:

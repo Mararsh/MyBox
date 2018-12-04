@@ -51,7 +51,7 @@ public class SettingsController extends BaseController {
     @FXML
     private TextField hisMaxInput, tempDirInput;
     @FXML
-    protected ComboBox<String> styleBox;
+    protected ComboBox<String> styleBox, imageWidthBox;
     @FXML
     protected Button hisClearButton, hisOkButton;
     @FXML
@@ -136,6 +136,27 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            imageWidthBox.getItems().addAll(Arrays.asList(
+                    "4096", "2048", "8192", "1024", "10240", "6144", "512", "15360", "20480", "30720"));
+            imageWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                AppVaribles.setUserConfigInt("MaxImageSampleWidth", v);
+                                imageWidthBox.getEditor().setStyle(null);
+                            } else {
+                                imageWidthBox.getEditor().setStyle(badStyle);
+                            }
+                        } catch (Exception e) {
+                            imageWidthBox.getEditor().setStyle(badStyle);
+                        }
+                    }
+                }
+            });
+
             initValues();
 
         } catch (Exception e) {
@@ -201,6 +222,8 @@ public class SettingsController extends BaseController {
                 default:
                     break;
             }
+
+            imageWidthBox.getSelectionModel().select(AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
 
             checkLanguage();
             checkAlpha();

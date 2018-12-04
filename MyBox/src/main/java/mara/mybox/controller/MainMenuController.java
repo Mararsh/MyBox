@@ -475,6 +475,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageSample(ActionEvent event) {
+        reloadStage(CommonValues.ImageSampleFxml, AppVaribles.getMessage("ImageSubsample"));
+    }
+
+    @FXML
     private void openImagesCombine(ActionEvent event) {
         reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
     }
@@ -487,6 +492,16 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageGifEditer(ActionEvent event) {
         reloadStage(CommonValues.ImageGifEditerFxml, AppVaribles.getMessage("ImageGifEditer"));
+    }
+
+    @FXML
+    private void openImageTiffEditer(ActionEvent event) {
+        reloadStage(CommonValues.ImageTiffEditerFxml, AppVaribles.getMessage("ImageTiffEditer"));
+    }
+
+    @FXML
+    private void openImageFramesViewer(ActionEvent event) {
+        reloadStage(CommonValues.ImageFramesViewerFxml, AppVaribles.getMessage("ImageFramesViewer"));
     }
 
     @FXML

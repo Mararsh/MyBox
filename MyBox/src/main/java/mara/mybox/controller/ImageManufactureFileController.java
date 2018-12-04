@@ -4,7 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -24,9 +23,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
     final protected String ImageSaveAsKey, ImageSaveConfirmKey;
 
     @FXML
-    protected ToolBar fileBar, saveAsBar;
-    @FXML
-    protected CheckBox saveCheck;
+    protected ToolBar saveAsBar;
     @FXML
     protected ToggleGroup saveAsGroup;
     @FXML
@@ -50,6 +47,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
             initCommon();
             initFileTab();
             values.setScope(new ImageScope());
+            imageView.requestFocus();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -93,6 +91,75 @@ public class ImageManufactureFileController extends ImageManufactureController {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    protected void afterInfoLoaded() {
+        super.afterInfoLoaded();
+        fileBar.setDisable(false);
+        saveCheck.setDisable(true);
+    }
+
+    @Override
+    public void afterImageLoaded() {
+        try {
+            super.afterImageLoaded();
+
+            if (imageInformation.isIsSampled()) {
+                hotBar.setDisable(false);
+                showRefCheck.setDisable(true);
+                hisBox.setDisable(true);
+                undoButton.setDisable(true);
+                redoButton.setDisable(true);
+                recoverButton.setDisable(true);
+                saveButton.setDisable(true);
+
+                browseTab.setDisable(true);
+                viewTab.setDisable(true);
+                colorTab.setDisable(true);
+                effectsTab.setDisable(true);
+                convolutionTab.setDisable(true);
+                sizeTab.setDisable(true);
+                refTab.setDisable(true);
+                transformTab.setDisable(true);
+                textTab.setDisable(true);
+                coverTab.setDisable(true);
+                arcTab.setDisable(true);
+                shadowTab.setDisable(true);
+                marginsTab.setDisable(true);
+                cropTab.setDisable(true);
+
+            }
+            isSettingValues = true;
+            values.setSourceFile(sourceFile);
+            values.setImage(image);
+            values.setImageInfo(imageInformation);
+            values.setCurrentImage(image);
+            isSettingValues = false;
+
+            if (image == null || imageInformation.isIsSampled()) {
+                return;
+            }
+
+            isSettingValues = true;
+            values.setRefImage(image);
+            values.setRefInfo(imageInformation);
+            setImageChanged(false);
+            values.setScope(new ImageScope(image));
+            scope = values.getScope();
+
+            recordImageHistory(ImageOperationType.Load, image);
+            saveCheck.setDisable(false);
+            if (initTab != null) {
+                switchTab(initTab);
+            } else {
+                initInterface();
+            }
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 

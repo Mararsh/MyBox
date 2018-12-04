@@ -173,38 +173,6 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ImageSplit = new MenuItem(AppVaribles.getMessage("ImageSplit"));
-        ImageSplit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
-            }
-        });
-
-        MenuItem ImageCombine = new MenuItem(AppVaribles.getMessage("ImageCombine"));
-        ImageCombine.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
-            }
-        });
-
-        MenuItem ImagesBlend = new MenuItem(AppVaribles.getMessage("ImagesBlend"));
-        ImagesBlend.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImagesBlendFxml, AppVaribles.getMessage("ImagesBlend"));
-            }
-        });
-
-        MenuItem imagesCombinePdf = new MenuItem(AppVaribles.getMessage("ImagesCombinePdf"));
-        imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImagesCombinePdfFxml, AppVaribles.getMessage("ImagesCombinePdf"));
-            }
-        });
-
         MenuItem imageConverter = new MenuItem(AppVaribles.getMessage("ImageConverter"));
         imageConverter.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -218,22 +186,6 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.ImageConverterBatchFxml, AppVaribles.getMessage("ImageConverterBatch"));
-            }
-        });
-
-        MenuItem imageGifViewer = new MenuItem(AppVaribles.getMessage("ImageGifViewer"));
-        imageGifViewer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageGifViewerFxml, AppVaribles.getMessage("ImageGifViewer"));
-            }
-        });
-
-        MenuItem imageGifEditer = new MenuItem(AppVaribles.getMessage("ImageGifEditer"));
-        imageGifEditer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageGifEditerFxml, AppVaribles.getMessage("ImageGifEditer"));
             }
         });
 
@@ -263,11 +215,13 @@ public class MyBoxController extends BaseController {
 
         Menu manufactureSubMenu = initImageSubToolsMenu();
         Menu manufactureBatchMenu = initImageBatchToolsMenu();
+        Menu framesMenu = initImageFramesMenu();
+        Menu partMenu = initImagePartMenu();
+        Menu mergeMenu = initImageMergeMenu();
 
         imageMenu = new ContextMenu();
         imageMenu.getItems().addAll(ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
-                imageGifViewer, imageGifEditer, new SeparatorMenuItem(),
-                ImageSplit, ImagesBlend, ImageCombine, imagesCombinePdf, new SeparatorMenuItem(),
+                framesMenu, new SeparatorMenuItem(), mergeMenu, new SeparatorMenuItem(), partMenu, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
                 imageViewer, imagesViewer, new SeparatorMenuItem(),
                 convolutionKernelManager, colorPalette, pixelsCalculator);
@@ -496,6 +450,102 @@ public class MyBoxController extends BaseController {
                 imageConvolutionMenu, imageReplaceColorMenu, imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
         return manufactureBatchMenu;
+
+    }
+
+    private Menu initImageFramesMenu() {
+
+        MenuItem imageGifViewer = new MenuItem(AppVaribles.getMessage("ImageGifViewer"));
+        imageGifViewer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageGifViewerFxml, AppVaribles.getMessage("ImageGifViewer"));
+            }
+        });
+
+        MenuItem imageGifEditer = new MenuItem(AppVaribles.getMessage("ImageGifEditer"));
+        imageGifEditer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageGifEditerFxml, AppVaribles.getMessage("ImageGifEditer"));
+            }
+        });
+
+        MenuItem imageTiffEditer = new MenuItem(AppVaribles.getMessage("ImageTiffEditer"));
+        imageTiffEditer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageTiffEditerFxml, AppVaribles.getMessage("ImageTiffEditer"));
+            }
+        });
+
+        MenuItem imageFramesViewer = new MenuItem(AppVaribles.getMessage("ImageFramesViewer"));
+        imageFramesViewer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageFramesViewerFxml, AppVaribles.getMessage("ImageFramesViewer"));
+            }
+        });
+
+        Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("MultipleFramesImageFile"));
+        manufactureSubMenu.getItems().addAll(imageFramesViewer, imageTiffEditer, imageGifViewer, imageGifEditer);
+        return manufactureSubMenu;
+
+    }
+
+    private Menu initImagePartMenu() {
+
+        MenuItem ImageSplit = new MenuItem(AppVaribles.getMessage("ImageSplit"));
+        ImageSplit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
+            }
+        });
+
+        MenuItem ImageSample = new MenuItem(AppVaribles.getMessage("ImageSubsample"));
+        ImageSample.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageSampleFxml, AppVaribles.getMessage("ImageSubsample"));
+            }
+        });
+
+        Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImagePart"));
+        manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample);
+        return manufactureSubMenu;
+
+    }
+
+    private Menu initImageMergeMenu() {
+
+        MenuItem ImageCombine = new MenuItem(AppVaribles.getMessage("ImageCombine"));
+        ImageCombine.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImagesCombineFxml, AppVaribles.getMessage("ImageCombine"));
+            }
+        });
+
+        MenuItem ImagesBlend = new MenuItem(AppVaribles.getMessage("ImagesBlend"));
+        ImagesBlend.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImagesBlendFxml, AppVaribles.getMessage("ImagesBlend"));
+            }
+        });
+
+        MenuItem imagesCombinePdf = new MenuItem(AppVaribles.getMessage("ImagesCombinePdf"));
+        imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImagesCombinePdfFxml, AppVaribles.getMessage("ImagesCombinePdf"));
+            }
+        });
+
+        Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("MergeImages"));
+        manufactureSubMenu.getItems().addAll(ImagesBlend, ImageCombine, imagesCombinePdf);
+        return manufactureSubMenu;
 
     }
 

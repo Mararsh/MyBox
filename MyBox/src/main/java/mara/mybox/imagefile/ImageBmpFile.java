@@ -18,8 +18,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageFileInformation;
 import static mara.mybox.image.ImageValueTools.dpi2dpm;
+import mara.mybox.objects.ImageInformation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +102,7 @@ public class ImageBmpFile {
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 BMPMetadata metadata = (BMPMetadata) reader.getImageMetadata(0);
+                reader.dispose();
                 return metadata;
             }
         } catch (Exception e) {
@@ -110,7 +111,8 @@ public class ImageBmpFile {
         }
     }
 
-    public static void explainBmpMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
+    public static void explainBmpMetaData(Map<String, Map<String, Map<String, String>>> metaData,
+            ImageInformation info) {
         try {
             String format = "com_sun_media_imageio_plugins_bmp_image_1.0";
             if (!metaData.containsKey(format)) {
@@ -120,25 +122,25 @@ public class ImageBmpFile {
             if (javax_imageio_bmp.containsKey("Width")) {
                 Map<String, String> Width = javax_imageio_bmp.get("Width");
                 if (Width.containsKey("value")) {
-                    info.setxPixels(Integer.valueOf(Width.get("value")));
+                    info.setWidth(Integer.valueOf(Width.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("Height")) {
                 Map<String, String> Height = javax_imageio_bmp.get("Height");
                 if (Height.containsKey("value")) {
-                    info.setyPixels(Integer.valueOf(Height.get("value")));
+                    info.setHeight(Integer.valueOf(Height.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("X")) {    // PixelsPerMeter
                 Map<String, String> X = javax_imageio_bmp.get("X");
                 if (X.containsKey("value")) {
-                    info.setxDensity(ImageValueTools.dpm2dpi(Integer.valueOf(X.get("value"))));
+                    info.setwDensity(ImageValueTools.dpm2dpi(Integer.valueOf(X.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("Y")) {   // PixelsPerMeter
                 Map<String, String> Y = javax_imageio_bmp.get("Y");
                 if (Y.containsKey("value")) {
-                    info.setyDensity(ImageValueTools.dpm2dpi(Integer.valueOf(Y.get("value"))));
+                    info.sethDensity(ImageValueTools.dpm2dpi(Integer.valueOf(Y.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("BitsPerPixel")) {

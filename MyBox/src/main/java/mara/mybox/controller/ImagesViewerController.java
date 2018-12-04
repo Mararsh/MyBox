@@ -90,7 +90,7 @@ public class ImagesViewerController extends ImageViewerController {
                 }
             });
 
-            List<String> fvalues = Arrays.asList("9", "4", "8", "6", "10", "16", "2", "12", "15", "25",
+            List<String> fvalues = Arrays.asList("9", "4", "3", "8", "6", "10", "16", "2", "5", "12", "15", "25",
                     "36", "30", "24");
             filesBox.getItems().addAll(fvalues);
             filesBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -371,6 +371,8 @@ public class ImagesViewerController extends ImageViewerController {
                 if (!eachCheck.isSelected()) {
                     imageController.removeButtons();
                 }
+                imageController.setMyStage(myStage);
+                imageController.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
                 imageController.loadImage(imageFileList.get(i), false);
                 imageController.setParentController(this);
 
@@ -577,13 +579,11 @@ public class ImagesViewerController extends ImageViewerController {
 
     public void loadImages(List<String> fileNames) {
         try {
-            logger.debug(fileNames);
             if (fileNames == null || fileNames.isEmpty()) {
                 return;
             }
             int cols = (int) Math.sqrt(fileNames.size());
             cols = Math.max(cols, (int) (fileNames.size() / cols));
-            logger.debug(cols);
             loadImages(fileNames, cols);
 
         } catch (Exception e) {

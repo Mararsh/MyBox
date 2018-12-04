@@ -21,24 +21,50 @@
     <center>
         <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
-                <SplitPane fx:id="splitPane" dividerPositions="0.278391167192429" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <HBox VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar HBox.hgrow="ALWAYS">
+                            <items>
+                                <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
+                                <Button mnemonicParsing="false" text=" " visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar fx:id="imageBar" HBox.hgrow="NEVER">
+                            <items>
+                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" text="%OpenInNewWindow" />
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                        <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSave" />
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
                                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%Up" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%Down" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
                                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#showInfo" text="%ImageInformation" />
                                     </items>
                                 </ToolBar>
-                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
-                                        <TableColumn fx:id="sizeColumn" prefWidth="100.0" text="%Size" />
-                                        <TableColumn fx:id="fileColumn" prefWidth="500.0" text="%File" />
+                                        <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
+                                        <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Color" />
+                                        <TableColumn fx:id="fileColumn" prefWidth="200.0" text="%File" />
+                                        <TableColumn fx:id="indexColumn" text="%Index" />
                                     </columns>
                                 </TableView>
                             </children>
@@ -61,18 +87,18 @@
                                                         <ComboBox fx:id="columnsBox" disable="true" editable="true" prefWidth="100.0" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%Background" />
                                                         <ColorPicker fx:id="bgPicker" />
                                                         <Button mnemonicParsing="false" onAction="#bgTransparent" text="%Transparent" />
                                                         <Button mnemonicParsing="false" onAction="#bgWhite" text="%White" />
                                                         <Button mnemonicParsing="false" onAction="#bgBlack" text="%Black" />
-                                                        <Label text="%Interval">
-                                                            <padding>
-                                                                <Insets left="40.0" />
-                                                            </padding>
-                                                        </Label>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%Interval" />
                                                         <ComboBox fx:id="intervalBox" editable="true" prefWidth="80.0" />
                                                         <Label text="%Margins" />
                                                         <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
@@ -86,7 +112,7 @@
                                     <content>
                                         <VBox spacing="10.0">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <RadioButton fx:id="keepSizeRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%KeepSize">
                                                             <toggleGroup>
@@ -97,12 +123,16 @@
                                                         <RadioButton fx:id="sizeSmallerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%AlignAsSmaller" toggleGroup="$sizeGroup" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT">
                                                     <children>
                                                         <RadioButton fx:id="eachWidthRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%EachWidth" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="eachWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
                                                         <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%EachHeight" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="eachHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
                                                         <RadioButton fx:id="totalWidthRadio" mnemonicParsing="false" text="%TotalWidth" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="totalWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
                                                         <RadioButton fx:id="totalHeightRadio" mnemonicParsing="false" text="%TotalHeight" toggleGroup="$sizeGroup" />
@@ -113,28 +143,10 @@
                                         </VBox>
                                     </content>
                                 </TitledPane>
-                                <HBox fx:id="toolBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS">
-                                            <padding>
-                                                <Insets left="20.0" />
-                                            </padding>
-                                        </Label>
-                                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                                            <children>
-                                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" text="%OpenInNewWindow" />
-                                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </HBox>
+                                <Label fx:id="imageLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                                 <ScrollPane fx:id="scrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <ImageView fx:id="imageView" fitHeight="261.0" fitWidth="841.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="imageView" fitHeight="161.0" fitWidth="141.0" pickOnBounds="true" preserveRatio="true">
                                             <cursor>
                                                 <Cursor fx:constant="OPEN_HAND" />
                                             </cursor>
@@ -159,8 +171,9 @@
     </padding>
     <bottom>
         <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
-         <BorderPane.margin>
-            <Insets left="10.0" right="10.0" />
-         </BorderPane.margin></Label>
+            <BorderPane.margin>
+                <Insets left="10.0" right="10.0" />
+            </BorderPane.margin>
+        </Label>
     </bottom>
 </BorderPane>

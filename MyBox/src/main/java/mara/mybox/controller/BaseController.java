@@ -49,6 +49,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import static mara.mybox.objects.CommonValues.UserFilePath;
+import mara.mybox.objects.ImageInformation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -478,11 +479,11 @@ public class BaseController implements Initializable {
     protected File checkHelps() {
         try {
             String lang = AppVaribles.getLanguage();
-            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.3", false);
+            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.4", false);
             if (!updated) {
-                logger.debug("Updating Helps 4.3");
+                logger.debug("Updating Helps 4.4");
                 clearHelps();
-                AppVaribles.setSystemConfigValue("UpdatedHelps4.3", true);
+                AppVaribles.setSystemConfigValue("UpdatedHelps4.4", true);
             }
             File mybox_help = FxmlTools.getUserFile(getClass(),
                     "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
@@ -574,6 +575,7 @@ public class BaseController implements Initializable {
             } else if (getMyStage().getTitle() == null) {
                 myStage.setTitle(AppVaribles.getMessage("AppTitle"));
             }
+            controller.setBaseTitle(myStage.getTitle());
             myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
@@ -627,6 +629,7 @@ public class BaseController implements Initializable {
             } else {
                 stage.setTitle(title);
             }
+            controller.setBaseTitle(stage.getTitle());
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
             if (monitorClosing) {
@@ -887,9 +890,10 @@ public class BaseController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
             Pane root = fxmlLoader.load();
             final ImageViewerController controller = fxmlLoader.getController();
-            controller.loadImage(filename);
             Stage stage = new Stage();
             controller.setMyStage(stage);
+            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
+            controller.loadImage(filename);
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
@@ -898,8 +902,7 @@ public class BaseController implements Initializable {
                     }
                 }
             });
-
-            stage.setTitle(AppVaribles.getMessage("AppTitle"));
+            stage.setTitle(controller.getBaseTitle());
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.DECORATED);
             stage.initOwner(null);
@@ -933,9 +936,9 @@ public class BaseController implements Initializable {
             stage.initOwner(null);
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(root));
-            stage.setTitle(AppVaribles.getMessage("ImageManufacture"));
             stage.show();
 
+            controller.setBaseTitle(AppVaribles.getMessage("ImageManufacture"));
             controller.loadImage(filename);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -963,9 +966,9 @@ public class BaseController implements Initializable {
             stage.initOwner(null);
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(pane));
-            stage.setTitle(getMessage("MultipleImagesViewer"));
             stage.show();
 
+            controller.setBaseTitle(AppVaribles.getMessage("MultipleImagesViewer"));
             controller.loadImages(path, number);
         } catch (Exception e) {
             logger.error(e.toString());
@@ -993,9 +996,41 @@ public class BaseController implements Initializable {
             stage.initOwner(null);
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(root));
-            stage.setTitle(AppVaribles.getMessage("ImageViewer"));
             stage.show();
+
+            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
             controller.loadImage(image);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void showImageView(ImageInformation info) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
+            Pane root = fxmlLoader.load();
+            final ImageViewerController controller = fxmlLoader.getController();
+            Stage stage = new Stage();
+            controller.setMyStage(stage);
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.stageClosing()) {
+                        event.consume();
+                    }
+                }
+            });
+
+            stage.initModality(Modality.NONE);
+            stage.initStyle(StageStyle.DECORATED);
+            stage.initOwner(null);
+            stage.getIcons().add(CommonValues.AppIcon);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
+            controller.loadImage(info);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1023,8 +1058,9 @@ public class BaseController implements Initializable {
             stage.initOwner(null);
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(new Scene(root));
-            stage.setTitle(AppVaribles.getMessage("ImageViewer"));
             stage.show();
+
+            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
             controller.loadImage(file);
 
         } catch (Exception e) {

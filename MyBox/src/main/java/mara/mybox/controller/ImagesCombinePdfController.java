@@ -3,68 +3,42 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.util.Callback;
-import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.image.ImageGrayTools;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.objects.ImageInformation;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.PdfTools.PdfImageFormat;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.graphics.image.CCITTFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  * @Author Mara
@@ -72,31 +46,15 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImagesCombinePdfController extends ImageBaseController {
+public class ImagesCombinePdfController extends ImageSourcesController {
 
-    private final ObservableList<ImageFileInformation> sourceImages = FXCollections.observableArrayList();
-    private final String ImagesCombinePdfPathKey, ImageCombineLoadImagesKey, ImageCombineTargetPathKey;
-    private final String ImageCombineSizeKey, ImageCombineMarginsKey, AuthorKey;
-    private final int snapSize = 150;
-    private File targetFile;
-
-    protected int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold;
-    protected PDRectangle pageSize;
+    private final String ImageCombineMarginsKey, AuthorKey;
+    protected int marginSize, pageWidth, pageHeight, jpegQuality, threshold;
     protected boolean isImageSize;
+    private PdfImageFormat pdfFormat;
 
     @FXML
-    private Button addButton, openTargetButton, saveButton, deleteButton,
-            clearButton, openButton, loadButton, upButton, downButton;
-    @FXML
-    private TableView<ImageFileInformation> sourceTable;
-    @FXML
-    private TableColumn<ImageFileInformation, Image> imageColumn;
-    @FXML
-    private TableColumn<ImageFileInformation, String> fileColumn, pixelsColumn, modifyTimeColumn, sizeColumn;
-    @FXML
-    private ColorPicker bgPicker;
-    @FXML
-    protected CheckBox loadCheck, pageNumberCheck;
+    protected CheckBox pageNumberCheck;
     @FXML
     protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
     @FXML
@@ -105,150 +63,28 @@ public class ImagesCombinePdfController extends ImageBaseController {
     protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
     protected HBox sizeBox;
-
-    public static class PdfImageFormat {
-
-        public static int Original = 0;
-        public static int Tiff = 1;
-        public static int Jpeg = 2;
-
-    }
+    @FXML
+    protected ToolBar targetBar;
 
     public ImagesCombinePdfController() {
-        ImagesCombinePdfPathKey = "ImagesCombinePdfPathKey";
-        ImageCombineLoadImagesKey = "ImageCombineLoadImagesKey";
-        ImageCombineTargetPathKey = "ImageCombineTargetPathKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
-        ImageCombineSizeKey = "ImageCombineSizeKey";
         AuthorKey = "AuthorKey";
+        fileExtensionFilter = CommonValues.PdfExtensionFilter;
     }
 
     @Override
     protected void initializeNext() {
         try {
             initSourceSection();
+            initOptionsSection();
             initTargetSection();
-            initPdfOptionsSection();
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void initSourceSection() {
-        try {
-            fileColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("filename"));
-            pixelsColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("pixels"));
-            modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("modifyTime"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, String>("fileSize"));
-            imageColumn.setCellValueFactory(new PropertyValueFactory<ImageFileInformation, Image>("image"));
-            imageColumn.setCellFactory(new Callback<TableColumn<ImageFileInformation, Image>, TableCell<ImageFileInformation, Image>>() {
-                @Override
-                public TableCell<ImageFileInformation, Image> call(TableColumn<ImageFileInformation, Image> param) {
-                    final ImageView imageview = new ImageView();
-                    imageview.setPreserveRatio(true);
-                    imageview.setFitWidth(snapSize);
-                    imageview.setFitHeight(snapSize);
-                    TableCell<ImageFileInformation, Image> cell = new TableCell<ImageFileInformation, Image>() {
-                        @Override
-                        protected void updateItem(final Image item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item != null) {
-                                imageview.setImage(item);
-                                setGraphic(imageview);
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
-
-            sourceTable.setItems(sourceImages);
-            sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            sourceTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        openAction();
-                    }
-                }
-            });
-            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    checkTableSelected();
-                }
-            });
-            checkTableSelected();
-
-            loadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setUserConfigValue(ImageCombineLoadImagesKey, loadCheck.isSelected());
-                }
-            });
-            loadCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageCombineLoadImagesKey));
-
-            Tooltip tips = new Tooltip(getMessage("LoadImagesComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(loadCheck, tips);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    private void checkTableSelected() {
-        ObservableList<ImageFileInformation> selected = sourceTable.getSelectionModel().getSelectedItems();
-        if (selected != null && selected.size() > 0) {
-            openButton.setDisable(false);
-            loadButton.setDisable(false);
-            upButton.setDisable(false);
-            downButton.setDisable(false);
-            deleteButton.setDisable(false);
-        } else {
-            openButton.setDisable(true);
-            loadButton.setDisable(true);
-            upButton.setDisable(true);
-            downButton.setDisable(true);
-            deleteButton.setDisable(true);
-        }
-    }
-
-    private void initTargetSection() {
-
-        targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                openTargetButton.setDisable(true);
-                try {
-                    targetFile = new File(newValue);
-                    if (!newValue.toLowerCase().endsWith(".pdf")) {
-                        targetFile = null;
-                        targetFileInput.setStyle(badStyle);
-                        return;
-                    }
-                    targetFileInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
-                } catch (Exception e) {
-                    targetFile = null;
-                    targetFileInput.setStyle(badStyle);
-                }
-            }
-        });
-
-        saveButton.disableProperty().bind(
-                Bindings.isEmpty(sourceImages)
-                        .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                        .or(targetFileInput.styleProperty().isEqualTo(badStyle))
-                        .or(customWidthInput.styleProperty().isEqualTo(badStyle))
-                        .or(customHeightInput.styleProperty().isEqualTo(badStyle))
-                        .or(jpegBox.styleProperty().isEqualTo(badStyle))
-                        .or(thresholdInput.styleProperty().isEqualTo(badStyle))
-        );
-
-    }
-
-    protected void initPdfOptionsSection() {
+    @Override
+    protected void initOptionsSection() {
 
         Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
         tips.setFont(new Font(16));
@@ -264,6 +100,7 @@ public class ImagesCombinePdfController extends ImageBaseController {
         checkPageSize();
 
         standardSizeBox.getItems().addAll(Arrays.asList(
+                "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
                 "A4 (16k)  21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
@@ -415,6 +252,18 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
     }
 
+    private void initTargetSection() {
+
+        targetBar.disableProperty().bind(
+                Bindings.isEmpty(sourceImages)
+                        .or(customWidthInput.styleProperty().isEqualTo(badStyle))
+                        .or(customHeightInput.styleProperty().isEqualTo(badStyle))
+                        .or(jpegBox.styleProperty().isEqualTo(badStyle))
+                        .or(thresholdInput.styleProperty().isEqualTo(badStyle))
+        );
+
+    }
+
     private void checkPageSize() {
         standardSizeBox.setDisable(true);
         standardDpiBox.setDisable(true);
@@ -453,60 +302,65 @@ public class ImagesCombinePdfController extends ImageBaseController {
         } catch (Exception e) {
         }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        switch (s.substring(0, 2)) {
-            case "A4":
-                pageWidth = calculateCmPixels(21.0f, dpi);
-                pageHeight = calculateCmPixels(29.7f, dpi);
-                break;
-            case "A5":
-                pageWidth = calculateCmPixels(14.8f, dpi);
-                pageHeight = calculateCmPixels(21.0f, dpi);
-                break;
-            case "A6":
-                pageWidth = calculateCmPixels(10.5f, dpi);
-                pageHeight = calculateCmPixels(14.8f, dpi);
-                break;
-            case "A3":
-                pageWidth = calculateCmPixels(29.7f, dpi);
-                pageHeight = calculateCmPixels(42.0f, dpi);
-                break;
-            case "A2":
-                pageWidth = calculateCmPixels(42.0f, dpi);
-                pageHeight = calculateCmPixels(59.4f, dpi);
-                break;
-            case "A1":
-                pageWidth = calculateCmPixels(59.4f, dpi);
-                pageHeight = calculateCmPixels(84.1f, dpi);
-                break;
+        if (s.startsWith("A4-" + getMessage("Horizontal"))) {
+            pageWidth = calculateCmPixels(29.7f, dpi);
+            pageHeight = calculateCmPixels(21.0f, dpi);
+        } else {
+            switch (s.substring(0, 2)) {
+                case "A4":
+                    pageWidth = calculateCmPixels(21.0f, dpi);
+                    pageHeight = calculateCmPixels(29.7f, dpi);
+                    break;
+                case "A5":
+                    pageWidth = calculateCmPixels(14.8f, dpi);
+                    pageHeight = calculateCmPixels(21.0f, dpi);
+                    break;
+                case "A6":
+                    pageWidth = calculateCmPixels(10.5f, dpi);
+                    pageHeight = calculateCmPixels(14.8f, dpi);
+                    break;
+                case "A3":
+                    pageWidth = calculateCmPixels(29.7f, dpi);
+                    pageHeight = calculateCmPixels(42.0f, dpi);
+                    break;
+                case "A2":
+                    pageWidth = calculateCmPixels(42.0f, dpi);
+                    pageHeight = calculateCmPixels(59.4f, dpi);
+                    break;
+                case "A1":
+                    pageWidth = calculateCmPixels(59.4f, dpi);
+                    pageHeight = calculateCmPixels(84.1f, dpi);
+                    break;
 
-            case "A0":
-                pageWidth = calculateCmPixels(84.1f, dpi);
-                pageHeight = calculateCmPixels(118.9f, dpi);
-                break;
-            case "B5":
-                pageWidth = calculateCmPixels(17.6f, dpi);
-                pageHeight = calculateCmPixels(25.0f, dpi);
-                break;
-            case "B4":
-                pageWidth = calculateCmPixels(25.0f, dpi);
-                pageHeight = calculateCmPixels(35.3f, dpi);
-                break;
-            case "B2":
-                pageWidth = calculateCmPixels(35.3f, dpi);
-                pageHeight = calculateCmPixels(50.0f, dpi);
-                break;
-            case "C4":
-                pageWidth = calculateCmPixels(22.9f, dpi);
-                pageHeight = calculateCmPixels(32.4f, dpi);
-                break;
-            case "C5":
-                pageWidth = calculateCmPixels(16.2f, dpi);
-                pageHeight = calculateCmPixels(22.9f, dpi);
-                break;
-            case "C6":
-                pageWidth = calculateCmPixels(11.4f, dpi);
-                pageHeight = calculateCmPixels(16.2f, dpi);
-                break;
+                case "A0":
+                    pageWidth = calculateCmPixels(84.1f, dpi);
+                    pageHeight = calculateCmPixels(118.9f, dpi);
+                    break;
+                case "B5":
+                    pageWidth = calculateCmPixels(17.6f, dpi);
+                    pageHeight = calculateCmPixels(25.0f, dpi);
+                    break;
+                case "B4":
+                    pageWidth = calculateCmPixels(25.0f, dpi);
+                    pageHeight = calculateCmPixels(35.3f, dpi);
+                    break;
+                case "B2":
+                    pageWidth = calculateCmPixels(35.3f, dpi);
+                    pageHeight = calculateCmPixels(50.0f, dpi);
+                    break;
+                case "C4":
+                    pageWidth = calculateCmPixels(22.9f, dpi);
+                    pageHeight = calculateCmPixels(32.4f, dpi);
+                    break;
+                case "C5":
+                    pageWidth = calculateCmPixels(16.2f, dpi);
+                    pageHeight = calculateCmPixels(22.9f, dpi);
+                    break;
+                case "C6":
+                    pageWidth = calculateCmPixels(11.4f, dpi);
+                    pageHeight = calculateCmPixels(16.2f, dpi);
+                    break;
+            }
         }
         customWidthInput.setText(pageWidth + "");
         customHeightInput.setText(pageHeight + "");
@@ -553,12 +407,12 @@ public class ImagesCombinePdfController extends ImageBaseController {
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
         if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
-            format = PdfImageFormat.Original;
+            pdfFormat = PdfImageFormat.Original;
         } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
-            format = PdfImageFormat.Tiff;
+            pdfFormat = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
         } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
-            format = PdfImageFormat.Jpeg;
+            pdfFormat = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
         }
@@ -599,280 +453,45 @@ public class ImagesCombinePdfController extends ImageBaseController {
     }
 
     @FXML
-    private void addAction(ActionEvent event) {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(ImagesCombinePdfPathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
-            fileChooser.setInitialDirectory(defaultPath);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+    @Override
+    protected void saveAction() {
+        if (sourceImages == null || sourceImages.isEmpty()) {
+            return;
+        }
+        if (hasSampled()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(AppVaribles.getMessage("SureSampled"));
+            alert.getDialogPane().setPrefWidth(600);
+            ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            alert.getButtonTypes().setAll(buttonSure, buttonCancel);
 
-            List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
-            if (files == null || files.isEmpty()) {
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonCancel) {
                 return;
             }
-            String path = files.get(0).getParent();
-            AppVaribles.setUserConfigValue(LastPathKey, path);
-            AppVaribles.setUserConfigValue(ImagesCombinePdfPathKey, path);
-            loadImages(files);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
 
-    }
-
-    public void loadImages(final List<File> files) {
-        if (files == null || files.isEmpty()) {
+        final FileChooser fileChooser = new FileChooser();
+        File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        if (!path.isDirectory()) {
+            path = new File(CommonValues.UserFilePath);
+        }
+        fileChooser.setInitialDirectory(path);
+        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+        final File file = fileChooser.showSaveDialog(getMyStage());
+        if (file == null) {
             return;
         }
-        Task loadTask = new Task<Void>() {
-
-            private List<ImageFileInformation> infos;
-
-            @Override
-            protected Void call() throws Exception {
-                infos = new ArrayList<>();
-                for (File file : files) {
-                    final String fileName = file.getPath();
-                    ImageFileInformation info;
-                    if (loadCheck.isSelected()) {
-                        info = ImageFileReaders.readImageMetaData(fileName);
-                        BufferedImage bufferImage;
-                        String format = FileTools.getFileSuffix(fileName).toLowerCase();
-                        if ("raw".equals(format)) {
-                            continue;
-                        }
-                        bufferImage = ImageIO.read(file);
-                        Image image = SwingFXUtils.toFXImage(bufferImage, null);
-                        info.setImage(image);
-                    } else {
-                        info = new ImageFileInformation(file);
-                    }
-                    infos.add(info);
-                }
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (infos == null || infos.isEmpty()) {
-                            return;
-                        }
-                        sourceImages.addAll(infos);
-                        sourceTable.refresh();
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(loadTask);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    @FXML
-    public void loadSelected() {
-        Task loadTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                List<Integer> selected = new ArrayList<>();
-                selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
-                for (Integer index : selected) {
-                    if (index < 0 || index > sourceImages.size() - 1) {
-                        continue;
-                    }
-                    ImageFileInformation info = sourceImages.get(index);
-                    if (info.getImage() == null) {
-                        final String fileName = info.getFilename();
-                        info = ImageFileReaders.readImageMetaData(fileName);
-                        String format = FileTools.getFileSuffix(fileName).toLowerCase();
-                        if ("raw".equals(format)) {
-                            continue;
-                        }
-                        BufferedImage bufferImage = ImageIO.read(info.getFile());
-                        Image image = SwingFXUtils.toFXImage(bufferImage, null);
-                        info.setImage(image);
-                        sourceImages.set(index, info);
-                    }
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        sourceTable.refresh();
-                    }
-                });
-                return null;
-            }
-        };
-        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(loadTask);
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    @FXML
-    private void deleteAction(ActionEvent event) {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        for (int i = selected.size() - 1; i >= 0; i--) {
-            int index = selected.get(i);
-            if (index < 0 || index > sourceImages.size() - 1) {
-                continue;
-            }
-            sourceImages.remove(index);
-        }
-        sourceTable.refresh();
-    }
-
-    @FXML
-    private void clearAction(ActionEvent event) {
-        sourceImages.clear();
-        sourceTable.refresh();
-    }
-
-    @FXML
-    private void openAction() {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        for (Integer index : selected) {
-            if (index < 0 || index > sourceImages.size() - 1) {
-                continue;
-            }
-            ImageFileInformation info = sourceImages.get(index);
-            if (info.getImage() != null) {
-                showImageView(info.getImage());
-            } else {
-                showImageView(info.getFilename());
-            }
-        }
-    }
-
-    @FXML
-    private void upAction(ActionEvent event) {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        for (Integer index : selected) {
-            if (index == 0) {
-                continue;
-            }
-            ImageFileInformation info = sourceImages.get(index);
-            sourceImages.set(index, sourceImages.get(index - 1));
-            sourceImages.set(index - 1, info);
-        }
-        for (Integer index : selected) {
-            if (index > 0) {
-                sourceTable.getSelectionModel().select(index - 1);
-            }
-        }
-        sourceTable.refresh();
-    }
-
-    @FXML
-    private void downAction(ActionEvent event) {
-        List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
-        if (selected.isEmpty()) {
-            return;
-        }
-        for (int i = selected.size() - 1; i >= 0; i--) {
-            int index = selected.get(i);
-            if (index == sourceImages.size() - 1) {
-                continue;
-            }
-            ImageFileInformation info = sourceImages.get(index);
-            sourceImages.set(index, sourceImages.get(index + 1));
-            sourceImages.set(index + 1, info);
-        }
-        for (int i = selected.size() - 1; i >= 0; i--) {
-            int index = selected.get(i);
-            if (index < sourceImages.size() - 1) {
-                sourceTable.getSelectionModel().select(index + 1);
-            }
-        }
-        sourceTable.refresh();
-    }
-
-    @FXML
-    private void bgTransparent(ActionEvent event) {
-        bgPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    private void bgWhite(ActionEvent event) {
-        bgPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    private void bgBlack(ActionEvent event) {
-        bgPicker.setValue(Color.BLACK);
-    }
-
-    @FXML
-    protected void selectTargetFile(ActionEvent event) {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(ImageCombineTargetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
-            fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            targetFile = file;
-            AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
-            AppVaribles.setUserConfigValue(ImageCombineTargetPathKey, targetFile.getParent());
-
-            if (targetFileInput != null) {
-                targetFileInput.setText(targetFile.getAbsolutePath());
-            }
-        } catch (Exception e) {
-//            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void openTargetAction(ActionEvent event) {
-        if (!targetFile.exists()) {
-            openTargetButton.setDisable(true);
-            return;
-        }
-        openTargetButton.setDisable(false);
-        try {
-            Desktop.getDesktop().browse(targetFile.toURI());
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void saveAction(ActionEvent event) {
-        if (sourceImages == null || sourceImages.isEmpty() || targetFile == null) {
-            return;
-        }
-        Task saveTask = new Task<Void>() {
+        AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+        task = new Task<Void>() {
             private boolean fail;
 
             @Override
             protected Void call() throws Exception {
                 try {
-                    int count = 0;
                     try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
-                        PDPageContentStream content;
                         PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
@@ -880,93 +499,18 @@ public class ImagesCombinePdfController extends ImageBaseController {
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
                         info.setAuthor(authorInput.getText());
                         document.setDocumentInformation(info);
-                        BufferedImage bufferedImage;
-                        PDImageXObject imageObject;
-                        for (ImageFileInformation source : sourceImages) {
-                            if (source.getImage() == null) {
-                                bufferedImage = ImageIO.read(source.getFile());
-                                if (format == PdfImageFormat.Jpeg) {
-                                    bufferedImage = ImageConvertTools.clearAlpha(bufferedImage);
-                                    imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
-                                } else if (format == PdfImageFormat.Tiff) {
-                                    if (threshold < 0) {
-                                        bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
-                                    } else {
-                                        bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, threshold);
-                                    }
-                                    imageObject = CCITTFactory.createFromImage(document, bufferedImage);
-                                } else {
-                                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
-                                }
-                            } else {
-//                                logger.debug(source.getFile().getAbsolutePath() + "  " + source.getImageFormat());
-                                if (format == PdfImageFormat.Tiff) {
-                                    bufferedImage = SwingFXUtils.fromFXImage(source.getImage(), null);
-                                    if (threshold < 0) {
-                                        bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
-                                    } else {
-                                        bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, threshold);
-                                    }
-                                    imageObject = CCITTFactory.createFromImage(document, bufferedImage);
-                                } else if (format == PdfImageFormat.Jpeg) {
-                                    bufferedImage = FxmlImageTools.checkAlpha(source.getImage(), "jpg");
-                                    imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
-                                } else {
-                                    bufferedImage = FxmlImageTools.checkAlpha(source.getImage(), source.getImageFormat());
-                                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
-                                }
+                        int count = 0;
+                        int total = sourceImages.size();
+                        for (ImageInformation source : sourceImages) {
+                            BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(source);
+                            if (bufferedImage != null) {
+                                PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,
+                                        ++count, total, pdfFormat,
+                                        threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
+                                        pageWidth, pageHeight, marginSize, headerInput.getText());
                             }
-
-                            if (isImageSize) {
-                                pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
-                            } else {
-                                pageSize = new PDRectangle(pageWidth, pageHeight);
-                            }
-                            PDPage page = new PDPage(pageSize);
-                            document.addPage(page);
-                            content = new PDPageContentStream(document, page);
-
-                            float w, h;
-                            if (isImageSize) {
-                                w = imageObject.getWidth();
-                                h = imageObject.getHeight();
-                            } else {
-                                if (imageObject.getWidth() > imageObject.getHeight()) {
-                                    w = page.getTrimBox().getWidth() - marginSize * 2;
-                                    h = imageObject.getHeight() * w / imageObject.getWidth();
-                                } else {
-                                    h = page.getTrimBox().getHeight() - marginSize * 2;
-                                    w = imageObject.getWidth() * h / imageObject.getHeight();
-                                }
-                            }
-                            content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
-
-                            if (pageNumberCheck.isSelected()) {
-                                content.beginText();
-                                content.setFont(font, 12);
-                                content.newLineAtOffset(w + marginSize - 80, 5);
-                                content.showText((++count) + " / " + sourceImages.size());
-//                            content.showText(MessageFormat.format(AppVaribles.getMessage("PageNumber"), ++count, sourceImages.size()));
-                                content.endText();
-                            }
-
-                            if (!headerInput.getText().isEmpty()) {
-                                try {
-                                    content.beginText();
-                                    content.setFont(font, 16);
-                                    content.newLineAtOffset(marginSize, page.getTrimBox().getHeight() - marginSize + 2);
-                                    content.showText(headerInput.getText());
-//                            content.showText(MessageFormat.format(AppVaribles.getMessage("PageNumber"), ++count, sourceImages.size()));
-                                    content.endText();
-                                } catch (Exception e) {
-                                    logger.error(e.toString());
-                                }
-                            }
-
-                            content.close();
                         }
-
-                        document.save(targetFile);
+                        document.save(file);
                         fail = false;
                     }
 
@@ -978,9 +522,11 @@ public class ImagesCombinePdfController extends ImageBaseController {
                     @Override
                     public void run() {
                         try {
-                            if (!fail && targetFile.exists()) {
-                                Desktop.getDesktop().browse(targetFile.toURI());
-                                openTargetButton.setDisable(false);
+                            if (!fail && file.exists()) {
+                                popInformation(AppVaribles.getMessage("Successful"));
+                                if (viewCheck.isSelected()) {
+                                    Desktop.getDesktop().browse(file.toURI());
+                                }
                             } else {
                                 popError(AppVaribles.getMessage("ImageCombinePdfFail"));
                             }
@@ -992,8 +538,8 @@ public class ImagesCombinePdfController extends ImageBaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

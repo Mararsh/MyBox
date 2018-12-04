@@ -13,7 +13,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.objects.ImageInformation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,7 +90,8 @@ public class ImageJpegFile {
         }
     }
 
-    public static void explainJpegMetaData(Map<String, Map<String, Map<String, String>>> metaData, ImageFileInformation info) {
+    public static void explainJpegMetaData(Map<String, Map<String, Map<String, String>>> metaData,
+            ImageInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_jpeg_image_1.0")) {
                 return;
@@ -104,17 +105,17 @@ public class ImageJpegFile {
                     if (app0JFIF.containsKey("Xdensity")) {
                         int v = Integer.valueOf(app0JFIF.get("Xdensity"));
                         if (!isDpi) {
-                            info.setxDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
+                            info.setwDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
                         } else {
-                            info.setxDensity(v);
+                            info.setwDensity(v);
                         }
                     }
                     if (app0JFIF.containsKey("Ydensity")) {
                         int v = Integer.valueOf(app0JFIF.get("Ydensity"));
                         if (!isDpi) {
-                            info.setyDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
+                            info.sethDensity(ImageValueTools.dpi2dpcm(v));  // density value should be dpi
                         } else {
-                            info.setyDensity(v);
+                            info.sethDensity(v);
                         }
                     }
                 }
@@ -122,10 +123,10 @@ public class ImageJpegFile {
             if (javax_imageio_jpeg.containsKey("sof")) {
                 Map<String, String> sof = javax_imageio_jpeg.get("sof");
                 if (sof.containsKey("numLines")) {
-                    info.setyPixels(Integer.valueOf(sof.get("numLines")));
+                    info.setHeight(Integer.valueOf(sof.get("numLines")));
                 }
                 if (sof.containsKey("samplesPerLine")) {
-                    info.setxPixels(Integer.valueOf(sof.get("samplesPerLine")));
+                    info.setWidth(Integer.valueOf(sof.get("samplesPerLine")));
                 }
 //                if (sof.containsKey("samplePrecision")) {
 //                    info.setBitDepth(sof.get("samplePrecision"));

@@ -178,7 +178,7 @@ public class ImageMarginsTools {
             }
             int imageType = source.getType();
             if (addColor.getRGB() == AlphaColor.getRGB()) {
-                imageType = BufferedImage.TYPE_4BYTE_ABGR;
+                imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(totalWidth, totalHegiht, imageType);
             Graphics2D g = target.createGraphics();

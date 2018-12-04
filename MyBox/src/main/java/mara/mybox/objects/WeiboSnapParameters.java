@@ -2,7 +2,7 @@ package mara.mybox.objects;
 
 import java.io.File;
 import java.util.Date;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import mara.mybox.tools.PdfTools.PdfImageFormat;
 
 /**
  * @Author Mara
@@ -18,11 +18,11 @@ public class WeiboSnapParameters {
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles;
     private String webAddress, author, title, fontName;
-    private int marginSize, pageWidth, pageHeight, jpegQuality, format, threshold, maxMergeSize, category, pdfScale;
-    private PDRectangle pageSize;
+    private int marginSize, pageWidth, pageHeight, jpegQuality, threshold, maxMergeSize, category, pdfScale;
     private Date startMonth, endMonth;
     private float zoomScale;
     private File tempdir;
+    private PdfImageFormat format;
 
     public static class FileCategoryType {
 
@@ -119,11 +119,11 @@ public class WeiboSnapParameters {
         this.jpegQuality = jpegQuality;
     }
 
-    public int getFormat() {
+    public PdfImageFormat getFormat() {
         return format;
     }
 
-    public void setFormat(int format) {
+    public void setFormat(PdfImageFormat format) {
         this.format = format;
     }
 
@@ -133,14 +133,6 @@ public class WeiboSnapParameters {
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
-    }
-
-    public PDRectangle getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(PDRectangle pageSize) {
-        this.pageSize = pageSize;
     }
 
     public boolean isAddPageNumber() {

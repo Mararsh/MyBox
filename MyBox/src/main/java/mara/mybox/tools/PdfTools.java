@@ -12,10 +12,13 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
-import mara.mybox.controller.ImagesCombinePdfController;
+import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageGrayTools;
+import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.ImageAttributes;
+import mara.mybox.objects.ImageInformation;
 import mara.mybox.objects.WeiboSnapParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +49,11 @@ import org.apache.pdfbox.text.PDFTextStripper;
  */
 public class PdfTools {
 
-    public int PDF_dpi = 72; // pixels per inch
+    public static int PDF_dpi = 72; // pixels per inch
+
+    public static enum PdfImageFormat {
+        Original, Tiff, Jpeg
+    }
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -64,6 +71,82 @@ public class PdfTools {
 
     public static int inch2pixels(float inch) {
         return Math.round(inch * 72f);
+    }
+
+    public static boolean writePage(PDDocument document, PDFont font,
+            String sourceFormat, BufferedImage bufferedImage,
+            int index, int total, PdfImageFormat targetFormat,
+            int threshold, int jpegQuality, boolean isImageSize, boolean pageNumber,
+            int pageWidth, int pageHeight, int marginSize, String header) {
+        try {
+            PDImageXObject imageObject;
+            switch (targetFormat) {
+                case Tiff:
+                    if (threshold < 0) {
+                        bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
+                    } else {
+                        bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, threshold);
+                    }
+                    imageObject = CCITTFactory.createFromImage(document, bufferedImage);
+                    break;
+                case Jpeg:
+                    bufferedImage = ImageConvertTools.checkAlpha(bufferedImage, "jpg");
+                    imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
+                    break;
+                default:
+                    if (sourceFormat != null) {
+                        bufferedImage = ImageConvertTools.checkAlpha(bufferedImage, sourceFormat);
+                    }
+                    imageObject = LosslessFactory.createFromImage(document, bufferedImage);
+                    break;
+            }
+            PDRectangle pageSize;
+            if (isImageSize) {
+                pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
+            } else {
+                pageSize = new PDRectangle(pageWidth, pageHeight);
+            }
+            PDPage page = new PDPage(pageSize);
+            document.addPage(page);
+            try (PDPageContentStream content = new PDPageContentStream(document, page)) {
+                float w, h;
+                if (isImageSize) {
+                    w = imageObject.getWidth();
+                    h = imageObject.getHeight();
+                } else {
+                    if (imageObject.getWidth() > imageObject.getHeight()) {
+                        w = page.getTrimBox().getWidth() - marginSize * 2;
+                        h = imageObject.getHeight() * w / imageObject.getWidth();
+                    } else {
+                        h = page.getTrimBox().getHeight() - marginSize * 2;
+                        w = imageObject.getWidth() * h / imageObject.getHeight();
+                    }
+                }
+                content.drawImage(imageObject, marginSize, page.getTrimBox().getHeight() - marginSize - h, w, h);
+                if (pageNumber) {
+                    content.beginText();
+                    content.setFont(font, 12);
+                    content.newLineAtOffset(w + marginSize - 80, 5);
+                    content.showText(index + " / " + total);
+                    content.endText();
+                }
+                if (header != null && !header.trim().isEmpty()) {
+                    try {
+                        content.beginText();
+                        content.setFont(font, 16);
+                        content.newLineAtOffset(marginSize, page.getTrimBox().getHeight() - marginSize + 2);
+                        content.showText(header.trim());
+                        content.endText();
+                    } catch (Exception e) {
+                        logger.error(e.toString());
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
     public static boolean htmlIntoPdf(List<Image> images, File targetFile, boolean isImageSize) {
@@ -137,70 +220,10 @@ public class PdfTools {
 
     public static boolean imageInPdf(PDDocument document, BufferedImage bufferedImage,
             WeiboSnapParameters p, int pageNumber, int totalPage, PDFont font) {
-        try {
-            PDImageXObject imageObject;
-            if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Tiff) {
-                if (p.getThreshold() < 0) {
-                    bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
-                } else {
-                    bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, p.getThreshold());
-                }
-                imageObject = CCITTFactory.createFromImage(document, bufferedImage);
-            } else if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
-                imageObject = JPEGFactory.createFromImage(document, bufferedImage, p.getJpegQuality() / 100f);
-            } else {
-                imageObject = LosslessFactory.createFromImage(document, bufferedImage);
-            }
-
-            PDRectangle pageSize;
-            if (p.isIsImageSize()) {
-                pageSize = new PDRectangle(imageObject.getWidth() + p.getMarginSize() * 2, imageObject.getHeight() + p.getMarginSize() * 2);
-            } else {
-                pageSize = new PDRectangle(p.getPageWidth(), p.getPageHeight());
-//                        logger.debug(p.getPageWidth() + " " + p.getPageHeight());
-            }
-            PDPage page = new PDPage(pageSize);
-            document.addPage(page);
-
-            float w, h;
-            if (p.isIsImageSize()) {
-                w = imageObject.getWidth();
-                h = imageObject.getHeight();
-            } else {
-                if (imageObject.getWidth() > imageObject.getHeight()) {
-                    w = page.getTrimBox().getWidth() - p.getMarginSize() * 2;
-                    h = imageObject.getHeight() * w / imageObject.getWidth();
-                } else {
-                    h = page.getTrimBox().getHeight() - p.getMarginSize() * 2;
-                    w = imageObject.getWidth() * h / imageObject.getHeight();
-                }
-            }
-            PDPageContentStream content = new PDPageContentStream(document, page);
-            content.drawImage(imageObject, p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() - h, w, h);
-
-            content.beginText();
-            content.setFont(font, 12);
-            content.newLineAtOffset(w + p.getMarginSize() - 80, 5);
-            content.showText(pageNumber + " / " + totalPage);
-            content.endText();
-
-            if (!p.getTitle().isEmpty()) {
-                content.beginText();
-                content.setFont(font, 16);
-                content.newLineAtOffset(p.getMarginSize(), page.getTrimBox().getHeight() - p.getMarginSize() + 2);
-                content.showText(p.getTitle());
-                content.endText();
-            }
-
-            content.close();
-
-            return true;
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
-        }
-
+        return writePage(document, font, "png", bufferedImage,
+                pageNumber, totalPage, p.getFormat(),
+                p.getThreshold(), p.getJpegQuality(), p.isIsImageSize(), p.isAddPageNumber(),
+                p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle());
     }
 
     public static boolean images2Pdf(List<Image> images, File targetFile,
@@ -221,12 +244,20 @@ public class PdfTools {
 
                 BufferedImage bufferedImage;
                 for (Image image : images) {
-                    if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Tiff) {
+                    if (null == p.getFormat()) {
                         bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                    } else if (p.getFormat() == ImagesCombinePdfController.PdfImageFormat.Jpeg) {
-                        bufferedImage = FxmlImageTools.checkAlpha(image, "jpg");
                     } else {
-                        bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                        switch (p.getFormat()) {
+                            case Tiff:
+                                bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                                break;
+                            case Jpeg:
+                                bufferedImage = FxmlImageTools.checkAlpha(image, "jpg");
+                                break;
+                            default:
+                                bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                                break;
+                        }
                     }
                     imageInPdf(document, bufferedImage, p, ++count, total, font);
                 }
@@ -443,4 +474,68 @@ public class PdfTools {
 //
 //        is.close();
     }
+
+    public static boolean writeSplitImages(String sourceFormat, String sourceFile,
+            ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
+            ImageAttributes attributes, File targetFile,
+            PdfImageFormat pdfFormat, String fontName, String author,
+            int threshold, int jpegQuality, boolean isImageSize, boolean pageNumber,
+            int pageWidth, int pageHeight, int marginSize, String header) {
+        try {
+            if (sourceFormat == null || sourceFile == null || imageInformation == null
+                    || rows == null || rows.isEmpty()
+                    || cols == null || cols.isEmpty() || targetFile == null) {
+                return false;
+            }
+            try {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+            } catch (Exception e) {
+                return false;
+            }
+
+            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+                PDFont font = PdfTools.getFont(document, fontName);
+                PDDocumentInformation info = new PDDocumentInformation();
+                info.setCreationDate(Calendar.getInstance());
+                info.setModificationDate(Calendar.getInstance());
+                info.setProducer("MyBox v" + CommonValues.AppVersion);
+                info.setAuthor(author);
+                document.setDocumentInformation(info);
+                int x1, y1, x2, y2;
+                BufferedImage wholeSource = null;
+                if (!imageInformation.isIsSampled()) {
+                    wholeSource = FxmlImageTools.getBufferedImage(imageInformation.getImage());
+                }
+                int count = 0;
+                int total = (rows.size() - 1) * (cols.size() - 1);
+                for (int i = 0; i < rows.size() - 1; i++) {
+                    y1 = rows.get(i);
+                    y2 = rows.get(i + 1);
+                    for (int j = 0; j < cols.size() - 1; j++) {
+                        x1 = cols.get(j);
+                        x2 = cols.get(j + 1);
+                        BufferedImage target;
+                        if (imageInformation.isIsSampled()) {
+                            target = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
+                        } else {
+                            target = ImageConvertTools.cropImage(wholeSource, x1, y1, x2, y2);
+                        }
+                        PdfTools.writePage(document, font, sourceFormat, target,
+                                ++count, total, pdfFormat,
+                                threshold, jpegQuality, isImageSize, pageNumber,
+                                pageWidth, pageHeight, marginSize, header);
+                    }
+                }
+                document.save(targetFile);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+
+    }
+
 }

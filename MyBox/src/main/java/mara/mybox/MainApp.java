@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.imageio.ImageIO;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.db.DerbyBase;
@@ -35,7 +36,7 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         try {
 
-            // https://bugs.openjdk.java.net/browse/JDK-8041125
+            // https://pdfbox.apache.org/2.0/getting-started.html
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
 
@@ -49,6 +50,13 @@ public class MainApp extends Application {
             AppVaribles.initAppVaribles();
             DerbyBase.checkUpdates();
 
+            File tempPath = new File(CommonValues.TempPath);
+            if (!tempPath.exists()) {
+                tempPath.mkdirs();
+            }
+            ImageIO.setUseCache(true);
+            ImageIO.setCacheDirectory(new File(CommonValues.TempPath));
+
 //            logger.debug(Screen.getPrimary().getDpi());
             FXMLLoader fxmlLoader;
             Pane pane;
@@ -56,8 +64,9 @@ public class MainApp extends Application {
                 fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
                 pane = fxmlLoader.load();
                 final ImageManufactureController imageController = (ImageManufactureController) fxmlLoader.getController();
-                imageController.loadImage(imageFile);
                 imageController.setMyStage(stage);
+                imageController.setBaseTitle(AppVaribles.getMessage("ImageManufacture"));
+                imageController.loadImage(imageFile);
                 stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                     @Override
                     public void handle(WindowEvent event) {

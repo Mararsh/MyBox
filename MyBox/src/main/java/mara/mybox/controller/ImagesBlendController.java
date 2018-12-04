@@ -38,9 +38,9 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.objects.ImageInformation;
 
 /**
  * @Author Mara
@@ -59,7 +59,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     private File foreFile, backFile, targetFile;
     private Image foreImage, backImage;
-    private ImageFileInformation foreInfo, backInfo;
+    private ImageInformation foreInfo, backInfo;
 
     @FXML
     private VBox mainPane, targetBox;
@@ -371,7 +371,7 @@ public class ImagesBlendController extends ImageViewerController {
                     try {
                         BufferedImage bufferImage = ImageIO.read(file);
                         foreImage = SwingFXUtils.toFXImage(bufferImage, null);
-                        foreInfo = ImageFileReaders.readImageMetaData(fileName);
+                        foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
                         foreInfo.setImage(foreImage);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -452,7 +452,7 @@ public class ImagesBlendController extends ImageViewerController {
                     try {
                         BufferedImage bufferImage = ImageIO.read(file);
                         backImage = SwingFXUtils.toFXImage(bufferImage, null);
-                        backInfo = ImageFileReaders.readImageMetaData(fileName);
+                        backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
                         backInfo.setImage(backImage);
                         Platform.runLater(new Runnable() {
                             @Override

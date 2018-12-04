@@ -9,6 +9,7 @@
         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
             <items>
                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+            <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />

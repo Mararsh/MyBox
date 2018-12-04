@@ -1,8 +1,7 @@
 package mara.mybox.objects;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import javafx.scene.image.Image;
+import java.util.List;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -14,37 +13,18 @@ import mara.mybox.tools.FileTools;
  */
 public class ImageFileInformation extends FileInformation {
 
-    private String imageFormat, colorSpace, compressionType, imageRotation, bitDepth, extraFormat = "";
-    private int xPixels, yPixels, colorChannels;
-    private int yDensity, xDensity;  // dpi
-    private boolean hasAlpha, isLossless;
-    private String metaData, filename, pixels;
-    private Image image;
-    private BufferedImage bufferedImage;
-    private ImageFileInformation self;
+    private String imageFormat, filename;
+    private ImageInformation imageInformation;
+    private List<ImageInformation> imagesInformation;
+    private int numberOfImages;
 
     public ImageFileInformation() {
-        hasAlpha = false;
-        isLossless = true;
     }
 
     public ImageFileInformation(File file) {
         super(file);
-        hasAlpha = false;
-        isLossless = true;
         filename = fileName.get();
-        imageFormat = FileTools.getFileSuffix(filename);
-    }
-
-    public ImageFileInformation(Image image) {
-        hasAlpha = false;
-        isLossless = true;
-        this.image = image;
-        if (image == null) {
-            return;
-        }
-        xPixels = (int) image.getWidth();
-        yPixels = (int) image.getHeight();
+        imageFormat = FileTools.getFileSuffix(filename).toLowerCase();
     }
 
     public String getImageFormat() {
@@ -55,124 +35,12 @@ public class ImageFileInformation extends FileInformation {
         this.imageFormat = imageFormat;
     }
 
-    public String getColorSpace() {
-        return colorSpace;
+    public List<ImageInformation> getImagesInformation() {
+        return imagesInformation;
     }
 
-    public void setColorSpace(String colorSpace) {
-        this.colorSpace = colorSpace;
-    }
-
-    public String getCompressionType() {
-        return compressionType;
-    }
-
-    public void setCompressionType(String compressionType) {
-        this.compressionType = compressionType;
-    }
-
-    public String getImageRotation() {
-        return imageRotation;
-    }
-
-    public void setImageRotation(String imageRotation) {
-        this.imageRotation = imageRotation;
-    }
-
-    public int getxPixels() {
-        return xPixels;
-    }
-
-    public void setxPixels(int xPixels) {
-        this.xPixels = xPixels;
-    }
-
-    public int getyPixels() {
-        return yPixels;
-    }
-
-    public void setyPixels(int yPixels) {
-        this.yPixels = yPixels;
-    }
-
-    public int getyDensity() {
-        return yDensity;
-    }
-
-    public void setyDensity(int yDensity) {
-        this.yDensity = yDensity;
-    }
-
-    public int getxDensity() {
-        return xDensity;
-    }
-
-    public void setxDensity(int xDensity) {
-        this.xDensity = xDensity;
-    }
-
-    public int getColorChannels() {
-        return colorChannels;
-    }
-
-    public void setColorChannels(int colorChannels) {
-        this.colorChannels = colorChannels;
-    }
-
-    public String getBitDepth() {
-        return bitDepth;
-    }
-
-    public void setBitDepth(String bitDepth) {
-        this.bitDepth = bitDepth;
-    }
-
-    public boolean isHasAlpha() {
-        return hasAlpha;
-    }
-
-    public void setHasAlpha(boolean hasAlpha) {
-        this.hasAlpha = hasAlpha;
-    }
-
-    public boolean isIsLossless() {
-        return isLossless;
-    }
-
-    public void setIsLossless(boolean isLossless) {
-        this.isLossless = isLossless;
-    }
-
-    public String getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(String metaData) {
-        this.metaData = metaData;
-    }
-
-    public String getExtraFormat() {
-        return extraFormat;
-    }
-
-    public void setExtraFormat(String extraFormat) {
-        this.extraFormat = extraFormat;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public ImageFileInformation getSelf() {
-        return self;
-    }
-
-    public void setSelf(ImageFileInformation self) {
-        this.self = self;
+    public void setImagesInformation(List<ImageInformation> imagesInformation) {
+        this.imagesInformation = imagesInformation;
     }
 
     public String getFilename() {
@@ -186,27 +54,20 @@ public class ImageFileInformation extends FileInformation {
         this.filename = filename;
     }
 
-    public String getPixels() {
-        if (pixels == null) {
-            if (xPixels == 0 && yPixels == 0) {
-                pixels = "";
-            } else {
-                pixels = xPixels + "x" + yPixels;
-            }
-        }
-        return pixels;
+    public ImageInformation getImageInformation() {
+        return imageInformation;
     }
 
-    public void setPixels(String pixels) {
-        this.pixels = pixels;
+    public void setImageInformation(ImageInformation imageInformation) {
+        this.imageInformation = imageInformation;
     }
 
-    public BufferedImage getBufferedImage() {
-        return bufferedImage;
+    public int getNumberOfImages() {
+        return numberOfImages;
     }
 
-    public void setBufferedImage(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
+    public void setNumberOfImages(int numberOfImages) {
+        this.numberOfImages = numberOfImages;
     }
 
 }

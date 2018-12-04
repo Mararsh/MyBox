@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 /**
@@ -21,6 +22,11 @@ public class ValueTools {
             v = "0" + v;
         }
         return v;
+    }
+
+    public static String formatData(long data) {
+        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(data);
     }
 
     public static float roundFloat2(float fvalue) {
@@ -81,6 +87,15 @@ public class ValueTools {
             }
         }
         return m;
+    }
+
+    public static long getAvaliableMemory() {
+        Runtime r = Runtime.getRuntime();
+        return r.maxMemory() - (r.totalMemory() - r.freeMemory());
+    }
+
+    public static long getAvaliableMemoryMB() {
+        return getAvaliableMemory() / (1024 * 1024);
     }
 
 }
