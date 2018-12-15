@@ -7,7 +7,7 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-exe.zip) 。
+[MyBox-4.5-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
