@@ -372,6 +372,10 @@ public abstract class PdfBaseController extends BaseController {
                                 paraBox.setDisable(false);
                             }
                             showCost();
+
+                            if (operationBarController.miaoCheck.isSelected()) {
+                                FxmlTools.miao3();
+                            }
                     }
 
                 } catch (Exception e) {

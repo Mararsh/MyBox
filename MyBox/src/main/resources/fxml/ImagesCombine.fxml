@@ -123,7 +123,7 @@
                                                         <RadioButton fx:id="sizeSmallerRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%AlignAsSmaller" toggleGroup="$sizeGroup" />
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT">
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <RadioButton fx:id="eachWidthRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%EachWidth" toggleGroup="$sizeGroup" />
                                                         <TextField fx:id="eachWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />

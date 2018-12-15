@@ -112,8 +112,8 @@
                         <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                         <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="openHtmlEditor" mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
-                        <MenuItem mnemonicParsing="false" onAction="#openTextEditor" text="%TextEditor" />
+                        <MenuItem mnemonicParsing="false" onAction="#openTextEncoding" text="%TextEncoding" />
+                        <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                     </items>
@@ -121,7 +121,7 @@
                 <Menu mnemonicParsing="false" text="%NetworkTools">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
-                        <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor2" text="%HtmlEditor" />
+                        <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                     </items>
                 </Menu>
                 <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">

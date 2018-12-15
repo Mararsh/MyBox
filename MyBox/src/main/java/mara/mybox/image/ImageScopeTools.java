@@ -131,9 +131,9 @@ public class ImageScopeTools {
                 List<Integer> xs = new ArrayList<>();
                 List<Integer> ys = new ArrayList<>();
                 for (int i = 0; i < rows.size() - 1; i++) {
-                    int h = rows.get(i + 1) - rows.get(i);
+                    int h = rows.get(i + 1) - rows.get(i) + 1;
                     for (int j = 0; j < cols.size() - 1; j++) {
-                        int w = cols.get(j + 1) - cols.get(j);
+                        int w = cols.get(j + 1) - cols.get(j) + 1;
                         texts.add(w + "x" + h);
                         xs.add(cols.get(j) + w / 3);
                         ys.add(rows.get(i) + h / 3);

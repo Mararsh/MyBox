@@ -104,7 +104,7 @@ public class ImageGifFile {
     // https://github.com/DhyanB/Open-Imaging
     public static List<BufferedImage> readBrokenGifFile(String src) {
         try {
-            logger.debug("readBrokenGifFile");
+//            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
@@ -123,7 +123,7 @@ public class ImageGifFile {
 
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
         try {
-            logger.debug("readBrokenGifFile");
+//            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
@@ -142,6 +142,7 @@ public class ImageGifFile {
 
     public static List<BufferedImage> readBrokenGifFile(String src, List<ImageInformation> imagesInfo) {
         try {
+//            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
             try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);

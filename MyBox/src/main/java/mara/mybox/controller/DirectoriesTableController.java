@@ -22,7 +22,7 @@ import mara.mybox.objects.FileInformation;
  */
 public class DirectoriesTableController extends FilesTableController {
 
-    protected DirectoriessRenameController renameController;
+    protected DirectoriesRenameController renameController;
 
     @Override
     protected void initializeNext() {
@@ -100,11 +100,11 @@ public class DirectoriesTableController extends FilesTableController {
         deleteButton.setDisable(true);
     }
 
-    public DirectoriessRenameController getRenameController() {
+    public DirectoriesRenameController getRenameController() {
         return renameController;
     }
 
-    public void setRenameController(DirectoriessRenameController renameController) {
+    public void setRenameController(DirectoriesRenameController renameController) {
         this.renameController = renameController;
     }
 

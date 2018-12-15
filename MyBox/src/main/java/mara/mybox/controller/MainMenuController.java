@@ -555,15 +555,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openHtmlEditor2(ActionEvent event) {
-        HtmlEditorController controller
-                = (HtmlEditorController) reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
-//        controller.switchBroswerTab();
+    private void openTextEncoding(ActionEvent event) {
+        reloadStage(CommonValues.TextEncodingFxml, AppVaribles.getMessage("TextEncoding"));
     }
 
     @FXML
-    private void openTextEditor(ActionEvent event) {
-        reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
+    private void openTextEncodingBatch(ActionEvent event) {
+        reloadStage(CommonValues.TextEncodingBatchFxml, AppVaribles.getMessage("TextEncodingBatch"));
     }
 
     @FXML

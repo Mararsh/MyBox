@@ -603,7 +603,8 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    protected void imageClicked(MouseEvent event) {
+    @Override
+    public void clickImage(MouseEvent event) {
         if (image == null) {
             return;
         }

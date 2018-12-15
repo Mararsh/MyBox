@@ -98,10 +98,23 @@ public class TableImageHistory extends DerbyBase {
         }
     }
 
-    public static boolean clear(String image) {
+    public static boolean clearImage(String image) {
         try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_history WHERE image_location='" + image + "'";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean clearHistory(String image, String his) {
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+                Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM image_history WHERE image_location='" + image + "' AND "
+                    + "history_location='" + his + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {

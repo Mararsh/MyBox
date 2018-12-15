@@ -236,7 +236,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         return;
                     }
 //                    logger.debug(index + " " + imageHistories.get(index) + "  " + hisBox.getSelectionModel().getSelectedItem());
-                    setImage(new File(imageHistories.get(index)));
+                    loadImageHistory(index);
                 }
             });
             hisBox.setVisibleRowCount(15);
@@ -1150,6 +1150,26 @@ public abstract class ImageManufactureController extends ImageViewerController {
         thread.start();
     }
 
+    protected boolean loadImageHistory(final int index) {
+        if (values == null || values.getSourceFile() == null
+                || imageHistories == null
+                || index < 0 || index > imageHistories.size() - 1) {
+            return false;
+        }
+        String filename = imageHistories.get(index);
+        try {
+            File file = new File(filename);
+            if (file.exists()) {
+                setImage(file);
+                return true;
+            }
+        } catch (Exception e) {
+        }
+        imageHistories.remove(index);
+        TableImageHistory.clearHistory(values.getSourceFile().getAbsolutePath(), filename);
+        return false;
+    }
+
     protected void switchTab(Tab newTab) {
 
         String tabName = null;
@@ -1505,6 +1525,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void clickImage(MouseEvent event) {
         if (values == null || values.getCurrentImage() == null || scope == null) {
             imageView.setCursor(Cursor.OPEN_HAND);

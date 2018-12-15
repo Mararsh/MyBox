@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.FileInformation;
@@ -321,6 +322,9 @@ public class FilesRenameController extends BaseController {
                                 paraBox.setDisable(false);
                             }
                             showCost();
+                            if (operationBarController.miaoCheck.isSelected()) {
+                                FxmlTools.miao3();
+                            }
 
                     }
 

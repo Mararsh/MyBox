@@ -57,7 +57,7 @@ public class ImageManufactureConvolutionController extends ImageManufactureContr
     protected void initConvolutionTab() {
         try {
 
-            Tooltip tips = new Tooltip(getMessage("CTRL+c"));
+            Tooltip tips = new Tooltip(getMessage("CTRL+k"));
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(kernelBox, tips);
 
@@ -141,8 +141,8 @@ public class ImageManufactureConvolutionController extends ImageManufactureContr
         }
         if (event.isControlDown()) {
             switch (key) {
-                case "c":
-                case "C":
+                case "k":
+                case "K":
                     kernelBox.show();
                     break;
             }

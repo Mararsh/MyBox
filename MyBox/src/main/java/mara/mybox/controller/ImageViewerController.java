@@ -12,6 +12,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -22,18 +23,28 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
 import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.IntRectangle;
 
 /**
  * @Author Mara
@@ -48,10 +59,12 @@ public class ImageViewerController extends ImageBaseController {
     protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
 
+    protected int cropLeftX, cropLeftY, cropRightX, cropRightY;
+
     @FXML
     protected TextField imageFile;
     @FXML
-    protected HBox sourceBox;
+    protected HBox sourceBox, opeBox;
     @FXML
     protected VBox contentBox;
     @FXML
@@ -60,9 +73,12 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     protected Button tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
     @FXML
-    protected ToolBar toolbar, navBar, infoBar;
+    protected ToolBar toolbar, navBar, infoBar, selectionBar;
     @FXML
     protected ToggleGroup sortGroup;
+
+    @FXML
+    private Button cropButton, copySelectionButton;
 
     @Override
     protected void initializeNext() {
@@ -71,6 +87,24 @@ public class ImageViewerController extends ImageBaseController {
                 toolbar.disableProperty().bind(
                         Bindings.isNull(imageView.imageProperty())
                 );
+            }
+            if (opeBox != null && imageView != null) {
+                opeBox.disableProperty().bind(
+                        Bindings.isNull(imageView.imageProperty())
+                );
+            }
+
+            if (cropButton != null) {
+                Tooltip tips = new Tooltip(getMessage("CropLabel"));
+                tips.setFont(new Font(16));
+                FxmlTools.quickTooltip(cropButton, tips);
+
+            }
+
+            if (copySelectionButton != null) {
+                Tooltip tips = new Tooltip("CTRL+c");
+                tips.setFont(new Font(16));
+                FxmlTools.quickTooltip(copySelectionButton, tips);
             }
 //            setTips();
 
@@ -147,6 +181,10 @@ public class ImageViewerController extends ImageBaseController {
             if (sourceFile != null && navBar != null) {
                 navBar.setDisable(false);
                 checkImageNevigator();
+            }
+
+            if (cropButton != null) {
+                clearCropAction();
             }
 
         } catch (Exception e) {
@@ -384,6 +422,168 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
+    public void clearCropAction() {
+        cropLeftX = 0;
+        cropLeftY = 0;
+        cropRightX = (int) image.getWidth() - 1;
+        cropRightY = (int) image.getHeight() - 1;
+        imageView.setImage(image);
+        cropButton.setDisable(true);
+        bottomLabel.setText(getMessage("CropLabel"));
+    }
+
+    @FXML
+    public void clickImage(MouseEvent event) {
+        if (cropButton == null) {
+            imageView.setCursor(Cursor.OPEN_HAND);
+            return;
+        }
+        imageView.setCursor(Cursor.HAND);
+
+        int x = (int) Math.round(event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth());
+        int y = (int) Math.round(event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight());
+
+        if (event.getButton() == MouseButton.PRIMARY) {
+            cropLeftX = x;
+            cropLeftY = y;
+
+        } else if (event.getButton() == MouseButton.SECONDARY) {
+            cropRightX = x;
+            cropRightY = y;
+        }
+
+        if (cropLeftX < cropRightX && cropLeftY < cropRightY) {
+            indicateSelection();
+            cropButton.setDisable(false);
+            bottomLabel.setText(getMessage("Size") + ": " + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
+        } else {
+            cropButton.setDisable(true);
+        }
+
+    }
+
+    private void indicateSelection() {
+        if (task != null && task.isRunning()) {
+            return;
+        }
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    int lineWidth = 1;
+                    if (image.getWidth() >= 200) {
+                        lineWidth = (int) image.getWidth() / 200;
+                    }
+                    final Image newImage = FxmlScopeTools.indicateRectangle(image,
+                            Color.RED, lineWidth,
+                            new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImage(newImage);
+//                            popInformation(AppVaribles.getMessage("CropComments"));
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                return null;
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    @FXML
+    public void copySelectionAction() {
+        copySelectionAction(imageView.getImage());
+    }
+
+    public void copySelectionAction(Image currentImage) {
+        Image cropImage;
+        if (cropLeftX == 0 && cropLeftY == 0
+                && cropRightX == (int) currentImage.getWidth() && cropRightY == (int) currentImage.getHeight()) {
+            cropImage = currentImage;
+        } else {
+            cropImage = FxmlImageTools.cropImage(currentImage, cropLeftX, cropLeftY, cropRightX, cropRightY);
+        }
+        ClipboardContent cc = new ClipboardContent();
+        cc.putImage(cropImage);
+        Clipboard.getSystemClipboard().setContent(cc);
+        popInformation(getMessage("ImageSelectionInClipBoard"));
+    }
+
+    @FXML
+    private void cropAction() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+            if (!path.isDirectory()) {
+                path = new File(CommonValues.UserFilePath);
+            }
+            fileChooser.setInitialDirectory(path);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+
+            if (task != null && task.isRunning()) {
+                return;
+            }
+            task = new Task<Void>() {
+                private boolean ok;
+
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        Image cropImage = FxmlImageTools.cropImage(image,
+                                cropLeftX, cropLeftY, cropRightX, cropRightY);
+                        String format = FileTools.getFileSuffix(file.getName());
+                        BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(cropImage);
+                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (ok) {
+                                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                    alert.setTitle(getMyStage().getTitle());
+                                    alert.setContentText(AppVaribles.getMessage("Successful"));
+                                    ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("Open"));
+                                    ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Close"));
+                                    alert.getButtonTypes().setAll(buttonOpen, buttonCancel);
+
+                                    Optional<ButtonType> result = alert.showAndWait();
+                                    if (result.get() == buttonOpen) {
+                                        showImageView(file.getAbsolutePath());
+                                    }
+                                } else {
+                                    popInformation(AppVaribles.getMessage("Failed"));
+                                }
+                            }
+                        });
+                        return null;
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                    return null;
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
     public void saveAs() {
         try {
             if (imageInformation.isIsSampled()) {
@@ -438,6 +638,22 @@ public class ImageViewerController extends ImageBaseController {
             logger.error(e.toString());
         }
 
+    }
+
+    @Override
+    protected void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        String key = event.getText();
+        if (key == null || key.isEmpty()) {
+            return;
+        }
+        if (event.isControlDown()) {
+            switch (key) {
+                case "c":
+                    copySelectionAction();
+                    break;
+            }
+        }
     }
 
     public void setQuickTips() {

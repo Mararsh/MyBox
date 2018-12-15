@@ -18,11 +18,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.controller.BaseController.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.IntRectangle;
 
 /**
@@ -32,8 +32,6 @@ import mara.mybox.objects.IntRectangle;
  * @License Apache License Version 2.0
  */
 public class ImageManufactureCropController extends ImageManufactureController {
-
-    protected int cropLeftX, cropLeftY, cropRightX, cropRightY;
 
     @FXML
     protected TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
@@ -235,6 +233,12 @@ public class ImageManufactureCropController extends ImageManufactureController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    @Override
+    public void copySelectionAction() {
+        copySelectionAction(values.getCurrentImage());
     }
 
     @FXML

@@ -88,9 +88,9 @@ public class HtmlEditorController extends TextEditorController {
     private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
     private final String WeiBoPassportChecked;
     private WebEngine webEngine;
-    private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
+    private int delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
     protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
-    private boolean isSettingValues, isOneImage, isLoadingWeiboPassport;
+    private boolean isOneImage, isLoadingWeiboPassport;
     private URL url;
     private List<Image> images;
     private File targetFile;
@@ -101,7 +101,7 @@ public class HtmlEditorController extends TextEditorController {
     private float zoomScale;
 
     @FXML
-    private Button saveButton, openButton, createButton, loadButton, updateEditorButton, snapsotButton;
+    private Button loadButton, updateEditorButton, snapsotButton;
     @FXML
     private HTMLEditor htmlEdior;
     @FXML
@@ -503,7 +503,8 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void openAction(ActionEvent event) {
+    @Override
+    protected void openAction() {
         try {
             if (!checkSavingForNextAction()) {
                 return;
@@ -640,7 +641,8 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void saveAction() {
+    @Override
+    protected void saveAction() {
         try {
             isSettingValues = true;
             if (sourceFile == null) {
@@ -677,7 +679,8 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void saveAsAction(ActionEvent event) {
+    @Override
+    protected void saveAsAction() {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
@@ -711,7 +714,8 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    private void createAction(ActionEvent event) {
+    @Override
+    protected void createAction() {
         try {
             isSettingValues = true;
             sourceFile = null;

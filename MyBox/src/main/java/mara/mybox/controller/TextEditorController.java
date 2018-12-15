@@ -10,7 +10,6 @@ import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -32,16 +31,16 @@ import mara.mybox.objects.CommonValues;
  */
 public class TextEditorController extends BaseController {
 
-    private final String TextFilePathKey;
-    private int cols, rows;
+    protected final String TextFilePathKey;
+    protected int cols, rows;
     protected SimpleBooleanProperty fileChanged;
     protected int lastTextLen;
-    private boolean isSettingValues;
+    protected boolean isSettingValues;
 
     @FXML
-    private Button openButton, createButton, saveButton;
+    protected Button openButton, createButton, saveButton;
     @FXML
-    private TextArea textArea;
+    protected TextArea textArea;
     @FXML
     protected TextField bottomText;
 
@@ -51,8 +50,9 @@ public class TextEditorController extends BaseController {
 
         fileExtensionFilter = new ArrayList() {
             {
-                add(new FileChooser.ExtensionFilter("txt", "*.txt"));
                 add(new FileChooser.ExtensionFilter("*", "*.*"));
+                add(new FileChooser.ExtensionFilter("txt", "*.txt"));
+                add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             }
         };
     }
@@ -98,7 +98,7 @@ public class TextEditorController extends BaseController {
     }
 
     @FXML
-    private void openAction(ActionEvent event) {
+    protected void openAction() {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
@@ -140,7 +140,7 @@ public class TextEditorController extends BaseController {
     }
 
     @FXML
-    private void saveAction() {
+    protected void saveAction() {
         try {
             isSettingValues = true;
             if (sourceFile == null) {
@@ -170,7 +170,7 @@ public class TextEditorController extends BaseController {
     }
 
     @FXML
-    private void saveAsAction(ActionEvent event) {
+    protected void saveAsAction() {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
@@ -198,7 +198,7 @@ public class TextEditorController extends BaseController {
     }
 
     @FXML
-    private void createAction(ActionEvent event) {
+    protected void createAction() {
         try {
 
             isSettingValues = true;

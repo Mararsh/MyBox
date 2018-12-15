@@ -446,6 +446,10 @@ public class DirectorySynchronizeController extends BaseController {
                                         + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
                             }
 
+                            if (operationBarController.miaoCheck.isSelected()) {
+                                FxmlTools.miao3();
+                            }
+
                     }
 
                 } catch (Exception e) {

@@ -468,9 +468,9 @@ public class FxmlImageTools {
 
             if (showSize) {
                 for (int i = 0; i < rows.size() - 1; i++) {
-                    int h = rows.get(i + 1) - rows.get(i);
+                    int h = rows.get(i + 1) - rows.get(i) + 1;
                     for (int j = 0; j < cols.size() - 1; j++) {
-                        int w = cols.get(j + 1) - cols.get(j);
+                        int w = cols.get(j + 1) - cols.get(j) + 1;
                         Text text = new Text();
                         text.setX(cols.get(j) + w / 3);
                         text.setY(rows.get(i) + h / 3);

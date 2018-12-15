@@ -37,6 +37,12 @@
     -fx-font-weight: bolder;
 }
 
+.grayArea, .grayArea:focused {
+    -fx-background-color: transparent ;
+    -fx-background-insets: 0px ;
+    -fx-text-fill: gray;
+}
+
 
 
 

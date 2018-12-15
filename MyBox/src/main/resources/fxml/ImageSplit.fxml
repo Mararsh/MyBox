@@ -91,12 +91,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <ToggleGroup fx:id="splitGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton mnemonicParsing="false" selected="true" text="%DivideEqually" toggleGroup="$splitGroup" />
+                                          <RadioButton mnemonicParsing="false" text="%BySize" toggleGroup="$splitGroup" />
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%ByNumber" toggleGroup="$splitGroup" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
                                         </HBox>
-                                        <HBox fx:id="equalBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                        <HBox fx:id="byBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
@@ -105,27 +106,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar maxWidth="1.7976931348623157E308">
                                                     <items>
-                                                        <Label text="%RowsNumber" />
-                                                        <TextField fx:id="rowsNumberInput" prefWidth="50.0" />
-                                                        <Label text="%ColumnsNumber" />
-                                                        <TextField fx:id="colsNumberInput" prefWidth="50.0" />
-                                                        <Button fx:id="equiOkButton" mnemonicParsing="false" onAction="#equiOkAction" text="%OK" />
-                                                        <Label text="%Predefined">
-                                                            <padding>
-                                                                <Insets left="20.0" />
-                                                            </padding>
-                                                        </Label>
-                                                        <Button mnemonicParsing="false" onAction="#do42Action" text="4*2" />
-                                                        <Button mnemonicParsing="false" onAction="#do43Action" text="4*3" />
-                                                        <Button mnemonicParsing="false" onAction="#do44Action" text="4*4" />
-                                                        <Button mnemonicParsing="false" onAction="#do13Action" text="1*3" />
-                                                        <Button mnemonicParsing="false" onAction="#do31Action" text="3*1" />
-                                                        <Button mnemonicParsing="false" onAction="#do12Action" text="1*2" />
-                                                        <Button mnemonicParsing="false" onAction="#do21Action" text="2*1" />
-                                                        <Button mnemonicParsing="false" onAction="#do32Action" text="3*2" />
-                                                        <Button mnemonicParsing="false" onAction="#do23Action" text="2*3" />
-                                                        <Button mnemonicParsing="false" onAction="#do22Action" text="2*2" />
-                                                        <Button mnemonicParsing="false" onAction="#do33Action" text="3*3" />
+                                          <HBox fx:id="predefinedBox" alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                              <Label text="%Predefined">
+                                                                  <padding>
+                                                                      <Insets left="20.0" />
+                                                                  </padding>
+                                                              </Label>
+                                                              <Button mnemonicParsing="false" onAction="#do42Action" text="4*2" />
+                                                              <Button mnemonicParsing="false" onAction="#do43Action" text="4*3" />
+                                                              <Button mnemonicParsing="false" onAction="#do44Action" text="4*4" />
+                                                              <Button mnemonicParsing="false" onAction="#do13Action" text="1*3" />
+                                                              <Button mnemonicParsing="false" onAction="#do31Action" text="3*1" />
+                                                              <Button mnemonicParsing="false" onAction="#do12Action" text="1*2" />
+                                                              <Button mnemonicParsing="false" onAction="#do21Action" text="2*1" />
+                                                              <Button mnemonicParsing="false" onAction="#do32Action" text="3*2" />
+                                                              <Button mnemonicParsing="false" onAction="#do23Action" text="2*3" />
+                                                              <Button mnemonicParsing="false" onAction="#do22Action" text="2*2" />
+                                                              <Button mnemonicParsing="false" onAction="#do33Action" text="3*3" />
+                                             </children>
+                                          </HBox>
+                                                        <Label fx:id="rowsLabel" text="%RowsNumber" />
+                                                        <TextField fx:id="rowsInput" prefWidth="70.0" />
+                                                        <Label fx:id="colsLabel" text="%ColumnsNumber" />
+                                                        <TextField fx:id="colsInput" prefWidth="70.0" />
+                                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -141,11 +146,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <ToolBar fx:id="customBar" maxWidth="1.7976931348623157E308">
                                                     <items>
                                                         <Label text="%SplittingRows" />
-                                                        <TextField fx:id="rowsInput" prefWidth="150.0" promptText="%SplitByComma" />
+                                                        <TextField fx:id="customizedRowsInput" prefWidth="150.0" promptText="%SplitByComma" />
                                                         <Button mnemonicParsing="false" onAction="#clearRows" text="%Clear" />
                                                         <Label prefWidth="20.0" text=" " />
                                                         <Label text="%SplittingColumns" />
-                                                        <TextField fx:id="colsInput" prefWidth="150.0" promptText="%SplitByComma" />
+                                                        <TextField fx:id="customizedColsInput" prefWidth="150.0" promptText="%SplitByComma" />
                                                         <Button mnemonicParsing="false" onAction="#clearCols" text="%Clear" />
                                                     </items>
                                                 </ToolBar>

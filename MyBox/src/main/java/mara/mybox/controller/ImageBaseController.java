@@ -30,6 +30,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -561,6 +562,9 @@ public abstract class ImageBaseController extends BaseController {
                                 paraBox.setDisable(false);
                             }
                             showCost();
+                            if (operationBarController.miaoCheck.isSelected()) {
+                                FxmlTools.miao3();
+                            }
 
                     }
 

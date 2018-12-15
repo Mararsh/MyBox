@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.4";
-    public static final String AppVersionDate = "2018-12-03";
+    public static final String AppVersion = "4.5";
+    public static final String AppVersionDate = "2018-12-15";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String TempPath = UserFilePath + File.separator + "temp";
@@ -116,6 +116,8 @@ public class CommonValues {
     public static final String WeiboSnapRunFxml = "/fxml/WeiboSnapRun.fxml";
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
+    public static final String TextEncodingFxml = "/fxml/TextEncoding.fxml";
+    public static final String TextEncodingBatchFxml = "/fxml/TextEncodingBatch.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");

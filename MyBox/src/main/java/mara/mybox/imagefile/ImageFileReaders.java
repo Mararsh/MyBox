@@ -410,12 +410,11 @@ public class ImageFileReaders {
                         info.setIndex(i);
                         images.add(m);
                     } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        logger.error(e.toString());
+                        logger.error(format + "  " + e.toString());
                         if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")
                                 && format.toLowerCase().equals("gif")) {
-                            in.close();
-                            reader.dispose();
-                            return readBrokenGifFile(filename, imagesInfo);
+                            images = readBrokenGifFile(filename, imagesInfo);
+                            break;
                         }
                     }
                 }

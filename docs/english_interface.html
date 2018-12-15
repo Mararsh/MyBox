@@ -39,12 +39,13 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-4.4-exe.zip">MyBox-4.4-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-exe.zip">MyBox-4.5-exe.zip</a></p>
+<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms.</p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-4.4-jar.zip">MyBox-4.4-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-jar.zip">MyBox-4.5-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.4.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.5.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="paragraph">Project Main Page</p>
@@ -60,15 +61,15 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.4. It includes the following features: </p>
+<p class="paragraph">Current version is 4.5. It includes the following features: </p>
 <PRE>
 1. PDF Tools:
 	A. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
@@ -113,20 +114,23 @@
 		4) The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.
 		5) The sampled image is mainly to display the image, and not suitable for operations against whole image and images merging.
 		6) Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images.
-	G. View the image meta-data and image attributes.
-	H. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
-	I. Convert image into other format, with options like color model, size, compression, quality, etc.
-	J. Color palette
-	K. Pixels calculator
-	L. Convolution Kernels Manager
-	M. Shortcuts
+	G. Copy image or selected part of image in system clipboard(Ctrl-c).
+	H. View the image meta-data and image attributes.
+	I. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
+	J. Convert image into other format, with options like color model, size, compression, quality, etc.
+	K. Color palette
+	L. Pixels calculator
+	M. Convolution Kernels Manager
+	N. Shortcuts	
 3. Desktop Tools:
 	A. Rename Files/Directories, with options of files' name and ordering.  Renamed files can be recovered as original names in all or in part.
 	B. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, 
 	   whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
 	C. Arrange files and reorganize them under new directories by modifed time. 
 	   This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
-	D. Text editor.
+	D. Text Encoding. File charset can be either detected automatically or set manually. 
+	   Target file charset can be selected to implement encoding conversion. BOM setting is supported.
+	   Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown..
 	E. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 4. Network Tools:
 	A. Html Editor
@@ -146,13 +150,21 @@
 		h. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 		i. Set the retry times of failure.
 5. Supported image format: png,jpg,bmp,tif,gif,wbmp,pnm,pcx.
-6. Settings: Languages(Chinese and English), whether show comments, maximum main memory used for PDF, how to handle alpha channel of image, 
-   whether close alarm clocks when exit program,  clearing settings,  and more parameters.
+6. Settings of languages, whether show comments, PDF options, image options, whether close alarm clocks when exit program, clearing settings, and more parameters.
 7. Multiple interface styles.
+8. Internationalization. Switch languages in time. Current supported languages include Chinese and English. 
+   More lanaguages can be supported by editing new resource files.
 </PRE>
 
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.</BR>
+Text Encoding conversion in batch way.</BR>
+Split image by size.</BR>
+Copy image or selected part of image in system clipboard(Ctrl-c).</BR>
+Crop and save part of image in interface of Image Viewer.</p>
+
+
 <p class="paragraph">2018-12-03 v4.4 View/Extract/Create/Edit multiple frames image file. Support multiple frames Tiff file.</BR>
 For all operations which use image as input, handle situation of multiple frames image file.</BR>
 For all operations which use image as input, handle situation of big image which includes too many pixels to be loaded and displayed under limitation of available memory. Evaulate possiblility OutOfMemory and judge whether subsample image automatically. After that, show meaningful information and prompt for next
@@ -246,17 +258,19 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 
 <p class="p1" >Implementation</p>
-MyBox is developed with NetBeans: 
+MyBox is developed with Netbeans8.2 and JavaFX Scene Builder 2.0: 
 <p class="link"><a href="https://netbeans.org/" target=_Blank>https://netbeans.org/</a></p>
+<p class="link"><a href="https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html" target=_Blank>https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html</a></p>
 
 It is based on following open sources softwares or libraries:
-<p class="link"><a href="https://docs.oracle.com/javafx/2/" target=_Blank>JavaFx</a></p>
-<p class="link"><a href="https://pdfbox.apache.org/" target=_Blank>PDFBox</a></p>
-<p class="link"><a href="https://github.com/jai-imageio/jai-imageio-core" target=_Blank>jai-imageio </a></p>
-<p class="link"><a href="http://www.javazoom.net/index.shtml" target=_Blank>javazoom</a></p>
-<p class="link"><a href="https://logging.apache.org/log4j/2.x" target=_Blank>log4j</a></p>
-<p class="link"><a href="http://db.apache.org/derby/" target=_Blank>Derby</a></p>
-
+<p class="link">JavaFx <a href="https://docs.oracle.com/javafx/2/" target=_Blank>https://docs.oracle.com/javafx/2/</a></p>
+<p class="link">PDFBox <a href="https://pdfbox.apache.org/" target=_Blank>https://pdfbox.apache.org/</a></p>
+<p class="link">jai-imageio <a href="https://github.com/jai-imageio/jai-imageio-core" target=_Blank>https://github.com/jai-imageio/jai-imageio-core</a></p>
+<p class="link">javazoom <a href="http://www.javazoom.net/index.shtml" target=_Blank>http://www.javazoom.net/index.shtml</a></p>
+<p class="link">log4j <a href="https://logging.apache.org/log4j/2.x" target=_Blank>https://logging.apache.org/log4j/2.x</a></p>
+<p class="link">Derby <a href="http://db.apache.org/derby/" target=_Blank>http://db.apache.org/derby/</a></p>
+<p class="link">GifDecoder <a href="https://github.com/DhyanB/Open-Imaging" target=_Blank>https://github.com/DhyanB/Open-Imaging</a></p>
+<p class="link">EncodingDetect <a href="https://www.cnblogs.com/ChurchYim/p/8427373.html" target=_Blank>https://www.cnblogs.com/ChurchYim/p/8427373.html</a></p>
 
 <p class="p1" >Main Interface</p>
 

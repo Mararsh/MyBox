@@ -27,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import static mara.mybox.controller.BaseController.logger;
+import mara.mybox.fxml.FxmlTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -525,6 +526,10 @@ public class FilesArrangeController extends BaseController {
                                 updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
                                         + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
                                         + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+                            }
+
+                            if (operationBarController.miaoCheck.isSelected()) {
+                                FxmlTools.miao3();
                             }
                     }
 

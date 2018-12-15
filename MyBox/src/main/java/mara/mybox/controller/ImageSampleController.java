@@ -356,6 +356,7 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void clickImage(MouseEvent event) {
         if (image == null) {
             imageView.setCursor(Cursor.OPEN_HAND);

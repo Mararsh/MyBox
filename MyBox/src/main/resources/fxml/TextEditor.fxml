@@ -61,7 +61,45 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <Button mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
                     </items>
                 </ToolBar>
-                <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+               <children>
+                  <ToolBar HBox.hgrow="ALWAYS">
+                    <items>
+                        <Label text="%Charset" />
+                        <ComboBox fx:id="charsetBox" prefWidth="150.0" />
+                        <RadioButton fx:id="leRadio" mnemonicParsing="false" selected="true" text="Little Endian">
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="endianGroup" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="beRadio" mnemonicParsing="false" text="Big Endian" toggleGroup="$endianGroup">
+                           <padding>
+                              <Insets right="20.0" />
+                           </padding>
+                        </RadioButton>
+                        <CheckBox fx:id="bomCheck" mnemonicParsing="false" text="BOM">
+                           <padding>
+                              <Insets right="20.0" />
+                           </padding>
+                        </CheckBox>
+                    </items>
+                  </ToolBar>
+                  <ToolBar HBox.hgrow="NEVER">
+                    <items>
+                      <Button mnemonicParsing="false" text="Button" />
+                        <CheckBox fx:id="hexCheck" mnemonicParsing="false" text="%Hexadecimal" />
+                    </items>
+                  </ToolBar>
+               </children>
+            </HBox>
+            <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+              <items>
+                      <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+              </items>
+            </SplitPane>
             </children>
         </VBox>
     </center>

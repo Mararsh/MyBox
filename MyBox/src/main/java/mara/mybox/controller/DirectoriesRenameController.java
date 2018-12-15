@@ -19,11 +19,11 @@ import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
- * @CreateDate 2018-7-6
+ * @CreateDate 2018-12-15
  * @Description
  * @License Apache License Version 2.0
  */
-public class DirectoriessRenameController extends FilesRenameController {
+public class DirectoriesRenameController extends FilesRenameController {
 
     protected List<File> includeFiles;
     protected int dirFiles, dirRenamed;

@@ -38,7 +38,7 @@
         <TextField fx:id="imageFile" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
             <content>
-                <ImageView fx:id="imageView" cache="true" onMouseClicked="#imageClicked" onMouseEntered="#imageEntered" pickOnBounds="true" preserveRatio="true">
+                <ImageView fx:id="imageView" cache="true" onMouseClicked="#clickImage" onMouseEntered="#imageEntered" pickOnBounds="true" preserveRatio="true">
                     <cursor>
                         <Cursor fx:constant="OPEN_HAND" />
                     </cursor>

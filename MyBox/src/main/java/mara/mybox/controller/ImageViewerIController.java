@@ -31,7 +31,8 @@ public class ImageViewerIController extends ImageViewerController {
     }
 
     @FXML
-    void imageClicked(MouseEvent event) {
+    @Override
+    public void clickImage(MouseEvent event) {
         if (!isRefer && event.getClickCount() > 1) {
             openImageManufactureInNew(sourceFile.getAbsolutePath());
 //            try {

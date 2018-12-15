@@ -557,6 +557,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.FilesRenameFxml, AppVaribles.getMessage("FilesRename"));
             }
         });
+
         MenuItem dirsRename = new MenuItem(AppVaribles.getMessage("DirectoriesRename"));
         dirsRename.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -564,6 +565,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
             }
         });
+
         MenuItem dirSynchronize = new MenuItem(AppVaribles.getMessage("DirectorySynchronize"));
         dirSynchronize.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -571,6 +573,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.DirectorySynchronizeFxml, AppVaribles.getMessage("DirectorySynchronize"));
             }
         });
+
         MenuItem filesArrangement = new MenuItem(AppVaribles.getMessage("FilesArrangement"));
         filesArrangement.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -578,18 +581,20 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.FilesArrangementFxml, AppVaribles.getMessage("FilesArrangement"));
             }
         });
-        MenuItem htmlEditor = new MenuItem(AppVaribles.getMessage("HtmlEditor"));
-        htmlEditor.setOnAction(new EventHandler<ActionEvent>() {
+
+        MenuItem textEncoding = new MenuItem(AppVaribles.getMessage("TextEncoding"));
+        textEncoding.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+                reloadStage(CommonValues.TextEncodingFxml, AppVaribles.getMessage("TextEncoding"));
             }
         });
-        MenuItem textEditor = new MenuItem(AppVaribles.getMessage("TextEditor"));
-        textEditor.setOnAction(new EventHandler<ActionEvent>() {
+
+        MenuItem textEncodingBatch = new MenuItem(AppVaribles.getMessage("TextEncodingBatch"));
+        textEncodingBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.TextEditorFxml, AppVaribles.getMessage("TextEditor"));
+                reloadStage(CommonValues.TextEncodingBatchFxml, AppVaribles.getMessage("TextEncodingBatch"));
             }
         });
 
@@ -603,7 +608,7 @@ public class MyBoxController extends BaseController {
         desktopMenu = new ContextMenu();
         desktopMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
                 filesArrangement, dirSynchronize, new SeparatorMenuItem(),
-                htmlEditor, textEditor, new SeparatorMenuItem(), alarmClock);
+                textEncoding, textEncodingBatch, new SeparatorMenuItem(), alarmClock);
     }
 
     private void initFileToolsMenu() {

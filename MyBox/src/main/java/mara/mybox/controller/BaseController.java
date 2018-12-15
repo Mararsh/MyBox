@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -121,6 +122,11 @@ public class BaseController implements Initializable {
         appendDensityKey = "appendDensity";
         appendQualityKey = "appendQuality";
         appendSizeKey = "appendSize";
+        fileExtensionFilter = new ArrayList() {
+            {
+                add(new FileChooser.ExtensionFilter("*", "*.*"));
+            }
+        };
     }
 
     @Override
@@ -479,11 +485,11 @@ public class BaseController implements Initializable {
     protected File checkHelps() {
         try {
             String lang = AppVaribles.getLanguage();
-            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.4", false);
+            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.5", false);
             if (!updated) {
-                logger.debug("Updating Helps 4.4");
+                logger.debug("Updating Helps 4.5");
                 clearHelps();
-                AppVaribles.setSystemConfigValue("UpdatedHelps4.4", true);
+                AppVaribles.setSystemConfigValue("UpdatedHelps4.5", true);
             }
             File mybox_help = FxmlTools.getUserFile(getClass(),
                     "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);

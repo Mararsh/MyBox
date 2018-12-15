@@ -7,14 +7,14 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.3/MyBox-4.3-exe.zip) 。
+[MyBox-4.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-exe.zip) 。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.4-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-4.4-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.4.jar</CODE></PRE>
+[MyBox-4.5-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.5.jar</CODE></PRE>
 
 
 ## 资源地址
@@ -30,19 +30,19 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-Overview-zh.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.4/MyBox-UserGuide-4.4-ImageTools-zh.pdf)
+[图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-zh.pdf)
 
 [PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
 
-[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-DesktopTools-zh.pdf)
+[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-zh.pdf)
 
 [网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
 
 
 ## 当前版本
-当前是版本4.4，已实现的特点：
+当前是版本4.5，已实现的特点：
 ```
 1. PDF工具：
 	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -91,19 +91,20 @@
 		4）采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。
 		5）采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。
 		6）一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像。
-	G.查看图片的元数据和属性。
-	H.同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
-	I. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-	J. 调色盘
-	K.像素计算器
-	L. 卷积核管理器
-	M.快捷键
+	G. 可将图像或图像的选中部分复制到系统粘贴板（Ctrl-c）。
+	H. 查看图像的元数据和属性。
+	I. 同屏查看多图，可以分别或者同步旋转和缩放。支持导览。
+	J. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
+	K. 调色盘
+	L. 像素计算器
+	M.卷积核管理器
+	N.快捷键
 3. 文件和目录工具：
 	A. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 	B. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
 	C. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。
 	   此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
-	D. 文本编辑器。
+	D. 文字编码。自动检测或手动设置文件编码；设置目标文件编码以实现转码；支持BOM设置；十六进制同步显示、同步选择；显示行号。
 4. 网络工具：
 	A. 网页编辑器
 		a. 富文本方式编辑本地网页或在线网页。
@@ -121,12 +122,19 @@
 		i. 可以设置错误时重试次数。
 5. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。尚不能处理动态gif。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
-7. 设置：切换中英文、是否显示注释、PDF处理的最大主内存、如何处理透明通道、退出程序时是否关闭闹钟、清除个人设置。
+7. 设置：切换语言、是否显示注释、PDF处理选项、图像处理选项、退出程序时是否关闭闹钟、清除个人设置，以及更多的参数设置。
 8. 多种界面皮肤。
+9. 国际化。实时切换。目前支持中文、英文。扩展语言只需编写资源文件。
 ```
 
 ## 开发日志
 ```
+2018-12-15 版本4.5 文字编码：自动检测或手动设置文件编码；设置目标文件编码以实现转码；支持BOM设置；
+十六进制同步显示、同步选择；显示行号。批量文字转码。
+图像分割支持按尺寸的方式。
+可将图像或图像的选中部分复制到系统粘贴板（Ctrl-c）。
+在查看图像的界面可裁剪保存。
+
 2018-12-03 版本4.4 多帧图像文件的查看、提取、创建、编辑。支持多帧Tiff文件。
 对于所有以图像文件为输入的操作，处理多帧图像文件的情形。
 对于所有以图像文件为输入的操作，处理极大图像（加载所需内存超出可用内存）的情形。自动评估、判断、给出提示信息和下一步处理的选择。
@@ -292,6 +300,8 @@ MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
 [Derby   http://db.apache.org/derby/](http://db.apache.org/derby/)
 
 [GifDecoder   https://github.com/DhyanB/Open-Imaging/](https://github.com/DhyanB/Open-Imaging/)
+
+[EncodingDetect  https://www.cnblogs.com/ChurchYim/p/8427373.html](https://www.cnblogs.com/ChurchYim/p/8427373.html)
 
 
 ## 主界面

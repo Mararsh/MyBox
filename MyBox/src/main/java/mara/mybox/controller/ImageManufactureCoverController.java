@@ -62,7 +62,7 @@ public class ImageManufactureCoverController extends ImageManufactureController 
     @FXML
     private ToggleGroup coverGroup;
     @FXML
-    private Label promptLabel, leftLabel;
+    private Label leftLabel;
     @FXML
     private HBox radiusBox, pixHBox, rightBox, sizeHBox;
     @FXML
@@ -211,6 +211,7 @@ public class ImageManufactureCoverController extends ImageManufactureController 
                     checkShape();
                 }
             });
+            pixBox.getSelectionModel().select(0);
 
             alphaBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             alphaBox.valueProperty().addListener(new ChangeListener<String>() {

@@ -154,7 +154,7 @@
                                 </HBox>
                                 <ScrollPane fx:id="scrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <ImageView fx:id="imageView" fitHeight="261.0" fitWidth="841.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="imageView" fitHeight="261.0" fitWidth="841.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
                                             <cursor>
                                                 <Cursor fx:constant="OPEN_HAND" />
                                             </cursor>

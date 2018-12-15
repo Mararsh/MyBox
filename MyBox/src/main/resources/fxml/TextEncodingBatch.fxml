@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEncodingBatchController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1061.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                            <items>
+                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
+                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
+                                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
+                                                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
+                                            </items>
+                                        </ToolBar>
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                            <content>
+                                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                    <columns>
+                                                        <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
+                                                        <TableColumn fx:id="fileColumn" prefWidth="700.0" text="%File" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </ScrollPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane text="%Options" VBox.vgrow="NEVER">
+                            <content>
+                                <VBox spacing="10.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <CheckBox fx:id="subCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                                <Label text="%TextEncodingComments"  styleClass="blue-label" stylesheets="@../styles/MyBox.css">
+                                                    <HBox.margin>
+                                                        <Insets left="30.0" />
+                                                    </HBox.margin>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <CheckBox fx:id="nameCheck" mnemonicParsing="false" selected="true" text="%OnlyFilenameInclude" />
+                                                <TextField fx:id="nameInput" text=".html  .htm  .txt " HBox.hgrow="ALWAYS" />
+                                                <Label text="%SeparateBySpace" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%SourceCharset" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%DetermainAutomatically">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="sourceGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%Known" toggleGroup="$sourceGroup" />
+                                                <ComboBox fx:id="sourceBox" prefWidth="150.0" />
+                                                <Label fx:id="bomLabel">
+                                                    <padding>
+                                                        <Insets right="20.0" />
+                                                    </padding>
+                                                </Label>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </TitledPane>
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                            <content>
+                                <VBox spacing="10.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <Label text="%TargetFileCharset" />
+                                                <ComboBox fx:id="targetBox" prefWidth="150.0" />
+                                                <CheckBox fx:id="targetBomCheck" mnemonicParsing="false" text="BOM" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                            <children>
+                                                <Label text="%FilesPath" />
+                                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%ExistedFiles" />
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="targetExistGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
+                                                <Label text="%Suffix" />
+                                                <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
+                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                            <VBox.margin>
+                                <Insets top="5.0" />
+                            </VBox.margin>
+                        </TitledPane>
+                    </children>
+                </VBox>
+                <fx:include fx:id="operationBar" source="Operation.fxml" />
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

@@ -88,25 +88,36 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                     </children>
                 </HBox>
-                <ToolBar fx:id="toolbar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="NEVER">
+            <HBox fx:id="opeBox" alignment="CENTER_LEFT" disable="true">
+               <children>
+                  <ToolBar fx:id="cropBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                     <items>
-                        <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                        <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                        <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
-                        <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
-                        <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
-                        <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
-                        <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
-                        <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
-                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                        <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                        <Button fx:id="copySelectionButton" mnemonicParsing="false" onAction="#copySelectionAction" text="%Copy" />
+                        <Button fx:id="cropButton" mnemonicParsing="false" onAction="#cropAction" text="%CropAs" />
+                      <Button mnemonicParsing="false" onAction="#clearCropAction" text="%ClearSelection" />
                     </items>
-                </ToolBar>
+                  </ToolBar>
+                      <ToolBar fx:id="toolbar" disable="true" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                          <items>
+                              <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                              <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                              <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                              <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                              <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
+                              <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
+                              <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
+                              <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
+                              <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                              <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                              <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                              <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                          </items>
+                      </ToolBar>
+               </children>
+            </HBox>
                 <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                     <content>
-                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
                             <cursor>
                                 <Cursor fx:constant="HAND" />
                             </cursor>
