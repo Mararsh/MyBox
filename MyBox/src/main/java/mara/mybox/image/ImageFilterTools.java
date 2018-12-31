@@ -2,8 +2,8 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageFilterTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage makeInvert(BufferedImage source) {
         try {

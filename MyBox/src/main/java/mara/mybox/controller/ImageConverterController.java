@@ -10,7 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javax.imageio.ImageIO;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;

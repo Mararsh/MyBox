@@ -5,7 +5,7 @@
  */
 package mara.mybox.controller;
 
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * FXML Controller class

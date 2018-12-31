@@ -9,8 +9,8 @@ import java.awt.image.ColorConvertOp;
 import java.io.File;
 import javax.imageio.ImageIO;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageGrayTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage color2Gray(BufferedImage source) {
         try {

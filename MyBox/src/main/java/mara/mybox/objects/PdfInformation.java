@@ -3,8 +3,8 @@ package mara.mybox.objects;
 import java.io.File;
 import java.util.Date;
 import mara.mybox.tools.PdfTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -18,7 +18,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
  */
 public class PdfInformation {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     private File file;
     private String title, subject, author, creator, producer;

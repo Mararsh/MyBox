@@ -21,8 +21,8 @@ import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.image.ImageColorTools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import static mara.mybox.image.ImageValueTools.pixelSizeMm2dpi;
@@ -41,7 +41,7 @@ import mara.mybox.objects.ImageInformation;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static IIOMetadata getIIOMetadata(String format, File file) {
         switch (format) {

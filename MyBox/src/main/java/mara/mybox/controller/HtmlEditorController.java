@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -27,7 +28,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -35,6 +38,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
@@ -63,7 +67,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.db.TableBrowserUrls;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -83,7 +87,7 @@ import mara.mybox.tools.PdfTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class HtmlEditorController extends TextEditorController {
+public class HtmlEditorController extends BaseController {
 
     private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
     private final String WeiBoPassportChecked;
@@ -99,6 +103,10 @@ public class HtmlEditorController extends TextEditorController {
     private Stage snapingStage;
     private LoadingController loadingController;
     private float zoomScale;
+    protected boolean isSettingValues;
+    protected SimpleBooleanProperty fileChanged;
+    protected int cols, rows;
+    protected int lastTextLen;
 
     @FXML
     private Button loadButton, updateEditorButton, snapsotButton;
@@ -122,6 +130,8 @@ public class HtmlEditorController extends TextEditorController {
     private ToggleGroup snapGroup;
     @FXML
     private CheckBox windowSizeCheck;
+    @FXML
+    protected TextField bottomText;
 
     public HtmlEditorController() {
 
@@ -503,7 +513,6 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    @Override
     protected void openAction() {
         try {
             if (!checkSavingForNextAction()) {
@@ -641,7 +650,6 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    @Override
     protected void saveAction() {
         try {
             isSettingValues = true;
@@ -679,7 +687,6 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    @Override
     protected void saveAsAction() {
         try {
             isSettingValues = true;
@@ -714,7 +721,6 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @FXML
-    @Override
     protected void createAction() {
         try {
             isSettingValues = true;
@@ -998,6 +1004,12 @@ public class HtmlEditorController extends TextEditorController {
     }
 
     @Override
+    public boolean stageReloading() {
+//        logger.debug("stageReloading");
+        return checkSavingForNextAction();
+    }
+
+    @Override
     public boolean stageClosing() {
         super.stageClosing();
         Platform.runLater(new Runnable() {
@@ -1018,6 +1030,32 @@ public class HtmlEditorController extends TextEditorController {
         }
         loadingController = null;
         return true;
+    }
+
+    public boolean checkSavingForNextAction() {
+//        logger.debug(fileChanged.getValue());
+
+        if (fileChanged == null || !fileChanged.getValue()) {
+            return true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(AppVaribles.getMessage("FileChanged"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonSave) {
+                saveAction();
+                return true;
+            } else if (result.get() == buttonNotSave) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
 }

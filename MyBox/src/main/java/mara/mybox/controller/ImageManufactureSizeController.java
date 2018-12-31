@@ -23,7 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -364,6 +364,9 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.scaleImage(values.getCurrentImage(), values.getImageInfo().getImageFormat(), scale);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Size, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -392,6 +395,9 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.scaleImage(values.getCurrentImage(), values.getImageInfo().getImageFormat(), width, height);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Size, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

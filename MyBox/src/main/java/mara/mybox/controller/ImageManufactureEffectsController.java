@@ -20,7 +20,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlEffectTools;
 import mara.mybox.fxml.FxmlEffectTools.EffectsOperationType;
 import mara.mybox.image.ImageConvertTools.Direction;
@@ -424,9 +424,6 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
         if (null == effectType) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -467,6 +464,9 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                         break;
                     default:
                         return null;
+                }
+                if (task.isCancelled()) {
+                    return null;
                 }
                 recordImageHistory(ImageOperationType.Effects, newImage);
                 Platform.runLater(new Runnable() {

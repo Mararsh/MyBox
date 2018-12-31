@@ -26,7 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -502,6 +502,10 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         int count = 0;
                         int total = sourceImages.size();
                         for (ImageInformation source : sourceImages) {
+                            if (task.isCancelled()) {
+                                document.close();
+                                return null;
+                            }
                             BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(source);
                             if (bufferedImage != null) {
                                 PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,

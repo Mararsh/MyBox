@@ -20,7 +20,7 @@ import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlAdjustColorTools;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorActionType;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorObjectType;
@@ -357,7 +357,7 @@ public class ImageManufactureColorController extends ImageManufactureController 
         if (null == colorOperationType || colorActionType == null || scope == null) {
             return;
         }
-        Task increaseTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 double change = colorValue;
@@ -379,6 +379,9 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 }
                 final Image newImage = FxmlAdjustColorTools.ajustColor(values.getCurrentImage(),
                         colorOperationType, colorActionType, change, colorPicker.getValue(), scope);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Color, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -392,8 +395,8 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 return null;
             }
         };
-        openHandlingStage(increaseTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(increaseTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
 

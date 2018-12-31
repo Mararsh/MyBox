@@ -4,8 +4,6 @@ import java.io.File;
 import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -16,8 +14,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class FileInformation {
 
-    protected static final Logger logger = LogManager.getLogger();
-
     protected File file;
     protected SimpleStringProperty fileName, newName, fileType, createTime, modifyTime, fileSize, handled;
 
@@ -26,19 +22,7 @@ public class FileInformation {
     }
 
     public FileInformation(File file) {
-        this.file = file;
-        String filename = file.getAbsolutePath();
-        this.handled = new SimpleStringProperty("");
-        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
-        this.newName = new SimpleStringProperty("");
-        if (file.isFile()) {
-            this.fileType = new SimpleStringProperty(FileTools.getFileSuffix(filename));
-        } else {
-            this.fileType = new SimpleStringProperty("");
-        }
-        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
-        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
-        this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
+        setFileAttributes(file);
     }
 
     public String getFileName() {
@@ -102,7 +86,26 @@ public class FileInformation {
     }
 
     public void setFile(File file) {
+        setFileAttributes(file);
+    }
+
+    private void setFileAttributes(File file) {
         this.file = file;
+        if (file == null) {
+            return;
+        }
+        String filename = file.getAbsolutePath();
+        this.handled = new SimpleStringProperty("");
+        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
+        this.newName = new SimpleStringProperty("");
+        if (file.isFile()) {
+            this.fileType = new SimpleStringProperty(FileTools.getFileSuffix(filename));
+        } else {
+            this.fileType = new SimpleStringProperty("");
+        }
+        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
+        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
+        this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
     }
 
 }

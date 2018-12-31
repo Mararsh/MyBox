@@ -24,7 +24,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.PdfInformation;
@@ -161,7 +161,6 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     public void loadPdfInformation() {
-
         if (sourceFile == null) {
             return;
         }
@@ -173,6 +172,9 @@ public class PdfSourceSelectionController extends BaseController {
             @Override
             protected Void call() throws Exception {
                 pdfInformation.loadDocument(passwordInput.getText());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

@@ -3,8 +3,8 @@ package mara.mybox.image;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import static mara.mybox.objects.CommonValues.AlphaColor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageReplaceColorTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage replaceColor(BufferedImage source,
             Color oldColor, Color newColor, int distance,

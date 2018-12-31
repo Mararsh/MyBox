@@ -67,17 +67,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane maxWidth="1.7976931348623157E308" text="%Options" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" text="%SourceFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="subCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
-                                                <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%OnlyFilenameInclude" />
-                                                <TextField fx:id="nameInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                                <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%OnlyFilenameInclude" />
+                                                <TextField fx:id="nameInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+                                    <Label text="%SeparateBySpace" />
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
                             </content>
@@ -85,13 +90,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </TitledPane>
-                        <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Label text="%FileNamePrefix" />
+                                                <Label text="%TargetFilePrefix" />
                                                 <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
                                                 <CheckBox fx:id="stringCheck" mnemonicParsing="false" selected="true" text="%IncludeString" />
                                                 <TextField fx:id="stringInput" prefHeight="30.0" prefWidth="200.0" />
@@ -143,7 +148,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Label text="%FileNameSuffix" />
+                                                <Label text="%TargetFileSuffix" />
                                                 <CheckBox fx:id="suffixCheck" mnemonicParsing="false" text="%ModifyAs" />
                                                 <TextField fx:id="suffixInput" prefHeight="30.0" prefWidth="80.0" />
                                             </children>

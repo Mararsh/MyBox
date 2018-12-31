@@ -27,8 +27,8 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.SoundTools;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
 

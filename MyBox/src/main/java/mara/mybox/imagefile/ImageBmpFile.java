@@ -21,8 +21,8 @@ import mara.mybox.objects.ImageAttributes;
 import static mara.mybox.image.ImageValueTools.dpi2dpm;
 import mara.mybox.objects.ImageInformation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/bmp_metadata.html
 public class ImageBmpFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static String[] getBmpCompressionTypes() {
         return new BMPImageWriteParam(null).getCompressionTypes();

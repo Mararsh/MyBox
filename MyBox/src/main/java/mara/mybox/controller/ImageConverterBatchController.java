@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 

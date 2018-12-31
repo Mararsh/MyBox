@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2010, 2014, Oracle and/or its affiliates.
+All rights reserved. Use is subject to license terms.
+
+This file is available and licensed under the following license:
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+ - Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+ - Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in
+   the documentation and/or other materials provided with the distribution.
+ - Neither the name of Oracle Corporation nor the names of its
+   contributors may be used to endorse or promote products derived
+   from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FileFilterController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+            <HBox VBox.vgrow="NEVER">
+               <children>
+                  <ToolBar HBox.hgrow="ALWAYS">
+                    <items>
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                        <CheckBox fx:id="askCheck" mnemonicParsing="false" selected="true" text="%AskSaveBeforeOperation" />
+                    </items>
+                  </ToolBar>
+               </children>
+            </HBox>
+                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                    <children>
+                        <ToolBar HBox.hgrow="ALWAYS">
+                            <items>
+                                <Button mnemonicParsing="false" text=" " visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar HBox.hgrow="NEVER">
+                            <items>
+                                <Label text="%FilterLines" />
+                                <RadioButton mnemonicParsing="false" selected="true" text="%IncludeOneOf">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="filterGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="%NotIncludeAnyOf" toggleGroup="$filterGroup" />
+                                <TextField fx:id="filterInput" prefHeight="30.0" prefWidth="448.0" promptText="%SeparateBySpace" />
+                                <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <HBox>
+                    <children>
+                        <TextField fx:id="filterConditionsLabel" editable="false" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+                <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <items>
+                        <AnchorPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <TextArea fx:id="lineArea" maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                <TextArea fx:id="mainArea" editable="false" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                            </children>
+                        </AnchorPane>
+                    </items>
+                </SplitPane>
+                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
+                            <items>
+                                <TextField fx:id="bottomText" editable="false" focusTraversable="false" prefHeight="30.0" prefWidth="520.0" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
+                                <Button mnemonicParsing="false" text=" " visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar fx:id="pageBar" disable="true" HBox.hgrow="NEVER">
+                            <items>
+                                <Button fx:id="firstButtonButton" mnemonicParsing="false" onAction="#firstPageAction" text="%FirstPage" />
+                                <Button fx:id="perviousPageButton" mnemonicParsing="false" onAction="#previousPageAction" text="%PreviousPage" />
+                                <Button fx:id="nextPageButton" mnemonicParsing="false" onAction="#nextPageAction" text="%NextPage" />
+                                <Button fx:id="lastPageButton" mnemonicParsing="false" onAction="#lastPageAction" text="%LastPage" />
+                                <Label text="%Page" />
+                                <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
+                                <Label fx:id="pageLabel" />
+                                <Button fx:id="pageGoButton" mnemonicParsing="false" onAction="#goPageAction" text="%Go" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</BorderPane>

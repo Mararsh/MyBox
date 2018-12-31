@@ -20,7 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.fxml.FxmlEffectTools;
 import mara.mybox.fxml.FxmlTools;
@@ -158,9 +158,6 @@ public class ImageManufactureConvolutionController extends ImageManufactureContr
         if (isSettingValues || currentKernel == null) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -172,6 +169,9 @@ public class ImageManufactureConvolutionController extends ImageManufactureContr
                         newImage = FxmlEffectTools.applyConvolutionByMatting(values.getCurrentImage(), currentKernel, scope);
                     } else {
                         newImage = FxmlEffectTools.applyConvolutionByScope(values.getCurrentImage(), currentKernel, scope);
+                    }
+                    if (task.isCancelled()) {
+                        return null;
                     }
 
                     recordImageHistory(ImageOperationType.Convolution, newImage);

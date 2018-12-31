@@ -7,8 +7,8 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageWbmpFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static WBMPMetadata getWbmpMetadata(File file) {
         try {

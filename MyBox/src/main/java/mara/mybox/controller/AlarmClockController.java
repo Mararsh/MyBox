@@ -26,7 +26,7 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AlarmClock;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;

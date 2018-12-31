@@ -13,8 +13,8 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImagePcxFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static boolean writePcxImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {

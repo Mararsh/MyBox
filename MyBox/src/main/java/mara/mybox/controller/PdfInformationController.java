@@ -4,9 +4,9 @@ import java.io.File;
 import mara.mybox.objects.PdfInformation;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import mara.mybox.controller.BaseController;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara

@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara

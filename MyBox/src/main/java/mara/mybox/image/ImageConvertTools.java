@@ -25,8 +25,8 @@ import static mara.mybox.objects.CommonValues.AlphaColor;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageCombine.CombineSizeType;
 import mara.mybox.objects.ImageInformation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import sun.awt.image.IntegerComponentRaster;
 
 /**
@@ -37,7 +37,7 @@ import sun.awt.image.IntegerComponentRaster;
  */
 public class ImageConvertTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static class Direction {
 

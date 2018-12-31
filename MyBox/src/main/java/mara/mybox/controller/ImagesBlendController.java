@@ -30,7 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javax.imageio.ImageIO;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.image.ImageBlendTools.ImagesBlendMode;
 import mara.mybox.image.ImageBlendTools.ImagesRelativeLocation;
@@ -365,13 +365,19 @@ public class ImagesBlendController extends ImageViewerController {
             AppVaribles.setUserConfigValue(sourcePathKey, foreFile.getParent());
 
             final String fileName = file.getPath();
-            Task loadTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     try {
                         BufferedImage bufferImage = ImageIO.read(file);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         foreImage = SwingFXUtils.toFXImage(bufferImage, null);
                         foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         foreInfo.setImage(foreImage);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -398,8 +404,8 @@ public class ImagesBlendController extends ImageViewerController {
                     return null;
                 }
             };
-            openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(loadTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 
@@ -446,13 +452,19 @@ public class ImagesBlendController extends ImageViewerController {
             AppVaribles.setUserConfigValue(sourcePathKey, backFile.getParent());
 
             final String fileName = file.getPath();
-            Task loadTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     try {
                         BufferedImage bufferImage = ImageIO.read(file);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         backImage = SwingFXUtils.toFXImage(bufferImage, null);
                         backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         backInfo.setImage(backImage);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -479,8 +491,8 @@ public class ImagesBlendController extends ImageViewerController {
                     return null;
                 }
             };
-            openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(loadTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 
@@ -537,13 +549,16 @@ public class ImagesBlendController extends ImageViewerController {
             AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
             targetFile = file;
 
-            Task saveTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     try {
                         String filename = targetFile.getAbsolutePath();
                         String format = FileTools.getFileSuffix(filename);
                         final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                     } catch (Exception e) {
                         logger.error(e.toString());
@@ -551,8 +566,8 @@ public class ImagesBlendController extends ImageViewerController {
                     return null;
                 }
             };
-            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(saveTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
         } catch (Exception e) {

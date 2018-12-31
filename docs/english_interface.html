@@ -39,13 +39,13 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-exe.zip">MyBox-4.5-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-4.6-exe.zip">MyBox-4.6-exe.zip</a></p>
 <p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms.</p>
 
 <p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-4.5-jar.zip">MyBox-4.5-jar.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-4.6-jar.zip">MyBox-4.6-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.5.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.6.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="paragraph">Project Main Page</p>
@@ -62,15 +62,15 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-Overview-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-Overview-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-DesktopTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.5. It includes the following features: </p>
+<p class="paragraph">Current version is 4.6. It includes the following features: </p>
 <PRE>
 1. PDF Tools:
 	A. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
@@ -129,9 +129,17 @@
 	   whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
 	C. Arrange files and reorganize them under new directories by modifed time. 
 	   This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
-	D. Text Encoding. File charset can be either detected automatically or set manually. 
-	   Target file charset can be selected to implement encoding conversion. BOM setting is supported.
-	   Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown..
+	D. Edit Text:
+		a. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. 
+		   BOM setting is supported.
+		b. Detect line break automatically. Convert line break. Support LF/CR/CRLF.
+		c. Find and replace. In current page, or in whole file.
+		d. Filter lines. By “Include one of strings” or “Not include all of strings”.
+		   Cumulative filter. Filtered results can be saved.
+		e. Hexadecimal codes can be viewed and selected synchronously.
+		f. Line numbers are shown.
+		g. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+           Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.
 	E. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 4. Network Tools:
 	A. Html Editor
@@ -159,6 +167,12 @@
 
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF/CR/CRLF.</BR>
+Find and replace. In current page, or in whole file.</BR>
+Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.</BR>
+Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.</p>
+
+
 <p class="paragraph">2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.</BR>
 Text Encoding conversion in batch way.</BR>
 Split image by size.</BR>

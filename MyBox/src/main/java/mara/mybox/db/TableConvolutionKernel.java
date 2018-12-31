@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static mara.mybox.db.DerbyBase.protocol;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.tools.DateTools;
 

@@ -15,7 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.fxml.FxmlImageTools;
@@ -133,6 +133,9 @@ public class ImageManufactureArcController extends ImageManufactureController {
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.addArc(values.getCurrentImage(), arc, arcColorPicker.getValue());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Arc, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

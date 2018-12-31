@@ -18,8 +18,8 @@ import mara.mybox.db.TableAlarmClock;
 import static mara.mybox.objects.AppVaribles.executorService;
 import static mara.mybox.objects.AppVaribles.scheduledTasks;
 import mara.mybox.tools.DateTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class AlarmClock {
 
-    protected static final Logger logger = LogManager.getLogger();
+   
     public static final String AlarmValueSeprator = "_FG-FG_";
     public static final int offset = 1;
 

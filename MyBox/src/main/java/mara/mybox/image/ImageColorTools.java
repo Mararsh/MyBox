@@ -3,8 +3,8 @@ package mara.mybox.image;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageColorTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static int RGB2Pixel(int r, int g, int b, int a) {
         return RGB2Pixel(new Color(r, g, b, a));

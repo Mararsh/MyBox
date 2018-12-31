@@ -16,8 +16,8 @@ import mara.mybox.objects.IntCircle;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.IntPoint;
 import mara.mybox.objects.IntRectangle;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlScopeTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static Image indicateRectangle(Image image,
             Color color, int lineWidth, IntRectangle rect) {

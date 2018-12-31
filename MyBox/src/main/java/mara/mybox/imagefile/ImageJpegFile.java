@@ -15,8 +15,8 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageInformation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.w3c.dom.Element;
 
 /**
@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
  */
 public class ImageJpegFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static String[] getJpegCompressionTypes() {
         return new JPEGImageWriteParam(null).getCompressionTypes();

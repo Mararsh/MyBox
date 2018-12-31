@@ -10,6 +10,7 @@ import java.util.Date;
 import mara.mybox.controller.ImageManufactureController.ImageOperationType;
 import mara.mybox.objects.ImageHistory;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara

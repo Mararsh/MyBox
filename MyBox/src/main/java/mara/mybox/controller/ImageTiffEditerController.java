@@ -13,7 +13,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.image.ImageValueTools;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -206,6 +206,9 @@ public class ImageTiffEditerController extends ImageSourcesController {
                 protected Void call() throws Exception {
                     try {
                         ret = ImageTiffFile.writeTiffImagesWithInfo(sourceImages, attributes, outFile);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {

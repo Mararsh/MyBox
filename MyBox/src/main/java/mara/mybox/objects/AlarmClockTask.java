@@ -14,10 +14,9 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.objects.AlarmClock.AlarmType;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.AppVaribles.scheduledTasks;
 import mara.mybox.tools.DateTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -27,7 +26,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class AlarmClockTask extends TimerTask {
 
-    private static final Logger logger = LogManager.getLogger();
     protected AlarmClock alarm;
 
     protected TimeUnit timeUnit = TimeUnit.SECONDS;

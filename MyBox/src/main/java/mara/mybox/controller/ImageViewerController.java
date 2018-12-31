@@ -35,7 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.objects.AppVaribles;
@@ -69,9 +69,8 @@ public class ImageViewerController extends ImageBaseController {
     protected VBox contentBox;
     @FXML
     protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton,
-            previousButton, nextButton, wButton, oButton;
-    @FXML
-    protected Button tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
+            previousButton, nextButton, wButton, oButton, clearSelectionButton,
+            tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
     @FXML
     protected ToolBar toolbar, navBar, infoBar, selectionBar;
     @FXML
@@ -92,13 +91,6 @@ public class ImageViewerController extends ImageBaseController {
                 opeBox.disableProperty().bind(
                         Bindings.isNull(imageView.imageProperty())
                 );
-            }
-
-            if (cropButton != null) {
-                Tooltip tips = new Tooltip(getMessage("CropLabel"));
-                tips.setFont(new Font(16));
-                FxmlTools.quickTooltip(cropButton, tips);
-
             }
 
             if (copySelectionButton != null) {
@@ -184,7 +176,12 @@ public class ImageViewerController extends ImageBaseController {
             }
 
             if (cropButton != null) {
-                clearCropAction();
+                clearSelectionAction();
+                Tooltip tips = new Tooltip(getMessage("CropLabel"));
+                tips.setFont(new Font(16));
+                FxmlTools.quickTooltip(cropButton, tips);
+                FxmlTools.quickTooltip(imageView, tips);
+                FxmlTools.quickTooltip(clearSelectionButton, tips);
             }
 
         } catch (Exception e) {
@@ -422,7 +419,7 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void clearCropAction() {
+    public void clearSelectionAction() {
         cropLeftX = 0;
         cropLeftY = 0;
         cropRightX = (int) image.getWidth() - 1;
@@ -434,7 +431,7 @@ public class ImageViewerController extends ImageBaseController {
 
     @FXML
     public void clickImage(MouseEvent event) {
-        if (cropButton == null) {
+        if (cropButton == null || image == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
@@ -455,7 +452,7 @@ public class ImageViewerController extends ImageBaseController {
         if (cropLeftX < cropRightX && cropLeftY < cropRightY) {
             indicateSelection();
             cropButton.setDisable(false);
-            bottomLabel.setText(getMessage("Size") + ": " + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
+            bottomLabel.setText(getMessage("SelectedSize") + ": " + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
         } else {
             cropButton.setDisable(true);
         }
@@ -463,9 +460,6 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     private void indicateSelection() {
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -477,6 +471,9 @@ public class ImageViewerController extends ImageBaseController {
                     final Image newImage = FxmlScopeTools.indicateRectangle(image,
                             Color.RED, lineWidth,
                             new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -531,9 +528,6 @@ public class ImageViewerController extends ImageBaseController {
             }
             AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
 
-            if (task != null && task.isRunning()) {
-                return;
-            }
             task = new Task<Void>() {
                 private boolean ok;
 
@@ -544,7 +538,13 @@ public class ImageViewerController extends ImageBaseController {
                                 cropLeftX, cropLeftY, cropRightX, cropRightY);
                         String format = FileTools.getFileSuffix(file.getName());
                         BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(cropImage);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         ok = ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -619,6 +619,9 @@ public class ImageViewerController extends ImageBaseController {
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
                     final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
                     Platform.runLater(new Runnable() {
                         @Override

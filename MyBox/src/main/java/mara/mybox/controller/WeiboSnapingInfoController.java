@@ -9,6 +9,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import mara.mybox.objects.CommonValues;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara

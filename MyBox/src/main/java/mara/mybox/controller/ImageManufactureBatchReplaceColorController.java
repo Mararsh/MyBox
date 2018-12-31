@@ -17,7 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlTools;

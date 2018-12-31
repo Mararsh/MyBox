@@ -22,13 +22,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileEncoding;
+import mara.mybox.objects.FileEditInformation;
+import mara.mybox.objects.FileEditInformationFactory;
+import mara.mybox.objects.FileEditInformationFactory.Edit_Type;
 import mara.mybox.objects.FileInformation;
-import mara.mybox.tools.FileEncodingTools;
+import mara.mybox.tools.TextTools;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -40,7 +42,7 @@ import mara.mybox.tools.FileTools;
 public class TextEncodingBatchController extends FileBatchController {
 
     private boolean autoDetermine;
-    private FileEncoding sourceEncoding, targetEncoding;
+    private FileEditInformation sourceEncoding, targetEncoding;
     private int dirTotal, dirOk;
 
     @FXML
@@ -99,8 +101,8 @@ public class TextEncodingBatchController extends FileBatchController {
     @Override
     protected void initOptionsSection() {
 
-        sourceEncoding = new FileEncoding();
-        targetEncoding = new FileEncoding();
+        sourceEncoding = FileEditInformationFactory.newEditInformation(Edit_Type.Text);
+        targetEncoding = FileEditInformationFactory.newEditInformation(Edit_Type.Text);
 
         sourceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -110,7 +112,7 @@ public class TextEncodingBatchController extends FileBatchController {
             }
         });
 
-        List<String> setNames = FileEncodingTools.getCharsetNames();
+        List<String> setNames = TextTools.getCharsetNames();
         sourceBox.getItems().addAll(setNames);
         sourceBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -216,7 +218,7 @@ public class TextEncodingBatchController extends FileBatchController {
         try {
             sourceEncoding.setFile(srcFile);
             if (autoDetermine) {
-                boolean ok = FileEncodingTools.checkCharset(sourceEncoding);
+                boolean ok = TextTools.checkCharset(sourceEncoding);
                 if (!ok || sourceEncoding == null) {
                     return false;
                 }
@@ -239,7 +241,7 @@ public class TextEncodingBatchController extends FileBatchController {
             if (!skip) {
                 targetEncoding.setFile(new File(currentParameters.finalTargetName));
                 targetEncoding.setWithBom(targetBomCheck.isSelected());
-                return FileEncodingTools.convertCharset(sourceEncoding, targetEncoding);
+                return TextTools.convertCharset(sourceEncoding, targetEncoding);
             } else {
                 return true;
             }

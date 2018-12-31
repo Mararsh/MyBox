@@ -18,8 +18,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.objects.ImageAttributes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageRawFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static boolean writeRawImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {

@@ -18,8 +18,8 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.Port;
 import javax.sound.sampled.SourceDataLine;
 import javazoom.jl.player.Player;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class SoundTools {
 
-    protected static final Logger logger = LogManager.getLogger();
+   
 
     public static synchronized Clip playback(String name, float addVolume) {
         File file = new File(name);

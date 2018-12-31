@@ -12,7 +12,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.fxml.FxmlImageTools;
@@ -160,6 +160,9 @@ public class ImageManufactureShadowController extends ImageManufactureController
             @Override
             protected Void call() throws Exception {
                 final Image newImage = FxmlImageTools.addShadow(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Shadow, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

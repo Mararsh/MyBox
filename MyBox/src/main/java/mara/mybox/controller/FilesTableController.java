@@ -17,6 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
 

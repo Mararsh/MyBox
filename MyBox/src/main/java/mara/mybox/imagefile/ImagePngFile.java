@@ -16,8 +16,8 @@ import static mara.mybox.image.ImageValueTools.dpi2dpm;
 import static mara.mybox.image.ImageValueTools.dpm2dpi;
 import mara.mybox.objects.ImageInformation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImagePngFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/png_metadata.html#image
     public static boolean writePNGImageFile(BufferedImage image,

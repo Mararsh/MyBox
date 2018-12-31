@@ -17,6 +17,7 @@ import static mara.mybox.objects.CommonValues.BundleRuRU;
 import static mara.mybox.objects.CommonValues.BundleZhCN;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
  */
 public class AppVaribles {
 
-    private static final Logger logger = LogManager.getLogger();
+    public static final Logger logger = LogManager.getLogger();
     public static ResourceBundle CurrentBundle;
     public static Map<String, String> userConfigValues;
     public static Map<String, String> systemConfigValues;

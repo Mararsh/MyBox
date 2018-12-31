@@ -20,8 +20,8 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageInformation;
 import mara.mybox.objects.WeiboSnapParameters;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -54,8 +54,6 @@ public class PdfTools {
     public static enum PdfImageFormat {
         Original, Tiff, Jpeg
     }
-
-    private static final Logger logger = LogManager.getLogger();
 
     public static float pixels2mm(float pixels) {
         return ValueTools.roundFloat2(pixels * 25.4f / 72f);

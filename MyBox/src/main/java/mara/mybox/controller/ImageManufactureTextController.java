@@ -21,7 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -326,6 +326,9 @@ public class ImageManufactureTextController extends ImageManufactureController {
                 final Image newImage = FxmlImageTools.addText(values.getCurrentImage(), waterInput.getText(),
                         font, waterColorPicker.getValue(), waterX, waterY,
                         waterTransparent, waterShadow, waterAngle, outlineCheck.isSelected());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 recordImageHistory(ImageOperationType.Text, newImage);
                 Platform.runLater(new Runnable() {
                     @Override

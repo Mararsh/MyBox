@@ -5,8 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import static mara.mybox.objects.CommonValues.AlphaColor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageTransformTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage rotateImage(BufferedImage source, int angle) {
         angle = angle % 360;

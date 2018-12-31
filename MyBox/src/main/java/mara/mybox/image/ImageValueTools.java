@@ -20,8 +20,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import static mara.mybox.imagefile.ImageJpegFile.getJpegCompressionTypes;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -32,7 +32,7 @@ import org.apache.pdfbox.rendering.ImageType;
  */
 public class ImageValueTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     // dpi(dot per inch) convert to dpm(dot per millimeter)
     public static int dpi2dpmm(int dpi) {

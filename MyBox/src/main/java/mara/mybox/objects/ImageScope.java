@@ -6,8 +6,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import mara.mybox.fxml.FxmlColorTools;
 import static mara.mybox.objects.AppVaribles.getMessage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageScope {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     private OperationType operationType;
     private ScopeType scopeType;

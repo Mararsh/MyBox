@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
 
 /**

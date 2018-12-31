@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.tools.ConfigTools;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara

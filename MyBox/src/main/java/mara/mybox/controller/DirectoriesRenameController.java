@@ -12,10 +12,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -98,7 +99,7 @@ public class DirectoriesRenameController extends FilesRenameController {
             }
             digitInput.setText(digit + "");
 
-            String[] names = nameInput.getText().trim().split("\\s+");
+            String[] names = StringTools.splitBySpace(nameInput.getText());
             for (File file : files) {
                 if (file.isFile()) {
                     dirFiles++;

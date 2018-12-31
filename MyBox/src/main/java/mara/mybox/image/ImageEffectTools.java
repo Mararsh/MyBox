@@ -9,9 +9,8 @@ import java.awt.image.LookupOp;
 import java.awt.image.ShortLookupTable;
 import static mara.mybox.image.ImageConvertTools.clearAlpha;
 import mara.mybox.objects.ConvolutionKernel;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.ValueTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -21,8 +20,6 @@ import org.apache.logging.log4j.Logger;
  * @License Apache License Version 2.0
  */
 public class ImageEffectTools {
-
-    private static final Logger logger = LogManager.getLogger();
 
     public static BufferedImage applyMatrix(BufferedImage source, float[][] matrix) {
         return applyMatrix(source, matrix, ConvolutionKernel.Edge_Op.FILL_ZERO);

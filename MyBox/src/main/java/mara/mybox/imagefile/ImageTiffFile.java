@@ -27,8 +27,8 @@ import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.objects.ImageInformation;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import org.w3c.dom.Node;
 
 /**
@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
  */
 public class ImageTiffFile {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static String[] getTiffCompressionTypes() {
         return new TIFFImageWriteParam(null).getCompressionTypes();

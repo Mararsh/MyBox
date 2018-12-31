@@ -12,8 +12,8 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import static mara.mybox.fxml.FxmlImageTools.cropImage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlMarginsTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static Image cutMarginsByWidth(Image image, int MarginWidth,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {

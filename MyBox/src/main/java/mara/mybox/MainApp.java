@@ -18,8 +18,7 @@ import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.image.ImageValueTools;
 import mara.mybox.tools.FileTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -29,7 +28,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class MainApp extends Application {
 
-    private static final Logger logger = LogManager.getLogger();
     private static String imageFile;
 
     @Override
@@ -51,9 +49,11 @@ public class MainApp extends Application {
             DerbyBase.checkUpdates();
 
             File tempPath = new File(CommonValues.TempPath);
-            if (!tempPath.exists()) {
-                tempPath.mkdirs();
+            if (tempPath.exists()) {
+                FileTools.deleteDir(tempPath);
             }
+            tempPath.mkdirs();
+
             ImageIO.setUseCache(true);
             ImageIO.setCacheDirectory(new File(CommonValues.TempPath));
 

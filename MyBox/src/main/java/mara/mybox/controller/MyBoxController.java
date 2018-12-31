@@ -16,6 +16,7 @@ import mara.mybox.objects.AlarmClock;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.scheduledTasks;
 import mara.mybox.objects.CommonValues;
+import static mara.mybox.objects.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -582,11 +583,11 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem textEncoding = new MenuItem(AppVaribles.getMessage("TextEncoding"));
-        textEncoding.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem textEditer = new MenuItem(AppVaribles.getMessage("TextEditer"));
+        textEditer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.TextEncodingFxml, AppVaribles.getMessage("TextEncoding"));
+                reloadStage(CommonValues.TextEditerFxml, AppVaribles.getMessage("TextEditer"));
             }
         });
 
@@ -595,6 +596,14 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.TextEncodingBatchFxml, AppVaribles.getMessage("TextEncodingBatch"));
+            }
+        });
+
+        MenuItem bytesEditer = new MenuItem(AppVaribles.getMessage("BytesEditer"));
+        bytesEditer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.BytesEditerFxml, AppVaribles.getMessage("BytesEditer"));
             }
         });
 
@@ -608,7 +617,8 @@ public class MyBoxController extends BaseController {
         desktopMenu = new ContextMenu();
         desktopMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
                 filesArrangement, dirSynchronize, new SeparatorMenuItem(),
-                textEncoding, textEncodingBatch, new SeparatorMenuItem(), alarmClock);
+                textEditer, textEncodingBatch, new SeparatorMenuItem(),
+                alarmClock);
     }
 
     private void initFileToolsMenu() {

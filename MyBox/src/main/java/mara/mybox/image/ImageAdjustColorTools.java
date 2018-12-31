@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import mara.mybox.fxml.FxmlAdjustColorTools;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorActionType;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorObjectType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageAdjustColorTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage changeSaturate(BufferedImage source, float change) {
         try {

@@ -11,7 +11,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorActionType;
 import mara.mybox.fxml.FxmlAdjustColorTools.ColorObjectType;
 import static mara.mybox.objects.AppVaribles.getMessage;

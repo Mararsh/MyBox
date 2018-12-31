@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.AppVaribles.getUserConfigValue;
 
 /**
@@ -555,13 +555,18 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openTextEncoding(ActionEvent event) {
-        reloadStage(CommonValues.TextEncodingFxml, AppVaribles.getMessage("TextEncoding"));
+    private void openTextEditer(ActionEvent event) {
+        reloadStage(CommonValues.TextEditerFxml, AppVaribles.getMessage("TextEditer"));
     }
 
     @FXML
     private void openTextEncodingBatch(ActionEvent event) {
         reloadStage(CommonValues.TextEncodingBatchFxml, AppVaribles.getMessage("TextEncodingBatch"));
+    }
+
+    @FXML
+    private void openBytesEditer(ActionEvent event) {
+        reloadStage(CommonValues.BytesEditerFxml, AppVaribles.getMessage("BytesEditer"));
     }
 
     @FXML

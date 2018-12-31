@@ -21,7 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageGifFile;
@@ -197,8 +197,14 @@ public class ImageGifViewerController extends ImageViewerController {
                     totalNumber = bimages.size();
                     images = new Image[totalNumber];
                     for (int i = 0; i < totalNumber; i++) {
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         Image m = SwingFXUtils.toFXImage(bimages.get(i), null);
                         images[i] = m;
+                    }
+                    if (task.isCancelled()) {
+                        return null;
                     }
                     if (totalNumber > 0) {
                         image = images[0];
@@ -302,7 +308,7 @@ public class ImageGifViewerController extends ImageViewerController {
                     || totalNumber <= 0 || fromIndex > toIndex) {
                 return;
             }
-            Task saveTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     String fileName = targetPath.getAbsolutePath() + "/"
@@ -310,6 +316,9 @@ public class ImageGifViewerController extends ImageViewerController {
                             + "." + targetTypeBox.getSelectionModel().getSelectedItem();
                     final List<String> filenames
                             = ImageGifFile.extractGifImages(sourceFile, new File(fileName), fromIndex, toIndex);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -319,8 +328,8 @@ public class ImageGifViewerController extends ImageViewerController {
                     return null;
                 }
             };
-            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(saveTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 

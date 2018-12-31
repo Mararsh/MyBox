@@ -10,8 +10,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.IntPoint;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlAdjustColorTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public enum ColorObjectType {
         Brightness, Sauration, Hue, Opacity, Red, Green, Blue, Yellow, Cyan, Magenta, RGB, Color

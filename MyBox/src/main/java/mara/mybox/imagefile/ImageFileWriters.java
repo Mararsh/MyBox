@@ -31,8 +31,8 @@ import static mara.mybox.imagefile.ImagePngFile.writePNGImageFile;
 import static mara.mybox.imagefile.ImageRawFile.writeRawImageFile;
 import static mara.mybox.imagefile.ImagePcxFile.writePcxImageFile;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 import static mara.mybox.imagefile.ImageTiffFile.writeTiffImage;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -46,7 +46,7 @@ import org.apache.pdfbox.rendering.ImageType;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileWriters {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
         if (image == null || outFile == null || format == null) {

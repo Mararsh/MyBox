@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.objects.IntCircle;
 import mara.mybox.objects.IntRectangle;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -22,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageScopeTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static BufferedImage indicateRectangle(BufferedImage source,
             Color color, int lineWidth, IntRectangle rect) {

@@ -28,7 +28,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -563,6 +563,9 @@ public class ImagesCombineController extends ImageSourcesController {
                     String format = FileTools.getFileSuffix(filename);
                     final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
                     ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {

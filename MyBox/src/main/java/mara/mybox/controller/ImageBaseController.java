@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlTools;
 import mara.mybox.objects.ImageFileInformation;
 import mara.mybox.tools.FileTools;
@@ -135,7 +135,7 @@ public abstract class ImageBaseController extends BaseController {
         image = null;
         final String fileName = file.getPath();
         getMyStage().setTitle(getBaseTitle() + " " + fileName);
-        Task loadTask = new Task<Void>() {
+        task = new Task<Void>() {
 
             @Override
             protected Void call() {
@@ -147,6 +147,9 @@ public abstract class ImageBaseController extends BaseController {
                         return null;
                     }
                     imageInformation = imageFileInformation.getImageInformation();
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -176,6 +179,9 @@ public abstract class ImageBaseController extends BaseController {
                         imageInformation.setImage(image);
                         imageInformation.setIsSampled(needSampled);
                     }
+                    if (task.isCancelled()) {
+                        return null;
+                    }
 
                     Platform.runLater(new Runnable() {
                         @Override
@@ -189,8 +195,8 @@ public abstract class ImageBaseController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(loadTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

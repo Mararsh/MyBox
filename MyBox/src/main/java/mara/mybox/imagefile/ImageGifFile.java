@@ -25,10 +25,10 @@ import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ImageAttributes;
 import mara.mybox.objects.ImageInformation;
 import mara.mybox.tools.FileTools;
+
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.ValueTools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 
@@ -40,8 +40,6 @@ import thridparty.GifDecoder.GifImage;
  * @License Apache License Version 2.0
  */
 public class ImageGifFile {
-
-    private static final Logger logger = LogManager.getLogger();
 
     public static GIFImageMetadata getGifMetadata(File file) {
         try {

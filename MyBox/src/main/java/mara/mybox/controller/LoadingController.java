@@ -1,13 +1,13 @@
 package mara.mybox.controller;
 
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.objects.CommonValues;
 
 /**
  * @Author Mara
@@ -15,10 +15,9 @@ import org.apache.logging.log4j.Logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class LoadingController {
+public class LoadingController extends BaseController {
 
-    private static final Logger logger = LogManager.getLogger();
-    private Stage myStage;
+    private Task<?> loadingTask;
 
     @FXML
     private ProgressIndicator progressIndicator;
@@ -31,21 +30,25 @@ public class LoadingController {
         try {
             progressIndicator.setProgress(-1F);
             progressIndicator.progressProperty().bind(task.progressProperty());
+            loadingTask = task;
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
+    @FXML
+    private void mybox(ActionEvent event) {
+        openStage(CommonValues.MyboxFxml, false, true);
+    }
+
+    @FXML
+    private void cancelAction(ActionEvent event) {
+        loadingTask.cancel();
+        parentController.taskCanceled();
+    }
+
     public void setInfo(String info) {
         infoLabel.setText(info);
-    }
-
-    public Stage getMyStage() {
-        return myStage;
-    }
-
-    public void setMyStage(Stage myStage) {
-        this.myStage = myStage;
     }
 
     public ProgressIndicator getProgressIndicator() {
@@ -70,6 +73,14 @@ public class LoadingController {
 
     public void setText(TextArea text) {
         this.text = text;
+    }
+
+    public Task<?> getLoadingTask() {
+        return loadingTask;
+    }
+
+    public void setLoadingTask(Task<?> loadingTask) {
+        this.loadingTask = loadingTask;
     }
 
 }

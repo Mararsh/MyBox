@@ -32,7 +32,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -249,6 +249,9 @@ public class ImageFramesViewerController extends ImageBaseController {
                 ret = "";
                 hasSampled = false;
                 for (File file : files) {
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     final String fileName = file.getPath();
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
                     String format = finfo.getImageFormat();
@@ -261,6 +264,9 @@ public class ImageFramesViewerController extends ImageBaseController {
                         break;
                     }
                     for (int i = 0; i < bufferImages.size(); i++) {
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         ImageInformation minfo = finfo.getImagesInformation().get(i);
                         if (minfo.isIsSampled()) {
                             hasSampled = true;
@@ -269,6 +275,9 @@ public class ImageFramesViewerController extends ImageBaseController {
                         minfo.setImage(image);
                         infos.add(minfo);
                     }
+                }
+                if (task.isCancelled()) {
+                    return null;
                 }
                 Platform.runLater(new Runnable() {
                     @Override
@@ -412,6 +421,9 @@ public class ImageFramesViewerController extends ImageBaseController {
                     int digit = (selectedImages.size() + "").length();
                     final List<String> filenames = new ArrayList<>();
                     for (int i = 0; i < selectedImages.size(); i++) {
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         filename = filePrefix + "-" + ValueTools.fillNumber(i, digit) + "." + format;
                         BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
                         if (bufferedImage == null) {
@@ -419,6 +431,9 @@ public class ImageFramesViewerController extends ImageBaseController {
                         }
                         ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                         filenames.add(filename);
+                    }
+                    if (task.isCancelled()) {
+                        return null;
                     }
                     Platform.runLater(new Runnable() {
                         @Override

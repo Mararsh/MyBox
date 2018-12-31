@@ -17,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.fxml.FxmlTools;
@@ -202,9 +202,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
     }
 
     protected void indicateCropScope() {
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -216,6 +213,9 @@ public class ImageManufactureCropController extends ImageManufactureController {
                     final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
                             Color.RED, lineWidth,
                             new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -276,15 +276,15 @@ public class ImageManufactureCropController extends ImageManufactureController {
     @FXML
     public void cropAction() {
         imageView.setCursor(Cursor.OPEN_HAND);
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
                     final Image newImage = FxmlImageTools.cropImage(values.getCurrentImage(),
                             cropLeftX, cropLeftY, cropRightX, cropRightY);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     recordImageHistory(ImageOperationType.Crop, newImage);
                     Platform.runLater(new Runnable() {
                         @Override

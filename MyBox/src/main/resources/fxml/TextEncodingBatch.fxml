@@ -75,7 +75,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
                                                     <columns>
                                                         <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" prefWidth="700.0" text="%File" />
+                                                        <TableColumn fx:id="fileColumn" prefWidth="700.0" text="%Directory" />
                                                     </columns>
                                                 </TableView>
                                             </content>
@@ -84,14 +84,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane text="%Options" VBox.vgrow="NEVER">
+                        <TitledPane text="%SourceFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="subCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
-                                                <Label text="%TextEncodingComments"  styleClass="blue-label" stylesheets="@../styles/MyBox.css">
+                                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextEncodingComments">
                                                     <HBox.margin>
                                                         <Insets left="30.0" />
                                                     </HBox.margin>
@@ -126,7 +126,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
@@ -139,7 +139,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                                             <children>
-                                                <Label text="%FilesPath" />
+                                                <Label text="%TargetFilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                 <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
                                                 <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />

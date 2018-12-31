@@ -22,7 +22,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.fxml.FxmlMarginsTools;
@@ -274,6 +274,9 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                             default:
                                 return null;
                         }
+                    }
+                    if (task.isCancelled()) {
+                        return null;
                     }
                     Platform.runLater(new Runnable() {
                         @Override

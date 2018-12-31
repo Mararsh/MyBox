@@ -40,7 +40,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.db.TableFloatMatrix;
 import mara.mybox.objects.AppVaribles;
@@ -502,7 +502,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (result.get() == buttonCancel) {
             return;
         }
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
@@ -524,8 +524,8 @@ public class ConvolutionKernelManagerController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
@@ -545,7 +545,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (result.get() == buttonCancel) {
             return;
         }
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
@@ -563,8 +563,8 @@ public class ConvolutionKernelManagerController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
@@ -640,8 +640,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     @FXML
     private void examplesAction(ActionEvent event) {
-
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
@@ -659,8 +658,8 @@ public class ConvolutionKernelManagerController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
 
@@ -705,7 +704,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (!pickKernel() || name == null || name.isEmpty()) {
             return;
         }
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
@@ -724,8 +723,8 @@ public class ConvolutionKernelManagerController extends BaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
 

@@ -37,7 +37,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -480,6 +480,9 @@ public class ImageSourcesController extends ImageViewerController {
                 ret = "";
                 hasSampled = false;
                 for (File file : files) {
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     final String fileName = file.getPath();
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
                     String format = finfo.getImageFormat();
@@ -492,6 +495,9 @@ public class ImageSourcesController extends ImageViewerController {
                         break;
                     }
                     for (int i = 0; i < bufferImages.size(); i++) {
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         ImageInformation minfo = finfo.getImagesInformation().get(i);
                         if (minfo.isIsSampled()) {
                             hasSampled = true;

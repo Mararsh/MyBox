@@ -30,7 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -395,7 +395,7 @@ public class PdfMergeController extends PdfBaseController {
                 || targetFile == null) {
             return;
         }
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             private boolean fail;
             private PDDocument document;
             private String errorString;
@@ -474,8 +474,8 @@ public class PdfMergeController extends PdfBaseController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }

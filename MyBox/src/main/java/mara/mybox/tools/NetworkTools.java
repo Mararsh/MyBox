@@ -25,8 +25,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import mara.mybox.objects.AppVaribles;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class NetworkTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public static Map<String, String> readCookie(WebEngine webEngine) {
         try {

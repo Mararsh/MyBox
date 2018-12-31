@@ -15,8 +15,8 @@ import mara.mybox.image.ImageEffectTools;
 import mara.mybox.objects.ConvolutionKernel;
 import mara.mybox.objects.ImageScope;
 import mara.mybox.objects.IntPoint;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlEffectTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public enum EffectsOperationType {
         Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Posterizing, Gray, BlackOrWhite, Sepia

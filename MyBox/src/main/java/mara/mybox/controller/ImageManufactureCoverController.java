@@ -34,7 +34,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlCoverTools;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
@@ -496,11 +496,14 @@ public class ImageManufactureCoverController extends ImageManufactureController 
             AppVaribles.setUserConfigValue(sourcePathKey, picFile.getParent());
 
             final String fileName = file.getPath();
-            Task loadTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     try {
                         BufferedImage bufferImage = ImageIO.read(file);
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         picture = SwingFXUtils.toFXImage(bufferImage, null);
                         Platform.runLater(new Runnable() {
                             @Override
@@ -515,8 +518,8 @@ public class ImageManufactureCoverController extends ImageManufactureController 
                     return null;
                 }
             };
-            openHandlingStage(loadTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(loadTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 
@@ -580,6 +583,9 @@ public class ImageManufactureCoverController extends ImageManufactureController 
                             default:
                                 return null;
                         }
+                    }
+                    if (task.isCancelled()) {
+                        return null;
                     }
                     clearAction();
                     recordImageHistory(ImageOperationType.Cover, newImage);

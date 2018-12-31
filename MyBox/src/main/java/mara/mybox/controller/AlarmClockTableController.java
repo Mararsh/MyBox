@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.objects.AlarmClock;
 import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
 
 /**

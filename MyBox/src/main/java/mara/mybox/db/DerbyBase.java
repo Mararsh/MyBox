@@ -8,8 +8,8 @@ import java.util.List;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.ConvolutionKernel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class DerbyBase {
 
-    protected static final Logger logger = LogManager.getLogger();
+   
 
     protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String protocol = "jdbc:derby:";

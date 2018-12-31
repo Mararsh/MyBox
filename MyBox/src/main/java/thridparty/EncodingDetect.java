@@ -2,6 +2,8 @@ package thridparty;
 
 /**
  * @Author https://www.cnblogs.com/ChurchYim/p/8427373.html
+ *
+ * My updates are marked with #####. Mara
  */
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +11,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class EncodingDetect {
+
+    public static int MAX_CHECK_BYTES = 20000000;  // ##### Added by Mara
 
     public static String detect(String path) {
         BytesEncodingDetect s = new BytesEncodingDetect();
@@ -86,8 +90,7 @@ public class EncodingDetect {
 
         public int detectEncoding(File testfile) {
             FileInputStream fileis;
-            byte[] rawtext;
-            rawtext = new byte[(int) testfile.length()];
+            byte[] rawtext = new byte[MAX_CHECK_BYTES];  // ##### Updated by Mara
             try {
                 fileis = new FileInputStream(testfile);
                 fileis.read(rawtext);

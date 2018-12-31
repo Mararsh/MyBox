@@ -30,8 +30,8 @@ import mara.mybox.image.ImageConvertTools;
 import mara.mybox.image.ImageScopeTools;
 import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageInformation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -41,7 +41,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FxmlImageTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public class ImageManufactureType {
 

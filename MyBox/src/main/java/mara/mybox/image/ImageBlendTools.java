@@ -3,8 +3,8 @@ package mara.mybox.image;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Random;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageBlendTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     public enum ImagesRelativeLocation {
         Foreground_In_Background,

@@ -112,7 +112,8 @@
                         <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                         <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openTextEncoding" text="%TextEncoding" />
+                        <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
+                        <!--<MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />-->
                         <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />

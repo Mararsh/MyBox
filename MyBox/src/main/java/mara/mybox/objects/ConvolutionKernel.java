@@ -8,8 +8,6 @@ import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.ValueTools;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -19,8 +17,6 @@ import org.apache.logging.log4j.Logger;
  * @License Apache License Version 2.0
  */
 public class ConvolutionKernel {
-
-    protected static final Logger logger = LogManager.getLogger();
 
     private SimpleStringProperty name, description, modifyTime, createTime;
     private SimpleIntegerProperty width, height, type, gray, edge;

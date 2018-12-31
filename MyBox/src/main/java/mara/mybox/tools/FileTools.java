@@ -18,8 +18,8 @@ import java.util.List;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import mara.mybox.objects.FileSynchronizeAttributes;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.objects.CommonValues.TempPath;
 
 /**
  * @Author mara
@@ -27,8 +27,6 @@ import org.apache.logging.log4j.Logger;
  * @Description
  */
 public class FileTools {
-
-    private static final Logger logger = LogManager.getLogger();
 
     public static long getFileCreateTime(final String filename) {
         try {
@@ -115,9 +113,9 @@ public class FileTools {
     }
 
     public static File getTempFile() {
-        File file = new File(UserFilePath + "/temp" + new Date().getTime() + ValueTools.getRandomInt(100));
+        File file = new File(TempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
         while (file.exists()) {
-            file = new File(UserFilePath + "/temp" + new Date().getTime() + ValueTools.getRandomInt(100));
+            file = new File(TempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
         }
         return file;
     }

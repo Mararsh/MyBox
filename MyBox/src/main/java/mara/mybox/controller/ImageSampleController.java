@@ -26,7 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlScopeTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -260,9 +260,6 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     private void indicateCropScope() {
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -275,6 +272,9 @@ public class ImageSampleController extends ImageViewerController {
                             Color.RED, lineWidth,
                             new IntRectangle((int) (cropLeftX / scale), (int) (cropLeftY / scale),
                                     (int) (cropRightX / scale), (int) (cropRightY / scale)));
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -429,7 +429,13 @@ public class ImageSampleController extends ImageViewerController {
                         sourceFile.getAbsolutePath(),
                         cropLeftX, cropLeftY, cropRightX, cropRightY,
                         sampleWidth, sampleHeight);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

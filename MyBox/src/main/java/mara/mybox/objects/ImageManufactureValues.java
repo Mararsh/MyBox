@@ -2,8 +2,8 @@ package mara.mybox.objects;
 
 import java.io.File;
 import javafx.scene.image.Image;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageManufactureValues {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     private File sourceFile;
     private ImageScope scope;

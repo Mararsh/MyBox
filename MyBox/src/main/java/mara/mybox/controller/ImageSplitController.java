@@ -6,8 +6,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -40,7 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.image.ImageConvertTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
@@ -56,6 +54,7 @@ import mara.mybox.objects.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -1125,21 +1124,14 @@ public class ImageSplitController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                Collections.sort(rows, new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer p1, Integer p2) {
-                        return p1 - p2;
-                    }
-                });
-                Collections.sort(cols, new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer p1, Integer p2) {
-                        return p1 - p2;
-                    }
-                });
+                ValueTools.sortList(rows);
+                ValueTools.sortList(cols);
                 final Image newImage = FxmlImageTools.indicateSplit(image, rows, cols,
                         lineColorPicker.getValue(), lineWidthBox.getValue(),
                         displaySizeCheck.isSelected(), scale);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1227,9 +1219,15 @@ public class ImageSplitController extends ImageViewerController {
                     wholeSource = FxmlImageTools.getBufferedImage(image);
                 }
                 for (int i = 0; i < rows.size() - 1; i++) {
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     y1 = rows.get(i);
                     y2 = rows.get(i + 1);
                     for (int j = 0; j < cols.size() - 1; j++) {
+                        if (task.isCancelled()) {
+                            return null;
+                        }
                         x1 = cols.get(j);
                         x2 = cols.get(j + 1);
                         BufferedImage target;
@@ -1280,6 +1278,9 @@ public class ImageSplitController extends ImageViewerController {
                         pdfFormat, fontBox.getSelectionModel().getSelectedItem(), authorInput.getText(),
                         threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
                         pageWidth, pageHeight, marginSize, headerInput.getText());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1319,6 +1320,9 @@ public class ImageSplitController extends ImageViewerController {
                 final String filename = sourceFile.getAbsolutePath();
                 ok = ImageTiffFile.writeSplitImages(sourceFormat, filename,
                         imageInformation, rows, cols, attributes, targetFile);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

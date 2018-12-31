@@ -25,7 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import mara.mybox.objects.CommonValues;
@@ -398,6 +398,7 @@ public class ImagesViewerController extends ImageViewerController {
     }
 
     private void makeNevigator(boolean reload) {
+
         if ((imageFileList == null || imageFileList.isEmpty()) && (filesNumber <= 0)) {
             previousFiles = null;
             nextFiles = null;

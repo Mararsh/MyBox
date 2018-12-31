@@ -55,7 +55,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
-import static mara.mybox.controller.BaseController.logger;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
 import mara.mybox.imagefile.ImageFileReaders;
@@ -696,9 +696,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 && scope.getScopeType() != ScopeType.RectangleColor) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -709,9 +706,18 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     }
                     final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
                             Color.RED, lineWidth, scope.getRectangle());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     final Image rectImage = FxmlScopeTools.indicateRectangle(scopedImage,
                             Color.RED, lineWidth, scope.getRectangle());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     scope.setImage(rectImage);
                     Platform.runLater(new Runnable() {
                         @Override
@@ -739,9 +745,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 && scope.getScopeType() != ScopeType.CircleColor) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -752,9 +755,18 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     }
                     final Image newImage = FxmlScopeTools.indicateCircle(values.getCurrentImage(),
                             Color.RED, lineWidth, scope.getCircle());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     final Image circledImage = FxmlScopeTools.indicateCircle(scopedImage,
                             Color.RED, lineWidth, scope.getCircle());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     scope.setImage(circledImage);
                     Platform.runLater(new Runnable() {
                         @Override
@@ -781,14 +793,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
         if (scope.getScopeType() != ScopeType.Matting) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
                     final Image scopeImage = FxmlScopeTools.scopeMatting(values.getCurrentImage(), scope);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     scope.setImage(scopeImage);
                     Platform.runLater(new Runnable() {
                         @Override
@@ -814,14 +826,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
         if (scope.getScopeType() != ScopeType.Color) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            return;
-        }
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
                     final Image scopeImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     scope.setImage(scopeImage);
                     Platform.runLater(new Runnable() {
                         @Override
@@ -844,11 +856,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     public void setImage(final File file) {
-        Task setTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 BufferedImage bufferImage = ImageIO.read(file);
+                if (task.isCancelled()) {
+                    return null;
+                }
                 final Image newImage = SwingFXUtils.toFXImage(bufferImage, null);
+                if (task.isCancelled()) {
+                    return null;
+                }
 //                recordImageHistory(ImageOperationType.Load, newImage);
                 Platform.runLater(new Runnable() {
                     @Override
@@ -863,8 +881,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 return null;
             }
         };
-        openHandlingStage(setTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(setTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
@@ -976,11 +994,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
             }
             return;
         }
-        Task refTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 values.setRefInfo(ImageFileReaders.readImageFileMetaData(values.getRefFile().getAbsolutePath()).getImageInformation());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 values.setRefImage(SwingFXUtils.toFXImage(ImageIO.read(values.getRefFile()), null));
+                if (task.isCancelled()) {
+                    return null;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -998,8 +1022,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 return null;
             }
         };
-        openHandlingStage(refTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(refTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
     }
@@ -1366,12 +1390,18 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
         }
 
-        Task saveTask = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 String format = values.getImageInfo().getImageFormat();
                 final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(values.getCurrentImage());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 ImageFileWriters.writeImageFile(bufferedImage, format, values.getSourceFile().getAbsolutePath());
+                if (task.isCancelled()) {
+                    return null;
+                }
                 imageInformation = ImageFileReaders.readImageFileMetaData(values.getSourceFile().getAbsolutePath()).getImageInformation();
                 image = values.getCurrentImage();
                 values.setImage(image);
@@ -1386,8 +1416,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 return null;
             }
         };
-        openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(saveTask);
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
 
@@ -1410,12 +1440,18 @@ public abstract class ImageManufactureController extends ImageViewerController {
             }
             AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
 
-            Task saveTask = new Task<Void>() {
+            task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
                     final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(values.getCurrentImage());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                    if (task.isCancelled()) {
+                        return null;
+                    }
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -1432,8 +1468,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     return null;
                 }
             };
-            openHandlingStage(saveTask, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(saveTask);
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
 

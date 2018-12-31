@@ -1,8 +1,8 @@
 package mara.mybox.objects;
 
 import javafx.scene.paint.Color;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ImageCombine {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     private int columnsValue, intervalValue, MarginsValue, arrayType, sizeType;
     private int eachWidthValue, eachHeightValue, totalWidthValue, totalHeightValue;

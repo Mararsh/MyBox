@@ -49,10 +49,9 @@ import mara.mybox.objects.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import mara.mybox.objects.ImageInformation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @Author Mara
@@ -62,14 +61,12 @@ import org.apache.logging.log4j.Logger;
  */
 public class BaseController implements Initializable {
 
-    protected static final Logger logger = LogManager.getLogger();
-
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
     protected String myFxml, parentFxml, currentStatus, baseTitle;
     protected Stage myStage;
     protected Alert loadingAlert;
-    protected Task<Void> task;
+    protected Task<Void> task, backgroundTask;
     protected BaseController parentController, myController;
     protected Timer popupTimer, timer;
     protected Popup popup;
@@ -723,6 +720,10 @@ public class BaseController implements Initializable {
                 }
             }
 
+            if (backgroundTask != null && backgroundTask.isRunning()) {
+                backgroundTask.cancel();
+            }
+
             if (AppVaribles.scheduledTasks == null) {
                 Platform.setImplicitExit(true);
             }
@@ -1115,6 +1116,7 @@ public class BaseController implements Initializable {
             Pane pane = fxmlLoader.load();
             LoadingController controller = fxmlLoader.getController();
             controller.init(task);
+            controller.setParentController(getMyController());
 
             final Stage loadingStage = new Stage();
             loadingStage.initModality(block);
@@ -1138,12 +1140,14 @@ public class BaseController implements Initializable {
             task.setOnCancelled(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
+                    popInformation(AppVaribles.getMessage("Canceled"));
                     loadingStage.close();
                 }
             });
             task.setOnFailed(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
+                    popError(AppVaribles.getMessage("Error"));
                     loadingStage.close();
                 }
             });
@@ -1153,6 +1157,10 @@ public class BaseController implements Initializable {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public void taskCanceled() {
+
     }
 
     public String getParentFxml() {

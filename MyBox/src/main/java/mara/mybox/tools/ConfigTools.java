@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import mara.mybox.objects.CommonValues;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static mara.mybox.objects.AppVaribles.logger;
+
 
 /**
  * @Author Mara
@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class ConfigTools {
 
-    private static final Logger logger = LogManager.getLogger();
+    
 
     // Keep this method to migrate data from config file to derby db.
     public static Map<String, String> readConfigValuesFromFile() {

@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
@@ -9,9 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import mara.mybox.objects.FileEncoding;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javafx.scene.control.IndexRange;
+import mara.mybox.objects.FileEditInformation;
+import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.objects.FileEditInformation.Line_Break;
+
 import thridparty.EncodingDetect;
 
 /**
@@ -21,9 +24,7 @@ import thridparty.EncodingDetect;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileEncodingTools {
-
-    private static final Logger logger = LogManager.getLogger();
+public class TextTools {
 
     public static List<Charset> getCharsets() {
         List<Charset> sets = new ArrayList<>();
@@ -91,26 +92,26 @@ public class FileEncodingTools {
         return null;
     }
 
-    public static boolean checkCharset(FileEncoding fileEncoding) {
+    public static boolean checkCharset(FileEditInformation info) {
         try {
-            if (fileEncoding == null || fileEncoding.getFile() == null) {
+            if (info == null || info.getFile() == null) {
                 return false;
             }
             String setName;
-            fileEncoding.setWithBom(false);
-            try (FileInputStream inputStream = new FileInputStream(fileEncoding.getFile())) {
+            info.setWithBom(false);
+            try (FileInputStream inputStream = new FileInputStream(info.getFile())) {
                 byte[] header = new byte[4];
                 if ((inputStream.read(header, 0, 4) != -1)) {
                     setName = checkCharsetByBom(header);
                     if (setName != null) {
-                        fileEncoding.setCharset(Charset.forName(setName));
-                        fileEncoding.setWithBom(true);
+                        info.setCharset(Charset.forName(setName));
+                        info.setWithBom(true);
                         return true;
                     }
                 }
             }
-            setName = EncodingDetect.detect(fileEncoding.getFile());
-            fileEncoding.setCharset(Charset.forName(setName));
+            setName = EncodingDetect.detect(info.getFile());
+            info.setCharset(Charset.forName(setName));
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -172,21 +173,21 @@ public class FileEncodingTools {
         return null;
     }
 
-    public static String readText(FileEncoding fileEncoding) {
+    public static String readText(FileEditInformation info) {
         try {
-            if (fileEncoding == null || fileEncoding.getFile() == null) {
+            if (info == null || info.getFile() == null) {
                 return null;
             }
             StringBuilder text = new StringBuilder();
-            try (FileInputStream inputStream = new FileInputStream(fileEncoding.getFile());
-                    InputStreamReader reader = new InputStreamReader(inputStream, fileEncoding.getCharset())) {
-                if (fileEncoding.isWithBom()) {
-                    inputStream.skip(bomSize(fileEncoding.getCharset().name()));
+            try (FileInputStream inputStream = new FileInputStream(info.getFile());
+                    InputStreamReader reader = new InputStreamReader(inputStream, info.getCharset())) {
+                if (info.isWithBom()) {
+                    inputStream.skip(bomSize(info.getCharset().name()));
                 }
                 char[] buf = new char[512];
-                int count;
-                while ((count = reader.read(buf)) != -1) {
-                    text.append(buf, 0, count);
+                int len;
+                while ((len = reader.read(buf)) != -1) {
+                    text.append(buf, 0, len);
                 }
             }
             return text.toString();
@@ -196,12 +197,12 @@ public class FileEncodingTools {
         }
     }
 
-    public static boolean writeText(FileEncoding fileEncoding, String text) {
+    public static boolean writeText(FileEditInformation info, String text) {
         try {
-            try (FileOutputStream outputStream = new FileOutputStream(fileEncoding.getFile());
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, fileEncoding.getCharset())) {
-                if (fileEncoding.isWithBom()) {
-                    byte[] bytes = bomBytes(fileEncoding.getCharset().name());
+            try (FileOutputStream outputStream = new FileOutputStream(info.getFile());
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, info.getCharset())) {
+                if (info.isWithBom()) {
+                    byte[] bytes = bomBytes(info.getCharset().name());
                     outputStream.write(bytes);
                 }
                 writer.write(text);
@@ -213,7 +214,7 @@ public class FileEncodingTools {
         }
     }
 
-    public static boolean convertCharset(FileEncoding sourceEncoding, FileEncoding targetEncoding) {
+    public static boolean convertCharset(FileEditInformation sourceEncoding, FileEditInformation targetEncoding) {
         try {
             if (sourceEncoding == null || sourceEncoding.getFile() == null
                     || sourceEncoding.getCharset() == null
@@ -244,6 +245,151 @@ public class FileEncodingTools {
             logger.debug(e.toString());
             return false;
         }
+    }
+
+    public static IndexRange hexIndex(String text, Charset charset,
+            Line_Break lineBreak, IndexRange textRange) {
+        int hIndex = 0;
+        int hBegin = 0;
+        int hEnd = 0;
+        int cBegin = textRange.getStart();
+        int cEnd = textRange.getEnd();
+        if (cBegin == 0 && cEnd == 0) {
+            return new IndexRange(0, 0);
+        }
+        byte[] cBytes, crlf = "\r\n".getBytes(charset);
+        boolean isCRLF = lineBreak == Line_Break.CRLF;
+        int crlfLen = "\r\n".getBytes(charset).length * 3;
+        for (int i = 0; i < text.length(); i++) {
+            if (cBegin == i) {
+                hBegin = hIndex;
+            }
+            if (cEnd == i) {
+                hEnd = hIndex;
+            }
+            char c = text.charAt(i);
+            if (isCRLF && c == '\n') {
+                hIndex += crlfLen;
+            } else {
+                cBytes = String.valueOf(text.charAt(i)).getBytes(charset);
+                hIndex += cBytes.length * 3;
+            }
+        }
+        if (cBegin == text.length()) {
+            hBegin = hIndex;
+        }
+        if (cEnd == text.length()) {
+            hEnd = hIndex;
+        }
+        return new IndexRange(hBegin, hEnd);
+    }
+
+    public static int countNumber(String string, String subString) {
+        if (string == null || string.isEmpty()
+                || subString == null || subString.isEmpty()
+                || string.length() < subString.length()) {
+            return 0;
+        }
+        int fromIndex = 0;
+        int count = 0;
+        while (true) {
+            int index = string.indexOf(subString, fromIndex);
+            if (index < 0) {
+                break;
+            }
+            fromIndex = index + 1;
+            count++;
+        }
+        return count;
+    }
+
+    public static int[] lastAndCount(String string, String subString) {
+        int[] results = new int[2];
+        results[0] = -1;
+        results[1] = 0;
+        if (string == null || string.isEmpty()
+                || subString == null || subString.isEmpty()
+                || string.length() < subString.length()) {
+            return results;
+        }
+        int fromIndex = 0;
+        int count = 0;
+        int last = -1;
+        while (true) {
+            int index = string.indexOf(subString, fromIndex);
+            if (index < 0) {
+                break;
+            }
+            last = index;
+            fromIndex = index + 1;
+            count++;
+        }
+        results[0] = last;
+        results[1] = count;
+        return results;
+    }
+
+    public static Line_Break checkLineBreak(File file) {
+        try {
+            if (file == null) {
+                return Line_Break.LF;
+            }
+            try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
+                int c;
+                boolean cr = false;
+                while ((c = reader.read()) != -1) {
+                    if ((char) c == '\r') {
+                        cr = true;
+                    } else if ((char) c == '\n') {
+                        if (cr) {
+                            return Line_Break.CRLF;
+                        } else {
+                            return Line_Break.LF;
+                        }
+                    } else if (cr) {
+                        return Line_Break.CR;
+                    }
+                }
+            }
+            return Line_Break.LF;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return Line_Break.LF;
+        }
+    }
+
+    public static String lineBreak(Line_Break lb) {
+        switch (lb) {
+            case LF:
+                return "\n";
+            case CRLF:
+                return "\r\n";
+            case CR:
+                return "\r";
+            default:
+                return "\n";
+        }
+    }
+
+    public static byte[] lineBreakBytes(Line_Break lb) {
+        switch (lb) {
+            case LF:
+                return "\n".getBytes();
+            case CRLF:
+                return "\r\n".getBytes();
+            case CR:
+                return "\r".getBytes();
+            default:
+                return "\n".getBytes();
+        }
+    }
+
+    public static String lineBreakHex(Line_Break lb) {
+        return ByteTools.bytesToHex(lineBreakBytes(lb));
+    }
+
+    public static String lineBreakHexFormat(Line_Break lb) {
+        return ByteTools.bytesToHexFormat(lineBreakBytes(lb));
     }
 
 }
