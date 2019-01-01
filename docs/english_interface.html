@@ -130,17 +130,20 @@
 	C. Arrange files and reorganize them under new directories by modifed time. 
 	   This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
 	D. Edit Text:
-		a. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. 
+		1) File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. 
 		   BOM setting is supported.
-		b. Detect line break automatically. Convert line break. Support LF/CR/CRLF.
-		c. Find and replace. In current page, or in whole file.
-		d. Filter lines. By “Include one of strings” or “Not include all of strings”.
+		2) Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).
+		3) Find and replace. In current page, or in whole file.
+		4) Filter lines. By “Include one of strings” or “Not include all of strings”.
 		   Cumulative filter. Filtered results can be saved.
-		e. Hexadecimal codes can be viewed and selected synchronously.
-		f. Line numbers are shown.
-		g. Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
-           Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.
-	E. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
+		5) Hexadecimal codes can be viewed and selected synchronously.
+		6) Line numbers are shown.
+		7) Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+			(1) Set page size.
+			(2) Pages browsing bar
+			(3) Load and display first page, and scan the file in background to count characters number and lines number.
+			    Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
+			(4) Make sure correction of finding, replacing, and filtering of strings that are across pages.
 4. Network Tools:
 	A. Html Editor
 		a. Edit local web pages or online pages in rich text.
@@ -159,18 +162,21 @@
 		h. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
 		i. Set the retry times of failure.
 5. Supported image format: png,jpg,bmp,tif,gif,wbmp,pnm,pcx.
-6. Settings of languages, whether show comments, PDF options, image options, whether close alarm clocks when exit program, clearing settings, and more parameters.
-7. Multiple interface styles.
-8. Internationalization. Switch languages in time. Current supported languages include Chinese and English. 
+6. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
+7. Settings of languages, whether show comments, PDF options, image options, whether close alarm clocks when exit program, clearing settings, and more parameters.
+8. Multiple interface styles.
+9. Internationalization. Switch languages in time. Current supported languages include Chinese and English. 
    More lanaguages can be supported by editing new resource files.
 </PRE>
 
 
 <p class="p1" >Development Logs</p>
-<p class="paragraph">2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF/CR/CRLF.</BR>
+<p class="paragraph">2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).</BR>
 Find and replace. In current page, or in whole file.</BR>
 Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.</BR>
-Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.</p>
+Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.</BR>
+Load and display first page, and scan the file in background to count characters number and lines number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.</BR>
+In progress interface, buttons "MyBox" and "Cancel" are added to have user use other functions or cancel current process.</p>
 
 
 <p class="paragraph">2018-12-15 v4.5 Text Encoding. File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. BOM setting is supported. Hexadecimal codes can be viewed and selected synchronously. Line numbers are shown.</BR>
