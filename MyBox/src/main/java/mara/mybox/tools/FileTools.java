@@ -20,6 +20,7 @@ import static mara.mybox.objects.CommonValues.UserFilePath;
 import mara.mybox.objects.FileSynchronizeAttributes;
 import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.CommonValues.TempPath;
+import mara.mybox.objects.FileInformation;
 
 /**
  * @Author mara
@@ -275,12 +276,106 @@ public class FileTools {
         }
     }
 
+    public static void sortFileInformations(List<FileInformation> files, int sortTpye) {
+        switch (sortTpye) {
+            case FileSortType.FileName:
+                Collections.sort(files, new Comparator<FileInformation>() {
+                    @Override
+                    public int compare(FileInformation f1, FileInformation f2) {
+                        return f1.getFile().getAbsolutePath().compareTo(f1.getFile().getAbsolutePath());
+                    }
+                });
+                break;
+
+            case FileSortType.ModifyTime:
+                Collections.sort(files, new Comparator<FileInformation>() {
+                    @Override
+                    public int compare(FileInformation f1, FileInformation f2) {
+                        long t1 = f1.getFile().lastModified();
+                        long t2 = f2.getFile().lastModified();
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+            case FileSortType.CreateTime:
+                Collections.sort(files, new Comparator<FileInformation>() {
+                    @Override
+                    public int compare(FileInformation f1, FileInformation f2) {
+                        long t1 = FileTools.getFileCreateTime(f1.getFile().getAbsolutePath());
+                        long t2 = FileTools.getFileCreateTime(f2.getFile().getAbsolutePath());
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+            case FileSortType.Size:
+                Collections.sort(files, new Comparator<FileInformation>() {
+                    @Override
+                    public int compare(FileInformation f1, FileInformation f2) {
+                        long t1 = f1.getFile().length();
+                        long t2 = f2.getFile().length();
+                        if (t1 == t2) {
+                            return 0;
+                        }
+                        if (t1 > t2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                break;
+
+        }
+    }
+
     public static boolean isSupportedImage(File file) {
         if (file == null || !file.isFile()) {
             return false;
         }
         String suffix = getFileSuffix(file.getName()).toLowerCase();
         return CommonValues.SupportedImages.contains(suffix);
+    }
+
+    public static boolean copyFile(File sourceFile, File targetFile,
+            boolean isCanReplace, boolean isCopyAttrinutes) {
+        try {
+            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+                return false;
+            }
+            if (!targetFile.exists()) {
+                if (isCopyAttrinutes) {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                            StandardCopyOption.COPY_ATTRIBUTES);
+                } else {
+                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()));
+                }
+            } else if (!isCanReplace || targetFile.isDirectory()) {
+                return false;
+            } else if (isCopyAttrinutes) {
+                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                        StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+            } else {
+                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
     public static FileSynchronizeAttributes copyWholeDirectory(File sourcePath, File targetPath) {
@@ -328,34 +423,10 @@ public class FileTools {
     }
 
     public static boolean copyFile(File sourceFile, File targetFile, FileSynchronizeAttributes attr) {
-        try {
-            if (sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
-                return false;
-            }
-            if (attr == null) {
-                attr = new FileSynchronizeAttributes();
-            }
-            if (!targetFile.exists()) {
-                if (attr.isCopyAttrinutes()) {
-                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
-                            StandardCopyOption.COPY_ATTRIBUTES);
-                } else {
-                    Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()));
-                }
-            } else if (!attr.isCanReplace() || targetFile.isDirectory()) {
-                return false;
-            } else if (attr.isCopyAttrinutes()) {
-                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
-                        StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
-            } else {
-                Files.copy(Paths.get(sourceFile.getAbsolutePath()), Paths.get(targetFile.getAbsolutePath()),
-                        StandardCopyOption.REPLACE_EXISTING);
-            }
-            return true;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return false;
+        if (attr == null) {
+            attr = new FileSynchronizeAttributes();
         }
+        return copyFile(sourceFile, targetFile, attr.isCanReplace(), attr.isCopyAttrinutes());
     }
 
     public static boolean deleteDir(File dir) {

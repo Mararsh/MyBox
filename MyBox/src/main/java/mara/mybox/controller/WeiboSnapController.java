@@ -939,7 +939,6 @@ public class WeiboSnapController extends BaseController {
         try {
             parameters = new WeiboSnapParameters();
             parameters.setWebAddress(webAddress);
-            logger.debug(parameters.getWebAddress());
             if (startMonth == null) {
                 startMonth = DateTools.parseMonth("2009-08");
             }
@@ -996,14 +995,6 @@ public class WeiboSnapController extends BaseController {
             final WeiboSnapRunController controller = fxmlLoader.getController();
             Stage stage = new Stage();
             controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
 
             stage.initModality(Modality.NONE);
             stage.initOwner(null);
@@ -1019,6 +1010,16 @@ public class WeiboSnapController extends BaseController {
             } else {
                 controller.setParent(this);
             }
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    logger.debug("setOnCloseRequest");
+                    if (!controller.stageClosing()) {
+                        logger.debug("setOnCloseRequest");
+                        event.consume();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.error(e.toString());

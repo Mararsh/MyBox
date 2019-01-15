@@ -57,6 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
+                                <Label fx:id="editLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" />
                                 <Button mnemonicParsing="false" text=" " visible="false" />
                             </items>
                         </ToolBar>
@@ -69,12 +70,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="pasteButton" mnemonicParsing="false" onAction="#pasteAction" text="%Paste" />
                                 <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recoverAction" text="%Recover" />
                                 <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
-                <TabPane nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
+                <TabPane fx:id="tabPane" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="NEVER">
                     <tabs>
                         <Tab fx:id="fileTab" text="%File">
                             <content>
@@ -96,8 +98,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ToolBar>
                                         <ToolBar HBox.hgrow="NEVER">
                                             <items>
+                                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" visible="false" />
                                                 <CheckBox fx:id="confirmCheck" mnemonicParsing="false" selected="true" text="%ConfirmWhenSave" />
-                                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%TextInformation" />
                                             </items>
                                         </ToolBar>
                                     </children>
@@ -110,7 +112,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
-                                                <Hyperlink text="%AsciiTable" />
+                                                <Hyperlink fx:id="asciiLink" onAction="#openAscii" text="%AsciiTable" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
@@ -130,57 +132,35 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </HBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="textTab" text="%Text">
+                        <Tab fx:id="lbTab" text="%BreakLine">
                             <content>
                                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
+                                    <Label text="%OnlyForDisplayNoEffect" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
                                         <ToolBar HBox.hgrow="NEVER">
                                             <items>
-                                                <Label fx:id="charsetLabel" text="%Charset" />
-                                                <ComboBox fx:id="currentBox" prefWidth="150.0" />
-                                                <Label fx:id="bomLabel" />
-                                                <CheckBox fx:id="scrollCheck" disable="true" mnemonicParsing="false" selected="true" text="%ScrollSynchronously" />
-                                                <CheckBox fx:id="displayCheck" mnemonicParsing="false" selected="true" text="%Display" />
-                                            </items>
-                                        </ToolBar>
-                                    </children>
-                                </HBox>
-                            </content>
-                        </Tab>
-                        <Tab fx:id="lbTab" text="%LineBreak">
-                            <content>
-                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                    <children>
-                                        <ToolBar HBox.hgrow="ALWAYS">
-                                            <items>
-                                                <Label fx:id="lineBreakLabel" />
-                                                <Button mnemonicParsing="false" text=" " visible="false" />
-                                            </items>
-                                        </ToolBar>
-                                        <ToolBar HBox.hgrow="NEVER">
-                                            <items>
-                                                <Label text="%CurrentFileLineBreak" />
-                                                <TextField fx:id="currentLineBreak" disable="true" editable="false" prefWidth="80.0" text="LF" />
-                                                <Label text="%TargetFileLineBreak" />
-                                                <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
+                                                <RadioButton fx:id="bytesNumberRadio" mnemonicParsing="false" selected="true" text="%BytesNumber">
                                                     <toggleGroup>
-                                                        <ToggleGroup fx:id="targetLineGroup" />
+                                                        <ToggleGroup fx:id="lineBreakGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$targetLineGroup" />
-                                                <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$targetLineGroup" />
+                                                <TextField fx:id="bytesNumberInput" prefWidth="60.0" text="30" />
+                                                <RadioButton mnemonicParsing="false" text="%LFHex" toggleGroup="$lineBreakGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%CRHex" toggleGroup="$lineBreakGroup" />
+                                                <RadioButton fx:id="byteRadio" mnemonicParsing="false" text="%BytesHex" toggleGroup="$lineBreakGroup" />
+                                                <TextField fx:id="hexInput" prefHeight="30.0" prefWidth="150.0" text="0D 0A" />
                                             </items>
                                         </ToolBar>
                                     </children>
                                 </HBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="replaceTab" text="%Replace">
+                        <Tab fx:id="replaceTab" text="%FindReplace">
                             <content>
                                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                     <children>
@@ -193,18 +173,80 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <items>
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%CurrentPage">
                                                     <toggleGroup>
-                                                        <ToggleGroup fx:id="replaceGroup" />
+                                                        <ToggleGroup fx:id="findGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%WholeFile" toggleGroup="$replaceGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%WholeFile" toggleGroup="$findGroup" />
                                                 <TextField fx:id="findInput" prefWidth="150.0" />
-                                                <Button fx:id="findFirstButton" disable="true" mnemonicParsing="false" onAction="#findFirstAction" text="%First" />
-                                                <Button fx:id="findNextButton" disable="true" mnemonicParsing="false" onAction="#findNextAction" text="%Next" />
-                                                <Button fx:id="findPreviousButton" disable="true" mnemonicParsing="false" onAction="#findPreviousAction" text="%Previous" />
-                                                <Button fx:id="findLastButton" disable="true" mnemonicParsing="false" onAction="#findLastAction" text="%Last" />
-                                                <TextField fx:id="replaceInput" prefWidth="150.0" />
-                                                <Button fx:id="replaceButton" disable="true" mnemonicParsing="false" onAction="#replaceAction" text="%Replace" />
-                                                <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction" text="%ReplaceAll" />
+                                                <HBox fx:id="findBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Button fx:id="findFirstButton" disable="true" mnemonicParsing="false" onAction="#findFirstAction" text="%First" />
+                                                        <Button fx:id="findNextButton" disable="true" mnemonicParsing="false" onAction="#findNextAction" text="%Next" />
+                                                        <Button fx:id="findPreviousButton" disable="true" mnemonicParsing="false" onAction="#findPreviousAction" text="%Previous" />
+                                                        <Button fx:id="findLastButton" disable="true" mnemonicParsing="false" onAction="#findLastAction" text="%Last" />
+                                                        <Button fx:id="countButton" disable="true" mnemonicParsing="false" onAction="#countAction" text="%Count" />
+                                                        <TextField fx:id="replaceInput" prefWidth="150.0" />
+                                                        <Button fx:id="replaceButton" disable="true" mnemonicParsing="false" onAction="#replaceAction" text="%Replace" />
+                                                        <Button fx:id="replaceAllButton" disable="true" mnemonicParsing="false" onAction="#replaceAllAction" text="%ReplaceAll" />
+                                                    </children>
+                                                </HBox>
+                                            </items>
+                                        </ToolBar>
+                                    </children>
+                                </HBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="filterTab" text="%FilterLines">
+                            <content>
+                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                    <children>
+                                        <ToolBar HBox.hgrow="ALWAYS">
+                                            <items>
+                                                <Button mnemonicParsing="false" text=" " visible="false" />
+                                            </items>
+                                        </ToolBar>
+                                        <ToolBar HBox.hgrow="NEVER">
+                                            <items>
+                                                <HBox fx:id="filterTypesBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%IncludeOne">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="filterGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox fx:id="filterBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <TextField fx:id="filterInput" prefHeight="30.0" prefWidth="300.0" promptText="%SeparateByCommaBlanksInvolved" />
+                                                        <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />
+                                                        <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
+                                                    </children>
+                                                </HBox>
+                                            </items>
+                                        </ToolBar>
+                                    </children>
+                                </HBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="textTab" text="%Text">
+                            <content>
+                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                    <children>
+                                        <ToolBar HBox.hgrow="ALWAYS">
+                                            <items>
+                                                <Button mnemonicParsing="false" text=" " visible="false" />
+                                            </items>
+                                        </ToolBar>
+                                        <ToolBar HBox.hgrow="NEVER">
+                                            <items>
+                                                <Label fx:id="bomLabel" />
+                                                <CheckBox fx:id="scrollCheck" mnemonicParsing="false" selected="true" text="%ScrollSynchronously" />
+                                                <CheckBox fx:id="displayCheck" mnemonicParsing="false" text="%DecodeByCharset" />
+                                                <ComboBox fx:id="currentBox" prefWidth="150.0" />
                                             </items>
                                         </ToolBar>
                                     </children>
@@ -232,40 +274,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </HBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="filterTab" text="%Filter">
-                            <content>
-                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
-                                    <children>
-                                        <ToolBar HBox.hgrow="ALWAYS">
-                                            <items>
-                                                <Button mnemonicParsing="false" text=" " visible="false" />
-                                            </items>
-                                        </ToolBar>
-                                        <ToolBar HBox.hgrow="NEVER">
-                                            <items>
-                                                <Label text="%Lines" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%Include">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="filterGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%NotInclude" toggleGroup="$filterGroup" />
-                                                <TextField fx:id="filterInput" prefHeight="30.0" prefWidth="300.0" />
-                                                <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
-                                            </items>
-                                        </ToolBar>
-                                    </children>
-                                </HBox>
-                            </content>
-                        </Tab>
                     </tabs>
                 </TabPane>
+                <Label text="%ByteHexComments">
+                    <VBox.margin>
+                        <Insets bottom="2.0" top="2.0" />
+                    </VBox.margin>
+                </Label>
                 <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <items>
                         <AnchorPane fx:id="textPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <TextArea fx:id="lineArea" maxHeight="1.7976931348623157E308" prefWidth="150.0" styleClass="grayArea" stylesheets="@../styles/MyBox.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%InputTextHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                <TextArea fx:id="mainArea" layoutX="24.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="%EditHere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                             </children>
                         </AnchorPane>
                     </items>

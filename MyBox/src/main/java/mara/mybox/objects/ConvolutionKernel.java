@@ -59,7 +59,7 @@ public class ConvolutionKernel {
 //            return;
 //        }
         ExampleKernels = new ArrayList<>();
-        ExampleKernels.add(makeAverageBlur3());
+        ExampleKernels.add(makeAverageBlur(3));
         ExampleKernels.add(makeGaussianBlur3());
         ExampleKernels.add(makeGaussianBlur5());
         ExampleKernels.add(makeSharpen3a());
@@ -83,21 +83,23 @@ public class ConvolutionKernel {
 
     }
 
-    public static ConvolutionKernel makeAverageBlur3() {
+    public static ConvolutionKernel makeAverageBlur(int radius) {
+        int size = 2 * radius + 1;
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.getMessage("AverageBlur") + " 3*3");
+        kernel.setName(AppVaribles.getMessage("AverageBlur") + " " + size + "*" + size);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
-        kernel.setWidth(3);
-        kernel.setHeight(3);
+        kernel.setWidth(size);
+        kernel.setHeight(size);
         kernel.setType(Convolution_Type.BLUR);
         kernel.setDescription("");
-        float ninth = 1.0f / 9.0f;
-        float[][] k = {
-            {ninth, ninth, ninth},
-            {ninth, ninth, ninth},
-            {ninth, ninth, ninth}
-        };
+        float v = 1.0f / (size * size * 1.0f);
+        float[][] k = new float[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                k[i][j] = v;
+            }
+        }
         kernel.setMatrix(k);
         return kernel;
     }

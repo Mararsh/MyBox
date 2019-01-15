@@ -106,16 +106,15 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="%DesktopTools">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
-                        <MenuItem mnemonicParsing="false" onAction="#openDirsRename" text="%DirectoriesRename" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                        <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
-                        <!--<MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />-->
+                        <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
                         <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
+                        <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
+                        <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                        <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                     </items>
                 </Menu>

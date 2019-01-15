@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformationFactory.Edit_Type;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
@@ -37,7 +36,7 @@ public class TextEditInformation extends FileEditInformation {
     @Override
     public boolean readTotalNumbers() {
         try {
-            if (file == null || pageSize <= 0) {
+            if (file == null || pageSize <= 0 || lineBreakValue == null) {
                 return false;
             }
             try (FileInputStream inputStream = new FileInputStream(file);
@@ -45,14 +44,13 @@ public class TextEditInformation extends FileEditInformation {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int charIndex = 0, lineIndex = 1, len;
                 String bufStr;
                 while ((len = reader.read(buf)) != -1) {
                     charIndex += len;
                     bufStr = new String(buf, 0, len);
-                    lineIndex += countNumber(bufStr, NewLine);
+                    lineIndex += countNumber(bufStr, lineBreakValue);
                 }
                 objectsNumber = charIndex;
                 linesNumber = lineIndex;
@@ -70,31 +68,29 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public String readPage(int pageNumber) {
+    public String readPage(long pageNumber) {
         try {
             if (file == null || pageSize <= 0 || pageNumber < 1) {
                 return null;
             }
-            int lineIndex = 1, lineStart = 1, lineEnd = 1, pageIndex = 1;
+            long lineEnd = 1, lineStart = 1, pageIndex = 1;
             String pageText = null;
             try (FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 String bufStr;
                 int len;
                 while ((len = reader.read(buf)) != -1) {
                     bufStr = new String(buf, 0, len);
-                    lineIndex += countNumber(bufStr, NewLine);
+                    lineEnd += countNumber(bufStr, lineBreakValue);
                     if (pageIndex == pageNumber) {
-                        lineEnd = lineIndex;
                         pageText = bufStr;
                         break;
                     }
-                    lineStart = lineIndex;
+                    lineStart = lineEnd;
                     pageIndex++;
                 }
                 if (pageText == null) {
@@ -110,8 +106,8 @@ public class TextEditInformation extends FileEditInformation {
                 objectsNumber = (pageNumber - 1) * pageSize + pageText.length();
                 linesNumber = lineEnd;
             }
-            if (lineBreak.equals(Line_Break.CR)) {
-                pageText = pageText.replaceAll("\r", "\n");
+            if (!lineBreak.equals(Line_Break.LF)) {
+                pageText = pageText.replaceAll(lineBreakValue, "\n");
             }
             return pageText;
         } catch (Exception e) {
@@ -133,7 +129,7 @@ public class TextEditInformation extends FileEditInformation {
                     outputStream.write(bytes);
                 }
                 if (lineBreak != Line_Break.LF) {
-                    writer.write(text.replaceAll("\n", TextTools.lineBreak(lineBreak)));
+                    writer.write(text.replaceAll("\n", lineBreakValue));
                 } else {
                     writer.write(text);
                 }
@@ -151,12 +147,12 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public boolean writePage(FileEditInformation sourceInfo, int pageNumber, String text) {
+    public boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text) {
         try {
             if (sourceInfo.getFile() == null || sourceInfo.getCharset() == null
                     || sourceInfo.getPageSize() <= 0 || pageNumber < 1
                     || text == null || text.isEmpty()
-                    || file == null || charset == null) {
+                    || file == null || charset == null || lineBreakValue == null) {
                 return false;
             }
             File targetFile = file;
@@ -174,15 +170,14 @@ public class TextEditInformation extends FileEditInformation {
                     byte[] bytes = bomBytes(charset.name());
                     outputStream.write(bytes);
                 }
-                String taregtLineBreak = TextTools.lineBreak(lineBreak);
-                String sourceLineBreak = TextTools.lineBreak(sourceInfo.getLineBreak());
-                boolean sameLineBreak = taregtLineBreak.equals(sourceLineBreak);
-                char[] buf = new char[sourceInfo.getPageSize()];
+                String sourceLineBreak = sourceInfo.getLineBreakValue();
+                boolean sameLineBreak = lineBreakValue.equals(sourceLineBreak);
+                char[] buf = new char[(int) sourceInfo.getPageSize()];
                 int bufLen, pageIndex = 1;
                 while ((bufLen = reader.read(buf)) != -1) {
                     if (pageIndex == pageNumber) {
                         if (lineBreak != Line_Break.LF) {
-                            writer.write(text.replaceAll("\n", taregtLineBreak));
+                            writer.write(text.replaceAll("\n", lineBreakValue));
                         } else {
                             writer.write(text);
                         }
@@ -191,7 +186,7 @@ public class TextEditInformation extends FileEditInformation {
                         if (sameLineBreak) {
                             writer.write(bufStr);
                         } else {
-                            writer.write(bufStr.replaceAll(sourceLineBreak, taregtLineBreak));
+                            writer.write(bufStr.replaceAll(sourceLineBreak, lineBreakValue));
                         }
                     }
                     pageIndex++;
@@ -220,14 +215,14 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || findString == null || findString.isEmpty()) {
                 return null;
             }
-            int previousFound, previousPage, previousPos;
-            int lineStart = 1, lineEnd = 1, pageIndex = 1, preStart = 1, preEnd;
+            long previousFound;
+            int previousPage, pageIndex = 1, previousPos;
+            long lineStart = 1, lineEnd = 1, preStart = 1, preEnd;
             if (currentFound >= 0) {
                 previousFound = currentFound;
-                previousPage = previousFound / pageSize + 1;
-                previousPos = previousFound % pageSize;
+                previousPage = (int) (previousFound / pageSize + 1);
+                previousPos = (int) (previousFound % pageSize);
             } else {
-                previousFound = -1;
                 previousPage = -1;
                 previousPos = -1;
             }
@@ -242,15 +237,14 @@ public class TextEditInformation extends FileEditInformation {
                     pageIndex = previousPage;
                     reader.skip((previousPage - 1) * pageSize);
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
                     preEnd = lineStart;
                     preText = bufStr;
                     bufStr = new String(buf, 0, len);
-                    lineEnd += countNumber(bufStr, NewLine);
+                    lineEnd += countNumber(bufStr, lineBreakValue);
                     if (pageIndex >= previousPage) {
                         if (previousPage == pageIndex) {
                             pos = (crossString + bufStr).indexOf(findString, previousPos + 1);
@@ -307,31 +301,32 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || findString == null || findString.isEmpty()) {
                 return null;
             }
-            int cuFound, cuPage, cuPos;
+            long cuFound;
+            int cuPage, cuPos;
             int lineEnd = 1, lineStart = 1, pageIndex = 1, preStart = 1, preEnd;
             if (currentFound >= 0) {
                 cuFound = currentFound;
-                cuPage = cuFound / pageSize + 1;
-                cuPos = cuFound % pageSize;
+                cuPage = (int) (cuFound / pageSize + 1);
+                cuPos = (int) (cuFound % pageSize);
             } else {
                 return findNext();
             }
             String pageText = null, preText;
-            int maxIndex = -1, maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
+            long maxIndex = -1;
+            int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
             try (FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
                     preEnd = lineStart;
                     preText = bufStr;
                     bufStr = new String(buf, 0, len);
-                    lineEnd += countNumber(bufStr, NewLine);
+                    lineEnd += countNumber(bufStr, lineBreakValue);
                     if (cuPage == pageIndex) {
                         if (cuPos > 0) {
                             pos = (crossString + bufStr).substring(0, cuPos + crossString.length() - 1).lastIndexOf(findString);
@@ -343,7 +338,7 @@ public class TextEditInformation extends FileEditInformation {
                     }
                     if (pos >= 0) {
                         if (!crossString.isEmpty() && pos < findLen) {
-                            int actualPos = (pageIndex - 1) * pageSize - (crossString.length() - pos);
+                            long actualPos = (pageIndex - 1) * pageSize - (crossString.length() - pos);
                             if (actualPos != cuFound) {
                                 maxPage = pageIndex - 1;
                                 maxIndex = actualPos;
@@ -397,21 +392,21 @@ public class TextEditInformation extends FileEditInformation {
             }
             int lineEnd = 1, lineStart = 1, pageIndex = 1, preStart = 1, preEnd;
             String pageText = null, preText;
-            int maxIndex = -1, maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
+            long maxIndex = -1;
+            int maxLineStart = -1, maxLineEnd = -1, maxPage = 1;
             try (FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
                 if (withBom) {
                     inputStream.skip(bomSize(charset.name()));
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int len, pos, findLen = findString.length();
                 String bufStr = null, crossString = "", addedStr;
                 while ((len = reader.read(buf)) != -1) {
                     preEnd = lineStart;
                     preText = bufStr;
                     bufStr = new String(buf, 0, len);
-                    lineEnd += countNumber(bufStr, NewLine);
+                    lineEnd += countNumber(bufStr, lineBreakValue);
                     addedStr = crossString + bufStr;
                     pos = addedStr.lastIndexOf(findString);
                     if (pos >= 0) {
@@ -474,7 +469,7 @@ public class TextEditInformation extends FileEditInformation {
                     inputStream.skip(bytes.length);
                     outputStream.write(bytes);
                 }
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int bufLen, findLen = findString.length();
                 String thisPage, crossString = "";
                 while ((bufLen = reader.read(buf)) != -1) {
@@ -514,49 +509,106 @@ public class TextEditInformation extends FileEditInformation {
     }
 
     @Override
-    public File filter() {
+    public int count() {
+        if (file == null || findString == null || findString.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
         try {
-            if (file == null || filterStrings == null || filterStrings == null) {
+            try (FileInputStream inputStream = new FileInputStream(file);
+                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+                if (withBom) {
+                    byte[] bytes = bomBytes(charset.name());
+                    inputStream.skip(bytes.length);
+                }
+                char[] buf = new char[(int) pageSize];
+                int bufLen, findLen = findString.length();
+                String thisPage, crossString = "";
+                while ((bufLen = reader.read(buf)) != -1) {
+                    thisPage = crossString + new String(buf, 0, bufLen);
+                    int[] ret = TextTools.lastAndCount(thisPage, findString);
+                    int lastPos = ret[0];
+                    int crossFrom, pagelen = thisPage.length();
+                    if (lastPos >= 0) {
+                        int num = ret[1];
+                        count += num;
+                        if (lastPos + findLen == pagelen) {
+                            crossString = "";
+                        } else {
+                            crossFrom = Math.max(lastPos + findLen, pagelen - findLen + 1);
+                            crossString = thisPage.substring(crossFrom, pagelen);
+                        }
+                    } else {
+                        crossFrom = pagelen - findLen + 1;
+                        crossString = thisPage.substring(crossFrom, pagelen);
+                    }
+                }
+            }
+
+            return count;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return 0;
+        }
+    }
+
+    @Override
+    public File filter(boolean recordLineNumbers) {
+        try {
+            if (file == null || filterStrings == null || filterStrings.length == 0) {
                 return file;
             }
             File targetFile = FileTools.getTempFile();
-            int lineEnd = 1, lineStart;
+            int lineEnd = 1, lineStart = 1;
             try (FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader reader = new InputStreamReader(inputStream, charset);
                     FileOutputStream outputStream = new FileOutputStream(targetFile);
                     OutputStreamWriter writer = new OutputStreamWriter(outputStream, charset)) {
                 if (withBom) {
-                    inputStream.skip(bomSize(charset.name()));
+                    byte[] bytes = bomBytes(charset.name());
+                    inputStream.skip(bytes.length);
+                    outputStream.write(bytes);
                 }
-                String NewLine = TextTools.lineBreak(lineBreak);
-                char[] buf = new char[pageSize];
+                char[] buf = new char[(int) pageSize];
                 int len;
                 String bufStr, crossString = "";
                 while ((len = reader.read(buf)) != -1) {
                     bufStr = crossString + new String(buf, 0, len);
-                    lineStart = lineEnd;
-                    String[] lines = bufStr.split(NewLine);
+                    String[] lines = bufStr.split(lineBreakValue);
+                    lineEnd += lines.length - 1;
                     for (int i = 0; i < lines.length - 1; i++) {
                         if (isMatchFilters(lines[i])) {
-                            String lineNumber = ValueTools.fillRightBlank(lineStart + i, 15);
-                            writer.write(lineNumber + "    " + lines[i] + NewLine);
+                            if (recordLineNumbers) {
+                                String lineNumber = ValueTools.fillRightBlank(lineStart + i, 15);
+                                writer.write(lineNumber + "    " + lines[i] + lineBreakValue);
+                            } else {
+                                writer.write(lines[i] + lineBreakValue);
+                            }
                         }
                     }
-                    if (bufStr.endsWith(NewLine)) {
+                    if (bufStr.endsWith(lineBreakValue)) {
                         if (isMatchFilters(lines[lines.length - 1])) {
-                            String lineNumber = ValueTools.fillRightBlank(lineStart + lines.length - 1, 15);
-                            writer.write(lineNumber + "    " + lines[lines.length - 1] + NewLine);
+                            if (recordLineNumbers) {
+                                String lineNumber = ValueTools.fillRightBlank(lineStart + lines.length - 1, 15);
+                                writer.write(lineNumber + "    " + lines[lines.length - 1] + lineBreakValue);
+                            } else {
+                                writer.write(lines[lines.length - 1] + lineBreakValue);
+                            }
                         }
                         crossString = "";
                     } else {
                         crossString = lines[lines.length - 1];
                     }
-                    lineEnd += lines.length - 1;
+                    lineStart = lineEnd;
                 }
                 if (!crossString.isEmpty()) {
                     if (isMatchFilters(crossString)) {
-                        String lineNumber = ValueTools.fillRightBlank(lineEnd, 15);
-                        writer.write(lineNumber + "    " + crossString);
+                        if (recordLineNumbers) {
+                            String lineNumber = ValueTools.fillRightBlank(lineEnd, 15);
+                            writer.write(lineNumber + "    " + crossString);
+                        } else {
+                            writer.write(crossString);
+                        }
                     }
                 }
             }

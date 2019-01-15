@@ -116,11 +116,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                          <Label text="%OnlyCopyModifiedAfter">
-                                             <HBox.margin>
-                                                <Insets left="160.0" />
-                                             </HBox.margin>
-                                          </Label>
+                                                        <Label text="%OnlyCopyModifiedAfter">
+                                                            <HBox.margin>
+                                                                <Insets left="160.0" />
+                                                            </HBox.margin>
+                                                        </Label>
                                                         <DatePicker fx:id="modifyAfterInput" />
                                                         <Label text="%CopyExistedComments" />
                                                     </children>
@@ -133,7 +133,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <CheckBox fx:id="notCopyCheck" mnemonicParsing="false" text="%NotCopyInclude" HBox.hgrow="NEVER" />
-                                                        <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateComma" HBox.hgrow="ALWAYS" />
+                                                        <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateByComma" HBox.hgrow="ALWAYS" />
                                                     </children>
                                                 </HBox>
                                             </children>

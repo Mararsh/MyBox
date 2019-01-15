@@ -1,14 +1,18 @@
 package mara.mybox.controller;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.IndexRange;
-import javafx.stage.FileChooser;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.Tooltip;
+import javafx.scene.text.Font;
+import mara.mybox.fxml.FxmlTools;
+import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformationFactory.Edit_Type;
+import mara.mybox.objects.FileEditInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 
@@ -21,17 +25,7 @@ import mara.mybox.tools.TextTools;
 public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
-        editType = Edit_Type.Text;
-        FilePathKey = "TextFilePathKey";
-        DisplayKey = "TextEditerDisplayHex";
-
-        fileExtensionFilter = new ArrayList() {
-            {
-                add(new FileChooser.ExtensionFilter("*", "*.*"));
-                add(new FileChooser.ExtensionFilter("txt", "*.txt"));
-                add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-            }
-        };
+        setTextType();
     }
 
     @Override
@@ -45,8 +39,12 @@ public class TextEditerController extends FileEditerController {
 
     }
 
-    @Override
     protected void initCharsetTab() {
+
+        Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(currentBox, tips);
+
         List<String> setNames = TextTools.getCharsetNames();
         currentBox.getItems().addAll(setNames);
         currentBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -80,11 +78,71 @@ public class TextEditerController extends FileEditerController {
     }
 
     @Override
+    protected void initLineBreakTab() {
+        try {
+            lineBreakGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkLineBreakGroup();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void checkLineBreakGroup() {
+        try {
+            RadioButton selected = (RadioButton) lineBreakGroup.getSelectedToggle();
+            if (AppVaribles.getMessage("LF").equals(selected.getText())) {
+                targetInformation.setLineBreak(FileEditInformation.Line_Break.LF);
+            } else if (AppVaribles.getMessage("CR").equals(selected.getText())) {
+                targetInformation.setLineBreak(FileEditInformation.Line_Break.CR);
+            } else if (AppVaribles.getMessage("CRLF").equals(selected.getText())) {
+                targetInformation.setLineBreak(FileEditInformation.Line_Break.CRLF);
+            }
+            targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    protected boolean validateFindString(String string) {
+        if (string.length() >= pageSize) {
+            popError(AppVaribles.getMessage("FindStringLimitation"));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     protected void changeCurrentCharset() {
         sourceInformation.setCharset(Charset.forName(currentBox.getSelectionModel().getSelectedItem()));
         charsetByUser = !isSettingValues;
         if (!isSettingValues && sourceFile != null) {
             openFile(sourceFile);
+        }
+    }
+
+    @Override
+    protected void countCurrentFound() {
+        if (!findWhole || sourceInformation.getPagesNumber() <= 1) {
+            return;
+        }
+        currentFound = -1;
+        if (sourceInformation.getCurrentFound() >= 0) {
+            int pos = (int) (sourceInformation.getCurrentFound() % sourceInformation.getPageSize());
+            int p = (int) (sourceInformation.getCurrentFound() / sourceInformation.getPageSize() + 1);
+            if (p == currentPage) {
+                if (pos > 0 && sourceInformation.getLineBreak() == FileEditInformation.Line_Break.CRLF) {
+                    pos -= TextTools.countNumber(mainArea.getText().substring(0, pos), "\n");
+                }
+                currentFound = pos;
+            }
         }
     }
 
@@ -95,8 +153,10 @@ public class TextEditerController extends FileEditerController {
         }
         isSettingValues = true;
         if (!text.isEmpty()) {
-            String hex = ByteTools.bytesToHexFormat(text.getBytes(sourceInformation.getCharset()),
-                    TextTools.lineBreakHexFormat(sourceInformation.getLineBreak()));
+            String hex = ByteTools.bytesToHexFormat(text.getBytes(sourceInformation.getCharset()));
+            String hexLF = ByteTools.bytesToHexFormat("\n".getBytes(sourceInformation.getCharset())).trim();
+            String hexLB = ByteTools.bytesToHexFormat(sourceInformation.getLineBreakValue().getBytes(sourceInformation.getCharset())).trim();
+            hex = hex.replaceAll(hexLF, hexLB + "\n");
             if (sourceInformation.isWithBom()) {
                 hex = TextTools.bomHex(sourceInformation.getCharset().name()) + " " + hex;
             }
@@ -118,13 +178,12 @@ public class TextEditerController extends FileEditerController {
         final String text = mainArea.getText();
         if (!text.isEmpty()) {
             IndexRange hexRange = TextTools.hexIndex(text, sourceInformation.getCharset(),
-                    sourceInformation.getLineBreak(), mainArea.getSelection());
+                    sourceInformation.getLineBreakValue(), mainArea.getSelection());
+            int bomLen = 0;
             if (sourceInformation.isWithBom()) {
-                String bom = TextTools.bomHex(sourceInformation.getCharset().name());
-                displayArea.selectRange(hexRange.getStart() + bom.length() + 1, hexRange.getEnd() + bom.length() + 1);
-            } else {
-                displayArea.selectRange(hexRange.getStart(), hexRange.getEnd());
+                bomLen = TextTools.bomHex(sourceInformation.getCharset().name()).length() + 1;
             }
+            displayArea.selectRange(hexRange.getStart() + bomLen, hexRange.getEnd() + bomLen);
             displayArea.setScrollTop(mainArea.getScrollTop());
         }
         isSettingValues = false;

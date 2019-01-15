@@ -42,7 +42,6 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -51,6 +50,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
@@ -227,7 +227,7 @@ public class WeiboSnapRunController extends BaseController {
         try {
             this.parameters = parameters;
             getMyStage();
-            logger.debug(parameters.getWebAddress());
+//            logger.debug(parameters.getWebAddress());
 
             if (parameters.getWebAddress() == null || parameters.getWebAddress().isEmpty()) {
                 closeStage();
@@ -253,7 +253,6 @@ public class WeiboSnapRunController extends BaseController {
                 return;
             }
             isLoadingWeiboPassport = true;
-            logger.debug(AppVaribles.getMessage("LoadingWeiboCertificate"));
             loadingController.setInfo(AppVaribles.getMessage("LoadingWeiboCertificate"));
             showMemInfo();
 
@@ -264,21 +263,27 @@ public class WeiboSnapRunController extends BaseController {
                         case SUCCEEDED:
                             if (isLoadingWeiboPassport) {
                                 isLoadingWeiboPassport = false;
-                                Timer loadTimer = new Timer();
+                                loadTimer = new Timer();
                                 if (NetworkTools.isOtherPlatforms()) {
                                     loadTimer.schedule(new TimerTask() {
+                                        private boolean done = false;
+
                                         @Override
                                         public void run() {
                                             AppVaribles.setUserConfigValue("WeiboPassportChecked", "true");
-//                                        logger.debug(checkWeiboPassport());
-                                            Platform.runLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    if (checkWeiboPassport()) {
-                                                        startLoading();
+                                            if (done) {
+                                                this.cancel();
+                                            } else {
+                                                Platform.runLater(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (checkWeiboPassport()) {
+                                                            done = true;
+                                                            startLoading();
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
+                                            }
                                         }
                                     }, 15000);
 
@@ -418,6 +423,7 @@ public class WeiboSnapRunController extends BaseController {
 
         } catch (Exception e) {
             alertError(e.toString());
+            logger.debug(e.toString());
             closeStage();
             return false;
         }
@@ -426,7 +432,7 @@ public class WeiboSnapRunController extends BaseController {
     private void loadMain() {
         try {
             webEngine.load(parameters.getWebAddress());
-            logger.debug(parameters.getWebAddress());
+//            logger.debug(parameters.getWebAddress());
 //            Thread.sleep(loadLoopInterval);
 //            NetworkTools.readCookie(webEngine);
 
@@ -444,7 +450,7 @@ public class WeiboSnapRunController extends BaseController {
             }
             loadTimer = new Timer();
             loadStartTime = new Date().getTime();
-            loadTimer.schedule(new TimerTask() {
+            TimerTask mainTask = new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
                 long maxDelay = loadLoopInterval * 60;
                 private String contents;
@@ -470,10 +476,10 @@ public class WeiboSnapRunController extends BaseController {
                                     loadingController.setText(AppVaribles.getMessage("PageHeightLoaded") + ": " + newHeight);
                                     loadingController.addLine(AppVaribles.getMessage("CharactersLoaded") + ": " + +contents.length());
                                     showMemInfo();
-
                                     if (contents.contains("帐号登录")) {
                                         loadFailed = loadCompleted = true;
-                                        errorString = AppVaribles.getMessage("NonExistedAccount");
+                                        errorString = AppVaribles.getMessage("NonExistedWeiboAccount");
+                                        quit();
                                         return;
                                     }
                                     int posAccount1 = contents.indexOf("<title>");
@@ -531,19 +537,26 @@ public class WeiboSnapRunController extends BaseController {
 
                 private void quit() {
                     this.cancel();
+//                    loadTimer.purge();
+//                    System.gc();
+//                    loadTimer.cancel();
                     loadCompleted = true;
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            webEngine.getLoadWorker().cancel();
                             if (accountName == null || firstMonth == null || lastMonth == null) {
                                 if (errorString == null) {
-                                    errorString = AppVaribles.getMessage("NonExistedAccount");
+                                    errorString = AppVaribles.getMessage("NonExistedWeiboAccount");
                                 }
                                 loadFailed = true;
                             }
                             if (loadFailed) {
                                 alertError(errorString);
-                                closeStage();
+                                if (parent == null) {
+                                    openStage(CommonValues.WeiboSnapFxml, AppVaribles.getMessage("WeiboSnap"), false, true);
+                                }
+                                endSnap();
                             } else {
                                 loadPages();
                             }
@@ -551,7 +564,8 @@ public class WeiboSnapRunController extends BaseController {
                     });
                 }
 
-            }, loadLoopInterval * 3, loadLoopInterval);
+            };
+            loadTimer.schedule(mainTask, loadLoopInterval * 3, loadLoopInterval);
 
         } catch (Exception e) {
             alertError(e.toString());
@@ -1290,23 +1304,6 @@ public class WeiboSnapRunController extends BaseController {
 
     }
 
-    public void endSnap() {
-        try {
-            if (parent != null) {
-                parent.setDuration(currentMonthString, "");
-            }
-            AppVaribles.setUserConfigValue("WeiboLastStartMonthKey", currentMonthString);
-            AppVaribles.setUserConfigValue("WeiBoCurrentPageKey", currentPage + "");
-            AppVaribles.setUserConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
-            if (parameters.isOpenPathWhenStop()) {
-                Desktop.getDesktop().browse(rootPath.toURI());
-            }
-            closeStage();
-        } catch (Exception e) {
-            closeStage();
-        }
-    }
-
     private void mergeMonthPdf(final File path, final String month) {
         final List<File> files = pdfs.get(month);
         if (files == null || files.isEmpty()) {
@@ -1388,21 +1385,46 @@ public class WeiboSnapRunController extends BaseController {
         new Thread(mergeTask).start();
     }
 
+    public void endSnap() {
+        try {
+            if (parent != null) {
+                parent.setDuration(currentMonthString, "");
+            }
+            AppVaribles.setUserConfigValue("WeiboLastStartMonthKey", currentMonthString);
+            AppVaribles.setUserConfigValue("WeiBoCurrentPageKey", currentPage + "");
+            AppVaribles.setUserConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
+            if (parameters.isOpenPathWhenStop()) {
+                Desktop.getDesktop().browse(rootPath.toURI());
+            }
+            closeStage();
+        } catch (Exception e) {
+            closeStage();
+        }
+    }
+
     @Override
     public boolean stageClosing() {
         if (!super.stageClosing()) {
             return false;
         }
-        if (loadingStage != null) {
-            loadingStage.close();
-        }
+        webEngine.getLoadWorker().cancel();
+        webEngine = null;
         if (loadTimer != null) {
             loadTimer.cancel();
         }
         if (snapTimer != null) {
             snapTimer.cancel();
         }
+        if (loadingStage != null) {
+            loadingStage.close();
+        }
 
+        /* When quit whole app from Failed path in "loadMain()", threads may NOT quit
+         * and cause wrong results of next execution due to unknow reason
+         * With below statement, the thread quit any way as need. DO NOT know what's the bug!
+         * Another solution is to open a window but not quit whole app.
+         */
+//        Thread thread = Thread.currentThread();
         return true;
     }
 

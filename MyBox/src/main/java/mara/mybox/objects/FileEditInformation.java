@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformationFactory.Edit_Type;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
@@ -24,21 +23,34 @@ public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
     protected final int IO_BUF_LENGTH = 4096;
-    protected boolean withBom, filterInclude;
+    protected boolean withBom;
     protected Charset charset;
-    protected int objectsNumber, linesNumber;
-    protected int pageSize, pagesNumber, currentPage, editerCharactersNumber, editerLinesNumber;
-    protected int currentPageObjectStart, currentPageObjectEnd;
-    protected int currentPageLineStart, currentPageLineEnd;
+    protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
+    protected long linesNumber, pageSize, pagesNumber, currentPage, editerObjectsNumber, editerLinesNumber;
+    protected long currentPageObjectStart, currentPageObjectEnd;
     protected String findString, replaceString;
     protected String[] filterStrings;
-    protected int currentFound, currentPosition;
+    protected long currentFound, currentPosition;
     protected Line_Break lineBreak;
+    protected Filter_Type filterType;
+    protected int lineBreakWidth;
+    protected String lineBreakValue;
+
+    public enum Edit_Type {
+        Text, Bytes
+    }
 
     public enum Line_Break {
         LF, // Liunx/Unix
         CR, // IOS
-        CRLF  // Windows
+        CRLF, // Windows
+        Width,
+        Value,
+        Auto
+    }
+
+    public enum Filter_Type {
+        IncludeAll, IncludeOne, NotIncludeAll, NotIncludeAny
     }
 
     public FileEditInformation() {
@@ -48,29 +60,102 @@ public abstract class FileEditInformation extends FileInformation {
 
     public FileEditInformation(File file) {
         super(file);
-        editType = Edit_Type.Text;
         initValues();
     }
 
     protected final void initValues() {
+        filterType = Filter_Type.IncludeOne;
         withBom = false;
         charset = Charset.defaultCharset();
         objectsNumber = linesNumber = -1;
         currentPage = pagesNumber = 1;
         pageSize = 100000;
         currentPageObjectStart = currentPageObjectEnd = -1;
-        editerCharactersNumber = editerLinesNumber = -1;
+        editerObjectsNumber = editerLinesNumber = -1;
         currentFound = currentPosition = -1;
         switch (System.lineSeparator()) {
             case "\r\n":
                 lineBreak = Line_Break.CRLF;
+                lineBreakValue = "\r\n";
                 break;
             case "\r":
                 lineBreak = Line_Break.CR;
+                lineBreakValue = "\r";
                 break;
             default:
                 lineBreak = Line_Break.LF;
+                lineBreakValue = "\n";
                 break;
+        }
+        lineBreakWidth = 30;
+    }
+
+    public static FileEditInformation newEditInformation(Edit_Type type) {
+        switch (type) {
+            case Text:
+                return new TextEditInformation();
+            case Bytes:
+                return new BytesEditInformation();
+            default:
+                return new TextEditInformation();
+        }
+    }
+
+    public static FileEditInformation newEditInformation(Edit_Type type, File file) {
+        switch (type) {
+            case Text:
+                return new TextEditInformation(file);
+            case Bytes:
+                return new BytesEditInformation(file);
+            default:
+                return new TextEditInformation(file);
+        }
+    }
+
+    public static FileEditInformation newEditInformationFull(FileEditInformation sourceInfo) {
+        FileEditInformation newInformation
+                = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
+        newInformation.setCharset(sourceInfo.getCharset());
+        newInformation.setWithBom(sourceInfo.isWithBom());
+        newInformation.setObjectsNumber(sourceInfo.getObjectsNumber());
+        newInformation.setLinesNumber(sourceInfo.getLinesNumber());
+        newInformation.setLineBreak(sourceInfo.getLineBreak());
+        newInformation.setLineBreakValue(sourceInfo.getLineBreakValue());
+        newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
+        newInformation.setFilterStrings(sourceInfo.getFilterStrings());
+        newInformation.setFilterType(sourceInfo.getFilterType());
+        newInformation.setFindString(sourceInfo.getFindString());
+        newInformation.setReplaceString(sourceInfo.getReplaceString());
+        newInformation.setCurrentFound(sourceInfo.getCurrentFound());
+        newInformation.setPageSize(sourceInfo.getPageSize());
+        newInformation.setCurrentPage(sourceInfo.getCurrentPage());
+        newInformation.setCurrentPageObjectStart(sourceInfo.getCurrentPageObjectStart());
+        newInformation.setCurrentPageObjectEnd(sourceInfo.getCurrentPageObjectEnd());
+        newInformation.setCurrentPageLineStart(sourceInfo.getCurrentPageLineEnd());
+        return newInformation;
+    }
+
+    public static FileEditInformation newEditInformationMajor(FileEditInformation sourceInfo) {
+        FileEditInformation newInformation
+                = FileEditInformation.newEditInformation(sourceInfo.getEditType(), sourceInfo.getFile());
+        newInformation.setCharset(sourceInfo.getCharset());
+        newInformation.setWithBom(sourceInfo.isWithBom());
+        newInformation.setLineBreak(sourceInfo.getLineBreak());
+        newInformation.setLineBreakValue(sourceInfo.getLineBreakValue());
+        newInformation.setLineBreakWidth(sourceInfo.getLineBreakWidth());
+        newInformation.setFilterStrings(sourceInfo.getFilterStrings());
+        newInformation.setFilterType(sourceInfo.getFilterType());
+        newInformation.setFindString(sourceInfo.getFindString());
+        newInformation.setReplaceString(sourceInfo.getReplaceString());
+        newInformation.setPageSize(sourceInfo.getPageSize());
+        return newInformation;
+    }
+
+    public static FileEditInformation newEditInformation(FileEditInformation sourceInfo, boolean full) {
+        if (full) {
+            return newEditInformationFull(sourceInfo);
+        } else {
+            return newEditInformationMajor(sourceInfo);
         }
     }
 
@@ -136,13 +221,13 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract String readPage();
 
-    public abstract String readPage(int pageNumber);
+    public abstract String readPage(long pageNumber);
 
     public abstract boolean writeObject(String text);
 
     public abstract boolean writePage(FileEditInformation sourceInfo, String text);
 
-    public abstract boolean writePage(FileEditInformation sourceInfo, int pageNumber, String text);
+    public abstract boolean writePage(FileEditInformation sourceInfo, long pageNumber, String text);
 
     public abstract String findFirst();
 
@@ -154,20 +239,29 @@ public abstract class FileEditInformation extends FileInformation {
 
     public abstract int replaceAll();
 
-    public abstract File filter();
+    public abstract int count();
+
+    public abstract File filter(boolean recordLineNumbers);
 
     public boolean isMatchFilters(String string) {
         if (string == null || string.isEmpty()) {
             return false;
         }
-        if (filterInclude) {
-            return isIncludeFilters(string);
-        } else {
-            return isNotIncludeFilters(string);
+        switch (filterType) {
+            case IncludeOne:
+                return includeOne(string);
+            case IncludeAll:
+                return includeAll(string);
+            case NotIncludeAny:
+                return notIncludeAny(string);
+            case NotIncludeAll:
+                return notIncludeAll(string);
+            default:
+                return false;
         }
     }
 
-    public boolean isIncludeFilters(String string) {
+    public boolean includeOne(String string) {
         boolean found;
         for (String filter : filterStrings) {
             found = string.contains(filter);
@@ -178,7 +272,18 @@ public abstract class FileEditInformation extends FileInformation {
         return false;
     }
 
-    public boolean isNotIncludeFilters(String string) {
+    public boolean includeAll(String string) {
+        boolean found;
+        for (String filter : filterStrings) {
+            found = string.contains(filter);
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean notIncludeAny(String string) {
         boolean found;
         for (String filter : filterStrings) {
             found = string.contains(filter);
@@ -187,6 +292,33 @@ public abstract class FileEditInformation extends FileInformation {
             }
         }
         return true;
+    }
+
+    public boolean notIncludeAll(String string) {
+        boolean found;
+        for (String filter : filterStrings) {
+            found = string.contains(filter);
+            if (!found) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String filterTypeName() {
+        switch (filterType) {
+            case IncludeOne:
+                return AppVaribles.getMessage("IncludeOne");
+            case IncludeAll:
+                return AppVaribles.getMessage("IncludeAll");
+            case NotIncludeAny:
+                return AppVaribles.getMessage("NotIncludeAny");
+            case NotIncludeAll:
+                return AppVaribles.getMessage("NotIncludeAll");
+            default:
+                return "";
+        }
+
     }
 
     public boolean isWithBom() {
@@ -205,70 +337,6 @@ public abstract class FileEditInformation extends FileInformation {
         this.charset = charset;
     }
 
-    public int getObjectsNumber() {
-        return objectsNumber;
-    }
-
-    public void setObjectsNumber(int objectsNumber) {
-        this.objectsNumber = objectsNumber;
-    }
-
-    public int getCurrentPageObjectStart() {
-        return currentPageObjectStart;
-    }
-
-    public void setCurrentPageObjectStart(int currentPageObjectStart) {
-        this.currentPageObjectStart = currentPageObjectStart;
-    }
-
-    public int getCurrentPageObjectEnd() {
-        return currentPageObjectEnd;
-    }
-
-    public void setCurrentPageObjectEnd(int currentPageObjectEnd) {
-        this.currentPageObjectEnd = currentPageObjectEnd;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public int getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(int currentPage) {
-        this.currentPage = currentPage;
-    }
-
-    public int getPagesNumber() {
-        return pagesNumber;
-    }
-
-    public void setPagesNumber(int pagesNumber) {
-        this.pagesNumber = pagesNumber;
-    }
-
-    public int getEditerCharactersNumber() {
-        return editerCharactersNumber;
-    }
-
-    public void setEditerCharactersNumber(int editerCharactersNumber) {
-        this.editerCharactersNumber = editerCharactersNumber;
-    }
-
-    public int getEditerLinesNumber() {
-        return editerLinesNumber;
-    }
-
-    public void setEditerLinesNumber(int editerLinesNumber) {
-        this.editerLinesNumber = editerLinesNumber;
-    }
-
     public String getFindString() {
         return findString;
     }
@@ -285,44 +353,12 @@ public abstract class FileEditInformation extends FileInformation {
         this.replaceString = replaceString;
     }
 
-    public int getLinesNumber() {
-        return linesNumber;
-    }
-
-    public void setLinesNumber(int linesNumber) {
-        this.linesNumber = linesNumber;
-    }
-
-    public int getCurrentPageLineStart() {
-        return currentPageLineStart;
-    }
-
-    public void setCurrentPageLineStart(int currentPageLineStart) {
-        this.currentPageLineStart = currentPageLineStart;
-    }
-
-    public int getCurrentPageLineEnd() {
-        return currentPageLineEnd;
-    }
-
-    public void setCurrentPageLineEnd(int currentPageLineEnd) {
-        this.currentPageLineEnd = currentPageLineEnd;
-    }
-
     public Line_Break getLineBreak() {
         return lineBreak;
     }
 
     public void setLineBreak(Line_Break lineBreak) {
         this.lineBreak = lineBreak;
-    }
-
-    public int getCurrentFound() {
-        return currentFound;
-    }
-
-    public void setCurrentFound(int currentFound) {
-        this.currentFound = currentFound;
     }
 
     public Edit_Type getEditType() {
@@ -333,14 +369,6 @@ public abstract class FileEditInformation extends FileInformation {
         this.editType = editType;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
-    }
-
     public String[] getFilterStrings() {
         return filterStrings;
     }
@@ -349,12 +377,132 @@ public abstract class FileEditInformation extends FileInformation {
         this.filterStrings = filterStrings;
     }
 
-    public boolean isFilterInclude() {
-        return filterInclude;
+    public Filter_Type getFilterType() {
+        return filterType;
     }
 
-    public void setFilterInclude(boolean filterInclude) {
-        this.filterInclude = filterInclude;
+    public void setFilterType(Filter_Type filterType) {
+        this.filterType = filterType;
+    }
+
+    public long getObjectsNumber() {
+        return objectsNumber;
+    }
+
+    public void setObjectsNumber(long objectsNumber) {
+        this.objectsNumber = objectsNumber;
+    }
+
+    public long getCurrentPageLineStart() {
+        return currentPageLineStart;
+    }
+
+    public void setCurrentPageLineStart(long currentPageLineStart) {
+        this.currentPageLineStart = currentPageLineStart;
+    }
+
+    public long getCurrentPageLineEnd() {
+        return currentPageLineEnd;
+    }
+
+    public void setCurrentPageLineEnd(long currentPageLineEnd) {
+        this.currentPageLineEnd = currentPageLineEnd;
+    }
+
+    public long getLinesNumber() {
+        return linesNumber;
+    }
+
+    public void setLinesNumber(long linesNumber) {
+        this.linesNumber = linesNumber;
+    }
+
+    public long getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(long pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public long getPagesNumber() {
+        return pagesNumber;
+    }
+
+    public void setPagesNumber(long pagesNumber) {
+        this.pagesNumber = pagesNumber;
+    }
+
+    public long getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(long currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public long getEditerObjectsNumber() {
+        return editerObjectsNumber;
+    }
+
+    public void setEditerObjectsNumber(long editerObjectsNumber) {
+        this.editerObjectsNumber = editerObjectsNumber;
+    }
+
+    public long getEditerLinesNumber() {
+        return editerLinesNumber;
+    }
+
+    public void setEditerLinesNumber(long editerLinesNumber) {
+        this.editerLinesNumber = editerLinesNumber;
+    }
+
+    public long getCurrentPageObjectStart() {
+        return currentPageObjectStart;
+    }
+
+    public void setCurrentPageObjectStart(long currentPageObjectStart) {
+        this.currentPageObjectStart = currentPageObjectStart;
+    }
+
+    public long getCurrentPageObjectEnd() {
+        return currentPageObjectEnd;
+    }
+
+    public void setCurrentPageObjectEnd(long currentPageObjectEnd) {
+        this.currentPageObjectEnd = currentPageObjectEnd;
+    }
+
+    public long getCurrentFound() {
+        return currentFound;
+    }
+
+    public void setCurrentFound(long currentFound) {
+        this.currentFound = currentFound;
+    }
+
+    public long getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(long currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public int getLineBreakWidth() {
+        return lineBreakWidth;
+    }
+
+    public void setLineBreakWidth(int lineBreakWidth) {
+        this.lineBreakWidth = lineBreakWidth;
+    }
+
+    public String getLineBreakValue() {
+        return lineBreakValue;
+    }
+
+    public void setLineBreakValue(String lineBreakValue) {
+        this.lineBreakValue = lineBreakValue;
     }
 
 }

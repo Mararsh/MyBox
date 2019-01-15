@@ -93,8 +93,6 @@ public class BaseController implements Initializable {
     @FXML
     protected FilesTableController filesTableController;
     @FXML
-    protected DirectoriesTableController dirsTableController;
-    @FXML
     protected OperationController operationBarController;
     @FXML
     protected Button previewButton;
@@ -129,6 +127,7 @@ public class BaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            baseTitle = AppVaribles.getMessage("AppTitle");
             setInterfaceStyle(AppVaribles.getStyle());
 
             myFxml = FxmlTools.getFxmlPath(url.getPath());
@@ -188,10 +187,6 @@ public class BaseController implements Initializable {
             if (filesTableController != null) {
                 filesTableController.setFileExtensionFilter(fileExtensionFilter);
                 filesTableController.setParentController(this);
-            }
-            if (dirsTableController != null) {
-                dirsTableController.setFileExtensionFilter(fileExtensionFilter);
-                dirsTableController.setParentController(this);
             }
             sourceFilesInformation = FXCollections.observableArrayList();
 
@@ -482,11 +477,13 @@ public class BaseController implements Initializable {
     protected File checkHelps() {
         try {
             String lang = AppVaribles.getLanguage();
-            Boolean updated = AppVaribles.getSystemConfigBoolean("UpdatedHelps4.5", false);
+            String latest = AppVaribles.getSystemConfigValue("HelpsVersion", "");
+            String newVersion = "4.7";
+            boolean updated = latest.equals(newVersion);
             if (!updated) {
-                logger.debug("Updating Helps 4.5");
+                logger.debug("Updating Helps " + newVersion);
                 clearHelps();
-                AppVaribles.setSystemConfigValue("UpdatedHelps4.5", true);
+                AppVaribles.setSystemConfigValue("HelpsVersion", newVersion);
             }
             File mybox_help = FxmlTools.getUserFile(getClass(),
                     "/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
@@ -687,17 +684,6 @@ public class BaseController implements Initializable {
             }
 
             if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
-//                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-//                alert.setTitle(AppVaribles.getMessage("AppTitle"));
-//                alert.setContentText(MessageFormat.format(AppVaribles.getMessage("AlarmClocksRunning"), AppVaribles.scheduledTasks.size()));
-//                ButtonType buttonStopAlarmsExit = new ButtonType(AppVaribles.getMessage("StopAlarmsExit"));
-//                ButtonType buttonKeepAlarmsExit = new ButtonType(AppVaribles.getMessage("KeepAlarmsExit"));
-//                ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
-//                alert.getButtonTypes().setAll(buttonStopAlarmsExit, buttonKeepAlarmsExit, buttonCancel);
-//
-//                Optional<ButtonType> result = alert.showAndWait();
-//                if (result.get() == buttonStopAlarmsExit) {
-
                 if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
                     for (Long key : AppVaribles.scheduledTasks.keySet()) {
                         ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
@@ -1603,14 +1589,6 @@ public class BaseController implements Initializable {
 
     public void setDirsTable(Pane dirsTable) {
         this.dirsTable = dirsTable;
-    }
-
-    public DirectoriesTableController getDirsTableController() {
-        return dirsTableController;
-    }
-
-    public void setDirsTableController(DirectoriesTableController dirsTableController) {
-        this.dirsTableController = dirsTableController;
     }
 
     public String getBaseTitle() {

@@ -53,16 +53,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-            <HBox VBox.vgrow="NEVER">
-               <children>
-                  <ToolBar HBox.hgrow="ALWAYS">
-                    <items>
+                <HBox VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar HBox.hgrow="ALWAYS">
+                            <items>
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                        <CheckBox fx:id="askCheck" mnemonicParsing="false" selected="true" text="%AskSaveBeforeOperation" />
-                    </items>
-                  </ToolBar>
-               </children>
-            </HBox>
+                                <Label text="%FileFilterComments" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
@@ -72,14 +72,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar HBox.hgrow="NEVER">
                             <items>
-                                <Label text="%FilterLines" />
-                                <RadioButton mnemonicParsing="false" selected="true" text="%IncludeOneOf">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="filterGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="%NotIncludeAnyOf" toggleGroup="$filterGroup" />
-                                <TextField fx:id="filterInput" prefHeight="30.0" prefWidth="448.0" promptText="%SeparateBySpace" />
+                                <HBox fx:id="filterTypesBox" alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%IncludeOne">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="filterGroup" />
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" />
+                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" />
+                                        <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" />
+                                    </children>
+                                </HBox>
+                                <TextField fx:id="filterInput" prefHeight="30.0" prefWidth="300.0" promptText="%SeparateByCommaBlanksInvolved" />
+                                <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />
                                 <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
                             </items>
                         </ToolBar>

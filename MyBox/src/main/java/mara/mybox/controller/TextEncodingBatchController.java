@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -8,30 +9,23 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileEditInformation;
-import mara.mybox.objects.FileEditInformationFactory;
-import mara.mybox.objects.FileEditInformationFactory.Edit_Type;
+import mara.mybox.objects.FileEditInformation.Edit_Type;
 import mara.mybox.objects.FileInformation;
-import mara.mybox.tools.TextTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.TextTools;
 
 /**
  * @Author Mara
@@ -39,22 +33,17 @@ import mara.mybox.tools.FileTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TextEncodingBatchController extends FileBatchController {
+public class TextEncodingBatchController extends FilesBatchController {
 
-    private boolean autoDetermine;
-    private FileEditInformation sourceEncoding, targetEncoding;
-    private int dirTotal, dirOk;
+    protected boolean autoDetermine;
+    protected FileEditInformation sourceInformation, targetInformation;
 
     @FXML
     protected ToggleGroup sourceGroup;
     @FXML
-    private ComboBox<String> sourceBox, targetBox;
+    protected ComboBox<String> sourceBox, targetBox;
     @FXML
     protected CheckBox targetBomCheck;
-    @FXML
-    private CheckBox subCheck, nameCheck;
-    @FXML
-    private TextField nameInput;
 
     public TextEncodingBatchController() {
         sourcePathKey = "TextFilePathKey";
@@ -68,41 +57,10 @@ public class TextEncodingBatchController extends FileBatchController {
     }
 
     @Override
-    protected void initSourceSection() {
-        try {
-            sourceFilesInformation = FXCollections.observableArrayList();
-
-            handledColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("handled"));
-            fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
-
-            sourceTable.setItems(sourceFilesInformation);
-            sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            sourceTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        openAction();
-                    }
-                }
-            });
-            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    checkTableSelected();
-                }
-            });
-            checkTableSelected();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
     protected void initOptionsSection() {
 
-        sourceEncoding = FileEditInformationFactory.newEditInformation(Edit_Type.Text);
-        targetEncoding = FileEditInformationFactory.newEditInformation(Edit_Type.Text);
+        sourceInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
+        targetInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
 
         sourceGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -117,33 +75,34 @@ public class TextEncodingBatchController extends FileBatchController {
         sourceBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
-                sourceEncoding.setCharset(Charset.forName(newValue));
+                sourceInformation.setCharset(Charset.forName(newValue));
             }
         });
         sourceBox.getSelectionModel().select(Charset.defaultCharset().name());
+        checkSource();
 
-        targetBox.getItems().addAll(setNames);
-        targetBox.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String oldValue, String newValue) {
-                targetEncoding.setCharset(Charset.forName(newValue));
-                if ("UTF-8".equals(newValue) || "UTF-16BE".equals(newValue)
-                        || "UTF-16LE".equals(newValue) || "UTF-32BE".equals(newValue)
-                        || "UTF-32LE".equals(newValue)) {
-                    targetBomCheck.setDisable(false);
-                } else {
-                    targetBomCheck.setDisable(true);
-                    if ("UTF-16".equals(newValue) || "UTF-32".equals(newValue)) {
-                        targetBomCheck.setSelected(true);
+        if (targetBox != null) {
+            targetBox.getItems().addAll(setNames);
+            targetBox.valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    targetInformation.setCharset(Charset.forName(newValue));
+                    if ("UTF-8".equals(newValue) || "UTF-16BE".equals(newValue)
+                            || "UTF-16LE".equals(newValue) || "UTF-32BE".equals(newValue)
+                            || "UTF-32LE".equals(newValue)) {
+                        targetBomCheck.setDisable(false);
                     } else {
-                        targetBomCheck.setSelected(false);
+                        targetBomCheck.setDisable(true);
+                        if ("UTF-16".equals(newValue) || "UTF-32".equals(newValue)) {
+                            targetBomCheck.setSelected(true);
+                        } else {
+                            targetBomCheck.setSelected(false);
+                        }
                     }
                 }
-            }
-        });
-        targetBox.getSelectionModel().select(Charset.defaultCharset().name());
-
-        checkSource();
+            });
+            targetBox.getSelectionModel().select(Charset.defaultCharset().name());
+        }
     }
 
     protected void checkSource() {
@@ -153,34 +112,72 @@ public class TextEncodingBatchController extends FileBatchController {
             sourceBox.setDisable(true);
         } else {
             autoDetermine = false;
-            sourceEncoding.setCharset(Charset.forName(sourceBox.getSelectionModel().getSelectedItem()));
+            sourceInformation.setCharset(Charset.forName(sourceBox.getSelectionModel().getSelectedItem()));
             sourceBox.setDisable(false);
         }
     }
 
     @Override
-    protected void handleCurrentIndex() {
-        File currentDir = sourceFiles.get(currentParameters.currentIndex);
-        dirTotal = dirOk = 0;
-        File rootPath = new File(currentParameters.targetPath + File.separator + currentDir.getName());
-        if (!rootPath.exists()) {
-            rootPath.mkdirs();
+    protected String handleCurrentFile(FileInformation d) {
+        File file = d.getFile();
+        currentParameters.sourceFile = file;
+        String filename = file.getName();
+        currentParameters.finalTargetName = currentParameters.targetPath
+                + File.separator + filename;
+        boolean skip = false;
+        if (targetExistType == TargetExistType.Rename) {
+            while (new File(currentParameters.finalTargetName).exists()) {
+                filename = FileTools.getFilePrefix(filename)
+                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(filename);
+                currentParameters.finalTargetName = currentParameters.targetPath
+                        + File.separator + filename;
+            }
+        } else if (targetExistType == TargetExistType.Skip) {
+            if (new File(currentParameters.finalTargetName).exists()) {
+                skip = true;
+            }
         }
-        convertDirectory(currentDir, rootPath);
-        markFileHandled(currentParameters.currentIndex,
-                MessageFormat.format(AppVaribles.getMessage("DirHandledSummary"), dirTotal, dirOk));
-        currentParameters.currentTotalHandled++;
+        if (!skip) {
+            return handleFile(currentParameters.sourceFile, new File(currentParameters.finalTargetName));
+        } else {
+            return AppVaribles.getMessage("Skip");
+        }
     }
 
-    protected void convertDirectory(File sourcePath, File targetPath) {
+    @Override
+    protected String handleCurrentDirectory(FileInformation d) {
+        File sourceDir = d.getFile();
+        File targetDir = new File(currentParameters.targetPath + File.separator + sourceDir.getName());
+        boolean skip = false;
+        if (targetExistType == TargetExistType.Rename) {
+            while (targetDir.exists()) {
+                targetDir = new File(targetDir.getAbsolutePath() + targetSuffixInput.getText().trim());
+            }
+        } else if (targetExistType == TargetExistType.Skip) {
+            if (targetDir.exists()) {
+                skip = true;
+            }
+        }
+        if (!skip) {
+            if (!targetDir.exists()) {
+                targetDir.mkdirs();
+            }
+            dirTotal = dirOk = 0;
+            handleDirectory(sourceDir, targetDir);
+            return MessageFormat.format(AppVaribles.getMessage("DirHandledSummary"), dirTotal, dirOk);
+        } else {
+            return AppVaribles.getMessage("Skip");
+        }
+    }
+
+    protected void handleDirectory(File sourcePath, File targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
             return;
         }
         try {
             List<File> files = new ArrayList<>();
             files.addAll(Arrays.asList(sourcePath.listFiles()));
-
-            String[] names = nameInput.getText().trim().split("\\s+");
+            String[] names = filesNameInput.getText().trim().split("\\s+");
             for (File srcFile : files) {
                 if (task.isCancelled()) {
                     return;
@@ -189,7 +186,7 @@ public class TextEncodingBatchController extends FileBatchController {
                 if (srcFile.isFile()) {
                     dirTotal++;
                     String originalName = srcFile.getAbsolutePath();
-                    if (nameCheck.isSelected() && names.length > 0) {
+                    if (filesNameCheck.isSelected() && names.length > 0) {
                         boolean isValid = false;
                         for (String name : names) {
                             if (FileTools.getFileName(originalName).contains(name)) {
@@ -201,12 +198,12 @@ public class TextEncodingBatchController extends FileBatchController {
                             continue;
                         }
                     }
-                    if (convertFile(srcFile, targetFile)) {
+                    if (!AppVaribles.getMessage("Failed").equals(handleFile(srcFile, targetFile))) {
                         dirOk++;
                     }
-                } else if (subCheck.isSelected()) {
+                } else if (subDirCheck.isSelected()) {
                     targetFile.mkdirs();
-                    convertDirectory(srcFile, targetFile);
+                    handleDirectory(srcFile, targetFile);
                 }
             }
         } catch (Exception e) {
@@ -214,78 +211,53 @@ public class TextEncodingBatchController extends FileBatchController {
         }
     }
 
-    protected boolean convertFile(File srcFile, File targetFile) {
+    protected String handleFile(File srcFile, File targetFile) {
         try {
-            sourceEncoding.setFile(srcFile);
+            sourceInformation.setFile(srcFile);
             if (autoDetermine) {
-                boolean ok = TextTools.checkCharset(sourceEncoding);
-                if (!ok || sourceEncoding == null) {
-                    return false;
+                boolean ok = TextTools.checkCharset(sourceInformation);
+                if (!ok || sourceInformation == null) {
+                    return AppVaribles.getMessage("Failed");
                 }
             }
-            String filename = targetFile.getAbsolutePath();
-            String suffix = FileTools.getFileSuffix(filename);
-            currentParameters.finalTargetName = filename;
-
-            boolean skip = false;
-            if (targetExistType == TargetExistType.Rename) {
-                while (new File(currentParameters.finalTargetName).exists()) {
-                    currentParameters.finalTargetName = FileTools.getFilePrefix(currentParameters.finalTargetName)
-                            + targetSuffixInput.getText().trim() + "." + suffix;
-                }
-            } else if (targetExistType == TargetExistType.Skip) {
-                if (new File(currentParameters.finalTargetName).exists()) {
-                    skip = true;
-                }
-            }
-            if (!skip) {
-                targetEncoding.setFile(new File(currentParameters.finalTargetName));
-                targetEncoding.setWithBom(targetBomCheck.isSelected());
-                return TextTools.convertCharset(sourceEncoding, targetEncoding);
+            targetInformation.setFile(targetFile);
+            targetInformation.setWithBom(targetBomCheck.isSelected());
+            if (TextTools.convertCharset(sourceInformation, targetInformation)) {
+                return AppVaribles.getMessage("Successful");
             } else {
-                return true;
+                return AppVaribles.getMessage("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
+            return AppVaribles.getMessage("Failed");
         }
     }
 
     @Override
-    protected void viewFile(String file) {
-//        TextEncodingController controller = (TextEncodingController) openStage(CommonValues.TextEncodingFxml,
-//                AppVaribles.getMessage("TextEncoding"), false, true);
-//        controller.openFile(new File(file));
+    protected void viewFile(File file) {
+        if (file == null) {
+            return;
+        }
+        if (file.isFile()) {
+            TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml,
+                    AppVaribles.getMessage("TextEditer"), false, true);
+            controller.openFile(file);
+        } else {
+            try {
+                Desktop.getDesktop().browse(file.toURI());
+            } catch (Exception e) {
+                logger.debug(e.toString());
+            }
+        }
     }
 
     @Override
-    protected void addAction(int index) {
+    protected void openTarget(ActionEvent event) {
         try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
-            chooser.setInitialDirectory(defaultPath);
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setUserConfigValue(sourcePathKey, directory.getPath());
-
-            FileInformation d = new FileInformation(directory);
-            if (index < 0 || index >= sourceFilesInformation.size()) {
-                sourceFilesInformation.add(d);
-            } else {
-                sourceFilesInformation.add(index, d);
-            }
-            sourceTable.refresh();
-
+            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
     }
 
 }

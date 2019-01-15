@@ -431,7 +431,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                 ConvolutionKernel convolutionKernel;
                 switch (effectType) {
                     case Blur:
-                        convolutionKernel = ConvolutionKernel.makeGaussKernel(intValue);
+                        convolutionKernel = ConvolutionKernel.makeAverageBlur(intValue);
                         newImage = FxmlEffectTools.applyConvolution(values.getCurrentImage(), convolutionKernel, scope);
                         break;
                     case Sharpen:

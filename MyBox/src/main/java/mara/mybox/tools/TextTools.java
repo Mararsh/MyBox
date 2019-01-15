@@ -214,23 +214,23 @@ public class TextTools {
         }
     }
 
-    public static boolean convertCharset(FileEditInformation sourceEncoding, FileEditInformation targetEncoding) {
+    public static boolean convertCharset(FileEditInformation source, FileEditInformation target) {
         try {
-            if (sourceEncoding == null || sourceEncoding.getFile() == null
-                    || sourceEncoding.getCharset() == null
-                    || targetEncoding == null || targetEncoding.getFile() == null
-                    || targetEncoding.getCharset() == null) {
+            if (source == null || source.getFile() == null
+                    || source.getCharset() == null
+                    || target == null || target.getFile() == null
+                    || target.getCharset() == null) {
                 return false;
             }
-            try (FileInputStream inputStream = new FileInputStream(sourceEncoding.getFile());
-                    InputStreamReader reader = new InputStreamReader(inputStream, sourceEncoding.getCharset());
-                    FileOutputStream outputStream = new FileOutputStream(targetEncoding.getFile());
-                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, targetEncoding.getCharset())) {
-                if (sourceEncoding.isWithBom()) {
-                    inputStream.skip(bomSize(sourceEncoding.getCharset().name()));
+            try (FileInputStream inputStream = new FileInputStream(source.getFile());
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    FileOutputStream outputStream = new FileOutputStream(target.getFile());
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                if (source.isWithBom()) {
+                    inputStream.skip(bomSize(source.getCharset().name()));
                 }
-                if (targetEncoding.isWithBom()) {
-                    byte[] bytes = bomBytes(targetEncoding.getCharset().name());
+                if (target.isWithBom()) {
+                    byte[] bytes = bomBytes(target.getCharset().name());
                     outputStream.write(bytes);
                 }
                 char[] buf = new char[512];
@@ -247,8 +247,43 @@ public class TextTools {
         }
     }
 
+    public static boolean convertLineBreak(FileEditInformation source, FileEditInformation target) {
+        try {
+            if (source == null || source.getFile() == null
+                    || source.getCharset() == null
+                    || target == null || target.getFile() == null
+                    || target.getCharset() == null) {
+                return false;
+            }
+            String sourceLineBreak = TextTools.lineBreakValue(source.getLineBreak());
+            String taregtLineBreak = TextTools.lineBreakValue(target.getLineBreak());
+            if (sourceLineBreak == null || taregtLineBreak == null) {
+                return false;
+            }
+            if (source.getLineBreak() == target.getLineBreak()) {
+                return FileTools.copyFile(source.getFile(), target.getFile(), true, true);
+            }
+            try (FileInputStream inputStream = new FileInputStream(source.getFile());
+                    InputStreamReader reader = new InputStreamReader(inputStream, source.getCharset());
+                    FileOutputStream outputStream = new FileOutputStream(target.getFile());
+                    OutputStreamWriter writer = new OutputStreamWriter(outputStream, target.getCharset())) {
+                char[] buf = new char[4096];
+                int count;
+                while ((count = reader.read(buf)) != -1) {
+                    String text = new String(buf, 0, count);
+                    text = text.replaceAll(sourceLineBreak, taregtLineBreak);
+                    writer.write(text);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
     public static IndexRange hexIndex(String text, Charset charset,
-            Line_Break lineBreak, IndexRange textRange) {
+            String lineBreakValue, IndexRange textRange) {
         int hIndex = 0;
         int hBegin = 0;
         int hEnd = 0;
@@ -257,9 +292,7 @@ public class TextTools {
         if (cBegin == 0 && cEnd == 0) {
             return new IndexRange(0, 0);
         }
-        byte[] cBytes, crlf = "\r\n".getBytes(charset);
-        boolean isCRLF = lineBreak == Line_Break.CRLF;
-        int crlfLen = "\r\n".getBytes(charset).length * 3;
+        int lbLen = lineBreakValue.getBytes(charset).length * 3 + 1;
         for (int i = 0; i < text.length(); i++) {
             if (cBegin == i) {
                 hBegin = hIndex;
@@ -268,11 +301,10 @@ public class TextTools {
                 hEnd = hIndex;
             }
             char c = text.charAt(i);
-            if (isCRLF && c == '\n') {
-                hIndex += crlfLen;
+            if (c == '\n') {
+                hIndex += lbLen;
             } else {
-                cBytes = String.valueOf(text.charAt(i)).getBytes(charset);
-                hIndex += cBytes.length * 3;
+                hIndex += String.valueOf(c).getBytes(charset).length * 3;
             }
         }
         if (cBegin == text.length()) {
@@ -346,7 +378,7 @@ public class TextTools {
                         } else {
                             return Line_Break.LF;
                         }
-                    } else if (cr) {
+                    } else if (c != 0 && cr) {
                         return Line_Break.CR;
                     }
                 }
@@ -358,7 +390,7 @@ public class TextTools {
         }
     }
 
-    public static String lineBreak(Line_Break lb) {
+    public static String lineBreakValue(Line_Break lb) {
         switch (lb) {
             case LF:
                 return "\n";
@@ -371,25 +403,25 @@ public class TextTools {
         }
     }
 
-    public static byte[] lineBreakBytes(Line_Break lb) {
+    public static byte[] lineBreakBytes(Line_Break lb, Charset charset) {
         switch (lb) {
             case LF:
-                return "\n".getBytes();
+                return "\n".getBytes(charset);
             case CRLF:
-                return "\r\n".getBytes();
+                return "\r\n".getBytes(charset);
             case CR:
-                return "\r".getBytes();
+                return "\r".getBytes(charset);
             default:
-                return "\n".getBytes();
+                return "\n".getBytes(charset);
         }
     }
 
-    public static String lineBreakHex(Line_Break lb) {
-        return ByteTools.bytesToHex(lineBreakBytes(lb));
+    public static String lineBreakHex(Line_Break lb, Charset charset) {
+        return ByteTools.bytesToHex(lineBreakBytes(lb, charset));
     }
 
-    public static String lineBreakHexFormat(Line_Break lb) {
-        return ByteTools.bytesToHexFormat(lineBreakBytes(lb));
+    public static String lineBreakHexFormat(Line_Break lb, Charset charset) {
+        return ByteTools.bytesToHexFormat(lineBreakBytes(lb, charset));
     }
 
 }

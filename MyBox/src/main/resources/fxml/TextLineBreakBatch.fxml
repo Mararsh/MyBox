@@ -46,19 +46,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRenameController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextLineBreakBatchController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1061.0" VBox.vgrow="ALWAYS">
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
@@ -68,21 +65,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" text="%AddDirectory" />
                                                 <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" text="%InsertFiles" />
                                                 <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" text="%InsertDirectory" />
+                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                                                 <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                                                <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" text="%RecoverAll" />
-                                                <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverSelected" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                                             </items>
                                         </ToolBar>
-                                        <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <TableView fx:id="sourceTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                <TableView fx:id="sourceTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
                                                     <columns>
-                                                        <TableColumn fx:id="handledColumn" prefWidth="220.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%OriginalFileName" />
-                                                        <TableColumn fx:id="newColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%NewFileName" />
+                                                        <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
+                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%FileName" />
                                                         <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
                                                         <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
                                                         <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
@@ -95,91 +90,84 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane maxWidth="1.7976931348623157E308" text="%SourceFilesOptions" VBox.vgrow="NEVER">
+                        <TitledPane text="%SourceFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="subDirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextLineBreakComments">
+                                                    <HBox.margin>
+                                                        <Insets left="30.0" />
+                                                    </HBox.margin>
+                                                </Label>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                                <CheckBox fx:id="filesNameCheck" mnemonicParsing="false" text="%OnlyFilenameInclude" />
-                                                <TextField fx:id="filesNameInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+                                                <CheckBox fx:id="filesNameCheck" mnemonicParsing="false" selected="true" text="%OnlyFilenameInclude" />
+                                                <TextField fx:id="filesNameInput" text=".html  .htm  .txt " HBox.hgrow="ALWAYS" />
                                                 <Label text="%SeparateBySpace" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%SourceCharset" />
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%DetermainAutomatically">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="sourceGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%Known" toggleGroup="$sourceGroup" />
+                                                <ComboBox fx:id="sourceBox" prefWidth="150.0" />
+                                                <Label fx:id="bomLabel">
+                                                    <padding>
+                                                        <Insets right="20.0" />
+                                                    </padding>
+                                                </Label>
                                             </children>
                                         </HBox>
                                     </children>
                                 </VBox>
                             </content>
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFilesOptions" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <Label text="%FileNamePrefix" />
-                                                <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
-                                                <CheckBox fx:id="stringCheck" mnemonicParsing="false" selected="true" text="%IncludeString" />
-                                                <TextField fx:id="stringInput" prefHeight="30.0" prefWidth="200.0" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <CheckBox fx:id="accumCheck" mnemonicParsing="false" selected="true" text="%AppendAccumulatingNumber">
-                                                    <HBox.margin>
-                                                        <Insets left="20.0" />
-                                                    </HBox.margin>
-                                                </CheckBox>
-                                                <Label text="%From">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="40.0" text="0" />
-                                                <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero" />
-                                                <Label text="%Digit" />
-                                                <TextField fx:id="digitInput" prefHeight="30.0" prefWidth="40.0" />
-                                                <Label text="%AccumDigitComments" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <VBox.margin>
-                                                <Insets />
-                                            </VBox.margin>
-                                            <children>
-                                                <Label text="%Sort">
-                                                    <HBox.margin>
-                                                        <Insets left="60.0" />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%AddedSequence">
+                                                <Label text="%TargetFileLineBreak" />
+                                                <RadioButton fx:id="lfRadio" mnemonicParsing="false" selected="true" text="%LF">
                                                     <toggleGroup>
-                                                        <ToggleGroup fx:id="sortGroup" />
+                                                        <ToggleGroup fx:id="lbGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%OriginalFileName" toggleGroup="$sortGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%CreateTime" toggleGroup="$sortGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%ModifyTime" toggleGroup="$sortGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Size" toggleGroup="$sortGroup" />
-                                                <CheckBox fx:id="descentCheck" mnemonicParsing="false" text="%Descent">
-                                                    <HBox.margin>
-                                                        <Insets left="20.0" />
-                                                    </HBox.margin>
-                                                </CheckBox>
+                                                <RadioButton fx:id="crRadio" mnemonicParsing="false" text="%CR" toggleGroup="$lbGroup" />
+                                                <RadioButton fx:id="crlfRadio" mnemonicParsing="false" text="%CRLF" toggleGroup="$lbGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                            <children>
+                                                <Label text="%TargetFilesPath" />
+                                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Label text="%FileNameSuffix" />
-                                                <CheckBox fx:id="suffixCheck" mnemonicParsing="false" text="%ModifyAs" />
-                                                <TextField fx:id="suffixInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <Label text="%ExistedFiles" />
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="targetExistGroup" />
+                                                    </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
+                                                <Label text="%Suffix" />
+                                                <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
+                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>
                                     </children>

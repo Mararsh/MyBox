@@ -39,13 +39,13 @@
 
 <p class="paragraph">Jar packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
 <p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-4.6-exe.zip">MyBox-4.6-exe.zip</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-4.7-exe.zip">MyBox-4.7-exe.zip</a></p>
 <p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms.</p>
 
-<p class="paragraph">User also can download jar file if JRE or JDK installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-4.6-jar.zip">MyBox-4.6-jar.zip</a></p>
+<p class="paragraph">User also can download jar file if JRE or JDK 8/9/10 installed:</p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-4.7-jar.zip">MyBox-4.7-jar.zip</a></p>
 <p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.6.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-4.7.jar</code></pre>
 
 <p class="p1" >Resource Addresses</p>
 <p class="paragraph">Project Main Page</p>
@@ -62,15 +62,15 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-Overview-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-Overview-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.6/MyBox-UserGuide-4.6-DesktopTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.6. It includes the following features: </p>
+<p class="paragraph">Current version is 4.7. It includes the following features: </p>
 <PRE>
 1. PDF Tools:
 	A. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
@@ -91,7 +91,9 @@
 			Convolution can be defined and referred to make more effects
 		4) Other operations: Crop, text, cover(Mosaic/Frosted/Picture ), arc, shadow, shear, mirror, rotate, cut margins, add margins. Options can be set.
 		5) “Scope”: All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectrangle, Color Matching in Circle. 
-			Color Matching can be against saturaion,  brightness, hue, RGB, or Red/Green/Blue channel. Scope can be applied for Color Adjustment, Effects, and Convolution. Scope can be determined by simply clicking image. Parameters like points set of matting and colors list of color matching can be set easily. All scope can be set as Excluded.
+			Color Matching can be against saturaion,  brightness, hue, RGB, or Red/Green/Blue channel. 
+			Scope can be applied for Color Adjustment, Effects, and Convolution. Scope can be determined by simply clicking image. 
+			Parameters like points set of matting and colors list of color matching can be set easily. All scope can be set as Excluded.
 		6) “Undo” and “Redo” of previous operation. Original image can be recoverred at any time.
 			Updated histories can be saved automatically and set back. Number of updated histories can be set.
 		7) Browse images under same directory.
@@ -114,7 +116,8 @@
 		3) If memory may be out, subsample the image for next operations.
 		4) The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.
 		5) The sampled image is mainly to display the image, and not suitable for operations against whole image and images merging.
-		6) Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images.
+		6) Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images. 
+		   Sampled image is displayed while original image is handled.
 	G. Copy image or selected part of image in system clipboard(Ctrl-c).
 	H. View the image meta-data and image attributes.
 	I. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
@@ -132,11 +135,11 @@
 	D. Edit Text:
 		1) File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. 
 		   BOM setting is supported.
-		2) Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).
-		3) Find and replace. In current page, or in whole file.
-		4) Filter lines. By “Include one of strings” or “Not include all of strings”.
-		   Cumulative filter. Filtered results can be saved.
-		5) Hexadecimal codes can be viewed and selected synchronously.
+		2) Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(Apple), CRLF(Windows).
+		3) Find and replace. In current page, or in whole file. Counting.
+		4) Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.
+		   Cumulative filter. Filtered results can be saved. Select whether include lines number.
+		5) Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
 		6) Line numbers are shown.
 		7) Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
 			(1) Set page size.
@@ -144,23 +147,37 @@
 			(3) Load and display first page, and scan the file in background to count characters number and lines number.
 			    Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
 			(4) Make sure correction of finding, replacing, and filtering of strings that are across pages.
+	E. Edit Bytes:
+		1) Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
+		2) Input boxes of general ASCII characters.
+		3) Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
+		4) Find and replace. In current page, or in whole file. Counting.
+		5) Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.
+			Cumulative filter. Filtered results can be saved. Select whether include lines number.
+		6) Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
+		7) Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. 
+			Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages. 
+			When break lines by bytes number, crossing pages need not concerned.
+		8) General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
+	F. Convert charset in batching way.
+	G. Convert line break in batching way.
 4. Network Tools:
 	A. Html Editor
-		a. Edit local web pages or online pages in rich text.
-		b. Code Editor can be sychronized with Html Editor.
-		c. Web browser can be sychronized with contents of Editors, or load the online page. 
+		1) Edit local web pages or online pages in rich text.
+		2) Code Editor can be sychronized with Html Editor.
+		3) Web browser can be sychronized with contents of Editors, or load the online page. 
 		   Support history browsing, font zooming 、and snapshoting of the whole page as a image or a PDF file.
 	B. Weibo Snaping Tool
-		a. Save Weibo pages of any months of any Weibo accounts automatically.
-		b. Set the months range.
-		c. Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
-		d. Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. 
+		1) Save Weibo pages of any months of any Weibo accounts automatically.
+		2) Set the months range.
+		3) Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
+		4) Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. 
 		   They can be used to extract texts in the pages.
-		e. Save the pages' snapshots as PDF files, with options like page size, margins, author, images format, etc.
-		f. Save all original size pictures in the pages.
-		g. Display progress information in time.
-		h. Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
-		i. Set the retry times of failure.
+		5) Save the pages' snapshots as PDF files, with options like page size, margins, author, images format, etc.
+		6) Save all original size pictures in the pages.
+		7) Display progress information in time.
+		8) Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
+		9) Set the retry times of failure.
 5. Supported image format: png,jpg,bmp,tif,gif,wbmp,pnm,pcx.
 6. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 7. Settings of languages, whether show comments, PDF options, image options, whether close alarm clocks when exit program, clearing settings, and more parameters.
@@ -171,6 +188,12 @@
 
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.</BR>
+Convert line breaks of files in batching way.</BR>
+Merge “Rename Files” and “Rename Files under Directories”.</BR>
+Image Blurring uses “Average Algorithm” which is good enough and quicker.</p>
+
+
 <p class="paragraph">2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).</BR>
 Find and replace. In current page, or in whole file.</BR>
 Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.</BR>

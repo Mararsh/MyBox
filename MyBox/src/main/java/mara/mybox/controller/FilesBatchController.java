@@ -16,8 +16,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -27,15 +29,17 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import static mara.mybox.objects.AppVaribles.logger;
+import javafx.util.Callback;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileInformation;
-import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.ValueTools;
 
@@ -45,11 +49,11 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileBatchController extends BaseController {
+public class FilesBatchController extends BaseController {
 
     protected TargetExistType targetExistType;
-    protected ObservableList<String> generatedFiles;
-    protected String fileType, errorString, targetFormat;
+    protected int dirTotal, dirOk;
+    protected List<Integer> sourcesHandling;
 
     protected class ProcessParameters {
 
@@ -63,9 +67,12 @@ public class FileBatchController extends BaseController {
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
 
     @FXML
-    protected TableView<FileInformation> sourceTable;
+    protected TableView<FileInformation> sourceTableView;
     @FXML
-    protected TableColumn<FileInformation, String> handledColumn, fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
+    protected TableColumn<FileInformation, String> handledColumn, fileColumn, modifyTimeColumn,
+            sizeColumn, createTimeColumn;
+    @FXML
+    protected TableColumn<FileInformation, Boolean> typeColumn;
     @FXML
     protected ToggleGroup targetExistGroup, fileTypeGroup;
     @FXML
@@ -73,14 +80,24 @@ public class FileBatchController extends BaseController {
     @FXML
     protected TextField targetSuffixInput;
     @FXML
-    protected Button addButton, upButton, downButton, deleteButton, clearButton, openButton, insertButton;
+    protected Button addFilesButton, addDirectoryButton, insertFilesButton, insertDirectoryButton,
+            upButton, downButton, deleteButton, clearButton, openButton;
+    @FXML
+    protected CheckBox subDirCheck, filesNameCheck;
+    @FXML
+    protected TextField filesNameInput;
 
     protected static enum TargetExistType {
         Rename, Replace, Skip
     }
 
-    public FileBatchController() {
-
+    public FilesBatchController() {
+        sourcePathKey = "sourcePath";
+        fileExtensionFilter = new ArrayList() {
+            {
+                add(new FileChooser.ExtensionFilter("*", "*.*"));
+            }
+        };
     }
 
     /**
@@ -98,30 +115,32 @@ public class FileBatchController extends BaseController {
 
     }
 
-    protected void viewFile(String file) {
+    protected void viewFile(File file) {
+        if (file == null) {
+            return;
+        }
         try {
-
+            Desktop.getDesktop().browse(file.toURI());
         } catch (Exception e) {
+            logger.debug(e.toString());
         }
     }
 
-    protected String handleCurrentFile() {
-        try {
-            // handle and generate file
-            generatedFiles.add(currentParameters.finalTargetName);
-            return AppVaribles.getMessage("Successful");
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return AppVaribles.getMessage("Failed");
-        }
+    protected String handleCurrentFile(FileInformation file) {
+        return AppVaribles.getMessage("Successful");
     }
 
+    protected String handleCurrentDirectory(FileInformation file) {
+        return AppVaribles.getMessage("Successful");
+    }
+
+    protected void donePost() {
+
+    }
 
     /* ----------------------------------------------------- */
     @Override
     protected void initializeNext() {
-
-        generatedFiles = FXCollections.observableArrayList();
 
         initSourceSection();
         initOptionsSection();
@@ -137,13 +156,36 @@ public class FileBatchController extends BaseController {
 
             handledColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("handled"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
+            typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Boolean>("isFile"));
+            typeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Boolean>, TableCell<FileInformation, Boolean>>() {
+                @Override
+                public TableCell<FileInformation, Boolean> call(TableColumn<FileInformation, Boolean> param) {
+                    TableCell<FileInformation, Boolean> cell = new TableCell<FileInformation, Boolean>() {
+                        final Text text = new Text();
+
+                        @Override
+                        protected void updateItem(final Boolean item, boolean empty) {
+                            super.updateItem(item, empty);
+                            if (item != null) {
+                                if (item) {
+                                    text.setText(AppVaribles.getMessage("File"));
+                                } else {
+                                    text.setText(AppVaribles.getMessage("Directory"));
+                                }
+                            }
+                            setGraphic(text);
+                        }
+                    };
+                    return cell;
+                }
+            });
             modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("modifyTime"));
             createTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("createTime"));
             sizeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileSize"));
 
-            sourceTable.setItems(sourceFilesInformation);
-            sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            sourceTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            sourceTableView.setItems(sourceFilesInformation);
+            sourceTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            sourceTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     if (event.getClickCount() > 1) {
@@ -151,7 +193,7 @@ public class FileBatchController extends BaseController {
                     }
                 }
             });
-            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            sourceTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
                 @Override
                 public void changed(ObservableValue ov, Object t, Object t1) {
                     checkTableSelected();
@@ -165,13 +207,17 @@ public class FileBatchController extends BaseController {
     }
 
     protected void checkTableSelected() {
-        ObservableList<Integer> selected = sourceTable.getSelectionModel().getSelectedIndices();
+        ObservableList<Integer> selected = sourceTableView.getSelectionModel().getSelectedIndices();
         boolean none = (selected == null || selected.isEmpty());
-        insertButton.setDisable(none);
-        openButton.setDisable(none);
+        insertFilesButton.setDisable(none);
+        insertDirectoryButton.setDisable(none);
+        if (openButton != null) {
+            openButton.setDisable(none);
+        }
         upButton.setDisable(none);
         downButton.setDisable(none);
         deleteButton.setDisable(none);
+
     }
 
     protected void initTargetSection() {
@@ -239,21 +285,36 @@ public class FileBatchController extends BaseController {
     }
 
     @FXML
-    protected void addAction(ActionEvent event) {
-        addAction(sourceFilesInformation.size());
+    protected void addFilesAction(ActionEvent event) {
+        addFilesAction(sourceFilesInformation.size());
     }
 
     @FXML
-    protected void insertAction(ActionEvent event) {
-        int index = sourceTable.getSelectionModel().getSelectedIndex();
+    protected void addDirectoryAction(ActionEvent event) {
+        addDirectoryAction(sourceFilesInformation.size());
+    }
+
+    @FXML
+    protected void insertFilesAction(ActionEvent event) {
+        int index = sourceTableView.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
-            addAction(index);
+            addFilesAction(index);
         } else {
-            insertButton.setDisable(true);
+            insertFilesButton.setDisable(true);
         }
     }
 
-    protected void addAction(int index) {
+    @FXML
+    protected void insertDirectoryAction(ActionEvent event) {
+        int index = sourceTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addDirectoryAction(index);
+        } else {
+            insertDirectoryButton.setDisable(true);
+        }
+    }
+
+    protected void addFilesAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
@@ -283,7 +344,36 @@ public class FileBatchController extends BaseController {
             } else {
                 sourceFilesInformation.addAll(index, infos);
             }
-            sourceTable.refresh();
+            sourceTableView.refresh();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected void addDirectoryAction(int index) {
+        try {
+            DirectoryChooser dirChooser = new DirectoryChooser();
+            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
+            if (!defaultPath.isDirectory()) {
+                defaultPath = new File(CommonValues.UserFilePath);
+            }
+            dirChooser.setInitialDirectory(defaultPath);
+            File directory = dirChooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            AppVaribles.setUserConfigValue(sourcePathKey, directory.getPath());
+
+            FileInformation d = new FileInformation(directory);
+            if (index < 0 || index >= sourceFilesInformation.size()) {
+                sourceFilesInformation.add(d);
+            } else {
+                sourceFilesInformation.add(index, d);
+            }
+            sourceTableView.refresh();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -294,7 +384,7 @@ public class FileBatchController extends BaseController {
     @FXML
     protected void deleteAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
+        selected.addAll(sourceTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
             return;
         }
@@ -305,19 +395,19 @@ public class FileBatchController extends BaseController {
             }
             sourceFilesInformation.remove(index);
         }
-        sourceTable.refresh();
+        sourceTableView.refresh();
     }
 
     @FXML
     protected void clearAction(ActionEvent event) {
         sourceFilesInformation.clear();
-        sourceTable.refresh();
+        sourceTableView.refresh();
     }
 
     @FXML
     protected void openAction() {
         List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
+        selected.addAll(sourceTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
             return;
         }
@@ -326,14 +416,18 @@ public class FileBatchController extends BaseController {
                 continue;
             }
             FileInformation info = sourceFilesInformation.get(index);
-            viewFile(info.getFile().getAbsolutePath());
+            if (info.getNewName() != null && !info.getNewName().isEmpty()) {
+                viewFile(new File(info.getNewName()));
+            } else {
+                viewFile(info.getFile());
+            }
         }
     }
 
     @FXML
     protected void upAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
+        selected.addAll(sourceTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
             return;
         }
@@ -347,16 +441,16 @@ public class FileBatchController extends BaseController {
         }
         for (Integer index : selected) {
             if (index > 0) {
-                sourceTable.getSelectionModel().select(index - 1);
+                sourceTableView.getSelectionModel().select(index - 1);
             }
         }
-        sourceTable.refresh();
+        sourceTableView.refresh();
     }
 
     @FXML
     protected void downAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
-        selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
+        selected.addAll(sourceTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
             return;
         }
@@ -372,16 +466,24 @@ public class FileBatchController extends BaseController {
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
             if (index < sourceFilesInformation.size() - 1) {
-                sourceTable.getSelectionModel().select(index + 1);
+                sourceTableView.getSelectionModel().select(index + 1);
             }
         }
-        sourceTable.refresh();
+        sourceTableView.refresh();
     }
 
     @Override
     protected void openTarget(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
+            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+                return;
+            }
+            File f = new File(sourceFilesInformation.get(0).getFileName());
+            if (f.isDirectory()) {
+                Desktop.getDesktop().browse(new File(f.getPath()).toURI());
+            } else {
+                Desktop.getDesktop().browse(new File(f.getParent()).toURI());
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -412,29 +514,31 @@ public class FileBatchController extends BaseController {
             actualParameters.startIndex = actualParameters.currentIndex;
             return;
         }
+
         actualParameters = new ProcessParameters();
         actualParameters.currentIndex = 0;
-
-        actualParameters.targetRootPath = targetPathInput.getText();
-        actualParameters.targetPath = actualParameters.targetRootPath;
-        if (subdirCheck != null) {
-            actualParameters.createSubDir = subdirCheck.isSelected();
-            AppVaribles.setUserConfigValue(creatSubdirKey, actualParameters.createSubDir);
-        }
-
-        if (targetPrefixInput != null) {
-            actualParameters.targetPrefix = targetFileInput.getText();
-        }
-
+        sourcesHandling = new ArrayList();
         if (sourceFilesInformation != null && !sourceFilesInformation.isEmpty()) {
-            sourceFiles = new ArrayList();
             if (isPreview) {
-                sourceFiles.add(sourceFilesInformation.get(0).getFile());
+                int index = 0;
+                ObservableList<Integer> selected = sourceTableView.getSelectionModel().getSelectedIndices();
+                if (selected != null && !selected.isEmpty()) {
+                    index = selected.get(0);
+                }
+                sourcesHandling.add(index);
             } else {
-                for (FileInformation f : sourceFilesInformation) {
-                    sourceFiles.add(f.getFile());
+                for (int i = 0; i < sourceFilesInformation.size(); i++) {
+                    sourcesHandling.add(i);
                 }
             }
+        }
+
+        if (targetPathInput != null) {
+            actualParameters.targetRootPath = targetPathInput.getText();
+            actualParameters.targetPath = actualParameters.targetRootPath;
+        }
+        if (targetPrefixInput != null) {
+            actualParameters.targetPrefix = targetFileInput.getText();
         }
 
     }
@@ -454,7 +558,6 @@ public class FileBatchController extends BaseController {
 
     protected void doCurrentProcess() {
         try {
-            generatedFiles = FXCollections.observableArrayList();
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
             updateInterface("Started");
@@ -462,15 +565,15 @@ public class FileBatchController extends BaseController {
                 @Override
                 protected Void call() {
                     try {
-                        for (; currentParameters.currentIndex < sourceFiles.size();) {
+                        for (; currentParameters.currentIndex < sourcesHandling.size();) {
                             if (isCancelled()) {
                                 break;
                             }
                             handleCurrentIndex();
 
                             currentParameters.currentIndex++;
-                            updateProgress(currentParameters.currentIndex, sourceFiles.size());
-                            updateMessage(currentParameters.currentIndex + "/" + sourceFiles.size());
+                            updateProgress(currentParameters.currentIndex, sourcesHandling.size());
+                            updateMessage(currentParameters.currentIndex + "/" + sourcesHandling.size());
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -523,46 +626,52 @@ public class FileBatchController extends BaseController {
         }
     }
 
-    protected void handleCurrentIndex() {
-        File file = sourceFiles.get(currentParameters.currentIndex);
-        currentParameters.sourceFile = file;
-        String filename = file.getName();
-        if (fileType != null) {
-            filename = FileTools.replaceFileSuffix(filename, fileType);
-        }
-        currentParameters.finalTargetName = currentParameters.targetPath
-                + File.separator + filename;
-        boolean skip = false;
-        if (targetExistType == TargetExistType.Rename) {
-            while (new File(currentParameters.finalTargetName).exists()) {
-                filename = FileTools.getFilePrefix(filename)
-                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(filename);
-                currentParameters.finalTargetName = currentParameters.targetPath
-                        + File.separator + filename;
-            }
-        } else if (targetExistType == TargetExistType.Skip) {
-            if (new File(currentParameters.finalTargetName).exists()) {
-                skip = true;
+    public FileInformation findFileInformation(String filename) {
+        for (FileInformation d : sourceFilesInformation) {
+            if (d.getFileName().equals(filename)) {
+                return d;
             }
         }
-        if (!skip) {
-            String result = handleCurrentFile();
-            markFileHandled(currentParameters.currentIndex, result);
-        } else {
-            markFileHandled(currentParameters.currentIndex, AppVaribles.getMessage("Skip"));
-        }
-
-        currentParameters.currentTotalHandled++;
-
+        return null;
     }
 
-    protected void markFileHandled(int index, String msg) {
-        FileInformation d = sourceFilesInformation.get(index);
+    public FileInformation findFileInformation(File file) {
+        for (FileInformation d : sourceFilesInformation) {
+            if (d.getFile().equals(file)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public int findFileIndex(String filename) {
+        for (int i = 0; i < sourceFilesInformation.size(); i++) {
+            FileInformation d = sourceFilesInformation.get(i);
+            if (d.getFileName().equals(filename)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    protected void handleCurrentIndex() {
+        FileInformation d = sourceFilesInformation.get(sourcesHandling.get(currentParameters.currentIndex));
         if (d == null) {
             return;
         }
-        d.setHandled(msg);
-        sourceTable.refresh();
+        File file = d.getFile();
+        currentParameters.sourceFile = file;
+        String result;
+        if (!file.exists()) {
+            result = AppVaribles.getMessage("NotFound");
+        } else if (file.isFile()) {
+            result = handleCurrentFile(d);
+        } else {
+            result = handleCurrentDirectory(d);
+        }
+        d.setHandled(result);
+        sourceTableView.refresh();
+        currentParameters.currentTotalHandled++;
     }
 
     @Override
@@ -576,8 +685,8 @@ public class FileBatchController extends BaseController {
             public void run() {
                 try {
                     if (operationBarController.fileProgressBar != null) {
-                        operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourceFiles.size());
-                        operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourceFiles.size());
+                        operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourcesHandling.size());
+                        operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourcesHandling.size());
                     }
                     switch (newStatus) {
                         case "StartFile":
@@ -586,8 +695,8 @@ public class FileBatchController extends BaseController {
                                     + getMessage("StartTime")
                                     + ": " + DateTools.datetimeToString(currentParameters.startTime));
                             if (operationBarController.fileProgressBar != null) {
-                                operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourceFiles.size());
-                                operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourceFiles.size());
+                                operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourcesHandling.size());
+                                operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourcesHandling.size());
                             }
                             break;
 
@@ -614,8 +723,8 @@ public class FileBatchController extends BaseController {
                         case "CompleteFile":
                             showCost();
                             if (operationBarController.fileProgressBar != null) {
-                                operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourceFiles.size());
-                                operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourceFiles.size());
+                                operationBarController.fileProgressBar.setProgress(currentParameters.currentIndex / sourcesHandling.size());
+                                operationBarController.fileProgressValue.setText(currentParameters.currentIndex + " / " + sourcesHandling.size());
                             }
                             break;
 
@@ -625,7 +734,7 @@ public class FileBatchController extends BaseController {
                                         || !new File(currentParameters.finalTargetName).exists()) {
                                     alertInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else {
-                                    viewFile(currentParameters.finalTargetName);
+                                    viewFile(new File(currentParameters.finalTargetName));
                                 }
                             }
 
@@ -659,6 +768,7 @@ public class FileBatchController extends BaseController {
                                 operationBarController.pauseButton.setVisible(false);
                                 operationBarController.pauseButton.setDisable(true);
                                 paraBox.setDisable(false);
+                                donePost();
                             }
                             showCost();
 

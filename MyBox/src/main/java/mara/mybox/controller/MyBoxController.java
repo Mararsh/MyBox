@@ -559,14 +559,6 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem dirsRename = new MenuItem(AppVaribles.getMessage("DirectoriesRename"));
-        dirsRename.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
-            }
-        });
-
         MenuItem dirSynchronize = new MenuItem(AppVaribles.getMessage("DirectorySynchronize"));
         dirSynchronize.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -599,6 +591,14 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem textLineBreakBatch = new MenuItem(AppVaribles.getMessage("TextLineBreakBatch"));
+        textLineBreakBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.TextLineBreakBatchFxml, AppVaribles.getMessage("TextLineBreakBatch"));
+            }
+        });
+
         MenuItem bytesEditer = new MenuItem(AppVaribles.getMessage("BytesEditer"));
         bytesEditer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -615,9 +615,9 @@ public class MyBoxController extends BaseController {
             }
         });
         desktopMenu = new ContextMenu();
-        desktopMenu.getItems().addAll(filesRename, dirsRename, new SeparatorMenuItem(),
-                filesArrangement, dirSynchronize, new SeparatorMenuItem(),
-                textEditer, textEncodingBatch, new SeparatorMenuItem(),
+        desktopMenu.getItems().addAll(
+                textEditer, bytesEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
+                filesRename, filesArrangement, dirSynchronize, new SeparatorMenuItem(),
                 alarmClock);
     }
 

@@ -1,6 +1,9 @@
 package mara.mybox.tools;
 
+import java.nio.charset.Charset;
+import javafx.scene.control.IndexRange;
 import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.objects.FileEditInformation.Line_Break;
 
 /**
  * @Author Mara
@@ -9,6 +12,8 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class ByteTools {
+
+    public static int Invalid_Byte = -999;
 
     public static String byteToHex(byte b) {
         String hex = Integer.toHexString(b & 0xFF);
@@ -56,12 +61,12 @@ public class ByteTools {
         return s;
     }
 
-    public static String bytesToHexFormat(byte[] bytes, String newLineHex) {
-        String s = bytesToHexFormat(bytes);
-        s = s.replace("0A ", newLineHex.trim() + "\n");
-        return s;
-    }
-
+//    public static String bytesToHexFormat(byte[] bytes, String newLineValue) {
+//        String s = bytesToHexFormat(bytes);
+//        s = s.replace("\n", newLineHex.trim() + "\n");
+//        logger.debug(newLineHex);
+//        return s;
+//    }
     public static String bytesToHexFormat(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bytes.length; i++) {
@@ -81,6 +86,84 @@ public class ByteTools {
             return (byte) Integer.parseInt(inHex, 16);
         } catch (Exception e) {
             return new Byte("63"); // "?"
+        }
+    }
+
+    public static int hexToInt(String inHex) {
+        try {
+            if (inHex.length() == 0 || inHex.length() > 2) {
+                return Invalid_Byte;
+            }
+            String hex = inHex;
+            if (inHex.length() == 1) {
+                hex = "0" + hex;
+            }
+            return Integer.parseInt(hex, 16);
+        } catch (Exception e) {
+            return Invalid_Byte;
+        }
+    }
+
+    public static String validateByteHex(String inHex) {
+        try {
+            if (inHex.length() == 0 || inHex.length() > 2) {
+                return null;
+            }
+            String hex = inHex;
+            if (inHex.length() == 1) {
+                hex = "0" + hex;
+            }
+            Integer.parseInt(hex, 16);
+            return hex;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean isByteHex(String inHex) {
+        try {
+            if (inHex.length() != 2) {
+                return false;
+            }
+            Integer.parseInt(inHex, 16);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isBytesHex(String inHex) {
+        try {
+            int hexlen = inHex.length();
+            if (hexlen % 2 == 1) {
+                return false;
+            }
+            for (int i = 0; i < hexlen; i += 2) {
+                Integer.parseInt(inHex.substring(i, i + 2), 16);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static String validateTextHex(String text) {
+        try {
+            String inHex = text.replaceAll(" ", "").replaceAll("\n", "").toUpperCase();
+            int hexlen = inHex.length();
+            if (hexlen % 2 == 1) {
+                return null;
+            }
+            StringBuilder sb = new StringBuilder();
+            String b;
+            for (int i = 0; i < hexlen; i += 2) {
+                b = inHex.substring(i, i + 2);
+                Integer.parseInt(b, 16);
+                sb.append(b).append(" ");
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -107,24 +190,6 @@ public class ByteTools {
         return hexToBytes(hex);
     }
 
-//    public static String hexFormatAdjust(String hexFormat, String newLineHex) {
-//        StringBuilder sb = new StringBuilder();
-//        String[] lines = hexFormat.split("\n");
-//        for (String line: lines) {
-//
-//        }
-//        for (int i = 0; i < bytes.length; i++) {
-//            String hex = Integer.toHexString(bytes[i] & 0xFF);
-//            if (hex.length() < 2) {
-//                sb.append(0);
-//            }
-//            sb.append(hex).append(" ");
-//        }
-//        String s = sb.toString();
-//        s = s.replace(newLineHex + " ", newLineHex + "\n");
-//        s = s.toUpperCase();
-//        return s;
-//    }
     public static byte[] subBytes(byte[] bytes, int off, int length) {
         try {
             byte[] newBytes = new byte[length];
@@ -158,6 +223,104 @@ public class ByteTools {
 
     public static int countNumber(byte[] bytes, String hex) {
         return TextTools.countNumber(bytesToHex(bytes), hex);
+    }
+
+    public static int lineIndex(String lineText, Charset charset,
+            int offset) {
+
+        int hIndex = 0;
+        byte[] cBytes;
+        for (int i = 0; i < lineText.length(); i++) {
+            if (offset <= hIndex) {
+                return i;
+            }
+            char c = lineText.charAt(i);
+            cBytes = String.valueOf(c).getBytes(charset);
+            hIndex += cBytes.length * 3;
+        }
+        return -1;
+    }
+
+    public static IndexRange textIndex(String hex, Charset charset,
+            int lbLength, IndexRange hexRange) {
+        int hIndex = 0, cindex = 0;
+        int cBegin = 0;
+        int cEnd = 0;
+        int hexBegin = hexRange.getStart();
+        int hexEnd = hexRange.getEnd();
+        if (hexBegin == 0 && hexEnd <= 0) {
+            return new IndexRange(0, 0);
+        }
+        boolean gotStart = false, gotEnd = false;
+        String[] lines = hex.split("\n");
+        StringBuilder text = new StringBuilder();
+        String lineText;
+        for (String line : lines) {
+            lineText = new String(ByteTools.hexFormatToBytes(line), charset);
+            lineText = lineText.replaceAll("\n", " ");
+            if (!gotStart && hexBegin >= hIndex && hexBegin <= (hIndex + line.length())) {
+                cBegin = cindex + lineIndex(lineText, charset, hexBegin - hIndex);
+                gotStart = true;
+            }
+            if (hexEnd >= hIndex && hexEnd <= (hIndex + line.length())) {
+                cEnd = cindex + lineIndex(lineText, charset, hexEnd - hIndex);
+                gotEnd = true;
+                break;
+            }
+            hIndex += line.length() + 1;
+            cindex += lineText.length();
+        }
+        if (!gotStart) {
+            cBegin = text.length() - 1;
+        }
+        if (!gotEnd) {
+            cEnd = text.length();
+        }
+        if (cBegin > cEnd) {
+            cEnd = cBegin;
+        }
+        return new IndexRange(cBegin, cEnd);
+    }
+
+    public static int indexOf(String hexString, String hexSubString, int initFrom) {
+        if (hexString == null || hexSubString == null
+                || hexString.length() < hexSubString.length()) {
+            return -1;
+        }
+        int from = initFrom, pos = 0;
+        while (pos >= 0) {
+            pos = hexString.indexOf(hexSubString, from);
+            if (pos % 2 == 0) {
+                return pos;
+            }
+            from = pos + 1;
+        }
+        return -1;
+    }
+
+    public static String formatHex(String hexString,
+            Line_Break lineBreak, int lineBreakWidth, String lineBreakValue) {
+        String text = hexString;
+        if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
+            int step = 3 * lineBreakWidth;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < text.length(); i += step) {
+                if (i + step < text.length()) {
+                    sb.append(text.substring(i, i + step)).append("\n");
+                } else {
+                    sb.append(text.substring(i, text.length()));
+                }
+            }
+            text = sb.toString();
+        } else if (lineBreakValue != null) {
+            if (text.endsWith(lineBreakValue)) {
+                text = text.replaceAll(lineBreakValue, lineBreakValue.trim() + "\n");
+                text = text.substring(0, text.length() - 1);
+            } else {
+                text = text.replaceAll(lineBreakValue, lineBreakValue.trim() + "\n");
+            }
+        }
+        return text;
     }
 
 }

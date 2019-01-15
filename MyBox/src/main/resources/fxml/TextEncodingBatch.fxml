@@ -61,8 +61,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
-                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" text="%AddFiles" />
+                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" text="%AddDirectory" />
+                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" text="%InsertFiles" />
+                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" text="%InsertDirectory" />
                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
@@ -72,10 +74,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ToolBar>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                <TableView fx:id="sourceTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
                                                     <columns>
                                                         <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" prefWidth="700.0" text="%Directory" />
+                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%FileName" />
+                                                        <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
+                                                        <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
+                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
+                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
                                                     </columns>
                                                 </TableView>
                                             </content>
@@ -90,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <CheckBox fx:id="subCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                                <CheckBox fx:id="subDirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
                                                 <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextEncodingComments">
                                                     <HBox.margin>
                                                         <Insets left="30.0" />
@@ -100,8 +106,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                                <CheckBox fx:id="nameCheck" mnemonicParsing="false" selected="true" text="%OnlyFilenameInclude" />
-                                                <TextField fx:id="nameInput" text=".html  .htm  .txt " HBox.hgrow="ALWAYS" />
+                                                <CheckBox fx:id="filesNameCheck" mnemonicParsing="false" selected="true" text="%OnlyFilenameInclude" />
+                                                <TextField fx:id="filesNameInput" text=".html  .htm  .txt " HBox.hgrow="ALWAYS" />
                                                 <Label text="%SeparateBySpace" />
                                             </children>
                                         </HBox>

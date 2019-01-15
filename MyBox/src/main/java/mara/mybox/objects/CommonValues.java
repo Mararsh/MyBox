@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.6";
-    public static final String AppVersionDate = "2018-12-31";
+    public static final String AppVersion = "4.7";
+    public static final String AppVersionDate = "2019-01-15";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String TempPath = UserFilePath + File.separator + "temp";
@@ -106,7 +106,6 @@ public class CommonValues {
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
-    public static final String DirectoriesRenameFxml = "/fxml/DirectoriesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
     public static final String AlarmClockFxml = "/fxml/AlarmClock.fxml";
@@ -117,6 +116,7 @@ public class CommonValues {
     public static final String WeiboSnapingInfoFxml = "/fxml/WeiboSnapingInfo.fxml";
     public static final String TextEditerFxml = "/fxml/TextEditer.fxml";
     public static final String TextEncodingBatchFxml = "/fxml/TextEncodingBatch.fxml";
+    public static final String TextLineBreakBatchFxml = "/fxml/TextLineBreakBatch.fxml";
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
 
@@ -140,8 +140,6 @@ public class CommonValues {
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
 
     public static final int InvalidValue = -9999999;
-
-    public static final int MaxImageSampleWidth = 4096;
 
     public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList() {
         {

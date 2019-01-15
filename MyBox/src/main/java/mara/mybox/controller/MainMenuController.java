@@ -530,11 +530,6 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openDirsRename(ActionEvent event) {
-        reloadStage(CommonValues.DirectoriesRenameFxml, AppVaribles.getMessage("DirectoriesRename"));
-    }
-
-    @FXML
     private void openDirectorySynchronize(ActionEvent event) {
         reloadStage(CommonValues.DirectorySynchronizeFxml, AppVaribles.getMessage("DirectorySynchronize"));
     }
@@ -562,6 +557,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openTextEncodingBatch(ActionEvent event) {
         reloadStage(CommonValues.TextEncodingBatchFxml, AppVaribles.getMessage("TextEncodingBatch"));
+    }
+
+    @FXML
+    private void openTextLineBreakBatch(ActionEvent event) {
+        reloadStage(CommonValues.TextLineBreakBatchFxml, AppVaribles.getMessage("TextLineBreakBatch"));
     }
 
     @FXML

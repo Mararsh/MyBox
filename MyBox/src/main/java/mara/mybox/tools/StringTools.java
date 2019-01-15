@@ -13,4 +13,9 @@ public class StringTools {
         return splitted;
     }
 
+    public static String[] splitByComma(String string) {
+        String[] splitted = string.split(",");
+        return splitted;
+    }
+
 }

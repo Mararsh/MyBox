@@ -2,10 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -103,13 +101,13 @@ public class HtmlEditorController extends BaseController {
     private Stage snapingStage;
     private LoadingController loadingController;
     private float zoomScale;
-    protected boolean isSettingValues;
+    protected boolean isSettingValues, loadSynchronously, isFrameSet;
     protected SimpleBooleanProperty fileChanged;
     protected int cols, rows;
     protected int lastTextLen;
 
     @FXML
-    private Button loadButton, updateEditorButton, snapsotButton;
+    private Button loadButton, snapsotButton;
     @FXML
     private HTMLEditor htmlEdior;
     @FXML
@@ -162,6 +160,7 @@ public class HtmlEditorController extends BaseController {
             isSettingValues = false;
             fontSize = 14;
             zoomScale = 1.0f;
+            isFrameSet = false;
 
             initHtmlEdtior();
             initCodeEdtior();
@@ -171,15 +170,52 @@ public class HtmlEditorController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Tab> observable,
                         Tab oldValue, Tab newValue) {
-                    if (fileChanged.get()) {
-                        isSettingValues = true;
-                        if (newValue.equals(editorTab)) {
-                            htmlEdior.setHtmlText(codesArea.getText());
-                        } else if (newValue.equals(codesTab)) {
-                            codesArea.setText(htmlEdior.getHtmlText());
+                    isSettingValues = true;
+                    String contents = "";
+                    if (newValue.equals(editorTab)) {
+                        if (oldValue.equals(codesTab)) {
+                            contents = codesArea.getText();
+                        } else if (oldValue.equals(browserTab)) {
+                            contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                         }
-                        isSettingValues = false;
+                        isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                        if (isFrameSet) {
+                            popError(AppVaribles.getMessage("NotSupportFrameSet"));
+                            htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
+                        } else {
+                            htmlEdior.setHtmlText(contents);
+                        }
+
+                    } else if (newValue.equals(codesTab)) {
+                        if (oldValue.equals(editorTab)) {
+                            if (isFrameSet) {
+                                contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                            } else {
+                                contents = htmlEdior.getHtmlText();
+                            }
+                        } else if (oldValue.equals(browserTab)) {
+                            contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                        }
+                        isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                        codesArea.setText(contents);
+
+                    } else if (newValue.equals(browserTab)) {
+                        if (oldValue.equals(editorTab)) {
+                            if (isFrameSet) {
+                                contents = codesArea.getText();
+                            } else {
+                                contents = htmlEdior.getHtmlText();
+                            }
+                        } else if (oldValue.equals(codesTab)) {
+                            contents = codesArea.getText();
+                        }
+                        isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                        if (!isFrameSet) {
+                            webEngine.loadContent(contents);
+                        }
                     }
+
+                    isSettingValues = false;
                 }
             });
 
@@ -243,13 +279,13 @@ public class HtmlEditorController extends BaseController {
 
     protected void initCodeEdtior() {
         try {
-            codesArea.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            codesArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void handle(KeyEvent event) {
-                    int len = codesArea.getText().length();
-                    if (!isSettingValues && len != lastTextLen) {
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (!isSettingValues) {
                         fileChanged.set(true);
                     }
+                    int len = codesArea.getText().length();
                     lastCodesLen = len;
                     bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
                 }
@@ -434,6 +470,23 @@ public class HtmlEditorController extends BaseController {
                                 loadButton.setText(getMessage("Load"));
                                 snapBar.setDisable(false);
                             }
+                            if (loadSynchronously) {
+                                try {
+                                    String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
+                                    isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
+                                    logger.debug(isFrameSet);
+                                    if (isFrameSet) {
+                                        popError(AppVaribles.getMessage("NotSupportFrameSet"));
+                                        htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
+                                    } else {
+                                        htmlEdior.setHtmlText(contents);
+                                    }
+                                    codesArea.setText(contents);
+                                } catch (Exception e) {
+                                    logger.debug(e.toString());
+                                }
+                                loadSynchronously = false;
+                            }
 
                             break;
                         case CANCELLED:
@@ -518,9 +571,7 @@ public class HtmlEditorController extends BaseController {
             if (!checkSavingForNextAction()) {
                 return;
             }
-            isSettingValues = true;
-//            sourceFile = null;
-//            htmlEdior.setHtmlText("");
+
             final FileChooser fileChooser = new FileChooser();
             File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
@@ -533,37 +584,22 @@ public class HtmlEditorController extends BaseController {
             AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
             sourceFile = file;
 
-            StringBuilder contents = new StringBuilder();
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-                String lineTxt;
-                cols = 0;
-                rows = 0;
-                while ((lineTxt = bufferedReader.readLine()) != null) {
-                    if (lineTxt.length() > rows) {
-                        rows = lineTxt.length();
-                    }
-                    cols++;
-                    contents.append(lineTxt).append(System.getProperty("line.separator"));
-                }
-            }
-            final String conString = contents.toString();
-            htmlEdior.setHtmlText(conString);
-            codesArea.setText(conString);
-            webEngine.loadContent(conString);
-
-            lastCodesLen = lastHtmlLen = contents.length();
-            fileChanged.set(false);
-            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
-            isSettingValues = false;
-
+            loadHtml(file);
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
     }
 
+    public void loadHtml(File file) {
+        isFrameSet = false;
+        loadSynchronously = true;
+        webEngine.load(file.toURI().toString());
+    }
+
     @FXML
     private void loadAction(ActionEvent event) {
+        isFrameSet = false;
         if (loadButton.getText().equals(getMessage("Stop"))) {
             webEngine.getLoadWorker().cancel();
             return;
@@ -592,42 +628,6 @@ public class HtmlEditorController extends BaseController {
             }
         }
 
-    }
-
-    @FXML
-    private void updateBrowser(ActionEvent event) {
-        webEngine.loadContent(htmlEdior.getHtmlText());
-//        Platform.runLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    logger.debug("updateBrowser");
-//
-//                } catch (Exception e) {
-//                    logger.error(e.toString());
-//                }
-//            }
-//        });
-
-    }
-
-    @FXML
-    private void updateEditor() {
-        try {
-            if (!checkSavingForNextAction()) {
-                return;
-            }
-
-//            String contents = getBrowserContents();
-//            logger.debug(contents.length());
-            String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-
-            htmlEdior.setHtmlText(contents);
-            codesArea.setText(contents);
-            fileChanged.set(true);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
     }
 
     private String getBrowserContents() {
@@ -729,6 +729,7 @@ public class HtmlEditorController extends BaseController {
             codesArea.setText("");
             lastCodesLen = lastHtmlLen = 0;
             fileChanged.set(false);
+            isFrameSet = false;
             getMyStage().setTitle(getBaseTitle());
             isSettingValues = false;
         } catch (Exception e) {
@@ -967,11 +968,13 @@ public class HtmlEditorController extends BaseController {
 
     @FXML
     private void backAction(ActionEvent event) {
+        isFrameSet = false;
         webEngine.executeScript("window.history.back();");
     }
 
     @FXML
     private void forwardAction(ActionEvent event) {
+        isFrameSet = false;
         webEngine.executeScript("window.history.forward();");
     }
 
@@ -987,6 +990,7 @@ public class HtmlEditorController extends BaseController {
     public void loginWeibo() {
         try {
             tabPane.getSelectionModel().select(browserTab);
+            isFrameSet = false;
             isSettingValues = true;
             urlBox.setValue("https://weibo.com");
             isSettingValues = false;
@@ -995,11 +999,6 @@ public class HtmlEditorController extends BaseController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-
-    }
-
-    public void loadHtml(File file) {
-        webEngine.load(file.toURI().toString());
 
     }
 

@@ -98,8 +98,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <ComboBox fx:id="urlBox" editable="true" prefWidth="450.0" />
                                           <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" text="%Load" />
                                     <Button mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
-                                    <Button fx:id="updateEditorButton" mnemonicParsing="false" onAction="#updateEditor" text="%UpdateEditor" />
-                                  <Button mnemonicParsing="false" onAction="#updateBrowser" text="%LoadEditorContents" />
                                 </items>
                               </ToolBar>
                               <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">

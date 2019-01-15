@@ -1,6 +1,7 @@
 package mara.mybox.objects;
 
 import java.io.File;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -15,7 +16,8 @@ import mara.mybox.tools.FileTools;
 public class FileInformation {
 
     protected File file;
-    protected SimpleStringProperty fileName, newName, fileType, createTime, modifyTime, fileSize, handled;
+    protected SimpleStringProperty fileName, newName, fileSuffix, createTime, modifyTime, fileSize, handled;
+    protected SimpleBooleanProperty isFile;
 
     public FileInformation() {
 
@@ -25,12 +27,44 @@ public class FileInformation {
         setFileAttributes(file);
     }
 
+    private void setFileAttributes(File file) {
+        this.file = file;
+        if (file == null) {
+            return;
+        }
+        String filename = file.getAbsolutePath();
+        this.handled = new SimpleStringProperty("");
+        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
+        this.isFile = new SimpleBooleanProperty(file.isFile());
+        this.newName = new SimpleStringProperty("");
+        if (file.isFile()) {
+            this.fileSuffix = new SimpleStringProperty(FileTools.getFileSuffix(filename));
+        } else {
+            this.fileSuffix = new SimpleStringProperty("");
+        }
+        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
+        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
+        if (file.isFile()) {
+            this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
+        } else {
+            this.fileSize = new SimpleStringProperty("");
+        }
+    }
+
     public String getFileName() {
         return fileName.get();
     }
 
     public void setFileName(String fileName) {
         this.fileName.set(fileName);
+    }
+
+    public boolean getIsFile() {
+        return isFile.get();
+    }
+
+    public void setIsFile(boolean isFile) {
+        this.isFile.set(isFile);
     }
 
     public String getNewName() {
@@ -42,11 +76,11 @@ public class FileInformation {
     }
 
     public String getFileType() {
-        return fileType.get();
+        return fileSuffix.get();
     }
 
     public void setFileType(String fileType) {
-        this.fileType.set(fileType);
+        this.fileSuffix.set(fileType);
     }
 
     public String getCreateTime() {
@@ -87,25 +121,6 @@ public class FileInformation {
 
     public void setFile(File file) {
         setFileAttributes(file);
-    }
-
-    private void setFileAttributes(File file) {
-        this.file = file;
-        if (file == null) {
-            return;
-        }
-        String filename = file.getAbsolutePath();
-        this.handled = new SimpleStringProperty("");
-        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
-        this.newName = new SimpleStringProperty("");
-        if (file.isFile()) {
-            this.fileType = new SimpleStringProperty(FileTools.getFileSuffix(filename));
-        } else {
-            this.fileType = new SimpleStringProperty("");
-        }
-        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
-        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
-        this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
     }
 
 }
