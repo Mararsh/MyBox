@@ -478,10 +478,7 @@ public class AlarmClockController extends BaseController {
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 defaultPath = "C:\\Windows\\media";
             }
-            File path = new File(AppVaribles.getUserConfigValue(SystemMediaPathKey, defaultPath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(SystemMediaPathKey, defaultPath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("wav", "*.wav"));
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -503,10 +500,7 @@ public class AlarmClockController extends BaseController {
     private void selectMusic(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(MusicPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(MusicPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
             final File file = fileChooser.showOpenDialog(getMyStage());

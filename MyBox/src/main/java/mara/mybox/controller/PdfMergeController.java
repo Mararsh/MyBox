@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -185,10 +184,7 @@ public class PdfMergeController extends PdfBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
@@ -249,12 +245,7 @@ public class PdfMergeController extends PdfBaseController {
             }
 
             FileInformation info = sourceFilesInformation.get(index);
-            try {
-                Desktop.getDesktop().browse(info.getFile().toURI());
-            } catch (Exception e) {
-
-            }
-
+            OpenFile.openTarget(getClass(), null, info.getFile().getAbsolutePath());
         }
     }
 
@@ -353,10 +344,7 @@ public class PdfMergeController extends PdfBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -382,11 +370,7 @@ public class PdfMergeController extends PdfBaseController {
             return;
         }
         openTargetButton.setDisable(false);
-        try {
-            Desktop.getDesktop().browse(targetFile.toURI());
-        } catch (Exception e) {
-
-        }
+        OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 
     @FXML
@@ -460,7 +444,7 @@ public class PdfMergeController extends PdfBaseController {
                     public void run() {
                         try {
                             if (!fail && targetFile.exists()) {
-                                Desktop.getDesktop().browse(targetFile.toURI());
+                                OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
                                 openTargetButton.setDisable(false);
                             } else {
                                 popError(errorString);

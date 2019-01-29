@@ -325,12 +325,15 @@
         <br><br>
         <div id="PackExe">
             <P class="p1">How to pack execution program</P>
-            <P class="paragraph">Copy the compiled Jar fle to a temprary directory, like "D:\tmp\src". And execute following command, ("javapackager" is under bin path of JDK)</P>
+            <P class="paragraph">Copy the compiled Jar file and application icon file to a temprary directory, like "D:\tmp\src". And execute following command, ("javapackager" is under bin path of JDK)</P>
             <P class="command">
-                javapackager -deploy -native image -appclass mara.mybox.MainApp -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox
+                javapackager -deploy -native image -appclass mara.mybox.MyBox -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox -Bicon=D:\tmp\src\MyBox.ico
             </P>
             <P class="paragraph">The exe files are generated under "D:\tmp\out\bundles".</P>
             <P class="paragraph">If this command asks for extra tools, download them as its prompts.</P>
+            <P class="paragraph">Formal document:</P>
+            <p class="link"><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html" target=_blank>
+                    https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html</a></p>
         </div>
 
     </body>

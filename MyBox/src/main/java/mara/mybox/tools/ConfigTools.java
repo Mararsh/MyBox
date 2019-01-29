@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.logger;
-
 
 /**
  * @Author Mara
@@ -17,8 +15,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class ConfigTools {
-
-    
 
     // Keep this method to migrate data from config file to derby db.
     public static Map<String, String> readConfigValuesFromFile() {

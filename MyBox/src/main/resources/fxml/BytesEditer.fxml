@@ -138,7 +138,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
-                                    <Label text="%OnlyForDisplayNoEffect" />
+                                                <Label text="%OnlyForDisplayNoEffect" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
@@ -232,12 +232,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </HBox>
                             </content>
                         </Tab>
+                        <Tab fx:id="locateTab" text="%Locate">
+                            <content>
+                                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                                    <children>
+                                        <ToolBar HBox.hgrow="ALWAYS">
+                                            <items>
+                                                <Button mnemonicParsing="false" text=" " visible="false" />
+                                            </items>
+                                        </ToolBar>
+                                        <ToolBar HBox.hgrow="NEVER">
+                                            <items>
+                                                <Label text="%Line" />
+                                                <TextField fx:id="lineInput" prefWidth="120.0" />
+                                                <Button fx:id="locateLineButton" mnemonicParsing="false" onAction="#locateLine" text="%Go" />
+                                                <Label text="%Byte">
+                                                    <padding>
+                                                        <Insets left="50.0" />
+                                                    </padding>
+                                                </Label>
+                                                <TextField fx:id="objectNumberInput" prefWidth="120.0" />
+                                                <Button fx:id="locateObjectButton" mnemonicParsing="false" onAction="#locateObject" text="%Go" />
+                                            </items>
+                                        </ToolBar>
+                                    </children>
+                                </HBox>
+                            </content>
+                        </Tab>
                         <Tab fx:id="textTab" text="%Text">
                             <content>
                                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
+                                                <Label fx:id="BytesTextComments" text="%DecodeComments" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
@@ -295,7 +323,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
                             <items>
-                                <TextField fx:id="bottomText" editable="false" focusTraversable="false" prefHeight="30.0" prefWidth="520.0" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
                                 <Button mnemonicParsing="false" text=" " visible="false" />
                             </items>
                         </ToolBar>
@@ -319,4 +346,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="bottomLabel" HBox.hgrow="ALWAYS" />
+                <Label fx:id="selectionLabel" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+            </children>
+        </HBox>
+    </bottom>
 </BorderPane>

@@ -31,6 +31,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -228,10 +229,7 @@ public class ImageSourcesController extends ImageViewerController {
             }
             sourceImages.clear();
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -257,10 +255,7 @@ public class ImageSourcesController extends ImageViewerController {
                 return;
             }
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -358,10 +353,7 @@ public class ImageSourcesController extends ImageViewerController {
     protected void saveAction() {
         if (targetFile == null) {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -381,10 +373,7 @@ public class ImageSourcesController extends ImageViewerController {
                 return;
             }
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -407,7 +396,7 @@ public class ImageSourcesController extends ImageViewerController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureSampled"));
-            alert.getDialogPane().setPrefWidth(600);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -443,10 +432,7 @@ public class ImageSourcesController extends ImageViewerController {
     protected void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
 
@@ -647,7 +633,7 @@ public class ImageSourcesController extends ImageViewerController {
         if (info == null) {
             return;
         }
-        showImageView(info);
+        openImageViewer(info);
     }
 
 }

@@ -34,6 +34,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
@@ -105,7 +106,7 @@ public class ImageSplitController extends ImageViewerController {
     private Label rowsLabel, colsLabel;
 
     @Override
-    protected void initializeNext() {
+    protected void initializeNext2() {
         try {
             initCommon();
             initSplitTab();
@@ -1169,7 +1170,7 @@ public class ImageSplitController extends ImageViewerController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureSampled"));
-            alert.getDialogPane().setPrefWidth(600);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -1180,10 +1181,7 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-        if (!path.isDirectory()) {
-            path = new File(CommonValues.UserFilePath);
-        }
+        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
         fileChooser.setInitialDirectory(path);
         fileChooser.getExtensionFilters().addAll(ext);
         if (diagTitle != null) {

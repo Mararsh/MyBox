@@ -151,10 +151,7 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     private void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
@@ -219,12 +216,7 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
             }
 
             FileInformation info = sourceFilesInformation.get(index);
-            try {
-                Desktop.getDesktop().browse(info.getFile().toURI());
-            } catch (Exception e) {
-
-            }
-
+            OpenFile.openTarget(getClass(), null, info.getFile().getAbsolutePath());
         }
     }
 
@@ -292,11 +284,11 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
 //        actualParameters.sourceFile = new File(sourceFilesInformation.get(0).getFileName());
         actualParameters.fromPage = 0;
         actualParameters.toPage = 100;
-        actualParameters.acumFrom = 0;
-        actualParameters.currentNameNumber = 0;
+        actualParameters.acumFrom = 1;
+        actualParameters.currentNameNumber = 1;
         actualParameters.password = "";
         actualParameters.startPage = 0;
-        actualParameters.acumStart = 0;
+        actualParameters.acumStart = 1;
         actualParameters.acumDigit = 0;
 
     }

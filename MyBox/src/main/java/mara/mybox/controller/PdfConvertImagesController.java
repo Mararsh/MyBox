@@ -108,7 +108,7 @@ public class PdfConvertImagesController extends PdfBaseController {
                             if (isCancelled() || isPreview) {
                                 break;
                             }
-                            currentParameters.acumStart = 0;
+                            currentParameters.acumStart = 1;
                             currentParameters.startPage = 0;
                             if (currentParameters.isBatch) {
                                 updateInterface("CompleteFile");

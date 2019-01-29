@@ -38,6 +38,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
@@ -534,6 +536,44 @@ public class PdfTools {
             return false;
         }
 
+    }
+
+    public static BufferedImage page2image(File file, int page) {
+        try {
+            try (PDDocument doc = PDDocument.load(file, null, AppVaribles.PdfMemUsage)) {
+                PDFRenderer renderer = new PDFRenderer(doc);
+                BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
+                return image;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static BufferedImage page2image(File file, String password, int page,
+            float scale, ImageType imageType) {
+        try {
+            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage)) {
+                PDFRenderer renderer = new PDFRenderer(doc);
+                BufferedImage image = renderer.renderImage(page, scale, imageType);
+                return image;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static BufferedImage page2image(File file, String password, int page,
+            int dpi, ImageType imageType) {
+        try {
+            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage)) {
+                PDFRenderer renderer = new PDFRenderer(doc);
+                BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
+                return image;
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

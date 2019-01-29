@@ -117,10 +117,14 @@ public abstract class PdfBaseController extends BaseController {
         previewParameters = copyParameters(actualParameters);
         int page = 0;
         if (previewInput != null) {
-            page = FxmlTools.getInputInt(previewInput);
-            if (page > sourceSelectionController.pdfInformation.getNumberOfPages()) {
+            try {
+                page = Integer.parseInt(previewInput.getText()) - 1;
+            } catch (Exception e) {
                 page = 0;
-                previewInput.setText("0");
+            }
+            if (page < 0 || page > sourceSelectionController.pdfInformation.getNumberOfPages()) {
+                page = 0;
+                previewInput.setText("1");
             }
         }
         previewParameters.fromPage = page;
@@ -183,9 +187,9 @@ public abstract class PdfBaseController extends BaseController {
         sourceFiles.add(sourceSelectionController.pdfInformation.getFile());
         actualParameters.sourceFile = sourceSelectionController.pdfInformation.getFile();
 
-        actualParameters.fromPage = sourceSelectionController.readFromPage();
+        actualParameters.fromPage = sourceSelectionController.readFromPage() - 1; // Interface From 1, actual from 0
 //        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.fromPage);
-        actualParameters.toPage = sourceSelectionController.readToPage();
+        actualParameters.toPage = sourceSelectionController.readToPage() - 1;  // Interface From 1, actual from 0
 //        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.toPage);
         actualParameters.currentNameNumber = actualParameters.acumFrom;
         actualParameters.password = sourceSelectionController.readPassword();
@@ -193,7 +197,8 @@ public abstract class PdfBaseController extends BaseController {
         if (acumFromInput != null) {
             actualParameters.acumFrom = FxmlTools.getInputInt(acumFromInput);
             actualParameters.acumStart = actualParameters.acumFrom;
-            actualParameters.acumDigit = (actualParameters.toPage + "").length();
+            actualParameters.acumDigit
+                    = ((actualParameters.acumFrom + actualParameters.toPage - actualParameters.fromPage + 1) + "").length();
         }
         if (targetSelectionController != null) {
             if (targetSelectionController.targetPrefixInput != null) {
@@ -229,11 +234,11 @@ public abstract class PdfBaseController extends BaseController {
 //        actualParameters.sourceFile = new File(sourceFilesInformation.get(0).getFileName());
         actualParameters.fromPage = 0;
         actualParameters.toPage = 100;
-        actualParameters.acumFrom = 0;
-        actualParameters.currentNameNumber = 0;
+        actualParameters.acumFrom = 1;
+        actualParameters.currentNameNumber = 1;
         actualParameters.password = "";
         actualParameters.startPage = 0;
-        actualParameters.acumStart = 0;
+        actualParameters.acumStart = 1;
         actualParameters.acumDigit = 0;
 
     }
@@ -332,11 +337,14 @@ public abstract class PdfBaseController extends BaseController {
                                         || !new File(finalTargetName).exists()) {
                                     alertInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else if (isTxt) {
-                                    File txtFile = new File(finalTargetName);
-                                    Desktop.getDesktop().browse(txtFile.toURI());
+                                    TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml,
+                                            AppVaribles.getMessage("TextEditer"), false, true);
+                                    controller.openFile(new File(finalTargetName));
                                 } else {
-                                    openImageManufactureInNew(finalTargetName);
+                                    openImageManufacture(finalTargetName);
                                 }
+                            } else if (actualParameters.targetPath != null) {
+                                Desktop.getDesktop().browse(new File(actualParameters.targetPath).toURI());
                             }
 
                         default:

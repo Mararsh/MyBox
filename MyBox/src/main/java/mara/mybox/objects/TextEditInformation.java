@@ -54,6 +54,7 @@ public class TextEditInformation extends FileEditInformation {
                 }
                 objectsNumber = charIndex;
                 linesNumber = lineIndex;
+                totalNumberRead = true;
             }
             return true;
         } catch (Exception e) {
@@ -102,9 +103,10 @@ public class TextEditInformation extends FileEditInformation {
             currentPageObjectEnd = currentPageObjectStart + pageText.length();
             currentPageLineStart = lineStart;
             currentPageLineEnd = lineEnd;
-            if (objectsNumber < 0 && pageText.length() < pageSize) {
+            if (!totalNumberRead && pageText.length() < pageSize) {
                 objectsNumber = (pageNumber - 1) * pageSize + pageText.length();
                 linesNumber = lineEnd;
+                totalNumberRead = true;
             }
             if (!lineBreak.equals(Line_Break.LF)) {
                 pageText = pageText.replaceAll(lineBreakValue, "\n");
@@ -440,6 +442,52 @@ public class TextEditInformation extends FileEditInformation {
             currentPageObjectEnd = currentPageObjectStart + pageText.length();
             currentPageLineStart = maxLineStart;
             currentPageLineEnd = maxLineEnd;
+            if (lineBreak.equals(Line_Break.CR)) {
+                pageText = pageText.replaceAll("\r", "\n");
+            }
+            return pageText;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+
+    }
+
+    @Override
+    public String locateLine() {
+        try {
+            if (file == null || currentLine <= 0) {
+                return null;
+            }
+            int lineEnd = 1, lineStart = 1, pageIndex = 1;
+            String pageText = null;
+            try (FileInputStream inputStream = new FileInputStream(file);
+                    InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
+                if (withBom) {
+                    inputStream.skip(bomSize(charset.name()));
+                }
+                char[] buf = new char[(int) pageSize];
+                int len;
+                String bufStr;
+                while ((len = reader.read(buf)) != -1) {
+                    bufStr = new String(buf, 0, len);
+                    lineEnd += countNumber(bufStr, lineBreakValue);
+                    if (currentLine >= lineStart && currentLine <= lineEnd) {
+                        pageText = bufStr;
+                        break;
+                    }
+                    lineStart = lineEnd;
+                    pageIndex++;
+                }
+                if (pageText == null) {
+                    return null;
+                }
+            }
+            currentPage = pageIndex;
+            currentPageObjectStart = pageSize * (pageIndex - 1);
+            currentPageObjectEnd = currentPageObjectStart + pageText.length();
+            currentPageLineStart = lineStart;
+            currentPageLineEnd = lineEnd;
             if (lineBreak.equals(Line_Break.CR)) {
                 pageText = pageText.replaceAll("\r", "\n");
             }

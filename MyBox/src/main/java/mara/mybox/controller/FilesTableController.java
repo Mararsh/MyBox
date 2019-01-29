@@ -100,10 +100,7 @@ public class FilesTableController extends BaseController {
     void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(parentController.sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(parentController.fileExtensionFilter);
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());

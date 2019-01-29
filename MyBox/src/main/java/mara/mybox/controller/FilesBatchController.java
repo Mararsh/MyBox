@@ -119,10 +119,16 @@ public class FilesBatchController extends BaseController {
         if (file == null) {
             return;
         }
-        try {
-            Desktop.getDesktop().browse(file.toURI());
-        } catch (Exception e) {
-            logger.debug(e.toString());
+        if (file.isFile()) {
+            TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml,
+                    AppVaribles.getMessage("TextEditer"), false, true);
+            controller.openFile(file);
+        } else {
+            try {
+                Desktop.getDesktop().browse(file.toURI());
+            } catch (Exception e) {
+                logger.debug(e.toString());
+            }
         }
     }
 
@@ -141,12 +147,15 @@ public class FilesBatchController extends BaseController {
     /* ----------------------------------------------------- */
     @Override
     protected void initializeNext() {
+        try {
+            initSourceSection();
+            initOptionsSection();
+            initTargetSection();
 
-        initSourceSection();
-        initOptionsSection();
-        initTargetSection();
-
-        initializeNext2();
+            initializeNext2();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
 
     }
 
@@ -156,29 +165,31 @@ public class FilesBatchController extends BaseController {
 
             handledColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("handled"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Boolean>("isFile"));
-            typeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Boolean>, TableCell<FileInformation, Boolean>>() {
-                @Override
-                public TableCell<FileInformation, Boolean> call(TableColumn<FileInformation, Boolean> param) {
-                    TableCell<FileInformation, Boolean> cell = new TableCell<FileInformation, Boolean>() {
-                        final Text text = new Text();
+            if (typeColumn != null) {
+                typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Boolean>("isFile"));
+                typeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Boolean>, TableCell<FileInformation, Boolean>>() {
+                    @Override
+                    public TableCell<FileInformation, Boolean> call(TableColumn<FileInformation, Boolean> param) {
+                        TableCell<FileInformation, Boolean> cell = new TableCell<FileInformation, Boolean>() {
+                            final Text text = new Text();
 
-                        @Override
-                        protected void updateItem(final Boolean item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item != null) {
-                                if (item) {
-                                    text.setText(AppVaribles.getMessage("File"));
-                                } else {
-                                    text.setText(AppVaribles.getMessage("Directory"));
+                            @Override
+                            protected void updateItem(final Boolean item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    if (item) {
+                                        text.setText(AppVaribles.getMessage("File"));
+                                    } else {
+                                        text.setText(AppVaribles.getMessage("Directory"));
+                                    }
                                 }
+                                setGraphic(text);
                             }
-                            setGraphic(text);
-                        }
-                    };
-                    return cell;
-                }
-            });
+                        };
+                        return cell;
+                    }
+                });
+            }
             modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("modifyTime"));
             createTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("createTime"));
             sizeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileSize"));
@@ -210,7 +221,9 @@ public class FilesBatchController extends BaseController {
         ObservableList<Integer> selected = sourceTableView.getSelectionModel().getSelectedIndices();
         boolean none = (selected == null || selected.isEmpty());
         insertFilesButton.setDisable(none);
-        insertDirectoryButton.setDisable(none);
+        if (insertDirectoryButton != null) {
+            insertDirectoryButton.setDisable(none);
+        }
         if (openButton != null) {
             openButton.setDisable(none);
         }
@@ -306,6 +319,9 @@ public class FilesBatchController extends BaseController {
 
     @FXML
     protected void insertDirectoryAction(ActionEvent event) {
+        if (insertDirectoryButton == null) {
+            return;
+        }
         int index = sourceTableView.getSelectionModel().getSelectedIndex();
         if (index >= 0) {
             addDirectoryAction(index);
@@ -317,10 +333,7 @@ public class FilesBatchController extends BaseController {
     protected void addFilesAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
@@ -355,10 +368,7 @@ public class FilesBatchController extends BaseController {
     protected void addDirectoryAction(int index) {
         try {
             DirectoryChooser dirChooser = new DirectoryChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             dirChooser.setInitialDirectory(defaultPath);
             File directory = dirChooser.showDialog(getMyStage());
             if (directory == null) {
@@ -475,15 +485,7 @@ public class FilesBatchController extends BaseController {
     @Override
     protected void openTarget(ActionEvent event) {
         try {
-            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
-                return;
-            }
-            File f = new File(sourceFilesInformation.get(0).getFileName());
-            if (f.isDirectory()) {
-                Desktop.getDesktop().browse(new File(f.getPath()).toURI());
-            } else {
-                Desktop.getDesktop().browse(new File(f.getParent()).toURI());
-            }
+            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }

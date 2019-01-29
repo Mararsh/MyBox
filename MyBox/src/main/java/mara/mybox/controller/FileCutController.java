@@ -1,0 +1,230 @@
+package mara.mybox.controller;
+
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.text.Font;
+import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.objects.AppVaribles;
+import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.objects.CommonValues;
+import mara.mybox.objects.FileInformation;
+import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.FileTools;
+
+/**
+ * @Author Mara
+ * @CreateDate 2018-9-21
+ * @Description
+ * @License Apache License Version 2.0
+ */
+public class FileCutController extends FilesBatchController {
+
+    private FileSplitType splitType;
+    private int bytesNumber, filesNumber;
+    private List<Integer> startEndList;
+
+    @FXML
+    protected ToggleGroup splitGroup;
+    @FXML
+    protected TextField filesNumberInput, bytesNumberInput, listInput;
+
+    public enum FileSplitType {
+        FilesNumber, BytesNumber, StartEndList
+    }
+
+    @Override
+    protected void initOptionsSection() {
+        splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                checkSplitType();
+            }
+        });
+        checkSplitType();
+
+        filesNumberInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                checkFilesNumber();
+            }
+        });
+
+        bytesNumberInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                checkBytesNumber();
+            }
+        });
+
+        listInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                checkStartEndList();
+            }
+        });
+
+        Tooltip tips = new Tooltip(getMessage("StartEndByteComments"));
+        tips.setFont(new Font(16));
+        FxmlTools.quickTooltip(listInput, tips);
+
+    }
+
+    private void checkSplitType() {
+        filesNumberInput.setDisable(true);
+        bytesNumberInput.setDisable(true);
+        listInput.setDisable(true);
+        filesNumberInput.setStyle(null);
+        bytesNumberInput.setStyle(null);
+        listInput.setStyle(null);
+
+        RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
+        if (AppVaribles.getMessage("SplitByFilesNumber").equals(selected.getText())) {
+            splitType = FileSplitType.FilesNumber;
+            filesNumberInput.setDisable(false);
+            checkFilesNumber();
+
+        } else if (AppVaribles.getMessage("SplitByBytesNumber").equals(selected.getText())) {
+            splitType = FileSplitType.BytesNumber;
+            bytesNumberInput.setDisable(false);
+            checkBytesNumber();
+
+        } else if (AppVaribles.getMessage("CutByStartEndByteList").equals(selected.getText())) {
+            splitType = FileSplitType.StartEndList;
+            listInput.setDisable(false);
+            checkStartEndList();
+        }
+    }
+
+    private void checkFilesNumber() {
+        try {
+            int v = Integer.valueOf(filesNumberInput.getText());
+            if (v >= 0) {
+                filesNumber = v;
+                filesNumberInput.setStyle(null);
+            } else {
+                filesNumberInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            filesNumber = 0;
+            filesNumberInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkBytesNumber() {
+        try {
+            int v = ByteTools.checkBytesValue(bytesNumberInput.getText());
+            if (v >= 0) {
+                bytesNumber = v;
+                bytesNumberInput.setStyle(null);
+            } else {
+                bytesNumberInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            bytesNumberInput.setStyle(badStyle);
+        }
+    }
+
+    private void checkStartEndList() {
+        startEndList = new ArrayList<>();
+        try {
+            String[] list = listInput.getText().split(",");
+            for (String item : list) {
+                String[] values = item.split("-");
+                if (values.length != 2) {
+                    continue;
+                }
+                try {
+                    int start = ByteTools.checkBytesValue(values[0]);
+                    int end = ByteTools.checkBytesValue(values[1]);
+                    if (start > 0 && end > 0) {           // 1-based start
+                        startEndList.add(start);
+                        startEndList.add(end);
+                    } else {
+                        startEndList.clear();
+                        break;
+                    }
+                } catch (Exception e) {
+                }
+            }
+            if (startEndList.isEmpty()) {
+                listInput.setStyle(badStyle);
+            } else {
+                listInput.setStyle(null);
+            }
+        } catch (Exception e) {
+            listInput.setStyle(badStyle);
+        }
+    }
+
+    @Override
+    protected void initTargetSection() {
+        targetPathInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                try {
+                    final File file = new File(newValue);
+                    if (!file.exists() || !file.isDirectory()) {
+                        targetPathInput.setStyle(badStyle);
+                        return;
+                    }
+                    targetPathInput.setStyle(null);
+                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
+                } catch (Exception e) {
+                }
+            }
+        });
+        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+
+        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+        );
+
+        operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                .or(Bindings.isEmpty(sourceFilesInformation))
+                .or(filesNumberInput.styleProperty().isEqualTo(badStyle))
+                .or(bytesNumberInput.styleProperty().isEqualTo(badStyle))
+                .or(listInput.styleProperty().isEqualTo(badStyle))
+        );
+
+    }
+
+    @Override
+    protected String handleCurrentFile(FileInformation d) {
+        File file = d.getFile();
+        currentParameters.sourceFile = file;
+        String filename = file.getName();
+        String targetName = currentParameters.targetPath + File.separator + filename;
+        List<File> files = null;
+        switch (splitType) {
+            case FilesNumber:
+                files = FileTools.splitFileByFilesNumber(file, targetName, filesNumber);
+                break;
+            case BytesNumber:
+                files = FileTools.splitFileByBytesNumber(file, targetName, bytesNumber);
+                break;
+            case StartEndList:
+                files = FileTools.splitFileByStartEndList(file, targetName, startEndList);
+                break;
+        }
+        if (files == null) {
+            return AppVaribles.getMessage("Failed");
+        } else {
+            return MessageFormat.format(AppVaribles.getMessage("FilesGenerated"), files.size());
+        }
+    }
+
+}

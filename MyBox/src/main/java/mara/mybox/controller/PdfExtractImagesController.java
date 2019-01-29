@@ -120,7 +120,7 @@ public class PdfExtractImagesController extends PdfBaseController {
                                 break;
                             }
 
-                            currentParameters.acumStart = 0;
+                            currentParameters.acumStart = 1;
                             currentParameters.startPage = 0;
                             if (currentParameters.isBatch) {
                                 updateInterface("CompleteFile");

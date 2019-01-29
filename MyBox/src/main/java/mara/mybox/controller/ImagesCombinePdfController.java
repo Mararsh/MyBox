@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -23,6 +22,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -462,7 +462,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureSampled"));
-            alert.getDialogPane().setPrefWidth(600);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -474,10 +474,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         }
 
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-        if (!path.isDirectory()) {
-            path = new File(CommonValues.UserFilePath);
-        }
+        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
         fileChooser.setInitialDirectory(path);
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
@@ -529,7 +526,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                             if (!fail && file.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (viewCheck.isSelected()) {
-                                    Desktop.getDesktop().browse(file.toURI());
+                                    OpenFile.openTarget(getClass(), null, file.getAbsolutePath());
                                 }
                             } else {
                                 popError(AppVaribles.getMessage("ImageCombinePdfFail"));

@@ -196,10 +196,7 @@ public class ImageFramesViewerController extends ImageBaseController {
     protected void openAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -346,7 +343,7 @@ public class ImageFramesViewerController extends ImageBaseController {
         if (info == null) {
             return;
         }
-        showImageView(info);
+        openImageViewer(info);
     }
 
     @FXML
@@ -399,10 +396,7 @@ public class ImageFramesViewerController extends ImageBaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
             fileChooser.setTitle(getMessage("FilePrefixInput"));

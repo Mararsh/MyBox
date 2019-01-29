@@ -83,7 +83,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%AccumulatingNumberFrom" />
-                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="64.0" text="0" />
+                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="64.0" text="1" />
                                                 <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero">
                                                     <HBox.margin>
                                                         <Insets />
@@ -121,7 +121,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="previewInput" prefHeight="30.0" prefWidth="53.0" text="0" />
+                                                <TextField fx:id="previewInput" prefHeight="30.0" prefWidth="53.0" text="1" />
                                                 <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" prefHeight="30.0" text="%Preview" />
                                             </children>
                                             <VBox.margin>

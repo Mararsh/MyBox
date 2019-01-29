@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,11 +38,11 @@ import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
- * @CreateDate 2018-7-9
+ * @CreateDate 2019-1-22
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesArrangeController extends BaseController {
+public class SnapScreenController extends BaseController {
 
     protected String lastFileName;
     protected Date startTime;
@@ -89,7 +88,7 @@ public class FilesArrangeController extends BaseController {
     @FXML
     private CheckBox verboseCheck;
 
-    public FilesArrangeController() {
+    public SnapScreenController() {
         targetPathKey = "FilesArrageTargetPath";
         sourcePathKey = "FilesArrageSourcePath";
         FileArrangeSubdirKey = "FileArrangeSubdirKey";
@@ -329,11 +328,7 @@ public class FilesArrangeController extends BaseController {
     @FXML
     @Override
     protected void openTarget(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        OpenFile.openTarget(getClass(), null, new File(targetPathInput.getText()).getAbsolutePath());
     }
 
     protected boolean initAttributes() {

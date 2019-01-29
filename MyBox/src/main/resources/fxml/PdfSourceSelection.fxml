@@ -61,6 +61,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <Insets />
                     </HBox.margin>
                 </Button>
+            <Button fx:id="pdfOpenButon" disable="true" mnemonicParsing="false" onAction="#openPdfAction" text="%Open" />
                 <Button fx:id="fileInformationButton" disable="true" mnemonicParsing="false" onAction="#showFileInformation" prefHeight="30.0" text="%FileInformation">
                     <HBox.margin>
                         <Insets />
@@ -75,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <children>
                 <Label text="%Read" />
                 <Label text="%FromPage " />
-                <TextField fx:id="fromPageInput" prefWidth="60.0" text="0" />
+                <TextField fx:id="fromPageInput" prefWidth="60.0" />
                 <Label text="%ToPage" />
                 <TextField fx:id="toPageInput" prefWidth="60.0" />
                 <Label text="%Password">

@@ -368,7 +368,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     break;
             }
 
-            BufferedImage target = ImageConvertTools.addTextText(source,
+            BufferedImage target = ImageConvertTools.addText(source,
                     waterInput.getText().trim(), font, color,
                     x, y, waterTransparent, waterShadow, waterAngle, false);
 

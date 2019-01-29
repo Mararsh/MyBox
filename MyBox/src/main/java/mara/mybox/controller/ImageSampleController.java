@@ -47,7 +47,6 @@ public class ImageSampleController extends ImageViewerController {
 
     private double scale;
     private int sampleWidth, sampleHeight;
-    private int cropLeftX, cropLeftY, cropRightX, cropRightY;
     private boolean isSettingValues;
 
     @FXML
@@ -66,7 +65,7 @@ public class ImageSampleController extends ImageViewerController {
     private TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
 
     @Override
-    protected void initializeNext() {
+    protected void initializeNext2() {
         try {
             scrollPane.setDisable(true);
             cropBox.setDisable(true);
@@ -405,10 +404,7 @@ public class ImageSampleController extends ImageViewerController {
             return;
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-        if (!path.isDirectory()) {
-            path = new File(CommonValues.UserFilePath);
-        }
+        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
         fileChooser.setInitialDirectory(path);
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());

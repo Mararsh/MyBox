@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "4.7";
-    public static final String AppVersionDate = "2019-01-15";
+    public static final String AppVersion = "4.8";
+    public static final String AppVersionDate = "2019-01-29";
 
     public static final String UserFilePath = System.getProperty("user.home") + File.separator + "mybox";
     public static final String TempPath = UserFilePath + File.separator + "temp";
@@ -41,6 +41,7 @@ public class CommonValues {
     public static final String caspianStyle = "/styles/caspian/caspian.css";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
+    public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
     public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
     public static final String PdfExtractTextsFxml = "/fxml/PdfExtractTexts.fxml";
@@ -119,6 +120,9 @@ public class CommonValues {
     public static final String TextLineBreakBatchFxml = "/fxml/TextLineBreakBatch.fxml";
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
+    public static final String FileCutFxml = "/fxml/FileCut.fxml";
+    public static final String FileMergeFxml = "/fxml/FileMerge.fxml";
+    public static final String SnapScreenFxml = "/fxml/SnapScreen.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
     public static final Locale LocaleEnUS = new Locale("en", "US");
@@ -205,6 +209,21 @@ public class CommonValues {
             add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
             add(new FileChooser.ExtensionFilter("wav", "*.wav"));
             add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
+        }
+    };
+
+    public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml", "json", "log", "js", "css",
+        "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
+        "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
+
+    public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh"));
+            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
+            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
+            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+            add(new FileChooser.ExtensionFilter("json", "*.json"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
         }
     };
 

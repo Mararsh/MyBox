@@ -255,7 +255,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             intLabel.setText(getMessage("Radius"));
             intBox.setDisable(false);
             intBox.getItems().clear();
-            intBox.getItems().addAll(Arrays.asList("10", "5", "3", "8", "15", "20", "30"));
+            intBox.getItems().addAll(Arrays.asList("10", "5", "3", "2", "1", "8", "15", "20", "30"));
             intBox.setEditable(true);
             intValue = 10;
             intBox.getSelectionModel().select("10");

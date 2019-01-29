@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -30,12 +32,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.fxml.FxmlImageTools;
 import mara.mybox.fxml.FxmlScopeTools;
 import mara.mybox.objects.AppVaribles;
@@ -44,6 +46,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.IntRectangle;
 
 /**
@@ -58,7 +61,6 @@ public class ImageViewerController extends ImageBaseController {
     protected int xZoomStep = 50, yZoomStep = 50;
     protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
-
     protected int cropLeftX, cropLeftY, cropRightX, cropRightY;
 
     @FXML
@@ -69,28 +71,57 @@ public class ImageViewerController extends ImageBaseController {
     protected VBox contentBox;
     @FXML
     protected Button iButton, mButton, gButton, pButton, inButton, outButton, lButton, rButton,
-            previousButton, nextButton, wButton, oButton, clearSelectionButton,
-            tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton;
+            previousButton, nextButton, wButton, oButton,
+            tButton, sButton, mrButton, mlButton, upButton, downButton, infoButton, metaButton,
+            cropButton, selectAllButton, copySelectionButton;
     @FXML
-    protected ToolBar toolbar, navBar, infoBar, selectionBar;
+    protected ToolBar toolbar, navBar, infoBar, selectionBar, cropBar;
     @FXML
     protected ToggleGroup sortGroup;
 
-    @FXML
-    private Button cropButton, copySelectionButton;
+    public ImageViewerController() {
+
+    }
 
     @Override
     protected void initializeNext() {
         try {
-            if (toolbar != null && imageView != null) {
-                toolbar.disableProperty().bind(
-                        Bindings.isNull(imageView.imageProperty())
-                );
-            }
-            if (opeBox != null && imageView != null) {
-                opeBox.disableProperty().bind(
-                        Bindings.isNull(imageView.imageProperty())
-                );
+            if (imageView != null) {
+                if (toolbar != null) {
+                    toolbar.disableProperty().bind(
+                            Bindings.isNull(imageView.imageProperty())
+                    );
+                }
+
+                if (opeBox != null) {
+                    opeBox.disableProperty().bind(
+                            Bindings.isNull(imageView.imageProperty())
+                    );
+                }
+
+                if (scrollPane != null) {
+                    imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                            moveCenter();
+                        }
+                    });
+                    scrollPane.heightProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                            if (Math.abs(imageView.getFitHeight() - old_val.doubleValue()) < 20) {
+                                paneSize();
+                            }
+                            moveCenter();
+                        }
+                    });
+                    scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                            moveCenter();
+                        }
+                    });
+                }
             }
 
             if (copySelectionButton != null) {
@@ -98,12 +129,28 @@ public class ImageViewerController extends ImageBaseController {
                 tips.setFont(new Font(16));
                 FxmlTools.quickTooltip(copySelectionButton, tips);
             }
-//            setTips();
+            if (cropButton != null) {
+                Tooltip tips = new Tooltip(getMessage("CropLabel"));
+                tips.setFont(new Font(16));
+                FxmlTools.quickTooltip(cropButton, tips);
+            }
 
             initializeNext2();
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public void moveCenter() {
+        imageView.setTranslateX(0);
+        if (imageView.getImage() == null) {
+            return;
+        }
+        double w = imageView.getImage().getWidth() * imageView.getFitHeight() / imageView.getImage().getHeight();
+        double offset = scrollPane.getWidth() - w;
+        if (offset > 0) {
+            imageView.setTranslateX(offset / 2);
         }
     }
 
@@ -140,6 +187,7 @@ public class ImageViewerController extends ImageBaseController {
             }
 
             imageView.setPreserveRatio(true);
+
             imageView.setImage(image);
             xZoomStep = (int) image.getWidth() / 10;
             yZoomStep = (int) image.getHeight() / 10;
@@ -176,12 +224,10 @@ public class ImageViewerController extends ImageBaseController {
             }
 
             if (cropButton != null) {
-                clearSelectionAction();
+                selectAllAction();
                 Tooltip tips = new Tooltip(getMessage("CropLabel"));
                 tips.setFont(new Font(16));
                 FxmlTools.quickTooltip(cropButton, tips);
-                FxmlTools.quickTooltip(imageView, tips);
-                FxmlTools.quickTooltip(clearSelectionButton, tips);
             }
 
         } catch (Exception e) {
@@ -230,7 +276,7 @@ public class ImageViewerController extends ImageBaseController {
         box.getChildren().add(helpLink);
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(getMyStage().getTitle());
-        alert.getDialogPane().setPrefWidth(800);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.getDialogPane().setContent(box);
         alert.setContentText(msg);
 
@@ -280,10 +326,19 @@ public class ImageViewerController extends ImageBaseController {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonSure) {
-            final ImageFramesViewerController controller
-                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml, false, true);
-            controller.setBaseTitle(AppVaribles.getMessage("ImageFramesViewer"));
-            controller.openFile(sourceFile);
+            String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
+            if (format.contains("gif")) {
+                final ImageGifViewerController controller
+                        = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml, false, true);
+                controller.setBaseTitle(AppVaribles.getMessage("ImageGifViewer"));
+                controller.loadImage(sourceFile.getAbsolutePath());
+
+            } else {
+                final ImageFramesViewerController controller
+                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml, false, true);
+                controller.setBaseTitle(AppVaribles.getMessage("ImageFramesViewer"));
+                controller.openFile(sourceFile);
+            }
         }
     }
 
@@ -308,7 +363,14 @@ public class ImageViewerController extends ImageBaseController {
 
     @FXML
     public void browseAction() {
-        openImagesBrowserInNew(sourceFile.getParentFile(), 16);
+        try {
+            final ImagesViewerController controller = OpenFile.openImagesViewer(getClass(), null);
+            if (controller != null) {
+                controller.loadImages(sourceFile.getParentFile(), 16);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML
@@ -352,8 +414,9 @@ public class ImageViewerController extends ImageBaseController {
 
     @FXML
     public void imageSize() {
-        imageView.setFitWidth(-1);
-        imageView.setFitHeight(-1);
+        imageView.setFitWidth(imageView.getImage().getWidth());
+        imageView.setFitHeight(imageView.getImage().getHeight());
+
     }
 
     @FXML
@@ -419,14 +482,16 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    public void clearSelectionAction() {
+    public void selectAllAction() {
+        if (image == null) {
+            return;
+        };
         cropLeftX = 0;
         cropLeftY = 0;
         cropRightX = (int) image.getWidth() - 1;
         cropRightY = (int) image.getHeight() - 1;
         imageView.setImage(image);
-        cropButton.setDisable(true);
-        bottomLabel.setText(getMessage("CropLabel"));
+        bottomLabel.setText(AppVaribles.getMessage("SelectedSize") + ": " + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
     }
 
     @FXML
@@ -513,15 +578,12 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @FXML
-    private void cropAction() {
+    public void cropAction() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
                 return;
@@ -558,7 +620,7 @@ public class ImageViewerController extends ImageBaseController {
 
                                     Optional<ButtonType> result = alert.showAndWait();
                                     if (result.get() == buttonOpen) {
-                                        showImageView(file.getAbsolutePath());
+                                        openImageViewer(file.getAbsolutePath());
                                     }
                                 } else {
                                     popInformation(AppVaribles.getMessage("Failed"));
@@ -602,10 +664,7 @@ public class ImageViewerController extends ImageBaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());

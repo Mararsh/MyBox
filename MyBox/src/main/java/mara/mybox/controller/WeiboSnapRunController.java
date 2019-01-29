@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import com.sun.management.OperatingSystemMXBean;
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -597,10 +596,11 @@ public class WeiboSnapRunController extends BaseController {
             }
 
             currentMonth = parameters.getStartMonth();
-            currentPage = AppVaribles.getUserConfigInt("WeiBoCurrentPageKey", 1) - 1;
-            if (currentPage < 0) {
-                currentPage = 0;
-            }
+//            currentPage = AppVaribles.getUserConfigInt("WeiBoCurrentPageKey", 1) - 1;
+//            if (currentPage < 0) {
+//                currentPage = 0;
+//            }
+            currentPage = 0;
             currentMonthPageCount = AppVaribles.getUserConfigInt("WeiBoCurrentMonthPageCountKey", 1);
             if (currentMonthPageCount < 1) {
                 currentMonthPageCount = 1;
@@ -1394,7 +1394,7 @@ public class WeiboSnapRunController extends BaseController {
             AppVaribles.setUserConfigValue("WeiBoCurrentPageKey", currentPage + "");
             AppVaribles.setUserConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
             if (parameters.isOpenPathWhenStop()) {
-                Desktop.getDesktop().browse(rootPath.toURI());
+                OpenFile.openTarget(getClass(), null, rootPath.getAbsolutePath());
             }
             closeStage();
         } catch (Exception e) {
@@ -1424,15 +1424,13 @@ public class WeiboSnapRunController extends BaseController {
          * With below statement, the thread quit any way as need. DO NOT know what's the bug!
          * Another solution is to open a window but not quit whole app.
          */
-//        Thread thread = Thread.currentThread();
+        Thread thread = Thread.currentThread();
+        System.gc();
         return true;
     }
 
     public void openPath() {
-        try {
-            Desktop.getDesktop().browse(rootPath.toURI());
-        } catch (Exception e) {
-        }
+        OpenFile.openTarget(getClass(), null, rootPath.getAbsolutePath());
     }
 
     public WeiboSnapController getParent() {

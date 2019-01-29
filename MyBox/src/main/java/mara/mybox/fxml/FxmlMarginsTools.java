@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 import static mara.mybox.fxml.FxmlImageTools.cropImage;
 import static mara.mybox.objects.AppVaribles.logger;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-11-10 19:38:23
@@ -23,8 +22,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class FxmlMarginsTools {
-
-    
 
     public static Image cutMarginsByWidth(Image image, int MarginWidth,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
@@ -236,6 +233,7 @@ public class FxmlMarginsTools {
             double imageWidth = image.getWidth(), imageHeight = image.getHeight();
             double totalWidth = image.getWidth(), totalHeight = image.getHeight();
             ImageView view = new ImageView(image);
+            view.setPreserveRatio(true);
             view.setFitWidth(imageWidth);
             view.setFitHeight(imageHeight);
             if (addLeft) {

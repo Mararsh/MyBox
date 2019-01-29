@@ -42,13 +42,9 @@ public class PdfSourceSelectionController extends BaseController {
     protected PdfInformation pdfInformation;
 
     @FXML
-    protected Button sourceSelectButton;
+    protected Button sourceSelectButton, fileInformationButton, pdfOpenButon;
     @FXML
-    protected Button fileInformationButton;
-    @FXML
-    protected TextField fromPageInput;
-    @FXML
-    protected TextField toPageInput;
+    protected TextField fromPageInput, toPageInput;
     @FXML
     protected PasswordField passwordInput;
 
@@ -84,10 +80,11 @@ public class PdfSourceSelectionController extends BaseController {
                 }
             });
             if (fromPageInput != null) {
-                FxmlTools.setNonnegativeValidation(fromPageInput);
+                FxmlTools.setPositiveValidation(fromPageInput);
+                fromPageInput.setText("1");
             }
             if (toPageInput != null) {
-                FxmlTools.setNonnegativeValidation(toPageInput);
+                FxmlTools.setPositiveValidation(toPageInput);
             }
 
         } catch (Exception e) {
@@ -100,10 +97,7 @@ public class PdfSourceSelectionController extends BaseController {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(parentController.sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(parentController.sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
@@ -160,6 +154,14 @@ public class PdfSourceSelectionController extends BaseController {
         }
     }
 
+    @FXML
+    protected void openPdfAction(ActionEvent event) {
+        if (pdfInformation == null) {
+            return;
+        }
+        OpenFile.openPdfViewer(getClass(), null, pdfInformation.getFile());
+    }
+
     public void loadPdfInformation() {
         if (sourceFile == null) {
             return;
@@ -171,7 +173,7 @@ public class PdfSourceSelectionController extends BaseController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                pdfInformation.loadDocument(passwordInput.getText());
+                pdfInformation.readInformation(passwordInput.getText());
                 if (task.isCancelled()) {
                     return null;
                 }
@@ -179,8 +181,9 @@ public class PdfSourceSelectionController extends BaseController {
                     @Override
                     public void run() {
                         if (pdfInformation != null) {
-                            toPageInput.setText((pdfInformation.getNumberOfPages() - 1) + "");
+                            toPageInput.setText(pdfInformation.getNumberOfPages() + "");
                             fileInformationButton.setDisable(false);
+                            pdfOpenButon.setDisable(false);
                         }
                         parentController.sourceFileChanged(sourceFile);
                     }

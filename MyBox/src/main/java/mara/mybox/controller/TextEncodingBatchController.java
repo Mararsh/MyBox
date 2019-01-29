@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -20,7 +18,6 @@ import javafx.stage.FileChooser;
 import mara.mybox.objects.AppVaribles;
 import static mara.mybox.objects.AppVaribles.getMessage;
 import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
 import mara.mybox.objects.FileEditInformation;
 import mara.mybox.objects.FileEditInformation.Edit_Type;
 import mara.mybox.objects.FileInformation;
@@ -230,33 +227,6 @@ public class TextEncodingBatchController extends FilesBatchController {
         } catch (Exception e) {
             logger.error(e.toString());
             return AppVaribles.getMessage("Failed");
-        }
-    }
-
-    @Override
-    protected void viewFile(File file) {
-        if (file == null) {
-            return;
-        }
-        if (file.isFile()) {
-            TextEditerController controller = (TextEditerController) openStage(CommonValues.TextEditerFxml,
-                    AppVaribles.getMessage("TextEditer"), false, true);
-            controller.openFile(file);
-        } else {
-            try {
-                Desktop.getDesktop().browse(file.toURI());
-            } catch (Exception e) {
-                logger.debug(e.toString());
-            }
-        }
-    }
-
-    @Override
-    protected void openTarget(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
     }
 

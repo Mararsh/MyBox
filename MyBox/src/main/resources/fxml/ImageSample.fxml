@@ -74,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Label fx:id="cropLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%CropLabel" />
+                                <Label fx:id="cropLabel" text="%CropLabel" />
                                 <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
                             </items>
                         </ToolBar>
@@ -101,12 +101,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <ToolBar>
                             <items>
                                 <Label text="%SubsampleWidth" />
+                        <Label text="1:">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
                                 <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
                                 <Label text="%SubsampleHeight">
                                     <padding>
                                         <Insets left="20.0" />
                                     </padding>
                                 </Label>
+                        <Label text="1:">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </Label>
                                 <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
                             </items>
                         </ToolBar>

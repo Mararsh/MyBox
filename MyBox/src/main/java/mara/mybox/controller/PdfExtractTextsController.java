@@ -12,7 +12,6 @@ import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -110,7 +109,7 @@ public class PdfExtractTextsController extends PdfBaseController {
                                 break;
                             }
 
-                            currentParameters.acumStart = 0;
+                            currentParameters.acumStart = 1;
                             currentParameters.startPage = 0;
                             if (currentParameters.isBatch) {
                                 updateInterface("CompleteFile");
@@ -125,8 +124,7 @@ public class PdfExtractTextsController extends PdfBaseController {
 
                 private void handleCurrentFile() {
                     try {
-                        finalTargetName = currentParameters.targetPath + "/"
-                                + currentParameters.targetPrefix + ".txt";
+                        finalTargetName = currentParameters.targetPath + "/" + currentParameters.targetPrefix;
                         FileWriter writer = new FileWriter(finalTargetName, false);
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
                                 AppVaribles.PdfMemUsage)) {

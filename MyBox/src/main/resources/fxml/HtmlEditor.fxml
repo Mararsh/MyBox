@@ -121,7 +121,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                           </RadioButton>
                                           <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
                                           <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
-                                                <Button fx:id="snapsotButton" mnemonicParsing="false" onAction="#snapshot" text="%Snapshot" />
+                                                <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapshot" text="%Snapshot" />
                                       </items>
                                     </ToolBar>
                                  </children>

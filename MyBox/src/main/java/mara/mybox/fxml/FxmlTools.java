@@ -29,7 +29,6 @@ import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
 import static mara.mybox.objects.AppVaribles.logger;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
@@ -37,8 +36,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class FxmlTools {
-
-    
 
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
 
@@ -193,6 +190,29 @@ public class FxmlTools {
                 try {
                     int v = Integer.parseInt(newValue);
                     if (v >= 0 && v <= max) {
+                        input.setStyle(null);
+                    } else {
+                        input.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    input.setStyle(badStyle);
+                }
+            }
+        });
+    }
+
+    public static void setPositiveValidation(final TextField input) {
+        setNonnegativeValidation(input, Integer.MAX_VALUE);
+    }
+
+    public static void setPositiveValidation(final TextField input, final int max) {
+        input.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    int v = Integer.parseInt(newValue);
+                    if (v > 0 && v <= max) {
                         input.setStyle(null);
                     } else {
                         input.setStyle(badStyle);

@@ -451,10 +451,7 @@ public class SettingsController extends BaseController {
     protected void selectTemp(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigValue(TempDirKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(TempDirKey, CommonValues.UserFilePath));
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {

@@ -18,6 +18,7 @@ public class FileInformation {
     protected File file;
     protected SimpleStringProperty fileName, newName, fileSuffix, createTime, modifyTime, fileSize, handled;
     protected SimpleBooleanProperty isFile;
+    protected final int IO_BUF_LENGTH = 4096;
 
     public FileInformation() {
 

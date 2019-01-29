@@ -204,6 +204,7 @@ public abstract class ImageBaseController extends BaseController {
     public void loadImage(final String fileName) {
         try {
             sourceFile = new File(fileName).getAbsoluteFile(); // Must convert to AbsoluteFile!
+//            popInformation(fileName + "\n" + sourceFile.getAbsolutePath());
             if (sourceFileInput != null) {
                 sourceFileInput.setText(sourceFile.getAbsolutePath());
             } else {
@@ -532,7 +533,7 @@ public abstract class ImageBaseController extends BaseController {
                                         || !new File(currentParameters.finalTargetName).exists()) {
                                     alertInformation(AppVaribles.getMessage("NoDataNotSupported"));
                                 } else {
-                                    openImageManufactureInNew(currentParameters.finalTargetName);
+                                    openImageManufacture(currentParameters.finalTargetName);
                                 }
                             }
 

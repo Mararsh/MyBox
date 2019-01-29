@@ -20,8 +20,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import static mara.mybox.imagefile.ImageJpegFile.getJpegCompressionTypes;
 
-import static mara.mybox.objects.AppVaribles.logger;
-
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -31,8 +29,6 @@ import org.apache.pdfbox.rendering.ImageType;
  * @License Apache License Version 2.0
  */
 public class ImageValueTools {
-
-    
 
     // dpi(dot per inch) convert to dpm(dot per millimeter)
     public static int dpi2dpmm(int dpi) {

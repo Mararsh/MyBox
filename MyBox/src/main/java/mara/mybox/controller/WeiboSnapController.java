@@ -868,10 +868,7 @@ public class WeiboSnapController extends BaseController {
     protected void selectPath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigValue(WeiboTargetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(WeiboTargetPathKey, CommonValues.UserFilePath));
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {

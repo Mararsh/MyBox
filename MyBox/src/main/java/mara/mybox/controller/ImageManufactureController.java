@@ -330,6 +330,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             undoButton.setDisable(true);
             redoButton.setDisable(true);
 
+            imageView.setPreserveRatio(true);
             imageView.setImage(values.getCurrentImage());
             imageView.setCursor(Cursor.OPEN_HAND);
             setBottomLabel();
@@ -359,8 +360,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 getMyStage().setHeight(values.getStageHeight());
             }
             if (values.getImageViewHeight() > 0) {
-                imageView.setFitHeight(values.getImageViewHeight());
                 imageView.setFitWidth(values.getImageViewWidth());
+                imageView.setFitHeight(values.getImageViewHeight());
             } else {
                 fitSize();
             }
@@ -948,11 +949,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     if (values.getRefInfo() != null) {
 //                            logger.debug(scrollPane.getHeight() + " " + refInfo.getyPixels());
                         if (scrollPane.getHeight() < values.getRefInfo().getHeight()) {
+                            refView.setFitWidth(scrollPane.getWidth() - 1);
                             refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
-//                                refView.setFitWidth(scrollPane.getWidth() - 1);
                         } else {
+                            refView.setFitWidth(values.getRefInfo().getWidth());
                             refView.setFitHeight(values.getRefInfo().getHeight());
-//                                refView.setFitWidth(refInfo.getxPixels());
                         }
                     }
                 }
@@ -986,11 +987,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setRefInfo(values.getImageInfo());
             refView.setImage(image);
             if (scrollPane.getHeight() < values.getImageInfo().getWidth()) {
-                refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
                 refView.setFitWidth(scrollPane.getWidth() - 1);
+                refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
             } else {
-                refView.setFitHeight(values.getImageInfo().getHeight());
                 refView.setFitWidth(values.getImageInfo().getWidth());
+                refView.setFitHeight(values.getImageInfo().getHeight());
             }
             return;
         }
@@ -1010,11 +1011,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     public void run() {
                         refView.setImage(values.getRefImage());
                         if (refPane.getHeight() < values.getRefInfo().getHeight()) {
-                            refView.setFitHeight(refPane.getHeight() - 5);
                             refView.setFitWidth(refPane.getWidth() - 1);
+                            refView.setFitHeight(refPane.getHeight() - 5);
                         } else {
-                            refView.setFitHeight(values.getRefInfo().getHeight());
                             refView.setFitWidth(values.getRefInfo().getWidth());
+                            refView.setFitHeight(values.getRefInfo().getHeight());
                         }
                         setBottomLabel();
                     }
@@ -1428,10 +1429,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     public void saveAs() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -1460,7 +1458,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                                 sourceFileChanged(file);
 
                             } else if (values.getSaveAsType() == ImageManufactureFileController.SaveAsType.Open) {
-                                openImageManufactureInNew(file.getAbsolutePath());
+                                openImageManufacture(file.getAbsolutePath());
                             }
                             popInformation(AppVaribles.getMessage("Successful"));
                         }
@@ -1484,13 +1482,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
     public void zoomIn() {
         try {
             super.zoomIn();
+
             if (values.isRefSync() && refView != null) {
                 refView.setFitWidth(imageView.getFitWidth());
-//                refView.setFitHeight(imageView.getFitWidth());
+                refView.setFitHeight(imageView.getFitHeight());
             }
             if (scopeView != null) {
                 scopeView.setFitWidth(imageView.getFitWidth());
-//                scopeView.setFitHeight(imageView.getFitHeight());
+                scopeView.setFitHeight(imageView.getFitHeight());
             }
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -1503,34 +1502,32 @@ public abstract class ImageManufactureController extends ImageViewerController {
         super.zoomOut();
         if (values.isRefSync() && refView != null) {
             refView.setFitWidth(imageView.getFitWidth());
-//            refView.setFitHeight(imageView.getFitWidth());
+            refView.setFitHeight(imageView.getFitHeight());
         }
         if (scopeView != null) {
             scopeView.setFitWidth(imageView.getFitWidth());
-//            scopeView.setFitHeight(imageView.getFitHeight());
+            scopeView.setFitHeight(imageView.getFitHeight());
         }
     }
 
     @FXML
     @Override
     public void imageSize() {
-        imageView.setFitHeight(-1);
-        imageView.setFitWidth(-1);
+        super.imageSize();
         if (values.isRefSync() && refView != null) {
-            refView.setFitHeight(-1);
-            refView.setFitWidth(-1);
+            refView.setFitWidth(refView.getImage().getWidth());
+            refView.setFitHeight(refView.getImage().getHeight());
         }
         if (scopeView != null) {
-            scopeView.setFitHeight(-1);
-            scopeView.setFitWidth(-1);
+            scopeView.setFitWidth(scopeView.getImage().getWidth());
+            scopeView.setFitHeight(scopeView.getImage().getHeight());
         }
     }
 
     @FXML
     @Override
     public void paneSize() {
-        imageView.setFitWidth(scrollPane.getWidth() - 5);
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
+        super.paneSize();
         if (values.isRefSync() && refView != null) {
             refView.setFitWidth(scrollPane.getWidth() - 5);
             refView.setFitHeight(scrollPane.getHeight() - 5);
@@ -2514,20 +2511,20 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
                 case Rectangle:
                     if (scope.getOperationType() == OperationType.ReplaceColor) {
-                        promptLabel.setText(getMessage("ClickForRectangle"));
+                        promptLabel.setText(getMessage("RectangleLabel"));
                         imageLabel.setText(getMessage("ClickCurrentForNewColor"));
                     } else {
-                        promptLabel.setText(getMessage("ClickForRectangle"));
+                        promptLabel.setText(getMessage("RectangleLabel"));
                         imageLabel.setText(getMessage("BothImagesCanClicked"));
                     }
                     break;
 
                 case Circle:
                     if (scope.getOperationType() == OperationType.ReplaceColor) {
-                        promptLabel.setText(getMessage("ClickForCircle"));
+                        promptLabel.setText(getMessage("CircleLabel"));
                         imageLabel.setText(getMessage("ClickCurrentForNewColor"));
                     } else {
-                        promptLabel.setText(getMessage("ClickForCircle"));
+                        promptLabel.setText(getMessage("CircleLabel"));
                         imageLabel.setText(getMessage("BothImagesCanClicked"));
                     }
                     break;

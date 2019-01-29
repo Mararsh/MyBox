@@ -103,7 +103,7 @@ public class FileFilterController extends FileEditerController {
     @Override
     protected void saveAction() {
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigValue(FilePathKey, CommonValues.UserFilePath));
+        File path = new File(AppVaribles.getUserConfigPath(FilePathKey, CommonValues.UserFilePath));
         fileChooser.setInitialDirectory(path);
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());

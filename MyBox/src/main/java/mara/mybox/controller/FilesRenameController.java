@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -473,6 +474,23 @@ public class FilesRenameController extends FilesBatchController {
         insertFilesButton.setDisable(true);
         insertDirectoryButton.setDisable(true);
         deleteButton.setDisable(true);
+    }
+
+    @Override
+    protected void openTarget(ActionEvent event) {
+        try {
+            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+                return;
+            }
+            File f = new File(sourceFilesInformation.get(0).getFileName());
+            if (f.isDirectory()) {
+                Desktop.getDesktop().browse(new File(f.getPath()).toURI());
+            } else {
+                Desktop.getDesktop().browse(new File(f.getParent()).toURI());
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
 }

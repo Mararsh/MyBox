@@ -273,10 +273,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
     protected void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!defaultPath.isDirectory()) {
-                defaultPath = new File(CommonValues.UserFilePath);
-            }
+            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(defaultPath);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
@@ -343,7 +340,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
                 continue;
             }
             FileInformation info = sourceFilesInformation.get(index);
-            showImageView(info.getFile().getAbsolutePath());
+            openImageViewer(info.getFile().getAbsolutePath());
         }
     }
 

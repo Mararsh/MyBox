@@ -22,18 +22,17 @@ import thridparty.EncodingDetect;
 public abstract class FileEditInformation extends FileInformation {
 
     protected Edit_Type editType;
-    protected final int IO_BUF_LENGTH = 4096;
-    protected boolean withBom;
+    protected boolean withBom, totalNumberRead;
     protected Charset charset;
     protected long objectsNumber, currentPageLineStart, currentPageLineEnd;
-    protected long linesNumber, pageSize, pagesNumber, currentPage, editerObjectsNumber, editerLinesNumber;
+    protected long linesNumber, pageSize, pagesNumber, currentPage;
     protected long currentPageObjectStart, currentPageObjectEnd;
     protected String findString, replaceString;
     protected String[] filterStrings;
-    protected long currentFound, currentPosition;
+    protected long currentFound;
     protected Line_Break lineBreak;
     protected Filter_Type filterType;
-    protected int lineBreakWidth;
+    protected int lineBreakWidth, currentPosition, currentLine;
     protected String lineBreakValue;
 
     public enum Edit_Type {
@@ -65,14 +64,13 @@ public abstract class FileEditInformation extends FileInformation {
 
     protected final void initValues() {
         filterType = Filter_Type.IncludeOne;
-        withBom = false;
+        withBom = totalNumberRead = false;
         charset = Charset.defaultCharset();
         objectsNumber = linesNumber = -1;
         currentPage = pagesNumber = 1;
         pageSize = 100000;
         currentPageObjectStart = currentPageObjectEnd = -1;
-        editerObjectsNumber = editerLinesNumber = -1;
-        currentFound = currentPosition = -1;
+        currentFound = currentPosition = currentLine = -1;
         switch (System.lineSeparator()) {
             case "\r\n":
                 lineBreak = Line_Break.CRLF;
@@ -236,6 +234,8 @@ public abstract class FileEditInformation extends FileInformation {
     public abstract String findPrevious();
 
     public abstract String findLast();
+
+    public abstract String locateLine();
 
     public abstract int replaceAll();
 
@@ -441,22 +441,6 @@ public abstract class FileEditInformation extends FileInformation {
         this.currentPage = currentPage;
     }
 
-    public long getEditerObjectsNumber() {
-        return editerObjectsNumber;
-    }
-
-    public void setEditerObjectsNumber(long editerObjectsNumber) {
-        this.editerObjectsNumber = editerObjectsNumber;
-    }
-
-    public long getEditerLinesNumber() {
-        return editerLinesNumber;
-    }
-
-    public void setEditerLinesNumber(long editerLinesNumber) {
-        this.editerLinesNumber = editerLinesNumber;
-    }
-
     public long getCurrentPageObjectStart() {
         return currentPageObjectStart;
     }
@@ -481,11 +465,11 @@ public abstract class FileEditInformation extends FileInformation {
         this.currentFound = currentFound;
     }
 
-    public long getCurrentPosition() {
+    public int getCurrentPosition() {
         return currentPosition;
     }
 
-    public void setCurrentPosition(long currentPosition) {
+    public void setCurrentPosition(int currentPosition) {
         this.currentPosition = currentPosition;
     }
 
@@ -503,6 +487,22 @@ public abstract class FileEditInformation extends FileInformation {
 
     public void setLineBreakValue(String lineBreakValue) {
         this.lineBreakValue = lineBreakValue;
+    }
+
+    public boolean isTotalNumberRead() {
+        return totalNumberRead;
+    }
+
+    public void setTotalNumberRead(boolean totalNumberRead) {
+        this.totalNumberRead = totalNumberRead;
+    }
+
+    public int getCurrentLine() {
+        return currentLine;
+    }
+
+    public void setCurrentLine(int currentLine) {
+        this.currentLine = currentLine;
     }
 
 }

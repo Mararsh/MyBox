@@ -41,8 +41,6 @@ import mara.mybox.objects.ImageInformation;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
 
-    
-
     public static IIOMetadata getIIOMetadata(String format, File file) {
         switch (format) {
             case "png":
@@ -797,7 +795,7 @@ public class ImageFileReaders {
         }
     }
 
-    // The following 4 methods are from internet
+    // http://johnbokma.com/java/obtaining-image-metadata.html
     public static void displayMetadata(String fileName) {
         try {
             System.out.println("\n\n" + fileName);

@@ -327,12 +327,15 @@
         <br><br>
         <div id="PackExe">
             <P class="p1">如何打包成exe程序</P>
-            <P class="paragraph">把编译后的jar文件复制到一个临时目录下，如“D:\tmp\src”，然后执行以下命令：（命令“javapackager”在JDK的bin目录下）</P>
+            <P class="paragraph">把编译后的jar文件和应用图标复制到一个临时目录下，如“D:\tmp\src”，然后执行以下命令：（命令“javapackager”在JDK的bin目录下）</P>
             <P class="command">
-                javapackager -deploy -native image -appclass mara.mybox.MainApp -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox
+                javapackager -deploy -native image -appclass mara.mybox.MyBox -srcdir D:\tmp\src -outdir D:\tmp\out -outfile MyBox -name MyBox -Bicon=D:\tmp\src\MyBox.ico
             </P>
             <P class="paragraph">可运行的exe文件就生成在目录“D:\tmp\out\bundles”下了。</P>
             <P class="paragraph">如果此命令提示缺少辅助工具，则按提示下载。</P>
+            <P class="paragraph">官方文档：</P>
+            <p class="link"><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html" target=_blank>
+                    https://docs.oracle.com/javase/8/docs/technotes/guides/deploy/self-contained-packaging.html</a></p>
         </div>
 
     </body>

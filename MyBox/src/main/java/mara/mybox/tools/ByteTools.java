@@ -225,24 +225,23 @@ public class ByteTools {
         return TextTools.countNumber(bytesToHex(bytes), hex);
     }
 
-    public static int lineIndex(String lineText, Charset charset,
-            int offset) {
-
+    public static int lineIndex(String lineText, Charset charset, int offset) {
         int hIndex = 0;
         byte[] cBytes;
         for (int i = 0; i < lineText.length(); i++) {
-            if (offset <= hIndex) {
-                return i;
-            }
             char c = lineText.charAt(i);
             cBytes = String.valueOf(c).getBytes(charset);
-            hIndex += cBytes.length * 3;
+            int clen = cBytes.length * 3;
+            if (offset <= hIndex + clen) {
+                return i;
+            }
+            hIndex += clen;
         }
         return -1;
     }
 
     public static IndexRange textIndex(String hex, Charset charset,
-            int lbLength, IndexRange hexRange) {
+            IndexRange hexRange) {
         int hIndex = 0, cindex = 0;
         int cBegin = 0;
         int cEnd = 0;
@@ -255,20 +254,20 @@ public class ByteTools {
         String[] lines = hex.split("\n");
         StringBuilder text = new StringBuilder();
         String lineText;
-        for (String line : lines) {
-            lineText = new String(ByteTools.hexFormatToBytes(line), charset);
-            lineText = lineText.replaceAll("\n", " ");
-            if (!gotStart && hexBegin >= hIndex && hexBegin <= (hIndex + line.length())) {
+        for (String lineHex : lines) {
+            lineText = new String(ByteTools.hexFormatToBytes(lineHex), charset);
+            lineText = lineText.replaceAll("\n", " ").replaceAll("\r", " ");
+            if (!gotStart && hexBegin >= hIndex && hexBegin <= (hIndex + lineHex.length())) {
                 cBegin = cindex + lineIndex(lineText, charset, hexBegin - hIndex);
                 gotStart = true;
             }
-            if (hexEnd >= hIndex && hexEnd <= (hIndex + line.length())) {
-                cEnd = cindex + lineIndex(lineText, charset, hexEnd - hIndex);
+            if (hexEnd >= hIndex && hexEnd <= (hIndex + lineHex.length())) {
+                cEnd = cindex + lineIndex(lineText, charset, hexEnd - hIndex) + 1;
                 gotEnd = true;
                 break;
             }
-            hIndex += line.length() + 1;
-            cindex += lineText.length();
+            hIndex += lineHex.length() + 1;
+            cindex += lineText.length() + 1;
         }
         if (!gotStart) {
             cBegin = text.length() - 1;
@@ -306,9 +305,9 @@ public class ByteTools {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < text.length(); i += step) {
                 if (i + step < text.length()) {
-                    sb.append(text.substring(i, i + step)).append("\n");
+                    sb.append(text.substring(i, i + step - 1)).append("\n");
                 } else {
-                    sb.append(text.substring(i, text.length()));
+                    sb.append(text.substring(i, text.length() - 1));
                 }
             }
             text = sb.toString();
@@ -321,6 +320,31 @@ public class ByteTools {
             }
         }
         return text;
+    }
+
+    public static int checkBytesValue(String string) {
+        try {
+            String strV = string.trim().toLowerCase();
+            int unit = 1;
+            if (strV.endsWith("kb")) {
+                unit = 1024;
+                strV = strV.substring(0, strV.length() - 2);
+            } else if (strV.endsWith("mb")) {
+                unit = 1024 * 1024;
+                strV = strV.substring(0, strV.length() - 2);
+            } else if (strV.endsWith("gb")) {
+                unit = 1024 * 1024 * 1024;
+                strV = strV.substring(0, strV.length() - 2);
+            }
+            int v = Integer.valueOf(strV);
+            if (v >= 0) {
+                return v * unit;
+            } else {
+                return -1;
+            }
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
 }

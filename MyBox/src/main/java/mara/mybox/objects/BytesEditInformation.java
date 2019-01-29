@@ -65,6 +65,7 @@ public class BytesEditInformation extends FileEditInformation {
                     linesNumber = totalLines;
                 }
             }
+            totalNumberRead = true;
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -110,9 +111,10 @@ public class BytesEditInformation extends FileEditInformation {
                     linesThisPage++;
                 }
                 currentPageLineEnd = currentPageLineStart + linesThisPage - 1;
-                if (objectsNumber < 0 && len < pageSize) {
+                if (!totalNumberRead && len < pageSize) {
                     objectsNumber = (pageNumber - 1) * pageSize + len;
                     linesNumber = (pageNumber - 1) * linesPerPage + linesThisPage;
+                    totalNumberRead = true;
                 }
             }
             return pageText;
@@ -150,9 +152,10 @@ public class BytesEditInformation extends FileEditInformation {
                 currentPageObjectEnd = currentPageObjectStart + len;
                 currentPageLineStart = lineStart;
                 currentPageLineEnd = lineEnd;
-                if (objectsNumber < 0 && len < pageSize) {
+                if (!totalNumberRead && len < pageSize) {
                     objectsNumber = (pageNumber - 1) * pageSize + len;
                     linesNumber = lineEnd;
+                    totalNumberRead = true;
                 }
             }
             return pageText;
@@ -213,13 +216,17 @@ public class BytesEditInformation extends FileEditInformation {
             }
             try (FileInputStream inputStream = new FileInputStream(sourceInfo.getFile());
                     FileOutputStream outputStream = new FileOutputStream(targetFile)) {
-                byte[] buf = new byte[(int) sourceInfo.getPageSize()];
+                int psize = (int) sourceInfo.getPageSize();
+                byte[] buf = new byte[psize];
                 int bufLen, pageIndex = 1;
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     if (pageIndex == pageNumber) {
                         outputStream.write(ByteTools.hexFormatToBytes(hex));
                     } else {
-                        outputStream.write(ByteTools.subBytes(buf, 0, bufLen));
+                        if (psize > bufLen) {
+                            buf = ByteTools.subBytes(buf, 0, bufLen);
+                        }
+                        outputStream.write(buf);
                     }
                     pageIndex++;
                 }
@@ -285,7 +292,7 @@ public class BytesEditInformation extends FileEditInformation {
                         if (len % lineBreakWidth > 0) {
                             linesThisPage++;
                         }
-                        lineEnd += linesThisPage - 1;
+                        lineEnd = lineStart + linesThisPage - 1;
                     } else {
                         lineEnd += countNumber(bufHex, lineBreakValue);
                     }
@@ -316,7 +323,11 @@ public class BytesEditInformation extends FileEditInformation {
                         crossString = bufHex.substring(strLen - findLen + 3, strLen);
                     }
                     preStart = lineStart;
-                    lineStart = lineEnd;
+                    if (lbWidth) {
+                        lineStart = lineEnd + 1;
+                    } else {
+                        lineStart = lineEnd;
+                    }
                     pageIndex++;
                 }
                 if (pageText == null) {
@@ -375,7 +386,7 @@ public class BytesEditInformation extends FileEditInformation {
                         if (len % lineBreakWidth > 0) {
                             linesThisPage++;
                         }
-                        lineEnd += linesThisPage - 1;
+                        lineEnd = lineStart + linesThisPage - 1;
                     } else {
                         lineEnd += countNumber(bufHex, lineBreakValue);
                     }
@@ -412,7 +423,11 @@ public class BytesEditInformation extends FileEditInformation {
                     int strLen = bufHex.length();
                     crossString = bufHex.substring(strLen - findLen + 3, strLen);
                     preStart = lineStart;
-                    lineStart = lineEnd;
+                    if (lbWidth) {
+                        lineStart = lineEnd + 1;
+                    } else {
+                        lineStart = lineEnd;
+                    }
                     pageIndex++;
                 }
                 if (pageText == null) {
@@ -463,7 +478,7 @@ public class BytesEditInformation extends FileEditInformation {
                         if (len % lineBreakWidth > 0) {
                             linesThisPage++;
                         }
-                        lineEnd += linesThisPage - 1;
+                        lineEnd = lineStart + linesThisPage - 1;
                     } else {
                         lineEnd += countNumber(bufHex, lineBreakValue);
                     }
@@ -487,7 +502,11 @@ public class BytesEditInformation extends FileEditInformation {
                     int strLen = addedStr.length();
                     crossString = addedStr.substring(Math.max(pos + 3, strLen - findLen + 3), strLen);
                     preStart = lineStart;
-                    lineStart = lineEnd;
+                    if (lbWidth) {
+                        lineStart = lineEnd + 1;
+                    } else {
+                        lineStart = lineEnd;
+                    }
                     pageIndex++;
                 }
                 if (pageText == null) {
@@ -500,6 +519,64 @@ public class BytesEditInformation extends FileEditInformation {
             currentPageObjectEnd = currentPageObjectStart + pageText.length() / 3;
             currentPageLineStart = maxLineStart;
             currentPageLineEnd = maxLineEnd;
+            return pageText;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+
+    }
+
+    @Override
+    public String locateLine() {
+        try {
+            if (file == null || currentLine <= 0) {
+                return null;
+            }
+            boolean lbWidth = (lineBreak == Line_Break.Width && lineBreakWidth > 0);
+            if (!lbWidth && lineBreakValue == null) {
+                return null;
+            }
+            int lineEnd = 1, lineStart = 1, pageIndex = 1, linesThisPage;
+            String pageText = null;
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                byte[] buf = new byte[(int) pageSize];
+                int len;
+                String bufHex;
+                while ((len = inputStream.read(buf)) != -1) {
+                    if (len < pageSize) {
+                        buf = ByteTools.subBytes(buf, 0, len);
+                    }
+                    bufHex = ByteTools.bytesToHexFormat(buf);
+                    if (lbWidth) {
+                        linesThisPage = len / lineBreakWidth;
+                        if (len % lineBreakWidth > 0) {
+                            linesThisPage++;
+                        }
+                        lineEnd = lineStart + linesThisPage - 1;
+                    } else {
+                        lineEnd += countNumber(bufHex, lineBreakValue);
+                    }
+                    if (currentLine >= lineStart && currentLine <= lineEnd) {
+                        pageText = bufHex;
+                        break;
+                    }
+                    if (lbWidth) {
+                        lineStart = lineEnd + 1;
+                    } else {
+                        lineStart = lineEnd;
+                    }
+                    pageIndex++;
+                }
+                if (pageText == null) {
+                    return null;
+                }
+            }
+            currentPage = pageIndex;
+            currentPageObjectStart = pageSize * (pageIndex - 1);
+            currentPageObjectEnd = currentPageObjectStart + pageText.length() / 3;
+            currentPageLineStart = lineStart;
+            currentPageLineEnd = lineEnd;
             return pageText;
         } catch (Exception e) {
             logger.debug(e.toString());

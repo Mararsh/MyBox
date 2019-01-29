@@ -248,6 +248,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openPdfView(ActionEvent event) {
+        reloadStage(CommonValues.PdfViewFxml, AppVaribles.getMessage("PdfView"));
+    }
+
+    @FXML
     private void openPdfConvertImages(ActionEvent event) {
         reloadStage(CommonValues.PdfConvertImagesFxml, AppVaribles.getMessage("PdfConvertImages"));
     }
@@ -567,6 +572,21 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openBytesEditer(ActionEvent event) {
         reloadStage(CommonValues.BytesEditerFxml, AppVaribles.getMessage("BytesEditer"));
+    }
+
+    @FXML
+    private void openFileCut(ActionEvent event) {
+        reloadStage(CommonValues.FileCutFxml, AppVaribles.getMessage("FileCut"));
+    }
+
+    @FXML
+    private void openFileMerge(ActionEvent event) {
+        reloadStage(CommonValues.FileMergeFxml, AppVaribles.getMessage("FileMerge"));
+    }
+
+    @FXML
+    private void openSnapScreen(ActionEvent event) {
+        reloadStage(CommonValues.SnapScreenFxml, AppVaribles.getMessage("SnapScreen"));
     }
 
     @FXML

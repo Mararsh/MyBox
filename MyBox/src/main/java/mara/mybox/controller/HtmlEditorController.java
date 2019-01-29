@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -96,7 +95,6 @@ public class HtmlEditorController extends BaseController {
     private URL url;
     private List<Image> images;
     private File targetFile;
-    protected SimpleBooleanProperty loadedCompletely;
     private List<String> urls;
     private Stage snapingStage;
     private LoadingController loadingController;
@@ -107,7 +105,7 @@ public class HtmlEditorController extends BaseController {
     protected int lastTextLen;
 
     @FXML
-    private Button loadButton, snapsotButton;
+    private Button loadButton, snapshotButton;
     @FXML
     private HTMLEditor htmlEdior;
     @FXML
@@ -180,7 +178,7 @@ public class HtmlEditorController extends BaseController {
                         }
                         isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
                         if (isFrameSet) {
-                            popError(AppVaribles.getMessage("NotSupportFrameSet"));
+//                            popError(AppVaribles.getMessage("NotSupportFrameSet"));
                             htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
                         } else {
                             htmlEdior.setHtmlText(contents);
@@ -474,9 +472,8 @@ public class HtmlEditorController extends BaseController {
                                 try {
                                     String contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                                     isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
-                                    logger.debug(isFrameSet);
                                     if (isFrameSet) {
-                                        popError(AppVaribles.getMessage("NotSupportFrameSet"));
+//                                        popError(AppVaribles.getMessage("NotSupportFrameSet"));
                                         htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
                                     } else {
                                         htmlEdior.setHtmlText(contents);
@@ -537,17 +534,7 @@ public class HtmlEditorController extends BaseController {
                     logger.debug("Received exception: " + t1.getMessage());
                 }
             });
-//            loadedCompletely = new SimpleBooleanProperty(false);
-//            loadedCompletely.addListener(new ChangeListener<Boolean>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-//                    if (loadedCompletely.getValue()) {
-//                    } else {
-//
-//                    }
-//
-//                }
-//            });
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -573,7 +560,7 @@ public class HtmlEditorController extends BaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -655,7 +642,7 @@ public class HtmlEditorController extends BaseController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+                File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
                 fileChooser.setInitialDirectory(path);
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
@@ -691,7 +678,7 @@ public class HtmlEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(HtmlFilePathKey, CommonValues.UserFilePath));
+            File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -743,10 +730,10 @@ public class HtmlEditorController extends BaseController {
         final FileChooser fileChooser = new FileChooser();
         File path;
         if (isOneImage) {
-            path = new File(AppVaribles.getUserConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
+            path = new File(AppVaribles.getUserConfigPath(HtmlImagePathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
         } else {
-            path = new File(AppVaribles.getUserConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
+            path = new File(AppVaribles.getUserConfigPath(HtmlPdfPathKey, CommonValues.UserFilePath));
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
         }
         fileChooser.setInitialDirectory(path);
@@ -778,8 +765,7 @@ public class HtmlEditorController extends BaseController {
 //            myStage.setWidth(900);
 //            webEngine.executeScript("document.body.style.fontSize = '15px' ;");
 
-            loadedCompletely.set(false);
-            snapsotButton.setDisable(true);
+            snapshotButton.setDisable(true);
             final int maxDelay = delay * 30;
             final long startTime = new Date().getTime();
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
@@ -830,7 +816,6 @@ public class HtmlEditorController extends BaseController {
                             try {
                                 newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
                                 loadingController.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + newHeight);
-                                logger.debug(lastHeight + "  newHeight:" + newHeight);
                                 if (newHeight == lastHeight) {
                                     loadingController.setInfo(AppVaribles.getMessage("ExpandingPage"));
                                     startSnap();
@@ -911,18 +896,14 @@ public class HtmlEditorController extends BaseController {
                                             success = PdfTools.htmlIntoPdf(images, targetFile, windowSizeCheck.isSelected());
                                         }
                                         if (success && targetFile.exists()) {
-                                            if (isOneImage) {
-                                                openImageManufactureInNew(targetFile.getAbsolutePath());
-                                            } else {
-                                                Desktop.getDesktop().browse(targetFile.toURI());
-                                            }
+                                            OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
                                         } else {
                                             popError(AppVaribles.getMessage("Failed"));
                                         }
 
                                         webEngine.executeScript("window.scrollTo(0,0 );");
                                         bottomText.setText("");
-                                        snapsotButton.setDisable(false);
+                                        snapshotButton.setDisable(false);
 
                                         if (snapingStage != null) {
                                             snapingStage.close();

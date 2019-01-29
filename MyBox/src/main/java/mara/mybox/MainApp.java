@@ -1,18 +1,12 @@
 package mara.mybox;
 
 import java.io.File;
+import java.util.List;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
-import mara.mybox.controller.BaseController;
-import mara.mybox.controller.ImageManufactureController;
+import mara.mybox.controller.OpenFile;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.objects.AppVaribles;
 import mara.mybox.objects.CommonValues;
@@ -27,8 +21,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class MainApp extends Application {
-
-    private static String imageFile;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -57,52 +49,25 @@ public class MainApp extends Application {
             ImageIO.setUseCache(true);
             ImageIO.setCacheDirectory(new File(CommonValues.TempPath));
 
-//            logger.debug(Screen.getPrimary().getDpi());
-            FXMLLoader fxmlLoader;
-            Pane pane;
-            if (imageFile != null) {
-                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
-                pane = fxmlLoader.load();
-                final ImageManufactureController imageController = (ImageManufactureController) fxmlLoader.getController();
-                imageController.setMyStage(stage);
-                imageController.setBaseTitle(AppVaribles.getMessage("ImageManufacture"));
-                imageController.loadImage(imageFile);
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        if (!imageController.stageClosing()) {
-                            event.consume();
-                        }
-                    }
-                });
-
+            String inFile = null;
+            List<String> paremeters = getParameters().getUnnamed();
+            if (paremeters != null && !paremeters.isEmpty()) {
+                if (new File(paremeters.get(0)).exists()) {
+                    inFile = paremeters.get(0);
+                }
+            }
+            if (inFile != null) {
+                if (!OpenFile.openTarget(getClass(), stage, inFile)) {
+                    OpenFile.openMyBox(getClass(), stage);
+                }
             } else {
-                fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.MyboxFxml), AppVaribles.CurrentBundle);
-                pane = fxmlLoader.load();
-                final BaseController controller = fxmlLoader.getController();
-                controller.setMyStage(stage);
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        if (!controller.stageClosing()) {
-                            event.consume();
-                        }
-                    }
-                });
+                OpenFile.openMyBox(getClass(), stage);
             }
-            try {
-                pane.getStylesheets().add(getClass().getResource(AppVaribles.getStyle()).toExternalForm());
-            } catch (Exception e) {
-                logger.error(e.toString());
-            }
-
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setTitle(AppVaribles.getMessage("AppTitle"));
-            stage.setScene(new Scene(pane));
-            stage.show();
 
             // https://stackoverflow.com/questions/23527679/trying-to-open-a-javafx-stage-after-calling-platform-exit
             Platform.setImplicitExit(false);
+
+            //            logger.debug(Screen.getPrimary().getDpi());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -117,12 +82,7 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        if (args.length > 0) {
-            if (CommonValues.SupportedImages.contains(FileTools.getFileSuffix(args[0]))) {
-                imageFile = args[0];
-            }
-        }
-        launch(args);
+        Application.launch(args);
     }
 
 }

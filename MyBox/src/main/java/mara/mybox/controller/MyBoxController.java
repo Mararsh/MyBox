@@ -60,6 +60,14 @@ public class MyBoxController extends BaseController {
     }
 
     private void initPdfToolsMenu() {
+        MenuItem pdfView = new MenuItem(AppVaribles.getMessage("PdfView"));
+        pdfView.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.PdfViewFxml, AppVaribles.getMessage("PdfView"));
+            }
+        });
+
         MenuItem pdfExtractImages = new MenuItem(AppVaribles.getMessage("PdfExtractImages"));
         pdfExtractImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -67,6 +75,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesFxml, AppVaribles.getMessage("PdfExtractImages"));
             }
         });
+
         MenuItem pdfExtractImagesBatch = new MenuItem(AppVaribles.getMessage("PdfExtractImagesBatch"));
         pdfExtractImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -74,6 +83,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractImagesBatchFxml, AppVaribles.getMessage("PdfExtractImagesBatch"));
             }
         });
+
         MenuItem pdfExtractTexts = new MenuItem(AppVaribles.getMessage("PdfExtractTexts"));
         pdfExtractTexts.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -81,6 +91,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractTextsFxml, AppVaribles.getMessage("pdfExtractTexts"));
             }
         });
+
         MenuItem pdfExtractTextsBatch = new MenuItem(AppVaribles.getMessage("PdfExtractTextsBatch"));
         pdfExtractTextsBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -88,6 +99,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfExtractTextsBatchFxml, AppVaribles.getMessage("PdfExtractTextsBatch"));
             }
         });
+
         MenuItem pdfConvertImages = new MenuItem(AppVaribles.getMessage("PdfConvertImages"));
         pdfConvertImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -95,6 +107,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesFxml, AppVaribles.getMessage("PdfConvertImages"));
             }
         });
+
         MenuItem pdfConvertImagesBatch = new MenuItem(AppVaribles.getMessage("PdfConvertImagesBatch"));
         pdfConvertImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -102,6 +115,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfConvertImagesBatchFxml, AppVaribles.getMessage("PdfConvertImagesBatch"));
             }
         });
+
         MenuItem imagesCombinePdf = new MenuItem(AppVaribles.getMessage("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -109,6 +123,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.ImagesCombinePdfFxml, AppVaribles.getMessage("ImagesCombinePdf"));
             }
         });
+
         MenuItem pdfCompressImages = new MenuItem(AppVaribles.getMessage("CompressPdfImages"));
         pdfCompressImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -132,6 +147,7 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfMergeFxml, AppVaribles.getMessage("MergePdf"));
             }
         });
+
         MenuItem pdfSplit = new MenuItem(AppVaribles.getMessage("SplitPdf"));
         pdfSplit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -139,13 +155,16 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.PdfSplitFxml, AppVaribles.getMessage("SplitPdf"));
             }
         });
+
         pdfMenus = new ContextMenu();
         pdfMenus.getItems().addAll(
+                pdfView, new SeparatorMenuItem(),
                 pdfConvertImages, pdfConvertImagesBatch, new SeparatorMenuItem(),
+                pdfExtractImages, pdfExtractImagesBatch, pdfExtractTexts, pdfExtractTextsBatch, new SeparatorMenuItem(),
                 imagesCombinePdf, new SeparatorMenuItem(),
-                pdfCompressImages, pdfCompressImagesBatch, new SeparatorMenuItem(),
                 pdfMerge, pdfSplit, new SeparatorMenuItem(),
-                pdfExtractImages, pdfExtractImagesBatch, pdfExtractTexts, pdfExtractTextsBatch);
+                pdfCompressImages, pdfCompressImagesBatch
+        );
 
     }
 
@@ -607,6 +626,30 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem fileCut = new MenuItem(AppVaribles.getMessage("FileCut"));
+        fileCut.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.FileCutFxml, AppVaribles.getMessage("FileCut"));
+            }
+        });
+
+        MenuItem fileMerge = new MenuItem(AppVaribles.getMessage("FileMerge"));
+        fileMerge.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.FileMergeFxml, AppVaribles.getMessage("FileMerge"));
+            }
+        });
+
+        MenuItem snapScreen = new MenuItem(AppVaribles.getMessage("SnapScreen"));
+        snapScreen.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.SnapScreenFxml, AppVaribles.getMessage("SnapScreen"));
+            }
+        });
+
         MenuItem alarmClock = new MenuItem(AppVaribles.getMessage("AlarmClock"));
         alarmClock.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -614,9 +657,11 @@ public class MyBoxController extends BaseController {
                 reloadStage(CommonValues.AlarmClockFxml, AppVaribles.getMessage("AlarmClock"));
             }
         });
+
         desktopMenu = new ContextMenu();
         desktopMenu.getItems().addAll(
-                textEditer, bytesEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
+                textEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
+                bytesEditer, fileCut, fileMerge, new SeparatorMenuItem(),
                 filesRename, filesArrangement, dirSynchronize, new SeparatorMenuItem(),
                 alarmClock);
     }

@@ -187,9 +187,10 @@ public class BytesEditerController extends FileEditerController {
             isSettingValues = false;
 
             if (sourceFile == null) {
+                formatMainArea();
                 updateInterface(false);
             } else {
-                sourceInformation.setObjectsNumber(-1);
+                sourceInformation.setTotalNumberRead(false);
                 openFile(sourceFile);
 
             }
@@ -251,9 +252,10 @@ public class BytesEditerController extends FileEditerController {
                 sourceInformation.setLineBreakWidth(lineBreakWidth);
                 if (!isSettingValues) {
                     if (sourceFile == null) {
+                        logger.debug(lineBreakWidth);
                         updateInterface(false);
                     } else {
-                        sourceInformation.setObjectsNumber(-1);
+                        sourceInformation.setTotalNumberRead(false);
                         openFile(sourceFile);
                     }
                 }
@@ -354,14 +356,10 @@ public class BytesEditerController extends FileEditerController {
             if (text.isEmpty()) {
                 return true;
             }
-            LoadingController loadingController = openHandlingStage(Modality.WINDOW_MODAL);
-            text = ByteTools.formatHex(text, lineBreak, lineBreakWidth, lineBreakValue);
+            final String hex = ByteTools.formatHex(text, lineBreak, lineBreakWidth, lineBreakValue);
             isSettingValues = true;
-            mainArea.setText(text);
+            mainArea.setText(hex);
             isSettingValues = false;
-            if (loadingController != null && loadingController.getMyStage() != null) {
-                loadingController.getMyStage().close();
-            }
             return true;
         } else {
             return false;
@@ -379,9 +377,6 @@ public class BytesEditerController extends FileEditerController {
             int p = (int) (sourceInformation.getCurrentFound() / sourceInformation.getPageSize() + 1);
             if (p == currentPage) {
                 currentFound = pos * 3;
-                if (lineBreak == Line_Break.Width && lineBreakWidth > 0) {
-                    currentFound += pos / lineBreakWidth;
-                }
             }
         }
     }
@@ -400,9 +395,8 @@ public class BytesEditerController extends FileEditerController {
             String lineText;
             for (String line : lines) {
                 lineText = new String(ByteTools.hexFormatToBytes(line), sourceInformation.getCharset());
-                lineText = lineText.replaceAll("\n", " ");
+                lineText = lineText.replaceAll("\n", " ").replaceAll("\r", " ") + "\n";
                 text.append(lineText);
-                text.append("\n");
             }
             displayArea.setText(text.toString());
         } else {
@@ -426,13 +420,8 @@ public class BytesEditerController extends FileEditerController {
         }
         isSettingValues = true;
         final String text = displayArea.getText();
-        int lbLength = 1;
-        if (lineBreak == Line_Break.Value) {
-            lbLength = lineBreakValue.length();
-        }
         if (!text.isEmpty()) {
-            IndexRange textRange = ByteTools.textIndex(mainArea.getText(), sourceInformation.getCharset(),
-                    lbLength, hexRange);
+            IndexRange textRange = ByteTools.textIndex(mainArea.getText(), sourceInformation.getCharset(), hexRange);
             displayArea.selectRange(textRange.getStart(), textRange.getEnd());
             displayArea.setScrollTop(mainArea.getScrollTop());
         }

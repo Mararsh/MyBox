@@ -150,10 +150,7 @@ public class DirectorySynchronizeController extends BaseController {
     protected void selectSourcePath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
@@ -176,10 +173,7 @@ public class DirectorySynchronizeController extends BaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {

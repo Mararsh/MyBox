@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -217,10 +216,7 @@ public class PdfCompressImagesController extends PdfBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -280,7 +276,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                                 break;
                             }
 
-                            currentParameters.acumStart = 0;
+                            currentParameters.acumStart = 1;
                             currentParameters.startPage = 0;
                             if (currentParameters.isBatch) {
                                 updateInterface("CompleteFile");
@@ -297,9 +293,9 @@ public class PdfCompressImagesController extends PdfBaseController {
                             try {
                                 if (!fail && targetFile.exists()) {
                                     if (currentParameters.isBatch) {
-                                        Desktop.getDesktop().browse(targetPath.toURI());
+                                        OpenFile.openTarget(getClass(), null, targetPath.getAbsolutePath());
                                     } else {
-                                        Desktop.getDesktop().browse(targetFile.toURI());
+                                        OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
                                     }
                                     operationBarController.openTargetButton.setDisable(false);
                                 } else {
@@ -454,11 +450,7 @@ public class PdfCompressImagesController extends PdfBaseController {
             return;
         }
         operationBarController.openTargetButton.setDisable(false);
-        try {
-            Desktop.getDesktop().browse(targetFile.toURI());
-        } catch (Exception e) {
-
-        }
+        OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 
 }

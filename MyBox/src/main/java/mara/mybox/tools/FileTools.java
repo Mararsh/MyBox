@@ -6,19 +6,22 @@
 package mara.mybox.tools;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.objects.CommonValues;
 import static mara.mybox.objects.CommonValues.UserFilePath;
 import mara.mybox.objects.FileSynchronizeAttributes;
-import static mara.mybox.objects.AppVaribles.logger;
 import static mara.mybox.objects.CommonValues.TempPath;
 import mara.mybox.objects.FileInformation;
 
@@ -470,6 +473,175 @@ public class FileTools {
             return path + fontName + ".ttf ";
         } else {
             return null;
+        }
+    }
+
+    public static List<File> splitFileByFilesNumber(File file,
+            String filename, long filesNumber) {
+        try {
+            if (file == null || filesNumber <= 0) {
+                return null;
+            }
+            long bytesNumber = file.length() / filesNumber;
+            List<File> splittedFiles = new ArrayList<>();
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                String newFilename;
+                int digit = (filesNumber + "").length();
+                byte[] buf = new byte[(int) bytesNumber];
+                int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
+                while ((fileIndex < filesNumber)
+                        && (bufLen = inputStream.read(buf)) != -1) {
+                    endIndex += bufLen;
+                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                            + "-b" + (startIndex + 1) + "-b" + endIndex;
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                        if (bytesNumber > bufLen) {
+                            buf = ByteTools.subBytes(buf, 0, bufLen);
+                        }
+                        outputStream.write(buf);
+                    }
+                    splittedFiles.add(new File(newFilename));
+                    fileIndex++;
+                    startIndex = endIndex;
+                }
+                buf = new byte[(int) (file.length() - endIndex)];
+                bufLen = inputStream.read(buf);
+                if (bufLen > 0) {
+                    endIndex += bufLen;
+                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                            + "-b" + (startIndex + 1) + "-b" + endIndex;
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                        outputStream.write(buf);
+                    }
+                    splittedFiles.add(new File(newFilename));
+                }
+            }
+            return splittedFiles;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static List<File> splitFileByBytesNumber(File file,
+            String filename, long bytesNumber) {
+        try {
+            if (file == null || bytesNumber <= 0) {
+                return null;
+            }
+            List<File> splittedFiles = new ArrayList<>();
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                String newFilename;
+                long fnumber = file.length() / bytesNumber;
+                if (file.length() % bytesNumber > 0) {
+                    fnumber++;
+                }
+                int digit = (fnumber + "").length();
+                byte[] buf = new byte[(int) bytesNumber];
+                int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
+                while ((bufLen = inputStream.read(buf)) != -1) {
+                    endIndex += bufLen;
+                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                            + "-b" + (startIndex + 1) + "-b" + endIndex;
+                    try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
+                        if (bytesNumber > bufLen) {
+                            buf = ByteTools.subBytes(buf, 0, bufLen);
+                        }
+                        outputStream.write(buf);
+                    }
+                    splittedFiles.add(new File(newFilename));
+                    fileIndex++;
+                    startIndex = endIndex;
+                }
+            }
+            return splittedFiles;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static List<File> splitFileByStartEndList(File file,
+            String filename, List<Integer> startEndList) {
+        try {
+            if (file == null || startEndList == null
+                    || startEndList.isEmpty() || startEndList.size() % 2 > 0) {
+                return null;
+            }
+            List<File> splittedFiles = new ArrayList<>();
+            for (int i = 0; i < startEndList.size(); i += 2) {
+                File f = cutFile(file, filename, startEndList.get(i), startEndList.get(i + 1));
+                if (f != null) {
+                    splittedFiles.add(f);
+                }
+            }
+            return splittedFiles;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    // 1-based start, that is: from (start - 1) to ( end - 1) actually
+    public static File cutFile(File file,
+            String filename, long startIndex, long endIndex) {
+        try {
+            if (file == null || startIndex < 1 || startIndex > endIndex) {
+                return null;
+            }
+            File targetFile = FileTools.getTempFile();
+            String newFilename = filename + "-cut-b" + startIndex + "-b" + endIndex;
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                if (startIndex > 1) {
+                    inputStream.skip(startIndex - 1);
+                }
+                int cutLength = (int) (endIndex - startIndex + 1);
+                byte[] buf = new byte[cutLength];
+                int bufLen;
+                bufLen = inputStream.read(buf);
+                if (bufLen == -1) {
+                    return null;
+                }
+                try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+                    if (cutLength > bufLen) {
+                        buf = ByteTools.subBytes(buf, 0, bufLen);
+                        newFilename = filename + "-cut-b" + startIndex + "-b" + bufLen;
+                    }
+                    outputStream.write(buf);
+                }
+            }
+            targetFile.renameTo(new File(newFilename));
+            return targetFile;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean mergeFiles(List<File> files, File targetFile) {
+        try {
+            if (files == null || files.isEmpty() || targetFile == null) {
+                return false;
+            }
+            int bufSize = 4096;
+            try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
+                byte[] buf = new byte[bufSize];
+                int bufLen;
+                for (File file : files) {
+                    try (FileInputStream inputStream = new FileInputStream(file)) {
+                        while ((bufLen = inputStream.read(buf)) != -1) {
+                            if (bufSize > bufLen) {
+                                buf = ByteTools.subBytes(buf, 0, bufLen);
+                            }
+                            outputStream.write(buf);
+                        }
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
     }
 

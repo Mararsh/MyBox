@@ -238,6 +238,37 @@ public class AppVaribles {
         return AppVaribles.getUserConfigBoolean(key, true);
     }
 
+    public static String getUserConfigPath(String key, String defaultValue) {
+        try {
+//            logger.debug("getUserConfigValue:" + key);
+            String path;
+            if (userConfigValues.containsKey(key)) {
+                path = userConfigValues.get(key);
+            } else {
+                path = TableUserConf.read(key, defaultValue);
+            }
+            File file = new File(path);
+            if (!file.exists() || !file.isDirectory()) {
+                deleteUserConfigValue(key);
+                path = CommonValues.UserFilePath;
+            }
+            userConfigValues.put(key, path);
+            return path;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean deleteUserConfigValue(String key) {
+        if (TableUserConf.delete(key)) {
+            userConfigValues.remove(key);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static boolean setUserConfigValue(String key, String value) {
         if (TableUserConf.write(key, value) > 0) {
             userConfigValues.put(key, value);
@@ -339,6 +370,15 @@ public class AppVaribles {
     public static boolean setSystemConfigValue(String key, boolean value) {
         if (TableSystemConf.write(key, value) > 0) {
             systemConfigValues.put(key, value ? "true" : "false");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean deleteSystemConfigValue(String key) {
+        if (TableSystemConf.delete(key)) {
+            systemConfigValues.remove(key);
             return true;
         } else {
             return false;

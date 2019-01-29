@@ -32,7 +32,6 @@ import mara.mybox.objects.ImageCombine;
 import mara.mybox.objects.ImageInformation;
 import static mara.mybox.objects.AppVaribles.logger;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-6-11 11:19:42
@@ -40,8 +39,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class FxmlImageTools {
-
-    
 
     public class ImageManufactureType {
 
@@ -132,7 +129,7 @@ public class FxmlImageTools {
             java.awt.Font font, Color color, int x, int y,
             float transparent, int shadow, int angle, boolean isOutline) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = ImageConvertTools.addTextText(source, textString,
+        BufferedImage target = ImageConvertTools.addText(source, textString,
                 font, FxmlImageTools.colorConvert(color), x, y, transparent, shadow, angle, isOutline);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
@@ -195,6 +192,7 @@ public class FxmlImageTools {
             Scene scene = new Scene(group);
 
             ImageView view = new ImageView(image);
+            view.setPreserveRatio(true);
             view.setFitWidth(imageWidth);
             view.setFitHeight(imageHeight);
 
@@ -374,6 +372,7 @@ public class FxmlImageTools {
             Scene s = new Scene(group);
 
             ImageView view = new ImageView(image);
+            view.setPreserveRatio(true);
             view.setFitWidth(imageWidth);
             view.setFitHeight(imageHeight);
 
@@ -510,6 +509,7 @@ public class FxmlImageTools {
             for (int i = 0; i < images.size(); i++) {
                 Image image = images.get(i);
                 ImageView view = new ImageView(image);
+                view.setPreserveRatio(true);
                 view.setFitWidth(image.getWidth());
                 view.setFitHeight(image.getHeight());
                 view.setX(x);

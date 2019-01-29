@@ -46,8 +46,9 @@ import mara.mybox.tools.ValueTools;
 public class PdfSplitController extends PdfBaseController {
 
     final private String AuthorKey;
-    private int splitType, pagesNumber, filesNumber;
+    private int pagesNumber, filesNumber;
     private List<Integer> startEndList;
+    private PdfSplitType splitType;
 
     @FXML
     private ToggleGroup splitGroup;
@@ -60,12 +61,8 @@ public class PdfSplitController extends PdfBaseController {
     @FXML
     private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
-    public static class PdfSplitType {
-
-        public static int PagesNumber = 1;
-        public static int FilesNumber = 2;
-        public static int StartEndList = 3;
-
+    public enum PdfSplitType {
+        PagesNumber, FilesNumber, StartEndList
     }
 
     public PdfSplitController() {
@@ -217,13 +214,15 @@ public class PdfSplitController extends PdfBaseController {
                 try {
                     int start = Integer.valueOf(values[0].trim());
                     int end = Integer.valueOf(values[1].trim());
-                    startEndList.add(start);
+                    startEndList.add(start);   // 1-based start
                     startEndList.add(end);
                 } catch (Exception e) {
                 }
             }
             if (startEndList.isEmpty()) {
                 ListInput.setStyle(badStyle);
+            } else {
+                ListInput.setStyle(null);
             }
         } catch (Exception e) {
             ListInput.setStyle(badStyle);
@@ -318,7 +317,7 @@ public class PdfSplitController extends PdfBaseController {
                                 break;
                             }
 
-                            currentParameters.acumStart = 0;
+                            currentParameters.acumStart = 1;
                             currentParameters.startPage = 0;
                             if (currentParameters.isBatch) {
                                 updateInterface("CompleteFile");
@@ -373,12 +372,20 @@ public class PdfSplitController extends PdfBaseController {
                             }
                             currentParameters.currentNameNumber = currentParameters.acumStart;
 
-                            if (splitType == PdfSplitType.PagesNumber) {
-                                splitByPagesSize(doc);
-                            } else if (splitType == PdfSplitType.FilesNumber) {
-                                splitByFilesNumber(doc);
-                            } else if (splitType == PdfSplitType.StartEndList) {
-                                splitByList(doc);
+                            if (null != splitType) {
+                                switch (splitType) {
+                                    case PagesNumber:
+                                        splitByPagesSize(doc);
+                                        break;
+                                    case FilesNumber:
+                                        splitByFilesNumber(doc);
+                                        break;
+                                    case StartEndList:
+                                        splitByList(doc);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                             int num = files.size();
 //                            if (num == 0) num = doc.getNumberOfPages();
@@ -439,8 +446,8 @@ public class PdfSplitController extends PdfBaseController {
                                 continue;
                             }
                             Splitter splitter = new Splitter();
-                            splitter.setStartPage(start + 1);
-                            splitter.setEndPage(end + 1);
+                            splitter.setStartPage(start);  // 1-based start
+                            splitter.setEndPage(end);
                             splitter.setMemoryUsageSetting(memSettings);
                             splitter.setSplitAtPage(end - start + 1);
                             docs.add(splitter.split(source).get(0));
@@ -457,7 +464,7 @@ public class PdfSplitController extends PdfBaseController {
                             return;
                         }
                         files = new ArrayList<>();
-                        currentParameters.currentNameNumber = 0;
+                        currentParameters.currentNameNumber = 1;
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());

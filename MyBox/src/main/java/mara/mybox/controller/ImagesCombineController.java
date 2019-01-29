@@ -456,7 +456,7 @@ public class ImagesCombineController extends ImageSourcesController {
 
     @FXML
     private void newWindow(ActionEvent event) {
-        showImageView(image);
+        openImageViewer(image);
     }
 
     @FXML
@@ -540,10 +540,7 @@ public class ImagesCombineController extends ImageSourcesController {
             return;
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-        if (!path.isDirectory()) {
-            path = new File(CommonValues.UserFilePath);
-        }
+        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
         fileChooser.setInitialDirectory(path);
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
@@ -572,7 +569,7 @@ public class ImagesCombineController extends ImageSourcesController {
                             if (ok) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (openCheck.isSelected()) {
-                                    openImageManufactureInNew(filename);
+                                    openImageManufacture(filename);
                                 }
                             } else {
                                 popError(AppVaribles.getMessage("Failed"));

@@ -65,8 +65,6 @@ public class ImagesViewerController extends ImageViewerController {
     @Override
     protected void initializeNext2() {
         try {
-            fileExtensionFilter = CommonValues.ImageExtensionFilter;
-
             List<String> values = Arrays.asList("3", "4", "2", "5", "6", "1", "7", "8", "9", "10",
                     "16", "25", "20", "12", "15");
             colsnumBox.getItems().addAll(values);
@@ -145,7 +143,7 @@ public class ImagesViewerController extends ImageViewerController {
         try {
 
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = AppVaribles.getUserConfigValue(LastPathKey, CommonValues.UserFilePath);
+            String defaultPath = AppVaribles.getUserConfigPath(LastPathKey, CommonValues.UserFilePath);
             fileChooser.setInitialDirectory(new File(AppVaribles.getUserConfigValue(sourcePathKey, defaultPath)));
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());

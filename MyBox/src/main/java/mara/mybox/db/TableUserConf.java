@@ -176,4 +176,19 @@ public class TableUserConf extends DerbyBase {
         return v > 0;
     }
 
+    public static boolean delete(String keyName) {
+        if (keyName == null || keyName.isEmpty()) {
+            return false;
+        }
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+                Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM User_Conf WHERE key_Name='" + keyName + "'";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
 }

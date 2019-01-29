@@ -242,8 +242,8 @@ public class BaseController implements Initializable {
             }
 
             if (previewInput != null) {
-                previewInput.setText(AppVaribles.getUserConfigValue(previewKey, "0"));
-                FxmlTools.setNonnegativeValidation(previewInput);
+                previewInput.setText(AppVaribles.getUserConfigValue(previewKey, "1"));
+                FxmlTools.setPositiveValidation(previewInput);
                 previewInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -267,6 +267,7 @@ public class BaseController implements Initializable {
 
             if (acumFromInput != null) {
                 FxmlTools.setNonnegativeValidation(acumFromInput);
+                acumFromInput.setText("1");
             }
 
             initializeNext();
@@ -322,10 +323,7 @@ public class BaseController implements Initializable {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
@@ -357,10 +355,7 @@ public class BaseController implements Initializable {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             chooser.setInitialDirectory(path);
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
@@ -385,17 +380,24 @@ public class BaseController implements Initializable {
             if (targetSelectionController == null) {
                 return;
             }
+
             if (targetIsFile && finalTargetName != null) {
-                Desktop.getDesktop().browse(new File(finalTargetName).toURI());
+                OpenFile.openTarget(getClass(), null, finalTargetName);
+
             } else {
                 if (targetSelectionController.targetPathInput != null) {
 
                     String path = targetSelectionController.targetPathInput.getText();
-                    if (targetSelectionController.subdirCheck != null && targetSelectionController.subdirCheck.isSelected()) {
+                    if (targetSelectionController.targetPrefixInput != null
+                            && targetSelectionController.subdirCheck != null
+                            && targetSelectionController.subdirCheck.isSelected()) {
                         if (path.endsWith("/") || path.endsWith("\\")) {
                             path += targetSelectionController.targetPrefixInput.getText();
                         } else {
                             path += "/" + targetSelectionController.targetPrefixInput.getText();
+                        }
+                        if (!new File(path).exists()) {
+                            path = targetSelectionController.targetPathInput.getText();
                         }
                     }
                     Desktop.getDesktop().browse(new File(path).toURI());
@@ -478,7 +480,7 @@ public class BaseController implements Initializable {
         try {
             String lang = AppVaribles.getLanguage();
             String latest = AppVaribles.getSystemConfigValue("HelpsVersion", "");
-            String newVersion = "4.7";
+            String newVersion = "4.8";
             boolean updated = latest.equals(newVersion);
             if (!updated) {
                 logger.debug("Updating Helps " + newVersion);
@@ -610,45 +612,7 @@ public class BaseController implements Initializable {
     }
 
     public BaseController openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(newFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final BaseController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.NONE);
-            if (isOwned) {
-                stage.initOwner(getMyStage());
-            } else {
-                stage.initOwner(null);
-            }
-            if (title == null) {
-                stage.setTitle(AppVaribles.getMessage("AppTitle"));
-            } else {
-                stage.setTitle(title);
-            }
-            controller.setBaseTitle(stage.getTitle());
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            if (monitorClosing) {
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        if (!controller.stageClosing()) {
-                            event.consume();
-                        }
-                    }
-                });
-            }
-            stage.show();
-            controller.setMyStage(stage);
-            return controller;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
+        return OpenFile.openNewStage(getClass(), getMyStage(), newFxml, title, isOwned, monitorClosing);
     }
 
     public boolean closeStage() {
@@ -878,187 +842,34 @@ public class BaseController implements Initializable {
 
     }
 
-    public void showImage(String filename) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
-            controller.loadImage(filename);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-            stage.setTitle(controller.getBaseTitle());
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(root));
-            stage.show();
+    public void openImageManufacture(String filename) {
+        OpenFile.openImageManufacture(getClass(), null, new File(filename));
+    }
 
+    public void openImageViewer(Image image) {
+        try {
+            final ImageViewerController controller = OpenFile.openImageViewer(getClass(), null);
+            if (controller != null) {
+                controller.loadImage(image);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void openImageManufactureInNew(String filename) {
+    public void openImageViewer(ImageInformation info) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageManufactureFileFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageManufactureController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("ImageManufacture"));
-            controller.loadImage(filename);
+            final ImageViewerController controller = OpenFile.openImageViewer(getClass(), null);
+            if (controller != null) {
+                controller.loadImage(info);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void openImagesBrowserInNew(File path, int number) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final ImagesViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(pane));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("MultipleImagesViewer"));
-            controller.loadImages(path, number);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void showImageView(Image image) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
-            controller.loadImage(image);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void showImageView(ImageInformation info) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
-            controller.loadImage(info);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void showImageView(String file) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImageViewerFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final ImageViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            stage.initModality(Modality.NONE);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.initOwner(null);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("ImageViewer"));
-            controller.loadImage(file);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+    public void openImageViewer(String file) {
+        OpenFile.openImageViewer(getClass(), null, new File(file));
     }
 
     public LoadingController openHandlingStage(Modality block) {

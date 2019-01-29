@@ -7,15 +7,18 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.7-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-4.7-exe.zip) 。
+[MyBox-4.8-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-4.8-exe.zip) 。
+双击“MyBox.exe”即可运行MyBox。
+可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.7-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-4.7-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.7.jar</CODE></PRE>
-
+[MyBox-4.8-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-4.8-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.8.jar</CODE></PRE>
+程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
+<PRE><CODE>     java   -jar   MyBox-4.8.jar   /tmp/a1.jpg</CODE></PRE>
 
 ## 资源地址
 [项目主页：https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)
@@ -30,31 +33,32 @@
 
 
 ## 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-Overview-zh.pdf)
+[综述 https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-Overview-zh.pdf)
 
 [图像工具 https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-zh.pdf)
 
-[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-PdfTools-zh.pdf)
+[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-PdfTools-zh.pdf)
 
-[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.7/MyBox-UserGuide-4.7-DesktopTools-zh.pdf)
+[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-DesktopTools-zh.pdf)
 
 [网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
 
 
 ## 当前版本
-当前是版本4.7，已实现的特点：
+当前是版本4.8，已实现的特点：
 ```
 1. PDF工具：
-	A. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
-	B. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
-	   支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。
-	C. 压缩PDF文件的图片，设置JPGE质量或者黑白色阈值。
-	D. 合并多个PDF文件。
-	E. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
-	F. 将PDF中的图片提取出来。可以指定页码范围。
-	G. 将PDF文件中的文字提取出来，可以定制页的分割行。
-	H. PDF的批量处理。
-	I. 可设置PDF处理的主内存使用量。
+	A. 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
+	B. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
+	C. 将多个图片合成PDF文件，可以设置压缩选项、页面尺寸、页边、页眉、作者等。
+	  支持中文，程序自动定位系统中的字体文件，用户也可以输入ttf字体文件路径。
+	D. 压缩PDF文件的图片，设置JPEG质量或者黑白色阈值。
+	E. 合并多个PDF文件。
+	F. 分割PDF文件为多个PDF文件，可按页数或者文件数来均分，也可以设置起止列表。
+	G. 将PDF中的图片提取出来。可以指定页码范围。
+	H. 将PDF文件中的文字提取出来，可以定制页的分割行。
+	I. PDF的批量处理。
+	J. 可设置PDF处理的主内存使用量。
 2. 图像工具：
 	A. 图像处理
 		1）调整图像的大小：按比例收缩、或设置像素。四种保持宽高比的选项。
@@ -108,31 +112,40 @@
 		1) 自动检测或手动设置文件编码；设置新字符集以实现转码；支持BOM设置。
 		2) 自动检测换行符；转换换行符；显示行号。支持LF（Unix/Linux）、CR（Apple）、CRLF（Windows）。
 		3) 查找与替换。可只本页查找、或整个文件查找。计数功能。
-		4) 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。
-		5) 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
-		6) 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
+		4) 定位。跳转到指定的字符位置或行号。
+		5) 行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。
+		6) 字符集对应的编码：字节的十六进制同步显示、同步滚动、同步选择。
+		7) 分页。可用于查看和编辑非常大的文件，如几十G的运行日志。
 			（1）设置页尺寸。
 			（2）页面导航。
 			（3）先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。			
 			（4）对于跨页字符串，确保查找、替换、过滤的正确性。
-		7) 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-	E. 编辑字节
+		8) 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+	E. 批量转换文件的字符集。
+	F. 批量转换文件的换行符。
+	G. 编辑字节
 		1）字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。
 		2）常用ASCII字符的输入选择框。
 		3）换行。仅用于显示、无实际影响。显示行号。可按字节数换行、或按一组字节值来换行。
 		4）查找与替换。可只本页查找/替换、或整个文件查找/替换。计数功能。
-		5）行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。
-		6）选择字符集来解码：同步显示、同步滚动、同步选择。非字符显示为问号。
-		7）分页。可用于查看和编辑非常大的文件，如几十G的二进制文件。可设置页尺寸。
-			对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
-		8）通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-	F. 批量转换字符集。
-	G. 批量转换换行符。
+		5）定位。跳转到指定的字节位置或行号。
+		6）行过滤。条件：“包含任一”、“不含所有”、“包含所有”、“不含任一”。可累加过滤。可保存过滤结果。可选是否包含行号。
+		7）选择字符集来解码：同步显示、同步滚动、同步选择。非字符显示为问号。
+		8）分页。可用于查看和编辑非常大的文件，如几十G的二进制文件。
+			（1）可以设置页尺寸。
+			（2）页面导航。
+			（3）先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
+			（4）对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
+		9）通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
+	H. 切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。
+	I. 合并文件。 
 4. 网络工具：
 	A. 网页编辑器
-		1）富文本方式编辑本地网页或在线网页。
-		2）代码编辑器可以同步编辑html。
-		3）网页浏览器可以同步编辑器内容、也可以加载在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件
+		1）以富文本方式编辑本地网页或在线网页。（不支持FrameSet）
+		2）直接编辑HTML代码。（支持FrameSet）
+		3）网页浏览器显示编辑器内容、或在线网页。
+			支持前后导览、缩放字体、截图页面为整图或者PDF文件。
+		4）富文本页面、HTML代码、浏览器内容，这三者自动同步。
 	B. 微博截图工具
 		1）自动保存任意微博账户的任意月份的微博内容
 		2）设置起止月份。
@@ -152,6 +165,13 @@
 
 ## 开发日志
 ```
+2019-1-29 版本4.8 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
+文本/字节编辑器的“定位”功能：跳转到指定的字符/字节位置、或跳转到指定的行号。
+切割文件：按文件数、按字节数、或按起止列表把文件切割为多个文件。
+合并文件：把多个文件按字节合并为一个新文件。
+程序可以跟一个文件名作为参数，以用MyBox直接打开此文件。
+在Windows上可以把图片/文本/PDF文件的打开方式缺省关联到MyBox.exe，可以在以双击文件时直接用MyBox打开。
+
 2019-1-15 版本4.7  编辑字节：常用ASCII字符的输入选择框；按字节数、或按一组字节值来换行；查找与替换，本页或整个文件，计数功能；
 行过滤，“包含任一”、“不含所有”、“包含所有”、“不含任一”，累加过滤，保存过滤结果，是否包含行号；
 选择字符集来解码，同步显示、同步滚动、同步选择；

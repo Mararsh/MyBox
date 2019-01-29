@@ -93,7 +93,7 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @Override
-    protected void initializeNext() {
+    protected void initializeNext2() {
         try {
             initSourcesSection();
             initOptionsSection();
@@ -350,10 +350,7 @@ public class ImagesBlendController extends ImageViewerController {
     private void selectForegroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -385,11 +382,11 @@ public class ImagesBlendController extends ImageViewerController {
                                 foreView.setPreserveRatio(true);
                                 foreView.setImage(foreImage);
                                 if (foreScroll.getHeight() < foreImage.getHeight()) {
-                                    foreView.setFitHeight(foreScroll.getHeight() - 5);
                                     foreView.setFitWidth(foreScroll.getWidth() - 1);
+                                    foreView.setFitHeight(foreScroll.getHeight() - 5);
                                 } else {
-                                    foreView.setFitHeight(-1);
-                                    foreView.setFitWidth(-1);
+                                    foreView.setFitWidth(foreView.getImage().getWidth());
+                                    foreView.setFitHeight(foreView.getImage().getHeight());
                                 }
                                 foreTitle.setText(AppVaribles.getMessage("ForegroundImage") + " "
                                         + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
@@ -417,30 +414,27 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
-            openImageManufactureInNew(foreFile.getAbsolutePath());
+            openImageManufacture(foreFile.getAbsolutePath());
         }
     }
 
     @FXML
     private void setForegroundPaneSize(ActionEvent event) {
-        foreView.setFitHeight(foreScroll.getHeight() - 5);
         foreView.setFitWidth(foreScroll.getWidth() - 1);
+        foreView.setFitHeight(foreScroll.getHeight() - 5);
     }
 
     @FXML
     private void setForegroundImageSize(ActionEvent event) {
-        foreView.setFitHeight(-1);
-        foreView.setFitWidth(-1);
+        foreView.setFitWidth(foreView.getImage().getWidth());
+        foreView.setFitHeight(foreView.getImage().getHeight());
     }
 
     @FXML
     private void selectBackgroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
@@ -472,11 +466,11 @@ public class ImagesBlendController extends ImageViewerController {
                                 backView.setPreserveRatio(true);
                                 backView.setImage(backImage);
                                 if (backScroll.getHeight() < backImage.getHeight()) {
-                                    backView.setFitHeight(backScroll.getHeight() - 5);
                                     backView.setFitWidth(backScroll.getWidth() - 1);
+                                    backView.setFitHeight(backScroll.getHeight() - 5);
                                 } else {
-                                    backView.setFitHeight(-1);
-                                    backView.setFitWidth(-1);
+                                    backView.setFitWidth(backView.getImage().getWidth());
+                                    backView.setFitHeight(backView.getImage().getHeight());
                                 }
                                 backTitle.setText(AppVaribles.getMessage("BackgroundImage") + " "
                                         + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
@@ -513,20 +507,20 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
-            openImageManufactureInNew(backFile.getAbsolutePath());
+            openImageManufacture(backFile.getAbsolutePath());
         }
     }
 
     @FXML
     private void setBackgroundPaneSize(ActionEvent event) {
-        backView.setFitHeight(backScroll.getHeight() - 5);
         backView.setFitWidth(backScroll.getWidth() - 1);
+        backView.setFitHeight(backScroll.getHeight() - 5);
     }
 
     @FXML
     private void setBackgroundImageSize(ActionEvent event) {
-        backView.setFitHeight(-1);
-        backView.setFitWidth(-1);
+        backView.setFitWidth(backView.getImage().getWidth());
+        backView.setFitHeight(backView.getImage().getHeight());
     }
 
     @FXML
@@ -536,10 +530,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
-            if (!path.isDirectory()) {
-                path = new File(CommonValues.UserFilePath);
-            }
+            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
             fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
@@ -577,7 +568,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     private void newWindow(ActionEvent event) {
-        showImageView(image);
+        openImageViewer(image);
     }
 
     @FXML

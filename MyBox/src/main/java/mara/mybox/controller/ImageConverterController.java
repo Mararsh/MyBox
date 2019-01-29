@@ -57,7 +57,7 @@ public class ImageConverterController extends ImageBaseController {
 
     @FXML
     protected void showImage(ActionEvent event) {
-        openImageManufactureInNew(sourceFile.getAbsolutePath());
+        openImageManufacture(sourceFile.getAbsolutePath());
     }
 
     @Override
