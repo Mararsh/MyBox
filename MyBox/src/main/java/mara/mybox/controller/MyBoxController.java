@@ -12,11 +12,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import mara.mybox.objects.AlarmClock;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.scheduledTasks;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.data.AlarmClock;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.scheduledTasks;
+import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -177,11 +177,11 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imagesViewer = new MenuItem(AppVaribles.getMessage("MultipleImagesViewer"));
-        imagesViewer.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem imagesBrowser = new MenuItem(AppVaribles.getMessage("ImagesBrowser"));
+        imagesBrowser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
+                reloadStage(CommonValues.ImagesBrowserFxml, AppVaribles.getMessage("ImagesBrowser"));
             }
         });
 
@@ -206,6 +206,14 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.ImageConverterBatchFxml, AppVaribles.getMessage("ImageConverterBatch"));
+            }
+        });
+
+        MenuItem imageStatistic = new MenuItem(AppVaribles.getMessage("ImageStatistic"));
+        imageStatistic.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reloadStage(CommonValues.ImageStatisticFxml, AppVaribles.getMessage("ImageStatistic"));
             }
         });
 
@@ -240,10 +248,12 @@ public class MyBoxController extends BaseController {
         Menu mergeMenu = initImageMergeMenu();
 
         imageMenu = new ContextMenu();
-        imageMenu.getItems().addAll(ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
+        imageMenu.getItems().addAll(
+                imageViewer, imagesBrowser, new SeparatorMenuItem(),
+                ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
                 framesMenu, new SeparatorMenuItem(), mergeMenu, new SeparatorMenuItem(), partMenu, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                imageViewer, imagesViewer, new SeparatorMenuItem(),
+                //                imageStatistic, new SeparatorMenuItem(),
                 convolutionKernelManager, colorPalette, pixelsCalculator);
     }
 
@@ -286,16 +296,6 @@ public class MyBoxController extends BaseController {
                 ImageManufactureFileController controller
                         = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setInitTab("effects");
-            }
-        });
-
-        MenuItem imageConvolutionMenu = new MenuItem(AppVaribles.getMessage("Convolution"));
-        imageConvolutionMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                ImageManufactureFileController controller
-                        = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-                controller.setInitTab("convolution");
             }
         });
 
@@ -361,7 +361,7 @@ public class MyBoxController extends BaseController {
 
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImageManufactureSub"));
         manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu,
-                imageConvolutionMenu, imageTextMenu, imageCoverMenu, imageArcMenu, imageShadowMenu,
+                imageTextMenu, imageCoverMenu, imageArcMenu, imageShadowMenu,
                 imageTransformMenu, imageMarginsMenu);
         return manufactureSubMenu;
 
@@ -390,14 +390,6 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 reloadStage(CommonValues.ImageManufactureBatchColorFxml, AppVaribles.getMessage("ImageManufactureBatchColor"));
-            }
-        });
-
-        MenuItem imageConvolutionMenu = new MenuItem(AppVaribles.getMessage("Convolution"));
-        imageConvolutionMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                reloadStage(CommonValues.ImageManufactureBatchConvolutionFxml, AppVaribles.getMessage("ImageManufactureBatchConvolution"));
             }
         });
 
@@ -467,7 +459,7 @@ public class MyBoxController extends BaseController {
 
         Menu manufactureBatchMenu = new Menu(AppVaribles.getMessage("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu,
-                imageConvolutionMenu, imageReplaceColorMenu, imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
+                imageReplaceColorMenu, imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageCutMarginsMenu, imageAddMarginsMenu);
         return manufactureBatchMenu;
 
@@ -642,11 +634,11 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem snapScreen = new MenuItem(AppVaribles.getMessage("SnapScreen"));
-        snapScreen.setOnAction(new EventHandler<ActionEvent>() {
+        MenuItem recordImages = new MenuItem(AppVaribles.getMessage("RecordImagesInSystemClipBoard"));
+        recordImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                reloadStage(CommonValues.SnapScreenFxml, AppVaribles.getMessage("SnapScreen"));
+                reloadStage(CommonValues.RecordImagesInSystemClipboardFxml, AppVaribles.getMessage("RecordImagesInSystemClipBoard"));
             }
         });
 
@@ -663,7 +655,7 @@ public class MyBoxController extends BaseController {
                 textEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
                 bytesEditer, fileCut, fileMerge, new SeparatorMenuItem(),
                 filesRename, filesArrangement, dirSynchronize, new SeparatorMenuItem(),
-                alarmClock);
+                recordImages, alarmClock);
     }
 
     private void initFileToolsMenu() {
@@ -804,7 +796,7 @@ public class MyBoxController extends BaseController {
 
     @FXML
     private void showAbout(MouseEvent event) {
-        openStage(CommonValues.AboutFxml, true);
+        openStage(CommonValues.AboutFxml, false);
         imageMenu.hide();
         fileMenu.hide();
         desktopMenu.hide();

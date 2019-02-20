@@ -25,16 +25,16 @@
                     <children>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" visible="false" />
+                                <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
+                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar HBox.hgrow="NEVER">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
-                                <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                 <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
                                 <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
@@ -55,9 +55,9 @@
                                         <RadioButton fx:id="Gray" mnemonicParsing="false" text="%ShadesOfGray" toggleGroup="$colorGroup" />
                                         <RadioButton fx:id="Binary" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$colorGroup" />
                                     </children>
-                           <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin>
+                                    <VBox.margin>
+                                        <Insets top="10.0" />
+                                    </VBox.margin>
                                 </HBox>
                                 <HBox fx:id="compressBox" alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                     <children>
@@ -83,8 +83,7 @@
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
                                         <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
-                                        <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" />
-                                        <Label text="\%" />
+                                        <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="80.0" promptText="0~255" />
                                     </children>
                                 </HBox>
 
@@ -106,7 +105,7 @@
                                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                                         <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
                                         <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#showInfo" text="%ImageInformation" />
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
                                         <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
                                             <padding>
                                                 <Insets left="30.0" />
@@ -140,7 +139,7 @@
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />
             </BorderPane.margin>

@@ -16,8 +16,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
@@ -29,18 +27,15 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javax.imageio.ImageIO;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.fxml.FxmlStage;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -68,7 +63,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
     @FXML
     protected TextField targetSuffixInput;
     @FXML
-    protected Button addButton, upButton, downButton, deleteButton, clearButton, browseButton, openButton, insertButton;
+    protected Button addButton, upButton, downButton, clearButton, browseButton, openButton, insertButton;
     @FXML
     protected RadioButton blackRadio, whiteRadio;
 
@@ -189,7 +184,7 @@ public class ImageManufactureBatchController extends ImageBaseController {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
 
         targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -273,8 +268,10 @@ public class ImageManufactureBatchController extends ImageBaseController {
     protected void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -306,7 +303,8 @@ public class ImageManufactureBatchController extends ImageBaseController {
     }
 
     @FXML
-    protected void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -398,24 +396,10 @@ public class ImageManufactureBatchController extends ImageBaseController {
             if (generatedFiles == null || generatedFiles.isEmpty()) {
                 return;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.ImagesViewerFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final ImagesViewerController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-            stage.setScene(new Scene(pane));
-            stage.show();
-
-            controller.setBaseTitle(AppVaribles.getMessage("MultipleImagesViewer"));
-            controller.loadImages(generatedFiles);
+            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), null);
+            if (controller != null) {
+                controller.loadImages(generatedFiles);
+            }
         } catch (Exception e) {
         }
     }

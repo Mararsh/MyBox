@@ -135,13 +135,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </VBox.margin>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                 <children>
-                                    <RadioButton fx:id="internetButton" mnemonicParsing="false" text="%InternetMusic" toggleGroup="$soundGroup" />
-                                    <TextField fx:id="urlInput" promptText="%InternetMusicComments" HBox.hgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets left="40.0" />
-                                 </padding></HBox>
+                                            <children>
+                                                <RadioButton fx:id="internetButton" mnemonicParsing="false" text="%InternetMusic" toggleGroup="$soundGroup" />
+                                                <TextField fx:id="urlInput" promptText="%InternetMusicComments" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                            <padding>
+                                                <Insets left="40.0" />
+                                            </padding>
+                                        </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%SoundLoop">
@@ -176,7 +177,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAlarm" text="%Add" />
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Add"
+                                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                                             </children>
                                         </HBox>
                                     </children>

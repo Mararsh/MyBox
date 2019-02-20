@@ -46,24 +46,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
+<VBox fx:id="thisPane" alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
     <children>
-        <HBox  alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startProcess" prefHeight="30.0" text="%Start" />
-                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseProcess" prefHeight="30.0" text="%Pause" visible="false" />
-                <ProgressBar fx:id="fileProgressBar" prefWidth="100.0" progress="0.0" />
-                <Label fx:id="fileProgressValue" prefWidth="60.0" />
+                <Button fx:id="startButton" disable="true" mnemonicParsing="false" onAction="#startAction" prefHeight="30.0" text="%Start"
+                        styleClass="main-button" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER" />
+                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseProcess" prefHeight="30.0" text="%Pause" visible="false" HBox.hgrow="NEVER" />
+                <ProgressBar fx:id="fileProgressBar" prefWidth="100.0" progress="0.0" HBox.hgrow="NEVER" />
+                <Label fx:id="fileProgressValue" prefWidth="80.0" HBox.hgrow="NEVER" />
                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
-                <Label fx:id="progressValue" prefHeight="20.0" prefWidth="110.0" />
-                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget" prefHeight="30.0" text="%Open" />
-                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" text="%meow" />
+                <Label fx:id="progressValue" prefHeight="20.0" prefWidth="110.0" HBox.hgrow="NEVER" />
+                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget" prefHeight="30.0" text="%Open" HBox.hgrow="NEVER" />
+                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" text="%meow" HBox.hgrow="NEVER" />
             </children>
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>
         </HBox>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+        <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
             <children>
                 <TextField id="PdfStatus" fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" prefHeight="14.0" prefWidth="1061.0" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
             </children>

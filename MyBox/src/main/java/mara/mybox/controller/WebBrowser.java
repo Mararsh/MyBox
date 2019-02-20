@@ -20,8 +20,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -37,7 +37,7 @@ public class WebBrowser implements Initializable {
     private WebEngine webEngine;
     private int cols, rows, delay, fontSize, orginalStageHeight, orginalStageY;
     protected int lastHtmlLen, lastCodesLen, snapHeight, snapCount;
-    private boolean isSettingValues, isOneImage;
+    private boolean isOneImage;
     private URL url;
     private List<Image> images;
     private File targetFile;
@@ -163,13 +163,13 @@ public class WebBrowser implements Initializable {
 //        final FileChooser fileChooser = new FileChooser();
 //        File path;
 //        if (isOneImage) {
-//            path = new File(AppVaribles.getUserConfigValue(HtmlImagePathKey, CommonValues.UserFilePath));
+//            path = new File(AppVaribles.getUserConfigValue(HtmlImagePathKey);
 //            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
 //        } else {
-//            path = new File(AppVaribles.getUserConfigValue(HtmlPdfPathKey, CommonValues.UserFilePath));
+//            path = new File(AppVaribles.getUserConfigValue(HtmlPdfPathKey);
 //            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
 //        }
-//        fileChooser.setInitialDirectory(path);
+//        if ( path.exists() )  fileChooser.setInitialDirectory(path);
 //        final File file = fileChooser.showSaveDialog(getMyStage());
 //        if (file == null) {
 //            return;

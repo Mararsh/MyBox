@@ -57,8 +57,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Label fx:id="editLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" />
+                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
                                 <Button mnemonicParsing="false" text=" " visible="false" />
+                                <Label fx:id="editLabel" />
+                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar HBox.hgrow="NEVER">
@@ -71,7 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recoverAction" text="%Recover" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
@@ -138,7 +140,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
-                                                <Label text="%OnlyForDisplayNoEffect" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
@@ -265,7 +266,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar HBox.hgrow="ALWAYS">
                                             <items>
-                                                <Label fx:id="BytesTextComments" text="%DecodeComments" />
                                                 <Button mnemonicParsing="false" text=" " visible="false" />
                                             </items>
                                         </ToolBar>
@@ -295,7 +295,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Label text="%PageSize" />
                                                 <Label text="%BytesPaginateComment" />
                                                 <TextField fx:id="pageSizeInput" prefWidth="80.0" text="100000" />
-                                                <Button mnemonicParsing="false" onAction="#pageSizeAction" text="%OK" />
+                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" text="%OK" />
                                             </items>
                                         </ToolBar>
                                     </children>
@@ -304,11 +304,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </Tab>
                     </tabs>
                 </TabPane>
-                <Label text="%ByteHexComments">
-                    <VBox.margin>
-                        <Insets bottom="2.0" top="2.0" />
-                    </VBox.margin>
-                </Label>
                 <SplitPane fx:id="splitPane" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <items>
                         <AnchorPane fx:id="textPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -328,10 +323,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="pageBar" disable="true" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="firstButtonButton" mnemonicParsing="false" onAction="#firstPageAction" text="%FirstPage" />
-                                <Button fx:id="perviousPageButton" mnemonicParsing="false" onAction="#previousPageAction" text="%PreviousPage" />
-                                <Button fx:id="nextPageButton" mnemonicParsing="false" onAction="#nextPageAction" text="%NextPage" />
-                                <Button fx:id="lastPageButton" mnemonicParsing="false" onAction="#lastPageAction" text="%LastPage" />
+                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction" text="%FirstPage" />
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousPage" />
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextPage" />
+                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction" text="%LastPage" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />

@@ -9,8 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.ImageInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.ImageInformation;
 
 /**
  * @Author Mara

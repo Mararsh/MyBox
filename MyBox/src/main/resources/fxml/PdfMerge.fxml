@@ -28,7 +28,7 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                         <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                        <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -101,13 +101,22 @@
                                         <TextField fx:id="targetFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Button mnemonicParsing="false" onAction="#selectTargetFile" text="%Select..." />
                                         <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTargetAction" text="%Open" />
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
                     </content>
                 </TitledPane>
+                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
+                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
+                                    styleClass="main-button" stylesheets="@../styles/MyBox.css"                            />
+                    </children>
+                    <VBox.margin>
+                        <Insets top="5.0" />
+                    </VBox.margin>
+                </HBox>
             </children>
             <BorderPane.margin>
                 <Insets />

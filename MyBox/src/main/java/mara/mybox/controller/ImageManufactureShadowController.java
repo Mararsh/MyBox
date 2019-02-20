@@ -12,10 +12,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.image.ImageTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -60,17 +60,18 @@ public class ImageManufactureShadowController extends ImageManufactureController
 
             isSettingValues = true;
 
-            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+            if (values.getImageInfo() != null
+                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
                 transShadowButton.setDisable(true);
             } else {
                 transShadowButton.setDisable(false);
             }
 
             shadowBox.getItems().clear();
-            shadowBox.getItems().addAll(Arrays.asList(values.getImageInfo().getWidth() / 100 + "",
-                    values.getImageInfo().getWidth() / 50 + "",
-                    values.getImageInfo().getWidth() / 200 + "",
-                    values.getImageInfo().getWidth() / 30 + "",
+            shadowBox.getItems().addAll(Arrays.asList((int) values.getImage().getWidth() / 100 + "",
+                    (int) values.getImage().getWidth() / 50 + "",
+                    (int) values.getImage().getWidth() / 200 + "",
+                    (int) values.getImage().getWidth() / 30 + "",
                     "0", "4", "5", "3", "2", "1", "6"));
             shadowBox.getSelectionModel().select(0);
 
@@ -131,7 +132,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
             return;
         }
         try {
-            Image newImage = FxmlImageTools.addShadowFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
+            Image newImage = ImageTools.addShadowFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
             if (newImage != null) {
                 recordImageHistory(ImageOperationType.Shadow, newImage);
                 values.setUndoImage(values.getCurrentImage());
@@ -145,7 +146,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
 
         }
 
-        Image newImage = FxmlImageTools.addShadowBigFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
+        Image newImage = ImageTools.addShadowBigFx(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
         if (newImage != null) {
             recordImageHistory(ImageOperationType.Shadow, newImage);
             values.setUndoImage(values.getCurrentImage());
@@ -159,7 +160,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.addShadow(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
+                final Image newImage = ImageTools.addShadow(values.getCurrentImage(), shadow, shadowColorPicker.getValue());
                 if (task.isCancelled()) {
                     return null;
                 }

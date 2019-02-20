@@ -26,7 +26,8 @@
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
                                 <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-                                <Button mnemonicParsing="false" text=" " visible="false" />
+                                <Button mnemonicParsing="false" text=" " visible="false"
+                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="imageBar" HBox.hgrow="NEVER">
@@ -36,8 +37,9 @@
                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                        <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSave" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSave" />
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
+                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                             </items>
                         </ToolBar>
                     </children>
@@ -55,7 +57,7 @@
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
                                         <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                                         <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#showInfo" text="%ImageInformation" />
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
                                     </items>
                                 </ToolBar>
                                 <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -170,7 +172,7 @@
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />
             </BorderPane.margin>

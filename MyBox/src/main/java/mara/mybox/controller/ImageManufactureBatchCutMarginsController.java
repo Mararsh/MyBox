@@ -14,13 +14,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.fxml.image.ImageTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageMarginsTools;
+import mara.mybox.image.ImageMargins;
 
 /**
  * @Author Mara
@@ -195,13 +195,13 @@ public class ImageManufactureBatchCutMarginsController extends ImageManufactureB
             }
             BufferedImage target;
             if (cutMarginsByWidth) {
-                target = ImageMarginsTools.cutMargins(source,
+                target = ImageMargins.cutMargins(source,
                         cutMarginWidth,
                         cutMarginsTopCheck.isSelected(), cutMarginsBottomCheck.isSelected(),
                         cutMarginsLeftCheck.isSelected(), cutMarginsRightCheck.isSelected());
             } else {
-                target = ImageMarginsTools.cutMargins(source,
-                        FxmlImageTools.colorConvert(cutMarginsColorPicker.getValue()),
+                target = ImageMargins.cutMargins(source,
+                        ImageTools.colorConvert(cutMarginsColorPicker.getValue()),
                         cutMarginsTopCheck.isSelected(), cutMarginsBottomCheck.isSelected(),
                         cutMarginsLeftCheck.isSelected(), cutMarginsRightCheck.isSelected());
             }

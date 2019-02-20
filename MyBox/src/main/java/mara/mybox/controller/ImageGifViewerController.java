@@ -21,13 +21,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageGifFile;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageFileInformation;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageGifFile;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -40,14 +40,13 @@ public class ImageGifViewerController extends ImageViewerController {
 
     protected Image[] images;
     protected int currentIndex, interval, fromIndex, toIndex, totalNumber;
-    protected boolean isSettingValues;
 
     @FXML
     protected ComboBox<String> intervalCBox, frameBox;
     @FXML
     protected Button pauseButton, extractButton;
     @FXML
-    protected HBox opBox, extractBox;
+    protected HBox operation4Box;
     @FXML
     protected Label promptLabel, commentsLabel;
     @FXML
@@ -56,15 +55,20 @@ public class ImageGifViewerController extends ImageViewerController {
     protected TextField fromInput, toInput;
 
     public ImageGifViewerController() {
+        TipsLabelKey = "GifViewTips";
+
         fileExtensionFilter = CommonValues.GifExtensionFilter;
     }
 
     @Override
     protected void initializeNext2() {
         try {
-            infoBar.setDisable(true);
-            opBox.setDisable(true);
-            extractBox.setDisable(true);
+            operation3Box.disableProperty().bind(
+                    Bindings.isNull(imageView.imageProperty())
+            );
+            operation4Box.disableProperty().bind(
+                    Bindings.isNull(imageView.imageProperty())
+            );
 
             targetTypeBox.getItems().addAll(CommonValues.SupportedImages);
             targetTypeBox.getSelectionModel().select(0);
@@ -238,14 +242,8 @@ public class ImageGifViewerController extends ImageViewerController {
         try {
             super.afterImageLoaded();
             if (images == null || images.length == 0) {
-                infoBar.setDisable(true);
-                opBox.setDisable(true);
-                extractBox.setDisable(true);
                 return;
             }
-            infoBar.setDisable(false);
-            opBox.setDisable(false);
-            extractBox.setDisable(false);
             showGifImage(0);
             List<String> frames = new ArrayList<>();
             for (int i = 0; i < images.length; i++) {

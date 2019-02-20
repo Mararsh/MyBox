@@ -18,17 +18,18 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -37,8 +38,6 @@ import static mara.mybox.objects.AppVaribles.getUserConfigValue;
  * @License Apache License Version 2.0
  */
 public class SettingsController extends BaseController {
-
-    final protected String TempDirKey;
 
     @FXML
     private ToggleGroup langGroup, alphaGroup, pdfMemGroup, hisGroup;
@@ -51,14 +50,13 @@ public class SettingsController extends BaseController {
     @FXML
     private TextField hisMaxInput, tempDirInput;
     @FXML
-    protected ComboBox<String> styleBox, imageWidthBox;
+    protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox;
     @FXML
     protected Button hisClearButton, hisOkButton;
     @FXML
     protected HBox pdfMemBox, imageHisBox;
 
     public SettingsController() {
-        TempDirKey = "TempDir";
     }
 
     @Override
@@ -72,6 +70,22 @@ public class SettingsController extends BaseController {
                     checkLanguage();
                 }
             });
+
+            fontSizeBox.getItems().addAll(Arrays.asList(
+                    "9", "10", "12", "14", "15", "16", "17", "18", "19", "20", "21", "22"));
+            fontSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            setPaneFontSize(v);
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            });
+            fontSizeBox.getSelectionModel().select(AppVaribles.getPaneFontSize() + "");
 
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -113,13 +127,13 @@ public class SettingsController extends BaseController {
                             return;
                         }
                         tempDirInput.setStyle(null);
-                        AppVaribles.setUserConfigValue(TempDirKey, file.getAbsolutePath());
+                        AppVaribles.setUserConfigValue(CommonValues.userTempPathKey, file.getAbsolutePath());
                     } catch (Exception e) {
                     }
                 }
 
             });
-            tempDirInput.setText(AppVaribles.getUserConfigValue(TempDirKey, CommonValues.UserFilePath));
+            tempDirInput.setText(AppVaribles.getUserConfigPath(CommonValues.userTempPathKey).getAbsolutePath());
 
             styleBox.getItems().addAll(Arrays.asList(
                     getMessage("DefaultStyle"), getMessage("caspianStyle"),
@@ -385,6 +399,7 @@ public class SettingsController extends BaseController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             return;
@@ -451,14 +466,20 @@ public class SettingsController extends BaseController {
     protected void selectTemp(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigPath(TempDirKey, CommonValues.UserFilePath));
-            chooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserTempPath();
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
             }
+            if (CommonValues.AppDataPaths.contains(directory)) {
+                alertError(AppVaribles.getMessage("DirectoryReserved"));
+                return;
+            }
             AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setUserConfigValue(TempDirKey, directory.getPath());
+            AppVaribles.setUserConfigValue(CommonValues.userTempPathKey, directory.getPath());
 
             tempDirInput.setText(directory.getPath());
         } catch (Exception e) {
@@ -481,7 +502,7 @@ public class SettingsController extends BaseController {
             f = CommonValues.ImageManufactureFileFxml;
         }
         reloadStage(f, getMyStage().getTitle());
-        popInformation(AppVaribles.getMessage("Successful"));
+//        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML

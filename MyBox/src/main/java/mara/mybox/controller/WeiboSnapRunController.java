@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import com.sun.management.OperatingSystemMXBean;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -41,15 +42,15 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.WeiboSnapParameters;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.image.ImageTools;
 import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
@@ -388,9 +389,11 @@ public class WeiboSnapRunController extends BaseController {
             startTime = new Date().getTime();
             tempdir = parameters.getTempdir();
             if (tempdir == null || !tempdir.exists() || !tempdir.isDirectory()) {
-                tempdir = new File(CommonValues.UserFilePath);
+                tempdir = new File(CommonValues.AppDataRoot);
             } else if (!tempdir.exists()) {
-                tempdir.mkdirs();
+                if (!tempdir.mkdirs()) {
+                    tempdir = CommonValues.AppTempPath;
+                }
             }
             memSettings = AppVaribles.PdfMemUsage.setTempDir(tempdir);
 
@@ -1195,7 +1198,7 @@ public class WeiboSnapRunController extends BaseController {
                                         if (parameters.isUseTempFiles()) {
                                             try {
                                                 String filename = pdfFilename + "-Image" + imageNumber + ".png";
-                                                bufferedImage = FxmlImageTools.getBufferedImage(snapshot);
+                                                bufferedImage = ImageTools.getBufferedImage(snapshot);
                                                 snapshot = null;
                                                 ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
                                                 bufferedImage = null;
@@ -1215,7 +1218,7 @@ public class WeiboSnapRunController extends BaseController {
                                             Image lasSnap = images.get(images.size() - 1);
                                             int y1 = snapHeight - pageHeight + 100;
 //                                            logger.debug(pageHeight + " " + snapHeight + " " + screenHeight + " " + y1);
-                                            lasSnap = FxmlImageTools.cropImage(lasSnap, 0, y1,
+                                            lasSnap = ImageTools.cropImage(lasSnap, 0, y1,
                                                     (int) lasSnap.getWidth() - 1, (int) lasSnap.getHeight() - 1);
                                             images.set(images.size() - 1, lasSnap);
                                         }
@@ -1251,7 +1254,7 @@ public class WeiboSnapRunController extends BaseController {
 
                             if (!snapFailed) {
                                 if (!parameters.isImagePerScreen() && !images.isEmpty()) {
-                                    Image finalImage = FxmlImageTools.combineSingleColumn(images);
+                                    Image finalImage = ImageTools.combineSingleColumn(images);
                                     logger.debug("combineSingleColumn");
                                     images = new ArrayList<>();
                                     if (finalImage == null) {
@@ -1394,7 +1397,7 @@ public class WeiboSnapRunController extends BaseController {
             AppVaribles.setUserConfigValue("WeiBoCurrentPageKey", currentPage + "");
             AppVaribles.setUserConfigValue("WeiBoCurrentMonthPageCountKey", currentMonthPageCount + "");
             if (parameters.isOpenPathWhenStop()) {
-                OpenFile.openTarget(getClass(), null, rootPath.getAbsolutePath());
+                FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
             }
             closeStage();
         } catch (Exception e) {
@@ -1404,9 +1407,6 @@ public class WeiboSnapRunController extends BaseController {
 
     @Override
     public boolean stageClosing() {
-        if (!super.stageClosing()) {
-            return false;
-        }
         webEngine.getLoadWorker().cancel();
         webEngine = null;
         if (loadTimer != null) {
@@ -1426,11 +1426,12 @@ public class WeiboSnapRunController extends BaseController {
          */
         Thread thread = Thread.currentThread();
         System.gc();
-        return true;
+
+        return super.stageClosing();
     }
 
     public void openPath() {
-        OpenFile.openTarget(getClass(), null, rootPath.getAbsolutePath());
+        FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
     }
 
     public WeiboSnapController getParent() {

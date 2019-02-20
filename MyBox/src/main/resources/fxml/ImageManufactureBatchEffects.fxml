@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchEffectsController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchEffectsController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -91,52 +91,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%Blur">
+                                                <RadioButton mnemonicParsing="false" selected="true" text="%Clarity">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="effectsGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Clarity" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
+                                                    </toggleGroup></RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="%Contrast" toggleGroup="$effectsGroup" />
+                                                <RadioButton fx:id="posterizingRadio" mnemonicParsing="false" text="%Posterizing" toggleGroup="$effectsGroup" />
                                                 <RadioButton fx:id="thresholdingRadio" mnemonicParsing="false" text="%Thresholding" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Gray" toggleGroup="$effectsGroup" />
-                                                <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$effectsGroup" />
+                                                <RadioButton fx:id="bwRadio" mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$effectsGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Sepia" toggleGroup="$effectsGroup" />
                                             </children>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
-                                                <Label fx:id="intLabel" text="%Radius" />
-                                                <ComboBox fx:id="intBox" editable="true" prefWidth="80.0" />
-                                                <Label fx:id="stringLabel" text="Label" />
-                                                <ComboBox fx:id="stringBox" prefWidth="150.0" />
-                                                <CheckBox fx:id="grayCheck" mnemonicParsing="false" selected="true" text="%Gray" />
-                                                <HBox fx:id="thresholdingBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                    <children>
-                                                        <Label text="%Threshold" />
-                                                        <TextField fx:id="thresholdingInput" prefWidth="60.0" promptText="0~255" />
-                                                        <Label text="%SmallValue" />
-                                                        <TextField fx:id="thresholdingMinInput" prefWidth="60.0" promptText="0~255" />
-                                                        <Label text="%BigValue" />
-                                                        <TextField fx:id="thresholdingMaxInput" prefWidth="60.0" promptText="0~255" />
-                                                    </children>
-                                                </HBox>
+                                                <RadioButton mnemonicParsing="false" text="%Emboss" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Blur" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Sharpen" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%EdgeDetection" toggleGroup="$effectsGroup" />
+                                                <RadioButton mnemonicParsing="false" text="%Convolution" toggleGroup="$effectsGroup" />
                                             </children>
                                         </HBox>
-                                        <HBox fx:id="bwBox" alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Label fx:id="bwLabel1" text="%Threshold" />
-                                                <Slider fx:id="bwSlider" blockIncrement="5.0" showTickLabels="true" showTickMarks="true" value="55.0" />
-                                                <TextField fx:id="bwInput" prefHeight="30.0" prefWidth="50.0" />
-                                                <Label fx:id="bwLabel2" text="\%" />
-                                                <Label fx:id="bwLabel3" text="%EmptyForDefault" />
-                                            </children>
-                                        </HBox>
+                                        <HBox fx:id="setBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" />
                                     </children>
                                 </VBox>
                             </content>

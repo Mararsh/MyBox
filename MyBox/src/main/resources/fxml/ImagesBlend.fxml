@@ -29,7 +29,7 @@
                                     <items>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                                <Label fx:id="foreTitle" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%ForegroundImage" />
+                                                <Label fx:id="foreTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ForegroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
                                                         <Button mnemonicParsing="false" onAction="#selectForegroundImage" text="%Select..." />
@@ -52,7 +52,7 @@
                                         </VBox>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                                <Label fx:id="backTitle" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%BackgroundImage" />
+                                                <Label fx:id="backTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%BackgroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
                                                         <Button mnemonicParsing="false" onAction="#selectBackgroundImage" text="%Select..." />
@@ -112,7 +112,7 @@
                                                         <Label text="%VertexCoordinate" />
                                                         <TextField fx:id="pointX" prefHeight="30.0" prefWidth="60.0" promptText="X" text="0" />
                                                         <TextField fx:id="pointY" prefHeight="30.0" prefWidth="60.0" promptText="Y" text="0" />
-                                                        <Label fx:id="pointLabel" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%ClickOnBackgournd" />
+                                                        <Label fx:id="pointLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ClickOnBackgournd" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -147,7 +147,8 @@
                                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                                 <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
+                                                        styleClass="main-button" stylesheets="@../styles/MyBox.css"                 />
                                             </children>
                                         </HBox>
                                     </children>
@@ -178,7 +179,7 @@
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />
             </BorderPane.margin>

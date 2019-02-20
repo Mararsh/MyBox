@@ -10,11 +10,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javax.imageio.ImageIO;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.ImageAttributes;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.data.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 import org.apache.pdfbox.rendering.ImageType;
@@ -57,7 +57,7 @@ public class ImageConverterController extends ImageBaseController {
 
     @FXML
     protected void showImage(ActionEvent event) {
-        openImageManufacture(sourceFile.getAbsolutePath());
+        openImageViewer(sourceFile.getAbsolutePath());
     }
 
     @Override
@@ -160,7 +160,7 @@ public class ImageConverterController extends ImageBaseController {
                         if (currentParameters.finalTargetName == null) {
                             return false;
                         }
-                        bufferedImage = ImageConvertTools.scaleImage(bufferedImage, w, h);
+                        bufferedImage = ImageConvert.scaleImage(bufferedImage, w, h);
                         bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
                         ImageFileWriters.writeImageFile(bufferedImage, attributes, currentParameters.finalTargetName);
                         return true;
@@ -208,7 +208,7 @@ public class ImageConverterController extends ImageBaseController {
                     if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
                         fname += "_" + "BINARY-Threshold";
                         if (attributes.getThreshold() >= 0) {
-                            fname += "-" + attributes.getThreshold() + "%";
+                            fname += "-" + attributes.getThreshold();
                         }
                     } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
                         fname += "_" + "BINARY-OTSU";

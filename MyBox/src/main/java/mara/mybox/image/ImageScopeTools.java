@@ -8,9 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.objects.IntCircle;
-import mara.mybox.objects.IntRectangle;
-import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.data.IntCircle;
+import mara.mybox.data.IntRectangle;
+import static mara.mybox.value.AppVaribles.logger;
 
 
 /**

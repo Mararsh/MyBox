@@ -10,8 +10,8 @@ import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -23,6 +23,13 @@ public class DateTools {
 
     public static String nowString() {
         return datetimeToString(new Date());
+    }
+
+    public static String nowString3() {
+        SimpleDateFormat formatter = new SimpleDateFormat(CommonValues.DatetimeFormat3);
+        formatter.setTimeZone(CommonValues.zoneZhCN);
+        String dateString = formatter.format(new Date());
+        return dateString;
     }
 
     public static String datetimeToString(long dvalue) {

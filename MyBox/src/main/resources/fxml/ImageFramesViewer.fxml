@@ -73,10 +73,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <items>
                                 <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
                                 <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#showInfo" text="%ImageInformation" />
-                        <Button mnemonicParsing="false" onAction="#selectAll" text="%SelectAll" />
-                        <Button mnemonicParsing="false" onAction="#unselectAll" text="%UnselectAll" />
-                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" text="%Extract" />
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                <Button mnemonicParsing="false" onAction="#selectAll" text="%SelectAll" />
+                                <Button mnemonicParsing="false" onAction="#unselectAll" text="%UnselectAll" />
+                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" text="%Extract"
+                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                                 <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
                                     <padding>
                                         <Insets left="30.0" />
@@ -110,7 +111,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <BorderPane.margin>
                 <Insets left="10.0" right="10.0" />
             </BorderPane.margin>

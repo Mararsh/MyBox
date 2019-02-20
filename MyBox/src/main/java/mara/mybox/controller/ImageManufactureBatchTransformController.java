@@ -12,10 +12,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageTransformTools;
+import mara.mybox.image.ImageTransform;
 
 /**
  * @Author Mara
@@ -167,16 +167,16 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = ImageTransformTools.shearImage(source, shearX, 0);
+                target = ImageTransform.shearImage(source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = ImageTransformTools.verticalMirrorImage(source);
+                target = ImageTransform.verticalMirrorImage(source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = ImageTransformTools.horizontalMirrorImage(source);
+                target = ImageTransform.horizontalMirrorImage(source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = ImageTransformTools.rotateImage(source, rotateAngle);
+                target = ImageTransform.rotateImage(source, rotateAngle);
             }
 
             return target;

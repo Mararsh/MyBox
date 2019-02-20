@@ -20,10 +20,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -34,7 +34,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.getUserConfigValue;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -137,6 +137,10 @@ public class PdfSplitController extends PdfBaseController {
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(pdfMemBox, tips);
+
+            tips = new Tooltip(getMessage("StartEndComments"));
+            tips.setFont(new Font(16));
+            FxmlTools.setComments(ListInput, tips);
 
             checkPdfMem();
 
@@ -287,7 +291,7 @@ public class PdfSplitController extends PdfBaseController {
             currentParameters.currentTotalHandled = 0;
             currentParameters.targetPath = new File(currentParameters.targetPath).getAbsolutePath();
 
-            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getTempPathFile());
+            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
 
             updateInterface("Started");
             task = new Task<Void>() {
@@ -471,7 +475,7 @@ public class PdfSplitController extends PdfBaseController {
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
                         info.setAuthor(authorInput.getText());
                         for (PDDocument doc : docs) {
-                            String pageNumber = ValueTools.fillNumber(currentParameters.currentNameNumber,
+                            String pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber,
                                     (filesNumber + "").length());
                             String fname = currentParameters.targetPrefix + "_" + pageNumber + ".pdf";
                             String fullname = currentParameters.targetPath + "/" + fname;

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -26,14 +27,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.data.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -54,7 +55,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     private PdfImageFormat pdfFormat;
 
     @FXML
-    protected CheckBox pageNumberCheck;
+    protected CheckBox pageNumberCheck, ditherCheck;
     @FXML
     protected ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, fontBox;
     @FXML
@@ -168,16 +169,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         });
         checkFormat();
 
-        jpegBox.getItems().addAll(Arrays.asList(
-                "100",
-                "75",
-                "90",
-                "50",
-                "60",
-                "80",
-                "30",
-                "10"
-        ));
+        jpegBox.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
         jpegBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
@@ -195,6 +187,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             }
         });
         checkThreshold();
+        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -440,7 +433,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                 return;
             }
             threshold = Integer.valueOf(thresholdInput.getText());
-            if (threshold >= 0 && threshold <= 100) {
+            if (threshold >= 0 && threshold <= 255) {
                 thresholdInput.setStyle(null);
             } else {
                 threshold = -1;
@@ -454,7 +447,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
 
     @FXML
     @Override
-    protected void saveAction() {
+    public void saveAction() {
         if (sourceImages == null || sourceImages.isEmpty()) {
             return;
         }
@@ -474,8 +467,10 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         }
 
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(targetPathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
@@ -508,7 +503,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                                 PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,
                                         ++count, total, pdfFormat,
                                         threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
-                                        pageWidth, pageHeight, marginSize, headerInput.getText());
+                                        pageWidth, pageHeight, marginSize, headerInput.getText(), ditherCheck.isSelected());
                             }
                         }
                         document.save(file);
@@ -526,7 +521,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                             if (!fail && file.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (viewCheck.isSelected()) {
-                                    OpenFile.openTarget(getClass(), null, file.getAbsolutePath());
+                                    FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
                                 }
                             } else {
                                 popError(AppVaribles.getMessage("ImageCombinePdfFail"));

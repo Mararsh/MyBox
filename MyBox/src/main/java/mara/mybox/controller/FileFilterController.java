@@ -8,10 +8,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileEditInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation;
 
 /**
  * @Author Mara
@@ -101,10 +100,12 @@ public class FileFilterController extends FileEditerController {
 
     @FXML
     @Override
-    protected void saveAction() {
+    public void saveAction() {
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(FilePathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(FilePathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {

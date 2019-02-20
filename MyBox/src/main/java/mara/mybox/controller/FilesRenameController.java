@@ -24,10 +24,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileInformation;
 
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortType;
@@ -352,7 +352,7 @@ public class FilesRenameController extends FilesBatchController {
             if (accumCheck.isSelected()) {
                 String pageNumber = currentAccum + "";
                 if (fillZero.isSelected()) {
-                    pageNumber = ValueTools.fillNumber(currentAccum, digit);
+                    pageNumber = ValueTools.fillLeftZero(currentAccum, digit);
                 }
                 filename += pageNumber;
                 currentAccum++;

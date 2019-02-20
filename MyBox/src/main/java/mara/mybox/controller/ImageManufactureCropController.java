@@ -7,23 +7,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.fxml.FxmlImageTools;
-import mara.mybox.fxml.FxmlScopeTools;
-import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.fxml.image.FxmlScopeTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.IntRectangle;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.IntRectangle;
 
 /**
  * @Author Mara
@@ -35,8 +31,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
     @FXML
     protected TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
-    @FXML
-    protected Button cropOkButton;
+
     @FXML
     protected ToolBar cropBar;
 
@@ -62,10 +57,10 @@ public class ImageManufactureCropController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
-            cropRightXInput.setText(values.getImageInfo().getWidth() * 3 / 4 + "");
-            cropRightYInput.setText(values.getImageInfo().getHeight() * 3 / 4 + "");
-            cropLeftXInput.setText(values.getImageInfo().getWidth() / 4 + "");
-            cropLeftYInput.setText(values.getImageInfo().getHeight() / 4 + "");
+            cropRightXInput.setText((int) values.getImage().getWidth() * 3 / 4 + "");
+            cropRightYInput.setText((int) values.getImage().getHeight() * 3 / 4 + "");
+            cropLeftXInput.setText((int) values.getImage().getWidth() / 4 + "");
+            cropLeftYInput.setText((int) values.getImage().getHeight() / 4 + "");
             isSettingValues = false;
             checkCropValues();
 
@@ -78,9 +73,6 @@ public class ImageManufactureCropController extends ImageManufactureController {
     protected void initCropTab() {
         try {
 
-            Tooltip tips = new Tooltip(getMessage("CropComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(cropBar, tips);
             cropLeftXInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
@@ -110,7 +102,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 }
             });
 
-            cropOkButton.disableProperty().bind(
+            okButton.disableProperty().bind(
                     cropLeftXInput.styleProperty().isEqualTo(badStyle)
                             .or(cropLeftYInput.styleProperty().isEqualTo(badStyle))
                             .or(cropRightXInput.styleProperty().isEqualTo(badStyle))
@@ -133,7 +125,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
         boolean areaValid = true;
         try {
             cropLeftX = Integer.valueOf(cropLeftXInput.getText());
-            if (cropLeftX >= 0 && cropLeftX <= values.getCurrentImage().getWidth()) {
+            if (cropLeftX >= 0 && cropLeftX < values.getCurrentImage().getWidth()) {
                 cropLeftXInput.setStyle(null);
             } else {
                 cropLeftXInput.setStyle(badStyle);
@@ -146,7 +138,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropLeftY = Integer.valueOf(cropLeftYInput.getText());
-            if (cropLeftY >= 0 && cropLeftY <= values.getCurrentImage().getHeight()) {
+            if (cropLeftY >= 0 && cropLeftY < values.getCurrentImage().getHeight()) {
                 cropLeftYInput.setStyle(null);
             } else {
                 cropLeftYInput.setStyle(badStyle);
@@ -159,7 +151,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropRightX = Integer.valueOf(cropRightXInput.getText());
-            if (cropRightX >= 0 && cropRightX <= values.getCurrentImage().getWidth()) {
+            if (cropRightX >= 0 && cropRightX < values.getCurrentImage().getWidth()) {
                 cropRightXInput.setStyle(null);
             } else {
                 cropRightXInput.setStyle(badStyle);
@@ -172,7 +164,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
         try {
             cropRightY = Integer.valueOf(cropRightYInput.getText());
-            if (cropRightY >= 0 && cropRightY <= values.getCurrentImage().getHeight()) {
+            if (cropRightY >= 0 && cropRightY < values.getCurrentImage().getHeight()) {
                 cropRightYInput.setStyle(null);
             } else {
                 cropRightYInput.setStyle(badStyle);
@@ -220,7 +212,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                         @Override
                         public void run() {
                             imageView.setImage(newImage);
-//                            popInformation(AppVaribles.getMessage("CropComments"));
+//                            infoAction(AppVaribles.getMessage("CropComments"));
                         }
                     });
                 } catch (Exception e) {
@@ -237,8 +229,20 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
     @FXML
     @Override
-    public void copySelectionAction() {
-        copySelectionAction(values.getCurrentImage());
+    public void selectAllAction() {
+        isSettingValues = true;
+        cropLeftXInput.setText("0");
+        cropLeftYInput.setText("0");
+        cropRightXInput.setText((int) (values.getCurrentImage().getWidth() - 1) + "");
+        cropRightYInput.setText((int) (values.getCurrentImage().getHeight() - 1) + "");
+        isSettingValues = false;
+        checkCropValues();
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        copyAction(values.getCurrentImage());
     }
 
     @FXML
@@ -274,13 +278,14 @@ public class ImageManufactureCropController extends ImageManufactureController {
     }
 
     @FXML
-    public void cropAction() {
+    @Override
+    public void okAction() {
         imageView.setCursor(Cursor.OPEN_HAND);
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image newImage = FxmlImageTools.cropImage(values.getCurrentImage(),
+                    final Image newImage = ImageTools.cropImage(values.getCurrentImage(),
                             cropLeftX, cropLeftY, cropRightX, cropRightY);
                     if (task.isCancelled()) {
                         return null;

@@ -2,8 +2,8 @@ package mara.mybox.tools;
 
 import java.nio.charset.Charset;
 import javafx.scene.control.IndexRange;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformation.Line_Break;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation.Line_Break;
 
 /**
  * @Author Mara
@@ -326,13 +326,13 @@ public class ByteTools {
         try {
             String strV = string.trim().toLowerCase();
             int unit = 1;
-            if (strV.endsWith("kb")) {
+            if (strV.endsWith("k")) {
                 unit = 1024;
                 strV = strV.substring(0, strV.length() - 2);
-            } else if (strV.endsWith("mb")) {
+            } else if (strV.endsWith("m")) {
                 unit = 1024 * 1024;
                 strV = strV.substring(0, strV.length() - 2);
-            } else if (strV.endsWith("gb")) {
+            } else if (strV.endsWith("g")) {
                 unit = 1024 * 1024 * 1024;
                 strV = strV.substring(0, strV.length() - 2);
             }

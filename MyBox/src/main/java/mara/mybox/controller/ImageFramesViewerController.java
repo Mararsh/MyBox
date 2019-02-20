@@ -32,14 +32,14 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.objects.ImageInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.ImageFileInformation;
+import mara.mybox.data.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.ValueTools;
 
@@ -52,12 +52,12 @@ import mara.mybox.tools.ValueTools;
 public class ImageFramesViewerController extends ImageBaseController {
 
     protected SimpleBooleanProperty changed;
-    protected boolean isSettingValues;
+
 
     protected ObservableList<ImageInformation> sourceImages = FXCollections.observableArrayList();
 
     @FXML
-    protected Button extractButton, infoButton, metaButton, viewButton, editButton;
+    protected Button extractButton, metaButton, viewButton, editButton;
     @FXML
     protected TableView<ImageInformation> sourceTable;
     @FXML
@@ -196,8 +196,10 @@ public class ImageFramesViewerController extends ImageBaseController {
     protected void openAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -328,7 +330,8 @@ public class ImageFramesViewerController extends ImageBaseController {
     }
 
     @FXML
-    protected void showInfo() {
+    @Override
+    public void infoAction() {
         showImageInformation(sourceTable.getSelectionModel().getSelectedItem());
     }
 
@@ -396,8 +399,10 @@ public class ImageFramesViewerController extends ImageBaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
             fileChooser.setTitle(getMessage("FilePrefixInput"));
             final File targetFile = fileChooser.showSaveDialog(getMyStage());
@@ -418,7 +423,7 @@ public class ImageFramesViewerController extends ImageBaseController {
                         if (task.isCancelled()) {
                             return null;
                         }
-                        filename = filePrefix + "-" + ValueTools.fillNumber(i, digit) + "." + format;
+                        filename = filePrefix + "-" + ValueTools.fillLeftZero(i, digit) + "." + format;
                         BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
                         if (bufferedImage == null) {
                             continue;

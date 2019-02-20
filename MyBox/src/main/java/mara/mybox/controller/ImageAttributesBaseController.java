@@ -3,18 +3,19 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.ImageAttributes;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.ImageAttributes;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.image.ImageValueTools;
+import mara.mybox.image.ImageValue;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -39,6 +40,8 @@ public class ImageAttributesBaseController extends BaseController {
     protected HBox qualityBox, compressBox, colorBox;
     @FXML
     protected RadioButton rawSelect, pcxSelect;
+    @FXML
+    protected CheckBox ditherCheck;
 
     protected ImageAttributes attributes = new ImageAttributes();
 
@@ -109,7 +112,7 @@ public class ImageAttributesBaseController extends BaseController {
                 checkColorConversion();
             }
         });
-        FxmlTools.setRadioSelected(binaryGroup, AppVaribles.getUserConfigValue(ImageBinaryKey, AppVaribles.getMessage("Default")));
+        FxmlTools.setRadioSelected(binaryGroup, AppVaribles.getUserConfigValue(ImageBinaryKey, AppVaribles.getMessage("OTSU")));
 
         thresholdInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -119,6 +122,15 @@ public class ImageAttributesBaseController extends BaseController {
             }
         });
         thresholdInput.setText(AppVaribles.getUserConfigValue(ImageBinaryInputKey, null));
+
+        ditherCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
+                attributes.setIsDithering(newValue);
+            }
+        });
+        attributes.setIsDithering(ditherCheck.isSelected());
+        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         if (pcxSelect != null) {
             FxmlTools.quickTooltip(pcxSelect, new Tooltip(getMessage("PcxComments")));
@@ -138,7 +150,7 @@ public class ImageAttributesBaseController extends BaseController {
             attributes.setImageFormat(imageFormat);
             AppVaribles.setUserConfigValue(ImageFormatKey, imageFormat);
 
-            String[] compressionTypes = ImageValueTools.getCompressionTypes(imageFormat, attributes.getColorSpace());
+            String[] compressionTypes = ImageValue.getCompressionTypes(imageFormat, attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 
             if (compressionTypes != null && "jpg".equals(imageFormat)) {
@@ -203,7 +215,7 @@ public class ImageAttributesBaseController extends BaseController {
             }
 
 //            if ("tif".equals(imageFormat) || "bmp".equals(imageFormat)) {
-            String[] compressionTypes = ImageValueTools.getCompressionTypes(attributes.getImageFormat(), attributes.getColorSpace());
+            String[] compressionTypes = ImageValue.getCompressionTypes(attributes.getImageFormat(), attributes.getColorSpace());
             checkCompressionTypes(compressionTypes);
 //            }
 
@@ -285,7 +297,7 @@ public class ImageAttributesBaseController extends BaseController {
             int inputValue;
             try {
                 inputValue = Integer.parseInt(thresholdInput.getText());
-                if (inputValue >= 0 && inputValue <= 100) {
+                if (inputValue >= 0 && inputValue <= 255) {
                     AppVaribles.setUserConfigValue(ImageBinaryInputKey, inputValue + "");
                 } else {
                     inputValue = -1;

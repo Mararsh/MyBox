@@ -16,12 +16,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.imagefile.ImageGifFile;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.image.file.ImageGifFile;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,11 +30,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -44,7 +45,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -58,7 +59,7 @@ public class PdfMergeController extends PdfBaseController {
     private File targetFile;
 
     @FXML
-    private Button openTargetButton, saveButton;
+    private Button openTargetButton;
     @FXML
     private TableView<FileInformation> sourceTable;
     @FXML
@@ -184,8 +185,10 @@ public class PdfMergeController extends PdfBaseController {
     private void addAction(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -210,7 +213,8 @@ public class PdfMergeController extends PdfBaseController {
     }
 
     @FXML
-    private void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -245,7 +249,7 @@ public class PdfMergeController extends PdfBaseController {
             }
 
             FileInformation info = sourceFilesInformation.get(index);
-            OpenFile.openTarget(getClass(), null, info.getFile().getAbsolutePath());
+            FxmlStage.openTarget(getClass(), null, info.getFile().getAbsolutePath());
         }
     }
 
@@ -344,8 +348,10 @@ public class PdfMergeController extends PdfBaseController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -370,11 +376,12 @@ public class PdfMergeController extends PdfBaseController {
             return;
         }
         openTargetButton.setDisable(false);
-        OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
+        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 
     @FXML
-    protected void saveAction(ActionEvent event) {
+    @Override
+    public void saveAction() {
         if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()
                 || targetFile == null) {
             return;
@@ -387,7 +394,7 @@ public class PdfMergeController extends PdfBaseController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getTempPathFile());
+                    final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
 
                     PDFMergerUtility mergePdf = new PDFMergerUtility();
                     for (FileInformation source : sourceFilesInformation) {
@@ -444,7 +451,7 @@ public class PdfMergeController extends PdfBaseController {
                     public void run() {
                         try {
                             if (!fail && targetFile.exists()) {
-                                OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
+                                FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
                                 openTargetButton.setDisable(false);
                             } else {
                                 popError(errorString);

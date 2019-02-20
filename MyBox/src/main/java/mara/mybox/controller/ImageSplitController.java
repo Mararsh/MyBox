@@ -39,19 +39,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.image.ImageTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageValueTools;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageTiffFile;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageAttributes;
+import mara.mybox.image.ImageValue;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageTiffFile;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
@@ -69,7 +69,7 @@ public class ImageSplitController extends ImageViewerController {
     private List<Integer> rows, cols;
     private int rowsNumber, colsNumber, width, height,
             marginSize, pageWidth, pageHeight, jpegQuality, threshold;
-    private boolean isImageSize, isSettingValues;
+    private boolean isImageSize;
     private double scale;
     private PdfImageFormat pdfFormat;
     protected SimpleBooleanProperty splitValid;
@@ -86,12 +86,12 @@ public class ImageSplitController extends ImageViewerController {
     @FXML
     private ToggleGroup splitGroup, sizeGroup, formatGroup, colorGroup, compressionGroup, binaryGroup;
     @FXML
-    private Button imagesButton, tiffButton, pdfButton, okButton;
+    private Button imagesButton, tiffButton, pdfButton;
     @FXML
     private TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             customWidthInput, customHeightInput, authorInput, pdfThresholdInput, headerInput, tiffThresholdInput;
     @FXML
-    private CheckBox displaySizeCheck, pageNumberCheck;
+    private CheckBox displaySizeCheck, pageNumberCheck, pdfDitherCheck, tiffDitherCheck;
     @FXML
     private ComboBox<Integer> lineWidthBox;
     @FXML
@@ -434,6 +434,8 @@ public class ImageSplitController extends ImageViewerController {
                 }
             });
 
+            FxmlTools.setComments(tiffDitherCheck, new Tooltip(getMessage("DitherComments")));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -468,7 +470,7 @@ public class ImageSplitController extends ImageViewerController {
             compressionBox.getChildren().clear();
             compressionGroup = new ToggleGroup();
             String[] compressionTypes
-                    = ImageValueTools.getCompressionTypes("tif", attributes.getColorSpace());
+                    = ImageValue.getCompressionTypes("tif", attributes.getColorSpace());
             for (String ctype : compressionTypes) {
                 if (ctype.equals("ZLib")) { // This type looks not work for mutiple frames tiff file
                     continue;
@@ -527,7 +529,7 @@ public class ImageSplitController extends ImageViewerController {
                 return;
             }
             int inputValue = Integer.parseInt(tiffThresholdInput.getText());
-            if (inputValue >= 0 && inputValue <= 100) {
+            if (inputValue >= 0 && inputValue <= 255) {
                 attributes.setThreshold(inputValue);
                 tiffThresholdInput.setStyle(null);
             } else {
@@ -645,6 +647,8 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
         checkPdfThreshold();
+
+        FxmlTools.setComments(pdfDitherCheck, new Tooltip(getMessage("DitherComments")));
 
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
@@ -877,7 +881,7 @@ public class ImageSplitController extends ImageViewerController {
                 return;
             }
             threshold = Integer.valueOf(pdfThresholdInput.getText());
-            if (threshold >= 0 && threshold <= 100) {
+            if (threshold >= 0 && threshold <= 255) {
                 pdfThresholdInput.setStyle(null);
             } else {
                 threshold = -1;
@@ -949,7 +953,8 @@ public class ImageSplitController extends ImageViewerController {
     }
 
     @FXML
-    private void okAction(ActionEvent event) {
+    @Override
+    public void okAction() {
         if (splitMethod == SplitMethod.ByNumber) {
             divideImageByNumber();
         } else if (splitMethod == SplitMethod.BySize) {
@@ -1127,7 +1132,7 @@ public class ImageSplitController extends ImageViewerController {
             protected Void call() throws Exception {
                 ValueTools.sortList(rows);
                 ValueTools.sortList(cols);
-                final Image newImage = FxmlImageTools.indicateSplit(image, rows, cols,
+                final Image newImage = ImageTools.indicateSplit(image, rows, cols,
                         lineColorPicker.getValue(), lineWidthBox.getValue(),
                         displaySizeCheck.isSelected(), scale);
                 if (task.isCancelled()) {
@@ -1171,6 +1176,7 @@ public class ImageSplitController extends ImageViewerController {
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureSampled"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -1181,8 +1187,10 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(targetPathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(ext);
         if (diagTitle != null) {
             fileChooser.setTitle(diagTitle);
@@ -1214,7 +1222,7 @@ public class ImageSplitController extends ImageViewerController {
                 final String filename = sourceFile.getAbsolutePath();
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = FxmlImageTools.getBufferedImage(image);
+                    wholeSource = ImageTools.getBufferedImage(image);
                 }
                 for (int i = 0; i < rows.size() - 1; i++) {
                     if (task.isCancelled()) {
@@ -1232,7 +1240,7 @@ public class ImageSplitController extends ImageViewerController {
                         if (imageInformation.isIsSampled()) {
                             target = ImageFileReaders.readRectangle(sourceFormat, filename, x1, y1, x2, y2);
                         } else {
-                            target = ImageConvertTools.cropImage(wholeSource, x1, y1, x2, y2);
+                            target = ImageConvert.cropImage(wholeSource, x1, y1, x2, y2);
                         }
                         String fileName = filePrefix + "_"
                                 + (rows.size() - 1) + "x" + (cols.size() - 1) + "_"
@@ -1271,6 +1279,7 @@ public class ImageSplitController extends ImageViewerController {
             protected Void call() throws Exception {
                 final String sourceFormat = imageInformation.getImageFormat();
                 final String sourcefile = sourceFile.getAbsolutePath();
+                attributes.setIsDithering(pdfDitherCheck.isSelected());
                 ok = PdfTools.writeSplitImages(sourceFormat, sourcefile, imageInformation,
                         rows, cols, attributes, targetFile,
                         pdfFormat, fontBox.getSelectionModel().getSelectedItem(), authorInput.getText(),
@@ -1316,6 +1325,7 @@ public class ImageSplitController extends ImageViewerController {
             protected Void call() throws Exception {
                 final String sourceFormat = imageInformation.getImageFormat();
                 final String filename = sourceFile.getAbsolutePath();
+                attributes.setIsDithering(tiffDitherCheck.isSelected());
                 ok = ImageTiffFile.writeSplitImages(sourceFormat, filename,
                         imageInformation, rows, cols, attributes, targetFile);
                 if (task.isCancelled()) {

@@ -98,10 +98,15 @@
                                                 <Insets right="10.0" />
                                             </padding>
                                         </Label>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label text="%Format" visible="false" />
                                         <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
-                                        <TextField fx:id="thresholdInput" prefWidth="60.0" />
-                                        <Label text="\%" />
+                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                         <Label text="%EmptyForDefault" />
+                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                     </children>
                                 </HBox>
                             </children>
@@ -206,17 +211,21 @@
                 </TitledPane>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start" />
-                        <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
+                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start"
+                                styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
                             <HBox.margin>
                                 <Insets />
                             </HBox.margin>
                         </Button>
+                        <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
                         <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
                         <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
                         <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
                     </children>
+                    <VBox.margin>
+                        <Insets bottom="15.0" top="10.0" />
+                    </VBox.margin>
                 </HBox>
             </children>
             <BorderPane.margin>

@@ -21,11 +21,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.image.ImageTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
@@ -80,7 +80,8 @@ public class ImageManufactureTextController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
-            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+            if (values.getImageInfo() != null
+                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
                 waterTransparentBox.setDisable(true);
                 waterTransparentBox.getSelectionModel().select("1.0");
             } else {
@@ -323,7 +324,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
                 } else {
                     font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, waterSize);
                 }
-                final Image newImage = FxmlImageTools.addText(values.getCurrentImage(), waterInput.getText(),
+                final Image newImage = ImageTools.addText(values.getCurrentImage(), waterInput.getText(),
                         font, waterColorPicker.getValue(), waterX, waterY,
                         waterTransparent, waterShadow, waterAngle, outlineCheck.isSelected());
                 if (task.isCancelled()) {

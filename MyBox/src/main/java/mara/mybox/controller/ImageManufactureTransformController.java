@@ -16,11 +16,11 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.FxmlTransformTools;
+import mara.mybox.fxml.image.FxmlTransformTools;
 
 /**
  * @Author Mara

@@ -7,7 +7,7 @@
 每个版本编译好的包已发布在Release目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-4.8-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-4.8-exe.zip) 。
+[MyBox-4.9-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.9/MyBox-4.9-exe.zip) 。
 双击“MyBox.exe”即可运行MyBox。
 可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
 
@@ -15,10 +15,10 @@
 
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-4.8-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-4.8-jar.zip) ，执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-4.8.jar</CODE></PRE>
+[MyBox-4.9-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v4.9/MyBox-4.9-jar.zip) ，执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-4.9.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-4.8.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-4.9.jar   /tmp/a1.jpg</CODE></PRE>
 
 ## 资源地址
 [项目主页：https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)
@@ -45,7 +45,9 @@
 
 
 ## 当前版本
-当前是版本4.8，已实现的特点：
+当前是版本4.9。我家急事，来不及更新4.9的文档和介绍，以后补上。
+
+版本4.8已实现的特点：
 ```
 1. PDF工具：
 	A. 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
@@ -165,6 +167,11 @@
 
 ## 开发日志
 ```
+2019-2-20 版本4.9 图像对比度处理，可选算法。
+图像的统计数据分析，包含各颜色通道的均值/方差/斜率/中值/众数以及直方图。
+系统粘贴板内图像的记录工具。
+（稍后更新准确的描述）
+
 2019-1-29 版本4.8 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
 文本/字节编辑器的“定位”功能：跳转到指定的字符/字节位置、或跳转到指定的行号。
 切割文件：按文件数、按字节数、或按起止列表把文件切割为多个文件。

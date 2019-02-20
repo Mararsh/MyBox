@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,10 +14,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.ByteTools;
 
 /**
@@ -61,8 +62,8 @@ public class FileMergeController extends FilesBatchController {
     protected void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if ( path.exists() )  fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -172,13 +173,13 @@ public class FileMergeController extends FilesBatchController {
                     AppVaribles.getMessage("BytesEditer"), false, true);
             controller.openFile(file);
         } else {
-            OpenFile.openTarget(getClass(), null, file.getAbsolutePath());
+            FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
         }
     }
 
     @Override
     protected void openTarget(ActionEvent event) {
-        OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
+        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 
 }

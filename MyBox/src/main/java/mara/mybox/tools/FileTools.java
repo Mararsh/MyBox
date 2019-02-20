@@ -18,12 +18,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.CommonValues.UserFilePath;
-import mara.mybox.objects.FileSynchronizeAttributes;
-import static mara.mybox.objects.CommonValues.TempPath;
-import mara.mybox.objects.FileInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileSynchronizeAttributes;
+import mara.mybox.data.FileInformation;
+import static mara.mybox.value.CommonValues.AppTempPath;
+import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
  * @Author mara
@@ -117,9 +117,9 @@ public class FileTools {
     }
 
     public static File getTempFile() {
-        File file = new File(TempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
+        File file = new File(AppTempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
         while (file.exists()) {
-            file = new File(TempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
+            file = new File(AppTempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
         }
         return file;
     }
@@ -147,9 +147,7 @@ public class FileTools {
     }
 
     public static File getHelpFile(String helpFile) {
-
-        String filepath = UserFilePath + "/" + helpFile;
-        File file = new File(UserFilePath + "/" + helpFile);
+        File file = new File(AppDataRoot + "/" + helpFile);
         if (file.exists()) {
             return file;
         }
@@ -492,7 +490,7 @@ public class FileTools {
                 while ((fileIndex < filesNumber)
                         && (bufLen = inputStream.read(buf)) != -1) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {
@@ -508,7 +506,7 @@ public class FileTools {
                 bufLen = inputStream.read(buf);
                 if (bufLen > 0) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         outputStream.write(buf);
@@ -541,7 +539,7 @@ public class FileTools {
                 int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillNumber(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {

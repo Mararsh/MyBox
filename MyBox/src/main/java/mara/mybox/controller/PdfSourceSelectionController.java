@@ -5,6 +5,7 @@
  */
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -24,10 +25,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.PdfInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.PdfInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -42,7 +43,7 @@ public class PdfSourceSelectionController extends BaseController {
     protected PdfInformation pdfInformation;
 
     @FXML
-    protected Button sourceSelectButton, fileInformationButton, pdfOpenButon;
+    protected Button sourceSelectButton, pdfOpenButon;
     @FXML
     protected TextField fromPageInput, toPageInput;
     @FXML
@@ -97,8 +98,10 @@ public class PdfSourceSelectionController extends BaseController {
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(parentController.sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(parentController.sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -120,7 +123,8 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     @FXML
-    protected void showFileInformation(ActionEvent event) {
+    @Override
+    public void infoAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -159,7 +163,7 @@ public class PdfSourceSelectionController extends BaseController {
         if (pdfInformation == null) {
             return;
         }
-        OpenFile.openPdfViewer(getClass(), null, pdfInformation.getFile());
+        FxmlStage.openPdfViewer(getClass(), null, pdfInformation.getFile());
     }
 
     public void loadPdfInformation() {
@@ -167,7 +171,7 @@ public class PdfSourceSelectionController extends BaseController {
             return;
         }
         toPageInput.setText("");
-        fileInformationButton.setDisable(true);
+        infoButton.setDisable(true);
 
         pdfInformation = new PdfInformation(sourceFile);
         task = new Task<Void>() {
@@ -182,7 +186,7 @@ public class PdfSourceSelectionController extends BaseController {
                     public void run() {
                         if (pdfInformation != null) {
                             toPageInput.setText(pdfInformation.getNumberOfPages() + "");
-                            fileInformationButton.setDisable(false);
+                            infoButton.setDisable(false);
                             pdfOpenButon.setDisable(false);
                         }
                         parentController.sourceFileChanged(sourceFile);
@@ -225,12 +229,12 @@ public class PdfSourceSelectionController extends BaseController {
         this.sourceSelectButton = sourceSelectButton;
     }
 
-    public Button getFileInformationButton() {
-        return fileInformationButton;
+    public Button getInfoButton() {
+        return infoButton;
     }
 
-    public void setFileInformationButton(Button fileInformationButton) {
-        this.fileInformationButton = fileInformationButton;
+    public void setInfoButton(Button infoButton) {
+        this.infoButton = infoButton;
     }
 
     public TextField getFromPageInput() {

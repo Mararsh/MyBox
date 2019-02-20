@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.control.IndexRange;
-import mara.mybox.objects.FileEditInformation;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformation.Line_Break;
+import mara.mybox.data.FileEditInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation.Line_Break;
 
 import thridparty.EncodingDetect;
 

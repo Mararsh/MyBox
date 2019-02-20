@@ -109,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </HBox.margin>
                                                 </RadioButton>
                                                 <TextField fx:id="bytesNumberInput" prefWidth="160.0" />
-                                    <Label text="%BytesValuesComments" />
+                                    <Label text="%AbbrevValuesComments" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">

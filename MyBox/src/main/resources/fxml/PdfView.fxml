@@ -53,54 +53,54 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="sourceBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar HBox.hgrow="NEVER">
+                        <ToolBar HBox.hgrow="ALWAYS">
                             <items>
                                 <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Open" />
+                                <Label fx:id="tipsLabel" text="%Tips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css">
+                                    <padding>
+                                        <Insets left="10.0" />
+                                    </padding>
+                                </Label>
                             </items>
                         </ToolBar>
-                  <ToolBar fx:id="optionBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                    <items>
-                      <Button mnemonicParsing="false" visible="false" />
-                        <CheckBox fx:id="transCheck" mnemonicParsing="false" text="%TransparentBackground" />
-                        <CheckBox fx:id="selectCheck" mnemonicParsing="false" text="%Select" wrapText="true" />
-                        <Label fx:id="cropLabel" text="%CropLabel">
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </Label>
-                    </items>
-                  </ToolBar>
-                        <ToolBar fx:id="infoBar" HBox.hgrow="NEVER">
-                            <items>
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#popPdfInformation" prefHeight="30.0" text="%FileInformation" />
-                            </items>
-                        </ToolBar>
+                        <HBox fx:id="operation1Box" alignment="CENTER_LEFT">
+                            <children>
+                                <ToolBar HBox.hgrow="NEVER">
+                                    <items>
+                                        <CheckBox fx:id="transCheck" mnemonicParsing="false" text="%TransparentBackground" />
+                                        <CheckBox fx:id="openSaveCheck" mnemonicParsing="false" text="%OpenAfterSave" />
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%FileInformation" />
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%SaveAs" />
+                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
+                                    </items>
+                                </ToolBar>
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
-                <HBox fx:id="opeBox" alignment="CENTER_LEFT">
+                <HBox fx:id="operation2Box" alignment="CENTER_LEFT">
                     <children>
-                        <ToolBar fx:id="cropBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                     <items>
-                                <Button fx:id="copySelectionButton" mnemonicParsing="false" onAction="#copySelectionAction" text="%Copy" />
-                                <Button fx:id="cropButton" mnemonicParsing="false" onAction="#cropAction" text="%CropAs" />
-                                <Button fx:id="clearSelectionButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
-                     </items>
-                        </ToolBar>
-                        <ToolBar fx:id="toolbar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                             <items>
-                        <Label text="dpi" />
-                        <ComboBox fx:id="dpiBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                                <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                        <Label text="\%" />
+                                <CheckBox fx:id="cropCheck" mnemonicParsing="false" text="%Crop" wrapText="true" />
+                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                            <items>
+                                <Label text="dpi" />
+                                <ComboBox fx:id="dpiBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Label text="\%" />
                                 <ComboBox fx:id="sizeBox" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                 <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
                                 <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
                                 <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
                             </items>
                         </ToolBar>
                     </children>
@@ -114,19 +114,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ImageView>
                     </content>
                 </ScrollPane>
-                <HBox fx:id="navBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox fx:id="pageNavBox" alignment="CENTER_LEFT" disable="true" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
                             <items>
                                 <Button mnemonicParsing="false" text=" " visible="false" />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="pageBar" HBox.hgrow="NEVER">
+                        <ToolBar HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="firstButtonButton" mnemonicParsing="false" onAction="#firstPageAction" text="%FirstPage" />
-                                <Button fx:id="perviousPageButton" mnemonicParsing="false" onAction="#previousPageAction" text="%PreviousPage" />
-                                <Button fx:id="nextPageButton" mnemonicParsing="false" onAction="#nextPageAction" text="%NextPage" />
-                                <Button fx:id="lastPageButton" mnemonicParsing="false" onAction="#lastPageAction" text="%LastPage" />
+                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction" text="%FirstPage" />
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousPage" />
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextPage" />
+                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction" text="%LastPage" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />

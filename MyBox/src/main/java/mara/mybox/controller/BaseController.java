@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
@@ -9,7 +10,6 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -30,10 +30,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -42,16 +45,16 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.CommonValues.UserFilePath;
-import mara.mybox.objects.ImageInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.ImageInformation;
+import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
  * @Author Mara
@@ -60,6 +63,8 @@ import mara.mybox.objects.ImageInformation;
  * @License Apache License Version 2.0
  */
 public class BaseController implements Initializable {
+
+    protected String TipsLabelKey;
 
     protected List<FileChooser.ExtensionFilter> fileExtensionFilter;
 
@@ -71,7 +76,7 @@ public class BaseController implements Initializable {
     protected Timer popupTimer, timer;
     protected Popup popup;
 
-    protected boolean isPreview, targetIsFile, paused;
+    protected boolean isPreview, targetIsFile, paused, isSettingValues;
     protected File sourceFile, targetPath;
     protected List<File> sourceFiles;
     protected ObservableList<FileInformation> sourceFilesInformation;
@@ -95,7 +100,9 @@ public class BaseController implements Initializable {
     @FXML
     protected OperationController operationBarController;
     @FXML
-    protected Button previewButton;
+    protected Button newButton, copyButton, deleteButton, saveButton, infoButton, selectAllButton,
+            imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, okButton, startButton,
+            firstButton, lastButton, previousButton, nextButton, previewButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -103,7 +110,7 @@ public class BaseController implements Initializable {
     @FXML
     protected CheckBox fillZero, subdirCheck, appendDensity, appendColor, appendCompressionType, appendQuality, appendSize;
     @FXML
-    protected Label bottomLabel;
+    protected Label bottomLabel, tipsLabel;
 
     public BaseController() {
         LastPathKey = "LastPathKey";
@@ -139,6 +146,7 @@ public class BaseController implements Initializable {
             }
 
             if (thisPane != null) {
+                thisPane.setStyle("-fx-font-size: " + AppVaribles.getPaneFontSize() + "px;");
                 thisPane.setOnKeyReleased(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent event) {
@@ -146,6 +154,117 @@ public class BaseController implements Initializable {
                     }
                 });
             }
+
+            setTips();
+            initInputs();
+
+            initializeNext();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void setTips() {
+
+        if (tipsLabel != null && TipsLabelKey != null) {
+            Tooltip tips = new Tooltip(getMessage(TipsLabelKey));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(tipsLabel, tips);
+        }
+
+        if (okButton != null) {
+            Tooltip tips = new Tooltip("CTRL+g");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(okButton, tips);
+        }
+
+        if (newButton != null) {
+            Tooltip tips = new Tooltip("CTRL+n");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(newButton, tips);
+        }
+
+        if (deleteButton != null) {
+            Tooltip tips = new Tooltip("CTRL+d / DELETE");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(deleteButton, tips);
+        }
+
+        if (copyButton != null) {
+            Tooltip tips = new Tooltip("CTRL+c");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(copyButton, tips);
+        }
+
+        if (saveButton != null) {
+            Tooltip tips = new Tooltip("CTRL+s");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(saveButton, tips);
+
+        }
+
+        if (infoButton != null) {
+            Tooltip tips = new Tooltip("CTRL+i");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(infoButton, tips);
+        }
+
+        if (selectAllButton != null) {
+            Tooltip tips = new Tooltip("CTRL+a");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(selectAllButton, tips);
+        }
+
+        if (nextButton != null) {
+            Tooltip tips = new Tooltip("PAGE DOWN");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(nextButton, tips);
+        }
+        if (previousButton != null) {
+            Tooltip tips = new Tooltip("PAGE UP");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(previousButton, tips);
+        }
+        if (firstButton != null) {
+            Tooltip tips = new Tooltip("HOME");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(firstButton, tips);
+        }
+        if (lastButton != null) {
+            Tooltip tips = new Tooltip("END");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(lastButton, tips);
+        }
+
+        if (imageSizeButton != null) {
+            Tooltip tips = new Tooltip("CTRL+1");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(imageSizeButton, tips);
+        }
+
+        if (paneSizeButton != null) {
+            Tooltip tips = new Tooltip("CTRL+2");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(paneSizeButton, tips);
+
+        }
+
+        if (zoomInButton != null) {
+            Tooltip tips = new Tooltip("CTRL+3");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(zoomInButton, tips);
+
+        }
+
+        if (zoomOutButton != null) {
+            Tooltip tips = new Tooltip("CTRL+4");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(zoomOutButton, tips);
+        }
+    }
+
+    protected void initInputs() {
+        try {
 
             if (sourceFileInput != null) {
                 sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
@@ -171,7 +290,7 @@ public class BaseController implements Initializable {
                         } else {
                             AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
                             if (targetPathInput != null && targetPathInput.getText().isEmpty()) {
-                                targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+                                targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
                             }
                             if (targetPrefixInput != null) {
                                 targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
@@ -218,7 +337,7 @@ public class BaseController implements Initializable {
                             }
                         }
                     });
-                    targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+                    targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
                 }
             }
 
@@ -270,22 +389,126 @@ public class BaseController implements Initializable {
                 acumFromInput.setText("1");
             }
 
-            initializeNext();
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     protected void keyEventsHandler(KeyEvent event) {
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
         if (event.isControlDown()) {
-            if ("m".equals(key) || "M".equals(key)) {  // ctrl-m
-                if (mainMenuController != null) {
-                    mainMenuController.getShowCommentsCheck().setSelected(!mainMenuController.getShowCommentsCheck().isSelected());
-                    mainMenuController.checkShowComments();
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
+            switch (key) {
+                case "n":
+                case "N":
+                    if (newButton != null && !newButton.isDisabled()) {
+                        newAction();
+                    }
+                    break;
+                case "g":
+                case "G":
+                    if (okButton != null && !okButton.isDisabled()) {
+                        okAction();
+                    }
+                    break;
+                case "c":
+                case "C":
+                    if (copyButton != null && !copyButton.isDisabled()) {
+                        copyAction();
+                    }
+                    break;
+                case "s":
+                case "S":
+                    if (saveButton != null && !saveButton.isDisabled()) {
+                        saveAction();
+                    }
+                    break;
+                case "i":
+                case "I":
+                    if (infoButton != null && !infoButton.isDisabled()) {
+                        infoAction();
+                    }
+                    break;
+                case "d":
+                case "D":
+                    if (deleteButton != null && !deleteButton.isDisabled()) {
+                        deleteAction();
+                    }
+                    break;
+                case "a":
+                case "A":
+                    if (selectAllButton != null && !selectAllButton.isDisabled()) {
+                        selectAllAction();
+                    }
+                    break;
+                case "m":
+                case "M":
+                    if (mainMenuController != null) {
+                        mainMenuController.getShowCommentsCheck().setSelected(!mainMenuController.getShowCommentsCheck().isSelected());
+                        mainMenuController.checkShowComments();
+                    }
+                    break;
+                case "1":
+                    if (imageSizeButton != null && !imageSizeButton.isDisabled()) {
+                        imageSize();
+                    }
+                    break;
+                case "2":
+                    if (paneSizeButton != null && !paneSizeButton.isDisabled()) {
+                        paneSize();
+                    }
+                    break;
+                case "3":
+                    if (zoomInButton != null && !zoomInButton.isDisabled()) {
+                        zoomIn();
+                    }
+                    break;
+                case "4":
+                    if (zoomOutButton != null && !zoomOutButton.isDisabled()) {
+                        zoomOut();
+                    }
+                    break;
+                case "-":
+                    setPaneFontSize(AppVaribles.getPaneFontSize() - 1);
+                    break;
+                case "=":
+                    setPaneFontSize(AppVaribles.getPaneFontSize() + 1);
+                    break;
+            }
+
+        } else {
+            if (null != event.getCode()) {
+                switch (event.getCode()) {
+                    case DELETE:
+                        if (deleteButton != null && !deleteButton.isDisabled()) {
+                            deleteAction();
+                        }
+                        break;
+                    case HOME:
+                        if (firstButton != null && !firstButton.isDisabled()) {
+                            firstAction();
+                        }
+                        break;
+                    case END:
+                        if (lastButton != null && !lastButton.isDisabled()) {
+                            lastAction();
+                        }
+                        break;
+                    case PAGE_UP:
+                        if (previousButton != null && !previousButton.isDisabled()) {
+                            previousAction();
+                        }
+                        break;
+                    case PAGE_DOWN:
+                        if (nextButton != null && !nextButton.isDisabled()) {
+                            nextAction();
+                        }
+                        break;
+                    case F5:
+                        closeStage();
+                        break;
                 }
             }
         }
@@ -319,12 +542,39 @@ public class BaseController implements Initializable {
         }
     }
 
+    protected boolean setPaneFontSize(int size) {
+        if (thisPane == null || size < 9 || size > 22
+                || size == AppVaribles.getPaneFontSize()) {
+            return false;
+        }
+        AppVaribles.setPaneFontSize(size);
+        thisPane.setStyle("-fx-font-size: " + size + "px;");
+        if (parentController != null && parentController.getThisPane() != null) {
+            parentController.getThisPane().setStyle("-fx-font-size: " + size + "px;");
+        }
+        return true;
+    }
+
+    public void refresh() {
+        if (parentController != null) {
+            parentController.refresh();
+        }
+        if (myFxml.contains("ImageManufacture") && !myFxml.contains("ImageManufactureBatch")) {
+            reloadStage(CommonValues.ImageManufactureFileFxml, getParentController().getMyStage().getTitle());
+        } else {
+            reloadStage(myFxml, getBaseTitle());
+        }
+
+    }
+
     @FXML
     protected void selectSourceFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -355,8 +605,10 @@ public class BaseController implements Initializable {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            chooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
@@ -382,7 +634,7 @@ public class BaseController implements Initializable {
             }
 
             if (targetIsFile && finalTargetName != null) {
-                OpenFile.openTarget(getClass(), null, finalTargetName);
+                FxmlStage.openTarget(getClass(), null, finalTargetName);
 
             } else {
                 if (targetSelectionController.targetPathInput != null) {
@@ -411,7 +663,83 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    protected void startProcess(ActionEvent event) {
+    public void okAction() {
+
+    }
+
+    @FXML
+    public void startAction() {
+
+    }
+
+    @FXML
+    public void newAction() {
+
+    }
+
+    @FXML
+    public void copyAction() {
+
+    }
+
+    @FXML
+    public void saveAction() {
+
+    }
+
+    @FXML
+    public void deleteAction() {
+
+    }
+
+    @FXML
+    public void infoAction() {
+
+    }
+
+    @FXML
+    public void selectAllAction() {
+
+    }
+
+    @FXML
+    public void nextAction() {
+
+    }
+
+    @FXML
+    public void previousAction() {
+
+    }
+
+    @FXML
+    public void firstAction() {
+
+    }
+
+    @FXML
+    public void lastAction() {
+
+    }
+
+    @FXML
+    public void imageSize() {
+
+    }
+
+    @FXML
+    public void paneSize() {
+
+    }
+
+    @FXML
+    public void zoomIn() {
+
+    }
+
+    @FXML
+    public void zoomOut() {
+
     }
 
     @FXML
@@ -444,20 +772,62 @@ public class BaseController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             return;
         }
         DerbyBase.clearData();
-        clearTempFiles();
+        cleanAppPath();
         AppVaribles.initAppVaribles();
         popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    protected void cleanAppPath() {
+        try {
+            File userPath = new File(AppDataRoot);
+            if (userPath.exists()) {
+                File[] files = userPath.listFiles();
+                for (File f : files) {
+                    if (f.isFile()) {
+                        f.delete();
+                    } else if (!CommonValues.AppDataPaths.contains(f)) {
+                        FileTools.deleteDir(f);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void clearUserTempFiles() {
+        try {
+            File tempPath = AppVaribles.getUserTempPath();
+            if (tempPath.exists()) {
+                FileTools.deleteDir(tempPath);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    protected void clearSystemTempFiles() {
+        try {
+            if (CommonValues.AppTempPath.exists()) {
+                FileTools.deleteDir(CommonValues.AppTempPath);
+            } else {
+                CommonValues.AppTempPath.mkdirs();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     @FXML
     protected void openUserPath(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new File(UserFilePath).toURI());
+            Desktop.getDesktop().browse(new File(AppDataRoot).toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -480,7 +850,7 @@ public class BaseController implements Initializable {
         try {
             String lang = AppVaribles.getLanguage();
             String latest = AppVaribles.getSystemConfigValue("HelpsVersion", "");
-            String newVersion = "4.8";
+            String newVersion = "4.9";
             boolean updated = latest.equals(newVersion);
             if (!updated) {
                 logger.debug("Updating Helps " + newVersion);
@@ -502,27 +872,11 @@ public class BaseController implements Initializable {
 
     protected void clearHelps() {
         try {
-            File file = new File(UserFilePath);
+            File file = new File(AppDataRoot);
             if (file.exists()) {
                 File[] files = file.listFiles();
                 for (File f : files) {
                     if (f.getAbsolutePath().endsWith(".html")) {
-                        f.delete();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void clearTempFiles() {
-        try {
-            File file = new File(UserFilePath);
-            if (file.exists()) {
-                File[] files = file.listFiles();
-                for (File f : files) {
-                    if (f.isFile()) {
                         f.delete();
                     }
                 }
@@ -612,7 +966,7 @@ public class BaseController implements Initializable {
     }
 
     public BaseController openStage(String newFxml, String title, boolean isOwned, boolean monitorClosing) {
-        return OpenFile.openNewStage(getClass(), getMyStage(), newFxml, title, isOwned, monitorClosing);
+        return FxmlStage.openNewStage(getClass(), getMyStage(), newFxml, title, isOwned, monitorClosing);
     }
 
     public boolean closeStage() {
@@ -626,9 +980,6 @@ public class BaseController implements Initializable {
 
     public boolean stageClosing() {
         try {
-//            logger.debug("stageClosing:" + getMyStage().getWidth() + "," + myStage.getHeight());
-//            logger.debug(Platform.isImplicitExit());
-//            logger.debug("stageClosing:" + getClass());
 
             hidePopup();
             if (timer != null) {
@@ -638,8 +989,8 @@ public class BaseController implements Initializable {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
                 alert.setContentText(AppVaribles.getMessage("TaskRunning"));
+                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 Optional<ButtonType> result = alert.showAndWait();
-                logger.debug(result.get());
                 if (result.get() == ButtonType.OK && task != null) {
                     task.cancel();
                 } else {
@@ -647,39 +998,13 @@ public class BaseController implements Initializable {
                 }
             }
 
-            if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
-                if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
-                    for (Long key : AppVaribles.scheduledTasks.keySet()) {
-                        ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
-                        future.cancel(true);
-                    }
-                    AppVaribles.scheduledTasks = null;
-                    if (AppVaribles.executorService != null) {
-                        AppVaribles.executorService.shutdownNow();
-                        AppVaribles.executorService = null;
-                    }
-                }
-
-            } else {
-                if (AppVaribles.scheduledTasks != null) {
-                    AppVaribles.scheduledTasks = null;
-                }
-                if (AppVaribles.executorService != null) {
-                    AppVaribles.executorService.shutdownNow();
-                    AppVaribles.executorService = null;
-                }
-            }
-
             if (backgroundTask != null && backgroundTask.isRunning()) {
                 backgroundTask.cancel();
             }
 
-            if (AppVaribles.scheduledTasks == null) {
-                Platform.setImplicitExit(true);
-            }
-//            logger.debug(Platform.isImplicitExit());
-            return true;
+            Platform.setImplicitExit(AppVaribles.scheduledTasks == null);
 
+            return true;
         } catch (Exception e) {
             logger.debug(e.toString());
             return false;
@@ -688,39 +1013,15 @@ public class BaseController implements Initializable {
     }
 
     public void alertError(String information) {
-        try {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(null);
-            alert.setContentText(information);
-            alert.showAndWait();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        FxmlStage.alertError(getMyStage(), information);
     }
 
     public void alertWarning(String information) {
-        try {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(null);
-            alert.setContentText(information);
-            alert.showAndWait();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        FxmlStage.alertError(getMyStage(), information);
     }
 
     public void alertInformation(String information) {
-        try {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(null);
-            alert.setContentText(information);
-            alert.showAndWait();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
+        FxmlStage.alertInformation(getMyStage(), information);
     }
 
     public void popInformation(String text) {
@@ -843,12 +1144,12 @@ public class BaseController implements Initializable {
     }
 
     public void openImageManufacture(String filename) {
-        OpenFile.openImageManufacture(getClass(), null, new File(filename));
+        FxmlStage.openImageManufacture(getClass(), null, new File(filename));
     }
 
     public void openImageViewer(Image image) {
         try {
-            final ImageViewerController controller = OpenFile.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
             if (controller != null) {
                 controller.loadImage(image);
             }
@@ -859,7 +1160,7 @@ public class BaseController implements Initializable {
 
     public void openImageViewer(ImageInformation info) {
         try {
-            final ImageViewerController controller = OpenFile.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
             if (controller != null) {
                 controller.loadImage(info);
             }
@@ -869,7 +1170,7 @@ public class BaseController implements Initializable {
     }
 
     public void openImageViewer(String file) {
-        OpenFile.openImageViewer(getClass(), null, new File(file));
+        FxmlStage.openImageViewer(getClass(), null, new File(file));
     }
 
     public LoadingController openHandlingStage(Modality block) {

@@ -28,19 +28,19 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageCombine;
-import mara.mybox.objects.ImageCombine.ArrayType;
-import mara.mybox.objects.ImageCombine.CombineSizeType;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageCombine;
+import mara.mybox.data.ImageCombine.ArrayType;
+import mara.mybox.data.ImageCombine.CombineSizeType;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.FxmlImageTools;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.fxml.image.ImageTools;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.ImageInformation;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -487,9 +487,9 @@ public class ImagesCombineController extends ImageSourcesController {
         }
 
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-            image = ImageConvertTools.combineSingleColumn(imageCombine, sourceImages, false, true);
+            image = ImageConvert.combineSingleColumn(imageCombine, sourceImages, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-            image = ImageConvertTools.combineSingleRow(imageCombine, sourceImages, false, true);
+            image = ImageConvert.combineSingleRow(imageCombine, sourceImages, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
             image = combineImagesColumns(sourceImages);
         } else {
@@ -516,16 +516,16 @@ public class ImagesCombineController extends ImageSourcesController {
             for (ImageInformation imageInfo : images) {
                 rowImages.add(imageInfo);
                 if (rowImages.size() == imageCombine.getColumnsValue()) {
-                    Image rowImage = ImageConvertTools.combineSingleRow(imageCombine, rowImages, true, false);
+                    Image rowImage = ImageConvert.combineSingleRow(imageCombine, rowImages, true, false);
                     rows.add(new ImageInformation(rowImage));
                     rowImages = new ArrayList();
                 }
             }
             if (!rowImages.isEmpty()) {
-                Image rowImage = ImageConvertTools.combineSingleRow(imageCombine, rowImages, true, false);
+                Image rowImage = ImageConvert.combineSingleRow(imageCombine, rowImages, true, false);
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = ImageConvertTools.combineSingleColumn(imageCombine, rows, true, true);
+            Image newImage = ImageConvert.combineSingleColumn(imageCombine, rows, true, true);
             return newImage;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -535,13 +535,15 @@ public class ImagesCombineController extends ImageSourcesController {
 
     @FXML
     @Override
-    protected void saveAction() {
+    public void saveAction() {
         if (image == null) {
             return;
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(targetPathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
@@ -558,7 +560,7 @@ public class ImagesCombineController extends ImageSourcesController {
                 try {
                     final String filename = targetFile.getAbsolutePath();
                     String format = FileTools.getFileSuffix(filename);
-                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                    final BufferedImage bufferedImage = ImageTools.getBufferedImage(image);
                     ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                     if (task.isCancelled()) {
                         return null;
@@ -569,7 +571,7 @@ public class ImagesCombineController extends ImageSourcesController {
                             if (ok) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (openCheck.isSelected()) {
-                                    openImageManufacture(filename);
+                                    openImageViewer(filename);
                                 }
                             } else {
                                 popError(AppVaribles.getMessage("Failed"));

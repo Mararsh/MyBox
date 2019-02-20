@@ -10,10 +10,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,15 +24,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.fxml.FxmlScopeTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.image.FxmlScopeTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.IntRectangle;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.IntRectangle;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -47,14 +45,11 @@ public class ImageSampleController extends ImageViewerController {
 
     private double scale;
     private int sampleWidth, sampleHeight;
-    private boolean isSettingValues;
 
     @FXML
     private ToolBar opBar;
     @FXML
     private HBox cropBox, sampleBox, showBox;
-    @FXML
-    private Button saveButton;
     @FXML
     private CheckBox viewCheck;
     @FXML
@@ -177,8 +172,8 @@ public class ImageSampleController extends ImageViewerController {
                     getMessage("ImageSize") + ": "
                     + imageInformation.getWidth() + "x" + imageInformation.getHeight()
                     + "  " + getMessage("SampledSize") + ": "
-                    + (int) ((cropRightX - cropLeftX) / sampleWidth)
-                    + "x" + (int) ((cropRightY - cropLeftY) / sampleHeight));
+                    + (int) ((cropRightX - cropLeftX + 1) / sampleWidth)
+                    + "x" + (int) ((cropRightY - cropLeftY + 1) / sampleHeight));
         }
     }
 
@@ -215,7 +210,7 @@ public class ImageSampleController extends ImageViewerController {
 
         try {
             cropRightX = Integer.valueOf(cropRightXInput.getText());
-            if (cropRightX >= 0 && cropRightX <= imageInformation.getWidth()) {
+            if (cropRightX >= 0 && cropRightX < imageInformation.getWidth()) {
                 cropRightXInput.setStyle(null);
             } else {
                 cropRightXInput.setStyle(badStyle);
@@ -263,14 +258,18 @@ public class ImageSampleController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    int lineWidth = 1;
-                    if (image.getWidth() >= 200) {
-                        lineWidth = (int) image.getWidth() / 200;
+                    final Image newImage;
+                    if (isWholeImage(image)) {
+                        newImage = image;
+                    } else {
+                        int lineWidth = 1;
+                        if (image.getWidth() >= 200) {
+                            lineWidth = (int) image.getWidth() / 200;
+                        }
+                        newImage = FxmlScopeTools.indicateRectangle(image, Color.RED, lineWidth,
+                                new IntRectangle((int) (cropLeftX / scale), (int) (cropLeftY / scale),
+                                        (int) (cropRightX / scale), (int) (cropRightY / scale)));
                     }
-                    final Image newImage = FxmlScopeTools.indicateRectangle(image,
-                            Color.RED, lineWidth,
-                            new IntRectangle((int) (cropLeftX / scale), (int) (cropLeftY / scale),
-                                    (int) (cropRightX / scale), (int) (cropRightY / scale)));
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -278,7 +277,7 @@ public class ImageSampleController extends ImageViewerController {
                         @Override
                         public void run() {
                             imageView.setImage(newImage);
-//                            popInformation(AppVaribles.getMessage("CropComments"));
+//                            infoAction(AppVaribles.getMessage("CropComments"));
                         }
                     });
                 } catch (Exception e) {
@@ -388,24 +387,28 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @FXML
-    private void allAction(ActionEvent event) {
+    @Override
+    public void selectAllAction() {
         isSettingValues = true;
         cropLeftXInput.setText("0");
         cropLeftYInput.setText("0");
-        cropRightXInput.setText(imageInformation.getWidth() + "");
-        cropRightYInput.setText(imageInformation.getHeight() + "");
+        cropRightXInput.setText((imageInformation.getWidth() - 1) + "");
+        cropRightYInput.setText((imageInformation.getHeight() - 1) + "");
         isSettingValues = false;
         checkCropValues();
     }
 
     @FXML
-    public void saveAction(ActionEvent event) {
+    @Override
+    public void saveAction() {
         if (image == null || sampleWidth < 1 || sampleHeight < 1) {
             return;
         }
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(targetPathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {

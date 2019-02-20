@@ -62,7 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     </HBox.margin>
                 </Button>
             <Button fx:id="pdfOpenButon" disable="true" mnemonicParsing="false" onAction="#openPdfAction" text="%Open" />
-                <Button fx:id="fileInformationButton" disable="true" mnemonicParsing="false" onAction="#showFileInformation" prefHeight="30.0" text="%FileInformation">
+                <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%FileInformation">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>

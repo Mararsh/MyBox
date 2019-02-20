@@ -6,13 +6,13 @@ import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.ImageAttributes;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.data.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageGrayTools;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.ImageBinary;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -192,12 +192,29 @@ public class PdfConvertImagesController extends PdfBaseController {
                 if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
                         && attributes.getThreshold() >= 0) {
                     image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.RGB);
-                    image = ImageGrayTools.color2BinaryWithPercentage(image, attributes.getThreshold());
+                    ImageBinary imageBinary = new ImageBinary(image, attributes.getThreshold());
+                    imageBinary.setIsDithering(attributes.isIsDithering());
+                    image = imageBinary.operate();
+                    image = ImageBinary.byteBinary(image);
+
                 } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
                     image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.RGB);
-                    image = ImageGrayTools.color2BinaryByCalculation(image);
+                    ImageBinary imageBinary = new ImageBinary(image, -1);
+                    imageBinary.setCalculate(true);
+                    imageBinary.setIsDithering(attributes.isIsDithering());
+                    image = imageBinary.operate();
+                    image = ImageBinary.byteBinary(image);
+
                 } else {
-                    image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.BINARY);
+                    if (attributes.isIsDithering()) {
+                        image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.RGB);
+                        ImageBinary imageBinary = new ImageBinary(image, -1);
+                        imageBinary.setIsDithering(true);
+                        image = imageBinary.operate();
+                        image = ImageBinary.byteBinary(image);
+                    } else {
+                        image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), ImageType.BINARY);
+                    }
                 }
             } else {
                 image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());
@@ -212,7 +229,7 @@ public class PdfConvertImagesController extends PdfBaseController {
         ImageAttributes attributes = pdfConvertAttributesController.getAttributes();
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
-            pageNumber = ValueTools.fillNumber(currentParameters.currentNameNumber, currentParameters.acumDigit);
+            pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
         }
         String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix + "_" + pageNumber;
         if (currentParameters.aColor) {

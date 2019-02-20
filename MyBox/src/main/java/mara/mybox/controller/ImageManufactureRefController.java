@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -85,8 +85,8 @@ public class ImageManufactureRefController extends ImageManufactureController {
     public void selectReference() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if ( path.exists() )  fileChooser.setInitialDirectory(path);
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {

@@ -10,9 +10,9 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
 
@@ -25,6 +25,8 @@ import mara.mybox.tools.TextTools;
 public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
+        TipsLabelKey = "TextEditerTips";
+
         setTextType();
     }
 
@@ -74,6 +76,10 @@ public class TextEditerController extends FileEditerController {
                     }
                 }
             });
+
+            tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(targetBomCheck, tips);
         }
     }
 

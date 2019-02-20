@@ -17,9 +17,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.stage.Modality;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformation.Line_Break;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
@@ -40,6 +40,8 @@ public class BytesEditerController extends FileEditerController {
     private RadioButton bytesNumberRadio, byteRadio;
 
     public BytesEditerController() {
+        TipsLabelKey = "BytesEditerTips";
+
         setBytesType();
     }
 

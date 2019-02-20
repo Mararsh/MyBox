@@ -17,12 +17,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageReplaceColorTools;
+import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageScope;
+import mara.mybox.image.PixelsOperation;
 
 /**
  * @Author Mara
@@ -184,10 +185,25 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
-        BufferedImage target = ImageReplaceColorTools.replaceColor(source,
-                FxmlImageTools.colorConvert(oldColorPicker.getValue()),
-                FxmlImageTools.colorConvert(newColorPicker.getValue()),
-                distance, isColor, excludeCheck.isSelected());
+        ImageScope scope = new ImageScope();
+        if (isColor) {
+            scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+            scope.setColorDistance(distance);
+        } else {
+            scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
+            scope.setHsbDistance(distance / 360.0f);
+        }
+        scope.setColorExcluded(excludeCheck.isSelected());
+        PixelsOperation pixelsOperation = new PixelsOperation(source, scope,
+                PixelsOperation.OperationType.ReplaceColor);
+        pixelsOperation.setColorPara1(ImageColor.converColor(oldColorPicker.getValue()));
+        pixelsOperation.setColorPara2(ImageColor.converColor(newColorPicker.getValue()));
+        BufferedImage target = pixelsOperation.operate();
+
+//        BufferedImage target = ImageReplaceColorTools.replaceColor(source,
+//                FxmlManufactureTools.colorConvert(oldColorPicker.getValue()),
+//                FxmlManufactureTools.colorConvert(newColorPicker.getValue()),
+//                distance, isColor, excludeCheck.isSelected());
         return target;
     }
 

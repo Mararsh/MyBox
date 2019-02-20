@@ -1,6 +1,6 @@
 package mara.mybox.tools;
 
-import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.image.ImageTools;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,15 +12,15 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.image.ImageGrayTools;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageAttributes;
-import mara.mybox.objects.ImageInformation;
-import mara.mybox.objects.WeiboSnapParameters;
-import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.image.ImageBinary;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageAttributes;
+import mara.mybox.data.ImageInformation;
+import mara.mybox.data.WeiboSnapParameters;
+import static mara.mybox.value.AppVaribles.logger;
 
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -40,7 +40,6 @@ import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
  * @Author Mara
@@ -77,25 +76,24 @@ public class PdfTools {
             String sourceFormat, BufferedImage bufferedImage,
             int index, int total, PdfImageFormat targetFormat,
             int threshold, int jpegQuality, boolean isImageSize, boolean pageNumber,
-            int pageWidth, int pageHeight, int marginSize, String header) {
+            int pageWidth, int pageHeight, int marginSize, String header, boolean dithering) {
         try {
             PDImageXObject imageObject;
             switch (targetFormat) {
                 case Tiff:
-                    if (threshold < 0) {
-                        bufferedImage = ImageGrayTools.color2Binary(bufferedImage);
-                    } else {
-                        bufferedImage = ImageGrayTools.color2BinaryWithPercentage(bufferedImage, threshold);
-                    }
+                    ImageBinary imageBinary = new ImageBinary(bufferedImage, threshold);
+                    imageBinary.setIsDithering(dithering);
+                    bufferedImage = imageBinary.operate();
+                    bufferedImage = ImageBinary.byteBinary(bufferedImage);
                     imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                     break;
                 case Jpeg:
-                    bufferedImage = ImageConvertTools.checkAlpha(bufferedImage, "jpg");
+                    bufferedImage = ImageConvert.checkAlpha(bufferedImage, "jpg");
                     imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
                     break;
                 default:
                     if (sourceFormat != null) {
-                        bufferedImage = ImageConvertTools.checkAlpha(bufferedImage, sourceFormat);
+                        bufferedImage = ImageConvert.checkAlpha(bufferedImage, sourceFormat);
                     }
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     break;
@@ -166,7 +164,7 @@ public class PdfTools {
                 int marginSize = 20, total = images.size();
                 for (Image image : images) {
                     PDImageXObject imageObject;
-                    bufferedImage = FxmlImageTools.getBufferedImage(image);
+                    bufferedImage = ImageTools.getBufferedImage(image);
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     if (isImageSize) {
                         pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
@@ -223,7 +221,7 @@ public class PdfTools {
         return writePage(document, font, "png", bufferedImage,
                 pageNumber, totalPage, p.getFormat(),
                 p.getThreshold(), p.getJpegQuality(), p.isIsImageSize(), p.isAddPageNumber(),
-                p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle());
+                p.getPageWidth(), p.getPageHeight(), p.getMarginSize(), p.getTitle(), p.isDithering());
     }
 
     public static boolean images2Pdf(List<Image> images, File targetFile,
@@ -252,7 +250,7 @@ public class PdfTools {
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
                                 break;
                             case Jpeg:
-                                bufferedImage = FxmlImageTools.checkAlpha(image, "jpg");
+                                bufferedImage = ImageTools.checkAlpha(image, "jpg");
                                 break;
                             default:
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -400,29 +398,6 @@ public class PdfTools {
         return font;
     }
 
-    public static String getTextFromPdf(InputStream fileStream, boolean sort) {
-        // 开始提取页数
-        int startPage = 1;
-        // 结束提取页数
-        String content = null;
-        PDDocument document = null;
-        try {
-            // 加载 pdf 文档
-            document = PDDocument.load(fileStream, AppVaribles.PdfMemUsage);
-            int endPage = null == document ? Integer.MAX_VALUE : document.getNumberOfPages();
-            PDFTextStripper stripper = new PDFTextStripper();
-            stripper.setSortByPosition(sort);
-            stripper.setStartPage(startPage);
-            stripper.setEndPage(endPage);
-            content = stripper.getText(document);
-//            log.info("pdf 文件解析，内容为：" + content);
-        } catch (Exception e) {
-//            log.error("文件解析异常，信息为： " + e.getMessage());
-        }
-        return content;
-
-    }
-
     public static List<PDImageXObject> getImageListFromPDF(PDDocument document, Integer startPage) throws Exception {
         List<PDImageXObject> imageList = new ArrayList<>();
         if (null != document) {
@@ -456,25 +431,6 @@ public class PdfTools {
 
     }
 
-    public static void writeInputStream(InputStream imageb, PDImageXObject image) throws Exception {
-
-//        File imgFile = new File("e:\\" + name + "." + image.getSuffix());
-//        FileOutputStream fout = new FileOutputStream(imgFile);
-//        ByteArrayOutputStream os = new ByteArrayOutputStream();
-//        ImageIO.write(imageb, image.getSuffix(), os);
-//        InputStream is = new ByteArrayInputStream(os.toByteArray());
-//        int byteCount = 0;
-//        byte[] bytes = new byte[1024];
-//
-//        while ((byteCount = is.read(bytes)) > 0) {
-//            fout.write(bytes, 0, byteCount);
-//        }
-//
-//        fout.close();
-//
-//        is.close();
-    }
-
     public static boolean writeSplitImages(String sourceFormat, String sourceFile,
             ImageInformation imageInformation, List<Integer> rows, List<Integer> cols,
             ImageAttributes attributes, File targetFile,
@@ -506,7 +462,7 @@ public class PdfTools {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = FxmlImageTools.getBufferedImage(imageInformation.getImage());
+                    wholeSource = ImageTools.getBufferedImage(imageInformation.getImage());
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
@@ -520,12 +476,12 @@ public class PdfTools {
                         if (imageInformation.isIsSampled()) {
                             target = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         } else {
-                            target = ImageConvertTools.cropImage(wholeSource, x1, y1, x2, y2);
+                            target = ImageConvert.cropImage(wholeSource, x1, y1, x2, y2);
                         }
                         PdfTools.writePage(document, font, sourceFormat, target,
                                 ++count, total, pdfFormat,
                                 threshold, jpegQuality, isImageSize, pageNumber,
-                                pageWidth, pageHeight, marginSize, header);
+                                pageWidth, pageHeight, marginSize, header, attributes.isIsDithering());
                     }
                 }
                 document.save(targetFile);
@@ -572,6 +528,7 @@ public class PdfTools {
                 return image;
             }
         } catch (Exception e) {
+            logger.debug(e.toString());
             return null;
         }
     }

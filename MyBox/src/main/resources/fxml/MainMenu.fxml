@@ -38,6 +38,9 @@
                 </Menu>
                 <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
                         <Menu mnemonicParsing="false" text="%ImageManufactureSub">
                             <items>
@@ -45,7 +48,6 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureConvolution" text="%Convolution" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureText" text="%Text" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCover" text="%Cover" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
@@ -60,7 +62,6 @@
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchConvolution" text="%Convolution" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
@@ -97,9 +98,8 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                         <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openMultipleImagesViewer" text="%MultipleImagesViewer" />
+                        <!--                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
                         <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
@@ -121,7 +121,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
                         <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <!--<MenuItem mnemonicParsing="false" onAction="#openSnapScreen" text="%SnapScreen" />-->
+                        <MenuItem mnemonicParsing="false" onAction="#openRecordImages" text="%RecordImagesInSystemClipBoard" />
                         <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                     </items>
                 </Menu>
@@ -142,6 +142,16 @@
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
                         <SeparatorMenuItem mnemonicParsing="false" />
+
+                        <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" text="%FontSize12">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="fontSizeGroup" />
+                            </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" text="%FontSize15" toggleGroup="$fontSizeGroup" />
+                        <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" text="%FontSize17" toggleGroup="$fontSizeGroup" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+
                         <Menu mnemonicParsing="false" text="%InterfaceStyle">
                             <items>
                                 <RadioMenuItem mnemonicParsing="false" onAction="#setDefaultStyle" text="%DefaultStyle">

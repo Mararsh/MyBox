@@ -116,10 +116,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="pageBar" disable="true" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="firstButtonButton" mnemonicParsing="false" onAction="#firstPageAction" text="%FirstPage" />
-                                <Button fx:id="perviousPageButton" mnemonicParsing="false" onAction="#previousPageAction" text="%PreviousPage" />
-                                <Button fx:id="nextPageButton" mnemonicParsing="false" onAction="#nextPageAction" text="%NextPage" />
-                                <Button fx:id="lastPageButton" mnemonicParsing="false" onAction="#lastPageAction" text="%LastPage" />
+                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction" text="%FirstPage" />
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousPage" />
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextPage" />
+                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction" text="%LastPage" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />

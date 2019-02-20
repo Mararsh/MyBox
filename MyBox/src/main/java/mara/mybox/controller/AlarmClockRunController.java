@@ -6,12 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javax.sound.sampled.Clip;
-import mara.mybox.objects.AlarmClock;
-import static mara.mybox.objects.AlarmClock.getTypeString;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.data.AlarmClock;
+import static mara.mybox.data.AlarmClock.getTypeString;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.SoundTools;
 
 /**

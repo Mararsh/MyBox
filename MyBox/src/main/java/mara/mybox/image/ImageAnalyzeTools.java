@@ -2,8 +2,7 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import static mara.mybox.objects.AppVaribles.logger;
-
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -13,8 +12,6 @@ import static mara.mybox.objects.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class ImageAnalyzeTools {
-
-    
 
     public int[][] calculateHistogram(BufferedImage source) {
         try {

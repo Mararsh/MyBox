@@ -16,10 +16,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -272,16 +272,16 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
         try {
             BufferedImage target = null;
             if (sizeType == SizeType.Scale) {
-                target = ImageConvertTools.scaleImage(source, scale);
+                target = ImageConvert.scaleImage(source, scale);
 
             } else if (sizeType == SizeType.Width) {
-                target = ImageConvertTools.scaleImageWidthKeep(source, keepWidth);
+                target = ImageConvert.scaleImageWidthKeep(source, keepWidth);
 
             } else if (sizeType == SizeType.Height) {
-                target = ImageConvertTools.scaleImageHeightKeep(source, keepHeight);
+                target = ImageConvert.scaleImageHeightKeep(source, keepHeight);
 
             } else if (sizeType == SizeType.Custom) {
-                target = ImageConvertTools.scaleImage(source, customWidth, customHeight);
+                target = ImageConvert.scaleImage(source, customWidth, customHeight);
             }
 
             return target;

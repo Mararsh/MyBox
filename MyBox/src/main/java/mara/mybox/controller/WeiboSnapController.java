@@ -28,15 +28,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.WeiboSnapParameters;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.getUserConfigValue;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 
 /**
@@ -68,9 +68,9 @@ public class WeiboSnapController extends BaseController {
     @FXML
     private TextField addressInput, pathInput, startInput, endInput;
     @FXML
-    private Button startButton, exampleButton;
+    private Button exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck;
+    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck;
     @FXML
     private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
@@ -362,6 +362,7 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
+        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
     }
 
@@ -369,6 +370,7 @@ public class WeiboSnapController extends BaseController {
         jpegBox.setDisable(true);
         jpegBox.setStyle(null);
         thresholdInput.setDisable(true);
+        ditherCheck.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
         if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
@@ -376,6 +378,7 @@ public class WeiboSnapController extends BaseController {
         } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
             format = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
+            ditherCheck.setDisable(false);
         } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
             format = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
@@ -405,7 +408,7 @@ public class WeiboSnapController extends BaseController {
                 return;
             }
             threshold = Integer.valueOf(thresholdInput.getText());
-            if (threshold >= 0 && threshold <= 100) {
+            if (threshold >= 0 && threshold <= 255) {
                 thresholdInput.setStyle(null);
             } else {
                 threshold = -1;
@@ -717,7 +720,7 @@ public class WeiboSnapController extends BaseController {
                 }
             }
         });
-        pathInput.setText(AppVaribles.getUserConfigValue(WeiboTargetPathKey, CommonValues.UserFilePath));
+        pathInput.setText(AppVaribles.getUserConfigPath(WeiboTargetPathKey).getAbsolutePath());
 
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -868,8 +871,10 @@ public class WeiboSnapController extends BaseController {
     protected void selectPath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigPath(WeiboTargetPathKey, CommonValues.UserFilePath));
-            chooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(WeiboTargetPathKey);
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
@@ -884,7 +889,8 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
-    protected void startAction(ActionEvent event) {
+    @Override
+    public void startAction() {
         makeParameters();
         if (parameters == null) {
             popError(AppVaribles.getMessage("ParametersError"));
@@ -967,10 +973,11 @@ public class WeiboSnapController extends BaseController {
             parameters.setSavePictures(pixCheck.isSelected());
             parameters.setExpandPicture(expandPicturesCheck.isSelected());
             parameters.setCategory(categoryType);
-            parameters.setTempdir(AppVaribles.getTempPathFile());
+            parameters.setTempdir(AppVaribles.getUserTempPath());
             parameters.setPdfScale(pdfScale);
             parameters.setOpenPathWhenStop(openPathCheck.isSelected());
             parameters.setFontName("幼圆");
+            parameters.setDithering(ditherCheck.isSelected());
             return parameters;
         } catch (Exception e) {
             parameters = null;

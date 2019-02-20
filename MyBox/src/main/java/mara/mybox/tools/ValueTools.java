@@ -1,10 +1,12 @@
 package mara.mybox.tools;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import javafx.scene.control.IndexRange;
 
 /**
  * @Author Mara
@@ -19,10 +21,18 @@ public class ValueTools {
         return r.nextInt(max);
     }
 
-    public static String fillNumber(int value, int digit) {
+    public static String fillLeftZero(int value, int digit) {
         String v = value + "";
         for (int i = v.length(); i < digit; i++) {
             v = "0" + v;
+        }
+        return v;
+    }
+
+    public static String fillRightZero(int value, int digit) {
+        String v = value + "";
+        for (int i = v.length(); i < digit; i++) {
+            v += "0";
         }
         return v;
     }
@@ -49,31 +59,35 @@ public class ValueTools {
     }
 
     public static float roundFloat2(float fvalue) {
-        return (float) Math.round(fvalue * 100.0) / 100.0f;
+        return (float) (Math.round(fvalue * 100)) / 100;
     }
 
     public static float roundFloat3(float fvalue) {
-        return (float) Math.round(fvalue * 1000.0) / 1000.0f;
+        return (float) Math.round(fvalue * 1000) / 1000;
+    }
+
+    public static float roundFloat4(float fvalue) {
+        return (float) Math.round(fvalue * 10000) / 10000;
     }
 
     public static float roundFloat5(float fvalue) {
-        return (float) Math.round(fvalue * 100000.0) / 100000.0f;
+        return (float) Math.round(fvalue * 100000) / 100000;
     }
 
     public static double roundDouble3(double invalue) {
-        return (double) Math.round(invalue * 1000.0) / 1000.0;
+        return (double) Math.round(invalue * 1000) / 1000;
     }
 
     public static double roundDouble2(double invalue) {
-        return (double) Math.round(invalue * 100.0) / 100.0;
+        return (double) Math.round(invalue * 100) / 100;
     }
 
     public static double roundDouble4(double invalue) {
-        return (double) Math.round(invalue * 10000.0) / 10000.0;
+        return (double) Math.round(invalue * 10000) / 10000;
     }
 
     public static double roundDouble5(double invalue) {
-        return (double) Math.round(invalue * 100000.0) / 100000.0;
+        return (double) Math.round(invalue * 100000) / 100000;
     }
 
     public static float[] matrix2Array(float[][] m) {
@@ -117,17 +131,6 @@ public class ValueTools {
         return getAvaliableMemory() / (1024 * 1024);
     }
 
-//    public static List<Integer> sortList(List<Integer> numbers) {
-//        List<Integer> sorted = new ArrayList<>();
-//        sorted.addAll(numbers);
-//        Collections.sort(sorted, new Comparator<Integer>() {
-//            @Override
-//            public int compare(Integer p1, Integer p2) {
-//                return p1 - p2;
-//            }
-//        });
-//        return sorted;
-//    }
     public static void sortList(List<Integer> numbers) {
         Collections.sort(numbers, new Comparator<Integer>() {
             @Override
@@ -135,6 +138,33 @@ public class ValueTools {
                 return p1 - p2;
             }
         });
+    }
+
+    public static void sortArray(int[] numbers) {
+        List<Integer> list = new ArrayList<>();
+        for (int i : numbers) {
+            list.add(i);
+        }
+        Collections.sort(list, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer p1, Integer p2) {
+                return p1 - p2;
+            }
+        });
+    }
+
+    public static int mapInt(int value, IndexRange originalRange, IndexRange newlRange) {
+        if (originalRange == null || newlRange == null
+                || originalRange.getStart() > value || originalRange.getEnd() < value) {
+            return value;
+        }
+        int len = value - originalRange.getStart() + 1;
+        double ratio = newlRange.getLength() * 1.0 / originalRange.getLength();
+        return newlRange.getStart() + (int) Math.round(len * ratio);
+    }
+
+    public static int zipInt(int value, int zipStep) {
+        return (int) (Math.round((value + zipStep / 2) / zipStep)) * zipStep;
     }
 
 }

@@ -16,10 +16,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 
@@ -186,7 +186,7 @@ public class FileCutController extends FilesBatchController {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
 
         operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))

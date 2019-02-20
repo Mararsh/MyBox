@@ -5,11 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ConvolutionKernel;
-import static mara.mybox.objects.AppVaribles.logger;
-
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ConvolutionKernel;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -20,11 +19,9 @@ import static mara.mybox.objects.AppVaribles.logger;
  */
 public class DerbyBase {
 
-   
-
     protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String protocol = "jdbc:derby:";
-    protected static final String dbName = CommonValues.DerbyDB;
+    protected static final String dbName = CommonValues.AppDerbyPath.getAbsolutePath();
     protected static final String parameters = ";user=mara;password=mybox;create=true";
 
     protected String Table_Name, Create_Table_Statement;

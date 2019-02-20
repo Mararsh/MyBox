@@ -27,14 +27,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileSynchronizeAttributes;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -126,7 +125,7 @@ public class FilesArrangeController extends BaseController {
     }
 
     private void initDirTab() {
-        sourcePathInput.setText(AppVaribles.getUserConfigValue(sourcePathKey, CommonValues.UserFilePath));
+        sourcePathInput.setText(AppVaribles.getUserConfigPath(sourcePathKey).getAbsolutePath());
         sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -142,7 +141,7 @@ public class FilesArrangeController extends BaseController {
             }
         });
 
-        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
         targetPathInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -294,8 +293,10 @@ public class FilesArrangeController extends BaseController {
     protected void selectSourcePath(ActionEvent event) {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            chooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
@@ -314,8 +315,10 @@ public class FilesArrangeController extends BaseController {
         }
         try {
             DirectoryChooser chooser = new DirectoryChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            chooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
             File directory = chooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
@@ -389,7 +392,7 @@ public class FilesArrangeController extends BaseController {
 
     @FXML
     @Override
-    protected void startProcess(ActionEvent event) {
+    public void startAction() {
         try {
             if (!initAttributes()) {
                 return;
@@ -488,7 +491,7 @@ public class FilesArrangeController extends BaseController {
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
 
@@ -497,7 +500,7 @@ public class FilesArrangeController extends BaseController {
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
                                 operationBarController.pauseButton.setVisible(false);

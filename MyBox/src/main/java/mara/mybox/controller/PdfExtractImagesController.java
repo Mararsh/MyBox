@@ -12,11 +12,11 @@ import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -228,7 +228,7 @@ public class PdfExtractImagesController extends PdfBaseController {
     protected String makeFilename(String suffix, int page, int index) {
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
-            pageNumber = ValueTools.fillNumber(currentParameters.currentNameNumber, currentParameters.acumDigit);
+            pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
         }
         String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix + "_" + pageNumber;
         if (appendPageNumber.isSelected()) {

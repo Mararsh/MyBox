@@ -7,9 +7,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.CommonValues;
 import mara.mybox.tools.ConfigTools;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara

@@ -1,12 +1,12 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import mara.mybox.objects.PdfInformation;
+import mara.mybox.data.PdfInformation;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara

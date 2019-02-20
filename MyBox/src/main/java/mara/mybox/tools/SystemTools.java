@@ -1,7 +1,11 @@
 package mara.mybox.tools;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.Map;
-import static mara.mybox.objects.AppVaribles.logger;
+import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -32,6 +36,34 @@ public class SystemTools {
         for (StackTraceElement element : thread.getStackTrace()) {
             logger.debug(element);
         }
+    }
+
+    public static Point getMousePoint() {
+        return MouseInfo.getPointerInfo().getLocation();
+    }
+
+    public static Image fetchImageInClipboard(boolean clear) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (!clipboard.hasImage()) {
+            return null;
+        }
+        Image image = clipboard.getImage();
+        if (clear) {
+            clipboard.clear();
+        }
+        return image;
+    }
+
+    public static String fetchTextInClipboard(boolean clear) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (!clipboard.hasString()) {
+            return null;
+        }
+        String text = clipboard.getString();
+        if (clear) {
+            clipboard.clear();
+        }
+        return text;
     }
 
 }

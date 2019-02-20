@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -46,6 +47,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
@@ -64,15 +66,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableBrowserUrls;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.FxmlImageTools;
+import mara.mybox.fxml.image.ImageTools;
 import mara.mybox.fxml.FxmlTools;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
@@ -99,7 +101,7 @@ public class HtmlEditorController extends BaseController {
     private Stage snapingStage;
     private LoadingController loadingController;
     private float zoomScale;
-    protected boolean isSettingValues, loadSynchronously, isFrameSet;
+    protected boolean loadSynchronously, isFrameSet;
     protected SimpleBooleanProperty fileChanged;
     protected int cols, rows;
     protected int lastTextLen;
@@ -560,8 +562,10 @@ public class HtmlEditorController extends BaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -637,13 +641,16 @@ public class HtmlEditorController extends BaseController {
     }
 
     @FXML
-    protected void saveAction() {
+    @Override
+    public void saveAction() {
         try {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
-                fileChooser.setInitialDirectory(path);
+                File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
+                if (path.exists()) {
+                    fileChooser.setInitialDirectory(path);
+                }
                 fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
                 final File file = fileChooser.showSaveDialog(getMyStage());
                 if (file == null) {
@@ -678,8 +685,10 @@ public class HtmlEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(HtmlFilePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -730,13 +739,15 @@ public class HtmlEditorController extends BaseController {
         final FileChooser fileChooser = new FileChooser();
         File path;
         if (isOneImage) {
-            path = new File(AppVaribles.getUserConfigPath(HtmlImagePathKey, CommonValues.UserFilePath));
+            path = AppVaribles.getUserConfigPath(HtmlImagePathKey);
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
         } else {
-            path = new File(AppVaribles.getUserConfigPath(HtmlPdfPathKey, CommonValues.UserFilePath));
+            path = AppVaribles.getUserConfigPath(HtmlPdfPathKey);
             fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
         }
-        fileChooser.setInitialDirectory(path);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
             return;
@@ -870,10 +881,10 @@ public class HtmlEditorController extends BaseController {
 
                                     Image snapshot = webView.snapshot(parameters, null);
                                     if (totalHeight < snapHeight + snapStep) { // last snap
-                                        snapshot = FxmlImageTools.cropImage(snapshot, 0, snapStep - (totalHeight - snapHeight),
+                                        snapshot = ImageTools.cropImage(snapshot, 0, snapStep - (totalHeight - snapHeight),
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     } else {
-                                        snapshot = FxmlImageTools.cropImage(snapshot, 0, 0,
+                                        snapshot = ImageTools.cropImage(snapshot, 0, 0,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     }
                                     images.add(snapshot);
@@ -884,10 +895,10 @@ public class HtmlEditorController extends BaseController {
                                         loadingController.setInfo(AppVaribles.getMessage("WritingFile"));
                                         boolean success = true;
                                         if (isOneImage) {
-                                            Image finalImage = FxmlImageTools.combineSingleColumn(images);
+                                            Image finalImage = ImageTools.combineSingleColumn(images);
                                             if (finalImage != null) {
                                                 String format = FileTools.getFileSuffix(targetFile.getAbsolutePath());
-                                                final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(finalImage);
+                                                final BufferedImage bufferedImage = ImageTools.getBufferedImage(finalImage);
                                                 ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
                                             } else {
                                                 success = false;
@@ -896,7 +907,7 @@ public class HtmlEditorController extends BaseController {
                                             success = PdfTools.htmlIntoPdf(images, targetFile, windowSizeCheck.isSelected());
                                         }
                                         if (success && targetFile.exists()) {
-                                            OpenFile.openTarget(getClass(), null, targetFile.getAbsolutePath());
+                                            FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
                                         } else {
                                             popError(AppVaribles.getMessage("Failed"));
                                         }
@@ -991,7 +1002,6 @@ public class HtmlEditorController extends BaseController {
 
     @Override
     public boolean stageClosing() {
-        super.stageClosing();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -1009,7 +1019,8 @@ public class HtmlEditorController extends BaseController {
             timer.cancel();
         }
         loadingController = null;
-        return true;
+        return super.stageClosing();
+
     }
 
     public boolean checkSavingForNextAction() {
@@ -1021,6 +1032,7 @@ public class HtmlEditorController extends BaseController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("FileChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));

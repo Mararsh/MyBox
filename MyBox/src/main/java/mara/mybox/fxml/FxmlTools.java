@@ -22,12 +22,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 import mara.mybox.tools.SoundTools;
-import static mara.mybox.objects.CommonValues.UserFilePath;
 import static mara.mybox.tools.FileTools.getFileSuffix;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
  * @Author Mara
@@ -202,7 +202,7 @@ public class FxmlTools {
     }
 
     public static void setPositiveValidation(final TextField input) {
-        setNonnegativeValidation(input, Integer.MAX_VALUE);
+        setPositiveValidation(input, Integer.MAX_VALUE);
     }
 
     public static void setPositiveValidation(final TextField input, final int max) {
@@ -303,7 +303,7 @@ public class FxmlTools {
         if (someClass == null || resourceFile == null || userFile == null) {
             return null;
         }
-        File file = new File(UserFilePath + "/" + userFile);
+        File file = new File(AppDataRoot + "/" + userFile);
         if (file.exists()) {
             if (deleteExisted) {
                 file.delete();

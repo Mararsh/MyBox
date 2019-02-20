@@ -11,12 +11,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.fxml.FxmlAdjustColorTools.ColorActionType;
-import mara.mybox.fxml.FxmlAdjustColorTools.ColorObjectType;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageAdjustColorTools;
+import mara.mybox.image.PixelsOperation;
+import mara.mybox.image.ImageScope;
+import mara.mybox.image.PixelsOperation.ColorActionType;
+import mara.mybox.image.PixelsOperation.OperationType;
 
 /**
  * @Author Mara
@@ -28,7 +29,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
 
     private int colorValue;
     private boolean isIncrease;
-    private ColorObjectType colorOperationType;
+    private OperationType colorOperationType;
     private ColorActionType colorActionType;
 
     @FXML
@@ -70,10 +71,10 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
-                    checkColorObjectType();
+                    checkOperationType();
                 }
             });
-            checkColorObjectType();
+            checkOperationType();
 
             colorSlider.valueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -106,7 +107,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
         }
     }
 
-    private void checkColorObjectType() {
+    private void checkOperationType() {
 
         setRadio.setDisable(false);
         invertRadio.setDisable(false);
@@ -116,7 +117,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
         setRadio.setSelected(true);
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (getMessage("Brightness").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Brightness;
+            colorOperationType = OperationType.Brightness;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -127,7 +128,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
         } else if (getMessage("Saturation").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Sauration;
+            colorOperationType = OperationType.Sauration;
             colorSlider.setMax(100);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -138,7 +139,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
         } else if (getMessage("Hue").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Hue;
+            colorOperationType = OperationType.Hue;
             colorSlider.setMax(359);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -149,7 +150,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             filterRadio.setDisable(true);
             invertRadio.setDisable(true);
         } else if (getMessage("Red").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Red;
+            colorOperationType = OperationType.Red;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -158,7 +159,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Green").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Green;
+            colorOperationType = OperationType.Green;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -167,7 +168,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Blue").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Blue;
+            colorOperationType = OperationType.Blue;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -176,7 +177,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Yellow").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Yellow;
+            colorOperationType = OperationType.Yellow;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -185,7 +186,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Cyan").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Cyan;
+            colorOperationType = OperationType.Cyan;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -194,7 +195,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Magenta").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Magenta;
+            colorOperationType = OperationType.Magenta;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -203,7 +204,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 colorInput.setText("50");
             }
         } else if (getMessage("Opacity").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.Opacity;
+            colorOperationType = OperationType.Opacity;
             colorSlider.setMax(100);
             colorSlider.setMin(0);
             colorSlider.setBlockIncrement(1);
@@ -216,7 +217,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             increaseRadio.setDisable(true);
             decreaseRadio.setDisable(true);
         } else if (getMessage("RGB").equals(selected.getText())) {
-            colorOperationType = ColorObjectType.RGB;
+            colorOperationType = OperationType.RGB;
             colorSlider.setMax(255);
             colorSlider.setMin(1);
             colorSlider.setBlockIncrement(1);
@@ -267,20 +268,14 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             return null;
         }
         try {
-            float value = colorValue;
-            if (colorActionType == ColorActionType.Decrease) {
-                value = 0 - colorValue;
-            }
+            ImageScope scope = new ImageScope();
+            PixelsOperation pixelsOperation = new PixelsOperation(source, scope,
+                    colorOperationType, colorActionType);
             switch (colorOperationType) {
+                case Hue:
                 case Brightness:
                 case Sauration:
-                    value = value / 100.0f;
-                    break;
-                case Opacity:
-                    value = value * 255 / 100.0f;
-                    break;
-                case Hue:
-                    value = value / 360.0f;
+                    pixelsOperation.setFloatPara1(colorValue / 100.0f);
                     break;
                 case Red:
                 case Green:
@@ -289,9 +284,11 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
                 case Cyan:
                 case Magenta:
                 case RGB:
+                case Opacity:
+                    pixelsOperation.setIntPara1(colorValue);
                     break;
             }
-            BufferedImage target = ImageAdjustColorTools.changeColor(source, colorOperationType, colorActionType, value);
+            BufferedImage target = pixelsOperation.operate();
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

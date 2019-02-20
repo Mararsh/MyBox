@@ -9,11 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
@@ -51,10 +51,13 @@ public abstract class PdfBaseController extends BaseController {
 
     public PdfBaseController() {
         targetPathKey = "PdfTargetPath";
+        sourcePathKey = "PdfSourcePath";
+        fileExtensionFilter = CommonValues.PdfExtensionFilter;
+
         creatSubdirKey = "PdfCreatSubdir";
         fillZeroKey = "PdfFillZero";
         previewKey = "PdfPreview";
-        sourcePathKey = "PdfSourcePath";
+
         appendColorKey = "PdfAppendColor";
         appendCompressionTypeKey = "PdfAppendCompressionType";
         appendDensityKey = "PdfAppendDensity";
@@ -62,8 +65,6 @@ public abstract class PdfBaseController extends BaseController {
         appendSizeKey = "PdfAppendSize";
         PdfSourceFromKey = "PdfSourceFromKey";
         PdfSourceToKey = "PdfSourceToKey";
-
-        fileExtensionFilter = CommonValues.PdfExtensionFilter;
 
     }
 
@@ -96,13 +97,13 @@ public abstract class PdfBaseController extends BaseController {
             targetSelectionController.targetPrefixInput.setText(FileTools.getFilePrefix(filename));
         }
         if (targetSelectionController.targetPathInput != null && targetSelectionController.targetPathInput.getText().isEmpty()) {
-            targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+            targetSelectionController.targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
         }
     }
 
     @FXML
     @Override
-    protected void startProcess(ActionEvent event) {
+    public void startAction() {
         isPreview = false;
         makeActualParameters();
         currentParameters = actualParameters;
@@ -341,7 +342,7 @@ public abstract class PdfBaseController extends BaseController {
                                             AppVaribles.getMessage("TextEditer"), false, true);
                                     controller.openFile(new File(finalTargetName));
                                 } else {
-                                    openImageManufacture(finalTargetName);
+                                    openImageViewer(finalTargetName);
                                 }
                             } else if (actualParameters.targetPath != null) {
                                 Desktop.getDesktop().browse(new File(actualParameters.targetPath).toURI());
@@ -362,7 +363,7 @@ public abstract class PdfBaseController extends BaseController {
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
                                 paraBox.setDisable(true);
@@ -371,7 +372,7 @@ public abstract class PdfBaseController extends BaseController {
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
                                 operationBarController.pauseButton.setVisible(false);

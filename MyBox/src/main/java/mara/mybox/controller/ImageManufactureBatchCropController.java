@@ -9,9 +9,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import mara.mybox.objects.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -260,7 +260,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
                 errorString = AppVaribles.getMessage("BeyondSize");
                 return null;
             }
-            return ImageConvertTools.cropImage(source, x1, y1, x2, y2);
+            return ImageConvert.cropImage(source, x1, y1, x2, y2);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

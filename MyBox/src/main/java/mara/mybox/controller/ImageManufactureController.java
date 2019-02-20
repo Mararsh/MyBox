@@ -29,14 +29,10 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -47,6 +43,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -55,27 +52,29 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
-import static mara.mybox.objects.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageHistory;
-import mara.mybox.objects.ImageManufactureValues;
-import mara.mybox.objects.ImageScope;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageHistory;
+import mara.mybox.data.ImageManufactureValues;
+import mara.mybox.image.ImageScope;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.fxml.FxmlImageTools;
-import mara.mybox.fxml.FxmlScopeTools;
+import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.fxml.image.FxmlScopeTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.ImageScope.ColorScopeType;
-import mara.mybox.objects.ImageScope.OperationType;
-import mara.mybox.objects.ImageScope.ScopeType;
-import mara.mybox.objects.IntRectangle;
+import mara.mybox.fxml.image.PixelsOperation;
+import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageScope.ColorScopeType;
+import mara.mybox.image.ImageScope.ScopeType;
+import mara.mybox.image.PixelsOperation.OperationType;
+import mara.mybox.data.IntRectangle;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -89,15 +88,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected ImageView refView, scopeView;
     protected Label refLabel;
     protected VBox refBox, scopeBox;
-
     protected ImageManufactureValues values;
-    protected boolean isSettingValues, isSwitchingTab;
-
+    protected boolean isSwitchingTab, isSettingColor;
     protected String initTab;
     protected int stageWidth, stageHeight;
     protected String imageHistoriesPath;
     protected List<String> imageHistories;
-
     protected ImageScope scope;
 
     protected TextField scopeLeftXInput, scopeLeftYInput, scopeRightXInput, scopeRightYInput;
@@ -134,16 +130,14 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected ToolBar fileBar, hotBar;
     @FXML
     protected Tab fileTab, viewTab, colorTab, textTab, coverTab, cropTab,
-            arcTab, shadowTab, effectsTab, convolutionTab, sizeTab, refTab,
+            arcTab, shadowTab, effectsTab, sizeTab, refTab,
             browseTab, transformTab, marginsTab;
     @FXML
-    protected Label tipsLabel, promptLabel, imageLabel;
+    protected Label promptLabel, imageLabel;
     @FXML
-    protected Button selectRefButton, saveButton, recoverButton, undoButton, redoButton;
+    protected Button selectRefButton, recoverButton, undoButton, redoButton, popButton, refButton;
     @FXML
     protected CheckBox showRefCheck, showScopeCheck, saveCheck;
-    @FXML
-    protected SplitPane splitPane;
     @FXML
     protected TabPane tabPane;
     @FXML
@@ -151,14 +145,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected VBox imageBox;
     @FXML
-    protected ComboBox hisBox;
-    @FXML
-    protected ToggleGroup scopeGroup;
+    protected ComboBox<String> hisBox, scopeListBox;
     @FXML
     protected ColorPicker colorPicker;
 
     public ImageManufactureController() {
-        sourcePathKey = "ImageSourcePathKey";
+        TipsLabelKey = "ImageManufactureTips";
 
     }
 
@@ -166,12 +158,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
         try {
             values = new ImageManufactureValues();
             values.setRefSync(true);
+            isSettingColor = false;
 
             browseTab.setDisable(true);
             viewTab.setDisable(true);
             colorTab.setDisable(true);
             effectsTab.setDisable(true);
-            convolutionTab.setDisable(true);
             sizeTab.setDisable(true);
             refTab.setDisable(true);
             transformTab.setDisable(true);
@@ -196,11 +188,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            Tooltip tips = new Tooltip(getMessage("ImageManufactureTips"));
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(tipsLabel, tips);
-
-            tips = new Tooltip(getMessage("ImageRefTips"));
+            Tooltip tips = new Tooltip(getMessage("ImageRefTips"));
             tips.setFont(new Font(16));
             FxmlTools.setComments(showRefCheck, tips);
             showRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -221,7 +209,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         return;
                     }
                     if (getMessage("SettingsDot").equals(hisBox.getItems().get(index))) {
-                        BaseController c = openStage(CommonValues.SettingsFxml, true);
+                        BaseController c = openStage(CommonValues.SettingsFxml, false);
                         c.setParentController(getMyController());
                         c.setParentFxml(getMyFxml());
                         return;
@@ -258,27 +246,19 @@ public abstract class ImageManufactureController extends ImageViewerController {
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(undoButton, tips);
 
-            tips = new Tooltip("CTRL+1");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(oButton, tips);
-
-            tips = new Tooltip("CTRL+2");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(wButton, tips);
-
-            tips = new Tooltip("CTRL+3");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(inButton, tips);
-
-            tips = new Tooltip("CTRL+4");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(outButton, tips);
-
             tips = new Tooltip("CTRL+h");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(hisBox, tips);
 
-            if (showScopeCheck != null && scopeGroup != null) {
+            tips = new Tooltip("CTRL+f");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(refButton, tips);
+
+            tips = new Tooltip("CTRL+p");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(popButton, tips);
+
+            if (showScopeCheck != null && scopeListBox != null) {
                 tips = new Tooltip(getMessage("ShowScopeComments"));
                 tips.setFont(new Font(16));
                 FxmlTools.setComments(showScopeCheck, tips);
@@ -313,7 +293,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             cropTab.setDisable(false);
             colorTab.setDisable(false);
-            convolutionTab.setDisable(false);
             effectsTab.setDisable(false);
             arcTab.setDisable(false);
             shadowTab.setDisable(false);
@@ -374,6 +353,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             isSettingValues = false;
 
+            imageData = values.getImageData();
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -383,13 +364,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected void initScopeBar() {
         try {
 
-            scopeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            List<String> scopeList = Arrays.asList(getMessage("All"),
+                    getMessage("Rectangle"), getMessage("Circle"), getMessage("Matting"), getMessage("ColorMatching"),
+                    getMessage("RectangleColor"), getMessage("CircleColor"));
+            scopeListBox.getItems().addAll(scopeList);
+            scopeListBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     checkScopeType();
                 }
             });
+            scopeListBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -406,30 +391,30 @@ public abstract class ImageManufactureController extends ImageViewerController {
             scope.clearColors();
             scope.clearPoints();
 
-            RadioButton selected = (RadioButton) scopeGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("All").equals(selected.getText())) {
+            String selected = scopeListBox.getSelectionModel().getSelectedItem();
+            if (AppVaribles.getMessage("All").equals(selected)) {
                 scope.setScopeType(ImageScope.ScopeType.All);
                 showScopeCheck.setDisable(true);
                 hideScopePane();
 
             } else {
 
-                if (AppVaribles.getMessage("Matting").equals(selected.getText())) {
+                if (AppVaribles.getMessage("Matting").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
 
-                } else if (getMessage("Rectangle").equals(selected.getText())) {
+                } else if (getMessage("Rectangle").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Rectangle);
 
-                } else if (getMessage("Circle").equals(selected.getText())) {
+                } else if (getMessage("Circle").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Circle);
 
-                } else if (getMessage("ColorMatching").equals(selected.getText())) {
+                } else if (getMessage("ColorMatching").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Color);
 
-                } else if (getMessage("RectangleColor").equals(selected.getText())) {
+                } else if (getMessage("RectangleColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.RectangleColor);
 
-                } else if (getMessage("CircleColor").equals(selected.getText())) {
+                } else if (getMessage("CircleColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.CircleColor);
 
                 }
@@ -499,7 +484,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case Hue:
                     if (distance >= 0 && distance <= 360) {
                         scopeDistanceInput.setStyle(null);
-                        scope.setHueDistance(distance);
+                        scope.setHsbDistance(distance / 360.0f);
                     } else {
                         scopeDistanceInput.setStyle(badStyle);
                         valid = false;
@@ -509,7 +494,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 case Saturation:
                     if (distance >= 0 && distance <= 100) {
                         scopeDistanceInput.setStyle(null);
-                        scope.setColorDistance(distance / 100.0);
+                        scope.setHsbDistance(distance / 100.0f);
                     } else {
                         scopeDistanceInput.setStyle(badStyle);
                         valid = false;
@@ -518,7 +503,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 default:
                     if (distance >= 0 && distance <= 255) {
                         scopeDistanceInput.setStyle(null);
-                        scope.setColorDistance(distance / 255.0);
+                        scope.setColorDistance(distance);
                     } else {
                         scopeDistanceInput.setStyle(badStyle);
                         valid = false;
@@ -710,7 +695,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     if (task.isCancelled()) {
                         return null;
                     }
-                    Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    PixelsOperation pixelsOperation = new PixelsOperation(values.getCurrentImage(), scope, OperationType.Scope);
+                    final Image scopedImage = pixelsOperation.operateFxImage();
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -759,7 +745,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     if (task.isCancelled()) {
                         return null;
                     }
-                    Image scopedImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    PixelsOperation pixelsOperation = new PixelsOperation(values.getCurrentImage(), scope, OperationType.Scope);
+                    final Image scopedImage = pixelsOperation.operateFxImage();
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -798,7 +785,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image scopeImage = FxmlScopeTools.scopeMatting(values.getCurrentImage(), scope);
+                    PixelsOperation pixelsOperation = new PixelsOperation(values.getCurrentImage(), scope, OperationType.Scope);
+                    final Image scopeImage = pixelsOperation.operateFxImage();
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -831,7 +819,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final Image scopeImage = FxmlScopeTools.scopeImage(values.getCurrentImage(), scope);
+                    PixelsOperation pixelsOperation = new PixelsOperation(values.getCurrentImage(), scope, OperationType.Scope);
+                    final Image scopeImage = pixelsOperation.operateFxImage();
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -854,6 +843,81 @@ public abstract class ImageManufactureController extends ImageViewerController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    @Override
+    protected void selectSourceFile(ActionEvent event) {
+        if (values == null || values.getCurrentImage() != null && values.isImageChanged()) {
+            if (!checkSavingBeforeExit()) {
+                return;
+            }
+        }
+        super.selectSourceFile(event);
+    }
+
+    @Override
+    public void afterImageLoaded() {
+        try {
+            super.afterImageLoaded();
+
+            if (imageInformation != null && imageInformation.isIsSampled()) {
+                hotBar.setDisable(false);
+                showRefCheck.setDisable(true);
+                hisBox.setDisable(true);
+                undoButton.setDisable(true);
+                redoButton.setDisable(true);
+                recoverButton.setDisable(true);
+                saveButton.setDisable(true);
+
+                browseTab.setDisable(true);
+                viewTab.setDisable(true);
+                colorTab.setDisable(true);
+                effectsTab.setDisable(true);
+                sizeTab.setDisable(true);
+                refTab.setDisable(true);
+                transformTab.setDisable(true);
+                textTab.setDisable(true);
+                coverTab.setDisable(true);
+                arcTab.setDisable(true);
+                shadowTab.setDisable(true);
+                marginsTab.setDisable(true);
+                cropTab.setDisable(true);
+
+            }
+
+            isSettingValues = true;
+            values.setSourceFile(sourceFile);
+            values.setImage(image);
+            values.setImageInfo(imageInformation);
+            values.setCurrentImage(image);
+            isSettingValues = false;
+
+            if (image == null
+                    || (imageInformation != null && imageInformation.isIsSampled())) {
+                return;
+            }
+
+            isSettingValues = true;
+            values.setRefImage(image);
+            values.setRefInfo(imageInformation);
+            setImageChanged(false);
+            values.setScope(new ImageScope(image));
+            scope = values.getScope();
+
+            recordImageHistory(ImageOperationType.Load, image);
+
+            imageData = values.getImageData();
+            if (initTab != null) {
+                switchTab(initTab);
+            } else {
+                initInterface();
+            }
+            isSettingValues = false;
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     public void setImage(final File file) {
@@ -986,12 +1050,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setRefImage(image);
             values.setRefInfo(values.getImageInfo());
             refView.setImage(image);
-            if (scrollPane.getHeight() < values.getImageInfo().getWidth()) {
+            if (scrollPane.getHeight() < (int) values.getImage().getWidth()) {
                 refView.setFitWidth(scrollPane.getWidth() - 1);
                 refView.setFitHeight(scrollPane.getHeight() - 5); // use attributes of scrollPane but not refPane
             } else {
-                refView.setFitWidth(values.getImageInfo().getWidth());
-                refView.setFitHeight(values.getImageInfo().getHeight());
+                refView.setFitWidth((int) values.getImage().getWidth());
+                refView.setFitHeight((int) values.getImage().getHeight());
             }
             return;
         }
@@ -1039,6 +1103,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             recoverButton.setDisable(false);
             undoButton.setDisable(false);
             redoButton.setDisable(true);
+
+            loadData();
 
         } else {
             saveButton.setDisable(true);
@@ -1140,7 +1206,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(newImage);
+                    final BufferedImage bufferedImage = ImageTools.getBufferedImage(newImage);
                     String filename = imageHistoriesPath + File.separator
                             + FileTools.getFilePrefix(values.getSourceFile().getName())
                             + "_" + (new Date().getTime()) + "_" + updateType
@@ -1197,42 +1263,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
     protected void switchTab(Tab newTab) {
 
-        String tabName = null;
-        if (fileTab.equals(newTab)) {
-            tabName = "file";
-        } else if (sizeTab.equals(newTab)) {
-            tabName = "size";
-        } else if (cropTab.equals(newTab)) {
-            tabName = "crop";
-        } else if (convolutionTab.equals(newTab)) {
-            tabName = "convolution";
-        } else if (effectsTab.equals(newTab)) {
-            tabName = "effects";
-        } else if (colorTab.equals(newTab)) {
-            tabName = "color";
-        } else if (textTab.equals(newTab)) {
-            tabName = "text";
-        } else if (coverTab.equals(newTab)) {
-            tabName = "cover";
-        } else if (arcTab.equals(newTab)) {
-            tabName = "arc";
-        } else if (shadowTab.equals(newTab)) {
-            tabName = "shadow";
-        } else if (transformTab.equals(newTab)) {
-            tabName = "transform";
-        } else if (marginsTab.equals(newTab)) {
-            tabName = "margins";
-        } else if (viewTab.equals(newTab)) {
-            tabName = "view";
-        } else if (refTab.equals(newTab)) {
-            tabName = "ref";
-        } else if (browseTab.equals(newTab)) {
-            tabName = "browse";
-        }
+        String tabName = findTabName(newTab);
         switchTab(tabName);
     }
 
-    protected void switchTab(String tabName) {
+    public void switchTab(String tabName) {
         try {
             isSwitchingTab = true;
             String fxml = null;
@@ -1248,9 +1283,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
                 case "color":
                     fxml = CommonValues.ImageManufactureColorFxml;
-                    break;
-                case "convolution":
-                    fxml = CommonValues.ImageManufactureConvolutionFxml;
                     break;
                 case "effects":
                     fxml = CommonValues.ImageManufactureEffectsFxml;
@@ -1285,10 +1317,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
             }
 
             if (fxml != null) {
+//                values.setCurrentImage(imageView.getImage());
                 values.setStageWidth(stageWidth);
                 values.setStageHeight(stageHeight);
                 values.setImageViewWidth((int) imageView.getFitWidth());
                 values.setImageViewHeight((int) imageView.getFitHeight());
+                values.setImageData(imageData);
                 ImageManufactureController controller
                         = (ImageManufactureController) reloadStage(fxml, AppVaribles.getMessage("ImageManufacture"));
                 controller.setValues(values);
@@ -1296,86 +1330,113 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 controller.xZoomStep = xZoomStep;
                 controller.yZoomStep = yZoomStep;
                 controller.initInterface();
+                controller.loadData(imageData);
 
             }
+            isSwitchingTab = false;
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void setTab(String tab) {
+    public void setTab(String tabName) {
         try {
+            Tab tab = findTab(tabName);
             if (tab == null) {
                 return;
             }
             isSettingValues = true;
-            switch (tab) {
-                case "file":
-                    tabPane.getSelectionModel().select(fileTab);
-                    break;
-                case "size":
-                    tabPane.getSelectionModel().select(sizeTab);
-                    break;
-                case "crop":
-                    tabPane.getSelectionModel().select(cropTab);
-                    break;
-                case "color":
-                    tabPane.getSelectionModel().select(colorTab);
-                    break;
-                case "convolution":
-                    tabPane.getSelectionModel().select(convolutionTab);
-                    break;
-                case "effects":
-                    tabPane.getSelectionModel().select(effectsTab);
-                    break;
-                case "text":
-                    tabPane.getSelectionModel().select(textTab);
-                    break;
-                case "cover":
-                    tabPane.getSelectionModel().select(coverTab);
-                    break;
-                case "arc":
-                    tabPane.getSelectionModel().select(arcTab);
-                    break;
-                case "shadow":
-                    tabPane.getSelectionModel().select(shadowTab);
-                    break;
-                case "transform":
-                    tabPane.getSelectionModel().select(transformTab);
-                    break;
-                case "margins":
-                    tabPane.getSelectionModel().select(marginsTab);
-                    break;
-                case "view":
-                    tabPane.getSelectionModel().select(viewTab);
-                    break;
-                case "ref":
-                    tabPane.getSelectionModel().select(refTab);
-                    break;
-                case "browse":
-                    tabPane.getSelectionModel().select(browseTab);
-                    break;
-            }
+            tabPane.getSelectionModel().select(tab);
             isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
         }
     }
 
+    protected String findTabName(Tab tab) {
+        String tabName = null;
+        if (fileTab.equals(tab)) {
+            tabName = "file";
+        } else if (sizeTab.equals(tab)) {
+            tabName = "size";
+        } else if (cropTab.equals(tab)) {
+            tabName = "crop";
+        } else if (effectsTab.equals(tab)) {
+            tabName = "effects";
+        } else if (colorTab.equals(tab)) {
+            tabName = "color";
+        } else if (textTab.equals(tab)) {
+            tabName = "text";
+        } else if (coverTab.equals(tab)) {
+            tabName = "cover";
+        } else if (arcTab.equals(tab)) {
+            tabName = "arc";
+        } else if (shadowTab.equals(tab)) {
+            tabName = "shadow";
+        } else if (transformTab.equals(tab)) {
+            tabName = "transform";
+        } else if (marginsTab.equals(tab)) {
+            tabName = "margins";
+        } else if (viewTab.equals(tab)) {
+            tabName = "view";
+        } else if (refTab.equals(tab)) {
+            tabName = "ref";
+        } else if (browseTab.equals(tab)) {
+            tabName = "browse";
+        }
+        return tabName;
+    }
+
+    public Tab findTab(String tabName) {
+        switch (tabName) {
+            case "file":
+                return fileTab;
+            case "size":
+                return sizeTab;
+            case "crop":
+                return cropTab;
+            case "color":
+                return colorTab;
+            case "effects":
+                return effectsTab;
+            case "text":
+                return textTab;
+            case "cover":
+                return coverTab;
+            case "arc":
+                return arcTab;
+            case "shadow":
+                return shadowTab;
+            case "transform":
+                return transformTab;
+            case "margins":
+                return marginsTab;
+            case "view":
+                return viewTab;
+            case "ref":
+                return refTab;
+            case "browse":
+                return browseTab;
+        }
+        return null;
+    }
+
     //  Hotbar Methods
     @FXML
-    public void save() {
+    @Override
+    public void saveAction() {
         if (saveButton.isDisabled()) {
             return;
         }
         if (values.getSourceFile() == null) {
-            saveAs();
+            saveAsAction();
             return;
         }
         if (values.isIsConfirmBeforeSave()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
@@ -1385,7 +1446,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             if (result.get() == buttonCancel) {
                 return;
             } else if (result.get() == buttonSaveAs) {
-                saveAs();
+                saveAsAction();
                 return;
             }
 
@@ -1394,8 +1455,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                String format = values.getImageInfo().getImageFormat();
-                final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(values.getCurrentImage());
+                String format = "png";
+                if (values.getImageInfo() != null) {
+                    format = values.getImageInfo().getImageFormat();
+                }
+                final BufferedImage bufferedImage = ImageTools.getBufferedImage(values.getCurrentImage());
                 if (task.isCancelled()) {
                     return null;
                 }
@@ -1425,12 +1489,13 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void saveAs() {
+    public void saveAsAction() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -1442,7 +1507,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(values.getCurrentImage());
+                    final BufferedImage bufferedImage = ImageTools.getBufferedImage(values.getCurrentImage());
                     if (task.isCancelled()) {
                         return null;
                     }
@@ -1549,7 +1614,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             str = AppVaribles.getMessage("CurrentPixels") + ":" + (int) values.getCurrentImage().getWidth() + "x" + (int) values.getCurrentImage().getHeight();
         } else {
             str = AppVaribles.getMessage("Format") + ":" + values.getImageInfo().getImageFormat() + "  "
-                    + AppVaribles.getMessage("Pixels") + ":" + values.getImageInfo().getWidth() + "x" + values.getImageInfo().getHeight() + "  "
+                    + AppVaribles.getMessage("Pixels") + ":" + (int) values.getImage().getWidth() + "x" + (int) values.getImage().getHeight() + "  "
                     + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(values.getSourceFile().length()) + "  "
                     + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(values.getSourceFile().lastModified()) + "  "
                     + AppVaribles.getMessage("CurrentPixels") + ":" + (int) values.getCurrentImage().getWidth() + "x" + (int) values.getCurrentImage().getHeight();
@@ -1573,17 +1638,17 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
         switch (scope.getScopeType()) {
             case All:
-                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                if (isSettingColor) {
                     colorPicker.setValue(color);
                 }
                 break;
 
             case Color:
-                if (scope.getOperationType() == OperationType.ReplaceColor
+                if (isSettingColor
                         && event.getButton() == MouseButton.SECONDARY) {
                     colorPicker.setValue(color);
                 } else {
-                    scope.addColor(color);
+                    scope.addColor(ImageColor.converColor(color));
                     scopeColorsBox.getItems().add(color);
                     scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
                     scopeColorsBox.setVisibleRowCount(15);
@@ -1592,7 +1657,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case Matting:
-                if (scope.getOperationType() == OperationType.ReplaceColor
+                if (isSettingColor
                         && event.getButton() == MouseButton.SECONDARY) {
                     colorPicker.setValue(color);
                 } else {
@@ -1605,7 +1670,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case Rectangle:
-                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                if (isSettingColor) {
                     colorPicker.setValue(color);
                 } else {
                     if (event.getButton() == MouseButton.PRIMARY) {
@@ -1625,7 +1690,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case Circle:
-                if (scope.getOperationType() == OperationType.ReplaceColor) {
+                if (isSettingColor) {
                     colorPicker.setValue(color);
                 } else {
                     if (event.getButton() == MouseButton.PRIMARY) {
@@ -1648,11 +1713,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case RectangleColor:
-                if (scope.getOperationType() == OperationType.ReplaceColor
+                if (isSettingColor
                         && event.getButton() == MouseButton.SECONDARY) {
                     colorPicker.setValue(color);
                 } else {
-                    scope.addColor(color);
+                    scope.addColor(ImageColor.converColor(color));
                     scopeColorsBox.getItems().add(color);
                     scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
                     scopeColorsBox.setVisibleRowCount(15);
@@ -1662,11 +1727,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 break;
 
             case CircleColor:
-                if (scope.getOperationType() == OperationType.ReplaceColor
+                if (isSettingColor
                         && event.getButton() == MouseButton.SECONDARY) {
                     colorPicker.setValue(color);
                 } else {
-                    scope.addColor(color);
+                    scope.addColor(ImageColor.converColor(color));
                     scopeColorsBox.getItems().add(color);
                     scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
                     scopeColorsBox.setVisibleRowCount(15);
@@ -1696,7 +1761,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
         switch (scope.getScopeType()) {
             case Color:
-                scope.addColor(color);
+                scope.addColor(ImageColor.converColor(color));
                 scopeColorsBox.getItems().add(color);
                 scopeColorsBox.getSelectionModel().select(scopeColorsBox.getItems().size() - 1);
                 scopeColorsBox.setVisibleRowCount(15);
@@ -1795,7 +1860,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
         setImageChanged(false);
         undoButton.setDisable(false);
         redoButton.setDisable(true);
-
+        loadData();
     }
 
     @FXML
@@ -1822,6 +1887,24 @@ public abstract class ImageManufactureController extends ImageViewerController {
         setImageChanged(true);
         undoButton.setDisable(false);
         redoButton.setDisable(true);
+    }
+
+    @FXML
+    public void refAction() {
+        values.setRefImage(imageView.getImage());
+        values.setRefInfo(null);
+        if (!showRefCheck.isSelected()) {
+            showRefCheck.setSelected(true);
+        } else if (refView != null) {
+            refView.setImage(imageView.getImage());
+        }
+    }
+
+    @FXML
+    public void popAction() {
+        ImageViewerController controller
+                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml, false);
+        controller.loadImage(sourceFile, imageView.getImage(), imageInformation, imageData);
     }
 
     @FXML
@@ -1859,18 +1942,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @Override
     protected void keyEventsHandler(KeyEvent event) {
         super.keyEventsHandler(event);
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
         if (event.isControlDown()) {
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
             switch (key) {
-                case "s":
-                case "S":
-                    if (!saveButton.isDisabled()) {
-                        save();
-                    }
-                    break;
                 case "r":
                 case "R":
                     if (!recoverButton.isDisabled()) {
@@ -1895,29 +1972,19 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         hisBox.show();
                     }
                     break;
-                case "1":
-                    if (!wButton.isDisabled()) {
-                        paneSize();
-                    }
-                    break;
-                case "2":
-                    if (!oButton.isDisabled()) {
-                        imageSize();
-                    }
-                    break;
-                case "3":
-                    if (!inButton.isDisabled()) {
-                        zoomIn();
-                    }
-                    break;
-                case "4":
-                    if (!outButton.isDisabled()) {
-                        zoomOut();
-                    }
-                    break;
                 case "x":
                     if (!scopeClearButton.isDisabled()) {
                         clearScope();
+                    }
+                    break;
+                case "f":
+                    if (!refButton.isDisabled()) {
+                        refAction();
+                    }
+                    break;
+                case "p":
+                    if (!popButton.isDisabled()) {
+                        popAction();
                     }
                     break;
                 default:
@@ -2481,7 +2548,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
     protected void showLabels() {
         try {
-            if (values == null || scope == null || scope.getOperationType() == null) {
+            if (values == null || scope == null) {
                 return;
             }
 
@@ -2490,7 +2557,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             switch (scope.getScopeType()) {
                 case All:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         imageLabel.setText(getMessage("ClickCurrentForNewColor"));
                     } else {
                         imageLabelBox.setAlignment(Pos.CENTER);
@@ -2500,7 +2567,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     promptLabel.setText("");
                     break;
                 case Matting:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText(getMessage("MattingComments2"));
                         imageLabel.setText(getMessage("ClickCurrentForColors"));
                     } else {
@@ -2510,7 +2577,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
 
                 case Rectangle:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText(getMessage("RectangleLabel"));
                         imageLabel.setText(getMessage("ClickCurrentForNewColor"));
                     } else {
@@ -2520,7 +2587,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
 
                 case Circle:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText(getMessage("CircleLabel"));
                         imageLabel.setText(getMessage("ClickCurrentForNewColor"));
                     } else {
@@ -2530,7 +2597,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
 
                 case Color:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText(getMessage("ClickScopeForColorMatch"));
                         imageLabel.setText(getMessage("ClickCurrentForColors"));
                     } else {
@@ -2540,7 +2607,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
 
                 case RectangleColor:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText("");
                         imageLabel.setText(getMessage("ClickScopeForRectangle"));
                         scopePromptLabel.setText(getMessage("ClickCurrentForColors"));
@@ -2552,7 +2619,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     break;
 
                 case CircleColor:
-                    if (scope.getOperationType() == OperationType.ReplaceColor) {
+                    if (isSettingColor) {
                         promptLabel.setText("");
                         imageLabel.setText(getMessage("ClickScopeForCircle"));
                         scopePromptLabel.setText(getMessage("ClickCurrentForColors"));
@@ -2588,25 +2655,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
     }
 
-    protected void adjustSplitPane() {
-        switch (splitPane.getItems().size()) {
-            case 3:
-                splitPane.getDividers().get(0).setPosition(0.33333);
-                splitPane.getDividers().get(1).setPosition(0.66666);
-//                splitPane.setDividerPositions(0.33, 0.33, 0.33); // This way not work!
-                break;
-            case 2:
-                splitPane.getDividers().get(0).setPosition(0.5);
-//               splitPane.setDividerPositions(0.5, 0.5); // This way not work!
-                break;
-            default:
-                splitPane.setDividerPositions(1);
-                break;
-        }
-        splitPane.layout();
-        fitSize();
-    }
-
     @Override
     public boolean stageReloading() {
         if (isSwitchingTab) {
@@ -2628,6 +2676,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("ImageChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
             ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
@@ -2636,12 +2685,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
-                save();
+                saveAction();
                 return true;
             } else if (result.get() == buttonNotSave) {
                 return true;
             } else if (result.get() == buttonSaveAs) {
-                saveAs();
+                saveAsAction();
                 return true;
             } else {
                 return false;

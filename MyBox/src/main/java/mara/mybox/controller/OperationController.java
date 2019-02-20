@@ -16,8 +16,8 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.fxml.FxmlTools;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * FXML Controller class
@@ -27,19 +27,11 @@ import static mara.mybox.objects.AppVaribles.getMessage;
 public class OperationController extends BaseController {
 
     @FXML
-    protected Button startButton;
+    protected Button pauseButton, openTargetButton;
     @FXML
-    protected Button pauseButton;
+    protected ProgressBar progressBar, fileProgressBar;
     @FXML
-    protected ProgressBar progressBar;
-    @FXML
-    protected Label progressValue;
-    @FXML
-    protected Button openTargetButton;
-    @FXML
-    protected ProgressBar fileProgressBar;
-    @FXML
-    protected Label fileProgressValue;
+    protected Label progressValue, fileProgressValue;
     @FXML
     protected CheckBox miaoCheck;
 
@@ -62,9 +54,9 @@ public class OperationController extends BaseController {
 
     @FXML
     @Override
-    protected void startProcess(ActionEvent event) {
+    public void startAction() {
         if (parentController != null) {
-            parentController.startProcess(event);
+            parentController.startAction();
         }
     }
 
@@ -72,7 +64,7 @@ public class OperationController extends BaseController {
     @Override
     protected void pauseProcess(ActionEvent event) {
         if (parentController != null) {
-            parentController.startProcess(event);
+            parentController.startAction();
         }
     }
 

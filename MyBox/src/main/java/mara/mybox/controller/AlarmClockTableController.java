@@ -18,9 +18,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import mara.mybox.objects.AlarmClock;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
+import javafx.scene.layout.Region;
+import mara.mybox.data.AlarmClock;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -124,6 +125,7 @@ public class AlarmClockTableController extends BaseController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVaribles.getMessage("SureClearAlarmClocks"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             return;
@@ -138,7 +140,8 @@ public class AlarmClockTableController extends BaseController {
     }
 
     @FXML
-    private void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         ObservableList<AlarmClock> selected = alarmClocksView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;

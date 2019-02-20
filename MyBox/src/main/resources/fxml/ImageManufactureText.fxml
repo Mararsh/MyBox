@@ -57,24 +57,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                                              <Label fx:id="tipsLabel" text="%Tips" />
-                                <Hyperlink onAction="#showHelp" text="%Help" />
-
+                                <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Open" />
+                                <Label fx:id="tipsLabel" text="%Tips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css"/>
                                 <Button mnemonicParsing="false" visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                             <items>
-                                <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ShowReference" />
-                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Reference" />
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
                                 <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
                                 <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
                                 <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
                                 <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%Save" />
+                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
+                                <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction" text="%Ref" />
+                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction" text="%Pop" />
+
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
@@ -89,7 +92,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects" />
 
-                                <Tab fx:id="convolutionTab" text="%Convolution" />
+
 
                                 <Tab fx:id="textTab" text="%Text">
                                     <content>
@@ -120,7 +123,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     <children>
                                                         <ToolBar HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Label styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" text="%ClickImageForText" />
+                                                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ClickImageForText" />
                                                                 <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
                                                             </items>
                                                         </ToolBar>

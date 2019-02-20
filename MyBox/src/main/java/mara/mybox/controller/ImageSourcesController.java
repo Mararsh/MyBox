@@ -38,13 +38,13 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.ImageFileInformation;
-import mara.mybox.objects.ImageInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.data.ImageFileInformation;
+import mara.mybox.data.ImageInformation;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -56,13 +56,13 @@ import mara.mybox.tools.ValueTools;
 public class ImageSourcesController extends ImageViewerController {
 
     protected File targetFile;
-    protected boolean isSettingValues, isOpenning;
+    protected boolean isOpenning;
     protected SimpleBooleanProperty changed, hasSampled;
 
     protected ObservableList<ImageInformation> sourceImages = FXCollections.observableArrayList();
 
     @FXML
-    protected Button saveButton, deleteButton, saveAsButton, insertButton, viewButton, clearButton;
+    protected Button saveAsButton, insertButton, viewButton, clearButton;
     @FXML
     protected TableView<ImageInformation> sourceTable;
     @FXML
@@ -229,8 +229,10 @@ public class ImageSourcesController extends ImageViewerController {
             }
             sourceImages.clear();
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -255,8 +257,10 @@ public class ImageSourcesController extends ImageViewerController {
                 return;
             }
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -299,6 +303,7 @@ public class ImageSourcesController extends ImageViewerController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("ImageChanged"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
@@ -350,11 +355,14 @@ public class ImageSourcesController extends ImageViewerController {
     }
 
     @FXML
-    protected void saveAction() {
+    @Override
+    public void saveAction() {
         if (targetFile == null) {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -373,8 +381,10 @@ public class ImageSourcesController extends ImageViewerController {
                 return;
             }
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -432,8 +442,10 @@ public class ImageSourcesController extends ImageViewerController {
     protected void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
 
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -547,7 +559,8 @@ public class ImageSourcesController extends ImageViewerController {
     }
 
     @FXML
-    protected void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -618,7 +631,8 @@ public class ImageSourcesController extends ImageViewerController {
     }
 
     @FXML
-    protected void showInfo() {
+    @Override
+    public void infoAction() {
         showImageInformation(sourceTable.getSelectionModel().getSelectedItem());
     }
 

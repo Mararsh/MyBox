@@ -8,8 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara

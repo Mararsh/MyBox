@@ -26,12 +26,12 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AlarmClock;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.AlarmClock;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 import mara.mybox.tools.SoundTools;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -53,7 +53,7 @@ public class AlarmClockController extends BaseController {
     @FXML
     private CheckBox activeCheck, loopCheck;
     @FXML
-    private Button playButton, pauseButton, saveButton;
+    private Button playButton, pauseButton;
     @FXML
     protected Pane alertClockTable;
     @FXML
@@ -474,12 +474,14 @@ public class AlarmClockController extends BaseController {
     private void selectSound(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            String defaultPath = CommonValues.UserFilePath;
+            String defaultPath = CommonValues.AppDataRoot;
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
                 defaultPath = "C:\\Windows\\media";
             }
-            File path = new File(AppVaribles.getUserConfigPath(SystemMediaPathKey, defaultPath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(SystemMediaPathKey, defaultPath);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("wav", "*.wav"));
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -500,8 +502,10 @@ public class AlarmClockController extends BaseController {
     private void selectMusic(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(MusicPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(MusicPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -519,7 +523,8 @@ public class AlarmClockController extends BaseController {
     }
 
     @FXML
-    private void saveAlarm(ActionEvent event) {
+    @Override
+    public void saveAction() {
         if (currentAlarm == null || !isEdit) {
             currentAlarm = new AlarmClock();
             currentAlarm.setKey(new Date().getTime());

@@ -13,14 +13,14 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageValueTools;
-import mara.mybox.imagefile.ImageTiffFile;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ImageAttributes;
+import mara.mybox.image.ImageValue;
+import mara.mybox.image.file.ImageTiffFile;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ImageAttributes;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -126,7 +126,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
             compressionBox.getChildren().clear();
             compressionGroup = new ToggleGroup();
             String[] compressionTypes
-                    = ImageValueTools.getCompressionTypes("tif", attributes.getColorSpace());
+                    = ImageValue.getCompressionTypes("tif", attributes.getColorSpace());
             for (String ctype : compressionTypes) {
                 if (ctype.equals("ZLib")) { // This type looks not work for mutiple frames tiff file
                     continue;
@@ -185,7 +185,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
                 return;
             }
             int inputValue = Integer.parseInt(thresholdInput.getText());
-            if (inputValue >= 0 && inputValue <= 100) {
+            if (inputValue >= 0 && inputValue <= 255) {
                 attributes.setThreshold(inputValue);
                 thresholdInput.setStyle(null);
             } else {

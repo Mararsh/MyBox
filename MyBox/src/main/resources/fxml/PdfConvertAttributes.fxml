@@ -105,15 +105,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <HBox fx:id="colorBox" alignment="CENTER_LEFT" disable="true" prefHeight="100.0" prefWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
                             <children>
-                                <RadioButton mnemonicParsing="false" selected="true" text="%Default">
+                                <RadioButton mnemonicParsing="false" selected="true" text="%OTSU">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="binaryGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
+                                    </toggleGroup></RadioButton>
+                                <RadioButton mnemonicParsing="false" text="%Default" toggleGroup="$binaryGroup" />
                                 <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
-                                <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="50.0" />
-                                <Label text="\%" />
+                                <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="80.0" promptText="0~255" />
+                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                             </children>
                         </HBox>
                     </children>

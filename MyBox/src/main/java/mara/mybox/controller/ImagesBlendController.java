@@ -30,17 +30,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javax.imageio.ImageIO;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.fxml.FxmlImageTools;
-import mara.mybox.image.ImageBlendTools.ImagesBlendMode;
-import mara.mybox.image.ImageBlendTools.ImagesRelativeLocation;
-import mara.mybox.imagefile.ImageFileReaders;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.image.ImageBlend.ImagesBlendMode;
+import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.ImageInformation;
+import mara.mybox.data.ImageInformation;
 
 /**
  * @Author Mara
@@ -78,11 +77,9 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private ComboBox<String> targetTypeBox, blendModeBox, opacityBox;
     @FXML
-    private Label foreTitle, foreLabel, backTitle, backLabel;
+    private Label foreTitle, foreLabel, backTitle, backLabel, pointLabel;
     @FXML
-    private Label pointLabel;
-    @FXML
-    private Button saveButton, imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton, newWindowButton;
+    private Button newWindowButton;
     @FXML
     private TextField pointX, pointY;
     @FXML
@@ -350,8 +347,10 @@ public class ImagesBlendController extends ImageViewerController {
     private void selectForegroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -414,7 +413,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
-            openImageManufacture(foreFile.getAbsolutePath());
+            openImageViewer(foreFile.getAbsolutePath());
         }
     }
 
@@ -434,8 +433,10 @@ public class ImagesBlendController extends ImageViewerController {
     private void selectBackgroundImage(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -507,7 +508,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
-            openImageManufacture(backFile.getAbsolutePath());
+            openImageViewer(backFile.getAbsolutePath());
         }
     }
 
@@ -524,14 +525,17 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void saveAction(ActionEvent event) {
+    @Override
+    public void saveAction() {
         if (image == null) {
             return;
         }
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(targetPathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -546,7 +550,7 @@ public class ImagesBlendController extends ImageViewerController {
                     try {
                         String filename = targetFile.getAbsolutePath();
                         String format = FileTools.getFileSuffix(filename);
-                        final BufferedImage bufferedImage = FxmlImageTools.getBufferedImage(image);
+                        final BufferedImage bufferedImage = ImageTools.getBufferedImage(image);
                         if (task.isCancelled()) {
                             return null;
                         }
@@ -635,7 +639,7 @@ public class ImagesBlendController extends ImageViewerController {
 
         bottomLabel.setText(AppVaribles.getMessage("Loading..."));
 
-        image = FxmlImageTools.blendImages(foreImage, backImage,
+        image = ImageTools.blendImages(foreImage, backImage,
                 location, x, y, intersectOnlyCheck.isSelected(), blendMode, opacity);
         if (image == null) {
             bottomLabel.setText("");

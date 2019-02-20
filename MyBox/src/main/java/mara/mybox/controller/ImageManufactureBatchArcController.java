@@ -15,10 +15,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.image.ImageConvertTools;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageConvert;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.fxml.image.ImageTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
@@ -181,8 +181,8 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             if (isPercent) {
                 value = source.getWidth() * percent / 100;
             }
-            BufferedImage target = ImageConvertTools.addArc(source, value,
-                    FxmlImageTools.colorConvert(arcColorPicker.getValue()));
+            BufferedImage target = ImageConvert.addArc(source, value,
+                    ImageTools.colorConvert(arcColorPicker.getValue()));
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

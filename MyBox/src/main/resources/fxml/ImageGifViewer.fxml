@@ -53,66 +53,83 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="sourceBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
                                 <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Open" />
+                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips">
+                                    <padding>
+                                        <Insets left="10.0" />
+                                    </padding>
+                                </Label>
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="infoBar" HBox.hgrow="NEVER">
-                            <items>
-                                <Label fx:id="commentsLabel" text="%ViewGifComments" />
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#popImageInformation" prefHeight="30.0" text="%ImageInformation" />
-                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
-                                <Button mnemonicParsing="false" onAction="#editAction" text="%Edit" />
-                            </items>
-                        </ToolBar>
+                        <HBox fx:id="operation1Box">
+                            <children>
+                                <ToolBar HBox.hgrow="NEVER">
+                                    <items>
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%ImageInformation" />
+                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
+                                        <Button mnemonicParsing="false" onAction="#editAction" text="%Edit" />
+                                    </items>
+                                </ToolBar>
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
-                <HBox fx:id="extractBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
+                <HBox fx:id="operation2Box" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                     <children>
                         <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" prefWidth="20.0" text=" " visible="false" />
+                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false"
+                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
                             </items>
                         </ToolBar>
                         <ToolBar maxWidth="1.7976931348623157E308">
                             <items>
-                                <Label text="%FilePath" /> 
+                                <Label text="%FilePath" />
                                 <TextField fx:id="targetPathInput" prefWidth="150.0" />
                                 <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
                                 <Label text="%FileNamePrefix" />
                                 <TextField fx:id="targetPrefixInput" prefWidth="80.0" />
-                                <Label text="%ExtractGifComments" />
                                 <Label text="%From" />
                                 <TextField fx:id="fromInput" prefWidth="40.0" />
                                 <Label text="%To" />
                                 <TextField fx:id="toInput" prefWidth="50.0" />
                                 <Label text="%Type" />
                                 <ComboBox fx:id="targetTypeBox" prefWidth="100.0" />
-                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" text="%Extract" />
+                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Extract" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
-                <ToolBar fx:id="toolbar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="NEVER">
-                    <items>
-                        <Button fx:id="gButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                        <Button fx:id="pButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                        <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                        <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                        <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
-                        <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
-                        <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
-                        <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
-                        <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
-                        <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
-                        <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                        <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
-                    </items>
-                </ToolBar>
-                <HBox fx:id="opBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox fx:id="operation3Box" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
+                    <children>
+                        <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                            <items>
+                                <Button mnemonicParsing="false" text=" " visible="false" />
+                            </items>
+                        </ToolBar>
+                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER" VBox.vgrow="NEVER">
+                            <items>
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
+                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
+                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
+                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
+                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                            </items>
+                        </ToolBar>
+                    </children>
+                </HBox>
+                <HBox fx:id="operation4Box" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>

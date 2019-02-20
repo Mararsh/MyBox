@@ -2,15 +2,14 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.ImageScope;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.image.ImageScope;
 
 /**
  * @Author Mara
@@ -94,75 +93,6 @@ public class ImageManufactureFileController extends ImageManufactureController {
         }
     }
 
-    @Override
-    protected void afterInfoLoaded() {
-        super.afterInfoLoaded();
-        fileBar.setDisable(false);
-        saveCheck.setDisable(true);
-    }
-
-    @Override
-    public void afterImageLoaded() {
-        try {
-            super.afterImageLoaded();
-
-            if (imageInformation.isIsSampled()) {
-                hotBar.setDisable(false);
-                showRefCheck.setDisable(true);
-                hisBox.setDisable(true);
-                undoButton.setDisable(true);
-                redoButton.setDisable(true);
-                recoverButton.setDisable(true);
-                saveButton.setDisable(true);
-
-                browseTab.setDisable(true);
-                viewTab.setDisable(true);
-                colorTab.setDisable(true);
-                effectsTab.setDisable(true);
-                convolutionTab.setDisable(true);
-                sizeTab.setDisable(true);
-                refTab.setDisable(true);
-                transformTab.setDisable(true);
-                textTab.setDisable(true);
-                coverTab.setDisable(true);
-                arcTab.setDisable(true);
-                shadowTab.setDisable(true);
-                marginsTab.setDisable(true);
-                cropTab.setDisable(true);
-
-            }
-            isSettingValues = true;
-            values.setSourceFile(sourceFile);
-            values.setImage(image);
-            values.setImageInfo(imageInformation);
-            values.setCurrentImage(image);
-            isSettingValues = false;
-
-            if (image == null || imageInformation.isIsSampled()) {
-                return;
-            }
-
-            isSettingValues = true;
-            values.setRefImage(image);
-            values.setRefInfo(imageInformation);
-            setImageChanged(false);
-            values.setScope(new ImageScope(image));
-            scope = values.getScope();
-
-            recordImageHistory(ImageOperationType.Load, image);
-            saveCheck.setDisable(false);
-            if (initTab != null) {
-                switchTab(initTab);
-            } else {
-                initInterface();
-            }
-            isSettingValues = false;
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
     private void checkSaveAsType() {
         try {
             RadioButton selected = (RadioButton) saveAsGroup.getSelectedToggle();
@@ -183,17 +113,6 @@ public class ImageManufactureFileController extends ImageManufactureController {
         }
     }
 
-    @FXML
-    @Override
-    protected void selectSourceFile(ActionEvent event) {
-        if (values == null || values.getCurrentImage() != null && values.isImageChanged()) {
-            if (!checkSavingBeforeExit()) {
-                return;
-            }
-        }
-        super.selectSourceFile(event);
-    }
-
     @Override
     protected void initInterface() {
         try {
@@ -205,11 +124,31 @@ public class ImageManufactureFileController extends ImageManufactureController {
             isSettingValues = true;
             fileBar.setDisable(false);
             saveAsBar.setDisable(false);
+            infoButton.setDisable(imageInformation == null);
+            metaButton.setDisable(imageInformation == null);
             isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
         }
 
+    }
+
+    @Override
+    protected void afterInfoLoaded() {
+        super.afterInfoLoaded();
+        fileBar.setDisable(false);
+        saveCheck.setDisable(true);
+    }
+
+    @Override
+    public void afterImageLoaded() {
+        try {
+            super.afterImageLoaded();
+            saveCheck.setDisable(false);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
 }

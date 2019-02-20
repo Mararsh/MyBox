@@ -34,11 +34,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import javax.imageio.ImageIO;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.fxml.FxmlCoverTools;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.image.FxmlCoverTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -394,7 +393,7 @@ public class ImageManufactureCoverController extends ImageManufactureController 
             }
 
             if (leftY >= rightY) {
-                leftYInput.setStyle(badStyle);
+                rightYInput.setStyle(badStyle);
             }
         }
 
@@ -481,8 +480,10 @@ public class ImageManufactureCoverController extends ImageManufactureController 
     private void selectPicture(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {

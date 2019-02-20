@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import java.util.concurrent.ScheduledFuture;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -9,10 +11,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.AppVaribles.getUserConfigValue;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -27,7 +29,8 @@ public class MainMenuController extends BaseController {
     @FXML
     private RadioMenuItem chineseMenuItem, englishMenuItem;
     @FXML
-    private RadioMenuItem replaceWhiteMenu, replaceBlackMenu, pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio;
+    private RadioMenuItem replaceWhiteMenu, replaceBlackMenu, pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio,
+            font12MenuItem, font15MenuItem, font17MenuItem;
     @FXML
     private CheckMenuItem showCommentsCheck, stopAlarmCheck;
     @FXML
@@ -54,6 +57,7 @@ public class MainMenuController extends BaseController {
         checkLanguage();
         checkAlpha();
         checkPdfMem();
+        checkFontSize();
         stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
         showCommentsCheck.setSelected(AppVaribles.isShowComments());
     }
@@ -63,6 +67,22 @@ public class MainMenuController extends BaseController {
             chineseMenuItem.setSelected(true);
         } else {
             englishMenuItem.setSelected(true);
+        }
+    }
+
+    protected void checkFontSize() {
+        switch (AppVaribles.getPaneFontSize()) {
+            case 12:
+                font12MenuItem.setSelected(true);
+                break;
+            case 15:
+                font15MenuItem.setSelected(true);
+                break;
+            case 17:
+                font17MenuItem.setSelected(true);
+                break;
+            default:
+                break;
         }
     }
 
@@ -100,16 +120,35 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void setChinese(ActionEvent event) {
         AppVaribles.setLanguage("zh");
-        if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-            reloadStage(CommonValues.ImageManufactureFileFxml, getParentController().getMyStage().getTitle());
-        } else {
-            reloadStage(parentFxml, getParentController().getMyStage().getTitle());
-        }
+        refresh();
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
         AppVaribles.setLanguage("en");
+        refresh();
+    }
+
+    @FXML
+    protected void setFont12(ActionEvent event) {
+        AppVaribles.setPaneFontSize(12);
+        refresh();
+    }
+
+    @FXML
+    protected void setFont15(ActionEvent event) {
+        AppVaribles.setPaneFontSize(15);
+        refresh();
+    }
+
+    @FXML
+    protected void setFont17(ActionEvent event) {
+        AppVaribles.setPaneFontSize(17);
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
             reloadStage(CommonValues.ImageManufactureFileFxml, getParentController().getMyStage().getTitle());
         } else {
@@ -244,7 +283,42 @@ public class MainMenuController extends BaseController {
     @FXML
     private void exit(ActionEvent event) {
         // This statement is internel call to close the stage, so itself can not tigger stageClosing()
-        closeStage();
+        try {
+            if (!getParentController().closeStage()) {
+                return;
+            }
+
+            if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
+                if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
+                    for (Long key : AppVaribles.scheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
+                        future.cancel(true);
+                    }
+                    AppVaribles.scheduledTasks = null;
+                    if (AppVaribles.executorService != null) {
+                        AppVaribles.executorService.shutdownNow();
+                        AppVaribles.executorService = null;
+                    }
+                }
+
+            } else {
+                if (AppVaribles.scheduledTasks != null) {
+                    AppVaribles.scheduledTasks = null;
+                }
+                if (AppVaribles.executorService != null) {
+                    AppVaribles.executorService.shutdownNow();
+                    AppVaribles.executorService = null;
+                }
+            }
+
+            if (AppVaribles.scheduledTasks == null) {
+                Platform.exit();
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
     }
 
     @FXML
@@ -313,8 +387,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openMultipleImagesViewer(ActionEvent event) {
-        reloadStage(CommonValues.ImagesViewerFxml, AppVaribles.getMessage("MultipleImagesViewer"));
+    private void openImagesBrowser(ActionEvent event) {
+        reloadStage(CommonValues.ImagesBrowserFxml, AppVaribles.getMessage("ImagesBrowser"));
     }
 
     @FXML
@@ -358,13 +432,6 @@ public class MainMenuController extends BaseController {
         ImageManufactureFileController controller
                 = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
         controller.setInitTab("effects");
-    }
-
-    @FXML
-    private void openImageManufactureConvolution(ActionEvent event) {
-        ImageManufactureFileController controller
-                = (ImageManufactureFileController) reloadStage(CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-        controller.setInitTab("convolution");
     }
 
     @FXML
@@ -432,11 +499,6 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImageManufactureBatchEffects(ActionEvent event) {
         reloadStage(CommonValues.ImageManufactureBatchEffectsFxml, AppVaribles.getMessage("ImageManufactureBatchEffects"));
-    }
-
-    @FXML
-    private void openImageManufactureBatchConvolution(ActionEvent event) {
-        reloadStage(CommonValues.ImageManufactureBatchConvolutionFxml, AppVaribles.getMessage("ImageManufactureBatchConvolution"));
     }
 
     @FXML
@@ -515,6 +577,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageStatistic(ActionEvent event) {
+        reloadStage(CommonValues.ImageStatisticFxml, AppVaribles.getMessage("ImageStatistic"));
+    }
+
+    @FXML
     private void openConvolutionKernelManager(ActionEvent event) {
         reloadStage(CommonValues.ConvolutionKernelManagerFxml, AppVaribles.getMessage("ConvolutionKernelManager"));
     }
@@ -585,8 +652,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openSnapScreen(ActionEvent event) {
-        reloadStage(CommonValues.SnapScreenFxml, AppVaribles.getMessage("SnapScreen"));
+    private void openRecordImages(ActionEvent event) {
+        reloadStage(CommonValues.RecordImagesInSystemClipboardFxml, AppVaribles.getMessage("RecordImagesInSystemClipBoard"));
     }
 
     @FXML
@@ -597,12 +664,12 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void showAbout(ActionEvent event) {
-        openStage(CommonValues.AboutFxml, true);
+        openStage(CommonValues.AboutFxml, false);
     }
 
     @FXML
     private void settingsAction(ActionEvent event) {
-        BaseController c = openStage(CommonValues.SettingsFxml, true);
+        BaseController c = openStage(CommonValues.SettingsFxml, false);
         c.setParentController(parentController);
         c.setParentFxml(parentFxml);
     }

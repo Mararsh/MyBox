@@ -81,10 +81,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets right="10.0" />
                                                     </padding>
                                                 </Label>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%CompressionType" visible="false" />
                                                 <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
-                                                <TextField fx:id="thresholdInput" prefWidth="60.0" />
-                                                <Label text="\%" />
+                                                <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                                 <Label text="%EmptyForDefault" />
+                                                <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">

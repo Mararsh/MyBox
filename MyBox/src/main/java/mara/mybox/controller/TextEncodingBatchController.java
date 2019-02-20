@@ -14,13 +14,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.FileEditInformation;
-import mara.mybox.objects.FileEditInformation.Edit_Type;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.fxml.FxmlTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileEditInformation;
+import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
 
@@ -99,6 +102,10 @@ public class TextEncodingBatchController extends FilesBatchController {
                 }
             });
             targetBox.getSelectionModel().select(Charset.defaultCharset().name());
+
+            Tooltip tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(targetBomCheck, tips);
         }
     }
 

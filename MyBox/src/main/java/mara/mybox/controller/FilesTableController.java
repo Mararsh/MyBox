@@ -16,10 +16,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.FileInformation;
 
 /**
  * @Author Mara
@@ -34,7 +33,7 @@ public class FilesTableController extends BaseController {
     @FXML
     protected Pane filesTablePane;
     @FXML
-    protected Button addButton, clearButton, deleteButton, upButton, downButton, insertButton;
+    protected Button addButton, clearButton, upButton, downButton, insertButton;
     @FXML
     protected Button recoveryAllButton, recoverySelectedButton;
     @FXML
@@ -100,8 +99,10 @@ public class FilesTableController extends BaseController {
     void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(parentController.sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(parentController.sourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(parentController.fileExtensionFilter);
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
             if (files == null || files.isEmpty()) {
@@ -199,7 +200,8 @@ public class FilesTableController extends BaseController {
     }
 
     @FXML
-    void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {

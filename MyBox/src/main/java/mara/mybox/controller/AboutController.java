@@ -5,10 +5,10 @@ import java.net.URI;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara

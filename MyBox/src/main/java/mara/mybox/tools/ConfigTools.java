@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import mara.mybox.objects.CommonValues;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara

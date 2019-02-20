@@ -5,10 +5,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
+import javafx.scene.control.ToolBar;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
 import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -19,6 +20,9 @@ import mara.mybox.fxml.FxmlTools;
 public class ImageManufactureBrowseController extends ImageManufactureController {
 
     final protected String ImageSortTypeKey;
+
+    @FXML
+    protected ToolBar navBar;
 
     public ImageManufactureBrowseController() {
         ImageSortTypeKey = "ImageSortType";
@@ -44,8 +48,10 @@ public class ImageManufactureBrowseController extends ImageManufactureController
 
             isSettingValues = true;
 
-            navBar.setDisable(false);
-            checkImageNevigator();
+            if (sourceFile != null && navBox != null) {
+                navBox.setDisable(false);
+                checkImageNevigator();
+            }
 
             isSettingValues = false;
         } catch (Exception e) {
@@ -79,6 +85,7 @@ public class ImageManufactureBrowseController extends ImageManufactureController
             return;
         }
         if (nextFile != null) {
+            setImageChanged(false);
             loadImage(nextFile.getAbsoluteFile(), false);
         }
     }
@@ -90,6 +97,7 @@ public class ImageManufactureBrowseController extends ImageManufactureController
             return;
         }
         if (previousFile != null) {
+            setImageChanged(false);
             loadImage(previousFile.getAbsoluteFile(), false);
         }
     }

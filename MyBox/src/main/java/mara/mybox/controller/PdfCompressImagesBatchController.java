@@ -5,6 +5,7 @@
  */
 package mara.mybox.controller;
 
+import mara.mybox.fxml.FxmlStage;
 import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
@@ -18,17 +19,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.data.FileInformation;
 import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.tools.FileTools;
 
 /**
  * FXML Controller class
@@ -37,12 +42,27 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
  */
 public class PdfCompressImagesBatchController extends PdfCompressImagesController {
 
+    protected int targetExistType;
+
     @FXML
     private TableView<FileInformation> sourceTable;
     @FXML
     private TableColumn<FileInformation, String> fileColumn, modifyTimeColumn, sizeColumn, createTimeColumn;
     @FXML
-    protected Button addButton, clearButton, openButton, deleteButton, upButton, downButton, insertButton;
+    protected Button addButton, clearButton, openButton, upButton, downButton, insertButton;
+    @FXML
+    protected ToggleGroup targetExistGroup;
+    @FXML
+    protected RadioButton targetReplaceRadio, targetRenameRadio, targetSkipRadio;
+    @FXML
+    protected TextField targetSuffixInput;
+
+    protected static class TargetExistType {
+
+        public static int Rename = 0;
+        public static int Replace = 1;
+        public static int Skip = 2;
+    }
 
     public PdfCompressImagesBatchController() {
 
@@ -130,7 +150,34 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
+
+        targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> ov,
+                    Toggle old_toggle, Toggle new_toggle) {
+                checkTargetExistType();
+            }
+        });
+        checkTargetExistType();
+
+    }
+
+    protected void checkTargetExistType() {
+        targetSuffixInput.setStyle(null);
+        RadioButton selected = (RadioButton) targetExistGroup.getSelectedToggle();
+        if (selected.equals(targetReplaceRadio)) {
+            targetExistType = TargetExistType.Replace;
+
+        } else if (selected.equals(targetRenameRadio)) {
+            targetExistType = TargetExistType.Rename;
+            if (targetSuffixInput.getText() == null || targetSuffixInput.getText().trim().isEmpty()) {
+                targetSuffixInput.setStyle(badStyle);
+            }
+
+        } else if (selected.equals(targetSkipRadio)) {
+            targetExistType = TargetExistType.Skip;
+        }
     }
 
     @FXML
@@ -151,8 +198,10 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     private void addAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(PdfCompressImagesSourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(PdfCompressImagesSourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -181,7 +230,8 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     }
 
     @FXML
-    private void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTable.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -216,7 +266,7 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
             }
 
             FileInformation info = sourceFilesInformation.get(index);
-            OpenFile.openTarget(getClass(), null, info.getFile().getAbsolutePath());
+            FxmlStage.openTarget(getClass(), null, info.getFile().getAbsolutePath());
         }
     }
 
@@ -291,6 +341,23 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
         actualParameters.acumStart = 1;
         actualParameters.acumDigit = 0;
 
+    }
+
+    @Override
+    protected void makeTargetFile(File file) {
+        String filename = FileTools.getFileName(file.getName());
+        targetFile = new File(targetPath.getAbsolutePath() + File.separator + filename);
+        if (targetExistType == TargetExistType.Rename) {
+            while (targetFile.exists()) {
+                filename = FileTools.getFilePrefix(filename)
+                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(filename);
+                targetFile = new File(targetPath.getAbsolutePath() + File.separator + filename);
+            }
+        } else if (targetExistType == TargetExistType.Skip) {
+            if (targetFile.exists()) {
+                targetFile = null;
+            }
+        }
     }
 
     @FXML

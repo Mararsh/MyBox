@@ -33,19 +33,20 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileEditInformation;
-import mara.mybox.objects.FileEditInformation.Edit_Type;
-import mara.mybox.objects.FileEditInformation.Filter_Type;
-import mara.mybox.objects.FileEditInformation.Line_Break;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileEditInformation;
+import mara.mybox.data.FileEditInformation.Edit_Type;
+import mara.mybox.data.FileEditInformation.Filter_Type;
+import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 
@@ -63,7 +64,7 @@ public abstract class FileEditerController extends BaseController {
     protected int currentFound, currentPageTmp, lineLocation, objectLocation;
     protected long pageSize, currentPage;
     protected SimpleBooleanProperty fileChanged;
-    protected boolean isSettingValues, findWhole, charsetByUser;
+    protected boolean findWhole, charsetByUser;
     protected FileEditInformation sourceInformation, targetInformation;
     protected SaveAsType saveAsType;
     protected TextArea displayArea;
@@ -98,12 +99,11 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel;
     @FXML
-    protected Button openButton, createButton, saveButton, charactersButton, linesButton, recoverButton,
-            redoButton, undoButton, deleteButton, cutButton, copyButton, pasteButton, selectAllButton,
+    protected Button openButton, createButton, charactersButton, linesButton, recoverButton,
+            redoButton, undoButton, cutButton, pasteButton,
             findFirstButton, findPreviousButton, findNextButton, findLastButton, countButton,
-            replaceButton, replaceAllButton, filterButton, infoButton, pageSizeButton,
-            firstPageButton, perviousPageButton, nextPageButton, lastPageButton, pageGoButton,
-            locateObjectButton, locateLineButton;
+            replaceButton, replaceAllButton, filterButton,
+            pageGoButton, locateObjectButton, locateLineButton;
     @FXML
     protected TextField fromInput, toInput, pageSizeInput, pageInput, filterInput, findInput, replaceInput,
             currentLineBreak, objectNumberInput, lineInput;
@@ -335,11 +335,8 @@ public abstract class FileEditerController extends BaseController {
 
     protected void initEditBar() {
         try {
-            Tooltip tips = new Tooltip("CTRL+c");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(copyButton, tips);
 
-            tips = new Tooltip("CTRL+v");
+            Tooltip tips = new Tooltip("CTRL+v");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(pasteButton, tips);
 
@@ -351,21 +348,13 @@ public abstract class FileEditerController extends BaseController {
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(undoButton, tips);
 
-            tips = new Tooltip("CTRL+a");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(selectAllButton, tips);
-
             tips = new Tooltip("CTRL+x");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(cutButton, tips);
 
-            tips = new Tooltip("CTRL+d");
+            tips = new Tooltip("CTRL+r");
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(deleteButton, tips);
-
-            tips = new Tooltip("CTRL+s");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(saveButton, tips);
+            FxmlTools.quickTooltip(recoverButton, tips);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -572,6 +561,10 @@ public abstract class FileEditerController extends BaseController {
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(findFirstButton, tips);
 
+            tips = new Tooltip("CTRL+l");
+            tips.setFont(new Font(16));
+            FxmlTools.quickTooltip(findLastButton, tips);
+
             tips = new Tooltip("CTRL+n");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(findNextButton, tips);
@@ -580,7 +573,7 @@ public abstract class FileEditerController extends BaseController {
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(findPreviousButton, tips);
 
-            tips = new Tooltip("CTRL+r");
+            tips = new Tooltip("CTRL+e");
             tips.setFont(new Font(16));
             FxmlTools.quickTooltip(replaceButton, tips);
 
@@ -869,7 +862,11 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void copyAction() {
+    @Override
+    public void copyAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!copyButton.isDisabled()) {
                 mainArea.copy();
@@ -881,6 +878,9 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void pasteAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!pasteButton.isDisabled()) {
                 mainArea.paste();
@@ -892,6 +892,9 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void cutAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!cutButton.isDisabled()) {
                 mainArea.cut();
@@ -902,7 +905,11 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void deleteAction() {
+    @Override
+    public void deleteAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!deleteButton.isDisabled()) {
                 mainArea.deleteText(mainArea.getSelection());
@@ -913,7 +920,11 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void selectAllAction() {
+    @Override
+    public void selectAllAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!selectAllButton.isDisabled()) {
                 mainArea.selectAll();
@@ -925,6 +936,9 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void redoAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!redoButton.isDisabled()) {
                 mainArea.redo();
@@ -936,6 +950,9 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void undoAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!undoButton.isDisabled()) {
                 mainArea.undo();
@@ -947,6 +964,9 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void recoverAction() {
+        if (!mainArea.isFocused()) {
+            return;
+        }
         try {
             if (!recoverButton.isDisabled() && sourceInformation.getFile() != null) {
                 loadPage();
@@ -959,64 +979,53 @@ public abstract class FileEditerController extends BaseController {
     @Override
     protected void keyEventsHandler(KeyEvent event) {
         super.keyEventsHandler(event);
-        String key = event.getText();
-        if (key == null || key.isEmpty()) {
-            return;
-        }
         if (event.isControlDown()) {
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
             switch (key) {
-                case "c":
-                case "C":
-                    if (mainArea.isFocused() && !copyButton.isDisabled()) {
-                        copyAction();
-                    }
-                    break;
-                case "v":
-                case "V":
-                    if (mainArea.isFocused() && !pasteButton.isDisabled()) {
-                        pasteAction();
-                    }
-                    break;
-                case "z":
-                case "Z":
-                    if (mainArea.isFocused() && !undoButton.isDisabled()) {
-                        undoAction();
-                    }
-                    break;
-                case "y":
-                case "Y":
-                    if (mainArea.isFocused() && !redoButton.isDisabled()) {
-                        redoAction();
-                    }
-                    break;
-                case "a":
-                case "A":
-                    if (mainArea.isFocused() && !selectAllButton.isDisabled()) {
-                        selectAllAction();
-                    }
-                    break;
-                case "x":
-                case "X":
-                    if (mainArea.isFocused() && !cutButton.isDisabled()) {
-                        cutAction();
-                    }
-                    break;
-                case "d":
-                case "D":
-                    if (mainArea.isFocused() && !deleteButton.isDisabled()) {
-                        deleteAction();
-                    }
-                    break;
-                case "s":
-                case "S":
-                    if (!saveButton.isDisabled()) {
-                        saveAction();
+                // TextArea itself supports these shortcuts.
+//                case "v":
+//                case "V":
+//                    if (mainArea.isFocused() && !pasteButton.isDisabled()) {
+//                        pasteAction();
+//                    }
+//                    break;
+//                case "z":
+//                case "Z":
+//                    if (mainArea.isFocused() && !undoButton.isDisabled()) {
+//                        undoAction();
+//                    }
+//                    break;
+//                case "y":
+//                case "Y":
+//                    if (mainArea.isFocused() && !redoButton.isDisabled()) {
+//                        redoAction();
+//                    }
+//                    break;
+//                case "x":
+//                case "X":
+//                    if (mainArea.isFocused() && !cutButton.isDisabled()) {
+//                        cutAction();
+//                    }
+//                    break;
+                case "r":
+                case "R":
+                    if (mainArea.isFocused() && !recoverButton.isDisabled()) {
+                        recoverAction();
                     }
                     break;
                 case "f":
                 case "F":
                     if (!findFirstButton.isDisabled()) {
                         findFirstAction();
+                    }
+                    break;
+                case "l":
+                case "L":
+                    if (!findLastButton.isDisabled()) {
+                        findLastAction();
                     }
                     break;
                 case "n":
@@ -1031,8 +1040,8 @@ public abstract class FileEditerController extends BaseController {
                         findPreviousAction();
                     }
                     break;
-                case "r":
-                case "R":
+                case "e":
+                case "E":
                     if (!replaceButton.isDisabled()) {
                         replaceAction();
                     }
@@ -1044,7 +1053,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void pageSizeAction() {
+    @Override
+    public void okAction() {
         if (!checkSavingForNextAction()) {
             return;
         }
@@ -1469,6 +1479,7 @@ public abstract class FileEditerController extends BaseController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureReplaceAll"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -1558,12 +1569,13 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void nextPageAction() {
+    @Override
+    public void nextAction() {
         if (!checkSavingForNextAction()) {
             return;
         }
         if (sourceInformation.getObjectsNumber() <= sourceInformation.getCurrentPageObjectEnd()) {
-            nextPageButton.setDisable(true);
+            nextButton.setDisable(true);
         } else {
             sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() + 1);
             currentFound = -1;
@@ -1572,12 +1584,13 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void previousPageAction() {
+    @Override
+    public void previousAction() {
         if (!checkSavingForNextAction()) {
             return;
         }
         if (sourceInformation.getCurrentPage() <= 1) {
-            perviousPageButton.setDisable(true);
+            previousButton.setDisable(true);
         } else {
             sourceInformation.setCurrentPage(sourceInformation.getCurrentPage() - 1);
             currentFound = -1;
@@ -1586,7 +1599,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void firstPageAction() {
+    @Override
+    public void firstAction() {
         if (!checkSavingForNextAction()) {
             return;
         }
@@ -1596,7 +1610,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void lastPageAction() {
+    @Override
+    public void lastAction() {
         if (!checkSavingForNextAction()) {
             return;
         }
@@ -1619,7 +1634,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void infoAction() {
+    @Override
+    public void infoAction() {
 
     }
 
@@ -1756,8 +1772,10 @@ public abstract class FileEditerController extends BaseController {
             }
 
             final FileChooser fileChooser = new FileChooser();
-            File path = new File(AppVaribles.getUserConfigPath(FilePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(path);
+            File path = AppVaribles.getUserConfigPath(FilePathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
@@ -1973,13 +1991,14 @@ public abstract class FileEditerController extends BaseController {
         } else {
             getMyStage().setTitle(t);
         }
-        if (editLabel != null) {
-            editLabel.setText("");
-        }
         if (!formatMainArea()) {
-            editLabel.setText(AppVaribles.getMessage("InvalidData"));
+            if (editLabel != null) {
+                editLabel.setText(AppVaribles.getMessage("InvalidData"));
+            }
             mainArea.setStyle(badStyle);
             return;
+        } else if (editLabel != null) {
+            editLabel.setText("");
         }
         mainArea.setStyle(null);
         String text = mainArea.getText();
@@ -2038,15 +2057,12 @@ public abstract class FileEditerController extends BaseController {
                     if (currentBox != null) {
                         currentBox.setDisable(changed || sourceInformation.isWithBom());
                     }
-                    if (editLabel != null && changed) {
-                        editLabel.setText(AppVaribles.getMessage("PaginateComments"));
-                    }
                     if (locateObjectButton != null) {
                         locateObjectButton.setDisable(changed);
                         locateLineButton.setDisable(changed);
                     }
-                    perviousPageButton.setDisable(sourceInformation.getCurrentPage() <= 1);
-                    nextPageButton.setDisable(sourceInformation.getObjectsNumber() <= sourceInformation.getCurrentPageObjectEnd());
+                    previousButton.setDisable(sourceInformation.getCurrentPage() <= 1);
+                    nextButton.setDisable(sourceInformation.getObjectsNumber() <= sourceInformation.getCurrentPageObjectEnd());
                     if (sourceInformation.getObjectsNumber() % sourceInformation.getPageSize() == 0) {
                         sourceInformation.setPagesNumber(sourceInformation.getObjectsNumber() / sourceInformation.getPageSize());
                     } else {
@@ -2084,8 +2100,8 @@ public abstract class FileEditerController extends BaseController {
                 }
             }
         }
-        if (pageSizeButton != null) {
-            pageSizeButton.setDisable(changed);
+        if (okButton != null) {
+            okButton.setDisable(changed);
         }
 
         setSecondArea(text);
@@ -2138,7 +2154,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void saveAction() {
+    @Override
+    public void saveAction() {
         if (sourceFile == null) {
             saveNew();
         } else {
@@ -2148,8 +2165,10 @@ public abstract class FileEditerController extends BaseController {
 
     protected void saveNew() {
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(FilePathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(FilePathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
@@ -2196,6 +2215,7 @@ public abstract class FileEditerController extends BaseController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
@@ -2247,8 +2267,10 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected void saveAsAction() {
         final FileChooser fileChooser = new FileChooser();
-        File path = new File(AppVaribles.getUserConfigPath(FilePathKey, CommonValues.UserFilePath));
-        fileChooser.setInitialDirectory(path);
+        File path = AppVaribles.getUserConfigPath(FilePathKey);
+        if (path.exists()) {
+            fileChooser.setInitialDirectory(path);
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
@@ -2352,6 +2374,7 @@ public abstract class FileEditerController extends BaseController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("NeedSaveBeforeAction"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
             ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
             ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));

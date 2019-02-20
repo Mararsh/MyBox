@@ -38,16 +38,17 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.db.TableFloatMatrix;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.ConvolutionKernel;
-import mara.mybox.objects.ConvolutionKernel.Convolution_Type;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
@@ -63,7 +64,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     protected ObservableList<ConvolutionKernel> tableData = FXCollections.observableArrayList();
     private int width, height, type, edge_Op;
-    private boolean isSettingValues, matrixValid;
+    private boolean matrixValid;
     private GridPane matrixPane;
     private TextField[][] matrixInputs;
     private float[][] matrixValues;
@@ -75,7 +76,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private Button editButton, deleteButton, saveButton, copyButton, gaussButton;
+    private Button editButton, gaussButton;
     @FXML
     private TableView<ConvolutionKernel> tableView;
     @FXML
@@ -154,11 +155,11 @@ public class ConvolutionKernelManagerController extends BaseController {
 
         if (parentController != null && parentFxml != null) {
             if (parentFxml.contains("ImageManufactureConvolution")) {
-                ImageManufactureConvolutionController p = (ImageManufactureConvolutionController) parentController;
-                p.loadList(records);
-            } else if (parentFxml.contains("ImageManufactureBatchConvolution")) {
-                ImageManufactureBatchConvolutionController p = (ImageManufactureBatchConvolutionController) parentController;
-                p.loadList(records);
+                ImageManufactureEffectsController p = (ImageManufactureEffectsController) parentController;
+                p.loadKernelsList(records);
+            } else if (parentFxml.contains("ImageManufactureBatchEffects")) {
+                ImageManufactureBatchEffectsController p = (ImageManufactureBatchEffectsController) parentController;
+                p.loadKernelsList(records);
             }
         }
     }
@@ -285,13 +286,13 @@ public class ConvolutionKernelManagerController extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
+            edge_Op = ConvolutionKernel.Edge_Op.COPY;
             RadioButton selected = (RadioButton) edgesGroup.getSelectedToggle();
             if (selected == null) {
                 return;
             }
-            if (getMessage("KeepValues").equals(selected.getText())) {
-                edge_Op = ConvolutionKernel.Edge_Op.COPY;
+            if (!getMessage("KeepValues").equals(selected.getText())) {
+                edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -479,7 +480,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void copyAction() {
+    @Override
+    public void copyAction() {
         editAction();
         nameInput.setDisable(false);
         nameInput.setText(kernel.getName() + " mmm");
@@ -487,7 +489,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         final List<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
@@ -495,6 +498,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.setContentText(AppVaribles.getMessage("SureDelete"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
         ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -538,6 +542,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.setContentText(AppVaribles.getMessage("SureDelete"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
         ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
@@ -689,18 +694,19 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (!pickKernel()) {
             return;
         }
-        ImageManufactureConvolutionController c
-                = (ImageManufactureConvolutionController) openStage(CommonValues.ImageManufactureConvolutionFxml, true);
+        ImageManufactureEffectsController c
+                = (ImageManufactureEffectsController) openStage(CommonValues.ImageManufactureEffectsFxml, false);
         c.setParentController(getMyController());
         c.setParentFxml(getMyFxml());
         c.loadImage(new Image("img/p3.png"));
-        c.setTab("convolution");
+        c.setTab("effects");
         c.showRef();
-        c.selectKernel(kernel);
+        c.applyKernel(kernel);
     }
 
     @FXML
-    private void saveAction(ActionEvent event) {
+    @Override
+    public void saveAction() {
         if (!pickKernel() || name == null || name.isEmpty()) {
             return;
         }

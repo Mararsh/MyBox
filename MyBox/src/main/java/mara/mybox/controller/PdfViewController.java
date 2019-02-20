@@ -10,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,8 +19,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
@@ -29,10 +26,10 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.objects.AppVaribles;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.PdfInformation;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.PdfInformation;
 import mara.mybox.tools.PdfTools;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -47,28 +44,26 @@ public class PdfViewController extends ImageViewerController {
     private PdfInformation pdfInformation;
     private int currentPage, currentPageTmp, percent, dpi;
     protected SimpleBooleanProperty infoLoaded;
-    private boolean isSettingValues, isTransparent;
+    private boolean isTransparent;
 
     @FXML
-    protected Label pageLabel, cropLabel;
+    protected Label pageLabel;
     @FXML
-    protected Button firstPageButton, perviousPageButton, nextPageButton, lastPageButton, pageGoButton;
+    protected Button pageGoButton;
     @FXML
     protected TextField pageInput;
     @FXML
-    protected HBox navBox;
-    @FXML
     protected ComboBox<String> sizeBox, dpiBox;
     @FXML
-    protected CheckBox selectCheck, transCheck;
+    protected CheckBox transCheck;
     @FXML
-    protected ToolBar optionBar;
+    protected HBox pageNavBox;
 
     public PdfViewController() {
         sourcePathKey = "PdfSourcePath";
+        TipsLabelKey = "PdfViewTips";
 
         fileExtensionFilter = CommonValues.PdfExtensionFilter;
-
     }
 
     @Override
@@ -76,24 +71,8 @@ public class PdfViewController extends ImageViewerController {
         try {
             infoLoaded = new SimpleBooleanProperty(false);
 
-            optionBar.disableProperty().bind(Bindings.not(infoLoaded));
-            infoBar.disableProperty().bind(Bindings.not(infoLoaded));
-            navBox.disableProperty().bind(Bindings.not(infoLoaded));
-            opeBox.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
-
-            selectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    cropLabel.setDisable(!selectCheck.isSelected());
-                    if (!selectCheck.isSelected()) {
-                        selectAllAction();
-                        bottomLabel.setText("");
-                    }
-                }
-            });
-            cropLabel.setDisable(!selectCheck.isSelected());
+            operation1Box.disableProperty().bind(Bindings.not(infoLoaded));
+            pageNavBox.disableProperty().bind(Bindings.not(infoLoaded));
 
             transCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -156,7 +135,7 @@ public class PdfViewController extends ImageViewerController {
                     if (isSettingValues) {
                         return;
                     }
-                    if (navBox.isDisabled()) {
+                    if (pageNavBox.isDisabled()) {
                         currentPageTmp = 0;
                         pageInput.setStyle(null);
                         return;
@@ -183,6 +162,24 @@ public class PdfViewController extends ImageViewerController {
         }
     }
 
+    @Override
+    protected void initOperation2Box() {
+
+        operation2Box.disableProperty().bind(
+                Bindings.isNull(imageView.imageProperty())
+        );
+
+        cropCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                AppVaribles.setUserConfigValue(SelectKey, cropCheck.isSelected());
+                checkSelect();
+            }
+        });
+        cropCheck.setSelected(AppVaribles.getUserConfigBoolean(SelectKey, true));
+        checkSelect();
+    }
+
     private void setSize(int percent) {
         if (imageView.getImage() == null) {
             return;
@@ -195,21 +192,25 @@ public class PdfViewController extends ImageViewerController {
 
     @Override
     public void sourceFileChanged(final File file) {
-        imageView.setImage(null);
-        imageView.setTranslateX(0);
-        pdfInformation = null;
-        currentPage = 0;
-        infoLoaded.set(false);
-        pageInput.setText("1");
-        pageLabel.setText("");
-        percent = 0;
-        if (file == null) {
-            return;
+        try {
+            imageView.setImage(null);
+            imageView.setTranslateX(0);
+            pdfInformation = null;
+            currentPage = 0;
+            infoLoaded.set(false);
+            pageInput.setText("1");
+            pageLabel.setText("");
+            percent = 0;
+            if (file == null) {
+                return;
+            }
+            sourceFile = file;
+            pdfInformation = new PdfInformation(sourceFile);
+            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
+            loadPage();
+        } catch (Exception e) {
+            logger.debug(e.toString());
         }
-        sourceFile = file;
-        pdfInformation = new PdfInformation(sourceFile);
-        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-        loadPage();
     }
 
     public void loadInformation() {
@@ -249,8 +250,8 @@ public class PdfViewController extends ImageViewerController {
         isSettingValues = true;
         pageInput.setText((currentPage + 1) + "");
         isSettingValues = false;
-        perviousPageButton.setDisable(currentPage <= 0);
-        nextPageButton.setDisable(infoLoaded.get() && currentPage >= (pdfInformation.getNumberOfPages() - 1));
+        previousButton.setDisable(currentPage <= 0);
+        nextButton.setDisable(infoLoaded.get() && currentPage >= (pdfInformation.getNumberOfPages() - 1));
         bottomLabel.setText("");
         task = new Task<Void>() {
             @Override
@@ -269,7 +270,9 @@ public class PdfViewController extends ImageViewerController {
                         if (percent == 0) {
                             sizeBox.getSelectionModel().select("100");
                         }
-                        selectAllAction();
+                        fitSize();
+                        checkSelect();
+
                         if (!infoLoaded.get()) {
                             loadInformation();
                         }
@@ -285,7 +288,8 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @FXML
-    protected void popPdfInformation(ActionEvent event) {
+    @Override
+    public void infoAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -320,7 +324,8 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @FXML
-    protected void nextPageAction() {
+    @Override
+    public void nextAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -329,7 +334,8 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @FXML
-    protected void previousPageAction() {
+    @Override
+    public void previousAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -338,7 +344,8 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @FXML
-    protected void firstPageAction() {
+    @Override
+    public void firstAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -347,7 +354,8 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @FXML
-    protected void lastPageAction() {
+    @Override
+    public void lastAction() {
         if (pdfInformation == null) {
             return;
         }
@@ -371,6 +379,13 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     @Override
+    public void imageSize() {
+        super.imageSize();
+        setSizeBox();
+    }
+
+    @FXML
+    @Override
     public void paneSize() {
         super.paneSize();
         setSizeBox();
@@ -388,15 +403,6 @@ public class PdfViewController extends ImageViewerController {
     public void zoomOut() {
         super.zoomOut();
         setSizeBox();
-    }
-
-    @FXML
-    @Override
-    public void clickImage(MouseEvent event) {
-        if (!selectCheck.isSelected()) {
-            return;
-        }
-        super.clickImage(event);
     }
 
 }

@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -22,11 +21,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.fxml.FxmlMarginsTools;
-import mara.mybox.objects.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.image.FxmlMarginsTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -47,13 +46,11 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
     @FXML
     protected ColorPicker marginsColorPicker;
     @FXML
-    protected Button marginsWhiteButton, marginsBlackButton, marginsOkButton, marginsTrButton;
+    protected Button marginsWhiteButton, marginsBlackButton, marginsTrButton;
     @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck;
     @FXML
     private HBox colorBox, distanceBox, widthBox;
-    @FXML
-    private Label promptLabel;
     @FXML
     private TextField distanceInput;
 
@@ -85,7 +82,8 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
             super.initInterface();
 
             isSettingValues = true;
-            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+            if (values.getImageInfo() != null
+                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
                 marginsTrButton.setDisable(true);
             } else {
                 marginsTrButton.setDisable(false);
@@ -127,7 +125,7 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
             });
             marginWidthBox.getSelectionModel().select(0);
 
-            marginsOkButton.disableProperty().bind(
+            okButton.disableProperty().bind(
                     marginWidthBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(distanceInput.styleProperty().isEqualTo(badStyle))
             );
@@ -234,7 +232,8 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
     }
 
     @FXML
-    public void marginsAction() {
+    @Override
+    public void okAction() {
         if (!marginsTopCheck.isSelected()
                 && !marginsBottomCheck.isSelected()
                 && !marginsLeftCheck.isSelected()

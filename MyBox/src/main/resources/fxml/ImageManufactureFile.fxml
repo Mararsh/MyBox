@@ -57,26 +57,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                                              <Label fx:id="tipsLabel" text="%Tips" />
-                                <Hyperlink onAction="#showHelp" text="%Help" />
+                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
+
 
                                 <Button mnemonicParsing="false" visible="false" />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
-                            <items>
-                                <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ShowReference" />
-                                <Button fx:id="outButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                <Button fx:id="inButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="wButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="oButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
-                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
-                                <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
-                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#save" text="%Save" />
-                            </items>
-                        </ToolBar>
+                        <HBox fx:id="operation1Box" alignment="CENTER_LEFT">
+                            <children>
+                                <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
+                                    <items>
+                                        <CheckBox fx:id="showRefCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Reference" />
+                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                        <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
+                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
+                                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
+                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recovery" text="%Recover" />
+                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
+                                        <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction" text="%Ref" />
+                                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction" text="%Pop" />
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                    </items>
+                                </ToolBar>
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="NEVER">
@@ -89,14 +96,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <ToolBar fx:id="fileBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="iButton" mnemonicParsing="false" onAction="#popImageInformation" text="%ImageInformation" />
-                                                        <Button fx:id="mButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                                                        <Button fx:id="statisticButton" mnemonicParsing="false" onAction="#statisticAction" text="%Statistic" />
+                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
                                                         <CheckBox fx:id="saveCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar fx:id="saveAsBar" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#saveAs" text="%SaveAs" />
+                                                        <Button mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
                                                         <RadioButton fx:id="loadRadio" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%LoadAfterSaveAs">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="saveAsGroup" />
@@ -111,7 +119,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Select..." />
+                                                        <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Open" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -123,7 +131,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Tab fx:id="colorTab" text="%Color" />
                                 <Tab fx:id="effectsTab" text="%Effects" />
 
-                                <Tab fx:id="convolutionTab" text="%Convolution" />
+
 
                                 <Tab fx:id="textTab" text="%Text" />
                                 <Tab fx:id="coverTab" text="%Cover" />

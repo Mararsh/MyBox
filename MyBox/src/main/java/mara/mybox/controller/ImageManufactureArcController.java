@@ -13,12 +13,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.image.ImageTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
 
 /**
@@ -63,17 +64,18 @@ public class ImageManufactureArcController extends ImageManufactureController {
 
             isSettingValues = true;
 
-            if (CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+            if (values.getImageInfo() != null
+                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
                 transForArcButton.setDisable(true);
             } else {
                 transForArcButton.setDisable(false);
             }
 
             arcBox.getItems().clear();
-            arcBox.getItems().addAll(Arrays.asList(values.getImageInfo().getWidth() / 6 + "",
-                    values.getImageInfo().getWidth() / 8 + "",
-                    values.getImageInfo().getWidth() / 4 + "",
-                    values.getImageInfo().getWidth() / 10 + "",
+            arcBox.getItems().addAll(Arrays.asList((int)values.getImage().getWidth() / 6 + "",
+                    (int)values.getImage().getWidth() / 8 + "",
+                    (int)values.getImage().getWidth() / 4 + "",
+                    (int)values.getImage().getWidth() / 10 + "",
                     "0", "15", "30", "50", "150", "300", "10", "3"));
             arcBox.getSelectionModel().select(0);
 
@@ -132,7 +134,7 @@ public class ImageManufactureArcController extends ImageManufactureController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                final Image newImage = FxmlImageTools.addArc(values.getCurrentImage(), arc, arcColorPicker.getValue());
+                final Image newImage = ImageTools.addArc(values.getCurrentImage(), arc, arcColorPicker.getValue());
                 if (task.isCancelled()) {
                     return null;
                 }
@@ -162,11 +164,12 @@ public class ImageManufactureArcController extends ImageManufactureController {
         if (arc <= 0) {
             return;
         }
-        final Image newImage = FxmlImageTools.addArcFx(values.getCurrentImage(), arc, arcColorPicker.getValue());
+        final Image newImage = ImageTools.addArcFx(values.getCurrentImage(), arc, arcColorPicker.getValue());
         if (newImage == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(getMyStage().getTitle());
             alert.setContentText(AppVaribles.getMessage("ErrorForBigImage"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             Optional<ButtonType> result = alert.showAndWait();
             return;
         }

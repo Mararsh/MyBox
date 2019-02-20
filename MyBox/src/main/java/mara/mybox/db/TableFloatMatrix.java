@@ -7,8 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import static mara.mybox.db.DerbyBase.protocol;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.ConvolutionKernel;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.data.ConvolutionKernel;
 
 /**
  * @Author Mara

@@ -33,13 +33,13 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.objects.CommonValues;
-import mara.mybox.objects.FileInformation;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.value.CommonValues;
+import mara.mybox.data.FileInformation;
 import mara.mybox.fxml.FxmlTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.objects.AppVaribles.getMessage;
-import static mara.mybox.objects.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.ValueTools;
 
@@ -81,7 +81,7 @@ public class FilesBatchController extends BaseController {
     protected TextField targetSuffixInput;
     @FXML
     protected Button addFilesButton, addDirectoryButton, insertFilesButton, insertDirectoryButton,
-            upButton, downButton, deleteButton, clearButton, openButton;
+            upButton, downButton, clearButton, openButton;
     @FXML
     protected CheckBox subDirCheck, filesNameCheck;
     @FXML
@@ -249,7 +249,7 @@ public class FilesBatchController extends BaseController {
                 }
             }
         });
-        targetPathInput.setText(AppVaribles.getUserConfigValue(targetPathKey, CommonValues.UserFilePath));
+        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
 
         targetExistGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -333,8 +333,10 @@ public class FilesBatchController extends BaseController {
     protected void addFilesAction(int index) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            fileChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
 
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
@@ -368,8 +370,10 @@ public class FilesBatchController extends BaseController {
     protected void addDirectoryAction(int index) {
         try {
             DirectoryChooser dirChooser = new DirectoryChooser();
-            File defaultPath = new File(AppVaribles.getUserConfigPath(sourcePathKey, CommonValues.UserFilePath));
-            dirChooser.setInitialDirectory(defaultPath);
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath != null) {
+                dirChooser.setInitialDirectory(defaultPath);
+            }
             File directory = dirChooser.showDialog(getMyStage());
             if (directory == null) {
                 return;
@@ -392,7 +396,8 @@ public class FilesBatchController extends BaseController {
     }
 
     @FXML
-    protected void deleteAction(ActionEvent event) {
+    @Override
+    public void deleteAction() {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(sourceTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -493,7 +498,7 @@ public class FilesBatchController extends BaseController {
 
     @FXML
     @Override
-    protected void startProcess(ActionEvent event) {
+    public void startAction() {
         isPreview = false;
         makeActualParameters();
         currentParameters = actualParameters;
@@ -755,7 +760,7 @@ public class FilesBatchController extends BaseController {
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
                                 paraBox.setDisable(true);
@@ -764,7 +769,7 @@ public class FilesBatchController extends BaseController {
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
-                                        startProcess(event);
+                                        startAction();
                                     }
                                 });
                                 operationBarController.pauseButton.setVisible(false);

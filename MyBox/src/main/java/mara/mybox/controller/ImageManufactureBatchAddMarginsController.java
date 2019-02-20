@@ -11,11 +11,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.paint.Color;
-import static mara.mybox.objects.AppVaribles.logger;
-import mara.mybox.objects.AppVaribles;
-import mara.mybox.fxml.FxmlImageTools;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVaribles;
+import mara.mybox.fxml.image.ImageTools;
 import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageMarginsTools;
+import mara.mybox.image.ImageMargins;
 
 /**
  * @Author Mara
@@ -151,8 +151,8 @@ public class ImageManufactureBatchAddMarginsController extends ImageManufactureB
             if (!checkMargins()) {
                 return null;
             }
-            BufferedImage target = ImageMarginsTools.addMargins(source,
-                    FxmlImageTools.colorConvert(addMarginsColorPicker.getValue()), addMarginWidth,
+            BufferedImage target = ImageMargins.addMargins(source,
+                    ImageTools.colorConvert(addMarginsColorPicker.getValue()), addMarginWidth,
                     addMarginsTopCheck.isSelected(), addMarginsBottomCheck.isSelected(),
                     addMarginsLeftCheck.isSelected(), addMarginsRightCheck.isSelected());
 
