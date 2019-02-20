@@ -623,13 +623,17 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeContrastBox() {
         try {
-            contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization;
+            contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
-            stringBox.getItems().addAll(Arrays.asList(getMessage("GrayHistogramEqualization"),
-                    getMessage("GrayHistogramShifting"),
-                    getMessage("LumaHistogramEqualization"), getMessage("BrightnessHistogramEqualization"),
-                    getMessage("AdaptiveHistogramEqualization")));
+            stringBox.getItems().addAll(Arrays.asList(
+                    getMessage("HSBHistogramEqualization"),
+                    getMessage("GrayHistogramEqualization"),
+                    getMessage("GrayHistogramStretching"),
+                    getMessage("GrayHistogramShifting")
+            //                    getMessage("LumaHistogramEqualization"),
+            //                    getMessage("AdaptiveHistogramEqualization")
+            ));
             stringBox.getSelectionModel().select(0);
             stringBox.valueProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -638,9 +642,9 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization;
                     } else if (getMessage("GrayHistogramShifting").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting;
-                    } else if (getMessage("LumaHistogramEqualization").equals(newValue)) {
-                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Luma_Histogram_Equalization;
-                    } else if (getMessage("BrightnessHistogramEqualization").equals(newValue)) {
+                    } else if (getMessage("GrayHistogramStretching").equals(newValue)) {
+                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching;
+                    } else if (getMessage("HSBHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
                     } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Adaptive_Histogram_Equalization;

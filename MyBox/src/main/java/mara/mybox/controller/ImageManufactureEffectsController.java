@@ -624,7 +624,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     private void makeContrastBox() {
         try {
-            contrastAlgorithm = ContrastAlgorithm.Gray_Histogram_Equalization;
+            contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
             stringBox.getItems().addAll(Arrays.asList(
@@ -738,10 +738,12 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                     } else if (getMessage("LumaHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Luma_Histogram_Equalization;
                     } else if (getMessage("HSBHistogramEqualization").equals(newValue)) {
+                        logger.debug(contrastAlgorithm);
                         contrastAlgorithm = ContrastAlgorithm.HSB_Histogram_Equalization;
                     } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
                         contrastAlgorithm = ContrastAlgorithm.Adaptive_Histogram_Equalization;
                     }
+                    logger.debug(contrastAlgorithm);
                 }
             });
 
