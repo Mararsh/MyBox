@@ -10,6 +10,7 @@
 [MyBox-4.9-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v4.9/MyBox-4.9-exe.zip) 。
 双击“MyBox.exe”即可运行MyBox。
 可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
+
 限制：在包含非英文字符的路径下无法启动MyBox.exe。请解包到纯英文目录下。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。
