@@ -185,11 +185,11 @@
             <P class="p1">About Big Image</P>
             <P class="paragraph">Big image is a picture that includes too many pixels to be loaded and displayed under limitation of current memory usage.
                 For all operations which use image as input, big image should be concerned.</P>
-            <P class="paragraph">The pressure agianst memory is the pixels number of the image, but not the bytes number of image file.</P>
+            <P class="paragraph">The pressure agianst memory is the pixels number of the image, instead of the bytes number of image file.</P>
             <P class="paragraph">Example, a jpg file of 42M includes 65500x4504 pixels. Each pixel occupies 3 bytes, so the image data requires 844M bytes memory.
                 If need load and display the whole image in interface of JavaFx, data will be tranferred between file, BufferedImage, and WritableImage, and at least
                 2.6G memory will be occupied. In my practice, at least 5G should be defined in "-Xmx" to display this image although about 2.3G is shown as the memory usage.</P>
-            <P class="paragraph">Another example, a png file of 52M includes 8101x4557 pixels, and it needs only 750 memory to load and display whole image in memory.</P>
+            <P class="paragraph">Another example, a png file of 52M includes 8101x4557 pixels, and it needs only 750M memory to load and display whole image in memory.</P>
             <P class="paragraph">The principles of handling big images by MyBox are following:</P>
             <OL>
                 <LI>Evaulate the required memory for whole image, and judge whether load all data in memory. (About 5 times of pixels data plus 200M)</LI>
@@ -197,10 +197,10 @@
                 <LI>If memory may be out, subsample the image for next operations.</LI>
                 <LI>The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.</LI>
                 <LI>The sampled image is mainly to display the image, and not suitable for operations against whole image and images merging.</LI>
-                <LI>Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, so they are suitable for big images.</LI>
+                <LI>Some operations, like splitting and subsampling, can be done by reading part of image data and writing-while-reading, so they are suitable for big images.</LI>
                 <LI>Image which can not be loaded wholely may be suitable to be handled batchly.
                     Example, an image of 500M pixels can not be displayed under limitation of 1.8G, thus can not be cropped, zoomed, or color-adjusted interactively.
-                    But when crop, zoom, or color-adjust the image in batch way, the operations may be successfully under same memory limitation,
+                    But when crop, zoom, or color-adjust the image in batch way, the operations may be successful under same memory limitation,
                     since the data need not transferred as interface pixels.</LI>
             </OL>
             <P class="paragraph">Continually handling images may affect memory usage. Example, memory occupied by previous operation has not been collected by GC

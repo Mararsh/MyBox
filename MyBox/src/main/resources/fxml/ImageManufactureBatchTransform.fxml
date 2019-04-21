@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchTransformController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchTransformController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -56,35 +56,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1061.0" VBox.vgrow="ALWAYS">
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                            <items>
-                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
-                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
-                                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
-                                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
-                                                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                                            </items>
-                                        </ToolBar>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                        <TableColumn fx:id="handledColumn" prefWidth="150.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" prefWidth="450.0" text="%File" />
-                                                        <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
-                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                                                    </columns>
-                                                </TableView>
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
-                                </VBox>
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
+                                    <content>
+                                        <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </TitledPane>
                         <TitledPane text="%Options" VBox.vgrow="NEVER">
@@ -131,7 +111,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" text="%Select..." />
                                                 <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction" text="%Browse" />
                                                 <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
                                             </children>
@@ -164,7 +144,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </RadioButton>
                                                 <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
-                                                <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
+                                                <TextField fx:id="targetSuffixInput"  prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>

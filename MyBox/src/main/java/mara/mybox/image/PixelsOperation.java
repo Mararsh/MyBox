@@ -5,8 +5,11 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.IntPoint;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -33,7 +36,7 @@ public class PixelsOperation {
     public enum OperationType {
         Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta,
-        Brightness, Sauration, Hue, Opacity, RGB, Color, Scope, Convolution, Contrast
+        Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope, Convolution, Contrast
     }
 
     public enum ColorActionType {
@@ -44,35 +47,201 @@ public class PixelsOperation {
 
     }
 
-    public PixelsOperation(BufferedImage image) {
-        this.image = image;
-    }
-
-    public PixelsOperation(BufferedImage image, OperationType operationType) {
-        this.image = image;
-        this.operationType = operationType;
-        this.scope = null;
-    }
-
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
         this.image = image;
         this.operationType = operationType;
         this.scope = scope;
     }
 
-    public PixelsOperation(BufferedImage image, ImageScope scope,
-            OperationType operationType, ColorActionType colorActionType) {
-        this.image = image;
-        this.operationType = operationType;
-        this.scope = scope;
-        this.colorActionType = colorActionType;
+    public static PixelsOperation newPixelsOperation(Image image,
+            ImageScope scope, OperationType operationType) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        return PixelsOperation.newPixelsOperation(bufferedImage, scope, operationType);
+    }
+
+    public static PixelsOperation newPixelsOperation(Image image,
+            ImageScope scope, OperationType operationType, ColorActionType colorActionType) {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        return PixelsOperation.newPixelsOperation(bufferedImage, scope, operationType, colorActionType);
+    }
+
+    public static PixelsOperation newPixelsOperation(BufferedImage image,
+            ImageScope scope, OperationType operationType) {
+        switch (operationType) {
+            case ShowScope:
+                return new ShowScope(image, scope);
+            case Sepia:
+                return new Sepia(image, scope);
+            case Thresholding:
+                return new Thresholding(image, scope);
+            default:
+                return new PixelsOperation(image, scope, operationType);
+        }
+    }
+
+    public static PixelsOperation newPixelsOperation(BufferedImage image,
+            ImageScope scope, OperationType operationType, ColorActionType colorActionType) {
+        switch (operationType) {
+            case ReplaceColor:
+                return new ReplaceColor(image, scope);
+            case Color:
+                return new SetColor(image, scope);
+            case Opacity:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseOpacity(image, scope);
+                    case Decrease:
+                        return new DecreaseOpacity(image, scope);
+                    case Set:
+                    default:
+                        return new SetOpacity(image, scope);
+                }
+            case PreOpacity:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreasePreOpacity(image, scope);
+                    case Decrease:
+                        return new DecreasePreOpacity(image, scope);
+                    case Set:
+                    default:
+                        return new SetPreOpacity(image, scope);
+                }
+            case Brightness:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseBrightness(image, scope);
+                    case Decrease:
+                        return new DecreaseBrightness(image, scope);
+                    case Set:
+                    default:
+                        return new SetBrightness(image, scope);
+                }
+            case Saturation:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseSaturation(image, scope);
+                    case Decrease:
+                        return new DecreaseSaturation(image, scope);
+                    case Set:
+                    default:
+                        return new SetSaturation(image, scope);
+                }
+            case Hue:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseHue(image, scope);
+                    case Decrease:
+                        return new DecreaseHue(image, scope);
+                    case Set:
+                    default:
+                        return new SetHue(image, scope);
+                }
+            case Red:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseRed(image, scope);
+                    case Decrease:
+                        return new DecreaseRed(image, scope);
+                    case Filter:
+                        return new FilterRed(image, scope);
+                    case Invert:
+                        return new InvertRed(image, scope);
+                    case Set:
+                    default:
+                        return new SetRed(image, scope);
+                }
+            case Green:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseGreen(image, scope);
+                    case Decrease:
+                        return new DecreaseGreen(image, scope);
+                    case Filter:
+                        return new FilterGreen(image, scope);
+                    case Invert:
+                        return new InvertGreen(image, scope);
+                    case Set:
+                    default:
+                        return new SetGreen(image, scope);
+                }
+            case Blue:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseBlue(image, scope);
+                    case Decrease:
+                        return new DecreaseBlue(image, scope);
+                    case Filter:
+                        return new FilterBlue(image, scope);
+                    case Invert:
+                        return new InvertBlue(image, scope);
+                    case Set:
+                    default:
+                        return new SetBlue(image, scope);
+                }
+            case Yellow:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseYellow(image, scope);
+                    case Decrease:
+                        return new DecreaseYellow(image, scope);
+                    case Filter:
+                        return new FilterYellow(image, scope);
+                    case Invert:
+                        return new InvertYellow(image, scope);
+                    case Set:
+                    default:
+                        return new SetYellow(image, scope);
+                }
+            case Cyan:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseCyan(image, scope);
+                    case Decrease:
+                        return new DecreaseCyan(image, scope);
+                    case Filter:
+                        return new FilterCyan(image, scope);
+                    case Invert:
+                        return new InvertCyan(image, scope);
+                    case Set:
+                    default:
+                        return new SetCyan(image, scope);
+                }
+            case Magenta:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseMagenta(image, scope);
+                    case Decrease:
+                        return new DecreaseMagenta(image, scope);
+                    case Filter:
+                        return new FilterMagenta(image, scope);
+                    case Invert:
+                        return new InvertMagenta(image, scope);
+                    case Set:
+                    default:
+                        return new SetMagenta(image, scope);
+                }
+            case RGB:
+                switch (colorActionType) {
+                    case Increase:
+                        return new IncreaseRGB(image, scope);
+                    case Decrease:
+                        return new DecreaseRGB(image, scope);
+                    case Invert:
+                        return new InvertRGB(image, scope);
+                    case Set:
+                    default:
+                        return new SetRGB(image, scope);
+                }
+            default:
+                return new PixelsOperation(image, scope, operationType);
+        }
     }
 
     public BufferedImage operate() {
-        return operationImage();
+        return operateImage();
     }
 
-    public BufferedImage operationImage() {
+    public BufferedImage operateImage() {
         if (image == null || operationType == null) {
             return image;
         }
@@ -82,12 +251,21 @@ public class PixelsOperation {
                 && operationType != OperationType.Quantization) {
             isDithering = false;
         }
+        scope = ImageScope.fineImageScope(scope);
         if (scope != null && scope.getScopeType() == ImageScope.ScopeType.Matting) {
             isDithering = false;
             return operateMatting();
         } else {
             return operateScope();
         }
+    }
+
+    public Image operateFxImage() {
+        BufferedImage target = operate();
+        if (target == null) {
+            return null;
+        }
+        return SwingFXUtils.toFXImage(target, null);
     }
 
     protected BufferedImage operateScope() {
@@ -100,7 +278,7 @@ public class PixelsOperation {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
-            boolean isScope = (operationType == OperationType.Scope);
+            boolean isShowScope = (operationType == OperationType.ShowScope);
             boolean isWhole = (scope == null || scope.getScopeType() == ImageScope.ScopeType.All);
             boolean inScope;
             if (isDithering) {
@@ -109,29 +287,31 @@ public class PixelsOperation {
                 thisLineY = 0;
                 thisLine[0] = new Color(image.getRGB(0, 0), true);
             }
+            Color newColor;
+            int pixel;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     Color color = new Color(image.getRGB(x, y), true);
                     inScope = isWhole || scope.inScope(x, y, color);
-                    if (isScope) {
+                    if (isDithering && y == thisLineY) {
+                        color = thisLine[x];
+                    }
+                    if (isShowScope) {
                         if (inScope) {
-                            if (isDithering && y == thisLineY) {
-                                color = thisLine[x];
-                            }
+                            newColor = color;
                             target.setRGB(x, y, color.getRGB());
                         } else {
-                            operatePixel(target, color, x, y);
+                            newColor = operatePixel(target, color, x, y);
                         }
                     } else {
                         if (inScope) {
-                            operatePixel(target, color, x, y);
+                            newColor = operatePixel(target, color, x, y);
                         } else {
-                            if (isDithering && y == thisLineY) {
-                                color = thisLine[x];
-                            }
+                            newColor = color;
                             target.setRGB(x, y, color.getRGB());
                         }
                     }
+                    dithering(target, color, newColor, x, y);
                 }
                 if (isDithering) {
                     thisLine = nextLine;
@@ -164,7 +344,7 @@ public class PixelsOperation {
             }
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
-            boolean isScope = operationType == OperationType.Scope;
+            boolean isScope = operationType == OperationType.ShowScope;
             if (isScope) {
                 if (excluded) {
                     target = image.getSubimage(0, 0, imageWidth, imageHeight);
@@ -231,26 +411,20 @@ public class PixelsOperation {
         }
     }
 
-    protected void operatePixel(BufferedImage target, int x, int y) {
-        operatePixel(target, image.getRGB(x, y), x, y);
+    protected Color operatePixel(BufferedImage target, int x, int y) {
+        Color color = new Color(image.getRGB(x, y), true);
+        return operatePixel(target, color, x, y);
     }
 
-    protected void operatePixel(BufferedImage target, int pixel, int x, int y) {
-        operatePixel(target, new Color(pixel, true), x, y);
-    }
-
-    protected void operatePixel(BufferedImage target, Color inColor, int x, int y) {
-        Color color;
-        if (isDithering && y == thisLineY) {
-            color = thisLine[x];
+    protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
+        Color newColor;
+        if (color == CommonValues.TRANSPARENT) {
+            newColor = color;
         } else {
-            color = inColor;
+            newColor = operateColor(color);
         }
-        Color newColor = operateColor(color);
         target.setRGB(x, y, newColor.getRGB());
-
-        dithering(target, color, newColor, x, y);
-
+        return newColor;
     }
 
     // https://en.wikipedia.org/wiki/Dither
@@ -303,303 +477,922 @@ public class PixelsOperation {
 
     }
 
+    public static class ShowScope extends PixelsOperation {
+
+        public ShowScope(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.ShowScope;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(),
+                    (int) (scope.getOpacity() * 255));
+        }
+    }
+
+    public static class Sepia extends PixelsOperation {
+
+        public Sepia(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Sepia;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return ImageColor.pixel2Sepia(color, intPara1);
+        }
+    }
+
+    public static class Thresholding extends PixelsOperation {
+
+        public Thresholding(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Thresholding;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return ImageColor.thresholdingColor(color, intPara1, intPara2, intPara3);
+        }
+    }
+
+    public static class ReplaceColor extends PixelsOperation {
+
+        public ReplaceColor(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.ReplaceColor;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            if (scope.inColorMatch(color, colorPara1)) {
+                return colorPara2;
+            } else {
+                return color;
+            }
+        }
+    }
+
+    public static class SetColor extends PixelsOperation {
+
+        public SetColor(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Color;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return colorPara1;
+        }
+    }
+
+    public static class SetOpacity extends PixelsOperation {
+
+        public SetOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(),
+                    Math.min(Math.max(intPara1, 0), 255));
+        }
+    }
+
+    public static class IncreaseOpacity extends PixelsOperation {
+
+        public IncreaseOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(),
+                    Math.min(Math.max(color.getAlpha() + intPara1, 0), 255));
+        }
+    }
+
+    public static class DecreaseOpacity extends PixelsOperation {
+
+        public DecreaseOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(),
+                    Math.min(Math.max(color.getAlpha() - intPara1, 0), 255));
+        }
+    }
+
+    public static class SetPreOpacity extends PixelsOperation {
+
+        public SetPreOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int opacity = Math.min(Math.max(intPara1, 0), 255);
+            float f = opacity / 255.0f;
+            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
+            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
+            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
+            return new Color(red, green, blue, opacity);
+        }
+    }
+
+    public static class IncreasePreOpacity extends PixelsOperation {
+
+        public IncreasePreOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int opacity = Math.min(Math.max(color.getAlpha() + intPara1, 0), 255);
+            float f = opacity / 255.0f;
+            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
+            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
+            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
+            return new Color(red, green, blue, opacity);
+        }
+    }
+
+    public static class DecreasePreOpacity extends PixelsOperation {
+
+        public DecreasePreOpacity(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int opacity = Math.min(Math.max(color.getAlpha() - intPara1, 0), 255);
+            float f = opacity / 255.0f;
+            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
+            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
+            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
+            return new Color(red, green, blue, opacity);
+        }
+    }
+
+    public static class SetBrightness extends PixelsOperation {
+
+        public SetBrightness(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = floatPara1;
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], hsb[1], f);
+        }
+    }
+
+    public static class IncreaseBrightness extends PixelsOperation {
+
+        public IncreaseBrightness(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[2] * (1.0f + floatPara1);
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], hsb[1], f);
+        }
+    }
+
+    public static class DecreaseBrightness extends PixelsOperation {
+
+        public DecreaseBrightness(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[2] * (1.0f - floatPara1);
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], hsb[1], f);
+        }
+    }
+
+    public static class SetSaturation extends PixelsOperation {
+
+        public SetSaturation(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = floatPara1;
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], f, hsb[2]);
+        }
+    }
+
+    public static class IncreaseSaturation extends PixelsOperation {
+
+        public IncreaseSaturation(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[1] * (1.0f + floatPara1);
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], f, hsb[2]);
+        }
+    }
+
+    public static class DecreaseSaturation extends PixelsOperation {
+
+        public DecreaseSaturation(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[1] * (1.0f - floatPara1);
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(hsb[0], f, hsb[2]);
+        }
+    }
+
+    public static class SetHue extends PixelsOperation {
+
+        public SetHue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = floatPara1;
+            if (f > 1.0f) {
+                f = f - 1.0f;
+            }
+            if (f < 0.0f) {
+                f = f + 1.0f;
+            }
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(f, hsb[1], hsb[2]);
+        }
+    }
+
+    public static class IncreaseHue extends PixelsOperation {
+
+        public IncreaseHue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[0] + floatPara1;
+            if (f > 1.0f) {
+                f = f - 1.0f;
+            }
+            if (f < 0.0f) {
+                f = f + 1.0f;
+            }
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(f, hsb[1], hsb[2]);
+        }
+    }
+
+    public static class DecreaseHue extends PixelsOperation {
+
+        public DecreaseHue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            float[] hsb;
+            hsb = ImageColor.getHSB(color);
+            float f = hsb[0] - floatPara1;
+            if (f > 1.0f) {
+                f = f - 1.0f;
+            }
+            if (f < 0.0f) {
+                f = f + 1.0f;
+            }
+            f = Math.min(Math.max(f, 0.0f), 1.0f);
+            return ImageColor.HSB2RGB(f, hsb[1], hsb[2]);
+        }
+    }
+
+    public static class SetRed extends PixelsOperation {
+
+        public SetRed(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(intPara1, 0), 255),
+                    color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class IncreaseRed extends PixelsOperation {
+
+        public IncreaseRed(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() + intPara1, 0), 255),
+                    color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseRed extends PixelsOperation {
+
+        public DecreaseRed(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() - intPara1, 0), 255),
+                    color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class FilterRed extends PixelsOperation {
+
+        public FilterRed(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), 0, 0, color.getAlpha());
+        }
+    }
+
+    public static class InvertRed extends PixelsOperation {
+
+        public InvertRed(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(255 - color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetGreen extends PixelsOperation {
+
+        public SetGreen(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), Math.min(Math.max(intPara1, 0), 255),
+                    color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class IncreaseGreen extends PixelsOperation {
+
+        public IncreaseGreen(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), Math.min(Math.max(color.getGreen() + intPara1, 0), 255),
+                    color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseGreen extends PixelsOperation {
+
+        public DecreaseGreen(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), Math.min(Math.max(color.getGreen() - intPara1, 0), 255),
+                    color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class FilterGreen extends PixelsOperation {
+
+        public FilterGreen(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(0, color.getGreen(), 0, color.getAlpha());
+        }
+    }
+
+    public static class InvertGreen extends PixelsOperation {
+
+        public InvertGreen(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), 255 - color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetBlue extends PixelsOperation {
+
+        public SetBlue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(),
+                    Math.min(Math.max(intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class IncreaseBlue extends PixelsOperation {
+
+        public IncreaseBlue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(),
+                    Math.min(Math.max(color.getBlue() + intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseBlue extends PixelsOperation {
+
+        public DecreaseBlue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(),
+                    Math.min(Math.max(color.getBlue() - intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class FilterBlue extends PixelsOperation {
+
+        public FilterBlue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(0, 0, color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class InvertBlue extends PixelsOperation {
+
+        public InvertBlue(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetYellow extends PixelsOperation {
+
+        public SetYellow(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int v = Math.min(Math.max(intPara1, 0), 255);
+            return new Color(v, v, color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class IncreaseYellow extends PixelsOperation {
+
+        public IncreaseYellow(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() + intPara1, 0), 255),
+                    Math.min(Math.max(color.getGreen() + intPara1, 0), 255),
+                    color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseYellow extends PixelsOperation {
+
+        public DecreaseYellow(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() - intPara1, 0), 255),
+                    Math.min(Math.max(color.getGreen() - intPara1, 0), 255),
+                    color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class FilterYellow extends PixelsOperation {
+
+        public FilterYellow(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), color.getGreen(), 0, color.getAlpha());
+        }
+    }
+
+    public static class InvertYellow extends PixelsOperation {
+
+        public InvertYellow(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(255 - color.getRed(), 255 - color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetCyan extends PixelsOperation {
+
+        public SetCyan(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int v = Math.min(Math.max(intPara1, 0), 255);
+            return new Color(color.getRed(), v, v, color.getAlpha());
+        }
+    }
+
+    public static class IncreaseCyan extends PixelsOperation {
+
+        public IncreaseCyan(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(),
+                    Math.min(Math.max(color.getGreen() + intPara1, 0), 255),
+                    Math.min(Math.max(color.getBlue() + intPara1, 0), 255),
+                    color.getAlpha());
+        }
+    }
+
+    public static class DecreaseCyan extends PixelsOperation {
+
+        public DecreaseCyan(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(),
+                    Math.min(Math.max(color.getGreen() - intPara1, 0), 255),
+                    Math.min(Math.max(color.getBlue() - intPara1, 0), 255),
+                    color.getAlpha());
+        }
+    }
+
+    public static class FilterCyan extends PixelsOperation {
+
+        public FilterCyan(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(0, color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class InvertCyan extends PixelsOperation {
+
+        public InvertCyan(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetMagenta extends PixelsOperation {
+
+        public SetMagenta(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int v = Math.min(Math.max(intPara1, 0), 255);
+            return new Color(v, color.getGreen(), v, color.getAlpha());
+        }
+    }
+
+    public static class IncreaseMagenta extends PixelsOperation {
+
+        public IncreaseMagenta(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() + intPara1, 0), 255),
+                    color.getGreen(),
+                    Math.min(Math.max(color.getBlue() + intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseMagenta extends PixelsOperation {
+
+        public DecreaseMagenta(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() - intPara1, 0), 255),
+                    color.getGreen(),
+                    Math.min(Math.max(color.getBlue() - intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class FilterMagenta extends PixelsOperation {
+
+        public FilterMagenta(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Filter;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(color.getRed(), 0, color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class InvertMagenta extends PixelsOperation {
+
+        public InvertMagenta(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(255 - color.getRed(), color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+        }
+    }
+
+    public static class SetRGB extends PixelsOperation {
+
+        public SetRGB(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Set;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            int v = Math.min(Math.max(intPara1, 0), 255);
+            return new Color(v, v, v, color.getAlpha());
+        }
+    }
+
+    public static class IncreaseRGB extends PixelsOperation {
+
+        public IncreaseRGB(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Increase;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() + intPara1, 0), 255),
+                    Math.min(Math.max(color.getGreen() + intPara1, 0), 255),
+                    Math.min(Math.max(color.getBlue() + intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class DecreaseRGB extends PixelsOperation {
+
+        public DecreaseRGB(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Decrease;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(Math.min(Math.max(color.getRed() - intPara1, 0), 255),
+                    Math.min(Math.max(color.getGreen() - intPara1, 0), 255),
+                    Math.min(Math.max(color.getBlue() - intPara1, 0), 255), color.getAlpha());
+        }
+    }
+
+    public static class InvertRGB extends PixelsOperation {
+
+        public InvertRGB(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Invert;
+            this.image = image;
+            this.scope = scope;
+        }
+
+        @Override
+        protected Color operateColor(Color color) {
+            return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+        }
+    }
+
+    // SubClass should implement this
     protected Color operateColor(Color color) {
-        if (operationType == null) {
-            return color;
-        }
-        Color newColor = color;
-        float f;
-        int red, blue, green, opacity;
-        float[] hsb;
-        switch (operationType) {
-            case Convolution:
-                break;
-            case Scope:
-                newColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (scope.getOpacity() * 255));
-                break;
-            case Sepia:
-                newColor = ImageColor.pixel2Sepia(color, intPara1);
-                break;
-            case Thresholding:
-                newColor = ImageColor.thresholdingColor(color, intPara1, intPara2, intPara3);
-                break;
-            case ReplaceColor:
-                if (scope.inColorMatch(color, colorPara1)) {
-                    newColor = colorPara2;
-                }
-                break;
-            case Color:
-                newColor = colorPara1;
-                break;
-            case Brightness:
-                hsb = ImageColor.getHSB(color);
-                switch (colorActionType) {
-                    case Increase:
-                        f = hsb[2] * (1.0f + floatPara1);
-                        break;
-                    case Decrease:
-                        f = hsb[2] * (1.0f - floatPara1);
-                        break;
-                    case Set:
-                    default:
-                        f = floatPara1;
-                        break;
-                }
-                f = Math.min(Math.max(f, 0.0f), 1.0f);
-                newColor = ImageColor.HSB2RGB(hsb[0], hsb[1], f);
-                break;
-            case Sauration:
-                hsb = ImageColor.getHSB(color);
-                switch (colorActionType) {
-                    case Increase:
-                        f = hsb[1] * (1.0f + floatPara1);
-                        break;
-                    case Decrease:
-                        f = hsb[1] * (1.0f - floatPara1);
-                        break;
-                    case Set:
-                    default:
-                        f = floatPara1;
-                        break;
-                }
-                f = Math.min(Math.max(f, 0.0f), 1.0f);
-                newColor = ImageColor.HSB2RGB(hsb[0], f, hsb[2]);
-                break;
-            case Hue:
-                hsb = ImageColor.getHSB(color);
-                switch (colorActionType) {
-                    case Increase:
-                        f = hsb[0] + floatPara1;
-                        break;
-                    case Decrease:
-                        f = hsb[0] - floatPara1;
-                        break;
-                    case Set:
-                    default:
-                        f = floatPara1;
-                        break;
-                }
-                if (f > 1.0f) {
-                    f = f - 1.0f;
-                }
-                if (f < 0.0f) {
-                    f = f + 1.0f;
-                }
-                f = Math.min(Math.max(f, 0.0f), 1.0f);
-                newColor = ImageColor.HSB2RGB(f, hsb[1], hsb[2]);
-                break;
-            case Opacity:
-                opacity = Math.min(Math.max(intPara1, 0), 255);
-                newColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity);
-                break;
-            case Red:
-                switch (colorActionType) {
-                    case Set:
-                        red = intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                    case Increase:
-                        red = color.getRed() + intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                    case Decrease:
-                        red = color.getRed() - intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(color.getRed(), 0, 0, color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(255 - color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case Green:
-                switch (colorActionType) {
-                    case Set:
-                        green = intPara1;
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Increase:
-                        green = color.getGreen() + intPara1;
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Decrease:
-                        green = color.getGreen() - intPara1;
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(0, color.getGreen(), 0, color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(color.getRed(), 255 - color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case Blue:
-                switch (colorActionType) {
-                    case Set:
-                        blue = intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        newColor = new Color(color.getRed(), color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Increase:
-                        blue = color.getBlue() + intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        newColor = new Color(color.getRed(), color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Decrease:
-                        blue = color.getBlue() - intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        newColor = new Color(color.getRed(), color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(0, 0, color.getBlue(), color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(color.getRed(), color.getGreen(), 255 - color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case Yellow:
-                switch (colorActionType) {
-                    case Set:
-                        red = intPara1;
-                        green = intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(red, green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Increase:
-                        red = color.getRed() + intPara1;
-                        green = color.getGreen() + intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(red, green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Decrease:
-                        red = color.getRed() - intPara1;
-                        green = color.getGreen() - intPara1;
-                        red = Math.min(Math.max(red, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(red, green, color.getBlue(), color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(color.getRed(), color.getGreen(), 0, color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(255 - color.getRed(), 255 - color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case Cyan:
-                switch (colorActionType) {
-                    case Set:
-                        blue = intPara1;
-                        green = intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, blue, color.getAlpha());
-                        break;
-                    case Increase:
-                        blue = color.getBlue() + intPara1;
-                        green = color.getGreen() + intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, blue, color.getAlpha());
-                        break;
-                    case Decrease:
-                        blue = color.getBlue() - intPara1;
-                        green = color.getGreen() - intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        newColor = new Color(color.getRed(), green, blue, color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(0, color.getGreen(), color.getBlue(), color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case Magenta:
-                switch (colorActionType) {
-                    case Set:
-                        blue = intPara1;
-                        red = intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Increase:
-                        blue = color.getBlue() + intPara1;
-                        red = color.getRed() + intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Decrease:
-                        blue = color.getBlue() - intPara1;
-                        red = color.getRed() - intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, color.getGreen(), blue, color.getAlpha());
-                        break;
-                    case Filter:
-                        newColor = new Color(color.getRed(), 0, color.getBlue(), color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(255 - color.getRed(), color.getGreen(), 255 - color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-            case RGB:
-                switch (colorActionType) {
-                    case Set:
-                        blue = intPara1;
-                        green = intPara1;
-                        red = intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, green, blue, color.getAlpha());
-                        break;
-                    case Increase:
-                        blue = color.getBlue() + intPara1;
-                        green = color.getGreen() + intPara1;
-                        red = color.getRed() + intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, green, blue, color.getAlpha());
-                        break;
-                    case Decrease:
-                        blue = color.getBlue() - intPara1;
-                        green = color.getGreen() - intPara1;
-                        red = color.getRed() - intPara1;
-                        blue = Math.min(Math.max(blue, 0), 255);
-                        green = Math.min(Math.max(green, 0), 255);
-                        red = Math.min(Math.max(red, 0), 255);
-                        newColor = new Color(red, green, blue, color.getAlpha());
-                        break;
-                    case Invert:
-                        newColor = new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
-                        break;
-                }
-                break;
-
-            default:
-                break;
-        }
-        return newColor;
-
+        return color;
     }
 
     public BufferedImage getImage() {

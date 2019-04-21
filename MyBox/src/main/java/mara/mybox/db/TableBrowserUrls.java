@@ -65,7 +65,7 @@ public class TableBrowserUrls extends DerbyBase {
 
     public static List<String> read() {
         List<String> urls = new ArrayList();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "SELECT address FROM Browser_URLs ORDER BY last_visit DESC";
             ResultSet results = statement.executeQuery(sql);
@@ -95,7 +95,7 @@ public class TableBrowserUrls extends DerbyBase {
             if (!d.toLowerCase().startsWith("http")) {
                 return urls;
             }
-            try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+            try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                     Statement statement = conn.createStatement()) {
                 String sql;
                 if (urls.contains(d)) {

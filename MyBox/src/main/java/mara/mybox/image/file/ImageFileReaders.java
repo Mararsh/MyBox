@@ -17,11 +17,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.fxml.ImageManufacture;
 import mara.mybox.data.ImageFileInformation;
 import mara.mybox.image.ImageColor;
-
-import static mara.mybox.value.AppVaribles.logger;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -30,6 +29,8 @@ import static mara.mybox.image.file.ImageGifFile.readBrokenGifFile;
 import static mara.mybox.image.file.ImageGifFile.readBrokenGifFileWithWidth;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -40,6 +41,26 @@ import mara.mybox.data.ImageInformation;
  */
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
+
+    public static BufferedImage readImage(File file) {
+        if (file == null) {
+            return null;
+        }
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
+//            if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
+            if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+                String filename = file.getAbsolutePath();
+                String format = FileTools.getFileSuffix(filename).toLowerCase();
+                if (format.toLowerCase().equals("gif")) {
+                    image = ImageGifFile.readBrokenGifFile(filename, 0);
+                }
+            }
+        }
+        return image;
+    }
 
     public static IIOMetadata getIIOMetadata(String format, File file) {
         switch (format) {
@@ -183,6 +204,14 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFileBySample(String format, String filename,
+            DoubleRectangle rect, int sampleWidth, int sampleHeight) {
+        return readFileBySample(format, filename,
+                (int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
+                (int) Math.round(rect.getBigX()), (int) Math.round(rect.getBigY()),
+                sampleWidth, sampleHeight);
+    }
+
+    public static BufferedImage readFileBySample(String format, String filename,
             int x1, int y1, int x2, int y2,
             int sampleWidth, int sampleHeight) {
         BufferedImage bufferedImage = null;
@@ -227,7 +256,7 @@ public class ImageFileReaders {
                         }
                     } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
 //                        logger.error(e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")
+                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
                                 && format.toLowerCase().equals("gif")) {
                             broken = true;
                         }
@@ -276,7 +305,7 @@ public class ImageFileReaders {
                         }
                     } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
 //                        logger.error(e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")
+                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
                                 && format.toLowerCase().equals("gif")) {
                             broken = true;
                         }
@@ -296,8 +325,8 @@ public class ImageFileReaders {
         }
     }
 
-    public static boolean needSampled(ImageInformation imageInfo, int total, Map<String, Long> sizes) {
-        if (total < 1) {
+    public static boolean needSampled(ImageInformation imageInfo, int framesNumber) {
+        if (framesNumber < 1) {
             return false;
         }
         long availableMem, pixelsSize, requiredMem, totalRequiredMem;
@@ -312,23 +341,24 @@ public class ImageFileReaders {
         long used = (r.totalMemory() - r.freeMemory()) / (1024 * 1024);
         availableMem = r.maxMemory() / (1024 * 1024) - used;
         requiredMem = pixelsSize * 5;
-        totalRequiredMem = requiredMem * total + 200;
+        totalRequiredMem = requiredMem * framesNumber + 200;
 
-        if (sizes != null) {
-            sizes.put("availableMem", availableMem);
-            sizes.put("pixelsSize", pixelsSize);
-            sizes.put("requiredMem", requiredMem);
-            sizes.put("totalRequiredMem", totalRequiredMem);
+        Map<String, Long> sizes = new HashMap<>();
+        sizes.put("availableMem", availableMem);
+        sizes.put("pixelsSize", pixelsSize);
+        sizes.put("requiredMem", requiredMem);
+        sizes.put("totalRequiredMem", totalRequiredMem);
 
-            long maxSize = availableMem * 1014 * 1024 / (6 * total);
-            double ratio = imageInfo.getHeight() * 1.0 / imageInfo.getWidth();
-            long sampledWidth = (long) Math.sqrt(maxSize / (ratio * imageInfo.getColorChannels()));
-            int max = AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096);
-            if (sampledWidth > max) {
-                sampledWidth = max;
-            }
-            sizes.put("sampledWidth", sampledWidth);
+        long maxSize = availableMem * 1014 * 1024 / (6 * framesNumber);
+        double ratio = imageInfo.getHeight() * 1.0 / imageInfo.getWidth();
+        long sampledWidth = (long) Math.sqrt(maxSize / (ratio * imageInfo.getColorChannels()));
+        int max = AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096);
+        if (sampledWidth > max) {
+            sampledWidth = max;
         }
+        sizes.put("sampledWidth", sampledWidth);
+
+        imageInfo.setSizes(sizes);
 //        logger.debug(availableMem + "  " + pixelsSize + "  " + requiredMem);
         return totalRequiredMem > availableMem;
     }
@@ -343,14 +373,14 @@ public class ImageFileReaders {
                 if (imageInfo.getBufferedImage() != null) {
                     bufferedImage = imageInfo.getBufferedImage();
                 } else if (imageInfo.getImage() != null) {
-                    bufferedImage = ImageTools.getBufferedImage(imageInfo.getImage());
+                    bufferedImage = ImageManufacture.getBufferedImage(imageInfo.getImage());
                 }
             }
             if (bufferedImage == null) {
                 String fname = imageInfo.getFilename();
                 if (fname != null) {
                     if (imageInfo.getIndex() <= 0) {
-                        bufferedImage = ImageIO.read(new File(fname));
+                        bufferedImage = ImageFileReaders.readImage(new File(fname));
                     } else {
                         bufferedImage = ImageFileReaders.readFrame(imageInfo.getImageFormat(), fname, imageInfo.getIndex());
                     }
@@ -372,7 +402,7 @@ public class ImageFileReaders {
             }
             ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
             int total = imagesInfo.size();
-            Map<String, Long> sizes = new HashMap<>();
+
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 int scale;
@@ -380,8 +410,9 @@ public class ImageFileReaders {
                 for (int i = 0; i < imagesInfo.size(); i++) {
                     ImageInformation info = imagesInfo.get(i);
                     scale = 1;
-                    boolean needSampled = needSampled(info, total, sizes);
+                    boolean needSampled = needSampled(info, total);
                     if (needSampled) {
+                        Map<String, Long> sizes = info.getSizes();
                         int sampledWidth = sizes.get("sampledWidth").intValue();
                         if (reader.getWidth(i) <= sampledWidth) {
                             scale = 1;
@@ -399,17 +430,15 @@ public class ImageFileReaders {
                         if (scale == 1) {
                             info.setIsSampled(false);
                             info.setBufferedImage(m);
-                            info.setSizeString(info.getWidth() + "x" + info.getHeight());
                         } else {
                             info.setIsSampled(true);
 //                            info.setSampledBufferedImage(m);
-                            info.setSizeString(info.getWidth() + "x" + info.getHeight() + " *");
                         }
                         info.setIndex(i);
                         images.add(m);
                     } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
                         logger.error(format + "  " + e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")
+                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
                                 && format.toLowerCase().equals("gif")) {
                             images = readBrokenGifFile(filename, imagesInfo);
                             break;
@@ -426,7 +455,7 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readImage(String format, String filename,
-            ImageInformation imageInfo, Map<String, Long> sizes) {
+            ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage = null;
             ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
@@ -435,7 +464,8 @@ public class ImageFileReaders {
                 int scale = 1;
                 ImageReadParam param = reader.getDefaultReadParam();
                 if (imageInfo != null) {
-                    boolean needSampled = needSampled(imageInfo, 1, sizes);
+                    boolean needSampled = needSampled(imageInfo, 1);
+                    Map<String, Long> sizes = imageInfo.getSizes();
                     if (needSampled) {
                         int sampledWidth = sizes.get("sampledWidth").intValue();
                         if (reader.getWidth(0) <= sampledWidth) {
@@ -463,9 +493,9 @@ public class ImageFileReaders {
 
                 } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
 //                        logger.error(e.toString());
-                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")
+                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
                             && format.toLowerCase().equals("gif")) {
-                        return readBrokenGifFile(filename, imageInfo, sizes);
+                        return readBrokenGifFile(filename, imageInfo);
                     }
                 }
 
@@ -552,7 +582,7 @@ public class ImageFileReaders {
                     reader.setInput(iis, false);
                     int num = reader.getNumImages(true);
                     fileInfo.setNumberOfImages(num);
-                    String format = reader.getFormatName();
+                    String format = reader.getFormatName().toLowerCase();
                     if (!format.equals(fileInfo.getImageFormat())) {
                         fileInfo.setImageFormat(format);
                     }
@@ -564,6 +594,7 @@ public class ImageFileReaders {
                         imageInfo.setImageFormat(format);
                         imageInfo.setWidth(reader.getWidth(i));
                         imageInfo.setHeight(reader.getHeight(i));
+                        imageInfo.setIsMultipleFrames(num > 1);
                         imageInfo.setIsTiled(reader.isImageTiled(i));
                         Iterator<ImageTypeSpecifier> types = reader.getImageTypes(i);
                         List<ImageTypeSpecifier> typesValue = new ArrayList<>();

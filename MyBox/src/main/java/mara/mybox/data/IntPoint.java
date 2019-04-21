@@ -16,6 +16,26 @@ public class IntPoint {
         this.y = y;
     }
 
+    public static int distance2(int x1, int y1, int x2, int y2) {
+        int distanceX = x1 - x2;
+        int distanceY = y1 - y2;
+        return distanceX * distanceX + distanceY * distanceY;
+    }
+
+    public static int distance(int x1, int y1, int x2, int y2) {
+        return (int) Math.sqrt(distance2(x1, y1, x2, y2));
+    }
+
+    public static int distance2(IntPoint A, IntPoint B) {
+        int distanceX = A.getX() - B.getX();
+        int distanceY = A.getY() - B.getY();
+        return distanceX * distanceX + distanceY * distanceY;
+    }
+
+    public static int distance(IntPoint A, IntPoint B) {
+        return (int) Math.sqrt(distance2(A, B));
+    }
+
     public int getX() {
         return x;
     }

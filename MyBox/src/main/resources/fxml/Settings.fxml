@@ -35,8 +35,8 @@
                                         <Insets left="50.0" />
                                     </HBox.margin>
                                 </Label>
-                                <ComboBox fx:id="fontSizeBox" prefHeight="30.0" prefWidth="100.0" />
-                        <Label text="px" />
+                                <ComboBox fx:id="fontSizeBox" editable="true" prefWidth="100.0" />
+                                <Label text="px" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -46,13 +46,28 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Label>
-                                <ComboBox fx:id="styleBox" prefHeight="30.0" prefWidth="272.0" />
+                                <ComboBox fx:id="styleBox" prefWidth="272.0" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
                                 <CheckBox fx:id="showCommentsCheck" mnemonicParsing="false" selected="true" text="%ShowComments" />
                                 <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                            <children>
+                                <CheckBox fx:id="restoreStagesSizeCheck" mnemonicParsing="false" selected="true" text="%RestoreStagesSize" />
+                                <CheckBox fx:id="newWindowCheck" mnemonicParsing="false" text="%OpenStageInNewWindow" />
+                            </children>
+                        </HBox>
+                        <HBox fx:id="fileHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label text="%RecentFileHistories" />
+                                <TextField fx:id="fileRecentInput" prefWidth="70.0" text="15" />
+                                <Button fx:id="setFileRecentButton" mnemonicParsing="false" onAction="#setFileRecentAction" text="%OK" />
+                        <Button mnemonicParsing="false" onAction="#noFileHistories" text="%NotRecord" />
+                                <Button mnemonicParsing="false" onAction="#clearFileHistories" text="%Clear" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -97,33 +112,49 @@
             <content>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                     <children>
-                        <HBox maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <RadioButton fx:id="alphaWhiteRadio" mnemonicParsing="false" onAction="#replaceWhiteAction" selected="true" text="%ReplaceAlphaAsWhite">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="alphaGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton fx:id="alphaBlackRadio" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
+                                <Label text="%StrokeColor" />
+                                <ColorPicker fx:id="strokeColorPicker" />
+                                <Label text="%StrokeWidth" />
+                                <ComboBox fx:id="strokeWidthBox" prefWidth="100.0" />
                             </children>
                         </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="%AnchorColor" />
+                                <ColorPicker fx:id="anchorColorPicker" />
+                                <Label text="%AnchorWidth" />
+                                <ComboBox fx:id="anchorWidthBox" prefWidth="100.0" />
+                                <CheckBox fx:id="anchorSolidCheck" mnemonicParsing="false" text="%AnchorSolid" />
+                            </children>
+                        </HBox>
+                        <HBox maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                            <children>
+                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
+                                <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" />
+                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" />
+                            </children>
+                        </HBox>
+                  <HBox layoutX="20.0" layoutY="100.0" maxWidth="1.7976931348623157E308" spacing="10.0">
+                     <children>
+                        <CheckBox fx:id="removeAlphaCopyCheck" mnemonicParsing="false" selected="true" text="%RemoveAlphaWhenCopy" />
+                        <CheckBox fx:id="alphaWhiteCheck" mnemonicParsing="false" onAction="#replaceWhiteAction" selected="true" text="%ReplaceAlphaAsWhite" />
+                     </children>
+                  </HBox>
                         <HBox fx:id="imageHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                             <children>
-                                <RadioButton fx:id="maxHisRadio" mnemonicParsing="false" onAction="#maxHisAction" selected="true" text="%MaxHistories">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="hisGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <TextField fx:id="hisMaxInput" prefHeight="30.0" prefWidth="54.0" text="10" />
-                                <Button fx:id="hisOkButton" mnemonicParsing="false" onAction="#setHisAction" text="%OK" />
-                                <Button fx:id="hisClearButton" mnemonicParsing="false" onAction="#clearHistories" text="%Clear" />
-                                <RadioButton fx:id="noHisRadio" mnemonicParsing="false" onAction="#noHisAction" text="%NoHistories" toggleGroup="$hisGroup" />
+                                <Label text="%MaxImageHistories" />
+                                <TextField fx:id="imageMaxHisInput" prefWidth="70.0" text="10" />
+                                <Button fx:id="setImageHisButton" mnemonicParsing="false" onAction="#setImageHisAction" text="%OK" />
+                        <Button mnemonicParsing="false" onAction="#noImageHistories" text="%NotRecord" />
+                                <Button mnemonicParsing="false" onAction="#clearImageHistories" text="%Clear" />
                             </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
                                 <Label text="%ImageDisplaySampleMaxWidth" />
-                                <ComboBox fx:id="imageWidthBox" prefWidth="150.0" />
+                                <ComboBox fx:id="imageWidthBox" editable="true" prefWidth="150.0" />
                             </children>
                         </HBox>
                     </children>
@@ -137,7 +168,7 @@
             <children>
                 <Button mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                 <Button mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
-                <Button mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
+                <Button fx:id="closeButton" defaultButton="true" mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
             </children>
         </HBox>
     </children>

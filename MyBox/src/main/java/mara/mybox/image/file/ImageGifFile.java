@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.IIOImage;
@@ -119,6 +118,20 @@ public class ImageGifFile {
         }
     }
 
+    public static BufferedImage readBrokenGifFile(String src, int index) {
+        BufferedImage image = null;
+        try {
+            try (FileInputStream in = new FileInputStream(src)) {
+                final GifImage gif = GifDecoder.read(in);
+//                logger.error(gif.getFrameCount());
+                image = gif.getFrame(index);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return image;
+    }
+
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
         try {
 //            logger.debug("readBrokenGifFile");
@@ -145,20 +158,18 @@ public class ImageGifFile {
             try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
-                Map<String, Long> sizes = new HashMap<>();
                 for (int i = 0; i < frameCount; i++) {
                     ImageInformation info = imagesInfo.get(i);
-                    boolean needSampled = needSampled(info, frameCount, sizes);
+                    boolean needSampled = needSampled(info, frameCount);
                     final BufferedImage img = gif.getFrame(i);
                     if (needSampled) {
+                        Map<String, Long> sizes = info.getSizes();
                         images.add(ImageConvert.scaleImageWidthKeep(img, sizes.get("sampledWidth").intValue()));
                         info.setIsSampled(true);
-                        info.setSizeString(info.getWidth() + "x" + info.getHeight() + " *");
                     } else {
                         images.add(img);
                         info.setIsSampled(false);
                         info.setBufferedImage(img);
-                        info.setSizeString(info.getWidth() + "x" + info.getHeight());
                     }
                 }
             }
@@ -169,36 +180,23 @@ public class ImageGifFile {
         }
     }
 
-    public static BufferedImage readBrokenGifFile(String src,
-            ImageInformation imagesInfo, Map<String, Long> sizes) {
+    public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage;
             try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
-                boolean needSampled = needSampled(imagesInfo, 1, sizes);
+                boolean needSampled = needSampled(imageInfo, 1);
                 bufferedImage = gif.getFrame(0);
                 if (needSampled) {
+                    Map<String, Long> sizes = imageInfo.getSizes();
                     bufferedImage = ImageConvert.scaleImageWidthKeep(bufferedImage, sizes.get("sampledWidth").intValue());
-                    imagesInfo.setIsSampled(true);
+                    imageInfo.setIsSampled(true);
                 } else {
-                    imagesInfo.setIsSampled(false);
-                    imagesInfo.setBufferedImage(bufferedImage);
+                    imageInfo.setIsSampled(false);
+                    imageInfo.setBufferedImage(bufferedImage);
                 }
             }
             return bufferedImage;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
-    public static BufferedImage readBrokenGifFile(String src, int index) {
-        try {
-            try (FileInputStream in = new FileInputStream(src)) {
-                final GifImage gif = GifDecoder.read(in);
-                final BufferedImage img = gif.getFrame(index);
-                return img;
-            }
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

@@ -25,9 +25,7 @@
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-                                <Button mnemonicParsing="false" text=" " visible="false"
-                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="imageBar" HBox.hgrow="NEVER">
@@ -36,22 +34,21 @@
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
                                 <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSave" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
-                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
                 <SplitPane fx:id="splitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" onMouseEntered="#popFileAdd" text="%Add" />
+                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" onMouseEntered="#popFileInsert" text="%Insert" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%Up" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%Down" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -69,6 +66,7 @@
                                         <TableColumn fx:id="indexColumn" text="%Index" />
                                     </columns>
                                 </TableView>
+                                <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
@@ -146,13 +144,14 @@
                                     </content>
                                 </TitledPane>
                                 <Label fx:id="imageLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-                                <ScrollPane fx:id="scrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <ImageView fx:id="imageView" fitHeight="161.0" fitWidth="141.0" pickOnBounds="true" preserveRatio="true">
-                                            <cursor>
-                                                <Cursor fx:constant="OPEN_HAND" />
-                                            </cursor>
-                                        </ImageView>
+                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fx:id="imageView" fitHeight="161.0" fitWidth="141.0" pickOnBounds="true" preserveRatio="true">
+                                                </ImageView>
+                                            </children>
+                                        </AnchorPane>
                                     </content>
                                 </ScrollPane>
                             </children>

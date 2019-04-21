@@ -23,9 +23,9 @@
             <children>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <ToolBar prefWidth="200.0" HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#openAction" text="%Open" />
+                                <Button mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Open" />
                                 <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
                                 <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
                             </items>
@@ -34,7 +34,7 @@
                             <items>
                                 <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
                                 <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>
@@ -83,7 +83,7 @@
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%OTSU" toggleGroup="$binaryGroup" />
                                         <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
-                                        <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="80.0" promptText="0~255" />
+                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                     </children>
                                 </HBox>
 
@@ -97,8 +97,8 @@
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" onMouseEntered="#popFileAdd" text="%Add" />
+                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" onMouseEntered="#popFileInsert" text="%Insert" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%Up" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%Down" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -106,11 +106,7 @@
                                         <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
                                         <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
                                         <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
-                                        <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
-                                            <padding>
-                                                <Insets left="30.0" />
-                                            </padding>
-                                        </Label>
+                              <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
                                     </items>
                                 </ToolBar>
                                 <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -122,6 +118,7 @@
                                         <TableColumn fx:id="indexColumn" text="%Index" />
                                     </columns>
                                 </TableView>
+                                  <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                     </content>

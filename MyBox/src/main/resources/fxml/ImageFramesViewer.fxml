@@ -46,18 +46,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageFramesViewerController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageFramesViewerController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="636.0" prefWidth="1106.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="contentBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <HBox fx:id="sourceBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox fx:id="sourceBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#openAction" prefHeight="30.0" text="%Open" />
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="infoBar" HBox.hgrow="NEVER">
@@ -76,13 +76,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
                                 <Button mnemonicParsing="false" onAction="#selectAll" text="%SelectAll" />
                                 <Button mnemonicParsing="false" onAction="#unselectAll" text="%UnselectAll" />
-                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" text="%Extract"
-                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
-                                <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
-                                    <padding>
-                                        <Insets left="30.0" />
-                                    </padding>
-                                </Label>
+                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Extract" />
+                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
                             </items>
                         </ToolBar>
                         <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -94,6 +89,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <TableColumn fx:id="indexColumn" text="%Index" />
                             </columns>
                         </TableView>
+                          <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
                     </children>
                 </VBox>
 

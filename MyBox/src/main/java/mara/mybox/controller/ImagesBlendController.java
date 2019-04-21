@@ -3,22 +3,25 @@ package mara.mybox.controller;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -26,20 +29,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javax.imageio.ImageIO;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.image.ImageBlend.ImagesBlendMode;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.image.PixelBlend;
 
 /**
  * @Author Mara
@@ -56,14 +62,12 @@ public class ImagesBlendController extends ImageViewerController {
     private boolean isAreaValid;
     private float opacity;
 
-    private File foreFile, backFile, targetFile;
+    private File foreFile, backFile;
     private Image foreImage, backImage;
     private ImageInformation foreInfo, backInfo;
 
     @FXML
-    private VBox mainPane, targetBox;
-    @FXML
-    private SplitPane splitPane;
+    private VBox targetBox;
     @FXML
     private ScrollPane foreScroll, backScroll;
     @FXML
@@ -73,24 +77,24 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private ToggleGroup locationGroup;
     @FXML
-    private Button openTargetButton;
-    @FXML
-    private ComboBox<String> targetTypeBox, blendModeBox, opacityBox;
+    private ComboBox<String> blendModeBox, opacityBox;
     @FXML
     private Label foreTitle, foreLabel, backTitle, backLabel, pointLabel;
-    @FXML
-    private Button newWindowButton;
     @FXML
     private TextField pointX, pointY;
     @FXML
     private CheckBox intersectOnlyCheck;
 
     public ImagesBlendController() {
+        baseTitle = AppVaribles.getMessage("ImagesBlend");
+
         ImageBlendFileTypeKey = "ImageBlendFileType";
+        needNotRulers = true;
+        needNotCoordinates = true;
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initSourcesSection();
             initOptionsSection();
@@ -124,24 +128,14 @@ public class ImagesBlendController extends ImageViewerController {
             location = ImagesRelativeLocation.Foreground_In_Background;
             pointLabel.setText(AppVaribles.getMessage("ClickOnBackgournd"));
 
-            blendModeBox.getItems().addAll(Arrays.asList(AppVaribles.getMessage("NormalMode"),
-                    AppVaribles.getMessage("DissolveMode"), AppVaribles.getMessage("MultiplyMode"), AppVaribles.getMessage("ScreenMode"),
-                    AppVaribles.getMessage("OverlayMode"), AppVaribles.getMessage("HardLightMode"), AppVaribles.getMessage("SoftLightMode"),
-                    AppVaribles.getMessage("ColorDodgeMode"), AppVaribles.getMessage("LinearDodgeMode"), AppVaribles.getMessage("DivideMode"),
-                    AppVaribles.getMessage("ColorBurnMode"), AppVaribles.getMessage("LinearBurnMode"), AppVaribles.getMessage("VividLightMode"),
-                    AppVaribles.getMessage("LinearLightMode"), AppVaribles.getMessage("SubtractMode"), AppVaribles.getMessage("DifferenceMode"),
-                    AppVaribles.getMessage("ExclusionMode"), AppVaribles.getMessage("DarkenMode"), AppVaribles.getMessage("LightenMode"),
-                    AppVaribles.getMessage("HueMode"), AppVaribles.getMessage("SaturationMode"), AppVaribles.getMessage("ColorMode"),
-                    AppVaribles.getMessage("LuminosityMode")
-            ));
-            blendModeBox.valueProperty().addListener(new ChangeListener<String>() {
+            blendModeBox.getItems().addAll(PixelBlend.allBlendModes());
+            blendModeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
-                    checkBlendMode(newValue);
+                    checkBlendMode();
                 }
             });
-            blendMode = null;
 
             pointX.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -160,26 +154,24 @@ public class ImagesBlendController extends ImageViewerController {
             isAreaValid = true;
 
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacityBox.valueProperty().addListener(new ChangeListener<String>() {
+            opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         opacity = Float.valueOf(newValue);
                         if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacityBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(opacityBox);
                             blendImages();
                         } else {
                             opacity = 0.5f;
-                            opacityBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(opacityBox);
                         }
                     } catch (Exception e) {
                         opacity = 0.5f;
-                        opacityBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(opacityBox);
                     }
                 }
             });
-            opacityBox.getSelectionModel().select(0);
-            opacityHBox.setDisable(true);
 
             intersectOnlyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -188,6 +180,13 @@ public class ImagesBlendController extends ImageViewerController {
                     blendImages();
                 }
             });
+
+            isSettingValues = true;
+            blendModeBox.getSelectionModel().select(0);
+            opacityBox.getSelectionModel().select(0);
+            isSettingValues = false;
+            checkBlendMode();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -197,6 +196,7 @@ public class ImagesBlendController extends ImageViewerController {
         if (foreImage == null || backImage == null) {
             return;
         }
+        isSettingValues = true;
         RadioButton selected = (RadioButton) locationGroup.getSelectedToggle();
         if (AppVaribles.getMessage("FinB").equals(selected.getText())) {
             location = ImagesRelativeLocation.Foreground_In_Background;
@@ -215,82 +215,19 @@ public class ImagesBlendController extends ImageViewerController {
         }
         pointX.setText("0");
         pointY.setText("0");
+        isSettingValues = false;
+        checkPoint();
     }
 
-    private void checkBlendMode(String mode) {
-        opacityHBox.setDisable(true);
-        if (AppVaribles.getMessage("NormalMode").equals(mode)) {
-            blendMode = ImagesBlendMode.NORMAL;
-            opacityHBox.setDisable(false);
+    private void checkBlendMode() {
+        String mode = blendModeBox.getSelectionModel().getSelectedItem();
+        blendMode = PixelBlend.getBlendModeByName(mode);
+        opacityHBox.setDisable(blendMode != ImagesBlendMode.NORMAL);
 
-        } else if (AppVaribles.getMessage("DissolveMode").equals(mode)) {
-            blendMode = ImagesBlendMode.DISSOLVE;
-
-        } else if (AppVaribles.getMessage("MultiplyMode").equals(mode)) {
-            blendMode = ImagesBlendMode.MULTIPLY;
-
-        } else if (AppVaribles.getMessage("ScreenMode").equals(mode)) {
-            blendMode = ImagesBlendMode.SCREEN;
-
-        } else if (AppVaribles.getMessage("OverlayMode").equals(mode)) {
-            blendMode = ImagesBlendMode.OVERLAY;
-
-        } else if (AppVaribles.getMessage("HardLightMode").equals(mode)) {
-            blendMode = ImagesBlendMode.HARD_LIGHT;
-
-        } else if (AppVaribles.getMessage("SoftLightMode").equals(mode)) {
-            blendMode = ImagesBlendMode.SOFT_LIGHT;
-
-        } else if (AppVaribles.getMessage("ColorDodgeMode").equals(mode)) {
-            blendMode = ImagesBlendMode.COLOR_DODGE;
-
-        } else if (AppVaribles.getMessage("LinearDodgeMode").equals(mode)) {
-            blendMode = ImagesBlendMode.LINEAR_DODGE;
-
-        } else if (AppVaribles.getMessage("DivideMode").equals(mode)) {
-            blendMode = ImagesBlendMode.DIVIDE;
-
-        } else if (AppVaribles.getMessage("ColorBurnMode").equals(mode)) {
-            blendMode = ImagesBlendMode.COLOR_BURN;
-
-        } else if (AppVaribles.getMessage("LinearBurnMode").equals(mode)) {
-            blendMode = ImagesBlendMode.LINEAR_BURN;
-
-        } else if (AppVaribles.getMessage("VividLightMode").equals(mode)) {
-            blendMode = ImagesBlendMode.VIVID_LIGHT;
-
-        } else if (AppVaribles.getMessage("LinearLightMode").equals(mode)) {
-            blendMode = ImagesBlendMode.LINEAR_LIGHT;
-
-        } else if (AppVaribles.getMessage("SubtractMode").equals(mode)) {
-            blendMode = ImagesBlendMode.SUBTRACT;
-
-        } else if (AppVaribles.getMessage("DifferenceMode").equals(mode)) {
-            blendMode = ImagesBlendMode.DIFFERENCE;
-
-        } else if (AppVaribles.getMessage("ExclusionMode").equals(mode)) {
-            blendMode = ImagesBlendMode.EXCLUSION;
-
-        } else if (AppVaribles.getMessage("DarkenMode").equals(mode)) {
-            blendMode = ImagesBlendMode.DARKEN;
-
-        } else if (AppVaribles.getMessage("LightenMode").equals(mode)) {
-            blendMode = ImagesBlendMode.LIGHTEN;
-
-        } else if (AppVaribles.getMessage("HueMode").equals(mode)) {
-            blendMode = ImagesBlendMode.HUE;
-
-        } else if (AppVaribles.getMessage("SaturationMode").equals(mode)) {
-            blendMode = ImagesBlendMode.SATURATION;
-
-        } else if (AppVaribles.getMessage("ColorMode").equals(mode)) {
-            blendMode = ImagesBlendMode.COLOR;
-
-        } else if (AppVaribles.getMessage("LuminosityMode").equals(mode)) {
-            blendMode = ImagesBlendMode.LUMINOSITY;
-
+        if (!isSettingValues) {
+            blendImages();
         }
-        blendImages();
+
     }
 
     private void checkPoint() {
@@ -325,7 +262,9 @@ public class ImagesBlendController extends ImageViewerController {
             isAreaValid = false;
         }
 
-        blendImages();
+        if (!isSettingValues) {
+            blendImages();
+        }
     }
 
     private void initTargetSection() {
@@ -356,25 +295,47 @@ public class ImagesBlendController extends ImageViewerController {
             if (file == null) {
                 return;
             }
+            selectForegroundImage(file);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void selectForegroundImage(final File file) {
+        try {
+            if (file == null) {
+                return;
+            }
             foreFile = file;
-            AppVaribles.setUserConfigValue(LastPathKey, foreFile.getParent());
-            AppVaribles.setUserConfigValue(sourcePathKey, foreFile.getParent());
+            recordFileOpened(file);
 
             final String fileName = file.getPath();
             task = new Task<Void>() {
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
-                    try {
-                        BufferedImage bufferImage = ImageIO.read(file);
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        foreImage = SwingFXUtils.toFXImage(bufferImage, null);
-                        foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        foreInfo.setImage(foreImage);
+
+                    BufferedImage bufferImage = ImageFileReaders.readImage(file);
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    foreImage = SwingFXUtils.toFXImage(bufferImage, null);
+                    foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    foreInfo.setImage(foreImage);
+
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -394,10 +355,7 @@ public class ImagesBlendController extends ImageViewerController {
                                 afterImagesOpened();
                             }
                         });
-                    } catch (Exception e) {
-                        logger.error(e.toString());
                     }
-                    return null;
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -408,6 +366,37 @@ public class ImagesBlendController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    protected void popForeground(MouseEvent event) {
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+            popMenu = null;
+        }
+        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType);
+        if (his == null || his.isEmpty()) {
+            return;
+        }
+        popMenu = new ContextMenu();
+        List<String> files = new ArrayList();
+        for (VisitHistory h : his) {
+            final String fname = h.getResourceValue();
+            if (files.contains(fname)) {
+                continue;
+            }
+            files.add(fname);
+            MenuItem menu = new MenuItem(fname);
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    selectForegroundImage(new File(fname));
+                }
+            });
+            popMenu.getItems().add(menu);
+        }
+        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+
     }
 
     @FXML
@@ -442,25 +431,48 @@ public class ImagesBlendController extends ImageViewerController {
             if (file == null) {
                 return;
             }
+            selectBackgroundImage(file);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void selectBackgroundImage(final File file) {
+        try {
+            if (file == null) {
+                return;
+            }
             backFile = file;
             AppVaribles.setUserConfigValue(LastPathKey, backFile.getParent());
             AppVaribles.setUserConfigValue(sourcePathKey, backFile.getParent());
 
             final String fileName = file.getPath();
             task = new Task<Void>() {
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
-                    try {
-                        BufferedImage bufferImage = ImageIO.read(file);
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        backImage = SwingFXUtils.toFXImage(bufferImage, null);
-                        backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        backInfo.setImage(backImage);
+
+                    BufferedImage bufferImage = ImageFileReaders.readImage(file);
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    backImage = SwingFXUtils.toFXImage(bufferImage, null);
+                    backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    backInfo.setImage(backImage);
+
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -480,10 +492,7 @@ public class ImagesBlendController extends ImageViewerController {
                                 afterImagesOpened();
                             }
                         });
-                    } catch (Exception e) {
-                        logger.error(e.toString());
                     }
-                    return null;
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -494,6 +503,37 @@ public class ImagesBlendController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    protected void popBackground(MouseEvent event) {
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+            popMenu = null;
+        }
+        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType);
+        if (his == null || his.isEmpty()) {
+            return;
+        }
+        popMenu = new ContextMenu();
+        List<String> files = new ArrayList();
+        for (VisitHistory h : his) {
+            final String fname = h.getResourceValue();
+            if (files.contains(fname)) {
+                continue;
+            }
+            files.add(fname);
+            MenuItem menu = new MenuItem(fname);
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    selectBackgroundImage(new File(fname));
+                }
+            });
+            popMenu.getItems().add(menu);
+        }
+        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+
     }
 
     private void afterImagesOpened() {
@@ -550,8 +590,8 @@ public class ImagesBlendController extends ImageViewerController {
                     try {
                         String filename = targetFile.getAbsolutePath();
                         String format = FileTools.getFileSuffix(filename);
-                        final BufferedImage bufferedImage = ImageTools.getBufferedImage(image);
-                        if (task.isCancelled()) {
+                        final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
+                        if (task == null || task.isCancelled()) {
                             return null;
                         }
                         ImageFileWriters.writeImageFile(bufferedImage, format, filename);
@@ -579,6 +619,7 @@ public class ImagesBlendController extends ImageViewerController {
     private void openTargetPath(ActionEvent event) {
         try {
             Desktop.getDesktop().browse(targetPath.toURI());
+            recordFileOpened(targetPath);
         } catch (Exception e) {
 
         }
@@ -591,8 +632,8 @@ public class ImagesBlendController extends ImageViewerController {
         }
         foreView.setCursor(Cursor.HAND);
 
-        int xv = (int) Math.round(event.getX() * foreImage.getWidth() / foreView.getBoundsInLocal().getWidth());
-        int yv = (int) Math.round(event.getY() * foreImage.getHeight() / foreView.getBoundsInLocal().getHeight());
+        int xv = (int) Math.round(event.getX() * foreImage.getWidth() / foreView.getBoundsInParent().getWidth());
+        int yv = (int) Math.round(event.getY() * foreImage.getHeight() / foreView.getBoundsInParent().getHeight());
 
         pointX.setText(xv + "");
         pointY.setText(yv + "");
@@ -605,8 +646,8 @@ public class ImagesBlendController extends ImageViewerController {
         }
         backView.setCursor(Cursor.HAND);
 
-        int xv = (int) Math.round(event.getX() * backImage.getWidth() / backView.getBoundsInLocal().getWidth());
-        int yv = (int) Math.round(event.getY() * backImage.getHeight() / backView.getBoundsInLocal().getHeight());
+        int xv = (int) Math.round(event.getX() * backImage.getWidth() / backView.getBoundsInParent().getWidth());
+        int yv = (int) Math.round(event.getY() * backImage.getHeight() / backView.getBoundsInParent().getHeight());
 
         pointX.setText(xv + "");
         pointY.setText(yv + "");
@@ -614,14 +655,14 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     @Override
-    public void clickImage(MouseEvent event) {
+    public void imageClicked(MouseEvent event) {
         if (image == null) {
             return;
         }
         imageView.setCursor(Cursor.HAND);
 
-        int xv = (int) Math.round(event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth());
-        int yv = (int) Math.round(event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight());
+        int xv = (int) Math.round(event.getX() * image.getWidth() / imageView.getBoundsInParent().getWidth());
+        int yv = (int) Math.round(event.getY() * image.getHeight() / imageView.getBoundsInParent().getHeight());
 
         pointX.setText(xv + "");
         pointY.setText(yv + "");
@@ -639,7 +680,7 @@ public class ImagesBlendController extends ImageViewerController {
 
         bottomLabel.setText(AppVaribles.getMessage("Loading..."));
 
-        image = ImageTools.blendImages(foreImage, backImage,
+        image = ImageManufacture.blendImages(foreImage, backImage,
                 location, x, y, intersectOnlyCheck.isSelected(), blendMode, opacity);
         if (image == null) {
             bottomLabel.setText("");

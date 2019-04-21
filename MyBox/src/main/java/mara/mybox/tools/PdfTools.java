@@ -1,6 +1,6 @@
 package mara.mybox.tools;
 
-import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.fxml.ImageManufacture;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -151,7 +151,7 @@ public class PdfTools {
 
         try {
             int count = 0;
-            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                 PDPageContentStream content;
                 PDFont font = PDType1Font.HELVETICA;
                 PDDocumentInformation info = new PDDocumentInformation();
@@ -164,7 +164,7 @@ public class PdfTools {
                 int marginSize = 20, total = images.size();
                 for (Image image : images) {
                     PDImageXObject imageObject;
-                    bufferedImage = ImageTools.getBufferedImage(image);
+                    bufferedImage = ImageManufacture.getBufferedImage(image);
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     if (isImageSize) {
                         pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
@@ -231,7 +231,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -250,7 +250,7 @@ public class PdfTools {
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
                                 break;
                             case Jpeg:
-                                bufferedImage = ImageTools.checkAlpha(image, "jpg");
+                                bufferedImage = ImageManufacture.checkAlpha(image, "jpg");
                                 break;
                             default:
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -287,7 +287,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -300,7 +300,7 @@ public class PdfTools {
                 File file;
                 for (String filename : files) {
                     file = new File(filename);
-                    bufferedImage = ImageIO.read(file);
+                    bufferedImage = ImageFileReaders.readImage(file);
                     imageInPdf(document, bufferedImage, p, ++count, total, font);
                     if (deleteFiles) {
                         file.delete();
@@ -451,7 +451,7 @@ public class PdfTools {
                 return false;
             }
 
-            try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                 PDFont font = PdfTools.getFont(document, fontName);
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
@@ -462,7 +462,7 @@ public class PdfTools {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = ImageTools.getBufferedImage(imageInformation.getImage());
+                    wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
@@ -476,7 +476,7 @@ public class PdfTools {
                         if (imageInformation.isIsSampled()) {
                             target = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         } else {
-                            target = ImageConvert.cropImage(wholeSource, x1, y1, x2, y2);
+                            target = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
                         }
                         PdfTools.writePage(document, font, sourceFormat, target,
                                 ++count, total, pdfFormat,
@@ -496,7 +496,7 @@ public class PdfTools {
 
     public static BufferedImage page2image(File file, int page) {
         try {
-            try (PDDocument doc = PDDocument.load(file, null, AppVaribles.PdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, null, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
                 return image;
@@ -509,7 +509,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             float scale, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, scale, imageType);
                 return image;
@@ -522,7 +522,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             int dpi, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
                 return image;

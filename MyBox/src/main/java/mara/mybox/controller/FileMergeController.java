@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BatchBaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,7 +13,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
@@ -26,20 +26,22 @@ import mara.mybox.tools.ByteTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileMergeController extends FilesBatchController {
+public class FileMergeController extends BatchBaseController {
 
-    private File targetFile;
+    public FileMergeController() {
+        baseTitle = AppVaribles.getMessage("FileMerge");
+
+    }
 
     @Override
-    protected void initTargetSection() {
+    public void initTargetSection() {
         targetFileInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 try {
                     targetFile = new File(newValue);
                     targetFileInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
-                    AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
+                    recordFileWritten(targetFile.getParent());
                 } catch (Exception e) {
                     targetFile = null;
                     targetFileInput.setStyle(badStyle);
@@ -59,12 +61,15 @@ public class FileMergeController extends FilesBatchController {
     }
 
     @FXML
-    protected void selectTargetFile(ActionEvent event) {
+    @Override
+    public void selectTargetFile(ActionEvent event) {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if ( path.exists() )  fileChooser.setInitialDirectory(path);
-            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(CommonValues.AllExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
                 return;
@@ -76,7 +81,12 @@ public class FileMergeController extends FilesBatchController {
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void makeMoreParameters() {
+        makeBatchParameters();
+    }
+
+    @Override
+    public void doCurrentProcess() {
         try {
             if (targetFile == null || sourceFilesInformation.isEmpty()) {
                 return;
@@ -85,6 +95,8 @@ public class FileMergeController extends FilesBatchController {
             currentParameters.currentTotalHandled = 0;
             updateInterface("Started");
             task = new Task<Void>() {
+                private boolean ok;
+
                 @Override
                 protected Void call() {
                     try {
@@ -92,11 +104,11 @@ public class FileMergeController extends FilesBatchController {
                         try (FileOutputStream outputStream = new FileOutputStream(targetFile)) {
                             byte[] buf = new byte[bufSize];
                             int bufLen;
-                            for (; currentParameters.currentIndex < sourcesHandling.size();) {
+                            for (; currentParameters.currentIndex < sourcesIndice.size();) {
                                 if (isCancelled()) {
                                     break;
                                 }
-                                FileInformation d = sourceFilesInformation.get(sourcesHandling.get(currentParameters.currentIndex));
+                                FileInformation d = sourceFilesInformation.get(sourcesIndice.get(currentParameters.currentIndex));
                                 try (FileInputStream inputStream
                                         = new FileInputStream(d.getFile())) {
                                     while ((bufLen = inputStream.read(buf)) != -1) {
@@ -107,29 +119,24 @@ public class FileMergeController extends FilesBatchController {
                                     }
                                 }
                                 d.setHandled(AppVaribles.getMessage("Successful"));
-                                sourceTableView.refresh();
+                                filesTableView.refresh();
                                 currentParameters.currentIndex++;
                                 currentParameters.currentTotalHandled++;
-                                updateProgress(currentParameters.currentIndex, sourcesHandling.size());
-                                updateMessage(currentParameters.currentIndex + "/" + sourcesHandling.size());
+                                updateProgress(currentParameters.currentIndex, sourcesIndice.size());
+                                updateMessage(currentParameters.currentIndex + "/" + sourcesIndice.size());
 
                                 if (isCancelled() || isPreview) {
                                     break;
                                 }
                             }
                         }
+                        actualParameters.finalTargetName = targetFile.getAbsolutePath();
+                        targetFiles.add(targetFile);
+                        ok = true;
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
 
-                    if (!isPreview) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                openTarget(null);
-                            }
-                        });
-                    }
                     return null;
                 }
 
@@ -137,6 +144,7 @@ public class FileMergeController extends FilesBatchController {
                 protected void succeeded() {
                     super.succeeded();
                     updateInterface("Done");
+
                 }
 
                 @Override
@@ -164,21 +172,7 @@ public class FileMergeController extends FilesBatchController {
     }
 
     @Override
-    protected void viewFile(File file) {
-        if (file == null) {
-            return;
-        }
-        if (file.isFile()) {
-            BytesEditerController controller = (BytesEditerController) openStage(CommonValues.BytesEditerFxml,
-                    AppVaribles.getMessage("BytesEditer"), false, true);
-            controller.openFile(file);
-        } else {
-            FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
-        }
-    }
-
-    @Override
-    protected void openTarget(ActionEvent event) {
+    public void openTarget(ActionEvent event) {
         FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -19,11 +20,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
+import mara.mybox.value.AppVaribles;
 
 /**
  * @Author Mara
@@ -52,16 +54,18 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private CheckBox excludeCheck;
 
     public ImageManufactureBatchReplaceColorController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchReplaceColor");
 
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(distanceInput.styleProperty().isEqualTo(badStyle))
             );
 
@@ -71,13 +75,13 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
             super.initOptionsSection();
 
             Tooltip tips = new Tooltip(getMessage("ColorMatchComments2"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(colorBox, tips);
+            FxmlControl.setComments(colorBox, tips);
 
             newColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
@@ -123,9 +127,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
         isColor = getMessage("Color").equals(selected.getText());
         if (isColor) {
-            FxmlTools.quickTooltip(distanceInput, new Tooltip("0 ~ 255"));
+            FxmlControl.quickTooltip(distanceInput, new Tooltip("0 ~ 255"));
         } else {
-            FxmlTools.quickTooltip(distanceInput, new Tooltip("0 ~ 360"));
+            FxmlControl.quickTooltip(distanceInput, new Tooltip("0 ~ 360"));
         }
         checkDistance();
     }
@@ -194,7 +198,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
             scope.setHsbDistance(distance / 360.0f);
         }
         scope.setColorExcluded(excludeCheck.isSelected());
-        PixelsOperation pixelsOperation = new PixelsOperation(source, scope,
+        PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(source, scope,
                 PixelsOperation.OperationType.ReplaceColor);
         pixelsOperation.setColorPara1(ImageColor.converColor(oldColorPicker.getValue()));
         pixelsOperation.setColorPara2(ImageColor.converColor(newColorPicker.getValue()));

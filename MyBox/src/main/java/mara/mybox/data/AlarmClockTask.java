@@ -7,15 +7,9 @@ import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.data.AlarmClock.AlarmType;
+import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.scheduledTasks;
 import mara.mybox.tools.DateTools;
@@ -52,28 +46,8 @@ public class AlarmClockTask extends TimerTask {
                 @Override
                 public void run() {
                     try {
-                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.AlarmClockRunFxml), AppVaribles.CurrentBundle);
-                        Pane pane = fxmlLoader.load();
-                        final AlarmClockRunController controller = fxmlLoader.getController();
-                        Stage stage = new Stage();
-                        controller.setMyStage(stage);
-                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                            @Override
-                            public void handle(WindowEvent event) {
-                                if (!controller.stageClosing()) {
-                                    event.consume();
-                                }
-                            }
-                        });
-
-                        Scene scene = new Scene(pane);
-                        stage.initModality(Modality.NONE);
-                        stage.initOwner(null);
-                        stage.setTitle(AppVaribles.getMessage("AppTitle"));
-                        stage.getIcons().add(CommonValues.AppIcon);
-                        stage.setScene(scene);
-                        stage.show();
-
+                        final AlarmClockRunController controller = (AlarmClockRunController) FxmlStage.openStage(getClass(),
+                                null, CommonValues.AlarmClockRunFxml, false);
                         controller.runAlarm(alarm);
 
                         if (AppVaribles.alarmClockController != null

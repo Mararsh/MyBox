@@ -4,7 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -14,26 +14,25 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
  */
 public class ImageConverterBatchController extends ImageConverterController {
 
-    @Override
-    protected void initializeNext2() {
-        try {
+    public ImageConverterBatchController() {
+        baseTitle = AppVaribles.getMessage("ImageConverterBatch");
 
-            imageConverterAttributesController.setParentFxml(myFxml);
-            imageConverterAttributesController.getOriginalButton().setDisable(true);
+    }
+
+    @Override
+    public void initializeNext2() {
+        try {
+            imageConverterAttributesController.parentFxml = myFxml;
+            imageConverterAttributesController.originalButton.setDisable(true);
 
             operationBarController.startButton.disableProperty().bind(
-                    Bindings.isEmpty(filesTableController.getFilesTableView().getItems())
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getxInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getyInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                            .or(imageConverterAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
-            );
-
-            previewButton.disableProperty().bind(
-                    operationBarController.startButton.disableProperty()
-                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                    Bindings.isEmpty(filesTableController.filesTableView.getItems())
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.xInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.yInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.qualityBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.qualityInput.styleProperty().isEqualTo(badStyle)))
+                            .or(imageConverterAttributesController.colorBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.thresholdInput.styleProperty().isEqualTo(badStyle)))
             );
 
         } catch (Exception e) {
@@ -42,7 +41,7 @@ public class ImageConverterBatchController extends ImageConverterController {
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         makeBatchParameters();
     }
 }

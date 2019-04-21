@@ -9,15 +9,17 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javax.imageio.ImageIO;
+import mara.mybox.controller.base.ImageBatchBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import org.apache.pdfbox.rendering.ImageType;
+import mara.mybox.image.file.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -25,30 +27,38 @@ import org.apache.pdfbox.rendering.ImageType;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageConverterController extends ImageBaseController {
+public class ImageConverterController extends ImageBatchBaseController {
 
+    public ImageAttributes imageAttributes = new ImageAttributes();
+
+    @FXML
+    public ImageConverterAttributesController imageConverterAttributesController;
     @FXML
     protected Button viewButton;
 
+    public ImageConverterController() {
+        baseTitle = AppVaribles.getMessage("ImageConverter");
+
+    }
+
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             viewButton.setDisable(true);
 
-            imageConverterAttributesController.setParentFxml(myFxml);
-            imageConverterAttributesController.getOriginalButton().setDisable(true);
+            imageConverterAttributesController.parentFxml = myFxml;
+            imageConverterAttributesController.originalButton.setDisable(true);
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceFileInput.textProperty())
                             .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getxInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getyInput().styleProperty().isEqualTo(badStyle))
-                            .or(imageConverterAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                            .or(imageConverterAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.xInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.yInput.styleProperty().isEqualTo(badStyle))
+                            .or(imageConverterAttributesController.qualityBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.qualityInput.styleProperty().isEqualTo(badStyle)))
+                            .or(imageConverterAttributesController.colorBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(imageConverterAttributesController.thresholdInput.styleProperty().isEqualTo(badStyle)))
             );
-            operationBarController.openTargetButton.setVisible(false);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -57,49 +67,69 @@ public class ImageConverterController extends ImageBaseController {
 
     @FXML
     protected void showImage(ActionEvent event) {
-        openImageViewer(sourceFile.getAbsolutePath());
+        FxmlStage.openImageViewer(getClass(), null, sourceFile);
     }
 
     @Override
-    protected void sourceFileChanged(final File file) {
+    public void sourceFileChanged(final File file) {
         if (file == null) {
             return;
         }
         viewButton.setDisable(true);
-        imageConverterAttributesController.getOriginalButton().setDisable(true);
-        imageConverterAttributesController.getxInput().setText("");
-        imageConverterAttributesController.getyInput().setText("");
-        imageConverterAttributesController.getRatioBox().setDisable(true);
+        imageConverterAttributesController.originalButton.setDisable(true);
+        imageConverterAttributesController.xInput.setText("");
+        imageConverterAttributesController.yInput.setText("");
+        imageConverterAttributesController.ratioBox.setDisable(true);
         imageConverterAttributesController.getAttributes().setSourceWidth(0);
         imageConverterAttributesController.getAttributes().setSourceHeight(0);
-        loadImage(file, true);
+        loadImageInformation(file);
     }
 
     @Override
-    protected void afterImageLoaded() {
+    public void afterImageInfoLoaded() {
         if (imageInformation != null) {
             viewButton.setDisable(false);
-            imageConverterAttributesController.getOriginalButton().setDisable(false);
+            imageConverterAttributesController.originalButton.setDisable(false);
             imageConverterAttributesController.getAttributes().setSourceWidth(imageInformation.getWidth());
             imageConverterAttributesController.getAttributes().setSourceHeight(imageInformation.getHeight());
             imageConverterAttributesController.setOriginalSize();
-            imageConverterAttributesController.getRatioBox().setDisable(false);
+            imageConverterAttributesController.ratioBox.setDisable(false);
         }
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public boolean makeActualParameters() {
+        if (!super.makeActualParameters()) {
+            return false;
+        }
+
+        if (imageConverterAttributesController != null) {
+            actualParameters.aSize = appendSize.isSelected();
+            actualParameters.aColor = appendColor.isSelected();
+            actualParameters.aCompression = appendCompressionType.isSelected();
+            actualParameters.aQuality = appendQuality.isSelected();
+
+            AppVaribles.setUserConfigValue(appendSizeKey, actualParameters.aSize);
+            AppVaribles.setUserConfigValue(appendColorKey, actualParameters.aColor);
+            AppVaribles.setUserConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
+            AppVaribles.setUserConfigValue(appendQualityKey, actualParameters.aQuality);
+        }
+        return true;
+    }
+
+    @Override
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
             if (currentParameters == null) {
                 return;
             }
-            attributes = imageConverterAttributesController.getAttributes();
-            if (attributes == null) {
+            imageAttributes = imageConverterAttributesController.getAttributes();
+            if (imageAttributes == null) {
                 return;
             }
             currentParameters.startTime = new Date();
@@ -126,8 +156,11 @@ public class ImageConverterController extends ImageBaseController {
                                 }
                             }
 
-                            handleCurrentFile();
-                            markFileHandled(currentParameters.currentIndex);
+                            if (handleCurrentFile()) {
+                                markFileHandled(currentParameters.currentIndex, AppVaribles.getMessage("Successful"));
+                            } else {
+                                markFileHandled(currentParameters.currentIndex, AppVaribles.getMessage("Failed"));
+                            }
 
                             currentParameters.currentIndex++;
                             updateProgress(currentParameters.currentIndex, sourceFiles.size());
@@ -147,23 +180,30 @@ public class ImageConverterController extends ImageBaseController {
 
                 private boolean handleCurrentFile() {
                     try {
-                        BufferedImage bufferedImage = ImageIO.read(currentParameters.sourceFile);
-                        int w = attributes.getTargetWidth();
-                        int h = attributes.getTargetHeight();
+                        BufferedImage bufferedImage = ImageFileReaders.readImage(currentParameters.sourceFile);
+                        int w = imageAttributes.getTargetWidth();
+                        int h = imageAttributes.getTargetHeight();
                         if (w <= 0 && currentParameters.isBatch) {
                             w = bufferedImage.getWidth();
                         }
                         if (h <= 0 && currentParameters.isBatch) {
                             h = bufferedImage.getHeight();
                         }
-                        currentParameters.finalTargetName = makeFilename(w, h);
-                        if (currentParameters.finalTargetName == null) {
+                        String targetName = makeFilename(w, h);
+                        if (targetName == null) {
                             return false;
                         }
+                        actualParameters.finalTargetName = targetName;
                         bufferedImage = ImageConvert.scaleImage(bufferedImage, w, h);
-                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                        ImageFileWriters.writeImageFile(bufferedImage, attributes, currentParameters.finalTargetName);
-                        return true;
+                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, imageAttributes);
+                        ImageFileWriters.writeImageFile(bufferedImage, imageAttributes, actualParameters.finalTargetName);
+                        targetFile = new File(actualParameters.finalTargetName);
+                        if (targetFile.exists()) {
+                            targetFiles.add(targetFile);
+                            return true;
+                        } else {
+                            return false;
+                        }
                     } catch (Exception e) {
                         logger.error(e.toString());
                         return false;
@@ -204,34 +244,34 @@ public class ImageConverterController extends ImageBaseController {
         try {
             String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix;
             if (appendColor.isSelected()) {
-                if (ImageType.BINARY == attributes.getColorSpace()) {
-                    if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
+                if (ImageType.BINARY == imageAttributes.getColorSpace()) {
+                    if (imageAttributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD) {
                         fname += "_" + "BINARY-Threshold";
-                        if (attributes.getThreshold() >= 0) {
-                            fname += "-" + attributes.getThreshold();
+                        if (imageAttributes.getThreshold() >= 0) {
+                            fname += "-" + imageAttributes.getThreshold();
                         }
-                    } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                    } else if (imageAttributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
                         fname += "_" + "BINARY-OTSU";
                     } else {
-                        fname += "_" + attributes.getColorSpace();
+                        fname += "_" + imageAttributes.getColorSpace();
                     }
                 } else {
-                    fname += "_" + attributes.getColorSpace();
+                    fname += "_" + imageAttributes.getColorSpace();
                 }
             }
-            if (attributes.getCompressionType() != null
-                    && !AppVaribles.getMessage("None").equals(attributes.getCompressionType())) {
+            if (imageAttributes.getCompressionType() != null
+                    && !AppVaribles.getMessage("None").equals(imageAttributes.getCompressionType())) {
                 if (appendCompressionType.isSelected()) {
-                    fname += "_" + attributes.getCompressionType().replace(" ", "_");
+                    fname += "_" + imageAttributes.getCompressionType().replace(" ", "_");
                 }
-                if (appendQuality.isSelected() && "jpg".equals(attributes.getImageFormat())) {
-                    fname += "_quality-" + attributes.getQuality() + "%";
+                if (appendQuality.isSelected() && "jpg".equals(imageAttributes.getImageFormat())) {
+                    fname += "_quality-" + imageAttributes.getQuality() + "%";
                 }
             }
             if (appendSize.isSelected()) {
                 fname += "_" + w + "x" + h;
             }
-            fname += "." + attributes.getImageFormat();
+            fname += "." + imageAttributes.getImageFormat();
             return fname;
         } catch (Exception e) {
             logger.error(e.toString());

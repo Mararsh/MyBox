@@ -17,13 +17,14 @@ public class IntStatistic {
 
     private String name;
     private long sum;
-    private int mean, variance, skewness, minimum, maximum, mode;
+    private int mean, variance, skewness, minimum, maximum, mode, median;
 
     public IntStatistic() {
     }
 
     public IntStatistic(String name, long sum, int mean,
-            int variance, int skewness, int minimum, int maximum, int mode) {
+            int variance, int skewness, int minimum, int maximum,
+            int mode, int median) {
         this.name = name;
         this.sum = sum;
         this.mean = mean;
@@ -32,6 +33,7 @@ public class IntStatistic {
         this.minimum = minimum;
         this.maximum = maximum;
         this.mode = mode;
+        this.median = median;
     }
 
     public static long sum(int[] values) {
@@ -110,21 +112,32 @@ public class IntStatistic {
         return (int) (sum(values) / values.length);
     }
 
-    public static int[] median(int[] values) {
-        int[] mid = new int[3];
+    public static int median(int[] values) {
+        int mid = 0;
         if (values == null || values.length == 0) {
             return mid;
         }
-        ValueTools.sortArray(values);
-        if (values.length % 2 == 0) {
-            mid[1] = values.length / 2;
-            mid[2] = values.length / 2 - 1;
-            mid[0] = (values[mid[1]] + values[mid[2]]) / 2;
+        int[] sorted = ValueTools.sortArray(values);
+        if (sorted.length % 2 == 0) {
+            mid = (sorted[sorted.length / 2] + sorted[sorted.length / 2 - 1]) / 2;
         } else {
-            mid[1] = mid[2] = values.length / 2;
-            mid[0] = values[mid[1]];
+            mid = sorted[sorted.length / 2];
         }
         return mid;
+    }
+
+    public static int medianIndex(int[] values) {
+        if (values == null || values.length == 0) {
+            return -1;
+        }
+        int[] sorted = ValueTools.sortArray(values);
+        int mid = sorted[sorted.length / 2];
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == mid) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public static int variance(int[] values) {
@@ -236,6 +249,14 @@ public class IntStatistic {
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
+
+    public int getMedian() {
+        return median;
+    }
+
+    public void setMedian(int median) {
+        this.median = median;
     }
 
 }

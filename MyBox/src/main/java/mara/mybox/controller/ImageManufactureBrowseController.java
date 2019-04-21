@@ -1,15 +1,9 @@
 package mara.mybox.controller;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import mara.mybox.controller.base.ImageManufactureController;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToolBar;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -29,7 +23,7 @@ public class ImageManufactureBrowseController extends ImageManufactureController
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initBrowseTab();
@@ -47,10 +41,11 @@ public class ImageManufactureBrowseController extends ImageManufactureController
             super.initInterface();
 
             isSettingValues = true;
+            tabPane.getSelectionModel().select(browseTab);
 
             if (sourceFile != null && navBox != null) {
                 navBox.setDisable(false);
-                checkImageNevigator();
+                makeImageNevigator();
             }
 
             isSettingValues = false;
@@ -62,16 +57,6 @@ public class ImageManufactureBrowseController extends ImageManufactureController
 
     protected void initBrowseTab() {
         try {
-            sortGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkImageNevigator();
-                    RadioButton selected = (RadioButton) sortGroup.getSelectedToggle();
-                    AppVaribles.setUserConfigValue(ImageSortTypeKey, selected.getText());
-                }
-            });
-            FxmlTools.setRadioSelected(sortGroup, AppVaribles.getUserConfigValue(ImageSortTypeKey, getMessage("FileName")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -81,24 +66,24 @@ public class ImageManufactureBrowseController extends ImageManufactureController
     @FXML
     @Override
     public void nextAction() {
-        if (!checkSavingBeforeExit()) {
+        if (!checkSavingForNextAction()) {
             return;
         }
         if (nextFile != null) {
             setImageChanged(false);
-            loadImage(nextFile.getAbsoluteFile(), false);
+            loadImage(nextFile.getAbsoluteFile());
         }
     }
 
     @FXML
     @Override
     public void previousAction() {
-        if (!checkSavingBeforeExit()) {
+        if (!checkSavingForNextAction()) {
             return;
         }
         if (previousFile != null) {
             setImageChanged(false);
-            loadImage(previousFile.getAbsoluteFile(), false);
+            loadImage(previousFile.getAbsoluteFile());
         }
     }
 

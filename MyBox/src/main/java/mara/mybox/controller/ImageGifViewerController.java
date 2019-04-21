@@ -21,14 +21,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageFileInformation;
+import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -55,13 +57,24 @@ public class ImageGifViewerController extends ImageViewerController {
     protected TextField fromInput, toInput;
 
     public ImageGifViewerController() {
+        baseTitle = AppVaribles.getMessage("ImageGifViewer");
+
+        SourceFileType = VisitHistory.FileType.Gif;
+        SourcePathType = VisitHistory.FileType.Gif;
+        TargetFileType = VisitHistory.FileType.Gif;
+        TargetPathType = VisitHistory.FileType.Gif;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
+
         TipsLabelKey = "GifViewTips";
+        needNotRulers = true;
+        needNotCoordinates = true;
 
         fileExtensionFilter = CommonValues.GifExtensionFilter;
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             operation3Box.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
@@ -144,26 +157,26 @@ public class ImageGifViewerController extends ImageViewerController {
             interval = 500;
             List<String> values = Arrays.asList("500", "300", "1000", "2000", "3000", "5000", "10000");
             intervalCBox.getItems().addAll(values);
-            intervalCBox.valueProperty().addListener(new ChangeListener<String>() {
+            intervalCBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             interval = v;
-                            intervalCBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(intervalCBox);
                             showGifImage(currentIndex);
                         } else {
-                            intervalCBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intervalCBox);
                         }
                     } catch (Exception e) {
-                        intervalCBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intervalCBox);
                     }
                 }
             });
             intervalCBox.getSelectionModel().select(0);
 
-            frameBox.valueProperty().addListener(new ChangeListener<String>() {
+            frameBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -182,7 +195,8 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @Override
-    public void loadImage(final File file, final boolean onlyInformation) {
+    public void loadImage(final File file, final boolean onlyInformation,
+            final int inLoadWidth, final int inFrameIndex, boolean inCareFrames) {
         try {
             if (timer != null) {
                 timer.cancel();
@@ -190,10 +204,15 @@ public class ImageGifViewerController extends ImageViewerController {
             sourceFile = file;
             final String fileName = file.getPath();
             task = new Task<Void>() {
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
                     ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
                     imageInformation = imageFileInformation.getImageInformation();
+                    if (onlyInformation) {
+                        return null;
+                    }
                     List<BufferedImage> bimages = ImageFileReaders.readFrames("gif", fileName);
                     if (bimages == null) {
                         return null;
@@ -201,31 +220,40 @@ public class ImageGifViewerController extends ImageViewerController {
                     totalNumber = bimages.size();
                     images = new Image[totalNumber];
                     for (int i = 0; i < totalNumber; i++) {
-                        if (task.isCancelled()) {
+                        if (task == null || task.isCancelled()) {
                             return null;
                         }
                         Image m = SwingFXUtils.toFXImage(bimages.get(i), null);
                         images[i] = m;
                     }
-                    if (task.isCancelled()) {
+                    if (task == null || task.isCancelled()) {
                         return null;
                     }
                     if (totalNumber > 0) {
                         image = images[0];
                     }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            afterImageLoaded();
-                            isSettingValues = true;
-                            targetPathInput.setText(sourceFile.getParent());
-                            targetPrefixInput.setText(FileTools.getFilePrefix(sourceFile.getName()));
-                            fromInput.setText("0");
-                            toInput.setText((totalNumber - 1) + "");
-                            isSettingValues = false;
-                        }
-                    });
+
+                    ok = true;
                     return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                afterImageLoaded();
+                                isSettingValues = true;
+                                targetPathInput.setText(sourceFile.getParent());
+                                targetPrefixInput.setText(FileTools.getFilePrefix(sourceFile.getName()));
+                                fromInput.setText("0");
+                                toInput.setText((totalNumber - 1) + "");
+                                isSettingValues = false;
+                            }
+                        });
+                    }
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -307,23 +335,31 @@ public class ImageGifViewerController extends ImageViewerController {
                 return;
             }
             task = new Task<Void>() {
+                private List<String> filenames;
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
                     String fileName = targetPath.getAbsolutePath() + "/"
                             + targetPrefixInput.getText()
                             + "." + targetTypeBox.getSelectionModel().getSelectedItem();
-                    final List<String> filenames
-                            = ImageGifFile.extractGifImages(sourceFile, new File(fileName), fromIndex, toIndex);
-                    if (task.isCancelled()) {
-                        return null;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            multipleFilesGenerated(filenames);
-                        }
-                    });
+                    filenames = ImageGifFile.extractGifImages(sourceFile, new File(fileName), fromIndex, toIndex);
+
+                    ok = true;
                     return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                multipleFilesGenerated(filenames);
+                            }
+                        });
+                    }
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -340,8 +376,8 @@ public class ImageGifViewerController extends ImageViewerController {
     public void editAction() {
         try {
             final ImageGifEditerController controller
-                    = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml, false, true);
-            controller.openFile(sourceFile);
+                    = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
+            controller.selectSourceFile(sourceFile);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -400,6 +436,7 @@ public class ImageGifViewerController extends ImageViewerController {
             currentIndex += images.length;
         }
         imageView.setImage(images[currentIndex]);
+        refinePane();
         promptLabel.setText(AppVaribles.getMessage("TotalFrames") + ": " + images.length + "  "
                 + AppVaribles.getMessage("CurrentFrame") + ": " + currentIndex + "  "
                 + AppVaribles.getMessage("Size") + ": " + (int) images[currentIndex].getWidth()

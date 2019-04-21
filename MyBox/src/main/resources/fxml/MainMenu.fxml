@@ -4,204 +4,217 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox fx:id="mainMenuPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MainMenuController">
+<VBox fx:id="menuBox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MainMenuController">
     <children>
-        <MenuBar HBox.hgrow="ALWAYS">
-            <menus>
-                <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />
-                    </items>
-                </Menu>
-                <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImages" text="%PdfExtractImages" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTexts" text="%PdfExtractTexts" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
-                        <MenuItem mnemonicParsing="false" onAction="#openSplitPdf" text="%SplitPdf" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImages" text="%CompressPdfImages" />
-                        <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImagesBatch" text="%CompressPdfImagesBatch" />
-                    </items>
-                </Menu>
-                <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
-                        <Menu mnemonicParsing="false" text="%ImageManufactureSub">
+        <HBox fx:id="mainMenuPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+            <children>
+                <MenuBar HBox.hgrow="ALWAYS">
+                    <menus>
+                        <Menu fx:id="homeMenu" mnemonicParsing="false" text="%Window">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureSize" text="%Size" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureText" text="%Text" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCover" text="%Cover" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureShadow" text="%Shadow" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureTransform" text="%Transform" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureMargins" text="%Margins" />
+                                <MenuItem mnemonicParsing="false" onAction="#showHome" text="%Home" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <CheckMenuItem fx:id="monitorMemroyCheck" mnemonicParsing="false" onAction="#checkMemroyMonitor" text="%MonitorMemory" />
+                                <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
+                                <MenuItem mnemonicParsing="false" onAction="#jvmProperties" text="%JvmProperties" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#refresh" text="%RereshWindow" />
+                                <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#exit" text="%Exit" />
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
+                        <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCutMargins" text="%CutMargins" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchAddMargins" text="%AddMargins" />
-                            </items>
-                        </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <Menu mnemonicParsing="false" text="%MultipleFramesImageFile">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openImageFramesViewer" text="%ImageFramesViewer" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageTiffEditer" text="%ImageTiffEditer" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageGifViewer" text="%ImageGifViewer" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
-                            </items>
-                        </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <Menu mnemonicParsing="false" text="%MergeImages">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImages" text="%PdfExtractImages" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTexts" text="%PdfExtractTexts" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
+                                <MenuItem mnemonicParsing="false" onAction="#openSplitPdf" text="%SplitPdf" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImages" text="%PdfCompressImages" />
+                                <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImagesBatch" text="%PdfCompressImagesBatch" />
                             </items>
                         </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <Menu mnemonicParsing="false" text="%ImagePart">
+                        <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImagesBrowser" text="%ImagesBrowser" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%ImageManufacture" />
+                                <Menu mnemonicParsing="false" text="%ImageManufactureSub">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureSize" text="%Size" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureCrop" text="%Crop" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureColor" text="%Color" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureEffects" text="%Effects" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureText" text="%Text" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureDoodle" text="%Doodle" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureMosaic" text="%Mosaic" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureArc" text="%Arc" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureShadow" text="%Shadow" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureTransform" text="%Transform" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureMargins" text="%Margins" />
+                                    </items>
+                                </Menu>
+                                <Menu mnemonicParsing="false" text="%ImageManufactureBatch">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchSize" text="%Size" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchCrop" text="%Crop" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchColor" text="%Color" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchEffects" text="%Effects" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchReplaceColor" text="%ReplaceColor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchText" text="%Text" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchArc" text="%Arc" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchShadow" text="%Shadow" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchTransform" text="%Transform" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageManufactureBatchMargins" text="%Margins" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu mnemonicParsing="false" text="%MultipleFramesImageFile">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageFramesViewer" text="%ImageFramesViewer" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageTiffEditer" text="%ImageTiffEditer" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageGifViewer" text="%ImageGifViewer" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu mnemonicParsing="false" text="%MergeImages">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <Menu mnemonicParsing="false" text="%ImagePart">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                                <!--                        <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
+                                <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
                             </items>
                         </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
-                        <!--                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
-                        <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
-                        <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%DesktopTools">
-                    <items>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
-                        <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFileMerge" text="%FileMerge" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
-                        <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                        <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openRecordImages" text="%RecordImagesInSystemClipBoard" />
-                        <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%NetworkTools">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
-                        <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
-                    </items>
-                </Menu>
-                <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">
-                    <items>
-                        <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="langGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-
-                        <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" text="%FontSize12">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="fontSizeGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" text="%FontSize15" toggleGroup="$fontSizeGroup" />
-                        <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" text="%FontSize17" toggleGroup="$fontSizeGroup" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-
-                        <Menu mnemonicParsing="false" text="%InterfaceStyle">
+                        <Menu mnemonicParsing="false" text="%DesktopTools">
                             <items>
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setDefaultStyle" text="%DefaultStyle">
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openTextLineBreakBatch" text="%TextLineBreakBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFileMerge" text="%FileMerge" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openRecordImages" text="%RecordImagesInSystemClipBoard" />
+                                <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="%NetworkTools">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openWeiboSnap" text="%WeiboSnap" />
+                                <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
+                            </items>
+                        </Menu>
+                        <Menu fx:id="settingsMenu" mnemonicParsing="false" text="%Settings">
+                            <items>
+                                <CheckMenuItem fx:id="restoreStagesSizeCheck" mnemonicParsing="false" onAction="#restoreStagesSizeAction" text="%RestoreStagesSize" />
+                                <CheckMenuItem fx:id="newWindowCheck" mnemonicParsing="false" onAction="#newWindowAction" text="%OpenStageInNewWindow" />
+                                <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
                                     <toggleGroup>
-                                        <ToggleGroup fx:id="styleGroup" />
+                                        <ToggleGroup fx:id="langGroup" />
                                     </toggleGroup>
                                 </RadioMenuItem>
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setCaspianStyle" text="%caspianStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlackStyle" text="%WhiteOnBlackStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setPinkOnBlackStyle" text="%PinkOnBlackStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setYellowOnBlackStyle" text="%YellowOnBlackStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setGreenOnBlackStyle" text="%GreenOnBlackStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlueStyle" text="%WhiteOnBlueStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnGreenStyle" text="%WhiteOnGreenStyle" toggleGroup="$styleGroup" />
-                                <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnPurpleStyle" text="%WhiteOnVioletredStyle" toggleGroup="$styleGroup" />
+                                <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+
+                                <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" text="%FontSize12">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="fontSizeGroup" />
+                                    </toggleGroup>
+                                </RadioMenuItem>
+                                <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" text="%FontSize15" toggleGroup="$fontSizeGroup" />
+                                <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" text="%FontSize17" toggleGroup="$fontSizeGroup" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+
+                                <Menu mnemonicParsing="false" text="%InterfaceStyle">
+                                    <items>
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setDefaultStyle" text="%DefaultStyle">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="styleGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setCaspianStyle" text="%caspianStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlackStyle" text="%WhiteOnBlackStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setPinkOnBlackStyle" text="%PinkOnBlackStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setYellowOnBlackStyle" text="%YellowOnBlackStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setGreenOnBlackStyle" text="%GreenOnBlackStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnBlueStyle" text="%WhiteOnBlueStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnGreenStyle" text="%WhiteOnGreenStyle" toggleGroup="$styleGroup" />
+                                        <RadioMenuItem mnemonicParsing="false" onAction="#setWhiteOnPurpleStyle" text="%WhiteOnVioletredStyle" toggleGroup="$styleGroup" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <CheckMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <RadioMenuItem fx:id="pdf500mbRadio" mnemonicParsing="false" onAction="#PdfMem500MB" text="%PDFMem500MB">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="pdfMemGroup" />
+                                    </toggleGroup>
+                                </RadioMenuItem>
+                                <RadioMenuItem fx:id="pdf1gbRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="%PDFMem1GB" toggleGroup="$pdfMemGroup" />
+                                <RadioMenuItem fx:id="pdf2gbRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="%PDFMem2GB" toggleGroup="$pdfMemGroup" />
+                                <RadioMenuItem fx:id="pdfUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%PDFMemUnlimit" toggleGroup="$pdfMemGroup" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
+                                <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                             </items>
                         </Menu>
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="alphaGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="replaceBlackMenu" mnemonicParsing="false" onAction="#replaceBlackAction" text="%ReplaceAlphaAsBlack" toggleGroup="$alphaGroup" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <RadioMenuItem fx:id="pdf500mbRadio" mnemonicParsing="false" onAction="#PdfMem500MB" text="%PDFMem500MB">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="pdfMemGroup" />
-                            </toggleGroup>
-                        </RadioMenuItem>
-                        <RadioMenuItem fx:id="pdf1gbRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="%PDFMem1GB" toggleGroup="$pdfMemGroup" />
-                        <RadioMenuItem fx:id="pdf2gbRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="%PDFMem2GB" toggleGroup="$pdfMemGroup" />
-                        <RadioMenuItem fx:id="pdfUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%PDFMemUnlimit" toggleGroup="$pdfMemGroup" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#openUserPath" text="%OpenUserPath" />
-                        <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
-                    </items>
-                </Menu>
-                <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showHelp" text="%Help" />
-                        <MenuItem mnemonicParsing="false" onAction="#showHelpExternal" text="%HelpInExternal" />
-                        <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
+                        <Menu fx:id="recentMenu" mnemonicParsing="false" text="%RecentAccessed" />
+                        <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#showHelp" text="%Help" />
+                                <MenuItem mnemonicParsing="false" onAction="#showHelpExternal" text="%HelpInExternal" />
+                                <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </children>
+        </HBox>
     </children>
-</HBox>
+</VBox>

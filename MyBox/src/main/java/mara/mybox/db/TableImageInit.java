@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import mara.mybox.controller.ImageManufactureController.ImageOperationType;
+import mara.mybox.controller.base.ImageManufactureController.ImageOperationType;
 import mara.mybox.data.ImageHistory;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVaribles.logger;
@@ -42,7 +42,7 @@ public class TableImageInit extends DerbyBase {
         if (image == null || image.trim().isEmpty()) {
             return record;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_init WHERE image_location='" + image + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -64,7 +64,7 @@ public class TableImageInit extends DerbyBase {
         if (image == null || image.trim().isEmpty()) {
             return record;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             record = new ImageHistory();
             record.setImage(image);
@@ -90,7 +90,7 @@ public class TableImageInit extends DerbyBase {
     }
 
     public static boolean clear(String image) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_init WHERE image_location='" + image + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -111,7 +111,7 @@ public class TableImageInit extends DerbyBase {
 
     @Override
     public boolean clear() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT init_location FROM image_init";
             ResultSet results = statement.executeQuery(sql);

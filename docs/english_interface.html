@@ -9,9 +9,11 @@
 			 "Helvetica Neue", sans-serif;	
 		*/
 		}
-        p.p1 {text-indent: 0em; font-size:17px;font-weight:bold; color:darkgreen}
-        p.p2 {text-indent: 0em; font-size:15px;font-weight:bold}
-        p.p3 {text-indent: 0em; font-size:14px;font-weight:bold}
+        p.p1 {text-indent: 0em; font-size:25px;font-weight:bold; color:darkgreen}
+        p.p2 {text-indent: 0em; font-size:21px;font-weight:bold}
+        p.p3 {text-indent: 0em; font-size:17px;font-weight:bold}
+        p.p4 {text-indent: 0em; font-size:15px;font-weight:bold}
+        p.p5 {text-indent: 0em; font-size:12px;font-weight:bold}
 		.article {width: 900px; margin:0 auto;font-size:14px;font-weight:normal;}
         .paragraph {text-indent: 2em; font-size:14px;}
         .link {text-indent: 6em; font-size:14px;}
@@ -19,7 +21,8 @@
         .pix {text-indent: 6em; }
         .refer {text-indent: 6em; font-size:14px; color:darkblue}
         ol.inside {list-style-position: inside; text-indent: 2em;}
-        .description {font-size:14px; padding: 5px; background-color:#336633; font-weight:bord; color: white}
+        ol.l2 { list-style-type: upper-latin;}
+       .description {font-size:14px; padding: 5px; background-color:#336633; font-weight:bord; color: white}
         .codes {font-size:14px; padding: 5px; background-color:black; font-weight:normal; color: #CCFF99}
 		.table1 {font-size:14px; width:90%; border-collapse:collapse; border:solid 1px;}
 		tr {border:solid#000 1px;}
@@ -33,25 +36,24 @@
 <a href="https://github.com/Mararsh/MyBox"><img src="home.jpg" width=60px></a> 
 
 <p class="p1">MyBox: Set of Easy Tools</p>
-
-
 <p class="paragraph">This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources</p>
 
+<p class="p3">Download</p>
 <p class="paragraph">Packages of each version have been uploaded at Release directory now. You can find them by clicking "releases" tab in main page of this project. </p>
-<p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.9/MyBox-4.9-exe.zip">MyBox-4.9-exe.zip</a></p>
-<p class="paragraph">Double click "MyBox.exe" to launch MyBox.</p>
-<p class="paragraph">The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.</p>
-<p class="paragraph">Limitation: MyBox.exe can not be lanuched under path including non-English characters.</p>
+<p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it.  <a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-exe.zip"> MyBox-5.0-exe.zip</a></p>
+<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-jar.zip"> MyBox-5.0-jar.zip</a></p>
 
-<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms.</p>
+<p class="p3">Launch</p>
+<p class="paragraph">Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.</p>
 
-<p class="paragraph">User can download jar file if JRE or JDK 8/9/10 is installed:</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.9/MyBox-4.9-jar.zip">MyBox-4.9-jar.zip</a></p>
-<p class="paragraph">Run following command to launch this program:</p>
-<pre><code>                   java   -jar   MyBox-4.9.jar</code></pre>
+<p class="paragraph">Run following command to launch this program with Jar package:</p>
+<pre><code>                   java   -jar   MyBox-5.0.jar</code></pre>
 <p class="paragraph">A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
-<pre><code>                   java   -jar   MyBox-4.9.jar  /tmp/a1.jpg</code></pre>
+<pre><code>                   java   -jar   MyBox-5.0.jar  /tmp/a1.jpg</code></pre>
+
+<p class="p3">Limitation</p>
+<p class="paragraph">MyBox.exe can not be lanuched under path including non-English characters.</p>
+
 
 <p class="p1" >Resource Addresses</p>
 <p class="paragraph">Project Main Page</p>
@@ -68,150 +70,265 @@
 
 
 <p class="p1" >User Guides</p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-Overview-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.5/MyBox-UserGuide-4.5-ImageTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-PdfTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v4.8/MyBox-UserGuide-4.8-DesktopTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 4.9. I have some urgent thing to handle and have not time to update documents and desription of this version.
-Will update later. </p>
-<p class="paragraph">Version 4.8 includes the following features: </p>
-<PRE>
-1. PDF Tools:
-	A. View PDF file in image mode. Density(dpi) can be set. Page's image can be cropped and saved as image file.
-	B. Convert each page of PDF file as a image, with options like density, color model, format, compression, quality, color conversion, etc. 
-	C. Combine multiple images into PDF file, with options like compression, page size, margins, page header, author, etc. 
-	   Support Chinese and program can locate system font files. User can input the ttf font file path too.
-	D. Compress images in PDF file, with options like JPEG quality or black-white threshold.
-	E. Merge multiple PDF files.
-	F. Split PDF file into multiple PDF files, by pages number, files number, or start-end list.
-	G. Extract images from PDF file. Can define the page range.
-	H. Extract texts from PDF file. Can customize the deviding lines.
-	I. Handle PDF files in batch way.
-	J. Set the Maximum main memory of PDF handling.
-2. Image Tools:
-	A. Image Manufacture
-		1) Adjust size: Scale by ratio, or set pixels with 4 types of keeping aspect ratio.
-		2) Adjust color: Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, 
-			or RGB itself.
-		3) Make effects: Blur, clarity, sharpen, emboss, edges detect, posterize(reduce colors), thresholding, gray, black-white, Sepia. 
-			Convolution can be defined and referred to make more effects
-		4) Other operations: Crop, text, cover(Mosaic/Frosted/Picture ), arc, shadow, shear, mirror, rotate, cut margins, add margins. Options can be set.
-		5) “Scope”: All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectrangle, Color Matching in Circle. 
-			Color Matching can be against saturaion,  brightness, hue, RGB, or Red/Green/Blue channel. 
-			Scope can be applied for Color Adjustment, Effects, and Convolution. Scope can be determined by simply clicking image. 
-			Parameters like points set of matting and colors list of color matching can be set easily. All scope can be set as Excluded.
-		6) “Undo” and “Redo” of previous operation. Original image can be recoverred at any time.
-			Updated histories can be saved automatically and set back. Number of updated histories can be set.
-		7) Browse images under same directory.
-		8) Select whether show reference image. Can select other pictures as the reference image.
-	B. Image Manufacture in batch way.
-	C. Multiple frames image file.
-		1) View/Extract images in the file.
-		2) Create/Edit multiple frames Tiff/Tif file.
-		3) View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
-	D. Merge images.
-		1) Blend images. Support options like defining the intersected area, and multiple famous blending modes
-		2) Combine images. Support options like array ordering, background color, interval, margins, and size.
-		3) Combine images in PDF file.
-	E. Part image.
-		1) Split image. Support equal splitting and customized splitting. Save results as multiple image files, multiple frames Tiff file, or PDF file.
-		2) Subsample image. Options like sample region and sample ratio.
-	F. Handle big image.
-		1) Evaulate the required memory for whole image, and judge whether load all data in memory.
-		2) If enough memory is available to load whole image, read all data for next operations. Try best to operate in memory and avoid file I/O.
-		3) If memory may be out, subsample the image for next operations.
-		4) The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.
-		5) The sampled image is mainly to display the image, and not suitable for operations against whole image and images merging.
-		6) Some operations, like splitting and subsampling, can be handled by reading part of image data and writing-while-reading, 
-		   so they are suitable for big images. Sampled image is displayed while original image is handled.
-	G. Copy image or selected part of image in system clipboard(Ctrl-c).
-	H. View the image meta-data and image attributes.
-	I. View multiple images in same screen. Support rotating and zooming at same time. Support browsing.
-	J. Convert image into other format, with options like color model, size, compression, quality, etc.
-	K. Color palette
-	L. Pixels calculator
-	M. Convolution Kernels Manager
-	N. Shortcuts	
-3. Desktop Tools:
-	A. Rename Files/Directories, with options of files' name and ordering.  Renamed files can be recovered as original names in all or in part.
-	B. Sychronize directories, with options like whether copy sub-directories or new files, whether only copy modified files after specific date time, 
-	   whether keep attributes of original files, or whther delete non-existed files/directories under original directory.
-	C. Arrange files and reorganize them under new directories by modifed time. 
-	   This tool can be used to handle lots of files which need be archived according to time, like photoes, screenshots of games, or system logs.
-	D. Edit Text:
-		1) File charset can be either detected automatically or set manually. Target file charset can be selected to implement encoding conversion. 
-		   BOM setting is supported.
-		2) Detect line break automatically. Line numbers are shown. Convert line break. Support LF(Unix/Linux), CR(Apple), CRLF(Windows).
-		3) Find and replace. In current page, or in whole file. Counting.
-		4) Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.
-		   Cumulative filter. Filtered results can be saved. Select whether include lines number.
-		5) Locate. Go to the position of specified character/line. 
-		6) Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.
-		7) Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
-			(1) Set page size.
-			(2) Pages browsing bar
-			(3) Load and display first page, and scan the file in background to count characters number and lines number.
-			    Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
-			(4) Make sure correction of finding, replacing, and filtering of strings that are across pages.
-		8) General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
-	E. Convert files' charset in batching way.
-	F. Convert files' line break in batching way.
-	G. Edit Bytes:
-		1) Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.
-		2) Input boxes of general ASCII characters.
-		3) Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.
-		4) Find and replace. In current page, or in whole file. Counting.
-		5) Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”.
-			Cumulative filter. Filtered results can be saved. Select whether include lines number.
-		6) Locate. Go to the position of specified character/line. 
-		7) Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.
-		8) Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. 
-			(1) Set page size.
-			(2) Pages browsing bar
-			(3) Load and display first page, and scan the file in background to count bytes number and lines number.
-			    Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.
-			(4) Make sure correction of finding, replacing, and filtering of bytes group that are across pages.
-				When break lines by bytes number, crossing pages need not concerned.
-		9) General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
-	H. Cut files. By files number, by bytes number, or by start-end list. 
-	I. Merge files. 
-4. Network Tools:
-	A. Html Editor
-		1）Edit local web pages or online pages in rich text. (Not support FrameSet)
-		2）Edit html codes directly. (Support FrameSet)
-		3）Web browser display contents of Editors, or load the online page. 
-		   Support history browsing, font zooming 、and snapshoting of the whole page as a image or a PDF file.
-		4）Rich text, html codes, and web broswer are sychronized.
-	B. Weibo Snaping Tool
-		1) Save Weibo pages of any months of any Weibo accounts automatically.
-		2) Set the months range.
-		3) Make sure whole page contents loaded. Can expand the comments and pictures in the pages.
-		4) Save the pages as local html files which can not be loaded normally due to dynamic loading of WeiBo contents. 
-		   They can be used to extract texts in the pages.
-		5) Save the pages' snapshots as PDF files, with options like page size, margins, author, images format, etc.
-		6) Save all original size pictures in the pages.
-		7) Display progress information in time.
-		8) Stop the progress at any time. The interrupted month will be record and input as start month for next execution.
-		9) Set the retry times of failure.
-5. Supported image format: png,jpg,bmp,tif,gif,wbmp,pnm,pcx.
-6. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
-7. Settings of languages, whether show comments, PDF options, image options, whether close alarm clocks when exit program, clearing settings, and more parameters.
-8. Multiple interface styles.
-9. Internationalization. Switch languages in time. Current supported languages include Chinese and English. 
-   More lanaguages can be supported by editing new resource files.
-</PRE>
-
+<p class="paragraph">Current version is 5.0. Its features are mentioned below in summary.</p>
+<p class="p2" >Cross-platform</p>
+<p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java.</p>
+<p class="p2" >Internationalized</p>
+<p class="paragraph">All codes of MyBox are internationalized. User can switch language in time.</p>
+<p class="paragraph">Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.</p>
+<p class="p2" >PDF Tools</p>
+<ol>
+<li>View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.</li>
+<li>Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.</li>
+<li>Combine multiple images as PDF file. Options like compression, page size, margin size, header,</li>
+author, etc. Support Chinese and tool can locate system font files. User can input path of ttf font file.</li>
+<li>Compress images in PDF file. JPEG quality or threshold of black-white can be set.</li>
+<li>Merge multiple PDF files.</li>
+<li>Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.</li>
+<li>Extract images in PDF file. Page range can be set.</li>
+<li>Extract texts in PDF file. Splitting line can be customized.</li>
+<li>Handle PDF files in batch way.</li>
+<li>Maximum main memory of PDF handling can be set.</li>
+</ol>
+<p class="p2" >Image Tools</p>
+<p class="p3" >Image Manufacture</p>
+<ol>
+<li>Size. By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping
+aspect ratio.</li>
+<li>Crop. Cut inside or outside of rectangle, circle, ellipse, or polygon. Background color can be set.</li>
+<li>Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue,
+Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. Premultiplied Alpha is
+supported for setting opacity.</li>
+<li>Effects. Clarity, contrast, posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss,
+edges detect, blur, sharpen. Algorithms and parameters can be set. Convolution can be defined and
+referred to make more effects.</li>
+<li>Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether
+veritical. Locating text by clicking image.</li>
+<li>Picture. Paste embedded/outside/clipboard picture on image. Blend modes can be selected.</li>
+<li>Shape. Rectangle/circle/ellipse/polygon can be drawed on image. Options like stroke width and color,whether fill color, whether dotted.</li>
+<li>Line. Clicking and dragging multiple times to draw one line on image. Options like stroke width and
+color, whether dotted.</li>
+<li>Pen. Clicking and dragging one time to draw one line on image. Options like stroke width and color,
+whether dotted.</li>
+<li>Mosaic. Fill mosaic or frosted glass inside/outside rectangle/circle/ellipse/polygon. Density can be
+set.</li>
+<li>Round corner. Arc and background color can be set.</li>
+<li>Shadow. Options like background color, shadow size, whether apply Premultiplied Alpha.</li>
+<li>Transform. Shear, mirror, and rotate.</li>
+<li>Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust
+margins; add margins by setting width; cut margins by setting width or color.</li>
+<li>Scope. Types of All, Matting, Shapes(rectanlge/circle/ellipse/polygon), Color Matching, and Color
+Matching in Shapes. Color Matching can be against saturaion, brightness, hue, RGB, or
+Red/Green/Blue channel with distance defined. Scope can be applied for "Color" and "Effects".
+Scope can be determined by simply clicking image. Parameters like points set of matting and colors
+list of color matching can be set easily. All scope can be set as Excluded.</li>
+<li>"Undo" and "Redo" of previous operation. Original image can be recoverred at any time. Updated
+histories can be saved automatically and set back. Number of updated histories can be set.</li>
+<li>Select whether show reference image. Other pictures can be selected as the reference image.</li>
+<li>Handle existed image, or create new image.</li>
+<li>Copy(CTRL+c), paste(CTRL+v), pop, and reference.</li>
+</ol>
+<p class="p3" >Multiple frames image file</p>
+<ol>
+<li>View/Extract images in multiple frames file.</li>
+<li>Create/Edit multiple frames Tiff/Tif file.</li>
+<li>View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.</li>
+</ol>
+<p class="p3" >Merge images</p>
+<ol>
+<li>Blend images. Options like intersected area and blending modes.</li>
+<li>Combine images. Options like array ordering, background color, interval, margins, and size.</li>
+<li>Combine images in PDF file.</li>
+</ol>
+<p class="p3" >Part image</p>
+<ol>
+<li>Split image. By number, by size, or by customizing. Results can be saved as image files, multiple
+frames Tiff file, or PDF file.</li>
+<li>Subsample image. Options like sample region and sample ratio.</li>
+</ol>
+<p class="p3" >Big Image</p>
+<ol>
+<li>Evaulate the required memory for whole image, and judge whether load all data in memory.</li>
+<li>If enough memory is available to load whole image, read all data for next operations. Try best to operate in memory and avoid file I/O.</li>
+<li>If memory may be out, subsample the image for next operations.</li>
+<li>The sample ratio is determined by following rule: Make sure the sampled image is good enough while the sampled data occupy limited memory.</li>
+<li>The sampled image is mainly for displaying, and not suitable for operations against whole image and images merging.</li>
+<li>Some operations, like splitting and subsampling, can be handled by reading part of image data and
+writing-while-reading, so they are suitable for big images. Sampled image is displayed while original
+image is handled.</li>
+</ol>
+<p class="p3" >View Image</p>
+<ol>
+<li>"Load Width". Read image file with "Original Size" or with defined width.</li>
+<li>"Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else
+these operations are against whole image.</li>
+<li>Rotation can be saved.</li>
+<li>Recover, Rename, Delete.</li>
+<li>Select whether display Corodinate, X/Y Rulers, Data.</li>
+<li>Statistic and visualization of image data, including average, variance, skewness, median, mode,
+minimum, maximum of occurance of each color channel, and their histograms.</li>
+<li>Image attributes and image meta.</li>
+<li>Navigation of images under same directory.</li>
+</ol>
+<p class="p3" >Browse Images</p>
+<ol>
+<li>Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.</li>
+<li>Rotation can be saved.</li>
+<li>Grid Mode. Files number, columns number, and load width can be set.</li>
+<li>Thumbnails List Mode.</li>
+<li>Files List Mode.</li>
+<li>Rename and Delete.</li>
+</ol>
+<p class="p3" >Others</p>
+<ol>
+<li>Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.</li>
+<li>Manufacture images in batch.</li>
+<li>Convert images into other formats, with options like color space, size, compression, quality, etc.</li>
+<li>Color palette.</li>
+<li>Pixels calculator</li>
+<li>Convolution Kernels Manager</li>
+</ol>
+<p class="p2" >Desktop Tools</p>
+<p class="p3" >Manage Directories</p>
+<ol>
+<li>Rename Files/Directories, with options of files' name and ordering. Renamed files can be recovered
+as original names in all or in part.</li>
+<li>Sychronize directories, with options like whether copy sub-directories or new files, whether only
+copy modified files after specific date time, whether keep attributes of original files, or whther delete
+non-existed files/directories under original directory.</li>
+<li>Arrange files and reorganize them under new directories by modifed time. This tool can be used to
+handle lots of files which need be archived according to time, like photoes, screenshots of games, or
+system logs.</li>
+</ol>
+<p class="p3" >Edit Texts</p>
+<ol>
+<li>File charset can be either detected automatically or set manually. Target file charset can be selected
+to implement encoding conversion. BOM setting is supported.</li>
+<li>Detect line break automatically. Convert line break. Show lines number. Support LF(Unix/Linux),
+CR(Apple), and CRLF(Windows).</li>
+<li>Find and replace. In current page, or in whole file. Counting.</li>
+<li>Locate. Go to position of specified character or specified line.</li>
+<li>Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative
+filter. Filtered results can be saved. Select whether include lines number.</li>
+<li>Hexadecimal codes according file's charset can be viewed, scrolled, and selected synchronously.</li>
+<li>Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs.
+<ol class="l2">
+<li>Set page size.</li>
+<li>Pages navigation bar</li>
+<li>Load and display first page, and scan the file in background to count characters number and lines
+number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.</li>
+<li>Make sure correction of finding, replacing, and filtering of strings that are across pages.</li>
+</ol>
+</li>
+<li>General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their
+shortcuts.</li>
+</ol>
+<p class="p3" >Edit Bytes</p>
+<ol>
+<li>Bytes are expressed as 2 hexadecimal characters. All blanks, line breaks, and invalid values are ignored.</li>
+<li>Input boxes of general ASCII characters.</li>
+<li>Break lines, which is only for display and has not actual effect. By bytes number or by some defined bytes.</li>
+<li>Find and replace. In current page, or in whole file. Counting.</li>
+<li>Locate. Go to position of specified character or specified line.</li>
+<li>Filter lines. By “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative
+filter. Filtered results can be saved. Select whether include lines number.
+Select charset to decode bytes which can be viewed, scrolled, and selected synchronously.</li>
+<li>Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs.
+<ol class="l2">
+<li>Set page size.</li>
+<li>Pages navigation bar</li>
+<li>Load and display first page, and scan the file in background to count bytes number and lines
+number. Part of functions are unavaliable while counting. Interface will be refreshed
+automatically after counting process is complete.</li>
+<li>Make sure correction of finding, replacing, and filtering of bytes group that are across pages.
+When break lines by bytes number, crossing pages need not concerned.</li>
+</ol>
+<li>General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.</li>
+</ol>
+<p class="p3" >Others</p>
+<ol>
+<li>Convert files' charset in batch.</li>
+<li>Convert files' line break in batch.</li>
+<li>Split file, by files number, by bytes number, or by start-end list.</li>
+<li>Merge files.</li>
+<li>Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.</li>
+</ol>
+<p class="p2" >Network Tools</p>
+<p class="p3" >Html Editor</p>
+<ol>
+<li>Edit local web pages or online pages in rich text. (Not support FrameSet)</li>
+<li>Edit Html codes directly. (Support FrameSet)</li>
+<li>Web browser to view contents of Editors or load the online page. Support history browsing, 
+font zooming 、and snapshoting of the whole page as an image or a PDF file.</li>
+<li>Rich-text-editor, html-codes-edtor, and web browser are synchronized.</li>
+</ol>
+<p class="p3" >Weibo Snaping Tool</p>
+<ol>
+<li>Save Weibo pages of any months of any Weibo accounts automatically.</li>
+<li>Set the months range.</li>
+<li>Make sure whole page contents loaded. Can expand the comments and pictures in the pages.</li>
+<li>Save the pages as local html files which can not be loaded normally due to dynamic loading of
+WeiBo contents. They can be used to extract texts in the pages.</li>
+<li>Save the pages' snapshots as PDF files, with options like page size, margins, author, images format, etc.</li>
+<li>Save all original size pictures in the pages.</li>
+<li>Display progress information in time.</li>
+<li>Stop the progress at any time. The interrupted month will be record and input as start month for next execution.</li>
+<li>Set the retry times of failure.</li>
+</ol>
+<p class="p2" >Settings</p>
+<ol>
+<li>Whether restore last size of each scene. Whether open new stage to display scene. Whether pop
+recent visited files/directories.</li>
+<li>Language, font size, interface style, whether show comments.</li>
+<li>Width and color of stroke and anchor. Whether anchors are solid.</li>
+<li>Whether display coordinate and rulers.</li>
+<li>Images histories number. Maximum width to display images.</li>
+<li>Whether remove alpha channel when copy. Whether replace alpha as white when alpha is not supported.</li>
+<li>Maximum main memory of PDF handling.</li>
+<li>Whether close alarm clocks when exit program.</li>
+<li>Temporary path of MyBox.</li>
+<li>Clear personal settings. Open user's directory.</li>
+</ol>
+<p class="p2" >Window</p>
+<ol>
+<li>Open/Close monitor bar of Memory.</li>
+<li>Open/Close monitor bar of CPU.</li>
+<li>Display JVM attributes.</li>
+<li>Refresh/Reset windows.</li>
+<li>Close other windows.</li>
+<li>Recent visited tools.</li>
+</ol>
 
 <p class="p1" >Development Logs</p>
-<p class="paragraph">2019-2-20 v4.9 Change image's contrast. Multiple algorithms are supported. Dithering can be selected when handle color quantization.</BR>
+<p class="paragraph">2019-4-21 v5.0 Select scope or area by dragging anchors.</BR>
+Doodle: Paste picture, draw shape(rectangle/circle/ellipse/polygon) line or fill color in shape, draw lines by
+dragging mouse, in image. Stroke width and color, line dotted can be set.</BR>
+View image: Set load size. Select whether show coordinate and rulers. Rotation can be saved.</BR>
+Browse Images: Grid Mode/Thumnails List Mode/File List Mode. Set load size. Rotation can be saved.</BR>
+Image Manufacture: Dithering can be applied to all scope types except for matting. Opacity can be made by
+Premultiplied Aplha for formats not supporting alpha. Blur margins. Shadow implemented in low level.
+Adjust size or margins by dragging anchors. Crop inside/outside in rectangle/circle/ellipse/polygon. Veritcal
+texts.</BR>
+Interface: Only display useful controls. Enough and not distracting tips. Shortcuts, major buttons, and default
+buttons. Monitor memory/CPU in time. View JVM properties. Refresh/reset windows. Restore last size of
+interfaces. Pop recent visited files/directories. Recent visited tools.</BR>
+Codes refactoring: Implement selection logic by subclass instead of switch statement, to move judgement
+outside loop. Avoid float calculation in loop. Rationalize inheritance and reduce duplication. Central
+management of stages' opening/closing to avoid threads residual.</p>
+
+<p class="paragraph">2019-2-20 v4.9 Change image's contrast. Multiple algorithms are supported. Dithering can be selected when
+handle color quantization.</BR>
 Statistic data of image's color channels, including mean, variance, skewness, mode, midean, etc. Histograms.</BR>
-Recorder of images in system clipboard.</BR>
-Will update later.
-</p>
+Recorder of images in system clipboard. Change font size any time.</BR>
+View images: copy/crop/save the selected area.</p>
 
 <p class="paragraph">2019-1-29 v4.8 View PDF file in image mode. Density can be set. Pages can be cropped and saved as images.</BR>
 Locate function in Text/Bytes Editer: Go to the position of specified character/byte/line.</BR>
@@ -220,15 +337,15 @@ Merge multiple files' bytes as a new file.</BR>
 A file path can follow program as argument to be opened directly by MyBox. </BR>
 On windows, the default Open Method of image/text/PDF files can be associated with MyBox.exe, to open a file by MyBox by double clicking the file name.</p>
 
-<p class="paragraph">2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by “Include One”, “Not Include All”, “Include All”, or “Not Include Any”. Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.</BR>
+<p class="paragraph">2019-1-15 v4.7 Edit Bytes. Input boxes of general ASCII characters. Break lines by bytes number or by some defined bytes. Find and replace in current page or in whole file, and count. Filter lines by "Include One", "Not Include All", "Include All", or "Not Include Any". Cumulative filter. Filtered results can be saved. Select whether include lines number. Select charset to decode bytes which can be viewed, scrolled, and selected synchronously. Paginate. Fit for viewing or editing very large file, such as binary file in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of bytes that are across pages.</BR>
 Convert line breaks of files in batching way.</BR>
-Merge “Rename Files” and “Rename Files under Directories”.</BR>
-Image Blurring uses “Average Algorithm” which is good enough and quicker.</p>
+Merge "Rename Files" and "Rename Files under Directories".</BR>
+Image Blurring uses "Average Algorithm" which is good enough and quicker.</p>
 
 
 <p class="paragraph">2018-12-31 v4.6 Edit Text: Detect line break automatically. Convert line break. Support LF(Unix/Linux), CR(iOS), CRLF(Windows).</BR>
 Find and replace. In current page, or in whole file.</BR>
-Filter lines. By “Include one of strings” or “Not include all of strings”. Cumulative filter. Filtered results can be saved.</BR>
+Filter lines. By "Include one of strings" or "Not include all of strings". Cumulative filter. Filtered results can be saved.</BR>
 Paginate. Fit for viewing or editing very large file, such as logs in size of several GBs. Page Size can be set. Make sure correction of finding, replacing, and filtering of strings that are across pages.</BR>
 Load and display first page, and scan the file in background to count characters number and lines number. Part of functions are unavaliable while counting. Interface will be refreshed automatically after counting process is complete.</BR>
 In progress interface, buttons "MyBox" and "Cancel" are added to have user use other functions or cancel current process.</p>
@@ -252,18 +369,18 @@ Support subsampling big image with options of sample region and sample ratio.</p
 <p class="paragraph">2018-11-22 v4.3 Support animated Gif. View: set interval, pause/continue, go special frame, next/previous frame. Extract: set from/to frames, target files' type. Create/Edit: add/delete images, adjust orders, set interval, whether loop, keep images' size or set images' size, save as, what you see is what you get.</BR>
 Easier and better Scope for Image Manufacture. Type:All, Matting, Rectangle, Circle, Color Matching, Color Matching in Rectangle, Color Matching in Circle. Color Matching can be against red/green/blue channel, saturation, brightness, hue, or whole RGB. Points set of matting and colors set of color matching can be
 added/deleted easily. All type of scope can be set as Excluded. </BR>
-Merge functions of “Color”, “Filter”, “Effect”, and “Replace Color”, to reduce interface elements and user inputs.</BR>
+Merge functions of "Color", "Filter", "Effect", and "Replace Color", to reduce interface elements and user inputs.</BR>
 Multiple Images Viewer: Number of files in each screen can be set; pictures are shown in balanced sizes.</p>
 
-<p class="paragraph">2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. “Matting” is like Magic Wand of PhotoShop or “Bucket Fill” of Paint on Windows.</BR>
+<p class="paragraph">2018-11-13 v4.2 Scope for Image Manufacture: All, Matting, Rectangle, Circle, Color Matching, Hue Matching, Rectrangle/Circle plus Color/Hue Matching. "Matting" is like Magic Wand of PhotoShop or "Bucket Fill" of Paint on Windows.</BR>
 Scope can be applied for Color Increasing/Deceasing, Filtering, Effects, Replacing Color, and Convolution. The scope can be determined by clicking image.</BR>
 Convolution Kernels Manager: Values of Gaussian Distribution can be filled in automatically; Option about how to handle pixels in edges is supported. </BR>
 Directories Rename: Strings can be used to filter files to be handled.</BR>
 Optimize and reorganize codes of Image Manufacture.</BR>
 More shortcuts.</p>
 
-<p class="paragraph">2018-11-08 v4.1 Image Manufacture type of “Cover”. Following can be set on an image: mosaic rectangle, mosaic circle, frosted rectangle, frosted circle, or picture. Area and size can be set for masaic or frosted cover. Internal pictures or user's pictures can be selected as cover, with options of size and opacity. </BR>
-Image Manufacture type of “Convolution”. Convolution kernels can be picked to apply upon images. Batch way is supported.</BR>
+<p class="paragraph">2018-11-08 v4.1 Image Manufacture type of "Cover". Following can be set on an image: mosaic rectangle, mosaic circle, frosted rectangle, frosted circle, or picture. Area and size can be set for masaic or frosted cover. Internal pictures or user's pictures can be selected as cover, with options of size and opacity. </BR>
+Image Manufacture type of "Convolution". Convolution kernels can be picked to apply upon images. Batch way is supported.</BR>
 Convolution Kernels Manager. Kernels for image handling can be created/edited/deleted/copied. The matrix can be normalized automatically. The kernel can be tested. Example kernels are provided.</BR>
 New Image filters: Yellow/Cyan/Magenta channels.</p>
 
@@ -351,6 +468,8 @@ It is based on following open sources softwares or libraries:
 <p class="p1" >Main Interface</p>
 
 <img src="0-en.png" width="800px"><br><br>
+
+<img src="1-en.png" width="800px"><br><br>
 
 <a href="https://github.com/Mararsh/MyBox"><img src="home.jpg" width="60px"></a> 
 

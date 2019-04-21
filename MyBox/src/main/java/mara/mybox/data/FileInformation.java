@@ -3,7 +3,6 @@ package mara.mybox.data;
 import java.io.File;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -16,7 +15,8 @@ import mara.mybox.tools.FileTools;
 public class FileInformation {
 
     protected File file;
-    protected SimpleStringProperty fileName, newName, fileSuffix, createTime, modifyTime, fileSize, handled;
+    protected long fileSize, createTime, modifyTime;
+    protected SimpleStringProperty fileName, newName, fileSuffix, handled;
     protected SimpleBooleanProperty isFile;
     protected final int IO_BUF_LENGTH = 4096;
 
@@ -43,12 +43,12 @@ public class FileInformation {
         } else {
             this.fileSuffix = new SimpleStringProperty("");
         }
-        this.createTime = new SimpleStringProperty(DateTools.datetimeToString(FileTools.getFileCreateTime(filename)));
-        this.modifyTime = new SimpleStringProperty(DateTools.datetimeToString(file.lastModified()));
+        this.createTime = FileTools.getFileCreateTime(filename);
+        this.modifyTime = file.lastModified();
         if (file.isFile()) {
-            this.fileSize = new SimpleStringProperty(FileTools.showFileSize(file.length()));
+            this.fileSize = file.length();
         } else {
-            this.fileSize = new SimpleStringProperty("");
+            this.fileSize = 0;
         }
     }
 
@@ -84,28 +84,28 @@ public class FileInformation {
         this.fileSuffix.set(fileType);
     }
 
-    public String getCreateTime() {
-        return createTime.get();
+    public long getCreateTime() {
+        return createTime;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime.set(createTime);
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 
-    public String getModifyTime() {
-        return modifyTime.get();
+    public long getModifyTime() {
+        return modifyTime;
     }
 
-    public void setModifyTime(String modifyTime) {
-        this.modifyTime.set(modifyTime);
+    public void setModifyTime(long modifyTime) {
+        this.modifyTime = modifyTime;
     }
 
-    public String getFileSize() {
-        return fileSize.get();
+    public long getFileSize() {
+        return fileSize;
     }
 
-    public void setFileSize(String fileSize) {
-        this.fileSize.set(fileSize);
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
     }
 
     public String getHandled() {

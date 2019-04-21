@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -7,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -18,9 +20,10 @@ import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.value.AppVaribles;
 
 /**
  * @Author Mara
@@ -41,18 +44,22 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     private ToggleGroup shadowGroup;
     @FXML
     private ComboBox<String> perBox, shadowBox;
+    @FXML
+    protected CheckBox preAlphaCheck, alphaWhiteCheck;
 
     public ImageManufactureBatchShadowController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchShadow");
 
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(shadowBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
@@ -63,12 +70,12 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
             super.initOptionsSection();
 
             shadowBox.getItems().addAll(Arrays.asList("8", "5", "15", "3", "6", "1", "20", "30"));
-            shadowBox.valueProperty().addListener(new ChangeListener<String>() {
+            shadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkShadow();
@@ -78,10 +85,10 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
 
             Tooltip tips = new Tooltip("1~100");
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(perBox, tips);
+            FxmlControl.quickTooltip(perBox, tips);
 
             perBox.getItems().addAll(Arrays.asList("2", "1", "3", "5", "4", "6", "8", "7", "10", "9"));
-            perBox.valueProperty().addListener(new ChangeListener<String>() {
+            perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkPercent();
@@ -100,6 +107,17 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
 
             shadowColorPicker.setValue(Color.BLACK);
 
+            alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
+            alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
+                }
+            });
+
+            FxmlControl.quickTooltip(preAlphaCheck, new Tooltip(getMessage("PremultipliedAlphaTips")));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -107,8 +125,8 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
 
     private void checkType() {
         shadowBox.setDisable(true);
-        shadowBox.getEditor().setStyle(null);
         perBox.setDisable(true);
+        shadowBox.getEditor().setStyle(null);
         perBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) shadowGroup.getSelectedToggle();
@@ -129,15 +147,15 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
         try {
             percent = Integer.valueOf(perBox.getValue());
             if (percent > 0 && percent <= 100) {
-                perBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(perBox);
             } else {
                 percent = 15;
-                perBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
             percent = 15;
-            perBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(perBox);
         }
     }
 
@@ -145,15 +163,15 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
         try {
             shadow = Integer.valueOf(shadowBox.getValue());
             if (shadow >= 0) {
-                shadowBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(shadowBox);
             } else {
                 shadow = 0;
-                shadowBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(shadowBox);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
             shadow = 0;
-            shadowBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(shadowBox);
         }
     }
 
@@ -180,8 +198,12 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
                 value = source.getWidth() * percent / 100;
             }
             Color color = shadowColorPicker.getValue();
-            BufferedImage target = ImageConvert.addShadow(source, value, ImageTools.colorConvert(color));
-
+            BufferedImage target;
+            if (preAlphaCheck.isSelected()) {
+                target = ImageConvert.addShadowNoAlpha(source, value, ImageManufacture.toAwtColor(color));
+            } else {
+                target = ImageConvert.addShadowAlpha(source, value, ImageManufacture.toAwtColor(color));
+            }
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

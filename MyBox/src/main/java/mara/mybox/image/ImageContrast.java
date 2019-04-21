@@ -3,8 +3,10 @@ package mara.mybox.image;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javax.imageio.ImageIO;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.file.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -45,6 +47,17 @@ public class ImageContrast extends PixelsOperation {
         this.operationType = OperationType.Contrast;
         this.image = image;
         this.scope = scope;
+        this.algorithm = algorithm;
+    }
+
+    public ImageContrast(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Contrast;
+    }
+
+    public ImageContrast(Image image, ContrastAlgorithm algorithm) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Contrast;
         this.algorithm = algorithm;
     }
 
@@ -224,7 +237,7 @@ public class ImageContrast extends PixelsOperation {
 //            return null;
 //        }
         try {
-            BufferedImage colorImage = ImageIO.read(new File("D:\\tmp\\测试文件\\普通图片\\直方图\\f1.jpeg"));
+            BufferedImage colorImage = ImageFileReaders.readImage(new File("D:\\tmp\\测试文件\\普通图片\\直方图\\f1.jpeg"));
 
             int width = colorImage.getWidth();
             int height = colorImage.getHeight();
@@ -258,6 +271,18 @@ public class ImageContrast extends PixelsOperation {
         } catch (Exception e) {
             return colorImage1;
         }
+    }
+
+    public static Image grayHistogramEqualization(Image grayImage) {
+        BufferedImage image = SwingFXUtils.fromFXImage(grayImage, null);
+        image = mara.mybox.image.ImageContrast.grayHistogramEqualization(image);
+        return SwingFXUtils.toFXImage(image, null);
+    }
+
+    public static Image brightnessHistogramEqualization(Image colorImage) {
+        BufferedImage image = SwingFXUtils.fromFXImage(colorImage, null);
+        image = mara.mybox.image.ImageContrast.brightnessHistogramEqualization(image);
+        return SwingFXUtils.toFXImage(image, null);
     }
 
 }

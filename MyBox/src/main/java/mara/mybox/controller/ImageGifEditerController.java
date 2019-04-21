@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageSourcesController;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -16,12 +17,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.image.file.ImageGifFile;
 import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -44,11 +47,20 @@ public class ImageGifEditerController extends ImageSourcesController {
     private CheckBox loopCheck;
 
     public ImageGifEditerController() {
+        baseTitle = AppVaribles.getMessage("ImageGifEditer");
+
+        SourceFileType = VisitHistory.FileType.Gif;
+        SourcePathType = VisitHistory.FileType.Gif;
+        TargetFileType = VisitHistory.FileType.Gif;
+        TargetPathType = VisitHistory.FileType.Gif;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
+
         fileExtensionFilter = CommonValues.GifExtensionFilter;
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
 
             optionsBox.setDisable(true);
@@ -57,23 +69,22 @@ public class ImageGifEditerController extends ImageSourcesController {
             interval = 500;
             List<String> values = Arrays.asList("500", "300", "1000", "2000", "3000", "5000", "10000");
             intervalCBox.getItems().addAll(values);
-            intervalCBox.valueProperty().addListener(new ChangeListener<String>() {
+            intervalCBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             interval = v;
-                            intervalCBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(intervalCBox);
                             if (!isSettingValues && targetFile != null) {
                                 setImageChanged(true);
                             }
                         } else {
-
-                            intervalCBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intervalCBox);
                         }
                     } catch (Exception e) {
-                        intervalCBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intervalCBox);
                     }
                 }
             });
@@ -159,43 +170,41 @@ public class ImageGifEditerController extends ImageSourcesController {
     }
 
     @Override
-    protected void saveFileDo(final File outFile) {
+    public void saveFileDo(final File outFile) {
         try {
             task = new Task<Void>() {
                 private String ret;
 
                 @Override
                 protected Void call() throws Exception {
-                    try {
-                        ret = ImageGifFile.writeImages(sourceImages, outFile,
-                                interval, loopCheck.isSelected(), keepSize, width, height);
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ret.isEmpty()) {
-                                    popInformation(AppVaribles.getMessage("Successful"));
-                                    if (viewCheck.isSelected()) {
-                                        try {
-                                            final ImageGifViewerController controller
-                                                    = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml, false, true);
-                                            controller.setBaseTitle(AppVaribles.getMessage("ImageGifViewer"));
-                                            controller.loadImage(outFile.getAbsolutePath());
-                                        } catch (Exception e) {
-                                            logger.error(e.toString());
-                                        }
-                                    }
-                                } else {
-                                    popError(AppVaribles.getMessage(ret));
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        logger.error(e.toString());
-                    }
+                    ret = ImageGifFile.writeImages(sourceImages, outFile,
+                            interval, loopCheck.isSelected(), keepSize, width, height);
+
                     return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ret.isEmpty()) {
+                                popInformation(AppVaribles.getMessage("Successful"));
+                                if (viewCheck.isSelected()) {
+                                    try {
+                                        final ImageGifViewerController controller
+                                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                                        controller.loadImage(outFile.getAbsolutePath());
+                                    } catch (Exception e) {
+                                        logger.error(e.toString());
+                                    }
+                                }
+                            } else {
+                                popError(AppVaribles.getMessage(ret));
+                            }
+                        }
+                    });
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);

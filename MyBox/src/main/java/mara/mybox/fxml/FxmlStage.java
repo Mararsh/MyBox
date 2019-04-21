@@ -2,11 +2,16 @@ package mara.mybox.fxml;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ScheduledFuture;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -14,11 +19,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import mara.mybox.controller.BaseController;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.controller.BytesEditerController;
 import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.ImageInformationController;
-import mara.mybox.controller.ImageManufactureController;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
@@ -26,10 +31,11 @@ import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -40,43 +46,60 @@ import mara.mybox.tools.FileTools;
  */
 public class FxmlStage {
 
-    public static BaseController openNewStage(Class theClass, Stage myStage,
-            String newFxml, String title, boolean isOwned, boolean monitorClosing) {
+    public static BaseController initScene(Class theClass, final Stage stage, String newFxml) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(theClass.getResource(newFxml), AppVaribles.CurrentBundle);
+            if (stage == null) {
+                return null;
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(theClass.getResource(newFxml), AppVaribles.currentBundle);
             Pane pane = fxmlLoader.load();
             pane.getStylesheets().add(theClass.getResource(AppVaribles.getStyle()).toExternalForm());
-            final BaseController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
             Scene scene = new Scene(pane);
-            stage.initModality(Modality.NONE);
-            if (isOwned) {
-                stage.initOwner(myStage);
-            } else {
-                stage.initOwner(null);
-            }
-            if (title == null) {
+
+            final BaseController controller = (BaseController) fxmlLoader.getController();
+            controller.myStage = stage;
+            controller.myScene = scene;
+            controller.loadFxml = newFxml;
+
+            if (controller.getBaseTitle() == null) {
                 stage.setTitle(AppVaribles.getMessage("AppTitle"));
             } else {
-                stage.setTitle(title);
+                stage.setTitle(controller.getBaseTitle());
             }
-            controller.setBaseTitle(stage.getTitle());
-            controller.setMyStage(stage);
+            stage.setTitle(controller.getBaseTitle());
+            VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
+
             stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            if (monitorClosing) {
-                stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                    @Override
-                    public void handle(WindowEvent event) {
-                        if (!controller.stageClosing()) {
-                            event.consume();
-                        }
+
+            stage.setOnShown(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    controller.afterStageShown();
+                }
+            });
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent event) {
+                    if (!controller.leavingScene()) {
+                        event.consume();
+                    } else {
+                        FxmlStage.closeStage(stage);
                     }
-                });
-            }
+                }
+            });
+
+            Scene s = stage.getScene();
+            s = null;
+            stage.setScene(scene);
             stage.show();
-            pane.requestFocus();
+            stage.requestFocus();
+
+            controller.initStage();
+
+            AppVaribles.stageOpened(stage, controller);
+
+            Platform.setImplicitExit(AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty());
+
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -84,56 +107,106 @@ public class FxmlStage {
         }
     }
 
-    public static BaseController openStage(Class theClass, Stage stage,
-            String newFxml, String title) {
+    public static BaseController openStage(Class theClass, Stage myStage,
+            String newFxml, boolean isOwned, Modality modality) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(theClass.getResource(newFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            pane.getStylesheets().add(theClass.getResource(AppVaribles.getStyle()).toExternalForm());
-            final BaseController controller = (BaseController) fxmlLoader.getController();
+            Stage stage = new Stage();
+            stage.initModality(modality);
+            if (isOwned && myStage != null) {
+                stage.initOwner(myStage);
+            } else {
+                stage.initOwner(null);
+            }
+            return initScene(theClass, stage, newFxml);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BaseController openStage(Class theClass, Stage myStage,
+            String newFxml, boolean isOwned) {
+        return openStage(theClass, myStage, newFxml, isOwned, Modality.NONE);
+    }
+
+    public static BaseController openStage(Class theClass, Stage myStage,
+            String newFxml) {
+        return openStage(theClass, myStage, newFxml, false, Modality.NONE);
+    }
+
+    public static BaseController openScene(Class theClass, Stage stage, String newFxml) {
+        try {
             if (stage == null) {
                 stage = new Stage();
                 stage.initModality(Modality.NONE);
                 stage.initStyle(StageStyle.DECORATED);
                 stage.initOwner(null);
             }
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-            controller.setMyStage(stage);
-            if (title == null) {
-                controller.setBaseTitle(AppVaribles.getMessage("AppTitle"));
-            } else {
-                controller.setBaseTitle(title);
-            }
-
-            stage.setTitle(controller.getBaseTitle());
-            stage.setScene(new Scene(pane));
-            stage.show();
-            pane.requestFocus();
-
-            return controller;
+            return initScene(theClass, stage, newFxml);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
     }
 
+    public static void closeStage(Stage stage) {
+        AppVaribles.stageClosed(stage);
+        stage.close();
+        if (AppVaribles.openedStages.isEmpty()) {
+            FxmlStage.appExit();
+        }
+    }
+
+    public static void appExit() {
+        try {
+            final List<BaseController> controllers = new ArrayList();
+            controllers.addAll(AppVaribles.openedStages.values());
+            for (BaseController controller : controllers) {
+                if (controller != null && !controller.closeStage()) {
+                    return;
+                }
+            }
+            if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
+                if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
+                    for (Long key : AppVaribles.scheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
+                        future.cancel(true);
+                    }
+                    AppVaribles.scheduledTasks = null;
+                    if (AppVaribles.executorService != null) {
+                        AppVaribles.executorService.shutdownNow();
+                        AppVaribles.executorService = null;
+                    }
+                }
+
+            } else {
+                if (AppVaribles.scheduledTasks != null) {
+                    AppVaribles.scheduledTasks = null;
+                }
+                if (AppVaribles.executorService != null) {
+                    AppVaribles.executorService.shutdownNow();
+                    AppVaribles.executorService = null;
+                }
+            }
+
+            if (AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty()) {
+                Platform.exit();
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
     public static BaseController openMyBox(Class theClass, Stage stage) {
-        return openStage(theClass, stage, CommonValues.MyboxFxml, AppVaribles.getMessage("AppTitle"));
+        return openScene(theClass, stage, CommonValues.MyboxFxml);
     }
 
     public static PdfViewController openPdfViewer(Class theClass, Stage stage, File file) {
         try {
             final PdfViewController controller
-                    = (PdfViewController) openStage(theClass, stage,
-                            CommonValues.PdfViewFxml, AppVaribles.getMessage("PdfView"));
+                    = (PdfViewController) openScene(theClass, stage, CommonValues.PdfViewFxml);
             controller.sourceFileChanged(file);
             return controller;
         } catch (Exception e) {
@@ -145,8 +218,7 @@ public class FxmlStage {
     public static HtmlEditorController openHtmlEditor(Class theClass, Stage stage, File file) {
         try {
             final HtmlEditorController controller
-                    = (HtmlEditorController) openStage(theClass, stage,
-                            CommonValues.HtmlEditorFxml, AppVaribles.getMessage("HtmlEditor"));
+                    = (HtmlEditorController) openScene(theClass, stage, CommonValues.HtmlEditorFxml);
             controller.switchBroswerTab();
             controller.loadHtml(file);
             return controller;
@@ -159,8 +231,7 @@ public class FxmlStage {
     public static ImageManufactureController openImageManufacture(Class theClass, Stage stage, File file) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openStage(theClass, stage,
-                            CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                    = (ImageManufactureController) openScene(theClass, stage, CommonValues.ImageManufactureFileFxml);
             controller.loadImage(file.getAbsolutePath());
             return controller;
         } catch (Exception e) {
@@ -173,8 +244,7 @@ public class FxmlStage {
             File file, Image image, ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openStage(theClass, stage,
-                            CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                    = (ImageManufactureController) openScene(theClass, stage, CommonValues.ImageManufactureFileFxml);
             controller.loadImage(file, image, imageInfo);
             return controller;
         } catch (Exception e) {
@@ -187,8 +257,7 @@ public class FxmlStage {
             ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openStage(theClass, stage,
-                            CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                    = (ImageManufactureController) openScene(theClass, stage, CommonValues.ImageManufactureFileFxml);
             controller.loadImage(imageInfo);
             return controller;
         } catch (Exception e) {
@@ -201,8 +270,7 @@ public class FxmlStage {
             Image image) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openStage(theClass, stage,
-                            CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
+                    = (ImageManufactureController) openScene(theClass, stage, CommonValues.ImageManufactureFileFxml);
             controller.loadImage(image);
             return controller;
         } catch (Exception e) {
@@ -214,8 +282,7 @@ public class FxmlStage {
     public static ImageViewerController openImageViewer(Class theClass, Stage stage) {
         try {
             final ImageViewerController controller
-                    = (ImageViewerController) openStage(theClass, stage,
-                            CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
+                    = (ImageViewerController) openScene(theClass, stage, CommonValues.ImageViewerFxml);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -238,8 +305,8 @@ public class FxmlStage {
 
     public static ImagesBrowserController openImagesBrowser(Class theClass, Stage stage) {
         try {
-            final ImagesBrowserController controller = (ImagesBrowserController) openStage(theClass, stage,
-                    CommonValues.ImagesBrowserFxml, AppVaribles.getMessage("ImagesBrowser"));
+            final ImagesBrowserController controller = (ImagesBrowserController) openScene(theClass, stage,
+                    CommonValues.ImagesBrowserFxml);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -250,8 +317,7 @@ public class FxmlStage {
     public static TextEditerController openTextEditer(Class theClass, Stage stage, File file) {
         try {
             final TextEditerController controller
-                    = (TextEditerController) openStage(theClass, stage,
-                            CommonValues.TextEditerFxml, AppVaribles.getMessage("TextEditer"));
+                    = (TextEditerController) openScene(theClass, stage, CommonValues.TextEditerFxml);
             controller.openFile(file);
             return controller;
         } catch (Exception e) {
@@ -263,8 +329,7 @@ public class FxmlStage {
     public static BytesEditerController openBytesEditer(Class theClass, Stage stage, File file) {
         try {
             final BytesEditerController controller
-                    = (BytesEditerController) openStage(theClass, stage,
-                            CommonValues.BytesEditerFxml, AppVaribles.getMessage("BytesEditer"));
+                    = (BytesEditerController) openScene(theClass, stage, CommonValues.BytesEditerFxml);
             controller.openFile(file);
             return controller;
         } catch (Exception e) {
@@ -275,8 +340,8 @@ public class FxmlStage {
 
     public static ImageInformationController openImageInformation(Class theClass, Stage stage, ImageInformation info) {
         try {
-            final ImageInformationController controller = (ImageInformationController) openStage(theClass, stage,
-                    CommonValues.ImageInformationFxml, AppVaribles.getMessage("ImageInformation"));
+            final ImageInformationController controller = (ImageInformationController) openScene(theClass, stage,
+                    CommonValues.ImageInformationFxml);
             controller.loadInformation(info);
             return controller;
         } catch (Exception e) {
@@ -287,8 +352,8 @@ public class FxmlStage {
 
     public static ImageMetaDataController openImageMetaData(Class theClass, Stage stage, ImageInformation info) {
         try {
-            final ImageMetaDataController controller = (ImageMetaDataController) openStage(theClass, stage,
-                    CommonValues.ImageMetaDataFxml, AppVaribles.getMessage("ImageInformation"));
+            final ImageMetaDataController controller = (ImageMetaDataController) openScene(theClass, stage,
+                    CommonValues.ImageMetaDataFxml);
             controller.loadData(info);
             return controller;
         } catch (Exception e) {
@@ -299,8 +364,8 @@ public class FxmlStage {
 
     public static ImageStatisticController openImageStatistic(Class theClass, Stage stage, ImageInformation info) {
         try {
-            final ImageStatisticController controller = (ImageStatisticController) openStage(theClass, stage,
-                    CommonValues.ImageStatisticFxml, AppVaribles.getMessage("ImageStatistic"));
+            final ImageStatisticController controller = (ImageStatisticController) openScene(theClass, stage,
+                    CommonValues.ImageStatisticFxml);
             controller.loadImage(info);
             return controller;
         } catch (Exception e) {
@@ -311,8 +376,8 @@ public class FxmlStage {
 
     public static ImageStatisticController openImageStatistic(Class theClass, Stage stage, Image image) {
         try {
-            final ImageStatisticController controller = (ImageStatisticController) openStage(theClass, stage,
-                    CommonValues.ImageStatisticFxml, AppVaribles.getMessage("ImageStatistic"));
+            final ImageStatisticController controller = (ImageStatisticController) openScene(theClass, stage,
+                    CommonValues.ImageStatisticFxml);
             controller.loadImage(image);
             return controller;
         } catch (Exception e) {
@@ -339,6 +404,7 @@ public class FxmlStage {
         if (file.isDirectory()) {
             try {
                 Desktop.getDesktop().browse(file.toURI());
+
             } catch (Exception e) {
 
             }
@@ -359,10 +425,11 @@ public class FxmlStage {
             controller = openPdfViewer(theClass, stage, file);
 
         } else if (mustOpen) {
-            try {
-                Desktop.getDesktop().browse(file.toURI());
-            } catch (Exception e) {
-            }
+            controller = openBytesEditer(theClass, stage, file);
+            //            try {
+//                Desktop.getDesktop().browse(file.toURI());
+//            } catch (Exception e) {
+//            }
         }
         return controller;
     }
@@ -398,8 +465,10 @@ public class FxmlStage {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(myStage.getTitle());
             alert.setHeaderText(null);
-            alert.setContentText(information);
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.getDialogPane().setContent(new Label(information));
+//            alert.setContentText(information);
+
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());

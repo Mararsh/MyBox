@@ -1,6 +1,5 @@
 package mara.mybox.data;
 
-import mara.mybox.image.ImageScope;
 import java.io.File;
 import java.util.Map;
 import javafx.scene.image.Image;
@@ -15,11 +14,10 @@ import javafx.scene.image.Image;
 public class ImageManufactureValues {
 
     private File sourceFile;
-    private ImageScope scope;
     private File refFile;
     private Image image, refImage, undoImage, redoImage, cropImage, currentImage;
     private ImageInformation refInfo, imageInfo;
-    private boolean refSync, isConfirmBeforeSave, imageChanged, showRef;
+    private boolean refSync, isConfirmBeforeSave, imageChanged, showRef, isPaste;
     private int stageWidth, stageHeight, saveAsType, imageViewWidth, imageViewHeight;
     protected Map<String, Object> imageData;
 
@@ -40,14 +38,6 @@ public class ImageManufactureValues {
 
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    public ImageScope getScope() {
-        return scope;
-    }
-
-    public void setScope(ImageScope scope) {
-        this.scope = scope;
     }
 
     public File getRefFile() {
@@ -192,6 +182,14 @@ public class ImageManufactureValues {
 
     public void setImageData(Map<String, Object> imageData) {
         this.imageData = imageData;
+    }
+
+    public boolean isIsPaste() {
+        return isPaste;
+    }
+
+    public void setIsPaste(boolean isPaste) {
+        this.isPaste = isPaste;
     }
 
 }

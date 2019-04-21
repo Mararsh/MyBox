@@ -1,47 +1,28 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageSourcesController;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.util.Callback;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.data.ImageFileInformation;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.ValueTools;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -49,29 +30,20 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageFramesViewerController extends ImageBaseController {
-
-    protected SimpleBooleanProperty changed;
-
-
-    protected ObservableList<ImageInformation> sourceImages = FXCollections.observableArrayList();
+public class ImageFramesViewerController extends ImageSourcesController {
 
     @FXML
-    protected Button extractButton, metaButton, viewButton, editButton;
-    @FXML
-    protected TableView<ImageInformation> sourceTable;
-    @FXML
-    protected TableColumn<ImageInformation, Image> imageColumn;
-    @FXML
-    protected TableColumn<ImageInformation, String> fileColumn, sizeColumn, typeColumn;
-    @FXML
-    protected TableColumn<ImageInformation, Integer> indexColumn;
-    @FXML
-    protected VBox sourcesBox;
-    @FXML
-    protected Label sourcesLabel;
+    protected Button extractButton, editButton;
 
     public ImageFramesViewerController() {
+        baseTitle = AppVaribles.getMessage("ImageFramesViewer");
+        SourceFileType = VisitHistory.FileType.MultipleFrames;
+        SourcePathType = VisitHistory.FileType.MultipleFrames;
+        TargetFileType = VisitHistory.FileType.MultipleFrames;
+        TargetPathType = VisitHistory.FileType.MultipleFrames;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
+
         fileExtensionFilter = new ArrayList() {
             {
                 add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
@@ -82,7 +54,7 @@ public class ImageFramesViewerController extends ImageBaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initSourceSection();
             sourcesBox.setDisable(true);
@@ -92,93 +64,8 @@ public class ImageFramesViewerController extends ImageBaseController {
         }
     }
 
-    protected void initSourceSection() {
-        try {
-            changed = new SimpleBooleanProperty(false);
-            sourcesLabel.setText("");
-
-            fileColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("filename"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("colorSpace"));
-            indexColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Integer>("index"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("sizeString"));
-            sizeColumn.setCellFactory(new Callback<TableColumn<ImageInformation, String>, TableCell<ImageInformation, String>>() {
-                @Override
-                public TableCell<ImageInformation, String> call(TableColumn<ImageInformation, String> param) {
-                    TableCell<ImageInformation, String> cell = new TableCell<ImageInformation, String>() {
-                        final Text text = new Text();
-
-                        @Override
-                        protected void updateItem(final String item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item != null) {
-                                text.setText(item);
-                                if (item.contains("*")) {
-                                    text.setFill(Color.RED);
-                                }
-                                setGraphic(text);
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
-            imageColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Image>("image"));
-            imageColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Image>, TableCell<ImageInformation, Image>>() {
-                @Override
-                public TableCell<ImageInformation, Image> call(TableColumn<ImageInformation, Image> param) {
-                    final ImageView imageview = new ImageView();
-                    imageview.setPreserveRatio(true);
-                    imageview.setFitWidth(100);
-                    imageview.setFitHeight(100);
-                    TableCell<ImageInformation, Image> cell = new TableCell<ImageInformation, Image>() {
-                        @Override
-                        protected void updateItem(final Image item, boolean empty) {
-                            super.updateItem(item, empty);
-                            if (item != null) {
-                                imageview.setImage(item);
-                                setGraphic(imageview);
-                            }
-                        }
-                    };
-                    return cell;
-                }
-            });
-
-            sourceTable.setItems(sourceImages);
-            sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-                @Override
-                public void changed(ObservableValue ov, Object t, Object t1) {
-                    if (!isSettingValues) {
-                        checkTableSelected();
-                    }
-                }
-            });
-            sourceTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (event.getClickCount() > 1) {
-                        viewAction();
-                    }
-                }
-            });
-            checkTableSelected();
-
-            sourceImages.addListener(new ListChangeListener<ImageInformation>() {
-                @Override
-                public void onChanged(ListChangeListener.Change<? extends ImageInformation> change) {
-                    if (!isSettingValues) {
-                        setImageChanged(true);
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected void checkTableSelected() {
+    @Override
+    public void checkTableSelected() {
         int selected = sourceTable.getSelectionModel().getSelectedIndex();
         boolean none = (selected < 0);
         infoButton.setDisable(none);
@@ -192,29 +79,8 @@ public class ImageFramesViewerController extends ImageBaseController {
         }
     }
 
-    @FXML
-    protected void openAction(ActionEvent event) {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
-            openFile(file);
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    protected void openFile(final File file) {
+    @Override
+    public void selectSourceFile(File file) {
         try {
             sourceImages.clear();
 
@@ -222,18 +88,18 @@ public class ImageFramesViewerController extends ImageBaseController {
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
             sourcesBox.setDisable(false);
             editButton.setDisable(false);
+            recordFileOpened(file);
 
             List<File> files = new ArrayList<>();
             files.add(file);
-            addFiles(files, 0);
-
+            showFiles(0, files);
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
     }
 
-    protected void addFiles(final List<File> files, final int index) {
+    protected void showFiles(final int index, final List<File> files) {
         if (files == null || files.isEmpty()) {
             return;
         }
@@ -241,6 +107,7 @@ public class ImageFramesViewerController extends ImageBaseController {
             private List<ImageInformation> infos;
             private String ret;
             private boolean hasSampled;
+            private boolean ok;
 
             @Override
             protected Void call() throws Exception {
@@ -248,7 +115,7 @@ public class ImageFramesViewerController extends ImageBaseController {
                 ret = "";
                 hasSampled = false;
                 for (File file : files) {
-                    if (task.isCancelled()) {
+                    if (task == null || task.isCancelled()) {
                         return null;
                     }
                     final String fileName = file.getPath();
@@ -263,7 +130,7 @@ public class ImageFramesViewerController extends ImageBaseController {
                         break;
                     }
                     for (int i = 0; i < bufferImages.size(); i++) {
-                        if (task.isCancelled()) {
+                        if (task == null || task.isCancelled()) {
                             return null;
                         }
                         ImageInformation minfo = finfo.getImagesInformation().get(i);
@@ -275,78 +142,45 @@ public class ImageFramesViewerController extends ImageBaseController {
                         infos.add(minfo);
                     }
                 }
-                if (task.isCancelled()) {
-                    return null;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ret.isEmpty()) {
-                            if (hasSampled) {
-                                alertWarning(AppVaribles.getMessage("ImageSampled"));
-                                bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
-                            }
-                            isSettingValues = true;
-                            if (index < 0 || index >= sourceImages.size()) {
-                                sourceImages.addAll(infos);
-                            } else {
-                                sourceImages.addAll(index, infos);
-                            }
-                            sourceTable.refresh();
-                            isSettingValues = false;
-                            setImageChanged(true);
-                        } else {
-                            popError(AppVaribles.getMessage(ret));
-                        }
 
-                    }
-                });
+                ok = true;
                 return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ret.isEmpty()) {
+                                if (hasSampled) {
+                                    alertWarning(AppVaribles.getMessage("ImageSampled"));
+                                    bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
+                                }
+                                isSettingValues = true;
+                                if (index < 0 || index >= sourceImages.size()) {
+                                    sourceImages.addAll(infos);
+                                } else {
+                                    sourceImages.addAll(index, infos);
+                                }
+                                sourceTable.refresh();
+                                isSettingValues = false;
+                                setImageChanged(true);
+                            } else {
+                                popError(AppVaribles.getMessage(ret));
+                            }
+
+                        }
+                    });
+                }
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    protected void setImageChanged(boolean c) {
-        changed.setValue(c);
-        long pixels = 0;
-        for (ImageInformation m : sourceImages) {
-            pixels += m.getWidth() * m.getHeight();
-        }
-        sourcesLabel.setText(getMessage("TotalImages") + ":" + sourceImages.size() + "  "
-                + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
-    }
-
-    protected boolean hasSampled() {
-        for (ImageInformation info : sourceImages) {
-            if (info.isIsSampled()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @FXML
-    @Override
-    public void infoAction() {
-        showImageInformation(sourceTable.getSelectionModel().getSelectedItem());
-    }
-
-    @FXML
-    protected void showMeta() {
-        showImageMetaData(sourceTable.getSelectionModel().getSelectedItem());
-    }
-
-    @FXML
-    protected void viewAction() {
-        ImageInformation info = sourceTable.getSelectionModel().getSelectedItem();
-        if (info == null) {
-            return;
-        }
-        openImageViewer(info);
     }
 
     @FXML
@@ -371,14 +205,12 @@ public class ImageFramesViewerController extends ImageBaseController {
             String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
             if (format.contains("tif")) {
                 final ImageTiffEditerController controller
-                        = (ImageTiffEditerController) openStage(CommonValues.ImageTiffEditerFxml, false, true);
-                controller.setBaseTitle(AppVaribles.getMessage("ImageTiffEditer"));
+                        = (ImageTiffEditerController) openStage(CommonValues.ImageTiffEditerFxml);
                 controller.loadFile(sourceFile, sourceImages);
 
             } else if (format.contains("gif")) {
                 final ImageGifEditerController controller
-                        = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml, false, true);
-                controller.setBaseTitle(AppVaribles.getMessage("ImageGifEditer"));
+                        = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
                 controller.loadFile(sourceFile, sourceImages);
             }
         } catch (Exception e) {
@@ -412,15 +244,18 @@ public class ImageFramesViewerController extends ImageBaseController {
             AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
 
             task = new Task<Void>() {
+                private List<String> filenames;
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(targetFile.getAbsolutePath()).toLowerCase();
                     String filePrefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
                     String filename;
                     int digit = (selectedImages.size() + "").length();
-                    final List<String> filenames = new ArrayList<>();
+                    filenames = new ArrayList<>();
                     for (int i = 0; i < selectedImages.size(); i++) {
-                        if (task.isCancelled()) {
+                        if (task == null || task.isCancelled()) {
                             return null;
                         }
                         filename = filePrefix + "-" + ValueTools.fillLeftZero(i, digit) + "." + format;
@@ -431,16 +266,21 @@ public class ImageFramesViewerController extends ImageBaseController {
                         ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                         filenames.add(filename);
                     }
-                    if (task.isCancelled()) {
-                        return null;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            multipleFilesGenerated(filenames);
-                        }
-                    });
+                    ok = true;
                     return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                multipleFilesGenerated(filenames);
+                            }
+                        });
+                    }
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);

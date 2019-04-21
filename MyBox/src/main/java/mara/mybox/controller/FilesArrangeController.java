@@ -16,7 +16,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -24,17 +23,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.controller.base.BatchBaseController;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ValueTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -42,7 +41,7 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesArrangeController extends BaseController {
+public class FilesArrangeController extends BatchBaseController {
 
     protected String lastFileName;
     protected Date startTime;
@@ -74,13 +73,11 @@ public class FilesArrangeController extends BaseController {
     @FXML
     private ToggleGroup filesGroup, byGroup, dirGroup, replaceGroup;
     @FXML
-    protected TextField sourcePathInput, maxLinesinput;
+    protected TextField maxLinesinput;
     @FXML
     protected VBox dirsBox, conditionsBox, logsBox;
     @FXML
     protected TextArea logsTextArea;
-    @FXML
-    protected Button clearButton;
     @FXML
     private RadioButton copyRadio, moveRadio, replaceModifiedRadio, replaceRadio, renameRadio, notCopyRadio;
     @FXML
@@ -89,6 +86,8 @@ public class FilesArrangeController extends BaseController {
     private CheckBox verboseCheck;
 
     public FilesArrangeController() {
+        baseTitle = AppVaribles.getMessage("FilesArrangement");
+
         targetPathKey = "FilesArrageTargetPath";
         sourcePathKey = "FilesArrageSourcePath";
         FileArrangeSubdirKey = "FileArrangeSubdirKey";
@@ -102,7 +101,7 @@ public class FilesArrangeController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initDirTab();
             initConditionTab();
@@ -125,37 +124,6 @@ public class FilesArrangeController extends BaseController {
     }
 
     private void initDirTab() {
-        sourcePathInput.setText(AppVaribles.getUserConfigPath(sourcePathKey).getAbsolutePath());
-        sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                final File file = new File(newValue);
-                if (!file.exists() || !file.isDirectory()) {
-                    sourcePathInput.setStyle(badStyle);
-                    return;
-                }
-                sourcePathInput.setStyle(null);
-                AppVaribles.setUserConfigValue(LastPathKey, newValue);
-                AppVaribles.setUserConfigValue(sourcePathKey, newValue);
-            }
-        });
-
-        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
-        targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,
-                    String oldValue, String newValue) {
-                final File file = new File(newValue);
-                if (!file.isDirectory()) {
-                    targetPathInput.setStyle(badStyle);
-                    return;
-                }
-                targetPathInput.setStyle(null);
-                AppVaribles.setUserConfigValue(LastPathKey, newValue);
-                AppVaribles.setUserConfigValue(targetPathKey, newValue);
-            }
-        });
 
     }
 
@@ -289,56 +257,6 @@ public class FilesArrangeController extends BaseController {
         }
     }
 
-    @FXML
-    protected void selectSourcePath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            sourcePathInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    protected void selectTargetPath(ActionEvent event) {
-        if (targetPathInput == null) {
-            return;
-        }
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            targetPathInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    protected void openTarget(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     protected boolean initAttributes() {
         try {
             sourcePath = new File(sourcePathInput.getText());
@@ -437,7 +355,7 @@ public class FilesArrangeController extends BaseController {
     }
 
     @Override
-    protected void updateInterface(final String newStatus) {
+    public void updateInterface(final String newStatus) {
         currentStatus = newStatus;
         Platform.runLater(new Runnable() {
             @Override
@@ -476,7 +394,6 @@ public class FilesArrangeController extends BaseController {
 
                         case "Done":
                         default:
-
                             if (paused) {
                                 operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
                                 operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -509,25 +426,7 @@ public class FilesArrangeController extends BaseController {
                                 dirsBox.setDisable(false);
                                 conditionsBox.setDisable(false);
                             }
-
-                            showCost();
-                            updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                                    + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
-                            updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
-                            updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
-                            if (!isCopy) {
-                                updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
-                                        + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                                        + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
-                            }
-
-                            if (operationBarController.miaoCheck.isSelected()) {
-                                FxmlTools.miao3();
-                            }
+                            donePost();
                     }
 
                 } catch (Exception e) {
@@ -538,7 +437,8 @@ public class FilesArrangeController extends BaseController {
 
     }
 
-    protected void showCost() {
+    @Override
+    public void showCost() {
         if (operationBarController.statusLabel == null) {
             return;
         }
@@ -561,6 +461,43 @@ public class FilesArrangeController extends BaseController {
         operationBarController.statusLabel.setText(s);
     }
 
+    @Override
+    public void donePost() {
+        showCost();
+        updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
+                + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
+        updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
+        updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
+        if (!isCopy) {
+            updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                    + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                    + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+        }
+
+        if (operationBarController.miaoCheck.isSelected()) {
+            FxmlControl.miao3();
+        }
+
+        if (operationBarController.openCheck.isSelected()) {
+            openTarget(null);
+        }
+
+    }
+
+    @FXML
+    @Override
+    public void openTarget(ActionEvent event) {
+        try {
+            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
     protected boolean arranegFiles(File sourcePath) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
@@ -570,11 +507,10 @@ public class FilesArrangeController extends BaseController {
             String srcFileName;
             long len;
             for (File srcFile : files) {
-                if (task.isCancelled()) {
+                if (task == null || task.isCancelled()) {
                     return false;
                 }
                 srcFileName = srcFile.getAbsolutePath();
-                logger.debug(srcFileName);
                 len = srcFile.length();
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {

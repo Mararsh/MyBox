@@ -1,15 +1,25 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ToolBar;
-import static mara.mybox.value.AppVaribles.logger;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.image.ImageScope;
+import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -24,9 +34,7 @@ public class ImageManufactureFileController extends ImageManufactureController {
     @FXML
     protected ToolBar saveAsBar;
     @FXML
-    protected ToggleGroup saveAsGroup;
-    @FXML
-    protected RadioButton loadRadio, openRadio, justRadio;
+    protected ChoiceBox saveAsOptions;
 
     public static class SaveAsType {
 
@@ -41,12 +49,10 @@ public class ImageManufactureFileController extends ImageManufactureController {
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initFileTab();
-            values.setScope(new ImageScope());
-            imageView.requestFocus();
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -54,25 +60,40 @@ public class ImageManufactureFileController extends ImageManufactureController {
 
     protected void initFileTab() {
         try {
-            fileBar.setDisable(true);
-            saveAsBar.setDisable(true);
 
-            saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            List<String> optionsList = Arrays.asList(getMessage("LoadAfterSaveAs"),
+                    getMessage("OpenAfterSaveAs"), getMessage("JustSaveAs"));
+            saveAsOptions.getItems().addAll(optionsList);
+            saveAsOptions.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkSaveAsType();
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    switch (newValue.intValue()) {
+                        case 0:
+                            AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Load + "");
+                            values.setSaveAsType(SaveAsType.Load);
+                            break;
+                        case 1:
+                            AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Open + "");
+                            values.setSaveAsType(SaveAsType.Open);
+                            break;
+                        case 2:
+                            AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.None + "");
+                            values.setSaveAsType(SaveAsType.None);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
             try {
                 int vv = AppVaribles.getUserConfigInt(ImageSaveAsKey, SaveAsType.Load);
                 values.setSaveAsType(vv);
                 if (vv == SaveAsType.Load) {
-                    loadRadio.setSelected(true);
+                    saveAsOptions.getSelectionModel().select(0);
                 } else if (vv == SaveAsType.Open) {
-                    openRadio.setSelected(true);
+                    saveAsOptions.getSelectionModel().select(1);
                 } else if (vv == SaveAsType.None) {
-                    justRadio.setSelected(true);
+                    saveAsOptions.getSelectionModel().select(2);
                 }
             } catch (Exception e) {
                 logger.error(e.toString());
@@ -93,26 +114,6 @@ public class ImageManufactureFileController extends ImageManufactureController {
         }
     }
 
-    private void checkSaveAsType() {
-        try {
-            RadioButton selected = (RadioButton) saveAsGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("LoadAfterSaveAs").equals(selected.getText())) {
-                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Load + "");
-                values.setSaveAsType(SaveAsType.Load);
-
-            } else if (AppVaribles.getMessage("OpenAfterSaveAs").equals(selected.getText())) {
-                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.Open + "");
-                values.setSaveAsType(SaveAsType.Open);
-
-            } else if (AppVaribles.getMessage("JustSaveAs").equals(selected.getText())) {
-                AppVaribles.setUserConfigValue(ImageSaveAsKey, SaveAsType.None + "");
-                values.setSaveAsType(SaveAsType.None);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
     @Override
     protected void initInterface() {
         try {
@@ -122,8 +123,8 @@ public class ImageManufactureFileController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
-            fileBar.setDisable(false);
-            saveAsBar.setDisable(false);
+            tabPane.getSelectionModel().select(fileTab);
+
             infoButton.setDisable(imageInformation == null);
             metaButton.setDisable(imageInformation == null);
             isSettingValues = false;
@@ -134,9 +135,8 @@ public class ImageManufactureFileController extends ImageManufactureController {
     }
 
     @Override
-    protected void afterInfoLoaded() {
+    public void afterInfoLoaded() {
         super.afterInfoLoaded();
-        fileBar.setDisable(false);
         saveCheck.setDisable(true);
     }
 
@@ -149,6 +149,69 @@ public class ImageManufactureFileController extends ImageManufactureController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+
+            task = new Task<Void>() {
+                private boolean ok;
+
+                @Override
+                protected Void call() throws Exception {
+                    String format = FileTools.getFileSuffix(file.getName());
+                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(imageView.getImage());
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (values.getSourceFile() == null
+                                        || values.getSaveAsType() == ImageManufactureFileController.SaveAsType.Load) {
+                                    sourceFileChanged(file);
+
+                                } else if (values.getSaveAsType() == ImageManufactureFileController.SaveAsType.Open) {
+                                    openImageManufacture(file.getAbsolutePath());
+                                }
+                                popInformation(AppVaribles.getMessage("Successful"));
+                            }
+                        });
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
     }
 
 }

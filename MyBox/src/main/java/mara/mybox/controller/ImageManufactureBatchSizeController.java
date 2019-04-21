@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -16,11 +17,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -52,15 +54,17 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchSizeController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchSize");
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                     .or(customHeightInput.styleProperty().isEqualTo(badStyle))
                     .or(keepWidthInput.styleProperty().isEqualTo(badStyle))
@@ -73,7 +77,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
 
             keepWidthInput.textProperty().addListener(new ChangeListener<String>() {
@@ -118,7 +122,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
             checkType();
 
             scaleBox.getItems().addAll(Arrays.asList("0.5", "2.0", "0.8", "0.1", "1.5", "3.0", "10.0", "0.01", "5.0", "0.3"));
-            scaleBox.valueProperty().addListener(new ChangeListener<String>() {
+            scaleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkScale();
@@ -172,14 +176,13 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
         try {
             scale = Float.valueOf(scaleBox.getSelectionModel().getSelectedItem());
             if (scale > 0) {
-                scaleBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(scaleBox);
             } else {
-                scaleBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(scaleBox);
             }
-
         } catch (Exception e) {
             scale = 0;
-            scaleBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(scaleBox);
         }
     }
 
@@ -239,11 +242,10 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     @FXML
     public void pixelsCalculator() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.currentBundle);
             Pane pane = fxmlLoader.load();
             final PixelsCalculationController controller = fxmlLoader.getController();
             Stage stage = new Stage();
-
             Scene scene = new Scene(pane);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(getMyStage());
@@ -251,7 +253,8 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
             stage.show();
-            controller.setMyStage(stage);
+
+            controller.myStage = stage;
             if (sizeType == SizeType.Custom) {
                 controller.setSource(null, customWidthInput, customHeightInput);
             } else if (sizeType == SizeType.Width) {

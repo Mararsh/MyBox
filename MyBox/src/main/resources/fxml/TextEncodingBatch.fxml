@@ -46,14 +46,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEncodingBatchController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TextEncodingBatchController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="1061.0" VBox.vgrow="ALWAYS">
+                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                             <content>
@@ -61,10 +61,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
-                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" text="%AddFiles" />
-                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" text="%AddDirectory" />
-                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" text="%InsertFiles" />
-                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" text="%InsertDirectory" />
+                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction"  onMouseEntered="#popFileAdd" text="%AddFiles" />
+                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction"  onMouseEntered="#popDirectoryAdd" text="%AddDirectory" />
+                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction"  onMouseEntered="#popFileInsert"  text="%InsertFiles" />
+                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction"  onMouseEntered="#popDirectoryInsert" text="%InsertDirectory" />
                                                 <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
@@ -72,20 +72,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
                                             </items>
                                         </ToolBar>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TableView fx:id="sourceTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                        <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%FileName" />
-                                                        <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
-                                                        <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
-                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                                                    </columns>
-                                                </TableView>
-                                            </content>
-                                        </ScrollPane>
+                                        <TableView fx:id="filesTableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
+                                                <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%FileName" />
+                                                <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
+                                                <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
+                                                <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
+                                                <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
+                                            </columns>
+                                        </TableView>
                                     </children>
                                 </VBox>
                             </content>
@@ -96,7 +92,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <CheckBox fx:id="subDirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                                <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
                                                 <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%TextEncodingComments">
                                                     <HBox.margin>
                                                         <Insets left="30.0" />
@@ -147,7 +143,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%TargetFilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
+                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" text="%Select..." />
                                                 <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
                                             </children>
                                         </HBox>
@@ -161,7 +157,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </RadioButton>
                                                 <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
-                                                <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
+                                                <TextField fx:id="targetSuffixInput" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>

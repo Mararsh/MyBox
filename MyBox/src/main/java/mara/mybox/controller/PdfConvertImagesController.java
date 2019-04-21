@@ -1,16 +1,19 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.PdfBatchBaseController;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
+import javafx.fxml.FXML;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
@@ -24,37 +27,38 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfConvertImagesController extends PdfBaseController {
+public class PdfConvertImagesController extends PdfBatchBaseController {
+
+    @FXML
+    public PdfConvertAttributesController pdfConvertAttributesController;
 
     public PdfConvertImagesController() {
-
+        baseTitle = AppVaribles.getMessage("PdfConvertImages");
+        browseTargets = true;
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
-
-//            sourceSelectionController.fromPageInput.setText(AppVaribles.getUserConfigValue(PdfSourceFromKey, "0"));
-//            sourceSelectionController.toPageInput.setText(AppVaribles.getUserConfigValue(PdfSourceToKey, ""));
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(acumFromInput.styleProperty().isEqualTo(badStyle))
                             .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))
                             .or(Bindings.isEmpty(acumFromInput.textProperty()))
                             .or(sourceSelectionController.sourceFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.fromPageInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.toPageInput.styleProperty().isEqualTo(badStyle))
-                            .or(acumFromInput.styleProperty().isEqualTo(badStyle))
-                            .or(pdfConvertAttributesController.getDensityInput().styleProperty().isEqualTo(badStyle))
-                            .or(pdfConvertAttributesController.getQualityBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getQualityInput().styleProperty().isEqualTo(badStyle)))
-                            .or(pdfConvertAttributesController.getColorBox().disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.getThresholdInput().styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.densityInput.styleProperty().isEqualTo(badStyle))
+                            .or(pdfConvertAttributesController.qualityBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.qualityInput.styleProperty().isEqualTo(badStyle)))
+                            .or(pdfConvertAttributesController.colorBox.disableProperty().isEqualTo(new SimpleBooleanProperty(false)).and(pdfConvertAttributesController.thresholdInput.styleProperty().isEqualTo(badStyle)))
             );
 
             previewButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
-                            .or(pdfConvertAttributesController.getRawSelect().selectedProperty())
+                            .or(pdfConvertAttributesController.rawSelect.selectedProperty())
                             .or(operationBarController.startButton.disableProperty())
                             .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
@@ -66,14 +70,34 @@ public class PdfConvertImagesController extends PdfBaseController {
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public boolean makeActualParameters() {
+        if (!super.makeActualParameters()) {
+            return false;
+        }
+
+        if (pdfConvertAttributesController != null) {
+            actualParameters.aDensity = appendDensity.isSelected();
+            actualParameters.aColor = appendColor.isSelected();
+            actualParameters.aCompression = appendCompressionType.isSelected();
+            actualParameters.aQuality = appendQuality.isSelected();
+
+            AppVaribles.setUserConfigValue(appendDensityKey, actualParameters.aDensity);
+            AppVaribles.setUserConfigValue(appendColorKey, actualParameters.aColor);
+            AppVaribles.setUserConfigValue(appendCompressionTypeKey, actualParameters.aCompression);
+            AppVaribles.setUserConfigValue(appendQualityKey, actualParameters.aQuality);
+        }
+        return true;
+    }
+
+    @Override
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
-            if (currentParameters == null) {
+            if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
             currentParameters.startTime = new Date();
@@ -83,12 +107,11 @@ public class PdfConvertImagesController extends PdfBaseController {
                 @Override
                 protected Void call() {
                     try {
-
-                        for (; currentParameters.currentFileIndex < sourceFiles.size(); currentParameters.currentFileIndex++) {
+                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            File file = sourceFiles.get(currentParameters.currentFileIndex);
+                            File file = sourceFiles.get(currentParameters.currentIndex);
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
@@ -102,8 +125,9 @@ public class PdfConvertImagesController extends PdfBaseController {
                                 }
                             }
 
-                            handleCurrentFile();
-                            markFileHandled(currentParameters.currentFileIndex);
+                            int count = handleCurrentFile();
+                            markFileHandled(currentParameters.currentIndex,
+                                    MessageFormat.format(AppVaribles.getMessage("TotalConvertedPagesCount"), count));
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -121,10 +145,11 @@ public class PdfConvertImagesController extends PdfBaseController {
                     return null;
                 }
 
-                private void handleCurrentFile() {
+                private int handleCurrentFile() {
+                    int count = 0;
                     try {
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
-                                AppVaribles.PdfMemUsage)) {
+                                AppVaribles.pdfMemUsage)) {
                             if (actualParameters.acumDigit < 1) {
                                 actualParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -139,7 +164,8 @@ public class PdfConvertImagesController extends PdfBaseController {
                                 if (isCancelled()) {
                                     break;
                                 }
-                                finalTargetName = makeFilename();
+                                actualParameters.finalTargetName = makeFilename();
+                                targetFiles.add(new File(actualParameters.finalTargetName));
                                 convertCurrentPage(renderer);
                                 currentParameters.currentTotalHandled++;
                                 currentParameters.currentNameNumber++;
@@ -147,11 +173,13 @@ public class PdfConvertImagesController extends PdfBaseController {
                                 int pages = currentParameters.currentPage - currentParameters.fromPage + 1;
                                 updateProgress(pages, total);
                                 updateMessage(pages + "/" + total);
+                                count++;
                             }
                         }
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
+                    return count;
                 }
 
                 @Override
@@ -186,7 +214,7 @@ public class PdfConvertImagesController extends PdfBaseController {
 
     protected void convertCurrentPage(PDFRenderer renderer) {
         try {
-            ImageAttributes attributes = pdfConvertAttributesController.getAttributes();
+            ImageAttributes attributes = pdfConvertAttributesController.imageAttributes;
             BufferedImage image;
             if (ImageType.BINARY == attributes.getColorSpace()) {
                 if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
@@ -219,14 +247,14 @@ public class PdfConvertImagesController extends PdfBaseController {
             } else {
                 image = renderer.renderImageWithDPI(currentParameters.currentPage, attributes.getDensity(), attributes.getColorSpace());
             }
-            ImageFileWriters.writeImageFile(image, attributes, finalTargetName);
+            ImageFileWriters.writeImageFile(image, attributes, actualParameters.finalTargetName);
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     protected String makeFilename() {
-        ImageAttributes attributes = pdfConvertAttributesController.getAttributes();
+        ImageAttributes attributes = pdfConvertAttributesController.imageAttributes;
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
             pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);

@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
@@ -16,7 +17,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.stage.Modality;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation.Line_Break;
@@ -40,13 +41,15 @@ public class BytesEditerController extends FileEditerController {
     private RadioButton bytesNumberRadio, byteRadio;
 
     public BytesEditerController() {
+        baseTitle = AppVaribles.getMessage("BytesEditer");
+
         TipsLabelKey = "BytesEditerTips";
 
         setBytesType();
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             super.initializeNext();
             initCharInputTab();
@@ -63,7 +66,7 @@ public class BytesEditerController extends FileEditerController {
                 ",", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "\\", "^", "_", "`",
                 "{", "}", "|", "~");
         symbolBox.getItems().addAll(symbolList);
-        symbolBox.valueProperty().addListener(new ChangeListener<String>() {
+        symbolBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 String s = newValue;
@@ -83,7 +86,7 @@ public class BytesEditerController extends FileEditerController {
             capitalList.add(i + "");
         }
         capitalBox.getItems().addAll(capitalList);
-        capitalBox.valueProperty().addListener(new ChangeListener<String>() {
+        capitalBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
@@ -95,7 +98,7 @@ public class BytesEditerController extends FileEditerController {
             smallList.add(i + "");
         }
         smallBox.getItems().addAll(smallList);
-        smallBox.valueProperty().addListener(new ChangeListener<String>() {
+        smallBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
@@ -107,7 +110,7 @@ public class BytesEditerController extends FileEditerController {
             numberList.add(i + "");
         }
         numberBox.getItems().addAll(numberList);
-        numberBox.valueProperty().addListener(new ChangeListener<String>() {
+        numberBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 mainArea.insertText(mainArea.getSelection().getStart(), ByteTools.stringToHexFormat(newValue));
@@ -333,7 +336,7 @@ public class BytesEditerController extends FileEditerController {
         super.initDisplayTab();
         List<String> setNames = TextTools.getCharsetNames();
         currentBox.getItems().addAll(setNames);
-        currentBox.valueProperty().addListener(new ChangeListener<String>() {
+        currentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
@@ -432,8 +435,8 @@ public class BytesEditerController extends FileEditerController {
 
     @FXML
     @Override
-    protected void openAction() {
-        super.openAction();
+    public void selectSourceFile(ActionEvent event) {
+        super.selectSourceFile(event);
         tabPane.getSelectionModel().select(inputTab);
     }
 

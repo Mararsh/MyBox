@@ -1,19 +1,17 @@
 package mara.mybox.controller;
 
-import java.io.File;
+import mara.mybox.controller.base.BaseController;
 import java.util.Arrays;
 import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -21,21 +19,15 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 
@@ -47,12 +39,12 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
  */
 public class WeiboSnapController extends BaseController {
 
-    private final String WeiboTargetPathKey, WeiboLoadSpeedKey, WeiboScrollDelayKey, WeiboZoomKey;
+    private final String WeiboLoadSpeedKey, WeiboScrollDelayKey, WeiboZoomKey;
     private final String WeiboLastAddressKey, WeiboRetryKey, WeiboOpenPathKey, WeiboColseWindowKey;
     private final String WeiboExpandPicturesKey, WeiboExpandCommentsKey, WeiboUseTempKey;
     private final String WeiboPdfKey, WeiboHtmlKey, WeiboPixKey, WeiboKeepPageKey, WeiboMiaoKey;
     final private String AuthorKey;
-    private int scrollDelay, webWidth, categoryType, retry;
+    private int scrollDelay, webWidth, categoryType, retry, startPage;
     private boolean isImageSize;
     private String webAddress;
     private WeiboSnapParameters parameters;
@@ -62,34 +54,31 @@ public class WeiboSnapController extends BaseController {
     private PdfImageFormat format;
 
     @FXML
-    private ToggleGroup sizeGroup, formatGroup, categoryGroup;
+    private ToggleGroup sizeGroup, formatGroup, categoryGroup, pdfMemGroup;
     @FXML
-    private ComboBox<String> zoomBox, widthBox, retryBox;
+    private ComboBox<String> zoomBox, widthBox, retryBox,
+            MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
     @FXML
-    private TextField addressInput, pathInput, startInput, endInput;
+    private TextField addressInput, startMonthInput, endMonthInput, startPageInput,
+            customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
     private Button exampleButton;
     @FXML
-    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck;
+    private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
+            expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
-    private CheckBox expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
+    private HBox sizeBox, pdfMemBox;
     @FXML
-    private ComboBox<String> MarginsBox, standardSizeBox, standardDpiBox, jpegBox, pdfScaleBox;
+    private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
+            pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    private TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
-    @FXML
-    private HBox sizeBox;
-    @FXML
-    private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio;
-    @FXML
-    protected HBox pdfMemBox;
-    @FXML
-    private ToggleGroup pdfMemGroup;
-    @FXML
-    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
+    private Label weiboTips;
 
     public WeiboSnapController() {
-        WeiboTargetPathKey = "WeiboTargetPathKey";
+        baseTitle = AppVaribles.getMessage("WeiboSnap");
+
+        targetPathKey = "WeiboTargetPathKey";
+
         WeiboLoadSpeedKey = "WeiboLoadSpeedKey";
         WeiboScrollDelayKey = "WeiboScrollDelayKey";
         WeiboZoomKey = "WeiboZoomKey";
@@ -109,7 +98,7 @@ public class WeiboSnapController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
 
             initWebOptions();
@@ -117,13 +106,9 @@ public class WeiboSnapController extends BaseController {
             initPdfOptionsSection();
             initTargetOptions();
 
-            Tooltip tips = new Tooltip(getMessage("MiaoPrompt"));
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(miaoCheck, tips);
-
-            tips = new Tooltip(getMessage("SnapStartComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(startButton, tips);
+            FxmlControl.quickTooltip(miaoCheck, new Tooltip(getMessage("MiaoPrompt")));
+            FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
+            FxmlControl.quickTooltip(weiboTips, new Tooltip(getMessage("WeiboAddressComments")));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -131,9 +116,6 @@ public class WeiboSnapController extends BaseController {
     }
 
     private void initWebOptions() {
-
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("WeiboAddressComments2"));
-        FxmlTools.quickTooltip(addressInput, tips);
 
         addressInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -172,19 +154,37 @@ public class WeiboSnapController extends BaseController {
         });
         addressInput.setText(AppVaribles.getUserConfigValue(WeiboLastAddressKey, "https://www.weibo.com/wow"));
 
-        tips = new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(startInput, tips);
-        startInput.textProperty().addListener(new ChangeListener<String>() {
+        FxmlControl.quickTooltip(startMonthInput, new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth")));
+        startMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 checkTimes();
             }
         });
-        startInput.setText(AppVaribles.getUserConfigValue("WeiboLastStartMonthKey", ""));
+        startMonthInput.setText(AppVaribles.getUserConfigValue("WeiboLastStartMonthKey", ""));
 
-        endInput.textProperty().addListener(new ChangeListener<String>() {
+        startPage = 1;
+        startPageInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable,
+                    String oldValue, String newValue) {
+                try {
+                    int v = Integer.valueOf(startPageInput.getText());
+                    if (v >= 1) {
+                        startPageInput.setStyle(null);
+                        startPage = v;
+                    } else {
+                        startPageInput.setStyle(badStyle);
+                    }
+                } catch (Exception e) {
+                    startPageInput.setStyle(badStyle);
+                }
+            }
+        });
+        startPageInput.setText("1");
+
+        endMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
@@ -193,7 +193,7 @@ public class WeiboSnapController extends BaseController {
         });
 
         retryBox.getItems().addAll(Arrays.asList("3", "0", "1", "5", "7", "10"));
-        retryBox.valueProperty().addListener(new ChangeListener<String>() {
+        retryBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -235,101 +235,102 @@ public class WeiboSnapController extends BaseController {
         Date weiboStart = DateTools.parseMonth("2009-08");
         Date thisMonth = DateTools.thisMonth();
         try {
-            String start = startInput.getText();
+            String start = startMonthInput.getText();
             if (start == null || start.isEmpty()) {
                 startMonth = weiboStart;
-                startInput.setStyle(null);
+                startMonthInput.setStyle(null);
             } else {
                 startMonth = DateTools.parseMonth(start);
                 if (startMonth.getTime() > thisMonth.getTime()) {
-                    startInput.setStyle(badStyle);
+                    startMonthInput.setStyle(badStyle);
                     return;
                 } else if (startMonth.getTime() < DateTools.parseMonth("2009-08").getTime()) {
 //                    startInput.setText("2009-08");
-                    startInput.setStyle(badStyle);
+                    startMonthInput.setStyle(badStyle);
                     return;
                 } else {
-                    startInput.setStyle(null);
+                    startMonthInput.setStyle(null);
                 }
             }
         } catch (Exception e) {
-            startInput.setStyle(badStyle);
+            startMonthInput.setStyle(badStyle);
             return;
         }
 
         try {
-            String end = endInput.getText();
+            String end = endMonthInput.getText();
             if (end == null || end.isEmpty()) {
                 endMonth = thisMonth;
-                endInput.setStyle(null);
+                endMonthInput.setStyle(null);
             } else {
                 endMonth = DateTools.parseMonth(end);
                 if (endMonth.getTime() > thisMonth.getTime()) {
                     endMonth = thisMonth;
                 }
-                endInput.setStyle(null);
+                endMonthInput.setStyle(null);
             }
         } catch (Exception e) {
-            endInput.setStyle(badStyle);
+            endMonthInput.setStyle(badStyle);
             return;
         }
 
         if (startMonth.getTime() > endMonth.getTime()) {
-            startInput.setStyle(badStyle);
-            endInput.setStyle(badStyle);
+            startMonthInput.setStyle(badStyle);
+            endMonthInput.setStyle(badStyle);
         }
 
     }
 
     private void initSnapOptions() {
         zoomBox.getItems().addAll(Arrays.asList("1.0", "1.5", "2", "1.6", "1.8", "0.8"));
-        zoomBox.valueProperty().addListener(new ChangeListener<String>() {
+        zoomBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
                     zoomScale = Float.valueOf(newValue);
                     if (zoomScale > 0) {
-                        zoomBox.getEditor().setStyle(null);
                         AppVaribles.setUserConfigValue(WeiboZoomKey, zoomScale + "");
                         if (zoomScale > 2) {
                             popInformation(AppVaribles.getMessage("TooLargerScale"));
                         }
+                        FxmlControl.setEditorNormal(zoomBox);
                     } else {
                         zoomScale = 1.0f;
-                        zoomBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(zoomBox);
                     }
 
                 } catch (Exception e) {
                     zoomScale = 1.0f;
-                    zoomBox.getEditor().setStyle(badStyle);
+                    FxmlControl.setEditorBadStyle(zoomBox);
                 }
             }
         });
         zoomBox.getSelectionModel().select(0);
 
-        widthBox.getItems().addAll(Arrays.asList("700", "900", "1000", "800", "1200", "1400", "1800", AppVaribles.getMessage("ScreenWidth")));
-        widthBox.valueProperty().addListener(new ChangeListener<String>() {
+        widthBox.getItems().addAll(Arrays.asList("700", "900", "1000", "800", "1200", "1400", "1800",
+                AppVaribles.getMessage("ScreenWidth")));
+        widthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
                     if (newValue.equals(AppVaribles.getMessage("ScreenWidth"))) {
                         webWidth = -1;
-                        widthBox.getEditor().setStyle(null);
+                        FxmlControl.setEditorNormal(widthBox);
                         return;
                     }
                     webWidth = Integer.valueOf(newValue);
                     if (webWidth > 0) {
-                        widthBox.getEditor().setStyle(null);
+                        FxmlControl.setEditorNormal(widthBox);
                     } else {
                         webWidth = 700;
-                        widthBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(widthBox);
                     }
 
                 } catch (Exception e) {
                     webWidth = 700;
-                    widthBox.getEditor().setStyle(badStyle);
+                    FxmlControl.setEditorBadStyle(widthBox);
                 }
             }
         });
@@ -345,7 +346,7 @@ public class WeiboSnapController extends BaseController {
         checkFormat();
 
         jpegBox.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
-        jpegBox.valueProperty().addListener(new ChangeListener<String>() {
+        jpegBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -362,7 +363,7 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
-        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
+        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
     }
 
@@ -424,7 +425,7 @@ public class WeiboSnapController extends BaseController {
 
         Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
         tips.setFont(new Font(16));
-        FxmlTools.setComments(sizeBox, tips);
+        FxmlControl.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -451,7 +452,7 @@ public class WeiboSnapController extends BaseController {
                 "C5	    16.2cm x 22.9cm",
                 "C6	    11.4cm x 16.2cm"
         ));
-        standardSizeBox.valueProperty().addListener(new ChangeListener<String>() {
+        standardSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -473,7 +474,7 @@ public class WeiboSnapController extends BaseController {
                 "240 dpi",
                 "320 dpi"
         ));
-        standardDpiBox.valueProperty().addListener(new ChangeListener<String>() {
+        standardDpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -496,44 +497,44 @@ public class WeiboSnapController extends BaseController {
         });
 
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
-        MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
+        MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
-                        MarginsBox.getEditor().setStyle(null);
+                        FxmlControl.setEditorNormal(MarginsBox);
                     } else {
                         marginSize = 0;
-                        MarginsBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(MarginsBox);
                     }
 
                 } catch (Exception e) {
                     marginSize = 0;
-                    MarginsBox.getEditor().setStyle(badStyle);
+                    FxmlControl.setEditorBadStyle(MarginsBox);
                 }
             }
         });
         MarginsBox.getSelectionModel().select(0);
 
         pdfScaleBox.getItems().addAll(Arrays.asList("60", "100", "75", "50", "125", "30"));
-        pdfScaleBox.valueProperty().addListener(new ChangeListener<String>() {
+        pdfScaleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
                     pdfScale = Integer.valueOf(newValue);
                     if (pdfScale >= 0) {
-                        pdfScaleBox.getEditor().setStyle(null);
+                        FxmlControl.setEditorNormal(pdfScaleBox);
                     } else {
                         pdfScale = 60;
-                        pdfScaleBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(pdfScaleBox);
                     }
 
                 } catch (Exception e) {
                     pdfScale = 60;
-                    pdfScaleBox.getEditor().setStyle(badStyle);
+                    FxmlControl.setEditorBadStyle(pdfScaleBox);
                 }
             }
         });
@@ -549,7 +550,7 @@ public class WeiboSnapController extends BaseController {
 
         tips = new Tooltip(getMessage("PdfMemComments"));
         tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(pdfMemBox, tips);
+        FxmlControl.quickTooltip(pdfMemBox, tips);
 
         checkPdfMem();
 
@@ -703,25 +704,6 @@ public class WeiboSnapController extends BaseController {
 
     private void initTargetOptions() {
 
-        pathInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    final File file = new File(newValue);
-                    if (!file.exists() || !file.isDirectory()) {
-                        pathInput.setStyle(badStyle);
-                        return;
-                    }
-                    pathInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(WeiboTargetPathKey, file.getAbsolutePath());
-                    targetPath = file;
-                } catch (Exception e) {
-                    pathInput.setStyle(badStyle);
-                }
-            }
-        });
-        pathInput.setText(AppVaribles.getUserConfigPath(WeiboTargetPathKey).getAbsolutePath());
-
         pdfCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
@@ -799,12 +781,12 @@ public class WeiboSnapController extends BaseController {
 
         Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
         tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(keepPageCheck, tips);
+        FxmlControl.quickTooltip(keepPageCheck, tips);
 
-        startButton.disableProperty().bind(Bindings.isEmpty(pathInput.textProperty())
-                .or(pathInput.styleProperty().isEqualTo(badStyle))
-                .or(startInput.styleProperty().isEqualTo(badStyle))
-                .or(endInput.styleProperty().isEqualTo(badStyle))
+        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                .or(startMonthInput.styleProperty().isEqualTo(badStyle))
+                .or(endMonthInput.styleProperty().isEqualTo(badStyle))
                 .or(zoomBox.getEditor().styleProperty().isEqualTo(badStyle))
                 .or(Bindings.isEmpty(addressInput.textProperty()))
                 .or(addressInput.styleProperty().isEqualTo(badStyle))
@@ -868,27 +850,6 @@ public class WeiboSnapController extends BaseController {
     }
 
     @FXML
-    protected void selectPath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(WeiboTargetPathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setUserConfigValue(targetPathKey, directory.getPath());
-
-            pathInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
     @Override
     public void startAction() {
         makeParameters();
@@ -914,7 +875,7 @@ public class WeiboSnapController extends BaseController {
 
     @FXML
     protected void callMiao(MouseEvent event) {
-        FxmlTools.miao3();
+        FxmlControl.miao3();
     }
 
     @FXML
@@ -933,11 +894,6 @@ public class WeiboSnapController extends BaseController {
         pngRadio.setSelected(true);
     }
 
-    @FXML
-    protected void mouseEnterPane(MouseEvent event) {
-        checkPdfMem();
-    }
-
     private WeiboSnapParameters makeParameters() {
         try {
             parameters = new WeiboSnapParameters();
@@ -950,6 +906,10 @@ public class WeiboSnapController extends BaseController {
                 endMonth = new Date();
             }
             parameters.setEndMonth(endMonth);
+            if (startPage <= 0) {
+                startPage = 1;
+            }
+            parameters.setStartPage(startPage);
             parameters.setZoomScale(zoomScale);
             parameters.setWebWidth(webWidth);
             parameters.setImagePerScreen(true);
@@ -992,21 +952,8 @@ public class WeiboSnapController extends BaseController {
                 popError(AppVaribles.getMessage("ParametersError"));
                 return;
             }
-            popInformation(getMessage("SnapStartComments"));
 
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.WeiboSnapRunFxml), AppVaribles.CurrentBundle);
-            Pane pane = fxmlLoader.load();
-            final WeiboSnapRunController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-
-            stage.initModality(Modality.NONE);
-            stage.initOwner(null);
-            stage.initStyle(StageStyle.DECORATED);
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(new Scene(pane));
-            stage.show();
-
+            final WeiboSnapRunController controller = (WeiboSnapRunController) openStage(CommonValues.WeiboSnapRunFxml);
             controller.start(parameters);
             if (closeWindowCheck.isSelected()) {
                 controller.setParent(null);
@@ -1014,16 +961,6 @@ public class WeiboSnapController extends BaseController {
             } else {
                 controller.setParent(this);
             }
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    logger.debug("setOnCloseRequest");
-                    if (!controller.stageClosing()) {
-                        logger.debug("setOnCloseRequest");
-                        event.consume();
-                    }
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1031,8 +968,8 @@ public class WeiboSnapController extends BaseController {
     }
 
     public void setDuration(String start, String end) {
-        startInput.setText(start);
-        endInput.setText(end);
+        startMonthInput.setText(start);
+        endMonthInput.setText(end);
     }
 
 }

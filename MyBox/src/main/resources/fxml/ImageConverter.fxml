@@ -62,17 +62,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%SourceFile" HBox.hgrow="NEVER" />
-                                                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                                                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308"  prefWidth="500.0" HBox.hgrow="ALWAYS">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </TextField>
-                                                <Button fx:id="sourceSelectButton" mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select...">
+                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile"   text="%Select...">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Button>
-                                                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#showImage" prefHeight="30.0" text="%View">
+                                                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#showImage"  text="%View">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
@@ -105,7 +105,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <VBox>
                                     <children>
-                                        <fx:include fx:id="targetSelection" source="TargetPrefixSelection.fxml" />
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%FilesPath">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
+                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"   onMouseEntered="#popTargetPath" text="%Select..." HBox.hgrow="NEVER" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets left="10.0" right="10.0" />
+                                            </VBox.margin>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                                <Label text="%FileNamePrefix" />
+                                                <TextField fx:id="targetPrefixInput" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                            <VBox.margin>
+                                                <Insets left="10.0" right="10.0" top="5.0" />
+                                            </VBox.margin>
+                                        </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%FileName">

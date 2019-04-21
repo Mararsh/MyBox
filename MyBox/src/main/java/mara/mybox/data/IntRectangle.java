@@ -9,7 +9,7 @@ package mara.mybox.data;
  */
 public class IntRectangle {
 
-    private int leftX, leftY, rightX, rightY, width, height;
+    private int smallX, smallY, bigX, bigY, width, height;
     private int maxX, maxY;
 
     public IntRectangle() {
@@ -20,41 +20,41 @@ public class IntRectangle {
     public IntRectangle(int x1, int y1, int x2, int y2) {
         maxX = Integer.MAX_VALUE;
         maxY = Integer.MAX_VALUE;
-        leftX = x1;
-        leftY = y1;
-        rightX = x2;
-        rightY = y2;
+        smallX = x1;
+        smallY = y1;
+        bigX = x2;
+        bigY = y2;
     }
 
     public IntRectangle(int maxX, int maxY, int x1, int y1, int x2, int y2) {
         this.maxX = maxX;
         this.maxY = maxY;
-        leftX = x1;
-        leftY = y1;
-        rightX = x2;
-        rightY = y2;
+        smallX = x1;
+        smallY = y1;
+        bigX = x2;
+        bigY = y2;
     }
 
     public IntRectangle cloneValues() {
-        return new IntRectangle(maxX, maxY, leftX, leftY, rightX, rightY);
+        return new IntRectangle(maxX, maxY, smallX, smallY, bigX, bigY);
     }
 
     public boolean isValid() {
-        return leftX >= 0 && leftY >= 0 && rightX > leftX && rightY > leftY
-                && rightX < maxX && rightY < maxY;
+        return bigX > smallX && bigY > smallY
+                && bigX < maxX && bigY < maxY;
     }
 
     public boolean isValid(int maxX, int maxY) {
-        return leftX >= 0 && leftY >= 0 && rightX > leftX && rightY > leftY
-                && rightX < maxX && rightY < maxY;
+        return bigX > smallX && bigY > smallY
+                && bigX < maxX && bigY < maxY;
     }
 
     public boolean include(int x, int y) {
-        return x >= leftX && y >= leftY && x <= rightX && y <= rightY;
+        return x >= smallX && y >= smallY && x <= bigX && y <= bigY;
     }
 
     public int getWidth() {
-        width = rightX - leftX + 1;
+        width = Math.abs(bigX - smallX + 1);
         return width;
     }
 
@@ -63,7 +63,7 @@ public class IntRectangle {
     }
 
     public int getHeight() {
-        height = rightY - leftY + 1;
+        height = Math.abs(bigY - smallY + 1);
         return height;
     }
 
@@ -71,36 +71,36 @@ public class IntRectangle {
         this.height = height;
     }
 
-    public int getLeftX() {
-        return leftX;
+    public int getSmallX() {
+        return smallX;
     }
 
-    public void setLeftX(int leftX) {
-        this.leftX = leftX;
+    public void setSmallX(int smallX) {
+        this.smallX = smallX;
     }
 
-    public int getLeftY() {
-        return leftY;
+    public int getSmallY() {
+        return smallY;
     }
 
-    public void setLeftY(int leftY) {
-        this.leftY = leftY;
+    public void setSmallY(int smallY) {
+        this.smallY = smallY;
     }
 
-    public int getRightX() {
-        return rightX;
+    public int getBigX() {
+        return bigX;
     }
 
-    public void setRightX(int rightX) {
-        this.rightX = rightX;
+    public void setBigX(int bigX) {
+        this.bigX = bigX;
     }
 
-    public int getRightY() {
-        return rightY;
+    public int getBigY() {
+        return bigY;
     }
 
-    public void setRightY(int rightY) {
-        this.rightY = rightY;
+    public void setBigY(int bigY) {
+        this.bigY = bigY;
     }
 
     public int getMaxX() {

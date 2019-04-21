@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
 import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,7 +10,6 @@ import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -31,7 +31,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initReferenceTab();
@@ -49,6 +49,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
+            tabPane.getSelectionModel().select(refTab);
 
             refSyncCheck.setSelected(values.isRefSync());
             refBar.setDisable(!values.isShowRef());
@@ -76,8 +77,8 @@ public class ImageManufactureRefController extends ImageManufactureController {
     }
 
     @Override
-    protected void checkReferenceImage() {
-        super.checkReferenceImage();
+    protected void checkReferencePane() {
+        super.checkReferencePane();
         refBar.setDisable(!values.isShowRef());
     }
 
@@ -86,15 +87,16 @@ public class ImageManufactureRefController extends ImageManufactureController {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if ( path.exists() )  fileChooser.setInitialDirectory(path);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
             }
             values.setRefFile(file);
-            AppVaribles.setUserConfigValue(LastPathKey, values.getSourceFile().getParent());
-            AppVaribles.setUserConfigValue(sourcePathKey, values.getSourceFile().getParent());
+            recordFileOpened(file);
 
             loadReferenceImage();
 

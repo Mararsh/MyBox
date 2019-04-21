@@ -140,7 +140,7 @@ public class ValueTools {
         });
     }
 
-    public static void sortArray(int[] numbers) {
+    public static int[] sortArray(int[] numbers) {
         List<Integer> list = new ArrayList<>();
         for (int i : numbers) {
             list.add(i);
@@ -151,6 +151,29 @@ public class ValueTools {
                 return p1 - p2;
             }
         });
+        int[] sorted = new int[numbers.length];
+        for (int i = 0; i < list.size(); i++) {
+            sorted[i] = list.get(i);
+        }
+        return sorted;
+    }
+
+    public static double[] sortArray(double[] numbers) {
+        List<Double> list = new ArrayList<>();
+        for (double i : numbers) {
+            list.add(i);
+        }
+        Collections.sort(list, new Comparator<Double>() {
+            @Override
+            public int compare(Double p1, Double p2) {
+                return (int) (p1 - p2);
+            }
+        });
+        double[] sorted = new double[numbers.length];
+        for (int i = 0; i < list.size(); i++) {
+            sorted[i] = list.get(i);
+        }
+        return sorted;
     }
 
     public static int mapInt(int value, IndexRange originalRange, IndexRange newlRange) {

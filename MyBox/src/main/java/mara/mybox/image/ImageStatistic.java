@@ -236,21 +236,21 @@ public class ImageStatistic {
 
             List<IntStatistic> statistic = new ArrayList<>();
             statistic.add(new IntStatistic("Grey", greySum, greyMean, (int) greyVariable, (int) greySkewness,
-                    greyMinimum, greyMaximum, IntStatistic.maximumIndex(greyHistogram)));
+                    greyMinimum, greyMaximum, IntStatistic.maximumIndex(greyHistogram), IntStatistic.medianIndex(greyHistogram)));
             statistic.add(new IntStatistic("Red", redSum, redMean, (int) redVariable, (int) redSkewness,
-                    redMinimum, redMaximum, IntStatistic.maximumIndex(redHistogram)));
+                    redMinimum, redMaximum, IntStatistic.maximumIndex(redHistogram), IntStatistic.medianIndex(redHistogram)));
             statistic.add(new IntStatistic("Green", greenSum, greenMean, (int) greenVariable, (int) greenSkewness,
-                    greenMinimum, greenMaximum, IntStatistic.maximumIndex(greenHistogram)));
+                    greenMinimum, greenMaximum, IntStatistic.maximumIndex(greenHistogram), IntStatistic.medianIndex(greenHistogram)));
             statistic.add(new IntStatistic("Blue", blueSum, blueMean, (int) blueVariable, (int) blueSkewness,
-                    blueMinimum, blueMaximum, IntStatistic.maximumIndex(blueHistogram)));
+                    blueMinimum, blueMaximum, IntStatistic.maximumIndex(blueHistogram), IntStatistic.medianIndex(blueHistogram)));
             statistic.add(new IntStatistic("Alpha", alphaSum, alphaMean, (int) alphaVariable, (int) alphaSkewness,
-                    alphaMinimum, alphaMaximum, IntStatistic.maximumIndex(alphaHistogram)));
+                    alphaMinimum, alphaMaximum, IntStatistic.maximumIndex(alphaHistogram), IntStatistic.medianIndex(alphaHistogram)));
             statistic.add(new IntStatistic("Hue", hueSum, hueMean, (int) hueVariable, (int) hueSkewness,
-                    hueMinimum, hueMaximum, IntStatistic.maximumIndex(hueHistogram)));
+                    hueMinimum, hueMaximum, IntStatistic.maximumIndex(hueHistogram), IntStatistic.medianIndex(hueHistogram)));
             statistic.add(new IntStatistic("Saturation", saturationSum, saturationMean, (int) saturationVariable, (int) saturationSkewness,
-                    saturationMinimum, saturationMaximum, IntStatistic.maximumIndex(saturationHistogram)));
+                    saturationMinimum, saturationMaximum, IntStatistic.maximumIndex(saturationHistogram), IntStatistic.medianIndex(saturationHistogram)));
             statistic.add(new IntStatistic("Brightness", brightnessSum, brightnessMean, (int) brightnessVariable, (int) brightnessSkewness,
-                    brightnessMinimum, brightnessMaximum, IntStatistic.maximumIndex(brightnessHistogram)));
+                    brightnessMinimum, brightnessMaximum, IntStatistic.maximumIndex(brightnessHistogram), IntStatistic.medianIndex(brightnessHistogram)));
 
             data.put("statistic", statistic);
 

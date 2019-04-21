@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BatchBaseController;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -16,16 +18,17 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileInformation;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -33,7 +36,7 @@ import mara.mybox.tools.TextTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TextEncodingBatchController extends FilesBatchController {
+public class TextEncodingBatchController extends BatchBaseController {
 
     protected boolean autoDetermine;
     protected FileEditInformation sourceInformation, targetInformation;
@@ -46,18 +49,26 @@ public class TextEncodingBatchController extends FilesBatchController {
     protected CheckBox targetBomCheck;
 
     public TextEncodingBatchController() {
+        baseTitle = AppVaribles.getMessage("TextEncodingBatch");
+
         sourcePathKey = "TextFilePathKey";
-        fileExtensionFilter = new ArrayList() {
-            {
-                add(new FileChooser.ExtensionFilter("*", "*.*"));
-                add(new FileChooser.ExtensionFilter("txt", "*.txt"));
-                add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-            }
-        };
+        fileExtensionFilter = CommonValues.TextExtensionFilter;
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initializeNext2() {
+        try {
+            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+                    .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                    .or(Bindings.isEmpty(filesTableView.getItems()))
+            );
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void initOptionsSection() {
 
         sourceInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
         targetInformation = FileEditInformation.newEditInformation(Edit_Type.Text);
@@ -72,7 +83,7 @@ public class TextEncodingBatchController extends FilesBatchController {
 
         List<String> setNames = TextTools.getCharsetNames();
         sourceBox.getItems().addAll(setNames);
-        sourceBox.valueProperty().addListener(new ChangeListener<String>() {
+        sourceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 sourceInformation.setCharset(Charset.forName(newValue));
@@ -83,7 +94,7 @@ public class TextEncodingBatchController extends FilesBatchController {
 
         if (targetBox != null) {
             targetBox.getItems().addAll(setNames);
-            targetBox.valueProperty().addListener(new ChangeListener<String>() {
+            targetBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     targetInformation.setCharset(Charset.forName(newValue));
@@ -105,7 +116,7 @@ public class TextEncodingBatchController extends FilesBatchController {
 
             Tooltip tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(targetBomCheck, tips);
+            FxmlControl.quickTooltip(targetBomCheck, tips);
         }
     }
 
@@ -122,34 +133,32 @@ public class TextEncodingBatchController extends FilesBatchController {
     }
 
     @Override
-    protected String handleCurrentFile(FileInformation d) {
-        File file = d.getFile();
-        currentParameters.sourceFile = file;
-        String filename = file.getName();
-        currentParameters.finalTargetName = currentParameters.targetPath
-                + File.separator + filename;
-        boolean skip = false;
-        if (targetExistType == TargetExistType.Rename) {
-            while (new File(currentParameters.finalTargetName).exists()) {
-                filename = FileTools.getFilePrefix(filename)
-                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(filename);
-                currentParameters.finalTargetName = currentParameters.targetPath
-                        + File.separator + filename;
-            }
-        } else if (targetExistType == TargetExistType.Skip) {
-            if (new File(currentParameters.finalTargetName).exists()) {
-                skip = true;
-            }
-        }
-        if (!skip) {
-            return handleFile(currentParameters.sourceFile, new File(currentParameters.finalTargetName));
-        } else {
-            return AppVaribles.getMessage("Skip");
-        }
+    public void makeMoreParameters() {
+        makeBatchParameters();
     }
 
     @Override
-    protected String handleCurrentDirectory(FileInformation d) {
+    public String handleCurrentFile(FileInformation d) {
+        if (currentParameters.sourceFile == null) {
+            return AppVaribles.getMessage("NotFound");
+        }
+        String sourceName = currentParameters.sourceFile.getName();
+        String targetName = currentParameters.targetPath + File.separator + sourceName;
+        if (targetExistType == TargetExistType.Rename) {
+            while (new File(targetName).exists()) {
+                sourceName = FileTools.getFilePrefix(sourceName)
+                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(sourceName);
+                targetName = currentParameters.targetPath + File.separator + sourceName;
+            }
+            return handleFile(currentParameters.sourceFile, new File(targetName));
+        } else if (targetExistType == TargetExistType.Skip) {
+            return AppVaribles.getMessage("Skip");
+        }
+        return "";
+    }
+
+    @Override
+    public String handleCurrentDirectory(FileInformation d) {
         File sourceDir = d.getFile();
         File targetDir = new File(currentParameters.targetPath + File.separator + sourceDir.getName());
         boolean skip = false;
@@ -183,7 +192,7 @@ public class TextEncodingBatchController extends FilesBatchController {
             files.addAll(Arrays.asList(sourcePath.listFiles()));
             String[] names = filesNameInput.getText().trim().split("\\s+");
             for (File srcFile : files) {
-                if (task.isCancelled()) {
+                if (task == null || task.isCancelled()) {
                     return;
                 }
                 File targetFile = new File(targetPath + File.separator + srcFile.getName());
@@ -205,7 +214,7 @@ public class TextEncodingBatchController extends FilesBatchController {
                     if (!AppVaribles.getMessage("Failed").equals(handleFile(srcFile, targetFile))) {
                         dirOk++;
                     }
-                } else if (subDirCheck.isSelected()) {
+                } else if (subdirCheck.isSelected()) {
                     targetFile.mkdirs();
                     handleDirectory(srcFile, targetFile);
                 }
@@ -227,6 +236,8 @@ public class TextEncodingBatchController extends FilesBatchController {
             targetInformation.setFile(targetFile);
             targetInformation.setWithBom(targetBomCheck.isSelected());
             if (TextTools.convertCharset(sourceInformation, targetInformation)) {
+                actualParameters.finalTargetName = targetFile.getAbsolutePath();
+                targetFiles.add(targetFile);
                 return AppVaribles.getMessage("Successful");
             } else {
                 return AppVaribles.getMessage("Failed");

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageSourcesController;
 import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -29,14 +30,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.data.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -68,13 +69,15 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     protected ToolBar targetBar;
 
     public ImagesCombinePdfController() {
+        baseTitle = AppVaribles.getMessage("ImagesCombinePdf");
+
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         AuthorKey = "AuthorKey";
         fileExtensionFilter = CommonValues.PdfExtensionFilter;
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initSourceSection();
             initOptionsSection();
@@ -85,11 +88,11 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
 
         Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
         tips.setFont(new Font(16));
-        FxmlTools.setComments(sizeBox, tips);
+        FxmlControl.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -116,7 +119,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                 "C5	    16.2cm x 22.9cm",
                 "C6	    11.4cm x 16.2cm"
         ));
-        standardSizeBox.valueProperty().addListener(new ChangeListener<String>() {
+        standardSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -138,7 +141,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                 "240 dpi",
                 "320 dpi"
         ));
-        standardDpiBox.valueProperty().addListener(new ChangeListener<String>() {
+        standardDpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -170,7 +173,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         checkFormat();
 
         jpegBox.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
-        jpegBox.valueProperty().addListener(new ChangeListener<String>() {
+        jpegBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -187,26 +190,26 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             }
         });
         checkThreshold();
-        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
+        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
-        MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
+        MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
-                        MarginsBox.getEditor().setStyle(null);
                         AppVaribles.setUserConfigValue(ImageCombineMarginsKey, newValue);
+                        FxmlControl.setEditorNormal(MarginsBox);
                     } else {
                         marginSize = 0;
-                        MarginsBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(MarginsBox);
                     }
 
                 } catch (Exception e) {
                     marginSize = 0;
-                    MarginsBox.getEditor().setStyle(badStyle);
+                    FxmlControl.setEditorBadStyle(MarginsBox);
                 }
             }
         });
@@ -221,7 +224,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                     "Courier",
                     "Times New Roman"
             ));
-            fontBox.valueProperty().addListener(new ChangeListener<String>() {
+            fontBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -231,7 +234,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
 
             tips = new Tooltip(getMessage("FontFileComments"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(fontBox, tips);
+            FxmlControl.setComments(fontBox, tips);
 
         }
 
@@ -255,6 +258,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         .or(thresholdInput.styleProperty().isEqualTo(badStyle))
         );
 
+        FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
     }
 
     private void checkPageSize() {
@@ -448,6 +452,12 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     @FXML
     @Override
     public void saveAction() {
+        File path = AppVaribles.getUserConfigPath(targetPathKey);
+        selectTargetFileFromPath(path);
+    }
+
+    @Override
+    public void selectTargetFileFromPath(File path) {
         if (sourceImages == null || sourceImages.isEmpty()) {
             return;
         }
@@ -467,7 +477,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         }
 
         final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
         if (path.exists()) {
             fileChooser.setInitialDirectory(path);
         }
@@ -478,12 +487,12 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         }
         AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
         task = new Task<Void>() {
-            private boolean fail;
+            private boolean ok;
 
             @Override
             protected Void call() throws Exception {
                 try {
-                    try (PDDocument document = new PDDocument(AppVaribles.PdfMemUsage)) {
+                    try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                         PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
@@ -494,7 +503,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         int count = 0;
                         int total = sourceImages.size();
                         for (ImageInformation source : sourceImages) {
-                            if (task.isCancelled()) {
+                            if (task == null || task.isCancelled()) {
                                 document.close();
                                 return null;
                             }
@@ -507,18 +516,24 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                             }
                         }
                         document.save(file);
-                        fail = false;
                     }
+                    ok = true;
 
                 } catch (Exception e) {
-                    fail = true;
                     logger.error(e.toString());
                 }
+
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            if (!fail && file.exists()) {
+                            if (ok && file.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (viewCheck.isSelected()) {
                                     FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
@@ -531,7 +546,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         }
                     }
                 });
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);

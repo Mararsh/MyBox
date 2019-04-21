@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesCombinePdfController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="730.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesCombinePdfController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -27,8 +27,8 @@
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
+                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" onMouseEntered="#popFileAdd" text="%Add" />
+                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" onMouseEntered="#popFileInsert" text="%Insert" />
                                         <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%Up" />
                                         <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%Down" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
@@ -36,14 +36,10 @@
                                         <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
                                         <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
                                         <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
-                                        <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Label">
-                                            <padding>
-                                                <Insets left="30.0" />
-                                            </padding>
-                                        </Label>
+                              <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
                                     </items>
                                 </ToolBar>
-                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
                                         <TableColumn fx:id="sizeColumn" prefWidth="150.0" text="%Pixels" />
@@ -52,6 +48,7 @@
                                         <TableColumn fx:id="indexColumn" prefWidth="100.0" text="%Index" />
                                     </columns>
                                 </TableView>
+                                  <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                     </content>
@@ -73,12 +70,24 @@
                                             </toggleGroup>
                                         </RadioButton>
                                         <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
-                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
+                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="300.0" />
+                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="200.0" />
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets top="5.0" />
+                                    </VBox.margin>
+                                </HBox>
+                                <HBox fx:id="sizeBox2" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label text="%PageSize" visible="false">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </Label>
                                         <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
                                         <Label text="%UnitPixels" />
-                                        <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
-                                        <TextField fx:id="customHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
+                                        <TextField fx:id="customWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
+                                        <TextField fx:id="customHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
                                     </children>
                                     <VBox.margin>
                                         <Insets top="5.0" />
@@ -122,34 +131,41 @@
                                                 <Insets />
                                             </HBox.margin>
                                         </Label>
-                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
+                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="100.0" />
                                         <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber">
                                             <HBox.margin>
-                                                <Insets left="10.0" />
+                                                <Insets left="40.0" />
                                             </HBox.margin>
                                         </CheckBox>
                                         <Label text="%Author">
                                             <padding>
                                                 <Insets left="10.0" />
                                             </padding>
+                                            <HBox.margin>
+                                                <Insets left="20.0" />
+                                            </HBox.margin>
                                         </Label>
-                                        <TextField fx:id="authorInput" prefWidth="100.0">
+                                        <TextField fx:id="authorInput" prefWidth="220.0">
                                             <HBox.margin>
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
                                         <Label text="%PageHeader">
                                             <HBox.margin>
-                                                <Insets left="10.0" />
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
-                                        <TextField fx:id="headerInput" prefHeight="30.0" prefWidth="200.0" />
+                                        <TextField fx:id="headerInput" prefWidth="350.0" />
                                         <Label text="%FontFile">
                                             <HBox.margin>
                                                 <Insets left="10.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="150.0" />
+                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="200.0" />
                                     </children>
                                 </HBox>
                             </children>
@@ -160,15 +176,13 @@
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" visible="false"
-                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="targetBar" HBox.hgrow="NEVER">
                             <items>
                                 <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
-                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popTargetFile" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
                         </ToolBar>
                     </children>

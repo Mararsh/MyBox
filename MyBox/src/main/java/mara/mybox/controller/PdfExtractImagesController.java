@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template sourceFile, choose Tools | Templates
- * and open the template in the editor.
- */
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.PdfBatchBaseController;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Iterator;
 import javafx.beans.binding.Bindings;
@@ -15,7 +12,7 @@ import javafx.scene.control.CheckBox;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.ValueTools;
 import org.apache.pdfbox.cos.COSName;
@@ -30,7 +27,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractImagesController extends PdfBaseController {
+public class PdfExtractImagesController extends PdfBatchBaseController {
 
     @FXML
     protected CheckBox appendPageNumber;
@@ -38,11 +35,12 @@ public class PdfExtractImagesController extends PdfBaseController {
     protected CheckBox appendIndex;
 
     public PdfExtractImagesController() {
-
+        baseTitle = AppVaribles.getMessage("PdfExtractImages");
+        browseTargets = true;
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
             appendPageNumber.setSelected(AppVaribles.getUserConfigBoolean("PdfAppendPageNumber"));
@@ -50,12 +48,12 @@ public class PdfExtractImagesController extends PdfBaseController {
 
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))
                             .or(Bindings.isEmpty(acumFromInput.textProperty()))
                             .or(sourceSelectionController.sourceFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.fromPageInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.toPageInput.styleProperty().isEqualTo(badStyle))
                             .or(acumFromInput.styleProperty().isEqualTo(badStyle))
@@ -74,19 +72,18 @@ public class PdfExtractImagesController extends PdfBaseController {
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
-            AppVaribles.setUserConfigValue("pei_appendPageNumber", appendPageNumber.isSelected());
-            AppVaribles.setUserConfigValue("pei_appendIndex", appendIndex.isSelected());
-            if (currentParameters == null) {
+            if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
-
+            AppVaribles.setUserConfigValue("pei_appendPageNumber", appendPageNumber.isSelected());
+            AppVaribles.setUserConfigValue("pei_appendIndex", appendIndex.isSelected());
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
             updateInterface("Started");
@@ -95,16 +92,16 @@ public class PdfExtractImagesController extends PdfBaseController {
                 @Override
                 protected Void call() {
                     try {
-                        for (; currentParameters.currentFileIndex < sourceFiles.size(); currentParameters.currentFileIndex++) {
+                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            File file = sourceFiles.get(currentParameters.currentFileIndex);
+                            File file = sourceFiles.get(currentParameters.currentIndex);
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
                                 currentParameters.targetPrefix = FileTools.getFilePrefix(file.getName());
-                                if (targetSelectionController.subdirCheck.isSelected()) {
+                                if (subdirCheck.isSelected()) {
                                     currentParameters.targetPath = currentParameters.targetRootPath + "/" + currentParameters.targetPrefix;
                                     File Path = new File(currentParameters.targetPath + "/");
                                     if (!Path.exists()) {
@@ -113,8 +110,9 @@ public class PdfExtractImagesController extends PdfBaseController {
                                 }
                             }
 
-                            handleCurrentFile();
-                            markFileHandled(currentParameters.currentFileIndex);
+                            int count = handleCurrentFile();
+                            markFileHandled(currentParameters.currentIndex,
+                                    MessageFormat.format(AppVaribles.getMessage("TotalExtractedImagesCount"), count));
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -133,10 +131,11 @@ public class PdfExtractImagesController extends PdfBaseController {
                     return null;
                 }
 
-                private void handleCurrentFile() {
+                private int handleCurrentFile() {
+                    int count = 0;
                     try {
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
-                                AppVaribles.PdfMemUsage)) {
+                                AppVaribles.pdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -157,11 +156,13 @@ public class PdfExtractImagesController extends PdfBaseController {
                                 int pages = currentParameters.currentPage - currentParameters.fromPage + 1;
                                 updateProgress(pages, total);
                                 updateMessage(pages + "/" + total);
+                                count++;
                             }
                         }
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
+                    return count;
                 }
 
                 protected void extractCurrentPage(PDPage pdPage) {
@@ -180,9 +181,10 @@ public class PdfExtractImagesController extends PdfBaseController {
                                     continue;
                                 }
                                 PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
-                                finalTargetName = makeFilename(pdxObject.getSuffix(), currentParameters.currentPage, index++);
-                                ImageFileWriters.writeImageFile(pdxObject.getImage(), pdxObject.getSuffix(), finalTargetName);
-//                                ImageIO.write(pdxObject.getImage(), pdxObject.getSuffix(), new File(currentParameters.finalTargetName));
+                                actualParameters.finalTargetName = makeFilename(pdxObject.getSuffix(), currentParameters.currentPage, index++);
+                                targetFiles.add(new File(actualParameters.finalTargetName));
+                                ImageFileWriters.writeImageFile(pdxObject.getImage(), pdxObject.getSuffix(), actualParameters.finalTargetName);
+//                                ImageIO.write(pdxObject.getImage(), pdxObject.getSuffix(), new File(currentParameters.actualParameters.finalTargetName));
                                 currentParameters.currentNameNumber++;
                                 if (isPreview) {
                                     break;

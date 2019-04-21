@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" onMouseEntered="#mouseEnterPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -28,21 +28,23 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%WeiboAddress" />
-                                        <TextField fx:id="addressInput" prefHeight="30.0" prefWidth="295.0" />
-                                        <Label text="%WeiboAddressComments" />
+                                        <TextField fx:id="addressInput" prefWidth="295.0" />
+                                        <Label fx:id="weiboTips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%StartMonth" />
-                                        <TextField fx:id="startInput" prefHeight="30.0" prefWidth="90.0" promptText="2016-05" />
+                                        <TextField fx:id="startMonthInput" prefWidth="90.0" promptText="2016-05" />
                                         <Label text="%EmptyForVeryStart" />
+                                        <Label text="%StartPage" />
+                                        <TextField fx:id="startPageInput" prefWidth="40.0" />
                                         <Label text="%EndMonth">
                                             <padding>
                                                 <Insets left="30.0" />
                                             </padding>
                                         </Label>
-                                        <TextField fx:id="endInput" prefHeight="30.0" prefWidth="90.0" promptText="2018-09" />
+                                        <TextField fx:id="endMonthInput" prefWidth="90.0" promptText="2018-09" />
                                         <Label text="%EmptyForNow" />
                                     </children>
                                 </HBox>
@@ -73,13 +75,13 @@
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label text="%WebPageScale" />
-                                        <ComboBox fx:id="zoomBox" editable="true" prefHeight="30.0" prefWidth="106.0" />
+                                        <ComboBox fx:id="zoomBox" editable="true" prefWidth="106.0" />
                                         <Label text="%WebWidth">
                                             <padding>
                                                 <Insets left="20.0" />
                                             </padding>
                                         </Label>
-                                        <ComboBox fx:id="widthBox" editable="true" prefHeight="30.0" prefWidth="145.0" />
+                                        <ComboBox fx:id="widthBox" editable="true" prefWidth="145.0" />
                                         <Label text="%SnapWidthComments" />
                                     </children>
                                 </HBox>
@@ -130,7 +132,7 @@
                                             </toggleGroup>
                                         </RadioButton>
                                         <RadioButton mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                        <ComboBox fx:id="standardSizeBox" disable="true" prefHeight="30.0" prefWidth="180.0" />
+                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
                                         <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
                                         <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
                                         <Label text="%UnitPixels" />
@@ -151,13 +153,13 @@
                                                 <Insets left="10.0" />
                                             </padding>
                                         </Label>
-                                        <TextField fx:id="authorInput" prefHeight="30.0" prefWidth="200.0" promptText="Mara">
+                                        <TextField fx:id="authorInput" prefWidth="200.0" promptText="Mara">
                                             <HBox.margin>
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
                                         <Label text="%DefaultDisplayScale" />
-                                        <ComboBox fx:id="pdfScaleBox" editable="true" prefHeight="30.0" prefWidth="91.0" />
+                                        <ComboBox fx:id="pdfScaleBox" editable="true" prefWidth="91.0" />
                                         <Label text="\%" />
                                     </children>
                                 </HBox>
@@ -185,8 +187,8 @@
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <Label text="%FilesPath" />
-                                        <TextField fx:id="pathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button mnemonicParsing="false" onAction="#selectPath" text="%Select..." />
+                                        <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" text="%Select..." />
                                         <Label text="%CategoryFiles" />
                                         <RadioButton fx:id="monthsPathsRadio" mnemonicParsing="false" selected="true" text="%InMonthsPaths">
                                             <toggleGroup>
@@ -211,8 +213,7 @@
                 </TitledPane>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
-                        <Button fx:id="startButton" mnemonicParsing="false" onAction="#startAction" text="%Start"
-                                styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
                         <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
                             <HBox.margin>
                                 <Insets />

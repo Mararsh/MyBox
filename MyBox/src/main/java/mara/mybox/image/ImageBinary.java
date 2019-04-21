@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javax.imageio.ImageIO;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.file.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -35,7 +35,6 @@ public class ImageBinary extends PixelsOperation {
         this.scope = scope;
         this.operationType = operationType;
         intPara1 = -1;
-        ;
     }
 
     public ImageBinary(BufferedImage image, int threshold) {
@@ -50,6 +49,37 @@ public class ImageBinary extends PixelsOperation {
         this.scope = scope;
         this.operationType = OperationType.BlackOrWhite;
         intPara1 = threshold;
+    }
+
+    public ImageBinary(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.BlackOrWhite;
+        intPara1 = -1;
+        grayed = false;
+    }
+
+    public ImageBinary(Image image, ImageScope scope) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.scope = scope;
+        this.operationType = OperationType.BlackOrWhite;
+        intPara1 = -1;
+        grayed = false;
+    }
+
+    public ImageBinary(Image image, int threshold) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.scope = null;
+        this.operationType = OperationType.BlackOrWhite;
+        intPara1 = threshold;
+        grayed = false;
+    }
+
+    public ImageBinary(Image image, ImageScope scope, int threshold) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.BlackOrWhite;
+        this.scope = scope;
+        intPara1 = threshold;
+        grayed = false;
     }
 
     @Override
@@ -73,7 +103,7 @@ public class ImageBinary extends PixelsOperation {
                 intPara1 = calculateThreshold(image);
             }
         }
-        return operationImage();
+        return operateImage();
     }
 
     @Override
@@ -208,7 +238,7 @@ public class ImageBinary extends PixelsOperation {
 
     public static int calculateThreshold(File file) {
         try {
-            BufferedImage bufferImage = ImageIO.read(file);
+            BufferedImage bufferImage = ImageFileReaders.readImage(file);
             return OTSU(ImageGray.byteGray(bufferImage));
         } catch (Exception e) {
             logger.error(e.toString());

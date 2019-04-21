@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
+import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
@@ -11,6 +13,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -19,16 +22,18 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
+import mara.mybox.db.TableVisitHistory;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
 
 /**
@@ -39,28 +44,35 @@ import static mara.mybox.value.AppVaribles.getUserConfigValue;
  */
 public class SettingsController extends BaseController {
 
+    private int maxImageHis, recentFileNumber;
+
     @FXML
-    private ToggleGroup langGroup, alphaGroup, pdfMemGroup, hisGroup;
+    private ToggleGroup langGroup, pdfMemGroup;
     @FXML
-    private RadioButton chineseRadio, englishRadio, alphaBlackRadio, alphaWhiteRadio;
+    private RadioButton chineseRadio, englishRadio;
     @FXML
-    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio, maxHisRadio, noHisRadio;
+    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    private CheckBox showCommentsCheck, stopAlarmCheck;
+    private CheckBox showCommentsCheck, stopAlarmCheck, newWindowCheck, alphaWhiteCheck, restoreStagesSizeCheck,
+            anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, removeAlphaCopyCheck;
     @FXML
-    private TextField hisMaxInput, tempDirInput;
+    private TextField imageMaxHisInput, tempDirInput, fileRecentInput;
     @FXML
-    protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox;
-    @FXML
-    protected Button hisClearButton, hisOkButton;
+    protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, strokeWidthBox, anchorWidthBox;
     @FXML
     protected HBox pdfMemBox, imageHisBox;
+    @FXML
+    protected ColorPicker strokeColorPicker, anchorColorPicker;
+    @FXML
+    private Button setImageHisButton, setFileRecentButton, closeButton;
 
     public SettingsController() {
+        baseTitle = AppVaribles.getMessage("Settings");
+
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
 
             langGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -71,6 +83,100 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            fileRecentInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkRecentFile();
+                }
+            });
+
+            strokeWidthBox.getItems().addAll(Arrays.asList(
+                    "1", "3", "5", "7", "9"));
+            strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                AppVaribles.setUserConfigInt("StrokeWidth", v);
+                                FxmlControl.setEditorNormal(strokeWidthBox);
+                                if (parentController != null) {
+                                    parentController.setMaskStroke();
+                                }
+                            } else {
+                                FxmlControl.setEditorBadStyle(strokeWidthBox);
+                            }
+                        } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(strokeWidthBox);
+                        }
+                    }
+                }
+            });
+            strokeWidthBox.getSelectionModel().select(AppVaribles.getUserConfigValue("StrokeWidth", "3"));
+
+            strokeColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+                @Override
+                public void changed(ObservableValue<? extends Color> observable,
+                        Color oldValue, Color newValue) {
+                    AppVaribles.setUserConfigValue("StrokeColor", newValue.toString());
+                    if (parentController != null) {
+                        parentController.setMaskStroke();
+                    }
+                }
+            });
+            strokeColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("StrokeColor", "#FF0000")));
+
+            anchorColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+                @Override
+                public void changed(ObservableValue<? extends Color> observable,
+                        Color oldValue, Color newValue) {
+                    AppVaribles.setUserConfigValue("AnchorColor", newValue.toString());
+                    if (parentController != null) {
+                        parentController.setMaskStroke();
+                    }
+                }
+            });
+            anchorColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("AnchorColor", "#0000FF")));
+
+            anchorWidthBox.getItems().addAll(Arrays.asList(
+                    "10", "15", "20", "25", "30", "40", "50"));
+            anchorWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        try {
+                            int v = Integer.valueOf(newValue);
+                            if (v > 0) {
+                                AppVaribles.setUserConfigInt("AnchorWidth", v);
+                                FxmlControl.setEditorNormal(anchorWidthBox);
+                                if (parentController != null) {
+                                    parentController.setMaskStroke();
+                                }
+                            } else {
+                                FxmlControl.setEditorBadStyle(anchorWidthBox);
+                            }
+                        } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(anchorWidthBox);
+                        }
+                    }
+                }
+            });
+            anchorWidthBox.getSelectionModel().select(AppVaribles.getUserConfigValue("AnchorWidth", "10"));
+
+            anchorSolidCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVaribles.setUserConfigValue("AnchorSolid", new_toggle);
+                    if (parentController != null) {
+                        parentController.setMaskStroke();
+                    }
+                }
+            });
+            anchorSolidCheck.setSelected(AppVaribles.getUserConfigBoolean("AnchorSolid", true));
+
             fontSizeBox.getItems().addAll(Arrays.asList(
                     "9", "10", "12", "14", "15", "16", "17", "18", "19", "20", "21", "22"));
             fontSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -79,13 +185,19 @@ public class SettingsController extends BaseController {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
                             int v = Integer.valueOf(newValue);
-                            setPaneFontSize(v);
+                            if (v > 0) {
+                                setSceneFontSize(v);
+                                FxmlControl.setEditorNormal(fontSizeBox);
+                            } else {
+                                FxmlControl.setEditorBadStyle(fontSizeBox);
+                            }
                         } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(fontSizeBox);
                         }
                     }
                 }
             });
-            fontSizeBox.getSelectionModel().select(AppVaribles.getPaneFontSize() + "");
+            fontSizeBox.getSelectionModel().select(AppVaribles.sceneFontSize + "");
 
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -97,23 +209,67 @@ public class SettingsController extends BaseController {
             showCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setUserConfigValue("ShowComments", showCommentsCheck.isSelected());
+                    AppVaribles.setShowComments(showCommentsCheck.isSelected());
+                }
+            });
+
+            newWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    AppVaribles.setOpenStageInNewWindow(newWindowCheck.isSelected());
+                }
+            });
+
+            restoreStagesSizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    AppVaribles.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
                 }
             });
 
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(pdfMemBox, tips);
+            FxmlControl.quickTooltip(pdfMemBox, tips);
 
             tips = new Tooltip(getMessage("ImageHisComments"));
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(imageHisBox, tips);
+            FxmlControl.quickTooltip(imageHisBox, tips);
 
-            hisMaxInput.textProperty().addListener(new ChangeListener<String>() {
+            rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue("RulerX", rulerXCheck.isSelected());
+                    if (parentController != null) {
+                        parentController.drawMaskRulerX();
+                    }
+                }
+            });
+            rulerXCheck.setSelected(AppVaribles.getUserConfigBoolean("RulerX", true));
+
+            rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue("RulerY", rulerYCheck.isSelected());
+                    if (parentController != null) {
+                        parentController.drawMaskRulerY();
+                    }
+                }
+            });
+            rulerYCheck.setSelected(AppVaribles.getUserConfigBoolean("RulerY", true));
+
+            coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue("ImagePopCooridnateKey", coordinateCheck.isSelected());
+                }
+            });
+            coordinateCheck.setSelected(AppVaribles.getUserConfigBoolean("ImagePopCooridnateKey", false));
+
+            imageMaxHisInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
-                    checkMaxHis();
+                    checkImageMaxHis();
                 }
             });
 
@@ -160,16 +316,37 @@ public class SettingsController extends BaseController {
                             int v = Integer.valueOf(newValue);
                             if (v > 0) {
                                 AppVaribles.setUserConfigInt("MaxImageSampleWidth", v);
-                                imageWidthBox.getEditor().setStyle(null);
+                                FxmlControl.setEditorNormal(imageWidthBox);
                             } else {
-                                imageWidthBox.getEditor().setStyle(badStyle);
+                                FxmlControl.setEditorBadStyle(imageWidthBox);
                             }
                         } catch (Exception e) {
-                            imageWidthBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(imageWidthBox);
                         }
                     }
                 }
             });
+            imageWidthBox.getSelectionModel().select(AppVaribles.getUserConfigValue("MaxImageSampleWidth", "4096"));
+
+            alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
+                }
+            });
+            alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
+
+            removeAlphaCopyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean old_toggle, Boolean new_toggle) {
+                    AppVaribles.setUserConfigValue("RemoveAlphaCopy", new_toggle);
+                }
+            });
+            removeAlphaCopyCheck.setSelected(AppVaribles.getUserConfigBoolean("RemoveAlphaCopy", true));
+
+            FxmlControl.quickTooltip(closeButton, new Tooltip("ENTER"));
 
             initValues();
 
@@ -180,29 +357,15 @@ public class SettingsController extends BaseController {
 
     protected void initValues() {
         try {
-//            logger.debug("initValues");
-
             stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
+            showCommentsCheck.setSelected(AppVaribles.showComments);
+            newWindowCheck.setSelected(AppVaribles.openStageInNewWindow);
 
-            showCommentsCheck.setSelected(AppVaribles.isShowComments());
+            maxImageHis = AppVaribles.getUserConfigInt("MaxImageHistories", 20);
+            imageMaxHisInput.setText(maxImageHis + "");
 
-            hisMaxInput.setText(AppVaribles.getUserConfigInt("MaxImageHistories", 20) + "");
-            if (AppVaribles.getUserConfigBoolean("ImageHis")) {
-                hisMaxInput.setDisable(false);
-                hisOkButton.setDisable(false);
-                hisClearButton.setDisable(false);
-                checkMaxHis();
-
-                maxHisRadio.setSelected(true);
-
-            } else {
-                hisMaxInput.setStyle(null);
-                hisMaxInput.setDisable(true);
-                hisOkButton.setDisable(true);
-                hisClearButton.setDisable(true);
-
-                noHisRadio.setSelected(true);
-            }
+            recentFileNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 20);
+            fileRecentInput.setText(recentFileNumber + "");
 
             String style = AppVaribles.getUserConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
             switch (style) {
@@ -240,7 +403,6 @@ public class SettingsController extends BaseController {
             imageWidthBox.getSelectionModel().select(AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
 
             checkLanguage();
-            checkAlpha();
             checkPdfMem();
 
         } catch (Exception e) {
@@ -249,18 +411,10 @@ public class SettingsController extends BaseController {
     }
 
     protected void checkLanguage() {
-        if (AppVaribles.CurrentBundle == CommonValues.BundleZhCN) {
+        if (AppVaribles.currentBundle == CommonValues.BundleZhCN) {
             chineseRadio.setSelected(true);
         } else {
             englishRadio.setSelected(true);
-        }
-    }
-
-    protected void checkAlpha() {
-        if (AppVaribles.isAlphaAsBlack()) {
-            alphaBlackRadio.setSelected(true);
-        } else {
-            alphaWhiteRadio.setSelected(true);
         }
     }
 
@@ -312,8 +466,8 @@ public class SettingsController extends BaseController {
     public void setStyle(String style) {
         try {
             AppVaribles.setUserConfigValue("InterfaceStyle", style);
-            if (getParentController() != null) {
-                getParentController().setInterfaceStyle(style);
+            if (parentController != null) {
+                parentController.setInterfaceStyle(style);
             }
             setInterfaceStyle(style);
         } catch (Exception e) {
@@ -321,57 +475,55 @@ public class SettingsController extends BaseController {
         }
     }
 
-    private void checkMaxHis() {
+    private void checkImageMaxHis() {
         try {
-            int v = Integer.valueOf(hisMaxInput.getText());
-            if (v > 0) {
-                hisMaxInput.setStyle(null);
+            int v = Integer.valueOf(imageMaxHisInput.getText());
+            if (v >= 0) {
+                maxImageHis = v;
+                imageMaxHisInput.setStyle(null);
+                setImageHisButton.setDisable(false);
             } else {
-                hisMaxInput.setStyle(badStyle);
+                imageMaxHisInput.setStyle(badStyle);
+                setImageHisButton.setDisable(true);
             }
         } catch (Exception e) {
-            hisMaxInput.setStyle(badStyle);
+            imageMaxHisInput.setStyle(badStyle);
+            setImageHisButton.setDisable(true);
+        }
+    }
+
+    private void checkRecentFile() {
+        try {
+            int v = Integer.valueOf(fileRecentInput.getText());
+            if (v >= 0) {
+                recentFileNumber = v;
+                fileRecentInput.setStyle(null);
+                setFileRecentButton.setDisable(false);
+            } else {
+                fileRecentInput.setStyle(badStyle);
+                setFileRecentButton.setDisable(true);
+            }
+        } catch (Exception e) {
+            fileRecentInput.setStyle(badStyle);
+            setFileRecentButton.setDisable(true);
         }
     }
 
     @FXML
     protected void setChinese(ActionEvent event) {
         AppVaribles.setLanguage("zh");
-        reload();
+        refresh();
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
         AppVaribles.setLanguage("en");
-        reload();
-    }
-
-    private void reload() {
-        BaseController c = reloadStage(getMyFxml(), AppVaribles.getMessage("AppTitle"));
-        if (parentController != null) {
-            c.setParentController(parentController);
-            if (parentFxml != null) {
-                c.setParentFxml(parentFxml);
-                BaseController p;
-                if (parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-                    p = parentController.reloadStage(CommonValues.ImageManufactureFileFxml, parentController.getMyStage().getTitle());
-                } else {
-                    p = parentController.reloadStage(parentFxml, parentController.getMyStage().getTitle());
-                }
-                c.setParentController(p);
-                c.setParentFxml(p.getMyFxml());
-            }
-        }
+        refresh();
     }
 
     @FXML
     protected void replaceWhiteAction(ActionEvent event) {
-        AppVaribles.setUserConfigValue("AlphaAsBlack", false);
-    }
-
-    @FXML
-    protected void replaceBlackAction(ActionEvent event) {
-        AppVaribles.setUserConfigValue("AlphaAsBlack", true);
+        AppVaribles.setUserConfigValue("AlphaAsWhite", alphaWhiteCheck.isSelected());
     }
 
     @FXML
@@ -395,7 +547,7 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void clearHistories(ActionEvent event) {
+    protected void clearImageHistories(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
         alert.setContentText(AppVaribles.getMessage("SureClear"));
@@ -415,51 +567,59 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void maxHisAction(ActionEvent event) {
-        AppVaribles.setUserConfigValue("ImageHis", true);
-        hisMaxInput.setDisable(false);
-        hisOkButton.setDisable(false);
-        hisClearButton.setDisable(false);
-        checkMaxHis();
-        if (parentController != null && parentFxml != null
-                && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-            ImageManufactureController p = (ImageManufactureController) parentController;
-            p.updateHisBox();
-        }
-    }
-
-    @FXML
-    protected void setHisAction(ActionEvent event) {
+    protected void setImageHisAction(ActionEvent event) {
         try {
-            int v = Integer.valueOf(hisMaxInput.getText());
-            if (v > 0) {
-                hisMaxInput.setStyle(null);
-                AppVaribles.setUserConfigInt("MaxImageHistories", v);
-                if (parentController != null && parentFxml != null
-                        && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
-                    ImageManufactureController p = (ImageManufactureController) parentController;
-                    p.updateHisBox();
-                }
-            } else {
-                hisMaxInput.setStyle(badStyle);
+            AppVaribles.setUserConfigInt("MaxImageHistories", maxImageHis);
+            if (parentController != null && parentFxml != null
+                    && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
+                ImageManufactureController p = (ImageManufactureController) parentController;
+                p.updateHisBox();
             }
+            popInformation(AppVaribles.getMessage("Successful"));
         } catch (Exception e) {
-            hisMaxInput.setStyle(badStyle);
+
         }
     }
 
     @FXML
-    protected void noHisAction(ActionEvent event) {
-        AppVaribles.setUserConfigValue("ImageHis", false);
-        hisMaxInput.setStyle(null);
-        hisMaxInput.setDisable(true);
-        hisOkButton.setDisable(true);
-        hisClearButton.setDisable(true);
+    protected void noImageHistories(ActionEvent event) {
+        imageMaxHisInput.setText("0");
+        AppVaribles.setUserConfigInt("MaxImageHistories", 0);
         if (parentController != null && parentFxml != null
                 && parentFxml.contains("ImageManufacture") && !parentFxml.contains("ImageManufactureBatch")) {
             ImageManufactureController p = (ImageManufactureController) parentController;
             p.updateHisBox();
         }
+        popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    @FXML
+    protected void setFileRecentAction(ActionEvent event) {
+        AppVaribles.setUserConfigInt("FileRecentNumber", recentFileNumber);
+        AppVaribles.fileRecentNumber = recentFileNumber;
+        popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    @FXML
+    protected void clearFileHistories(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getBaseTitle());
+        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() != ButtonType.OK) {
+            return;
+        }
+        new TableVisitHistory().clear();
+        popInformation(AppVaribles.getMessage("Successful"));
+    }
+
+    @FXML
+    protected void noFileHistories(ActionEvent event) {
+        fileRecentInput.setText("0");
+        AppVaribles.setUserConfigInt("FileRecentNumber", 0);
+        AppVaribles.fileRecentNumber = 0;
+        popInformation(AppVaribles.getMessage("Successful"));
     }
 
     @FXML
@@ -489,20 +649,9 @@ public class SettingsController extends BaseController {
 
     @FXML
     @Override
-    protected void clearSettings(ActionEvent event) {
+    public void clearSettings(ActionEvent event) {
         super.clearSettings(event);
-        BaseController c = getParentController();
-        String f = c.getMyFxml();
-        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
-            f = CommonValues.ImageManufactureFileFxml;
-        }
-        c.reloadStage(f, c.getMyStage().getTitle());
-        f = getMyFxml();
-        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
-            f = CommonValues.ImageManufactureFileFxml;
-        }
-        reloadStage(f, getMyStage().getTitle());
-//        popInformation(AppVaribles.getMessage("Successful"));
+        refresh();
     }
 
     @FXML

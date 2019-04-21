@@ -48,7 +48,7 @@ public class TableImageHistory extends DerbyBase {
             return records;
         }
         int max = AppVaribles.getUserConfigInt("MaxImageHistories", Default_Max_Histories);
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_history WHERE image_location='" + image + "' ORDER BY operation_time DESC";
             ResultSet results = statement.executeQuery(sql);
@@ -86,7 +86,7 @@ public class TableImageHistory extends DerbyBase {
                 || his_location == null || his_location.trim().isEmpty()) {
             return records;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "INSERT INTO image_history(image_location, history_location , update_type, operation_time) VALUES('"
                     + image + "', '" + his_location + "', " + update_type + ", '"
@@ -100,7 +100,7 @@ public class TableImageHistory extends DerbyBase {
     }
 
     public static boolean clearImage(String image) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_history WHERE image_location='" + image + "'";
             statement.executeUpdate(sql);
@@ -112,7 +112,7 @@ public class TableImageHistory extends DerbyBase {
     }
 
     public static boolean clearHistory(String image, String his) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM image_history WHERE image_location='" + image + "' AND "
                     + "history_location='" + his + "'";
@@ -126,7 +126,7 @@ public class TableImageHistory extends DerbyBase {
 
     @Override
     public boolean clear() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT history_location FROM image_history";
             ResultSet results = statement.executeQuery(sql);

@@ -55,18 +55,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <children>
                 <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar prefHeight="50.0" HBox.hgrow="ALWAYS">
+                        <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectImages" text="%Select..." />
-                                <Label fx:id="tipsLabel" text="%Tips"  styleClass="darkRed-label" stylesheets="@../styles/MyBox.css"/>
+                                <Button fx:id="selectButton" mnemonicParsing="false" onAction="#selectImages" onMouseEntered="#popSourcePath" text="%Select..." />
+                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
                             </items>
                         </ToolBar>
-                        <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" HBox.hgrow="NEVER">
+                        <ToolBar fx:id="setBar" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
                             <items>
-                                <Label text="%FilesNumber" />
-                                <ComboBox fx:id="filesBox" prefWidth="80.0" />
-                                <Label text="%ColumnsNumber" />
-                                <ComboBox fx:id="colsnumBox" prefWidth="80.0" />
+                                <Label text="%Files" />
+                                <ComboBox fx:id="filesBox" editable="true" prefWidth="80.0" />
+                                <Label fx:id="totalLabel">
+                                    <padding>
+                                        <Insets right="20.0" />
+                                    </padding>
+                                </Label>
+                                <Label text="%Columns" />
+                                <ComboBox fx:id="colsnumBox" editable="true" prefWidth="120.0" />
+                        <Button mnemonicParsing="false" onAction="#thumbsListAction" text="%ThumbnailsList" />
+                        <Button mnemonicParsing="false" onAction="#filesListAction" text="%FilesList" />
+                                <Label text="%LoadWidth" />
+                                <ComboBox fx:id="loadWidthBox" editable="true" prefWidth="140.0" />
                             </items>
                         </ToolBar>
                     </children>
@@ -80,18 +89,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
-                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
-                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
-                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
-                                <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
-                                <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
-                                <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                                <HBox fx:id="opPane" alignment="CENTER" spacing="5.0">
+                                    <children>
+                                        <HBox fx:id="opBox3" alignment="CENTER" spacing="5.0">
+                                            <children>
+                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%LoadedSize" />
+                                                <Button fx:id="paneSizeButton" defaultButton="true" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                                <Button fx:id="mlButton" mnemonicParsing="false" onAction="#moveLeft" text="%Right" />
+                                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#moveUp" text="%Up" />
+                                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#moveDown" text="%Down" />
+                                                <Button fx:id="mrButton" mnemonicParsing="false" onAction="#moveRight" text="%Left" />
+                                            </children>
+                                        </HBox>
+                              <HBox fx:id="rotateBox" alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                              <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
+                                              <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
+                                              <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
+                                              <CheckBox fx:id="saveRotationCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%SaveRotation" />
+                                 </children>
+                              </HBox>
+                                    </children>
+                                </HBox>
                             </items>
                         </ToolBar>
                     </children>
@@ -103,7 +124,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </ScrollPane>
                 <HBox fx:id="navBox">
                     <children>
-                        <ToolBar fx:id="fileOpBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <ToolBar fx:id="fileOpBar" prefWidth="200.0" HBox.hgrow="ALWAYS">
                             <items>
                                 <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
                                 <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
@@ -119,13 +140,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <Insets left="20.0" />
                                     </padding>
                                 </Label>
-                                <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="sortGroup" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
-                                <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
+                        <ComboBox fx:id="sortBox" prefWidth="200.0" />
                                 <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousBatch" />
                                 <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextBacth" />
                             </items>

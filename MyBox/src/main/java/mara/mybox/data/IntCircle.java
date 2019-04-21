@@ -27,7 +27,7 @@ public class IntCircle {
     }
 
     public boolean isValid() {
-        return centerX >= 0 && centerY >= 0 && radius > 0;
+        return radius > 0;
     }
 
     public boolean include(int x, int y) {

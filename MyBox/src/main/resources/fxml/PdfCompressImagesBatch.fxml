@@ -46,121 +46,106 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfCompressImagesBatchController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfCompressImagesBatchController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
-                            <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                            <items>
-                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" text="%Add" />
-                                                <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" text="%Insert" />
-                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openAction" text="%Open" />
-                                                <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
-                                                <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
-                                                <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                                            </items>
-                                        </ToolBar>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                            <children>
+                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF" VBox.vgrow="ALWAYS">
+                                    <VBox.margin>
+                                        <Insets />
+                                    </VBox.margin>
+                                    <content>
+                                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                                             <content>
-                                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                        <TableColumn fx:id="fileColumn" prefWidth="600.0" text="%File" />
-                                                        <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
-                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                                                    </columns>
-                                                </TableView>
+                                                <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                                             </content>
                                         </ScrollPane>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </TitledPane>
-                        <TitledPane text="%Options" VBox.vgrow="NEVER">
-                            <content>
-                                <VBox spacing="10.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    </content>
+                                </TitledPane>
+                                <TitledPane maxWidth="1.7976931348623157E308" text="%Options" VBox.vgrow="NEVER">
+                                    <content>
+                                        <VBox spacing="10.0">
                                             <children>
-                                                <Label text="%CompressionType" />
-                                                <RadioButton mnemonicParsing="false" selected="true" text="%JpegQuailty">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="formatGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <ComboBox fx:id="jpegBox" editable="true" prefWidth="80.0" />
-                                                <Label text="\%">
-                                                    <padding>
-                                                        <Insets right="10.0" />
-                                                    </padding>
-                                                </Label>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%CompressionType" />
+                                                        <RadioButton mnemonicParsing="false" selected="true" text="%JpegQuailty">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="formatGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="80.0" />
+                                                        <Label text="\%">
+                                                            <padding>
+                                                                <Insets right="10.0" />
+                                                            </padding>
+                                                        </Label>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%CompressionType" visible="false" />
+                                                        <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
+                                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
+                                                        <Label text="%EmptyForDefault" />
+                                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%Author" />
+                                                        <TextField fx:id="authorInput" prefWidth="260.0">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </TextField>
+                                                    </children>
+                                                </HBox>
                                             </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                        </VBox>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                                    <content>
+                                        <VBox spacing="10.0">
                                             <children>
-                                                <Label text="%CompressionType" visible="false" />
-                                                <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
-                                                <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
-                                                <Label text="%EmptyForDefault" />
-                                                <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%FilesPath" />
+                                                        <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" text="%Select..." />
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%ExistedFiles" />
+                                                        <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="targetExistGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
+                                                        <Label text="%Suffix" />
+                                                        <TextField fx:id="targetSuffixInput" prefWidth="70.0" text="-m" />
+                                                        <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                                    </children>
+                                                </HBox>
                                             </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%Author" />
-                                                <TextField fx:id="authorInput" prefWidth="100.0">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </TextField>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </content>
-                        </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
-                            <content>
-                                <VBox spacing="10.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FilesPath" />
-                                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath" text="%Select..." />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%ExistedFiles" />
-                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="targetExistGroup" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
-                                                <Label text="%Suffix" />
-                                                <TextField fx:id="targetSuffixInput" prefHeight="30.0" prefWidth="70.0" text="-m" />
-                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </content>
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
-                        </TitledPane>
+                                        </VBox>
+                                    </content>
+                                    <VBox.margin>
+                                        <Insets top="5.0" />
+                                    </VBox.margin>
+                                </TitledPane>
+                            </children>
+                        </VBox>
                     </children>
                 </VBox>
                 <fx:include fx:id="operationBar" source="OperationBatch.fxml" />

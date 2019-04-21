@@ -1,18 +1,17 @@
 package mara.mybox.controller;
 
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.controller.base.PdfBatchBaseController;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -21,13 +20,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.stage.FileChooser;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
 import mara.mybox.image.ImageBinary;
 import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.cos.COSName;
@@ -47,11 +45,10 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfCompressImagesController extends PdfBaseController {
+public class PdfCompressImagesController extends PdfBatchBaseController {
 
-    protected String PdfCompressImagesSourcePathKey, AuthorKey;
+    protected String AuthorKey;
     protected int jpegQuality, threshold;
-    protected File targetFile;
     protected PdfImageFormat format;
 
     @FXML
@@ -64,19 +61,14 @@ public class PdfCompressImagesController extends PdfBaseController {
     protected CheckBox ditherCheck;
 
     public PdfCompressImagesController() {
-        PdfCompressImagesSourcePathKey = "PdfCompressImagesSourcePathKey";
-        targetPathKey = "PDFCompressImagesPathKey";
+        baseTitle = AppVaribles.getMessage("PdfCompressImages");
+
         AuthorKey = "AuthorKey";
     }
 
     @Override
-    protected void initializeNext2() {
-
+    public void initializeNext2() {
         allowPaused = false;
-
-        initOptionsSection();
-        initTargetSection();
-
         operationBarController.startButton.disableProperty().bind(
                 Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                         .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
@@ -91,7 +83,8 @@ public class PdfCompressImagesController extends PdfBaseController {
         );
     }
 
-    protected void initOptionsSection() {
+    @Override
+    public void initOptionsSection() {
 
         formatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -112,7 +105,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                 "30",
                 "10"
         ));
-        jpegBox.valueProperty().addListener(new ChangeListener<String>() {
+        jpegBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
@@ -129,7 +122,7 @@ public class PdfCompressImagesController extends PdfBaseController {
             }
         });
         checkThreshold();
-        FxmlTools.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
+        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -191,67 +184,31 @@ public class PdfCompressImagesController extends PdfBaseController {
         }
     }
 
-    protected void initTargetSection() {
-
-        targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                operationBarController.openTargetButton.setDisable(true);
-                try {
-                    targetFile = new File(newValue);
-                    if (!newValue.toLowerCase().endsWith(".pdf")) {
-                        targetFile = null;
-                        targetFileInput.setStyle(badStyle);
-                        return;
-                    }
-                    targetFileInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
-                } catch (Exception e) {
-                    targetFile = null;
-                    targetFileInput.setStyle(badStyle);
-                }
-            }
-        });
-
-    }
-
     @Override
-    protected void sourceFileChanged(final File file) {
-
-    }
-
-    @FXML
-    protected void selectTargetFile(ActionEvent event) {
+    public void checkTargetFileInput() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
-            if (file == null) {
+            String input = targetFileInput.getText();
+            if (!input.toLowerCase().endsWith(".pdf")) {
+                targetFileInput.setStyle(badStyle);
                 return;
             }
-            targetFile = file;
-            AppVaribles.setUserConfigValue(LastPathKey, targetFile.getParent());
+            targetFile = new File(input);
+            targetFileInput.setStyle(null);
             AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
-
-            if (targetFileInput != null) {
-                targetFileInput.setText(targetFile.getAbsolutePath());
-            }
         } catch (Exception e) {
-//            logger.error(e.toString());
+            logger.debug(e.toString());
+            targetFile = null;
+            targetFileInput.setStyle(badStyle);
         }
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
             if (currentParameters == null) {
                 return;
@@ -261,29 +218,33 @@ public class PdfCompressImagesController extends PdfBaseController {
 
             updateInterface("Started");
             task = new Task<Void>() {
-                private boolean fail;
-                private PDDocument document;
+                private boolean ok;
 
                 @Override
                 protected Void call() {
                     try {
-                        for (; currentParameters.currentFileIndex < sourceFiles.size(); currentParameters.currentFileIndex++) {
+                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            File file = sourceFiles.get(currentParameters.currentFileIndex);
+                            File file = sourceFiles.get(currentParameters.currentIndex);
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
                                 makeTargetFile(file);
                             }
+                            int count = 0;
+
                             if (targetFile != null) {
-                                handleCurrentFile();
+                                actualParameters.finalTargetName = targetFile.getAbsolutePath();
+                                targetFiles.add(targetFile);
+                                count = handleCurrentFile();
                             } else {
                                 updateProgress(0, 0);
                                 updateMessage("0");
                             }
-                            markFileHandled(currentParameters.currentFileIndex);
+                            markFileHandled(currentParameters.currentIndex,
+                                    MessageFormat.format(AppVaribles.getMessage("TotalCompressedImageCount"), count));
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -296,37 +257,19 @@ public class PdfCompressImagesController extends PdfBaseController {
                             }
 
                         }
+                        ok = true;
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
 
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if (!fail && targetFile != null && targetFile.exists()) {
-                                    if (currentParameters.isBatch) {
-                                        FxmlStage.openTarget(getClass(), null, targetPath.getAbsolutePath());
-                                    } else {
-                                        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
-                                    }
-                                    operationBarController.openTargetButton.setDisable(false);
-                                } else {
-                                    popError(AppVaribles.getMessage("Failed"));
-                                }
-                            } catch (Exception e) {
-                                logger.error(e.toString());
-                            }
-                        }
-                    });
                     return null;
                 }
 
-                private void handleCurrentFile() {
+                private int handleCurrentFile() {
+                    int count = 0;
                     try {
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile,
-                                currentParameters.password, AppVaribles.PdfMemUsage)) {
-                            document = doc;
+                                currentParameters.password, AppVaribles.pdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -337,28 +280,27 @@ public class PdfCompressImagesController extends PdfBaseController {
                             Splitter splitter = new Splitter();
                             splitter.setStartPage(currentParameters.startPage + 1);
                             splitter.setEndPage(currentParameters.toPage + 1);
-                            splitter.setMemoryUsageSetting(AppVaribles.PdfMemUsage);
+                            splitter.setMemoryUsageSetting(AppVaribles.pdfMemUsage);
                             splitter.setSplitAtPage(currentParameters.toPage - currentParameters.startPage + 1);
-                            try (PDDocument newDoc = splitter.split(document).get(0)) {
+                            try (PDDocument newDoc = splitter.split(doc).get(0)) {
                                 newDoc.save(targetFile);
                             }
                         }
 
                         currentParameters.currentTotalHandled = 0;
-                        try (PDDocument doc = PDDocument.load(targetFile, AppVaribles.PdfMemUsage)) {
+                        try (PDDocument doc = PDDocument.load(targetFile, AppVaribles.pdfMemUsage)) {
                             PDDocumentInformation info = new PDDocumentInformation();
                             info.setCreationDate(Calendar.getInstance());
                             info.setModificationDate(Calendar.getInstance());
                             info.setProducer("MyBox v" + CommonValues.AppVersion);
                             info.setAuthor(authorInput.getText());
                             doc.setDocumentInformation(info);
-                            document = doc;
                             for (int i = 0; i < doc.getNumberOfPages(); i++) {
                                 if (isCancelled()) {
                                     break;
                                 }
                                 PDPage page = doc.getPage(i);
-                                handleCurrentPage(page);
+                                count += handleCurrentPage(doc, page);
 
                                 currentParameters.currentTotalHandled++;
                                 updateProgress(i, doc.getNumberOfPages());
@@ -372,17 +314,18 @@ public class PdfCompressImagesController extends PdfBaseController {
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
-
+                    return count;
                 }
 
-                protected void handleCurrentPage(PDPage pdPage) {
+                protected int handleCurrentPage(PDDocument doc, PDPage pdPage) {
+                    int count = 0;
                     try {
 
                         PDResources pdResources = pdPage.getResources();
                         pdResources.getXObjectNames();
                         Iterable<COSName> iterable = pdResources.getXObjectNames();
                         if (iterable == null) {
-                            return;
+                            return 0;
                         }
                         Iterator<COSName> pageIterator = iterable.iterator();
                         while (pageIterator.hasNext()) {
@@ -401,13 +344,14 @@ public class PdfCompressImagesController extends PdfBaseController {
                                 imageBinary.setIsDithering(ditherCheck.isSelected());
                                 BufferedImage newImage = imageBinary.operate();
                                 newImage = ImageBinary.byteBinary(newImage);
-                                newObject = CCITTFactory.createFromImage(document, newImage);
+                                newObject = CCITTFactory.createFromImage(doc, newImage);
 
                             } else if (format == PdfImageFormat.Jpeg) {
-                                newObject = JPEGFactory.createFromImage(document, sourceImage, jpegQuality / 100f);
+                                newObject = JPEGFactory.createFromImage(doc, sourceImage, jpegQuality / 100f);
                             }
                             if (newObject != null) {
                                 pdResources.put(cosName, newObject);
+                                count++;
                             }
                             if (isPreview) {
                                 break;
@@ -418,6 +362,7 @@ public class PdfCompressImagesController extends PdfBaseController {
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
+                    return count;
                 }
 
                 @Override
@@ -451,23 +396,7 @@ public class PdfCompressImagesController extends PdfBaseController {
     }
 
     protected void makeTargetFile(File file) {
-        targetFile = new File(targetPath.getAbsolutePath() + File.separator
-                + FileTools.getFileName(file.getName()));
-    }
-
-    protected File getTargetFile() {
-        return targetFile;
-    }
-
-    @FXML
-    @Override
-    protected void openTarget(ActionEvent event) {
-        if (!targetFile.exists()) {
-            operationBarController.openTargetButton.setDisable(true);
-            return;
-        }
-        operationBarController.openTargetButton.setDisable(false);
-        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
+        targetFile = new File(targetPath.getAbsolutePath() + File.separator + FileTools.getFileName(file.getName()));
     }
 
 }

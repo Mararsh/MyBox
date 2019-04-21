@@ -328,13 +328,13 @@ public class ByteTools {
             int unit = 1;
             if (strV.endsWith("k")) {
                 unit = 1024;
-                strV = strV.substring(0, strV.length() - 2);
+                strV = strV.substring(0, strV.length() - 1);
             } else if (strV.endsWith("m")) {
                 unit = 1024 * 1024;
-                strV = strV.substring(0, strV.length() - 2);
+                strV = strV.substring(0, strV.length() - 1);
             } else if (strV.endsWith("g")) {
                 unit = 1024 * 1024 * 1024;
-                strV = strV.substring(0, strV.length() - 2);
+                strV = strV.substring(0, strV.length() - 1);
             }
             int v = Integer.valueOf(strV);
             if (v >= 0) {

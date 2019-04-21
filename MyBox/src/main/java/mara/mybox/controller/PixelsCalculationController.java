@@ -5,6 +5,7 @@
  */
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -21,14 +22,15 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert.KeepRatioType;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.data.ImageAttributes;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -57,7 +59,7 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     private ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
     @FXML
-    private Button useButton;
+    private Button useButton, closeButton;
     @FXML
     private HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
     @FXML
@@ -73,8 +75,13 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     private TabPane tabPane;
 
+    public PixelsCalculationController() {
+        baseTitle = AppVaribles.getMessage("PixelsCalculator");
+
+    }
+
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             fromSource = false;
             targetLabel.setText("");
@@ -93,6 +100,8 @@ public class PixelsCalculationController extends BaseController {
                     recalculate();
                 }
             });
+
+            FxmlControl.quickTooltip(closeButton, new Tooltip("ENTER"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -323,7 +332,7 @@ public class PixelsCalculationController extends BaseController {
                 }
             }
         });
-        FxmlTools.setNonnegativeValidation(source_width);
+        FxmlControl.setNonnegativeValidation(source_width);
 
         source_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -342,7 +351,7 @@ public class PixelsCalculationController extends BaseController {
                 }
             }
         });
-        FxmlTools.setNonnegativeValidation(source_height);
+        FxmlControl.setNonnegativeValidation(source_height);
 
     }
 
@@ -364,7 +373,7 @@ public class PixelsCalculationController extends BaseController {
             }
         });
 //        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
-        FxmlTools.setNonnegativeValidation(cp_densityInput);
+        FxmlControl.setNonnegativeValidation(cp_densityInput);
 
         cp_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -493,7 +502,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_calculateValues();
             }
         });
-        FxmlTools.setNonnegativeValidation(cs_width);
+        FxmlControl.setNonnegativeValidation(cs_width);
 
         cs_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -507,7 +516,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_calculateValues();
             }
         });
-        FxmlTools.setNonnegativeValidation(cs_height);
+        FxmlControl.setNonnegativeValidation(cs_height);
 
         cs_DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -526,7 +535,7 @@ public class PixelsCalculationController extends BaseController {
             }
         });
 //        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
-        FxmlTools.setNonnegativeValidation(cs_densityInput);
+        FxmlControl.setNonnegativeValidation(cs_densityInput);
 
     }
 
@@ -543,7 +552,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-        FxmlTools.setNonnegativeValidation(cs_width);
+        FxmlControl.setNonnegativeValidation(cs_width);
 
         cd_height.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -557,7 +566,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-        FxmlTools.setNonnegativeValidation(cs_height);
+        FxmlControl.setNonnegativeValidation(cs_height);
 
         cd_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -716,16 +725,16 @@ public class PixelsCalculationController extends BaseController {
                     int rd = parentAttributes.getRatioAdjustion();
                     switch (rd) {
                         case KeepRatioType.BaseOnWidth:
-                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
                             break;
                         case KeepRatioType.BaseOnHeight:
-                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
                             break;
                         case KeepRatioType.BaseOnLarger:
-                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
                             break;
                         case KeepRatioType.BaseOnSmaller:
-                            FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
                             break;
                         default:
                             break;
@@ -808,7 +817,7 @@ public class PixelsCalculationController extends BaseController {
                     AppVaribles.setUserConfigValue("density", s);
                 } else {
                     cp_density = 0;
-                    cp_densityInput.setStyle(FxmlTools.badStyle);
+                    cp_densityInput.setStyle(FxmlControl.badStyle);
                 }
 
             } else {
@@ -863,7 +872,7 @@ public class PixelsCalculationController extends BaseController {
                     AppVaribles.setUserConfigValue("density", s);
                 } else {
                     cs_density = 0;
-                    cs_densityInput.setStyle(FxmlTools.badStyle);
+                    cs_densityInput.setStyle(FxmlControl.badStyle);
                 }
 
             } else {

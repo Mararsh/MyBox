@@ -1,11 +1,13 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
 import com.sun.javafx.charts.Legend;
 import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
@@ -29,45 +30,46 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.image.FxmlScopeTools;
+import mara.mybox.controller.base.ImageMaskBaseController;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.fxml.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.IntRectangle;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.fxml.FxmlColor;
+import mara.mybox.fxml.IntStatisticColorCell;
 import mara.mybox.image.ImageStatistic;
+import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools.FileSortMode;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -76,36 +78,35 @@ import static mara.mybox.value.AppVaribles.logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends ImageBaseController {
+public class ImageViewerController extends ImageMaskBaseController {
 
-    final protected String ConfirmDeleteKey, OpenAfterSaveKey, SelectKey;
-
-    protected double mouseX, mouseY;
+    final protected String ImageConfirmDeleteKey, OpenAfterSaveKey, ModifyImageKey,
+            ImageDataGreyShowKey,
+            ImageDataRedShowKey, ImageDataGreenShowKey, ImageDataBlueShowKey, ImageDataAlphaShowKey,
+            ImageDataHueShowKey, ImageDataBrightnessShowKey, ImageDataSaturationShowKey;
+    protected String ImageSelectKey, ImageDataShowKey, ImageLoadWidthKey;
     protected int xZoomStep = 50, yZoomStep = 50;
     protected int currentAngle = 0, rotateAngle = 90;
     protected File nextFile, previousFile;
-    protected int cropLeftX, cropLeftY, cropRightX, cropRightY;
 
     protected ObservableList<IntStatistic> statisticList = FXCollections.observableArrayList();
     protected Map<String, Color> colorTable;
+    protected FileSortMode sortMode;
 
-    @FXML
-    protected TextField imageFile;
     @FXML
     protected HBox operation1Box, operation2Box, operation3Box, navBox;
     @FXML
-    protected VBox contentBox;
+    protected VBox contentBox, imageBox;
     @FXML
-    protected Button upButton, downButton, renameButton, metaButton, manufactureButton, statisticButton;
-    @FXML
-    protected ToggleGroup sortGroup;
-    @FXML
-    protected CheckBox cropCheck, deleteConfirmCheck, openSaveCheck;
+    protected Button upButton, downButton, renameButton, metaButton, manufactureButton, statisticButton,
+            saveAsButton, cropButton, recoverButton, saveSelectedButton, splitButton, sampleButton;
     @FXML
     protected SplitPane splitPane;
     @FXML
-    protected CheckBox dataCheck, greyHistCheck, redHistCheck, greenHistCheck, blueHistCheck, alphaHistCheck,
-            hueHistCheck, saturationHistCheck, brightnessHistCheck;
+    protected CheckBox selectCheck, deleteConfirmCheck, dataCheck,
+            greyHistCheck, redHistCheck, greenHistCheck, blueHistCheck,
+            alphaHistCheck, hueHistCheck, saturationHistCheck, brightnessHistCheck,
+            openSaveCheck;
     @FXML
     protected SplitPane dataPane;
     @FXML
@@ -114,30 +115,81 @@ public class ImageViewerController extends ImageBaseController {
     protected TableColumn<IntStatistic, String> colorColumn;
     @FXML
     protected TableColumn<IntStatistic, Integer> meanColumn, varianceColumn,
-            skewnessColumn, maximumColumn, minimumColumn, modeColumn;
+            skewnessColumn, maximumColumn, minimumColumn, modeColumn, medianColumn;
     @FXML
     protected BarChart histogramChart;
     @FXML
-    protected ToolBar manuBar;
+    protected ToolBar actionsBar;
+    @FXML
+    protected ComboBox<String> loadWidthBox, sortBox;
 
     public ImageViewerController() {
-        ConfirmDeleteKey = "ImageConfirmDeleteKey";
+        baseTitle = AppVaribles.getMessage("ImageViewer");
+
+        ImageConfirmDeleteKey = "ImageConfirmDeleteKey";
         OpenAfterSaveKey = "ImageOpenAfterSaveKey";
-        SelectKey = "ImageSelectKey";
+        ModifyImageKey = "ModifyImageKey";
         TipsLabelKey = "ImageViewerTips";
+        ImageDataShowKey = "ImageDataShowKey";
+        ImageDataGreyShowKey = "ImageDataGreyShowKey";
+        ImageDataRedShowKey = "ImageDataRedShowKey";
+        ImageDataGreenShowKey = "ImageDataGreenShowKey";
+        ImageDataBlueShowKey = "ImageDataBlueShowKey";
+        ImageDataAlphaShowKey = "ImageDataAlphaShowKey";
+        ImageDataHueShowKey = "ImageDataHueShowKey";
+        ImageDataBrightnessShowKey = "ImageDataBrightnessShowKey";
+        ImageDataSaturationShowKey = "ImageDataSaturationShowKey";
+        ImageLoadWidthKey = "ImageViewerLoadWidthKey";
+        ImageSelectKey = "ImageSelectKey";
+
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initOperation1Box();
             initOperation2Box();
             initOperation3Box();
             initImageView();
+            initMaskPane();
             initDataPane();
+            initNavBar();
             initializeNext2();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        if (event.isControlDown()) {
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
+            switch (key) {
+                case "r":
+                case "R":
+                    if (recoverButton != null) {
+                        recoverAction();
+                    }
+                    break;
+                case "x":
+                case "X":
+                    if (cropButton != null) {
+                        cropAction();
+                    }
+                    break;
+                case "t":
+                case "T":
+                    if (selectCheck != null) {
+                        selectCheck.setSelected(!selectCheck.isSelected());
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -148,25 +200,89 @@ public class ImageViewerController extends ImageBaseController {
             );
         }
 
-        if (openSaveCheck != null) {
-            openSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        if (selectCheck != null) {
+            selectCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue(OpenAfterSaveKey, openSaveCheck.isSelected());
+                    AppVaribles.setUserConfigValue(ImageSelectKey, selectCheck.isSelected());
+                    checkSelect();
                 }
             });
-            openSaveCheck.setSelected(AppVaribles.getUserConfigBoolean(OpenAfterSaveKey, false));
+            selectCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageSelectKey, false));
+            checkSelect();
+            Tooltip tips = new Tooltip("CTRL+t");
+            FxmlControl.quickTooltip(selectCheck, tips);
         }
+
         if (deleteConfirmCheck != null) {
             deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue(ConfirmDeleteKey, deleteConfirmCheck.isSelected());
+                    AppVaribles.setUserConfigValue(ImageConfirmDeleteKey, deleteConfirmCheck.isSelected());
                 }
             });
-            deleteConfirmCheck.setSelected(AppVaribles.getUserConfigBoolean(ConfirmDeleteKey, true));
+            deleteConfirmCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageConfirmDeleteKey, true));
         }
 
+        if (rulerXCheck != null) {
+            rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue(ImageRulerXKey, rulerXCheck.isSelected());
+                    drawMaskRulerX();
+                }
+            });
+            rulerXCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageRulerXKey, false));
+        }
+        if (rulerYCheck != null) {
+            rulerYCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue(ImageRulerYKey, rulerYCheck.isSelected());
+                    drawMaskRulerY();
+                }
+            });
+            rulerYCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageRulerYKey, false));
+        }
+
+        if (coordinateCheck != null) {
+            coordinateCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkCoordinate();
+                }
+            });
+            coordinateCheck.setSelected(AppVaribles.getUserConfigBoolean(ImagePopCooridnateKey, false));
+            xyText.setVisible(coordinateCheck.isSelected());
+        }
+
+        if (recoverButton != null) {
+            Tooltip tips = new Tooltip("CTRL+r");
+            FxmlControl.quickTooltip(recoverButton, tips);
+        }
+
+        if (cropButton != null) {
+            Tooltip tips = new Tooltip("CTRL+x");
+            FxmlControl.quickTooltip(cropButton, tips);
+        }
+
+    }
+
+    protected void checkCoordinate() {
+        AppVaribles.setUserConfigValue(ImagePopCooridnateKey, coordinateCheck.isSelected());
+        xyText.setVisible(coordinateCheck.isSelected());
+    }
+
+    protected void checkSelect() {
+        if (cropButton != null) {
+            cropButton.setDisable(!selectCheck.isSelected());
+        }
+        if (selectAllButton != null) {
+            selectAllButton.setDisable(!selectCheck.isSelected());
+        }
+
+        initMaskRectangleLine(selectCheck.isSelected());
+        updateLabelTitle();
     }
 
     protected void initOperation2Box() {
@@ -177,18 +293,63 @@ public class ImageViewerController extends ImageBaseController {
             );
         }
 
-        if (cropCheck != null) {
-            cropCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        loadWidth = defaultLoadWidth;
+        if (loadWidthBox != null) {
+            List<String> values = Arrays.asList(AppVaribles.getMessage("OrignalSize"),
+                    "512", "1024", "256", "128", "2048", "100", "80", "4096");
+            loadWidthBox.getItems().addAll(values);
+            loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue(SelectKey, cropCheck.isSelected());
-                    checkSelect();
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+//                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
+                    if (AppVaribles.getMessage("OrignalSize").equals(newValue)) {
+                        loadWidth = -1;
+                    } else {
+                        try {
+                            loadWidth = Integer.valueOf(newValue);
+                            FxmlControl.setEditorNormal(loadWidthBox);
+                        } catch (Exception e) {
+                            FxmlControl.setEditorBadStyle(loadWidthBox);
+                            return;
+                        }
+                    }
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVaribles.setUserConfigInt(ImageLoadWidthKey, loadWidth);
+                    if (!isSettingValues) {
+                        setLoadWidth();
+                    }
                 }
             });
-            cropCheck.setSelected(AppVaribles.getUserConfigBoolean(SelectKey, true));
-            checkSelect();
+
+            isSettingValues = true;
+            int v = AppVaribles.getUserConfigInt(ImageLoadWidthKey, defaultLoadWidth);
+            if (v <= 0) {
+                loadWidthBox.getSelectionModel().select(0);
+            } else {
+                loadWidthBox.getSelectionModel().select(v + "");
+            }
+            isSettingValues = false;
+            FxmlControl.quickTooltip(loadWidthBox, new Tooltip(AppVaribles.getMessage("ImageLoadWidthCommnets")));
         }
 
+    }
+
+    protected void setLoadWidth() {
+        careFrames = false;
+        if (sourceFile != null) {
+            loadImage(sourceFile, loadWidth);
+        } else if (imageView.getImage() != null) {
+            loadImage(imageView.getImage(), loadWidth);
+        } else if (image != null) {
+            loadImage(image, loadWidth);
+        }
+        if (imageInformation != null) {
+            setImageChanged(imageInformation.isIsScaled());
+        } else {
+            setImageChanged(false);
+        }
     }
 
     protected void initOperation3Box() {
@@ -201,8 +362,8 @@ public class ImageViewerController extends ImageBaseController {
             manufactureButton.setDisable(true);
         }
 
-        if (manuBar != null) {
-            manuBar.disableProperty().bind(
+        if (actionsBar != null) {
+            actionsBar.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
             );
         }
@@ -210,61 +371,37 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     protected void initImageView() {
-        if (imageView == null || scrollPane == null) {
+        if (imageView == null) {
             return;
         }
 
+        imageView.fitWidthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                refinePane();
+            }
+        });
         imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                moveCenter();
-            }
-        });
-        scrollPane.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                if (Math.abs(imageView.getFitHeight() - old_val.doubleValue()) < 20) {
-                    paneSize();
-                }
-                moveCenter();
+                refinePane();
             }
         });
         scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                moveCenter();
+                refinePane();
             }
         });
-
     }
 
-    protected void checkSelect() {
-        if (image == null || cropCheck == null) {
-            return;
-        }
-        if (!cropCheck.isSelected()) {
-            imageView.setImage(image);
-            FxmlTools.removeTooltip(imageView);
-            bottomLabel.setText("");
-        } else {
-            selectAllAction();
-
-            bottomLabel.setText(getMessage("CropLabel"));
-        }
-        selectAllButton.setDisable(!cropCheck.isSelected());
-
-    }
-
-    public void moveCenter() {
-        imageView.setTranslateX(0);
+    public void refinePane() {
         if (imageView.getImage() == null) {
             return;
         }
-        double w = imageView.getImage().getWidth() * imageView.getFitHeight() / imageView.getImage().getHeight();
-        double offset = scrollPane.getWidth() - w;
-        if (offset > 0) {
-            imageView.setTranslateX(offset / 2);
-        }
+        FxmlControl.moveXCenter(scrollPane, imageView);
+        scrollPane.setVvalue(scrollPane.getVmin());
+        drawMaskControls();
     }
 
     protected void initDataPane() {
@@ -283,11 +420,19 @@ public class ImageViewerController extends ImageBaseController {
                         return;
                     }
                     loadDataBox();
-                    AppVaribles.setUserConfigValue("ImageDataShow", new_val);
+                    AppVaribles.setUserConfigValue(ImageDataShowKey, new_val);
                 }
             });
             isSettingValues = true;
-            dataCheck.setSelected(AppVaribles.getUserConfigBoolean("ImageDataShow", true));
+            dataCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataShowKey, false));
+            greyHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataGreyShowKey, false));
+            redHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataRedShowKey, false));
+            greenHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataGreenShowKey, false));
+            blueHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataBlueShowKey, false));
+            hueHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataHueShowKey, false));
+            brightnessHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataBrightnessShowKey, false));
+            saturationHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataSaturationShowKey, false));
+            alphaHistCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageDataAlphaShowKey, false));
             isSettingValues = false;
             loadDataBox();
 
@@ -303,30 +448,37 @@ public class ImageViewerController extends ImageBaseController {
             meanColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new ColorCell();
+                    return new IntStatisticColorCell();
                 }
             });
             varianceColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("variance"));
             skewnessColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("skewness"));
-            maximumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("maximum"));
-            maximumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
+            medianColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("median"));
+            medianColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new ColorCell();
-                }
-            });
-            minimumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("minimum"));
-            minimumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
-                @Override
-                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new ColorCell();
+                    return new IntStatisticColorCell();
                 }
             });
             modeColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("mode"));
             modeColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
-                    return new ColorCell();
+                    return new IntStatisticColorCell();
+                }
+            });
+            maximumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("maximum"));
+            maximumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
+                @Override
+                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
+                    return new IntStatisticColorCell();
+                }
+            });
+            minimumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("minimum"));
+            minimumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
+                @Override
+                public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
+                    return new IntStatisticColorCell();
                 }
             });
 
@@ -339,6 +491,7 @@ public class ImageViewerController extends ImageBaseController {
             colorTable.put(AppVaribles.getMessage("Brightness"), Color.GOLD);
             colorTable.put(AppVaribles.getMessage("Saturation"), Color.MEDIUMAQUAMARINE);
             colorTable.put(AppVaribles.getMessage("Gray"), Color.GRAY);
+            colorTable.put(AppVaribles.getMessage("Grey"), Color.GREY);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -357,65 +510,6 @@ public class ImageViewerController extends ImageBaseController {
                 setGraphic(text);
             }
         }
-    }
-
-    private class ColorCell extends TableCell<IntStatistic, Integer> {
-
-        private final Rectangle rectangle;
-
-        {
-            setContentDisplay(ContentDisplay.LEFT);
-            rectangle = new Rectangle(30, 20);
-        }
-        private Color color;
-
-        @Override
-        protected void updateItem(final Integer item, boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || item < 0 || empty) {
-                setGraphic(null);
-            } else {
-                IntStatistic row = getTableView().getItems().get(getTableRow().getIndex());
-
-                switch (row.getName()) {
-                    case "Red":
-                        color = new Color(item / 255.0, 0, 0, 1);
-                        break;
-                    case "Green":
-                        color = new Color(0, item / 255.0, 0, 1);
-                        break;
-                    case "Blue":
-                        color = new Color(0, 0, item / 255.0, 1);
-                        break;
-                    case "Alpha":
-                        color = new Color(1, 1, 1, item / 255.0);
-                        break;
-                    case "Grey":
-                        double c = item / 255.0;
-                        color = new Color(c, c, c, 1);
-                        break;
-                    case "Hue":
-                        color = Color.hsb(item, 1, 1);
-                        break;
-                    case "Saturation":
-                        color = Color.hsb(66, item / 100.0, 1);
-                        break;
-                    case "Brightness":
-                        color = Color.hsb(66, 1, item / 100.0);
-                        break;
-                    default:
-                        color = null;
-                        break;
-                }
-                if (color != null) {
-                    rectangle.setFill(color);
-                    setGraphic(rectangle);
-                }
-                setText(item + "");
-
-            }
-        }
-
     }
 
     protected void loadDataBox() {
@@ -452,6 +546,7 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     public void loadData(Map<String, Object> imageData) {
+
         if (imageData != null) {
             this.imageData = imageData;
             showData();
@@ -470,22 +565,26 @@ public class ImageViewerController extends ImageBaseController {
         task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                try {
+                if (handleLoadedSize || imageInformation == null) {
                     imageData = ImageStatistic.analyze(SwingFXUtils.fromFXImage(imageView.getImage(), null));
-                    if (task.isCancelled() || imageData == null) {
-                        return null;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            showData();
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
+                } else {
+                    imageData = ImageStatistic.analyze(SwingFXUtils.fromFXImage(imageInformation.getImage(), null));
                 }
+
                 return null;
             }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        showData();
+                    }
+                });
+            }
+
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
@@ -504,11 +603,26 @@ public class ImageViewerController extends ImageBaseController {
             return;
         }
         statisticList.clear();
-        clearHistogram();
+        histogramChart.getData().clear();
         List<IntStatistic> statistic = (List<IntStatistic>) imageData.get("statistic");
         statisticList.addAll(statistic);
-        greyHistCheck.fire();
+        showHistogram(AppVaribles.getMessage("Grey"), greyHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Red"), redHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Green"), greenHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Blue"), blueHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Hue"), hueHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Brightness"), brightnessHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Saturation"), saturationHistCheck.isSelected());
+        showHistogram(AppVaribles.getMessage("Alpha"), alphaHistCheck.isSelected());
         adjustSplitPane();
+    }
+
+    protected void showHistogram(String colorName, boolean isShow) {
+        if (isShow) {
+            showHistogram(colorName);
+        } else {
+            hideHistogram(colorName);
+        }
     }
 
     protected void showHistogram(final String colorName) {
@@ -524,31 +638,22 @@ public class ImageViewerController extends ImageBaseController {
         }
 
         int[] histogram;
-        final String colorValue;
         if (AppVaribles.getMessage("Red").equals(colorName)) {
             histogram = (int[]) imageData.get("redHistogram");
-            colorValue = "Red";
         } else if (AppVaribles.getMessage("Green").equals(colorName)) {
             histogram = (int[]) imageData.get("greenHistogram");
-            colorValue = "Green";
         } else if (AppVaribles.getMessage("Blue").equals(colorName)) {
             histogram = (int[]) imageData.get("blueHistogram");
-            colorValue = "Blue";
         } else if (AppVaribles.getMessage("Alpha").equals(colorName)) {
             histogram = (int[]) imageData.get("alphaHistogram");
-            colorValue = "SkyBlue";
         } else if (AppVaribles.getMessage("Hue").equals(colorName)) {
             histogram = (int[]) imageData.get("hueHistogram");
-            colorValue = "Pink";
         } else if (AppVaribles.getMessage("Brightness").equals(colorName)) {
             histogram = (int[]) imageData.get("brightnessHistogram");
-            colorValue = "Wheat";
         } else if (AppVaribles.getMessage("Saturation").equals(colorName)) {
             histogram = (int[]) imageData.get("saturationHistogram");
-            colorValue = "DarkRed";
         } else {
             histogram = (int[]) imageData.get("greyHistogram");
-            colorValue = "Gray";
         }
 
         XYChart.Series series = new XYChart.Series();
@@ -567,21 +672,6 @@ public class ImageViewerController extends ImageBaseController {
 
     }
 
-    // https://stackoverflow.com/questions/12197877/javafx-linechart-legend-style
-    private void updateLegend() {
-        if (histogramChart == null) {
-            return;
-        }
-        for (Node n : histogramChart.getChildrenUnmodifiable()) {
-            if (n instanceof Legend) {
-                for (Legend.LegendItem legendItem : ((Legend) n).getItems()) {
-                    String colorString = FxmlColor.rgb2Hex(colorTable.get(legendItem.getText()));
-                    legendItem.getSymbol().setStyle("-fx-background-color: " + colorString);
-                }
-            }
-        }
-    }
-
     protected void hideHistogram(String color) {
         if (imageData == null || isSettingValues || color == null
                 || histogramChart == null || histogramChart.getData() == null) {
@@ -597,10 +687,24 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
+    // https://stackoverflow.com/questions/12197877/javafx-linechart-legend-style
+    private void updateLegend() {
+        if (histogramChart == null) {
+            return;
+        }
+        for (Node n : histogramChart.getChildrenUnmodifiable()) {
+            if (n instanceof Legend) {
+                for (Legend.LegendItem legendItem : ((Legend) n).getItems()) {
+                    String colorString = FxmlColor.rgb2Hex(colorTable.get(legendItem.getText()));
+                    legendItem.getSymbol().setStyle("-fx-background-color: " + colorString);
+                }
+            }
+        }
+    }
+
     @FXML
     public void clearHistogram() {
         if (histogramChart != null) {
-            isSettingValues = true;
             greyHistCheck.setSelected(false);
             redHistCheck.setSelected(false);
             greenHistCheck.setSelected(false);
@@ -609,23 +713,41 @@ public class ImageViewerController extends ImageBaseController {
             hueHistCheck.setSelected(false);
             saturationHistCheck.setSelected(false);
             brightnessHistCheck.setSelected(false);
-            isSettingValues = false;
             histogramChart.getData().clear();
         }
     }
 
     @FXML
     protected void colorChecked(ActionEvent event) {
+        if (isSettingValues) {
+            return;
+        }
         CheckBox checked = (CheckBox) event.getSource();
-        if (checked.isSelected()) {
-            showHistogram(checked.getText());
+        String name = checked.getText();
+        boolean v = checked.isSelected();
+        showHistogram(name, v);
+        if (AppVaribles.getMessage("Red").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataRedShowKey, v);
+        } else if (AppVaribles.getMessage("Green").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataGreenShowKey, v);
+        } else if (AppVaribles.getMessage("Blue").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataBlueShowKey, v);
+        } else if (AppVaribles.getMessage("Alpha").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataAlphaShowKey, v);
+        } else if (AppVaribles.getMessage("Hue").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataHueShowKey, v);
+        } else if (AppVaribles.getMessage("Brightness").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataBrightnessShowKey, v);
+        } else if (AppVaribles.getMessage("Saturation").equals(name)) {
+            AppVaribles.setUserConfigValue(ImageDataSaturationShowKey, v);
         } else {
-            hideHistogram(checked.getText());
+            AppVaribles.setUserConfigValue(ImageDataGreyShowKey, v);
         }
     }
 
     protected void adjustSplitPane() {
         try {
+
             int size = splitPane.getItems().size();
             float p = 1.0f / size;
             if (size == 1) {
@@ -642,18 +764,68 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
-    @Override
-    public void sourceFileChanged(final File file) {
-        if (file.isDirectory()) {
-            AppVaribles.setUserConfigValue(sourcePathKey, file.getPath());
-        } else {
-            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
+    protected void initNavBar() {
+        if (sortBox != null) {
+            List<String> svalues = Arrays.asList(AppVaribles.getMessage("ModifyTimeDesc"),
+                    AppVaribles.getMessage("ModifyTimeAsc"),
+                    AppVaribles.getMessage("SizeDesc"),
+                    AppVaribles.getMessage("SizeAsc"),
+                    AppVaribles.getMessage("NameDesc"),
+                    AppVaribles.getMessage("NameAsc"),
+                    AppVaribles.getMessage("FormatDesc"),
+                    AppVaribles.getMessage("FormatAsc"),
+                    AppVaribles.getMessage("CreateTimeDesc"),
+                    AppVaribles.getMessage("CreateTimeAsc")
+            );
+            sortBox.getItems().addAll(svalues);
+            sortBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (AppVaribles.getMessage("ModifyTimeDesc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+                    } else if (AppVaribles.getMessage("ModifyTimeAsc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.ModifyTimeAsc;
+                    } else if (AppVaribles.getMessage("SizeDesc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.SizeDesc;
+                    } else if (AppVaribles.getMessage("SizeAsc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.SizeAsc;
+                    } else if (AppVaribles.getMessage("NameDesc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.NameDesc;
+                    } else if (AppVaribles.getMessage("NameAsc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.NameAsc;
+                    } else if (AppVaribles.getMessage("FormatDesc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.FormatDesc;
+                    } else if (AppVaribles.getMessage("FormatAsc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.FormatAsc;
+                    } else if (AppVaribles.getMessage("CreateTimeDesc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.CreateTimeDesc;
+                    } else if (AppVaribles.getMessage("CreateTimeAsc").equals(newValue)) {
+                        sortMode = FileTools.FileSortMode.CreateTimeAsc;
+                    } else {
+                        sortMode = FileTools.FileSortMode.ModifyTimeDesc;
+                    }
+                    if (!isSettingValues) {
+                        makeImageNevigator();
+                    }
+                }
+            });
+//            sortBox.getSelectionModel().select(0);
         }
-        loadImage(file, false);
+
     }
 
     @Override
-    protected void afterInfoLoaded() {
+    public void sourceFileChanged(final File file) {
+        if (file == null) {
+            return;
+        }
+        super.sourceFileChanged(file);
+        careFrames = true;
+        loadImage(file, loadWidth);
+    }
+
+    @Override
+    public void afterInfoLoaded() {
         if (infoButton != null) {
             infoButton.setDisable(imageInformation == null);
         }
@@ -684,6 +856,8 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void afterImageLoaded() {
         try {
+            super.afterImageLoaded();
+
             afterInfoLoaded();
             if (image == null) {
                 return;
@@ -691,46 +865,49 @@ public class ImageViewerController extends ImageBaseController {
             imageView.setPreserveRatio(true);
 
             imageView.setImage(image);
+            imageChanged = isCroppped = false;
             xZoomStep = (int) image.getWidth() / 10;
             yZoomStep = (int) image.getHeight() / 10;
+            careFrames = true;
 
+            if (sourceFile != null && navBox != null) {
+                makeImageNevigator();
+            }
             fitSize();
-            if (imageFile != null && sourceFile != null) {
-                imageFile.setText(sourceFile.getName());
+
+            setMaskStroke();
+
+            if (selectCheck != null) {
+                checkSelect();
+            }
+
+            if (imageInformation == null) {
+                setImageChanged(true);
+            } else if (!imageInformation.isIsSampled()) {
+                setImageChanged(imageInformation.isIsScaled());
             }
 
             if (imageInformation != null && imageInformation.isIsSampled()) {
-                handleSampledImage();
-                if (imageFile != null && sourceFile != null) {
-                    imageFile.setText(sourceFile.getName() + " " + getMessage("Sampled"));
+                if (sampledTips != null) {
+                    sampledTips.setVisible(true);
+                    FxmlControl.quickTooltip(sampledTips, new Tooltip(getSmapledInfo()));
                 }
+                loadWidth = (int) image.getWidth();
+                loadSampledImage();
             } else {
-                if (sourceFile != null) {
-                    if (imageInformation != null && imageInformation.getIndex() > 0) {
-                        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                                + " - " + getMessage("Image") + " " + imageInformation.getIndex());
-                    } else {
-                        getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                    }
+                if (sampledTips != null) {
+                    sampledTips.setVisible(false);
+                }
+            }
+
+            if (loadWidthBox != null) {
+                isSettingValues = true;
+                if (loadWidth == -1) {
+                    loadWidthBox.getSelectionModel().select(AppVaribles.getMessage("OrignalSize"));
                 } else {
-                    getMyStage().setTitle(getBaseTitle());
+                    loadWidthBox.getSelectionModel().select(loadWidth + "");
                 }
-                if (bottomLabel != null) {
-                    bottomLabel.setText("");
-                }
-            }
-
-            if (sourceFile != null && navBox != null) {
-                checkImageNevigator();
-            }
-
-            if (cropCheck != null) {
-                checkSelect();
-            } else {
-                cropLeftX = 0;
-                cropLeftY = 0;
-                cropRightX = (int) image.getWidth() - 1;
-                cropRightY = (int) image.getHeight() - 1;
+                isSettingValues = false;
             }
 
             if (dataPane != null) {
@@ -744,30 +921,38 @@ public class ImageViewerController extends ImageBaseController {
         }
     }
 
-    protected void handleSampledImage() {
-//            logger.debug(availableMem + "  " + pixelsSize + "  " + requiredMem + " " + sampledWidth + " " + sampledSize);
-        if (imageInformation.getIndex() > 0) {
-            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                    + " - " + getMessage("Image") + " " + imageInformation.getIndex() + " " + getMessage("Sampled"));
-        } else {
-            getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath() + " " + getMessage("Sampled"));
-        }
-
+    protected String getSmapledInfo() {
+        Map<String, Long> sizes = imageInformation.getSizes();
         if (sizes == null) {
-            if (bottomLabel != null) {
-                bottomLabel.setText(getMessage("ImageSampled"));
-            }
-            return;
+            return "";
         }
-
         int sampledSize = (int) (image.getWidth() * image.getHeight() * imageInformation.getColorChannels() / (1014 * 1024));
         String msg = MessageFormat.format(getMessage("ImageTooLarge"),
                 imageInformation.getWidth(), imageInformation.getHeight(), imageInformation.getColorChannels(),
                 sizes.get("pixelsSize"), sizes.get("requiredMem"), sizes.get("availableMem"),
                 (int) image.getWidth(), (int) image.getHeight(), sampledSize);
+        return msg;
+    }
 
-        if (bottomLabel != null) {
-            bottomLabel.setText(msg);
+    protected void loadSampledImage() {
+        if (sampledTips != null) {
+            sampledTips.setOnMouseMoved(null);
+            sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    popSampleInformation(getSmapledInfo());
+                }
+            });
+        }
+
+        popSampleInformation(getSmapledInfo());
+
+    }
+
+    protected void popSampleInformation(String msg) {
+        if (imageInformation == null || !imageInformation.isIsSampled()
+                || msg == null || msg.isEmpty()) {
+            return;
         }
 
         VBox box = new VBox();
@@ -781,40 +966,49 @@ public class ImageViewerController extends ImageBaseController {
         });
         box.getChildren().add(label);
         box.getChildren().add(helpLink);
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.getDialogPane().setContent(box);
         alert.setContentText(msg);
 
-        ButtonType buttonExit = new ButtonType(AppVaribles.getMessage("Exit"));
+        ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
         ButtonType buttonSplit = new ButtonType(AppVaribles.getMessage("ImageSplit"));
         ButtonType buttonSample = new ButtonType(AppVaribles.getMessage("ImageSubsample"));
         ButtonType buttonView = new ButtonType(AppVaribles.getMessage("ImageViewer"));
         ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("SaveSampledImage"));
         ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
-        alert.getButtonTypes().setAll(buttonExit, buttonSample, buttonSplit, buttonView, buttonSave, buttonCancel);
+        switch (myFxml) {
+            case CommonValues.ImageViewerFxml:
+                alert.getButtonTypes().setAll(buttonClose, buttonSample, buttonSplit, buttonSave, buttonCancel);
+                break;
+            case CommonValues.ImageSplitFxml:
+                alert.getButtonTypes().setAll(buttonClose, buttonSample, buttonView, buttonSave, buttonCancel);
+                break;
+            case CommonValues.ImageSampleFxml:
+                alert.getButtonTypes().setAll(buttonClose, buttonSplit, buttonView, buttonSave, buttonCancel);
+                break;
+            default:
+                alert.getButtonTypes().setAll(buttonClose, buttonSample, buttonSplit, buttonView, buttonSave, buttonCancel);
+        }
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonExit) {
+        if (result.get() == buttonClose) {
             closeStage();
 
         } else if (result.get() == buttonSplit) {
-            ImageSplitController controller
-                    = (ImageSplitController) reloadStage(CommonValues.ImageSplitFxml, AppVaribles.getMessage("ImageSplit"));
-            controller.setSizes(sizes);
-            controller.loadImage(sourceFile, image, imageInformation);
+            splitAction();
 
         } else if (result.get() == buttonSample) {
-            ImageSampleController controller
-                    = (ImageSampleController) reloadStage(CommonValues.ImageSampleFxml, AppVaribles.getMessage("ImageSubsample"));
-            controller.setSizes(sizes);
-            controller.loadImage(sourceFile, image, imageInformation);
+            sampleAction();
 
         } else if (result.get() == buttonView) {
-            ImageViewerController controller
-                    = (ImageViewerController) reloadStage(CommonValues.ImageViewerFxml, AppVaribles.getMessage("ImageViewer"));
-            controller.loadImage(sourceFile, image, imageInformation);
+            if (!CommonValues.ImageViewerFxml.equals(myFxml)) {
+                ImageViewerController controller
+                        = (ImageViewerController) loadScene(CommonValues.ImageViewerFxml);
+                controller.loadImage(sourceFile, image, imageInformation);
+            }
+
         } else if (result.get() == buttonSave) {
             saveAction();
         }
@@ -822,37 +1016,87 @@ public class ImageViewerController extends ImageBaseController {
     }
 
     @Override
-    protected void handleMultipleFramesImage() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(getMessage("MultipleFramesImagesInfo"));
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    public void loadMultipleFramesImage() {
+        String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
+        if (format.contains("gif")) {
+            final ImageGifViewerController controller
+                    = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+            controller.loadImage(sourceFile.getAbsolutePath());
 
-        ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
-        alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        } else {
+            final ImageFramesViewerController controller
+                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+            controller.selectSourceFile(sourceFile);
+        }
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonSure) {
-            String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
-            if (format.contains("gif")) {
-                final ImageGifViewerController controller
-                        = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml, false, true);
-                controller.setBaseTitle(AppVaribles.getMessage("ImageGifViewer"));
-                controller.loadImage(sourceFile.getAbsolutePath());
+    }
 
+    @Override
+    public void setImageChanged(boolean imageChanged) {
+        this.imageChanged = imageChanged;
+
+        if (saveButton != null && !saveButton.disableProperty().isBound()) {
+
+            if (imageInformation != null
+                    && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                saveButton.setDisable(true);
             } else {
-                final ImageFramesViewerController controller
-                        = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml, false, true);
-                controller.setBaseTitle(AppVaribles.getMessage("ImageFramesViewer"));
-                controller.openFile(sourceFile);
+                saveButton.setDisable(!imageChanged);
             }
         }
 
-        if (sourceFile != null && navBox != null) {
-            navBox.setDisable(false);
-            checkImageNevigator();
+        if (imageChanged) {
+            resetMaskControls();
         }
+
+        updateLabelTitle();
+    }
+
+    @Override
+    public void updateLabelTitle() {
+        if (imageView.getImage() == null) {
+            return;
+        }
+        if (bottomLabel != null) {
+            String bottom = "";
+            if (imageInformation != null) {
+                bottom += AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  ";
+                bottom += AppVaribles.getMessage("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
+            }
+            bottom += AppVaribles.getMessage("LoadedSize") + ":"
+                    + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
+                    + AppVaribles.getMessage("DisplayedSize") + ":"
+                    + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+
+            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+                bottom += "  " + getMessage("SelectedSize") + ": "
+                        + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
+            }
+            if (sourceFile != null) {
+                bottom += "  " + AppVaribles.getMessage("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
+                        + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
+            }
+
+            bottomLabel.setText(bottom);
+        }
+        String title = getBaseTitle();
+        if (sourceFile != null) {
+            title += " " + sourceFile.getAbsolutePath();
+            if (imageInformation != null) {
+                if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                    title += " - " + getMessage("Image") + " " + imageInformation.getIndex();
+                }
+                if (imageInformation.isIsSampled()) {
+                    title += " - " + getMessage("Sampled");
+                }
+            }
+        }
+        if (imageChanged) {
+            title += "  " + "*";
+        }
+
+        getMyStage().setTitle(title);
+
     }
 
     @FXML
@@ -876,7 +1120,8 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void nextAction() {
         if (nextFile != null) {
-            loadImage(nextFile.getAbsoluteFile(), false);
+            careFrames = false;
+            loadImage(nextFile.getAbsoluteFile(), loadWidth);
         }
     }
 
@@ -884,7 +1129,8 @@ public class ImageViewerController extends ImageBaseController {
     @Override
     public void previousAction() {
         if (previousFile != null) {
-            loadImage(previousFile.getAbsoluteFile(), false);
+            careFrames = false;
+            loadImage(previousFile.getAbsoluteFile(), loadWidth);
         }
     }
 
@@ -905,7 +1151,7 @@ public class ImageViewerController extends ImageBaseController {
         try {
             final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
             if (controller != null && sourceFile != null) {
-                controller.loadImage(sourceFile, false);
+                controller.loadImage(sourceFile);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -920,102 +1166,112 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     @Override
     public void zoomIn() {
-        double currentWidth = imageView.getFitWidth();
-        if (currentWidth == -1) {
-            currentWidth = imageView.getImage().getWidth();
-        }
-        imageView.setFitWidth(currentWidth + xZoomStep);
-        double currentHeight = imageView.getFitHeight();
-        if (currentHeight == -1) {
-            currentHeight = imageView.getImage().getHeight();
-        }
-        imageView.setFitHeight(currentHeight + yZoomStep);
+        FxmlControl.zoomIn(scrollPane, imageView, xZoomStep, yZoomStep);
     }
 
     @FXML
     @Override
     public void zoomOut() {
-        double currentWidth = imageView.getFitWidth();
-        if (currentWidth == -1) {
-            currentWidth = imageView.getImage().getWidth();
-        }
-        if (currentWidth <= xZoomStep) {
-            return;
-        }
-        imageView.setFitWidth(currentWidth - xZoomStep);
-        double currentHeight = imageView.getFitHeight();
-        if (currentHeight == -1) {
-            currentHeight = imageView.getImage().getHeight();
-        }
-        if (currentHeight <= yZoomStep) {
-            return;
-        }
-        imageView.setFitHeight(currentHeight - yZoomStep);
+        FxmlControl.zoomOut(scrollPane, imageView, xZoomStep, yZoomStep);
     }
 
     @FXML
     @Override
-    public void imageSize() {
-        imageView.setFitWidth(imageView.getImage().getWidth());
-        imageView.setFitHeight(imageView.getImage().getHeight());
+    public void loadedSize() {
+        FxmlControl.imageSize(scrollPane, imageView);
 
     }
 
     @FXML
     @Override
     public void paneSize() {
-        imageView.setFitWidth(scrollPane.getWidth() - 1);
-        imageView.setFitHeight(scrollPane.getHeight() - 5);
+        FxmlControl.paneSize(scrollPane, imageView);
     }
 
     public void fitSize() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        if (scrollPane.getHeight() < imageView.getImage().getHeight()
-                || scrollPane.getWidth() < imageView.getImage().getWidth()) {
-            paneSize();
-        } else {
-            imageSize();
+        try {
+            if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+                return;
+            }
+            if (scrollPane.getHeight() < getImageHeight()
+                    || scrollPane.getWidth() < getImageWidth()) {
+                paneSize();
+            } else {
+                loadedSize();
+            }
+        } catch (Exception e) {
+//            logger.error(e.toString());
         }
     }
 
     @FXML
     public void moveRight() {
-        FxmlTools.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
+        FxmlControl.setScrollPane(scrollPane, -40, scrollPane.getVvalue());
     }
 
     @FXML
     public void moveLeft() {
-        FxmlTools.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
+        FxmlControl.setScrollPane(scrollPane, 40, scrollPane.getVvalue());
     }
 
     @FXML
     public void moveUp() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
+        FxmlControl.setScrollPane(scrollPane, scrollPane.getHvalue(), 40);
     }
 
     @FXML
     public void moveDown() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
+        FxmlControl.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
     }
 
     @FXML
     public void rotateRight() {
-        currentAngle = (currentAngle + rotateAngle) % 360;
-        imageView.setRotate(currentAngle);
+        rotateModify(90);
+    }
+
+    public void rotateModify(final int rotateAngle) {
+        if (imageView.getImage() == null) {
+            return;
+        }
+        task = new Task<Void>() {
+            private Image newImage;
+
+            @Override
+            protected Void call() throws Exception {
+                newImage = ImageManufacture.rotateImage(imageView.getImage(), rotateAngle);
+
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImage(newImage);
+                        checkSelect();
+                        setImageChanged(true);
+                        refinePane();
+                    }
+                });
+            }
+
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
     public void rotateLeft() {
-        currentAngle = (360 - rotateAngle + currentAngle) % 360;
-        imageView.setRotate(currentAngle);
+        rotateModify(270);
     }
 
     @FXML
     public void turnOver() {
-        currentAngle = (180 + currentAngle) % 360;
-        imageView.setRotate(currentAngle);
+        rotateModify(180);
     }
 
     @FXML
@@ -1027,74 +1283,147 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     @Override
     public void selectAllAction() {
-        if (image == null) {
+        if (imageView.getImage() == null
+                || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
             return;
         }
-        cropLeftX = 0;
-        cropLeftY = 0;
-        cropRightX = (int) image.getWidth() - 1;
-        cropRightY = (int) image.getHeight() - 1;
-        imageView.setImage(image);
-        bottomLabel.setText(AppVaribles.getMessage("SelectedSize") + ": "
-                + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
+        maskRectangleData = new DoubleRectangle(0, 0,
+                getImageWidth() - 1, getImageHeight() - 1);
+
+        drawMaskRectangleLine();
     }
 
     @FXML
-    public void clickImage(MouseEvent event) {
-        if (image == null
-                || (cropCheck != null && !cropCheck.isSelected())) {
-            imageView.setCursor(Cursor.OPEN_HAND);
+    public void cropAction() {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
+        try {
+            task = new Task<Void>() {
+                private Image areaImage;
 
-        imageView.setCursor(Cursor.HAND);
+                @Override
+                protected Void call() throws Exception {
 
-        int x = (int) Math.round(event.getX() * image.getWidth() / imageView.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * image.getHeight() / imageView.getBoundsInLocal().getHeight());
+                    areaImage = cropImage();
+                    if (areaImage == null) {
+                        areaImage = imageView.getImage();
+                    }
+                    return null;
+                }
 
-        if (event.getButton() == MouseButton.PRIMARY) {
-            cropLeftX = x;
-            cropLeftY = y;
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageView.setImage(areaImage);
+                            loadData();
+                            isCroppped = true;
+                            setImageChanged(true);
+                            resetMaskControls();
+                        }
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
 
-        } else if (event.getButton() == MouseButton.SECONDARY) {
-            cropRightX = x;
-            cropRightY = y;
-        }
-
-        if (cropLeftX < cropRightX && cropLeftY < cropRightY) {
-            indicateSelection();
-            bottomLabel.setText(getMessage("SelectedSize") + ": "
-                    + (cropRightX - cropLeftX + 1) + "x" + (cropRightY - cropLeftY + 1));
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
 
     }
 
-    private void indicateSelection() {
+    protected Image cropImage() {
+        Image inImage = imageView.getImage();
+//        if (handleLoadedSize || imageInformation == null) {
+//            inImage = imageView.getImage();
+//        } else {
+//            inImage = imageInformation.getImage();
+//        }
+
+        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+            if (maskRectangleData.getSmallX() == 0
+                    && maskRectangleData.getSmallY() == 0
+                    && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
+                    && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                return null;
+            }
+            return ImageManufacture.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
+
+        } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+            return ImageManufacture.cropOutsideFx(inImage, maskCircleData, Color.WHITE);
+
+        } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+            return ImageManufacture.cropOutsideFx(inImage, maskEllipseData, Color.WHITE);
+
+        } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+            return ImageManufacture.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
+
+        } else {
+            return null;
+        }
+
+    }
+
+    @FXML
+    public void recoverAction() {
+        if (imageView == null) {
+            return;
+        }
+        boolean sizeChanged = getImageWidth() != image.getWidth()
+                || getImageHeight() != image.getHeight();
+        imageView.setImage(image);
+        if (sizeChanged) {
+            resetMaskControls();
+        }
+        if (isCroppped) {
+            loadData();
+            isCroppped = false;
+        }
+        setImageChanged(false);
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        if (imageView == null || imageView.getImage() == null || copyButton == null) {
+            return;
+        }
         task = new Task<Void>() {
+            private boolean ok;
+            private Image areaImage;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    int lineWidth = 1;
-                    if (image.getWidth() >= 200) {
-                        lineWidth = (int) image.getWidth() / 200;
-                    }
-                    final Image newImage = FxmlScopeTools.indicateRectangle(image,
-                            Color.RED, lineWidth,
-                            new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
-                    if (task.isCancelled()) {
-                        return null;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setImage(newImage);
-//                            infoAction(AppVaribles.getMessage("CropComments"));
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
+
+                areaImage = cropImage();
+                if (areaImage == null) {
+                    areaImage = imageView.getImage();
                 }
+                if (AppVaribles.getUserConfigBoolean("RemoveAlphaCopy", true)) {
+                    areaImage = ImageManufacture.clearAlpha(areaImage);
+                }
+                ok = true;
                 return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ClipboardContent cc = new ClipboardContent();
+                        cc.putImage(areaImage);
+                        Clipboard.getSystemClipboard().setContent(cc);
+                        popInformation(AppVaribles.getMessage("ImageSelectionInClipBoard"));
+                    }
+                });
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -1103,44 +1432,17 @@ public class ImageViewerController extends ImageBaseController {
         thread.start();
     }
 
-    protected boolean isWholeImage(Image currentImage) {
-        return cropLeftX == 0
-                && cropLeftY == 0
-                && cropRightX == (int) currentImage.getWidth() - 1
-                && cropRightY == (int) currentImage.getHeight() - 1;
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        if (imageView == null) {
-            return;
-        }
-        copyAction(imageView.getImage());
-    }
-
-    public void copyAction(Image currentImage) {
-        if (currentImage == null || copyButton == null) {
-            return;
-        }
-        Image cropImage;
-        if (isWholeImage(currentImage)) {
-            cropImage = currentImage;
-        } else {
-            cropImage = ImageTools.cropImage(currentImage, cropLeftX, cropLeftY, cropRightX, cropRightY);
-        }
-        ClipboardContent cc = new ClipboardContent();
-        cc.putImage(cropImage);
-        Clipboard.getSystemClipboard().setContent(cc);
-        popInformation(getMessage("ImageSelectionInClipBoard"));
-    }
-
     @FXML
     @Override
     public void saveAction() {
-        if (image == null) {
+        if (imageView == null) {
             return;
         }
+        if (sourceFile == null) {
+            saveAsAction();
+            return;
+        }
+
         try {
             if (imageInformation != null && imageInformation.isIsSampled()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1158,6 +1460,60 @@ public class ImageViewerController extends ImageBaseController {
                 }
             }
 
+            task = new Task<Void>() {
+                private boolean ok;
+
+                @Override
+                protected Void call() throws Exception {
+                    String format = FileTools.getFileSuffix(sourceFile.getName());
+                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(imageView.getImage());
+                    if (bufferedImage == null || task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    String filename = sourceFile.getAbsolutePath();
+                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                    if (!ok || task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    imageInformation = ImageFileReaders.readImageFileMetaData(filename).getImageInformation();
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                image = imageView.getImage();
+                                popInformation(AppVaribles.getMessage("Saved"));
+                                setImageChanged(false);
+                            } else {
+                                popInformation(AppVaribles.getMessage("Failed"));
+                            }
+                        }
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void saveAsAction() {
+        if (imageView == null) {
+            return;
+        }
+        try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVaribles.getUserConfigPath(targetPathKey);
             if (path.exists()) {
@@ -1175,38 +1531,41 @@ public class ImageViewerController extends ImageBaseController {
 
                 @Override
                 protected Void call() throws Exception {
-                    Image savedImage = image;
-                    if (cropCheck != null && cropCheck.isSelected()) {
-                        if (!isWholeImage(image)) {
-                            savedImage = ImageTools.cropImage(image,
-                                    cropLeftX, cropLeftY, cropRightX, cropRightY);
-                        }
+                    Image selected = cropImage();
+                    if (selected == null) {
+                        selected = imageView.getImage();
                     }
+
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = ImageTools.getBufferedImage(savedImage);
-                    if (task.isCancelled()) {
+                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(selected);
+                    if (task == null || task.isCancelled()) {
                         return null;
                     }
                     ok = bufferedImage != null
                             && ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                    if (task.isCancelled()) {
-                        return null;
-                    }
+
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             if (ok) {
+                                popInformation(AppVaribles.getMessage("Saved"));
+                                if (sourceFile == null) {
+                                    loadImage(file);
+                                }
                                 if (openSaveCheck != null && openSaveCheck.isSelected()) {
                                     openImageViewer(file.getAbsolutePath());
-                                } else {
-                                    popInformation(AppVaribles.getMessage("Successful"));
                                 }
                             } else {
                                 popInformation(AppVaribles.getMessage("Failed"));
                             }
                         }
                     });
-                    return null;
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -1266,6 +1625,7 @@ public class ImageViewerController extends ImageBaseController {
     @FXML
     public void renameAction() {
         try {
+            saveAction();
             File file = renameFile(sourceFile);
             if (file == null) {
                 return;
@@ -1296,9 +1656,9 @@ public class ImageViewerController extends ImageBaseController {
                 } else {
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 }
-                bottomLabel.setText("");
+                updateLabelTitle();
             }
-            checkImageNevigator();
+            makeImageNevigator();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1350,21 +1710,49 @@ public class ImageViewerController extends ImageBaseController {
             return;
         }
         try {
-            final ImageManufactureController controller
-                    = (ImageManufactureController) FxmlStage.openStage(getClass(), null,
-                            CommonValues.ImageManufactureFileFxml, AppVaribles.getMessage("ImageManufacture"));
-            controller.loadImage(sourceFile, image, imageInformation);
-            controller.loadData(imageData);
+            if (imageInformation != null && imageInformation.isIsMultipleFrames()) {
+                String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
+                if (format.contains("gif")) {
+                    final ImageGifViewerController controller
+                            = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                    controller.loadImage(sourceFile.getAbsolutePath());
+
+                } else {
+                    final ImageFramesViewerController controller
+                            = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+                    controller.selectSourceFile(sourceFile);
+                }
+            } else {
+                final ImageManufactureController controller
+                        = (ImageManufactureController) FxmlStage.openScene(getClass(), null,
+                                CommonValues.ImageManufactureFileFxml);
+                controller.loadImage(sourceFile, image, imageInformation);
+                controller.loadData(imageData);
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void checkImageNevigator() {
-        checkImageNevigator(sourceFile);
+    @FXML
+    public void sampleAction() {
+        ImageSampleController controller
+                = (ImageSampleController) loadScene(CommonValues.ImageSampleFxml);
+        controller.loadImage(sourceFile, image, imageInformation);
     }
 
-    public void checkImageNevigator(File currentfile) {
+    @FXML
+    public void splitAction() {
+        ImageSplitController controller
+                = (ImageSplitController) loadScene(CommonValues.ImageSplitFxml);
+        controller.loadImage(sourceFile, image, imageInformation);
+    }
+
+    public void makeImageNevigator() {
+        makeImageNevigator(sourceFile);
+    }
+
+    public void makeImageNevigator(File currentfile) {
         try {
             if (currentfile == null) {
                 previousFile = null;
@@ -1374,38 +1762,26 @@ public class ImageViewerController extends ImageBaseController {
                 return;
             }
             File path = currentfile.getParentFile();
-            List<File> sortedFiles = new ArrayList<>();
+            List<File> pathFiles = new ArrayList<>();
             File[] files = path.listFiles();
             for (File file : files) {
                 if (file.isFile() && FileTools.isSupportedImage(file)) {
-                    sortedFiles.add(file);
+                    pathFiles.add(file);
                 }
             }
-            RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-            if (getMessage("OriginalFileName").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.FileName);
+            FileTools.sortFiles(pathFiles, sortMode);
 
-            } else if (getMessage("CreateTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.CreateTime);
-
-            } else if (getMessage("ModifyTime").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.ModifyTime);
-
-            } else if (getMessage("Size").equals(sort.getText())) {
-                FileTools.sortFiles(sortedFiles, FileTools.FileSortType.Size);
-            }
-
-            for (int i = 0; i < sortedFiles.size(); i++) {
-                if (sortedFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
-                    if (i < sortedFiles.size() - 1) {
-                        nextFile = sortedFiles.get(i + 1);
+            for (int i = 0; i < pathFiles.size(); i++) {
+                if (pathFiles.get(i).getAbsoluteFile().equals(currentfile.getAbsoluteFile())) {
+                    if (i < pathFiles.size() - 1) {
+                        nextFile = pathFiles.get(i + 1);
                         nextButton.setDisable(false);
                     } else {
                         nextFile = null;
                         nextButton.setDisable(true);
                     }
                     if (i > 0) {
-                        previousFile = sortedFiles.get(i - 1);
+                        previousFile = pathFiles.get(i - 1);
                         previousButton.setDisable(false);
                     } else {
                         previousFile = null;
@@ -1421,70 +1797,6 @@ public class ImageViewerController extends ImageBaseController {
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-    }
-
-    public double getMouseX() {
-        return mouseX;
-    }
-
-    public void setMouseX(double mouseX) {
-        this.mouseX = mouseX;
-    }
-
-    public double getMouseY() {
-        return mouseY;
-    }
-
-    public void setMouseY(double mouseY) {
-        this.mouseY = mouseY;
-    }
-
-    public Button getImageSizeButton() {
-        return imageSizeButton;
-    }
-
-    public void setImageSizeButton(Button imageSizeButton) {
-        this.imageSizeButton = imageSizeButton;
-    }
-
-    public Button getPaneSizeButton() {
-        return paneSizeButton;
-    }
-
-    public void setPaneSizeButton(Button paneSizeButton) {
-        this.paneSizeButton = paneSizeButton;
-    }
-
-    public Button getZoomInButton() {
-        return zoomInButton;
-    }
-
-    public void setZoomInButton(Button zoomInButton) {
-        this.zoomInButton = zoomInButton;
-    }
-
-    public Button getZoomOutButton() {
-        return zoomOutButton;
-    }
-
-    public void setZoomOutButton(Button zoomOutButton) {
-        this.zoomOutButton = zoomOutButton;
-    }
-
-    public int getxZoomStep() {
-        return xZoomStep;
-    }
-
-    public void setxZoomStep(int xZoomStep) {
-        this.xZoomStep = xZoomStep;
-    }
-
-    public int getyZoomStep() {
-        return yZoomStep;
-    }
-
-    public void setyZoomStep(int yZoomStep) {
-        this.yZoomStep = yZoomStep;
     }
 
 }

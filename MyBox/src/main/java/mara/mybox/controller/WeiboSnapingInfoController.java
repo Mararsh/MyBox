@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
+import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -29,6 +31,11 @@ public class WeiboSnapingInfoController extends BaseController {
     private TextArea infoText, errorText;
     @FXML
     private Button stopButton, reloadButton;
+
+    public WeiboSnapingInfoController() {
+        baseTitle = AppVaribles.getMessage("WeiboSnap");
+
+    }
 
     public void init(final Task<?> task) {
         try {
@@ -52,7 +59,7 @@ public class WeiboSnapingInfoController extends BaseController {
     }
 
     public void addText(String str) {
-        infoText.setStyle("-fx-font-size: 15px;");
+        infoText.setStyle("-fx-font-size: 1em;");
         infoText.setText(infoText.getText().concat(str));
     }
 
@@ -65,12 +72,12 @@ public class WeiboSnapingInfoController extends BaseController {
     }
 
     public void showError(String str) {
-        errorText.setStyle("-fx-text-fill: #961c1c; -fx-font-size: 15px;");
+        errorText.setStyle("-fx-text-fill: #961c1c; -fx-font-size: 1em;");
         errorText.setText(str);
     }
 
     public void showMem(String str) {
-        errorText.setStyle("-fx-text-fill: #2e598a; -fx-font-size: 15px; ");
+        errorText.setStyle("-fx-text-fill: #2e598a; -fx-font-size: 1em; ");
         errorText.setText(str);
     }
 
@@ -91,7 +98,7 @@ public class WeiboSnapingInfoController extends BaseController {
 
     @FXML
     private void mybox(ActionEvent event) {
-        openStage(CommonValues.MyboxFxml, false, true);
+        openStage(CommonValues.MyboxFxml);
     }
 
     public WeiboSnapRunController getParent() {

@@ -21,7 +21,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.fxml.image.ImageTools;
+import mara.mybox.fxml.ImageManufacture;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.data.ImageFileInformation;
@@ -429,7 +429,7 @@ public class ImageTiffFile {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = ImageTools.getBufferedImage(imageInformation.getImage());
+                    wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
                 }
                 for (int i = 0; i < rows.size() - 1; i++) {
                     y1 = rows.get(i);
@@ -439,7 +439,7 @@ public class ImageTiffFile {
                         x2 = cols.get(j + 1);
                         BufferedImage bufferedImage;
                         if (!imageInformation.isIsSampled()) {
-                            bufferedImage = ImageConvert.cropImage(wholeSource, x1, y1, x2, y2);
+                            bufferedImage = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
                         } else {
                             bufferedImage = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         }

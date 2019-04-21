@@ -1,12 +1,12 @@
 package mara.mybox;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.List;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
-import mara.mybox.controller.BaseController;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.value.AppVaribles;
@@ -34,7 +34,8 @@ public class MainApp extends Application {
             File userPath = new File(CommonValues.AppDataRoot);
             if (!userPath.exists()) {
                 if (!userPath.mkdirs()) {
-                    FxmlStage.alertError(stage, "Can not find or make user path:\n" + CommonValues.AppDataRoot);
+                    FxmlStage.alertError(stage,
+                            MessageFormat.format(AppVaribles.getMessage("UserPathFail"), CommonValues.AppDataRoot));
                     return;
                 }
             }
@@ -42,7 +43,8 @@ public class MainApp extends Application {
                 FileTools.deleteDir(CommonValues.AppTempPath);
             }
             if (!CommonValues.AppTempPath.mkdirs()) {
-                FxmlStage.alertError(stage, "Can not find or make user path:\n" + CommonValues.AppTempPath);
+                FxmlStage.alertError(stage,
+                        MessageFormat.format(AppVaribles.getMessage("UserPathFail"), CommonValues.AppTempPath));
                 return;
             }
 
@@ -55,11 +57,20 @@ public class MainApp extends Application {
             ImageIO.setUseCache(true);
             ImageIO.setCacheDirectory(CommonValues.AppTempPath);
 
+//            if (getParameters().getRaw() != null && !getParameters().getRaw().isEmpty()) {
+//                logger.debug(getParameters().getRaw().get(0));
+//            }
             String inFile = null;
             List<String> paremeters = getParameters().getUnnamed();
             if (paremeters != null && !paremeters.isEmpty()) {
-                if (new File(paremeters.get(0)).exists()) {
-                    inFile = paremeters.get(0);
+                for (String p : paremeters) {
+                    try {
+                        if (new File(p).exists()) {
+                            inFile = p;
+                            break;
+                        }
+                    } catch (Exception e) {
+                    }
                 }
             }
             if (inFile != null) {
@@ -70,9 +81,6 @@ public class MainApp extends Application {
             } else {
                 FxmlStage.openMyBox(getClass(), stage);
             }
-
-            // https://stackoverflow.com/questions/23527679/trying-to-open-a-javafx-stage-after-calling-platform-exit
-            Platform.setImplicitExit(false);
 
             //            logger.debug(Screen.getPrimary().getDpi());
         } catch (Exception e) {

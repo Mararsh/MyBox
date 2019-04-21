@@ -1,13 +1,22 @@
 package mara.mybox.image;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.image.Image;
-import mara.mybox.data.IntCircle;
+import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
-import mara.mybox.data.IntRectangle;
 import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -17,20 +26,23 @@ import static mara.mybox.value.AppVaribles.getMessage;
  */
 public class ImageScope {
 
-    private ScopeType scopeType;
-    private ColorScopeType colorScopeType;
-    private List<Color> colors;
-    private List<IntPoint> points;
-    private IntRectangle rectangle;
-    private IntCircle circle;
-    private int colorDistance, colorDistance2;
-    private float hsbDistance;
-    private boolean areaExcluded, colorExcluded;
-    private Image image;
-    private double opacity;
+    protected ScopeType scopeType;
+    protected ColorScopeType colorScopeType;
+    protected List<Color> colors;
+    protected List<IntPoint> points;
+    protected DoubleRectangle rectangle;
+    protected DoubleCircle circle;
+    protected DoubleEllipse ellipse;
+    protected DoublePolygon polygon;
+    protected int colorDistance, colorDistance2;
+    protected float hsbDistance;
+    protected boolean areaExcluded, colorExcluded;
+    protected Image image;
+    protected double opacity;
 
     public enum ScopeType {
-        Invalid, All, Matting, Rectangle, Circle, Color, RectangleColor, CircleColor
+        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon,
+        Color, RectangleColor, CircleColor, EllipseColor, PolygonColor
     }
 
     public enum ColorScopeType {
@@ -46,6 +58,12 @@ public class ImageScope {
         init();
     }
 
+    public ImageScope(Image image, ScopeType type) {
+        this.image = image;
+        init();
+        scopeType = type;
+    }
+
     private void init() {
         scopeType = ScopeType.All;
         colorScopeType = ColorScopeType.AllColor;
@@ -55,294 +73,1533 @@ public class ImageScope {
         colorDistance2 = colorDistance * colorDistance;
         hsbDistance = 0.5f;
         opacity = 0.3;
-        circle = new IntCircle();
         if (image != null) {
-            rectangle = new IntRectangle((int) (image.getWidth() / 4), (int) (image.getHeight() / 4),
-                    (int) (image.getWidth() * 3 / 4), (int) (image.getHeight() * 3 / 4));
-            circle = new IntCircle((int) (image.getWidth() / 2), (int) (image.getHeight() / 2),
-                    (int) (image.getHeight() / 4));
+            rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                    image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                    image.getHeight() / 4);
+            ellipse = new DoubleEllipse(rectangle);
         } else {
-            rectangle = new IntRectangle();
-            circle = new IntCircle();
+            rectangle = new DoubleRectangle();
+            circle = new DoubleCircle();
+            ellipse = new DoubleEllipse();
         }
+        polygon = new DoublePolygon();
 
     }
 
     public ImageScope cloneValues() {
-        ImageScope scope = new ImageScope(image);
-        scope.setScopeType(scopeType);
-        scope.setColorScopeType(colorScopeType);
-        List<IntPoint> npoints = new ArrayList<>();
-        if (points != null) {
-            npoints.addAll(points);
-        }
-        scope.setPoints(npoints);
-        List<Color> ncolors = new ArrayList<>();
-        if (colors != null) {
-            ncolors.addAll(colors);
-        }
-        scope.setColors(ncolors);
-        scope.setRectangle(rectangle.cloneValues());
-        scope.setCircle(circle.cloneValues());
-        scope.setColorDistance(colorDistance);
-        scope.setColorDistance2(colorDistance2);
-        scope.setHsbDistance(hsbDistance);
-        scope.setColorExcluded(colorExcluded);
-        scope.setAreaExcluded(areaExcluded);
-        scope.setOpacity(opacity);
-        return scope;
+        return ImageScope.cloneAll(this);
     }
 
-    public boolean inScope(int x, int y, Color color) {
-        if (null == scopeType) {
-            return true;
+    public static ImageScope cloneAll(ImageScope sourceScope) {
+        ImageScope targetScope = new ImageScope();
+        ImageScope.cloneAll(targetScope, sourceScope);
+        return targetScope;
+    }
+
+    public static void cloneAll(ImageScope targetScope, ImageScope sourceScope) {
+        try {
+            targetScope.setImage(sourceScope.getImage());
+            targetScope.setScopeType(sourceScope.getScopeType());
+            targetScope.setColorScopeType(sourceScope.getColorScopeType());
+            List<IntPoint> npoints = new ArrayList<>();
+            if (sourceScope.getPoints() != null) {
+                npoints.addAll(sourceScope.getPoints());
+            }
+            targetScope.setPoints(npoints);
+            List<Color> ncolors = new ArrayList<>();
+            if (sourceScope.getColors() != null) {
+                ncolors.addAll(sourceScope.getColors());
+            }
+            targetScope.setColors(ncolors);
+            targetScope.setRectangle(sourceScope.getRectangle().cloneValues());
+            targetScope.setCircle(sourceScope.getCircle().cloneValues());
+            targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
+            targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
+            targetScope.setColorDistance(sourceScope.getColorDistance());
+            targetScope.setColorDistance2(sourceScope.getColorDistance2());
+            targetScope.setHsbDistance(sourceScope.getHsbDistance());
+            targetScope.setColorExcluded(sourceScope.isColorExcluded());
+            targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
+            targetScope.setOpacity(sourceScope.getOpacity());
+
+        } catch (Exception e) {
         }
-        boolean inArea;
+    }
+
+    public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {
+        try {
+            List<IntPoint> npoints = new ArrayList<>();
+            if (sourceScope.getPoints() != null) {
+                npoints.addAll(sourceScope.getPoints());
+            }
+            targetScope.setPoints(npoints);
+            List<Color> ncolors = new ArrayList<>();
+            if (sourceScope.getColors() != null) {
+                ncolors.addAll(sourceScope.getColors());
+            }
+            targetScope.setColors(ncolors);
+            targetScope.setRectangle(sourceScope.getRectangle().cloneValues());
+            targetScope.setCircle(sourceScope.getCircle().cloneValues());
+            targetScope.setEllipse(sourceScope.getEllipse().cloneValues());
+            targetScope.setPolygon(sourceScope.getPolygon().cloneValues());
+            targetScope.setColorDistance(sourceScope.getColorDistance());
+            targetScope.setColorDistance2(sourceScope.getColorDistance2());
+            targetScope.setHsbDistance(sourceScope.getHsbDistance());
+            targetScope.setColorExcluded(sourceScope.isColorExcluded());
+            targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
+            targetScope.setOpacity(sourceScope.getOpacity());
+
+        } catch (Exception e) {
+        }
+    }
+
+    public static ImageScope fineImageScope(ImageScope sourceScope) {
+        try {
+            ImageScope newScope = ImageScope.fineImageScope(sourceScope.getImage(),
+                    sourceScope.getScopeType(), sourceScope.getColorScopeType());
+            ImageScope.cloneValues(newScope, sourceScope);
+            return newScope;
+        } catch (Exception e) {
+            return sourceScope;
+        }
+    }
+
+    public static ImageScope fineImageScope(Image image,
+            ScopeType scopeType, ColorScopeType colorScopeType) {
         switch (scopeType) {
             case All:
-                return true;
+                return new All(image);
             case Rectangle:
-                if (areaExcluded) {
-                    return !rectangle.include(x, y);
-                } else {
-                    return rectangle.include(x, y);
-                }
+                return new Rectangle(image);
             case Circle:
-                if (areaExcluded) {
-                    return !circle.include(x, y);
-                } else {
-                    return circle.include(x, y);
-                }
+                return new Circle(image);
+            case Ellipse:
+                return new Ellipse(image);
+            case Polygon:
+                return new Polygon(image);
             case Color:
-                return inColorScope(color);
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new All(image);
+                    case Color:
+                        return new ColorDistance(image);
+                    case Red:
+                        return new RedDistance(image);
+                    case Green:
+                        return new GreenDistance(image);
+                    case Blue:
+                        return new BlueDistance(image);
+                    case Brightness:
+                        return new BrightnessDistance(image);
+                    case Saturation:
+                        return new SaturationDistance(image);
+                    case Hue:
+                        return new HueDistance(image);
+                    default:
+                        return new All(image);
+                }
             case RectangleColor:
-                if (areaExcluded) {
-                    inArea = !rectangle.include(x, y);
-                } else {
-                    inArea = rectangle.include(x, y);
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new Rectangle(image);
+                    case Color:
+                        return new RectangleColor(image);
+                    case Red:
+                        return new RectangleRed(image);
+                    case Green:
+                        return new RectangleGreen(image);
+                    case Blue:
+                        return new RectangleBlue(image);
+                    case Brightness:
+                        return new RectangleBrightness(image);
+                    case Saturation:
+                        return new RectangleSaturation(image);
+                    case Hue:
+                        return new RectangleHue(image);
+                    default:
+                        return new Rectangle(image);
                 }
-                if (!inArea) {
-                    return false;
-                }
-                return inColorScope(color);
             case CircleColor:
-                if (areaExcluded) {
-                    inArea = !circle.include(x, y);
-                } else {
-                    inArea = circle.include(x, y);
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new Circle(image);
+                    case Color:
+                        return new CircleColor(image);
+                    case Red:
+                        return new CircleRed(image);
+                    case Green:
+                        return new CircleGreen(image);
+                    case Blue:
+                        return new CircleBlue(image);
+                    case Brightness:
+                        return new CircleBrightness(image);
+                    case Saturation:
+                        return new CircleSaturation(image);
+                    case Hue:
+                        return new CircleHue(image);
+                    default:
+                        return new Circle(image);
                 }
-                if (!inArea) {
-                    return false;
+            case EllipseColor:
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new Ellipse(image);
+                    case Color:
+                        return new EllipseColor(image);
+                    case Red:
+                        return new EllipseRed(image);
+                    case Green:
+                        return new EllipseGreen(image);
+                    case Blue:
+                        return new EllipseBlue(image);
+                    case Brightness:
+                        return new EllipseBrightness(image);
+                    case Saturation:
+                        return new EllipseSaturation(image);
+                    case Hue:
+                        return new EllipseHue(image);
+                    default:
+                        return new ImageScope(image, scopeType);
                 }
-                return inColorScope(color);
+            case PolygonColor:
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new Polygon(image);
+                    case Color:
+                        return new PolygonColor(image);
+                    case Red:
+                        return new PolygonRed(image);
+                    case Green:
+                        return new PolygonGreen(image);
+                    case Blue:
+                        return new PolygonBlue(image);
+                    case Brightness:
+                        return new PolygonBrightness(image);
+                    case Saturation:
+                        return new PolygonSaturation(image);
+                    case Hue:
+                        return new PolygonHue(image);
+                    default:
+                        return new ImageScope(image, scopeType);
+                }
+            case Matting:
+                switch (colorScopeType) {
+                    case AllColor:
+                        return new Matting(image);
+                    case Color:
+                        return new MattingColor(image);
+                    case Red:
+                        return new MattingRed(image);
+                    case Green:
+                        return new MattingGreen(image);
+                    case Blue:
+                        return new MattingBlue(image);
+                    case Brightness:
+                        return new MattingBrightness(image);
+                    case Saturation:
+                        return new MattingSaturation(image);
+                    case Hue:
+                        return new MattingHue(image);
+                    default:
+                        return new Matting(image);
+                }
             default:
-                return true;
+                return new ImageScope(image, scopeType);
         }
     }
 
-    public boolean inColorScope(Color color) {
-        switch (colorScopeType) {
-            case AllColor:
-                return true;
-            case Color:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Red:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Green:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Blue:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Brightness:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Saturation:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            case Hue:
-                if (colorExcluded) {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    for (Color oColor : colors) {
-                        if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            default:
-                return false;
+    static class All extends ImageScope {
+
+        public All(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.All;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return true;
         }
     }
 
-    public boolean inColorMatch2(Color color1, Color color2) {
-        switch (colorScopeType) {
-            case AllColor:
-                return true;
-            case Color:
-                if (colorExcluded) {
-                    return !ImageColor.isColorMatch2(color1, color2, colorDistance2);
-                } else {
-                    return ImageColor.isColorMatch2(color1, color2, colorDistance2);
-                }
-            case Red:
-                if (colorExcluded) {
-                    return !ImageColor.isRedMatch(color1, color2, colorDistance);
-                } else {
-                    return ImageColor.isRedMatch(color1, color2, colorDistance);
-                }
-            case Green:
-                if (colorExcluded) {
-                    return !ImageColor.isGreenMatch(color1, color2, colorDistance);
-                } else {
-                    return ImageColor.isGreenMatch(color1, color2, colorDistance);
-                }
-            case Blue:
-                if (colorExcluded) {
-                    return !ImageColor.isBlueMatch(color1, color2, colorDistance);
-                } else {
-                    return ImageColor.isBlueMatch(color1, color2, colorDistance);
-                }
-            case Brightness:
-                if (colorExcluded) {
-                    return !ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
-                } else {
-                    return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
-                }
-            case Saturation:
-                if (colorExcluded) {
-                    return !ImageColor.isSaturationMatch(color1, color2, hsbDistance);
-                } else {
-                    return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
-                }
-            case Hue:
-                if (colorExcluded) {
-                    return !ImageColor.isHueMatch(color1, color2, hsbDistance);
-                } else {
-                    return ImageColor.isHueMatch(color1, color2, hsbDistance);
-                }
-            default:
-                return false;
+    static class Rectangle extends ImageScope {
+
+        public Rectangle(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
         }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return inShape(rectangle, areaExcluded, x, y);
+        }
+    }
+
+    static class Circle extends ImageScope {
+
+        public Circle(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return inShape(circle, areaExcluded, x, y);
+        }
+    }
+
+    static class Ellipse extends ImageScope {
+
+        public Ellipse(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return inShape(ellipse, areaExcluded, x, y);
+        }
+    }
+
+    static class Polygon extends ImageScope {
+
+        public Polygon(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            if (image != null) {
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return inShape(polygon, areaExcluded, x, y);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class AllColor extends ImageScope {
+
+        public AllColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.AllColor;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return true;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return true;
+        }
+    }
+
+    static class ColorDistance extends ImageScope {
+
+        public ColorDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Color;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class RedDistance extends ImageScope {
+
+        public RedDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Red;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isRedMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class GreenDistance extends ImageScope {
+
+        public GreenDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Green;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isGreenMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class BlueDistance extends ImageScope {
+
+        public BlueDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Blue;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isBlueMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class BrightnessDistance extends ImageScope {
+
+        public BrightnessDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Brightness;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isBrightnessMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class SaturationDistance extends ImageScope {
+
+        public SaturationDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Saturation;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isSaturationMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class HueDistance extends ImageScope {
+
+        public HueDistance(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Color;
+            this.colorScopeType = ColorScopeType.Hue;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            return isHueMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class RectangleColor extends ImageScope {
+
+        public RectangleColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Color;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class RectangleRed extends ImageScope {
+
+        public RectangleRed(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Red;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isRedMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class RectangleGreen extends ImageScope {
+
+        public RectangleGreen(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Green;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isGreenMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class RectangleBlue extends ImageScope {
+
+        public RectangleBlue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Blue;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBlueMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class RectangleBrightness extends ImageScope {
+
+        public RectangleBrightness(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Brightness;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBrightnessMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class RectangleSaturation extends ImageScope {
+
+        public RectangleSaturation(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Saturation;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isSaturationMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class RectangleHue extends ImageScope {
+
+        public RectangleHue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Rectangle;
+            this.colorScopeType = ColorScopeType.Hue;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+            } else {
+                rectangle = new DoubleRectangle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(rectangle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isHueMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class CircleColor extends ImageScope {
+
+        public CircleColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Color;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class CircleRed extends ImageScope {
+
+        public CircleRed(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Red;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isRedMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class CircleGreen extends ImageScope {
+
+        public CircleGreen(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Green;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isGreenMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class CircleBlue extends ImageScope {
+
+        public CircleBlue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Blue;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBlueMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class CircleBrightness extends ImageScope {
+
+        public CircleBrightness(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Brightness;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBrightnessMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class CircleSaturation extends ImageScope {
+
+        public CircleSaturation(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Saturation;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isSaturationMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class CircleHue extends ImageScope {
+
+        public CircleHue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Circle;
+            this.colorScopeType = ColorScopeType.Hue;
+            if (image != null) {
+                circle = new DoubleCircle(image.getWidth() / 2, image.getHeight() / 2,
+                        image.getHeight() / 4);
+            } else {
+                circle = new DoubleCircle();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(circle, areaExcluded, x, y)) {
+                return false;
+            }
+            return isHueMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class EllipseColor extends ImageScope {
+
+        public EllipseColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Color;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class EllipseRed extends ImageScope {
+
+        public EllipseRed(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Red;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isRedMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class EllipseGreen extends ImageScope {
+
+        public EllipseGreen(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Green;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isGreenMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class EllipseBlue extends ImageScope {
+
+        public EllipseBlue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Blue;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBlueMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class EllipseBrightness extends ImageScope {
+
+        public EllipseBrightness(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Brightness;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBrightnessMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class EllipseSaturation extends ImageScope {
+
+        public EllipseSaturation(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Saturation;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isSaturationMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class EllipseHue extends ImageScope {
+
+        public EllipseHue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Ellipse;
+            this.colorScopeType = ColorScopeType.Hue;
+            if (image != null) {
+                rectangle = new DoubleRectangle(image.getWidth() / 4, image.getHeight() / 4,
+                        image.getWidth() * 3 / 4, image.getHeight() * 3 / 4);
+                ellipse = new DoubleEllipse(rectangle);
+            } else {
+                rectangle = new DoubleRectangle();
+                ellipse = new DoubleEllipse();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(ellipse, areaExcluded, x, y)) {
+                return false;
+            }
+            return isHueMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class PolygonColor extends ImageScope {
+
+        public PolygonColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Color;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isColorMatch2(colors, colorExcluded, colorDistance2, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class PolygonRed extends ImageScope {
+
+        public PolygonRed(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Red;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isRedMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class PolygonGreen extends ImageScope {
+
+        public PolygonGreen(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Green;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isGreenMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class PolygonBlue extends ImageScope {
+
+        public PolygonBlue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Blue;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBlueMatch(colors, colorExcluded, colorDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class PolygonBrightness extends ImageScope {
+
+        public PolygonBrightness(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Brightness;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isBrightnessMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class PolygonSaturation extends ImageScope {
+
+        public PolygonSaturation(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Saturation;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isSaturationMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class PolygonHue extends ImageScope {
+
+        public PolygonHue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Polygon;
+            this.colorScopeType = ColorScopeType.Hue;
+            if (image != null) {
+
+                polygon = new DoublePolygon();
+            }
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (!inShape(polygon, areaExcluded, x, y)) {
+                return false;
+            }
+            return isHueMatch(colors, colorExcluded, hsbDistance, color);
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class Matting extends ImageScope {
+
+        public Matting(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Color;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class MattingColor extends ImageScope {
+
+        public MattingColor(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Color;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isColorMatch2(color1, color2, colorDistance2);
+        }
+    }
+
+    static class MattingRed extends ImageScope {
+
+        public MattingRed(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Red;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isRedMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class MattingGreen extends ImageScope {
+
+        public MattingGreen(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Green;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isGreenMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class MattingBlue extends ImageScope {
+
+        public MattingBlue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Blue;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBlueMatch(color1, color2, colorDistance);
+        }
+    }
+
+    static class MattingBrightness extends ImageScope {
+
+        public MattingBrightness(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Brightness;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class MattingSaturation extends ImageScope {
+
+        public MattingSaturation(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Saturation;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isSaturationMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    static class MattingHue extends ImageScope {
+
+        public MattingHue(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Matting;
+            this.colorScopeType = ColorScopeType.Hue;
+        }
+
+        @Override
+        public boolean inColorMatch(Color color1, Color color2) {
+            return ImageColor.isHueMatch(color1, color2, hsbDistance);
+        }
+    }
+
+    public static boolean inShape(DoubleShape shape, boolean areaExcluded,
+            int x, int y) {
+        if (areaExcluded) {
+            return !shape.include(x, y);
+        } else {
+            return shape.include(x, y);
+        }
+    }
+
+    public static boolean isColorMatch2(List<Color> colors, boolean colorExcluded,
+            int colorDistance2, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isRedMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isGreenMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isBlueMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isBrightnessMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isSaturationMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isHueMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    // SubClass should implement this
+    protected boolean inScope(int x, int y, Color color) {
+        return true;
     }
 
     public boolean inColorMatch(Color color1, Color color2) {
-        boolean isMatch;
-        switch (colorScopeType) {
-            case AllColor:
-                isMatch = true;
-                break;
-            case Color:
-                isMatch = ImageColor.isColorMatch2(color1, color2, colorDistance2);
-                break;
-            case Red:
-                isMatch = ImageColor.isRedMatch(color1, color2, colorDistance);
-                break;
-            case Green:
-                isMatch = ImageColor.isGreenMatch(color1, color2, colorDistance);
-                break;
-            case Blue:
-                isMatch = ImageColor.isBlueMatch(color1, color2, colorDistance);
-                break;
-            case Brightness:
-                isMatch = ImageColor.isBrightnessMatch(color1, color2, hsbDistance);
-                break;
-            case Saturation:
-                isMatch = ImageColor.isSaturationMatch(color1, color2, hsbDistance);
-                break;
-            case Hue:
-                isMatch = ImageColor.isHueMatch(color1, color2, hsbDistance);
-                break;
-            default:
-                isMatch = false;
-        }
-        return isMatch;
+        return true;
     }
 
     public void addPoints(IntPoint point) {
@@ -369,15 +1626,18 @@ public class ImageScope {
         points = new ArrayList<>();
     }
 
-    public void addColor(Color color) {
+    public boolean addColor(Color color) {
         if (color == null) {
-            return;
+            return false;
         }
         if (colors == null) {
             colors = new ArrayList<>();
         }
         if (!colors.contains(color)) {
             colors.add(color);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -387,7 +1647,7 @@ public class ImageScope {
 
     public void setCircleCenter(int x, int y) {
         if (circle == null) {
-            circle = new IntCircle();
+            circle = new DoubleCircle();
         }
         circle.setCenterX(x);
         circle.setCenterY(y);
@@ -395,7 +1655,7 @@ public class ImageScope {
 
     public void setCircleRadius(int r) {
         if (circle == null) {
-            circle = new IntCircle();
+            circle = new DoubleCircle();
         }
         circle.setRadius(r);
     }
@@ -474,6 +1734,171 @@ public class ImageScope {
         return s;
     }
 
+    public static BufferedImage indicateRectangle(BufferedImage source,
+            Color color, int lineWidth, DoubleRectangle rect) {
+        try {
+
+            int width = source.getWidth();
+            int height = source.getHeight();
+            if (!rect.isValid(width, height)) {
+                return source;
+            }
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateCircle(BufferedImage source,
+            Color color, int lineWidth, DoubleCircle circle) {
+        try {
+            if (!circle.isValid()) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            g.drawOval((int) circle.getCenterX() - (int) circle.getRadius(), (int) circle.getCenterY() - (int) circle.getRadius(),
+                    2 * (int) circle.getRadius(), 2 * (int) circle.getRadius());
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateEllipse(BufferedImage source,
+            Color color, int lineWidth, DoubleEllipse ellipse) {
+        try {
+            if (!ellipse.isValid()) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            DoubleRectangle rect = ellipse.getRectangle();
+            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
+                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateSplit(BufferedImage source,
+            List<Integer> rows, List<Integer> cols,
+            Color lineColor, int lineWidth, boolean showSize, double scale) {
+        try {
+            if (rows == null || cols == null) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(lineColor);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+//            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+            g.setStroke(stroke);
+
+            for (int i = 0; i < rows.size(); i++) {
+                int row = (int) (rows.get(i) / scale);
+                if (row <= 0 || row >= height - 1) {
+                    continue;
+                }
+                g.drawLine(0, row, width, row);
+            }
+            for (int i = 0; i < cols.size(); i++) {
+                int col = (int) (cols.get(i) / scale);
+                if (col <= 0 || col >= width - 1) {
+                    continue;
+                }
+                g.drawLine(col, 0, col, height);
+            }
+
+            if (showSize) {
+                List<String> texts = new ArrayList<>();
+                List<Integer> xs = new ArrayList<>();
+                List<Integer> ys = new ArrayList<>();
+                for (int i = 0; i < rows.size() - 1; i++) {
+                    int h = rows.get(i + 1) - rows.get(i) + 1;
+                    for (int j = 0; j < cols.size() - 1; j++) {
+                        int w = cols.get(j + 1) - cols.get(j) + 1;
+                        texts.add(w + "x" + h);
+                        xs.add(cols.get(j) + w / 3);
+                        ys.add(rows.get(i) + h / 3);
+//                    logger.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+                    }
+                }
+
+                int fontSize = width / (cols.size() * 10);
+                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
+                g.setFont(font);
+                for (int i = 0; i < texts.size(); i++) {
+                    g.drawString(texts.get(i), xs.get(i), ys.get(i));
+                }
+            }
+
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
     public List<Color> getColors() {
         return colors;
     }
@@ -482,19 +1907,19 @@ public class ImageScope {
         this.colors = colors;
     }
 
-    public IntRectangle getRectangle() {
+    public DoubleRectangle getRectangle() {
         return rectangle;
     }
 
-    public void setRectangle(IntRectangle rectangle) {
+    public void setRectangle(DoubleRectangle rectangle) {
         this.rectangle = rectangle;
     }
 
-    public IntCircle getCircle() {
+    public DoubleCircle getCircle() {
         return circle;
     }
 
-    public void setCircle(IntCircle circle) {
+    public void setCircle(DoubleCircle circle) {
         this.circle = circle;
     }
 
@@ -577,6 +2002,22 @@ public class ImageScope {
 
     public void setHsbDistance(float hsbDistance) {
         this.hsbDistance = hsbDistance;
+    }
+
+    public DoubleEllipse getEllipse() {
+        return ellipse;
+    }
+
+    public void setEllipse(DoubleEllipse ellipse) {
+        this.ellipse = ellipse;
+    }
+
+    public DoublePolygon getPolygon() {
+        return polygon;
+    }
+
+    public void setPolygon(DoublePolygon polygon) {
+        this.polygon = polygon;
     }
 
 }

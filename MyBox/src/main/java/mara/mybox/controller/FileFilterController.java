@@ -11,6 +11,7 @@ import javafx.stage.Modality;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation;
+import mara.mybox.fxml.FxmlStage;
 
 /**
  * @Author Mara
@@ -24,11 +25,13 @@ public class FileFilterController extends FileEditerController {
     private TextField filterConditionsLabel;
 
     public FileFilterController() {
+        baseTitle = AppVaribles.getMessage("FileFilter");
+
         setTextType();
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initFilterTab();
 
@@ -70,9 +73,12 @@ public class FileFilterController extends FileEditerController {
             @Override
             protected Void call() throws Exception {
                 file = sourceInformation.filter(recordLineNumber);
-                if (task.isCancelled()) {
-                    return null;
-                }
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -88,7 +94,6 @@ public class FileFilterController extends FileEditerController {
                         }
                     }
                 });
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -102,7 +107,7 @@ public class FileFilterController extends FileEditerController {
     @Override
     public void saveAction() {
         final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(FilePathKey);
+        File path = AppVaribles.getUserConfigPath(sourcePathKey);
         if (path.exists()) {
             fileChooser.setInitialDirectory(path);
         }
@@ -111,8 +116,7 @@ public class FileFilterController extends FileEditerController {
         if (file == null) {
             return;
         }
-        AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
-        AppVaribles.setUserConfigValue(FilePathKey, file.getParent());
+        recordFileWritten(file);
 
         targetInformation.setFile(file);
         targetInformation.setCharset(sourceInformation.getCharset());
@@ -126,10 +130,12 @@ public class FileFilterController extends FileEditerController {
             @Override
             protected Void call() throws Exception {
                 ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                if (task.isCancelled()) {
-                    return null;
-                }
+                return null;
+            }
 
+            @Override
+            protected void succeeded() {
+                super.succeeded();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -137,14 +143,13 @@ public class FileFilterController extends FileEditerController {
                             FileEditerController controller = openNewStage();
                             controller.openFile(file);
                             popInformation(AppVaribles.getMessage("Successful"));
-                            getMyStage().close();
+                            FxmlStage.closeStage(getMyStage());
 //                            sourceInformation.getFile().delete();
                         } else {
                             popInformation(AppVaribles.getMessage("failed"));
                         }
                     }
                 });
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);

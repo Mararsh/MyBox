@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
@@ -20,12 +22,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.image.ImageTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -37,20 +40,22 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
     private final String ImageTextShadowKey, ImageFontFamilyKey, ImageTextColorKey;
     private int waterSize, waterAngle, waterShadow, waterX, waterY, positionType, textWidth, textHeight, margin;
-    private float waterTransparent;
+    private float opacity;
     private java.awt.Font font;
     private java.awt.Color color;
 
     @FXML
     private ChoiceBox<String> waterFamilyBox, waterStyleBox;
     @FXML
-    private ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, waterTransparentBox;
+    private ComboBox<String> waterSizeBox, waterShadowBox, waterAngleBox, opacityBox;
     @FXML
     private ColorPicker waterColorPicker;
     @FXML
     private ToggleGroup positionGroup;
     @FXML
     private TextField waterInput, waterXInput, waterYInput, marginInput;
+    @FXML
+    protected CheckBox outlineCheck, verticalCheck;
 
     private class PositionType {
 
@@ -63,6 +68,8 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchTextController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchText");
+
         ImageTextShadowKey = "ImageTextShadowKey";
         ImageFontFamilyKey = "ImageFontFamilyKey";
         ImageTextColorKey = "ImageTextColorKey";
@@ -70,12 +77,13 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(Bindings.isEmpty(waterInput.textProperty()))
                     .or(waterXInput.styleProperty().isEqualTo(badStyle))
                     .or(waterYInput.styleProperty().isEqualTo(badStyle))
@@ -88,7 +96,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
 
             waterXInput.textProperty().addListener(new ChangeListener<String>() {
@@ -109,56 +117,58 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
             waterSizeBox.getItems().addAll(sizes);
-            waterSizeBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterSize = Integer.valueOf(newValue);
-                        waterSizeBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            waterSize = v;
+                            FxmlControl.setEditorNormal(waterSizeBox);
+                        } else {
+                            FxmlControl.setEditorBadStyle(waterSizeBox);
+                        }
                     } catch (Exception e) {
-                        waterSize = 15;
-                        waterSizeBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterSizeBox);
                     }
                 }
             });
             waterSizeBox.getSelectionModel().select(0);
 
-            waterTransparentBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            waterTransparentBox.valueProperty().addListener(new ChangeListener<String>() {
+            opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterTransparent = Float.valueOf(newValue);
-                        if (waterTransparent >= 0.0f && waterTransparent <= 1.0f) {
-                            waterSizeBox.getEditor().setStyle(null);
+                        float f = Float.valueOf(newValue);
+                        if (f >= 0.0f && f <= 1.0f) {
+                            opacity = f;
+                            FxmlControl.setEditorNormal(opacityBox);
                         } else {
-                            waterTransparent = 0.5f;
-                            waterSizeBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(opacityBox);
                         }
                     } catch (Exception e) {
-                        waterTransparent = 0.5f;
-                        waterSizeBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(opacityBox);
                     }
                 }
             });
-            waterTransparentBox.getSelectionModel().select(0);
+            opacityBox.getSelectionModel().select(0);
 
             waterShadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
-            waterShadowBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterShadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterShadow = Integer.valueOf(newValue);
-                        if (waterShadow >= 0) {
-                            waterShadowBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            waterShadow = v;
                             AppVaribles.setUserConfigValue(ImageTextShadowKey, newValue);
+                            FxmlControl.setEditorNormal(waterShadowBox);
                         } else {
-                            waterShadow = 0;
-                            waterShadowBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(waterShadowBox);
                         }
                     } catch (Exception e) {
-                        waterShadow = 0;
-                        waterShadowBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterShadowBox);
                     }
                 }
             });
@@ -172,7 +182,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
             waterFamilyBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
-            waterFamilyBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterFamilyBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     AppVaribles.setUserConfigValue(ImageFontFamilyKey, newValue);
@@ -186,19 +196,24 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     AppVaribles.setUserConfigValue(ImageTextColorKey, newValue.toString());
                 }
             });
-            waterColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FFFFFF")));
+            waterColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FF0000")));
 
-            waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "75", "120", "135"));
+            waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
+                    "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             waterAngleBox.setVisibleRowCount(10);
-            waterAngleBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterAngleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterAngle = Integer.valueOf(newValue);
-                        waterAngleBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            waterAngle = v;
+                            FxmlControl.setEditorNormal(waterAngleBox);
+                        } else {
+                            FxmlControl.setEditorBadStyle(waterAngleBox);
+                        }
                     } catch (Exception e) {
-                        waterAngle = 0;
-                        waterAngleBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterAngleBox);
                     }
                 }
             });
@@ -261,8 +276,9 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
     private void checkMargin() {
         try {
-            margin = Integer.valueOf(marginInput.getText());
-            if (margin >= 0) {
+            int v = Integer.valueOf(marginInput.getText());
+            if (v >= 0) {
+                margin = v;
                 marginInput.setStyle(null);
             } else {
                 marginInput.setStyle(badStyle);
@@ -275,8 +291,9 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
     private void checkWaterPosition() {
         try {
-            waterX = Integer.valueOf(waterXInput.getText());
-            if (waterX >= 0) {
+            int v = Integer.valueOf(waterXInput.getText());
+            if (v >= 0) {
+                waterX = v;
                 waterXInput.setStyle(null);
             } else {
                 waterXInput.setStyle(badStyle);
@@ -286,8 +303,9 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
         }
 
         try {
-            waterY = Integer.valueOf(waterYInput.getText());
-            if (waterY >= 0) {
+            int v = Integer.valueOf(waterYInput.getText());
+            if (v >= 0) {
+                waterY = v;
                 waterYInput.setStyle(null);
             } else {
                 waterYInput.setStyle(badStyle);
@@ -299,7 +317,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         super.makeMoreParameters();
 
         String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
@@ -323,7 +341,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, waterSize);
         }
 
-        color = ImageTools.colorConvert(waterColorPicker.getValue());
+        color = ImageManufacture.toAwtColor(waterColorPicker.getValue());
 
         final String msg = waterInput.getText().trim();
         final Text text = new Text(msg);
@@ -370,7 +388,8 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
 
             BufferedImage target = ImageConvert.addText(source,
                     waterInput.getText().trim(), font, color,
-                    x, y, waterTransparent, waterShadow, waterAngle, false);
+                    x, y, opacity, waterShadow, waterAngle,
+                    outlineCheck.isSelected(), verticalCheck.isSelected());
 
             return target;
         } catch (Exception e) {

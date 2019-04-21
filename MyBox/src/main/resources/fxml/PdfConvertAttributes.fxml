@@ -46,20 +46,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<HBox fx:id="pdfConvertAttributesPane" alignment="CENTER" maxWidth="1.7976931348623157E308" stylesheets="@../styles/MyBox.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfConvertAttributesController">
+<HBox fx:id="pdfConvertAttributesPane" alignment="CENTER" stylesheets="@../styles/MyBox.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfConvertAttributesController">
     <children>
-        <GridPane alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="200.0" HBox.hgrow="ALWAYS">
+        <GridPane alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" prefWidth="148.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="905.0" minWidth="10.0" prefWidth="863.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="467.0" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="40.0" vgrow="NEVER" />
+                <RowConstraints maxHeight="146.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="63.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="98.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="222.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
                 <Label text="%ImageFormat" />
@@ -108,11 +108,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <RadioButton mnemonicParsing="false" selected="true" text="%OTSU">
                                     <toggleGroup>
                                         <ToggleGroup fx:id="binaryGroup" />
-                                    </toggleGroup></RadioButton>
+                                    </toggleGroup>
+                                </RadioButton>
                                 <RadioButton mnemonicParsing="false" text="%Default" toggleGroup="$binaryGroup" />
                                 <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
-                                <TextField fx:id="thresholdInput" prefHeight="30.0" prefWidth="80.0" promptText="0~255" />
-                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+                                <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
+                                <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                             </children>
                         </HBox>
                     </children>
@@ -133,7 +134,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <RadioButton mnemonicParsing="false" text="120dpi" toggleGroup="$DensityGroup" />
                         <RadioButton mnemonicParsing="false" text="600dpi" toggleGroup="$DensityGroup" />
                         <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$DensityGroup" />
-                        <TextField fx:id="densityInput" prefHeight="30.0" prefWidth="80.0" />
+                        <TextField fx:id="densityInput" prefWidth="80.0" />
                         <Label text="dpi" />
                     </children>
                 </HBox>
@@ -164,7 +165,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <RadioButton mnemonicParsing="false" text="30%" toggleGroup="$QualityGroup" />
                         <RadioButton mnemonicParsing="false" text="20%" toggleGroup="$QualityGroup" />
                         <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$QualityGroup" />
-                        <TextField fx:id="qualityInput" prefHeight="30.0" prefWidth="50.0" />
+                        <TextField fx:id="qualityInput" prefWidth="50.0" />
                         <Label text="\%" />
                     </children>
                 </HBox>

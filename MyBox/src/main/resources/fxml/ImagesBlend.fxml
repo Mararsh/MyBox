@@ -27,12 +27,12 @@
                             <children>
                                 <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" VBox.vgrow="ALWAYS">
                                     <items>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                                 <Label fx:id="foreTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ForegroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <Button mnemonicParsing="false" onAction="#selectForegroundImage" text="%Select..." />
+                                                        <Button mnemonicParsing="false" onAction="#selectForegroundImage" onMouseEntered="#popForeground" text="%Select..." />
                                                         <HBox fx:id="foreBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="NEVER">
                                                             <children>
                                                                 <Button mnemonicParsing="false" onAction="#openForegroundImage" text="%Open" />
@@ -42,20 +42,24 @@
                                                         </HBox>
                                                     </children>
                                                 </HBox>
-                                                <ScrollPane fx:id="foreScroll" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                <ScrollPane fx:id="foreScroll" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                     <content>
-                                                        <ImageView fx:id="foreView" fitHeight="10.0" fitWidth="10.0" onMouseClicked="#foreClicked" pickOnBounds="true" preserveRatio="true" />
+                                                        <AnchorPane>
+                                                            <children>
+                                                                <ImageView fx:id="foreView" fitHeight="10.0" fitWidth="10.0" onMouseClicked="#foreClicked" pickOnBounds="true" preserveRatio="true" />
+                                                            </children>
+                                                        </AnchorPane>
                                                     </content>
                                                 </ScrollPane>
                                                 <Label fx:id="foreLabel" />
                                             </children>
                                         </VBox>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                                 <Label fx:id="backTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%BackgroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <Button mnemonicParsing="false" onAction="#selectBackgroundImage" text="%Select..." />
+                                                        <Button mnemonicParsing="false" onAction="#selectBackgroundImage" onMouseEntered="#popBackground" text="%Select..." />
                                                         <HBox fx:id="backBox" alignment="CENTER_LEFT" disable="true" spacing="10.0">
                                                             <children>
                                                                 <Button mnemonicParsing="false" onAction="#openBackgroundImage" text="%Open" />
@@ -65,9 +69,13 @@
                                                         </HBox>
                                                     </children>
                                                 </HBox>
-                                                <ScrollPane fx:id="backScroll" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                <ScrollPane fx:id="backScroll" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                                     <content>
-                                                        <ImageView fx:id="backView" fitHeight="10.0" fitWidth="10.0" onMouseClicked="#backClicked" pickOnBounds="true" preserveRatio="true" />
+                                                        <AnchorPane>
+                                                            <children>
+                                                                <ImageView fx:id="backView" fitHeight="10.0" fitWidth="10.0" onMouseClicked="#backClicked" pickOnBounds="true" preserveRatio="true" />
+                                                            </children>
+                                                        </AnchorPane>
                                                     </content>
                                                 </ScrollPane>
                                                 <Label fx:id="backLabel" />
@@ -80,7 +88,7 @@
                                 </SplitPane>
                             </children>
                         </VBox>
-                        <VBox fx:id="targetBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                        <VBox fx:id="targetBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
                                 <TitledPane maxWidth="1.7976931348623157E308" text="%BlendOptions" VBox.vgrow="NEVER">
                                     <content>
@@ -110,8 +118,8 @@
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <Label text="%VertexCoordinate" />
-                                                        <TextField fx:id="pointX" prefHeight="30.0" prefWidth="60.0" promptText="X" text="0" />
-                                                        <TextField fx:id="pointY" prefHeight="30.0" prefWidth="60.0" promptText="Y" text="0" />
+                                                        <TextField fx:id="pointX" prefWidth="60.0" promptText="X" text="0" />
+                                                        <TextField fx:id="pointY" prefWidth="60.0" promptText="Y" text="0" />
                                                         <Label fx:id="pointLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ClickOnBackgournd" />
                                                     </children>
                                                 </HBox>
@@ -123,7 +131,7 @@
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <Label text="%BlendMode" />
-                                                        <ComboBox fx:id="blendModeBox" prefHeight="30.0" prefWidth="150.0" />
+                                                        <ComboBox fx:id="blendModeBox" prefWidth="150.0" />
                                                         <HBox fx:id="opacityHBox" alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
                                                                 <Label text="%Opacity" />
@@ -146,22 +154,23 @@
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                                 <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
-                                                        styleClass="main-button" stylesheets="@../styles/MyBox.css"                 />
+                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
+                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                             </children>
                                         </HBox>
                                     </children>
                                 </HBox>
-                                <ScrollPane fx:id="scrollPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <ImageView fx:id="imageView" fitHeight="261.0" fitWidth="841.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                                            <cursor>
-                                                <Cursor fx:constant="OPEN_HAND" />
-                                            </cursor>
-                                        </ImageView>
+                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fx:id="imageView" fitHeight="261.0" fitWidth="841.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
+                                                </ImageView>
+                                            </children>
+                                        </AnchorPane>
                                     </content>
                                 </ScrollPane>
+                                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                             </children>
                         </VBox>
                     </items>
@@ -178,11 +187,4 @@
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <bottom>
-        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
-            <BorderPane.margin>
-                <Insets left="10.0" right="10.0" />
-            </BorderPane.margin>
-        </Label>
-    </bottom>
 </BorderPane>

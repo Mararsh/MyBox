@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
@@ -20,6 +21,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javax.sound.sampled.Clip;
@@ -33,8 +35,8 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.tools.SoundTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.tools.DateTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -75,6 +77,8 @@ public class AlarmClockController extends BaseController {
     protected File currentSound, miao;
 
     public AlarmClockController() {
+        baseTitle = AppVaribles.getMessage("AlarmClock");
+
         AlertClocksFileKey = "FileTargetPath";
         SystemMediaPathKey = "SystemMediaPath";
         MusicPathKey = "MusicPath";
@@ -83,10 +87,10 @@ public class AlarmClockController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             AppVaribles.alarmClockController = this;
-            miao = FxmlTools.getUserFile(getClass(), "/sound/miao4.mp3", "miao4.mp3");
+            miao = FxmlControl.getUserFile(getClass(), "/sound/miao4.mp3", "miao4.mp3");
 
             alertClockTableController.setAlarmClockController(this);
 
@@ -183,6 +187,8 @@ public class AlarmClockController extends BaseController {
                             .or(loopInput.styleProperty().isEqualTo(badStyle))
                             .or(urlInput.styleProperty().isEqualTo(badStyle))
             );
+
+            FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
 
             FloatControl control = SoundTools.getControl(miao);
             volumeSlider.setMax(control.getMaximum());
@@ -332,38 +338,49 @@ public class AlarmClockController extends BaseController {
             return;
         }
         Task playTask = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() {
-                try {
-                    if (player != null) {
-                        player.close();
-                    }
-                    if (file != null) {
-                        player = SoundTools.playback(file, volumeValue);
+                ok = false;
+                if (player != null) {
+                    player.close();
+                }
+                if (file != null) {
+                    player = SoundTools.playback(file, volumeValue);
+                } else {
+                    player = SoundTools.playback(url, volumeValue);
+                }
+                if (loopCheck.isSelected()) {
+                    if (isContinully) {
+                        player.loop(Clip.LOOP_CONTINUOUSLY);
                     } else {
-                        player = SoundTools.playback(url, volumeValue);
+                        player.loop(loopValue - 1);
                     }
-                    if (loopCheck.isSelected()) {
-                        if (isContinully) {
-                            player.loop(Clip.LOOP_CONTINUOUSLY);
-                        } else {
-                            player.loop(loopValue - 1);
+                }
+                player.addLineListener(new LineListener() {
+                    @Override
+                    public void update(LineEvent e) {
+                        if (e.getType() == LineEvent.Type.STOP && !isPaused) {
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    closeSound();
+                                }
+                            });
                         }
                     }
-                    player.addLineListener(new LineListener() {
-                        @Override
-                        public void update(LineEvent e) {
-                            if (e.getType() == LineEvent.Type.STOP && !isPaused) {
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        closeSound();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    player.start();
+                });
+                player.start();
+
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -384,9 +401,7 @@ public class AlarmClockController extends BaseController {
                             });
                         }
                     });
-                } catch (Exception e) {
                 }
-                return null;
             }
         };
         Thread thread = new Thread(playTask);
@@ -619,7 +634,7 @@ public class AlarmClockController extends BaseController {
     }
 
     @Override
-    public boolean stageClosing() {
+    public boolean leavingScene() {
 //        logger.debug("stageClosing");
         if (player != null) {
             player.stop();
@@ -627,7 +642,7 @@ public class AlarmClockController extends BaseController {
             player.close();
             player = null;
         }
-        return super.stageClosing();
+        return super.leavingScene();
     }
 
     public boolean isIsEdit() {

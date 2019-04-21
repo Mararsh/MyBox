@@ -30,8 +30,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.fxml.FxmlTools;
-import mara.mybox.fxml.image.ImageQuantization;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.value.AppVaribles;
@@ -100,6 +100,8 @@ public class ImageStatisticController extends ImageViewerController {
     private ToolBar colorBar;
 
     public ImageStatisticController() {
+        baseTitle = AppVaribles.getMessage("ImageStatistic");
+
         ImageStatisticHueStages = "ImageStatisticHueStages";
         ImageStatisticSaturationStages = "ImageStatisticSaturationStages";
         ImageStatisticBrightnessStages = "ImageStatisticBrightnessStages";
@@ -107,7 +109,7 @@ public class ImageStatisticController extends ImageViewerController {
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             tabPane.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
@@ -126,9 +128,9 @@ public class ImageStatisticController extends ImageViewerController {
 
         Tooltip tips = new Tooltip(getMessage("QuantizationComments"));
         tips.setFont(new Font(16));
-        FxmlTools.setComments(colorBar, tips);
+        FxmlControl.setComments(colorBar, tips);
 
-        FxmlTools.setComments(ditheringCheck, new Tooltip(getMessage("DitherComments")));
+        FxmlControl.setComments(ditheringCheck, new Tooltip(getMessage("DitherComments")));
 
         colorTable.setItems(colorList);
         colorValueColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
@@ -183,7 +185,7 @@ public class ImageStatisticController extends ImageViewerController {
         List<String> paletteList = Arrays.asList(
                 "512", "64", "8", "4096", "216", "343", "27", "125", "1000", "729", "1728", "8000");
         paletteBox.getItems().addAll(paletteList);
-        paletteBox.valueProperty().addListener(new ChangeListener<String>() {
+        paletteBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 try {
@@ -353,6 +355,8 @@ public class ImageStatisticController extends ImageViewerController {
         brightnessHistogram.getData().clear();
 
         task = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
                 try {
@@ -361,6 +365,19 @@ public class ImageStatisticController extends ImageViewerController {
 //                    if (task.isCancelled() || statisticMap == null) {
 //                        return null;
 //                    }
+
+                } catch (Exception e) {
+                    logger.debug(e.toString());
+                }
+                ok = true;
+
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -405,11 +422,9 @@ public class ImageStatisticController extends ImageViewerController {
 //                            greyList.add(0, (IntStatistic) statistic.get("sum"));
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
+
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);

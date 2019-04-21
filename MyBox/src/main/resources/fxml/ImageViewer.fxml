@@ -32,6 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -46,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageViewerController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -57,26 +58,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Open" />
-                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips">
-                                    <padding>
-                                        <Insets left="20.0" />
-                                    </padding>
-                                </Label>
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
+                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
                             </items>
                         </ToolBar>
                         <HBox fx:id="operation1Box" alignment="CENTER_LEFT">
                             <children>
                                 <ToolBar HBox.hgrow="NEVER">
                                     <items>
-                                        <CheckBox fx:id="openSaveCheck" mnemonicParsing="false" text="%OpenAfterSave" />
                                         <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" selected="true" text="%ConfirmWhenDelete" />
-                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%ImageInformation" />
                                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
                                         <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameAction" text="%Rename" />
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%SaveAs" />
+                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction" text="%Recover" />
                                         <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
+                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
+                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
+                                        <Button fx:id="cropButton" mnemonicParsing="false" onAction="#cropAction" text="%Crop" />
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
                                     </items>
                                 </ToolBar>
                             </children>
@@ -85,22 +83,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </HBox>
                 <HBox fx:id="operation2Box" alignment="CENTER_LEFT">
                     <children>
-                        <ToolBar fx:id="cropBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                        <ToolBar fx:id="cropBar" prefWidth="200.0" HBox.hgrow="ALWAYS">
                             <items>
-                                <CheckBox fx:id="cropCheck" mnemonicParsing="false" selected="true" text="%Crop" wrapText="true" />
-                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
+                                <Label fx:id="sampledTips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" />
+                                <Button mnemonicParsing="false" text=" " visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="paneSizeButton" defaultButton="true" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%LoadedSize" />
                                 <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
                                 <Button fx:id="rButton" mnemonicParsing="false" onAction="#rotateRight" text="%RotateRight" />
                                 <Button fx:id="lButton" mnemonicParsing="false" onAction="#rotateLeft" text="%RotateLeft" />
                                 <Button fx:id="tButton" mnemonicParsing="false" onAction="#turnOver" text="%TurnOver" />
-                                <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
+                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="120.0" />
+                                <Label text="%LoadWidth" />
                             </items>
                         </ToolBar>
                     </children>
@@ -111,13 +110,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <items>
                                 <TableView fx:id="dataTable" style="-fx-font-size: 14;" tableMenuButtonVisible="true">
                                     <columns>
-                                        <TableColumn fx:id="colorColumn" prefWidth="94.0" text="%Color" />
-                                        <TableColumn fx:id="meanColumn" prefWidth="92.0" text="%Mean" />
-                                        <TableColumn fx:id="varianceColumn" prefWidth="85.0" text="%Variance" />
-                                        <TableColumn fx:id="skewnessColumn" prefWidth="86.0" text="%Skewness" />
-                                        <TableColumn fx:id="modeColumn" prefWidth="93.0" text="%Mode" />
-                                        <TableColumn fx:id="maximumColumn" prefWidth="90.0" text="%Maximum" />
-                                        <TableColumn fx:id="minimumColumn" prefWidth="84.0" text="%Minimum" />
+                                        <TableColumn fx:id="colorColumn" prefWidth="83.0" text="%Color" />
+                                        <TableColumn fx:id="meanColumn" prefWidth="73.0" text="%Mean" />
+                                        <TableColumn fx:id="varianceColumn" prefWidth="73.0" text="%Variance" />
+                                        <TableColumn fx:id="skewnessColumn" prefWidth="82.0" text="%Skewness" />
+                                        <TableColumn fx:id="medianColumn" prefWidth="71.0" text="%Median" />
+                                        <TableColumn fx:id="modeColumn" prefWidth="76.0" text="%Mode" />
+                                        <TableColumn fx:id="maximumColumn" prefWidth="82.0" text="%Maximum" />
+                                        <TableColumn fx:id="minimumColumn" prefWidth="81.0" text="%Minimum" />
                                     </columns>
                                 </TableView>
                                 <VBox>
@@ -150,21 +150,74 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </items>
                         </SplitPane>
-                        <VBox fx:id="imageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox fx:id="imageBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
-                                <HBox fx:id="imageLabelBox" alignment="CENTER" spacing="5.0" VBox.vgrow="NEVER">
+                                <HBox fx:id="imageLabelBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <Label fx:id="imageLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%CurrentImage" wrapText="true" />
-                                        <Button mnemonicParsing="false" visible="false" />
+                                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel" />
+                                        <Button mnemonicParsing="false" visible="false" HBox.hgrow="NEVER" />
+                                        <Label fx:id="imageLabel" alignment="CENTER" wrapText="true" HBox.hgrow="NEVER" />
+                                        <CheckBox fx:id="dataCheck" mnemonicParsing="false" text="%Data" />
+                                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
+                                        <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
+                                        <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" HBox.hgrow="NEVER" />
+                                        <CheckBox fx:id="selectCheck" mnemonicParsing="false" text="%Select" HBox.hgrow="NEVER" />
                                     </children>
                                 </HBox>
-                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefViewportHeight="504.0" prefViewportWidth="538.0" VBox.vgrow="ALWAYS">
                                     <content>
-                                        <ImageView fx:id="imageView" cache="true" fitHeight="546.0" fitWidth="1067.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                                            <cursor>
-                                                <Cursor fx:constant="OPEN_HAND" />
-                                            </cursor>
-                                        </ImageView>
+                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                                                </ImageView>
+                                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="MOVE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="W_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="NE_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="N_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="E_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="SE_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="N_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="SW_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="NW_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                                            </children>
+                                        </AnchorPane>
                                     </content>
                                 </ScrollPane>
                             </children>
@@ -173,40 +226,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 </SplitPane>
                 <HBox fx:id="operation3Box" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar fx:id="manuBar" HBox.hgrow="NEVER">
+                        <ToolBar fx:id="actionsBar" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                             <items>
-                                <CheckBox fx:id="dataCheck" mnemonicParsing="false" text="%Data" />
                                 <!--<Button fx:id="statisticButton" mnemonicParsing="false" onAction="#statisticAction" text="%Statistic" />-->
                                 <Button fx:id="manufactureButton" mnemonicParsing="false" onAction="#manufactureAction" text="%Manufacture" />
+                        <Button fx:id="splitButton" mnemonicParsing="false" onAction="#splitAction" text="%Split" />
+                        <Button fx:id="sampleButton" mnemonicParsing="false" onAction="#sampleAction" text="%Sample" />
+                                  <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseImagesAction" text="%Browse" />
+                                  <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                  <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
                             </items>
                         </ToolBar>
-                        <HBox fx:id="navBox" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="NEVER">
-                            <children>
-                                <ToolBar HBox.hgrow="ALWAYS">
-                                    <items>
-                                        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseImagesAction" text="%Browse" />
-                                    </items>
-                                </ToolBar>
-                                <ToolBar fx:id="navBar" HBox.hgrow="NEVER">
-                                    <items>
-                                        <Label text="%Sort">
-                                            <padding>
-                                                <Insets left="20.0" />
-                                            </padding>
-                                        </Label>
-                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%FileName">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="sortGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%ModifyTime" toggleGroup="$sortGroup" />
-                                        <RadioButton mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%Size" toggleGroup="$sortGroup" />
+                          <ToolBar fx:id="navBar" HBox.hgrow="NEVER">
+                              <items>
+                        <HBox fx:id="navBox" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                           <children>
+                                        <Label text="%Sort" />
+                              <ComboBox fx:id="sortBox" prefWidth="200.0" />
                                         <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousImage" />
                                         <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextImage" />
-                                    </items>
-                                </ToolBar>
-                            </children>
+                           </children>
                         </HBox>
+                              </items>
+                          </ToolBar>
                     </children>
                 </HBox>
             </children>

@@ -42,7 +42,7 @@ public class PdfInformation {
     public void openDocument(String password) {
         try {
             if (doc == null) {
-                doc = PDDocument.load(file, password, AppVaribles.PdfMemUsage);
+                doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage);
             }
             infoLoaded = false;
         } catch (Exception e) {

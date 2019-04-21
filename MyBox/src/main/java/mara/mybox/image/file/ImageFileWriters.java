@@ -23,8 +23,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageBinary;
+import mara.mybox.image.ImageGray;
 import mara.mybox.image.ImageConvert;
-import mara.mybox.image.PixelsOperation;
 import mara.mybox.data.ImageAttributes;
 import static mara.mybox.image.file.ImageBmpFile.writeBmpImageFile;
 import static mara.mybox.image.file.ImageJpegFile.writeJPEGImageFile;
@@ -35,6 +35,7 @@ import static mara.mybox.image.file.ImagePcxFile.writePcxImageFile;
 import static mara.mybox.value.AppVaribles.logger;
 
 import static mara.mybox.image.file.ImageTiffFile.writeTiffImage;
+import mara.mybox.tools.FileTools;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -46,6 +47,24 @@ import org.apache.pdfbox.rendering.ImageType;
  */
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileWriters {
+
+    public static boolean writeImageFile(BufferedImage image, File outFile) {
+        try {
+            return writeImageFile(image, outFile.getAbsolutePath());
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writeImageFile(BufferedImage image, String outFile) {
+        try {
+            return writeImageFile(image, FileTools.getFileSuffix(outFile), outFile);
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
 
     public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
         if (image == null || outFile == null || format == null) {
@@ -299,8 +318,8 @@ public class ImageFileWriters {
 
                 }
             } else if (ImageType.GRAY == attributes.getColorSpace() && color != BufferedImage.TYPE_BYTE_GRAY) {
-                ImageBinary imageBinary = new ImageBinary(bufferedImage, PixelsOperation.OperationType.Gray);
-                bufferedImage = imageBinary.operate();
+                ImageGray imageGray = new ImageGray(bufferedImage);
+                bufferedImage = imageGray.operate();
 
             } else if (ImageType.RGB == attributes.getColorSpace()) {
                 bufferedImage = ImageConvert.clearAlpha(bufferedImage);

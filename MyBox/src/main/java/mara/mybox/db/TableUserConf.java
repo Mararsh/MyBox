@@ -78,7 +78,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int write(String keyName, String stringValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT string_Value FROM User_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -106,7 +106,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int write(String keyName, int intValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT int_Value FROM User_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -134,7 +134,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static String read(String keyName, String defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT string_Value FROM User_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
@@ -154,7 +154,7 @@ public class TableUserConf extends DerbyBase {
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT int_Value FROM User_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
@@ -166,7 +166,7 @@ public class TableUserConf extends DerbyBase {
                 return defaultValue;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            logger.debug(e.toString());
             return defaultValue;
         }
     }
@@ -180,9 +180,54 @@ public class TableUserConf extends DerbyBase {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM User_Conf WHERE key_Name='" + keyName + "'";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean deletePrefix(String keyName) {
+        if (keyName == null || keyName.isEmpty()) {
+            return false;
+        }
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM User_Conf WHERE key_Name like '" + keyName + "%'";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean deleteSuffix(String keyName) {
+        if (keyName == null || keyName.isEmpty()) {
+            return false;
+        }
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM User_Conf WHERE key_Name like '%" + keyName + "'";
+            statement.executeUpdate(sql);
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean deleteInclude(String keyName) {
+        if (keyName == null || keyName.isEmpty()) {
+            return false;
+        }
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                Statement statement = conn.createStatement()) {
+            String sql = "DELETE FROM User_Conf WHERE key_Name like '%" + keyName + "%'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {

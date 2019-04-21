@@ -56,7 +56,7 @@
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                     <children>
                                                         <Label text="%Name" />
-                                                        <TextField fx:id="nameInput" prefHeight="30.0" prefWidth="257.0" HBox.hgrow="ALWAYS" />
+                                                        <TextField fx:id="nameInput" prefWidth="257.0" HBox.hgrow="ALWAYS" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -122,8 +122,7 @@
                                                 <Button mnemonicParsing="false" onAction="#oneAction" text="1" />
                                                 <Button fx:id="gaussButton" mnemonicParsing="false" onAction="#gaussianDistribution" text="%GaussianDistribution" />
                                                 <Button mnemonicParsing="false" onAction="#normalization" text="%Normalization" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save"
-                                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                             </children>
                                         </HBox>
                                     </children>

@@ -19,7 +19,6 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.data.ImageAttributes;
 import static mara.mybox.value.AppVaribles.logger;
 
-
 /**
  * @Author Mara
  * @CreateDate 2018-6-19
@@ -28,8 +27,6 @@ import static mara.mybox.value.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class ImageRawFile {
-
-    
 
     public static boolean writeRawImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {

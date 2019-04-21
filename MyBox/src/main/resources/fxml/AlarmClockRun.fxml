@@ -8,14 +8,14 @@
 
 <VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="740.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockRunController">
     <children>
-        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="512.0" spacing="10.0">
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefWidth="512.0" spacing="10.0">
             <children>
                 <Label text="%AlarmClock" HBox.hgrow="NEVER">
                     <font>
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <Label fx:id="descLabel" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="466.0" text="Desc" HBox.hgrow="ALWAYS">
+                <Label fx:id="descLabel" maxWidth="1.7976931348623157E308" prefWidth="466.0" text="Desc" HBox.hgrow="ALWAYS">
                     <font>
                         <Font size="18.0" />
                     </font>
@@ -35,7 +35,7 @@
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#manageAction" text="%ManageAlarms" />
-                <Button mnemonicParsing="false" onAction="#knowAction" text="%GotIt" />
+                <Button defaultButton="true" mnemonicParsing="false" onAction="#knowAction" text="%GotIt" />
             </children>
         </HBox>
     </children>

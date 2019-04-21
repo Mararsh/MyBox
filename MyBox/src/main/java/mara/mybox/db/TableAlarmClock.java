@@ -83,7 +83,7 @@ public class TableAlarmClock extends DerbyBase {
 
     public static List<AlarmClock> read() {
         List<AlarmClock> alarms = new ArrayList();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Alarm_Clock";
             ResultSet results = statement.executeQuery(sql);
@@ -114,7 +114,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (AlarmClock a : alarms) {
@@ -158,7 +158,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (AlarmClock a : alarms) {

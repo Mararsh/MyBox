@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
@@ -66,6 +67,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import mara.mybox.data.VisitHistory;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableBrowserUrls;
 import mara.mybox.image.file.ImageFileWriters;
@@ -73,9 +75,9 @@ import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.FxmlTools;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
@@ -88,7 +90,7 @@ import mara.mybox.tools.PdfTools;
  */
 public class HtmlEditorController extends BaseController {
 
-    private final String HtmlFilePathKey, HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
+    private final String HtmlImagePathKey, HtmlSnapDelayKey, HtmlLastUrlsKey, HtmlPdfPathKey;
     private final String WeiBoPassportChecked;
     private WebEngine webEngine;
     private int delay, fontSize, orginalStageHeight, orginalStageY, orginalStageWidth;
@@ -132,8 +134,16 @@ public class HtmlEditorController extends BaseController {
     protected TextField bottomText;
 
     public HtmlEditorController() {
+        baseTitle = AppVaribles.getMessage("HtmlEditor");
 
-        HtmlFilePathKey = "HtmlFilePathKey";
+        SourceFileType = VisitHistory.FileType.Html;
+        SourcePathType = VisitHistory.FileType.Html;
+        TargetPathType = VisitHistory.FileType.Html;
+        TargetFileType = VisitHistory.FileType.Html;
+        AddFileType = VisitHistory.FileType.Html;
+        AddPathType = VisitHistory.FileType.Html;
+
+        sourcePathKey = "HtmlFilePathKey";
         HtmlImagePathKey = "HtmlImagePathKey";
         HtmlSnapDelayKey = "HtmlSnapDelayKey";
         HtmlLastUrlsKey = "HtmllastUrlKey";
@@ -153,7 +163,7 @@ public class HtmlEditorController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
 
             lastCodesLen = lastHtmlLen = 0;
@@ -300,7 +310,7 @@ public class HtmlEditorController extends BaseController {
     protected void initBroswer() {
         try {
 
-            urlBox.valueProperty().addListener(new ChangeListener<String>() {
+            urlBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newv) {
@@ -346,24 +356,24 @@ public class HtmlEditorController extends BaseController {
             }
 
             delayBox.getItems().addAll(Arrays.asList("2", "3", "5", "1", "10"));
-            delayBox.valueProperty().addListener(new ChangeListener<String>() {
+            delayBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
                         delay = Integer.valueOf(newValue);
                         if (delay > 0) {
-                            delayBox.getEditor().setStyle(null);
                             delay = delay * 1000;
                             AppVaribles.setUserConfigValue(HtmlSnapDelayKey, newValue);
+                            FxmlControl.setEditorNormal(delayBox);
                         } else {
                             delay = 2000;
-                            delayBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(delayBox);
                         }
 
                     } catch (Exception e) {
                         delay = 2000;
-                        delayBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(delayBox);
                     }
                 }
             });
@@ -380,7 +390,7 @@ public class HtmlEditorController extends BaseController {
 
             Tooltip tips = new Tooltip(getMessage("htmlSnapComments"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(snapBar, tips);
+            FxmlControl.setComments(snapBar, tips);
 
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
@@ -554,32 +564,9 @@ public class HtmlEditorController extends BaseController {
         }
     }
 
-    @FXML
-    protected void openAction() {
-        try {
-            if (!checkSavingForNextAction()) {
-                return;
-            }
-
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
-            sourceFile = file;
-
-            loadHtml(file);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
+    @Override
+    public void sourceFileChanged(final File file) {
+        loadHtml(file);
     }
 
     public void loadHtml(File file) {
@@ -647,7 +634,7 @@ public class HtmlEditorController extends BaseController {
             isSettingValues = true;
             if (sourceFile == null) {
                 final FileChooser fileChooser = new FileChooser();
-                File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
+                File path = AppVaribles.getUserConfigPath(sourcePathKey);
                 if (path.exists()) {
                     fileChooser.setInitialDirectory(path);
                 }
@@ -656,8 +643,7 @@ public class HtmlEditorController extends BaseController {
                 if (file == null) {
                     return;
                 }
-                AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
-                AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
+                recordFileOpened(file);
                 sourceFile = file;
             }
             String contents;
@@ -685,7 +671,7 @@ public class HtmlEditorController extends BaseController {
         try {
             isSettingValues = true;
             final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(HtmlFilePathKey);
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
@@ -694,8 +680,7 @@ public class HtmlEditorController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setUserConfigValue(HtmlFilePathKey, file.getParent());
+            recordFileOpened(file);
             sourceFile = file;
             String contents;
             if (AppVaribles.getMessage("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
@@ -779,7 +764,7 @@ public class HtmlEditorController extends BaseController {
             snapshotButton.setDisable(true);
             final int maxDelay = delay * 30;
             final long startTime = new Date().getTime();
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.CurrentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.currentBundle);
             Pane pane = fxmlLoader.load();
             loadingController = fxmlLoader.getController();
             snapingStage = new Stage();
@@ -837,7 +822,7 @@ public class HtmlEditorController extends BaseController {
                             } catch (Exception e) {
                                 logger.error(e.toString());
                                 if (snapingStage != null) {
-                                    snapingStage.close();
+                                    FxmlStage.closeStage(snapingStage);
                                 }
                             }
                         }
@@ -881,10 +866,10 @@ public class HtmlEditorController extends BaseController {
 
                                     Image snapshot = webView.snapshot(parameters, null);
                                     if (totalHeight < snapHeight + snapStep) { // last snap
-                                        snapshot = ImageTools.cropImage(snapshot, 0, snapStep - (totalHeight - snapHeight),
+                                        snapshot = ImageManufacture.cropOutsideFx(snapshot, 0, snapStep - (totalHeight - snapHeight),
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     } else {
-                                        snapshot = ImageTools.cropImage(snapshot, 0, 0,
+                                        snapshot = ImageManufacture.cropOutsideFx(snapshot, 0, 0,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     }
                                     images.add(snapshot);
@@ -895,10 +880,10 @@ public class HtmlEditorController extends BaseController {
                                         loadingController.setInfo(AppVaribles.getMessage("WritingFile"));
                                         boolean success = true;
                                         if (isOneImage) {
-                                            Image finalImage = ImageTools.combineSingleColumn(images);
+                                            Image finalImage = ImageManufacture.combineSingleColumn(images);
                                             if (finalImage != null) {
                                                 String format = FileTools.getFileSuffix(targetFile.getAbsolutePath());
-                                                final BufferedImage bufferedImage = ImageTools.getBufferedImage(finalImage);
+                                                final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(finalImage);
                                                 ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
                                             } else {
                                                 success = false;
@@ -917,7 +902,7 @@ public class HtmlEditorController extends BaseController {
                                         snapshotButton.setDisable(false);
 
                                         if (snapingStage != null) {
-                                            snapingStage.close();
+                                            FxmlStage.closeStage(snapingStage);
                                         }
                                         myStage.setY(orginalStageY);
                                         myStage.setHeight(orginalStageHeight);
@@ -929,7 +914,7 @@ public class HtmlEditorController extends BaseController {
                                     webEngine.executeScript("window.scrollTo(0,0 );");
                                     popError(AppVaribles.getMessage("Failed"));
                                     if (snapingStage != null) {
-                                        snapingStage.close();
+                                        FxmlStage.closeStage(snapingStage);
                                     }
                                 }
                             }
@@ -995,13 +980,7 @@ public class HtmlEditorController extends BaseController {
     }
 
     @Override
-    public boolean stageReloading() {
-//        logger.debug("stageReloading");
-        return checkSavingForNextAction();
-    }
-
-    @Override
-    public boolean stageClosing() {
+    public boolean leavingScene() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -1013,16 +992,17 @@ public class HtmlEditorController extends BaseController {
             }
         });
         if (snapingStage != null) {
-            snapingStage.close();
+            FxmlStage.closeStage(snapingStage);
         }
         if (timer != null) {
             timer.cancel();
         }
         loadingController = null;
-        return super.stageClosing();
+        return super.leavingScene();
 
     }
 
+    @Override
     public boolean checkSavingForNextAction() {
 //        logger.debug(fileChanged.getValue());
 

@@ -57,7 +57,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Open" />
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
                             </items>
                         </ToolBar>
                         <HBox fx:id="operation1Box" alignment="CENTER_LEFT">
@@ -76,15 +76,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <tabs>
                         <Tab fx:id="imageTab" text="%Image">
                             <content>
-                                <VBox>
+                                <VBox alignment="TOP_CENTER">
                                     <children>
                                         <HBox fx:id="operation2Box" alignment="CENTER">
                                             <children>
                                                 <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%ImageInformation" />
-                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" prefHeight="30.0" text="%ImageMetaData" />
-                                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
+                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
+                                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
                                                         <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
                                                         <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
                                                         <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
@@ -94,7 +94,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Button fx:id="sButton" mnemonicParsing="false" onAction="#straighten" text="%Straighten" />
                                                     </items>
                                                 </ToolBar>
-                                                <ToolBar fx:id="cropBar" prefHeight="40.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                <ToolBar fx:id="cropBar" prefWidth="200.0" HBox.hgrow="ALWAYS">
                                                     <items>
                                                         <Button mnemonicParsing="false" text=" " visible="false" />
                                                     </items>
@@ -103,11 +103,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <ScrollPane fx:id="scrollPane" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="800.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                                                    <cursor>
-                                                        <Cursor fx:constant="HAND" />
-                                                    </cursor>
-                                                </ImageView>
+                                                <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                                    <children>
+                                                        <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="800.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
+                                                        </ImageView>
+                                                    </children>
+                                                </AnchorPane>
                                             </content>
                                         </ScrollPane>
                                         <HBox fx:id="operation3Box" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
@@ -150,19 +151,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 </VBox>
                             </content>
                         </Tab>
-                  <Tab fx:id="colorTab1" text="%ColorFeatures">
-                     <content>
-                        <TableView fx:id="colorSummaryTable1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" tableMenuButtonVisible="true">
-                           <columns>
-                              <TableColumn fx:id="colorSummaryNameColumn1" prefWidth="127.0" text="%DataType" />
-                              <TableColumn fx:id="colorSummaryValueColumn1" editable="false" prefWidth="87.0" text="%Color" />
-                              <TableColumn fx:id="colorSummaryShowcaseColumn1" prefWidth="106.0" text="%Showcase" />
-                              <TableColumn fx:id="colorSummaryNumberColumn1" minWidth="0.0" prefWidth="134.0" text="%PixelsNumber" />
-                              <TableColumn fx:id="colorSummaryPercentageColumn1" prefWidth="128.0" text="%Percentage" />
-                           </columns>
-                        </TableView>
-                     </content>
-                  </Tab>
+                        <Tab fx:id="colorTab1" text="%ColorFeatures">
+                            <content>
+                                <TableView fx:id="colorSummaryTable1" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" tableMenuButtonVisible="true">
+                                    <columns>
+                                        <TableColumn fx:id="colorSummaryNameColumn1" prefWidth="127.0" text="%DataType" />
+                                        <TableColumn fx:id="colorSummaryValueColumn1" editable="false" prefWidth="87.0" text="%Color" />
+                                        <TableColumn fx:id="colorSummaryShowcaseColumn1" prefWidth="106.0" text="%Showcase" />
+                                        <TableColumn fx:id="colorSummaryNumberColumn1" minWidth="0.0" prefWidth="134.0" text="%PixelsNumber" />
+                                        <TableColumn fx:id="colorSummaryPercentageColumn1" prefWidth="128.0" text="%Percentage" />
+                                    </columns>
+                                </TableView>
+                            </content>
+                        </Tab>
                         <Tab fx:id="colorTab" text="%ColorQuantization">
                             <content>
                                 <VBox nodeOrientation="LEFT_TO_RIGHT">
@@ -180,7 +181,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ComboBox fx:id="algorithmBox" prefWidth="150.0" />
                                                         <Label text="%PaletteNumber" />
                                                         <ComboBox fx:id="paletteBox" prefWidth="100.0" />
-                                          <CheckBox fx:id="ditheringCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
+                                                        <CheckBox fx:id="ditheringCheck" mnemonicParsing="false" selected="true" text="%Dithering" />
                                                         <Button mnemonicParsing="false" onAction="#colorAction" text="%OK" />
                                                     </items>
                                                 </ToolBar>
@@ -188,8 +189,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <SplitPane dividerPositions="0.5196917808219178" VBox.vgrow="ALWAYS">
                                             <items>
-                                    <SplitPane dividerPositions="0.4" orientation="VERTICAL">
-                                       <items>
+                                                <SplitPane dividerPositions="0.4" orientation="VERTICAL">
+                                                    <items>
                                                         <TableView fx:id="colorSummaryTable" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" tableMenuButtonVisible="true">
                                                             <columns>
                                                                 <TableColumn fx:id="colorSummaryNameColumn" prefWidth="127.0" text="%DataType" />
@@ -199,18 +200,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <TableColumn fx:id="colorSummaryPercentageColumn" prefWidth="128.0" text="%Percentage" />
                                                             </columns>
                                                         </TableView>
-                                                      <TableView fx:id="colorTable" nodeOrientation="LEFT_TO_RIGHT" tableMenuButtonVisible="true">
-                                                          <columns>
-                                                              <TableColumn fx:id="colorSequenceColumn" prefWidth="94.0" text="%Sequence" />
-                                                              <TableColumn fx:id="colorValueColumn" editable="false" prefWidth="104.0" text="%Color" />
-                                                              <TableColumn fx:id="colorShowcaseColumn" prefWidth="110.0" text="%Showcase" />
-                                                              <TableColumn fx:id="colorNumberColumn" minWidth="0.0" prefWidth="141.0" text="%PixelsNumber" />
-                                                              <TableColumn fx:id="colorPercentageColumn" prefWidth="166.0" text="%Percentage" />
-                                                          </columns>
-                                                      </TableView>
-                                       </items>
-                                    </SplitPane>
-                                                    <PieChart fx:id="colorPie" legendVisible="false" title="%ColorPie" />
+                                                        <TableView fx:id="colorTable" nodeOrientation="LEFT_TO_RIGHT" tableMenuButtonVisible="true">
+                                                            <columns>
+                                                                <TableColumn fx:id="colorSequenceColumn" prefWidth="94.0" text="%Sequence" />
+                                                                <TableColumn fx:id="colorValueColumn" editable="false" prefWidth="104.0" text="%Color" />
+                                                                <TableColumn fx:id="colorShowcaseColumn" prefWidth="110.0" text="%Showcase" />
+                                                                <TableColumn fx:id="colorNumberColumn" minWidth="0.0" prefWidth="141.0" text="%PixelsNumber" />
+                                                                <TableColumn fx:id="colorPercentageColumn" prefWidth="166.0" text="%Percentage" />
+                                                            </columns>
+                                                        </TableView>
+                                                    </items>
+                                                </SplitPane>
+                                                <PieChart fx:id="colorPie" legendVisible="false" title="%ColorPie" />
                                             </items>
                                         </SplitPane>
                                     </children>
@@ -227,8 +228,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <children>
                                         <BarChart fx:id="greyHistogram" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" title="%GreyHistogram" verticalGridLinesVisible="false" verticalZeroLineVisible="false">

@@ -6,19 +6,31 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileInformation;
+import mara.mybox.fxml.FileSizeCell;
+import mara.mybox.fxml.FileTimeCell;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -28,43 +40,125 @@ import mara.mybox.data.FileInformation;
  */
 public class FilesTableController extends BaseController {
 
-    protected ObservableList<FileInformation> tableData = FXCollections.observableArrayList();
+    public ObservableList<FileInformation> sourceFilesInformation = FXCollections.observableArrayList();
 
     @FXML
-    protected Pane filesTablePane;
+    public Pane filesTablePane;
     @FXML
-    protected Button addButton, clearButton, upButton, downButton, insertButton;
+    public Button addFilesButton, clearButton, upButton, downButton, insertFilesButton, openButton,
+            addDirectoryButton, insertDirectoryButton;
     @FXML
-    protected Button recoveryAllButton, recoverySelectedButton;
+    public TableView<FileInformation> filesTableView;
     @FXML
-    protected TableView<FileInformation> filesTableView;
+    public TableColumn<FileInformation, String> handledColumn, fileColumn;
     @FXML
-    protected TableColumn<FileInformation, String> handledColumn, fileColumn, newColumn, modifyTimeColumn, createTimeColumn, typeColumn;
+    public TableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
     @FXML
-    protected TableColumn<FileInformation, Long> sizeColumn;
+    public TableColumn<FileInformation, Boolean> typeColumn;
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
+
+            initSourceSection();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void initSourceSection() {
+        try {
+
+            if (filesTableView == null) {
+                return;
+            }
+
+            sourceFilesInformation = FXCollections.observableArrayList();
 
             handledColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("handled"));
             fileColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileName"));
-            if (newColumn != null) {
-                newColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("newName"));
-            }
-            modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("modifyTime"));
-            createTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("createTime"));
-            typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("fileType"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Long>("fileSize"));
+            modifyTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Long>("modifyTime"));
+            modifyTimeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Long>, TableCell<FileInformation, Long>>() {
+                @Override
+                public TableCell<FileInformation, Long> call(TableColumn<FileInformation, Long> param) {
+                    return new FileTimeCell();
+                }
+            });
+            createTimeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Long>("createTime"));
+            createTimeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Long>, TableCell<FileInformation, Long>>() {
+                @Override
+                public TableCell<FileInformation, Long> call(TableColumn<FileInformation, Long> param) {
+                    return new FileTimeCell();
+                }
+            });
+            if (typeColumn != null) {
+                typeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Boolean>("isFile"));
+                typeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Boolean>, TableCell<FileInformation, Boolean>>() {
+                    @Override
+                    public TableCell<FileInformation, Boolean> call(TableColumn<FileInformation, Boolean> param) {
+                        TableCell<FileInformation, Boolean> cell = new TableCell<FileInformation, Boolean>() {
+                            final Text text = new Text();
 
-            filesTableView.setItems(tableData);
+                            @Override
+                            public void updateItem(final Boolean item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    if (item) {
+                                        text.setText(AppVaribles.getMessage("File"));
+                                    } else {
+                                        text.setText(AppVaribles.getMessage("Directory"));
+                                    }
+                                }
+                                setGraphic(text);
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
+            sizeColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, Long>("fileSize"));
+            sizeColumn.setCellFactory(new Callback<TableColumn<FileInformation, Long>, TableCell<FileInformation, Long>>() {
+                @Override
+                public TableCell<FileInformation, Long> call(TableColumn<FileInformation, Long> param) {
+                    return new FileSizeCell();
+                }
+            });
+
+            filesTableView.setItems(sourceFilesInformation);
             filesTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            filesTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getClickCount() > 1) {
+                        openAction();
+                    }
+                }
+            });
             filesTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
                 @Override
                 public void changed(ObservableValue ov, Object t, Object t1) {
                     checkTableSelected();
                 }
             });
+
+            sourceFilesInformation.addListener(new ListChangeListener<FileInformation>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends FileInformation> change) {
+                    long size = 0;
+                    for (FileInformation source : sourceFilesInformation) {
+                        size += source.getFile().length();
+                    }
+                    String s = AppVaribles.getMessage("FilesNumber") + ": " + sourceFilesInformation.size() + " "
+                            + AppVaribles.getMessage("TotalSize") + ": " + FileTools.showFileSize(size);
+                    if (bottomLabel != null) {
+                        bottomLabel.setText(s);
+                    }
+                    if (parentController != null && parentController.bottomLabel != null) {
+                        parentController.bottomLabel.setText(s);
+                    }
+                }
+            });
+
             checkTableSelected();
 
         } catch (Exception e) {
@@ -72,71 +166,207 @@ public class FilesTableController extends BaseController {
         }
     }
 
-    protected void checkTableSelected() {
+    public void checkTableSelected() {
         ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
         boolean none = (selected == null || selected.isEmpty());
-        insertButton.setDisable(none);
+        if (insertFilesButton != null) {
+            insertFilesButton.setDisable(none);
+        }
+
+        if (insertDirectoryButton != null) {
+            insertDirectoryButton.setDisable(none);
+        }
+        if (openButton != null) {
+            openButton.setDisable(none);
+        }
         upButton.setDisable(none);
         downButton.setDisable(none);
         deleteButton.setDisable(none);
     }
 
     @FXML
-    void addAction(ActionEvent event) {
-        addAction(tableData.size());
+    public void addFilesAction(ActionEvent event) {
+        addFiles(sourceFilesInformation.size());
     }
 
-    @FXML
-    void insertAction(ActionEvent event) {
-        int index = filesTableView.getSelectionModel().getSelectedIndex();
-        if (index >= 0) {
-            addAction(index);
-        } else {
-            insertButton.setDisable(true);
-        }
+    public void addFiles(int index) {
+        File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+        addFilesUnderPath(index, defaultPath);
     }
 
-    void addAction(int index) {
+    public void addFilesUnderPath(int index, File path) {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File defaultPath = AppVaribles.getUserConfigPath(parentController.sourcePathKey);
-            if (defaultPath.exists()) {
-                fileChooser.setInitialDirectory(defaultPath);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(parentController.fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
             if (files == null || files.isEmpty()) {
                 return;
             }
+            addFiles(index, files);
 
-            String path = files.get(0).getParent();
-            AppVaribles.setUserConfigValue(LastPathKey, path);
-            AppVaribles.setUserConfigValue(parentController.sourcePathKey, path);
-            List<FileInformation> newfiles = new ArrayList<>();
-            for (File file : files) {
-//                if (findData(file.getAbsolutePath()) != null) {
-//                    continue;
-//                }
-                FileInformation newFile = new FileInformation(file);
-                newfiles.add(newFile);
-            }
-            if (newfiles.isEmpty()) {
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @Override
+    public void addFile(File file) {
+        addFiles(sourceFilesInformation.size(), file);
+    }
+
+    public void addFiles(int index, File file) {
+        if (file == null) {
+            return;
+        }
+        List<File> files = new ArrayList();
+        files.add(file);
+        addFiles(index, files);
+    }
+
+    public void addFiles(int index, List<File> files) {
+        try {
+            if (files == null || files.isEmpty()) {
                 return;
             }
-            if (index < 0 || index >= tableData.size()) {
-                tableData.addAll(newfiles);
+            recordFileAdded(files.get(0));
+
+            List<FileInformation> infos = new ArrayList<>();
+            for (File file : files) {
+                FileInformation info = new FileInformation(file);
+                infos.add(info);
+            }
+            if (infos.isEmpty()) {
+                return;
+            }
+            if (index < 0 || index >= sourceFilesInformation.size()) {
+                sourceFilesInformation.addAll(infos);
             } else {
-                tableData.addAll(index, newfiles);
+                sourceFilesInformation.addAll(index, infos);
             }
             filesTableView.refresh();
 
         } catch (Exception e) {
-//            logger.error(e.toString());
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    public void insertFilesAction(ActionEvent event) {
+        int index = filesTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addFiles(index);
+        } else {
+            insertFilesButton.setDisable(true);
+        }
+    }
+
+    @Override
+    public void insertFile(File file) {
+        int index = filesTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addFiles(index, file);
+        } else {
+            insertFilesButton.setDisable(true);
         }
     }
 
     @FXML
-    void upAction(ActionEvent event) {
+    public void addDirectoryAction(ActionEvent event) {
+        addDirectoryAction(sourceFilesInformation.size());
+    }
+
+    @FXML
+    public void insertDirectoryAction(ActionEvent event) {
+        if (insertDirectoryButton == null) {
+            return;
+        }
+        int index = filesTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addDirectoryAction(index);
+        } else {
+            insertDirectoryButton.setDisable(true);
+        }
+    }
+
+    public void addDirectoryAction(int index) {
+        try {
+            DirectoryChooser dirChooser = new DirectoryChooser();
+            File defaultPath = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (defaultPath != null) {
+                dirChooser.setInitialDirectory(defaultPath);
+            }
+            File directory = dirChooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            addDirectory(index, directory);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    public void addDirectory(int index, File directory) {
+        try {
+            recordFileOpened(directory);
+
+            FileInformation d = new FileInformation(directory);
+            if (index < 0 || index >= sourceFilesInformation.size()) {
+                sourceFilesInformation.add(d);
+            } else {
+                sourceFilesInformation.add(index, d);
+            }
+            filesTableView.refresh();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @Override
+    public void addDirectory(File directory) {
+        addDirectory(sourceFilesInformation.size(), directory);
+    }
+
+    @Override
+    public void insertDirectory(File directory) {
+        int index = filesTableView.getSelectionModel().getSelectedIndex();
+        if (index >= 0) {
+            addDirectory(index, directory);
+        } else {
+            insertFilesButton.setDisable(true);
+        }
+    }
+
+    @FXML
+    public void openAction() {
+        List<Integer> selected = new ArrayList<>();
+        selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
+        if (selected.isEmpty()) {
+            return;
+        }
+        for (Integer index : selected) {
+            if (index < 0 || index > sourceFilesInformation.size() - 1) {
+                continue;
+            }
+            FileInformation info = sourceFilesInformation.get(index);
+            if (info.getNewName() != null && !info.getNewName().isEmpty()) {
+                FxmlStage.openTarget(getClass(), myStage, info.getNewName());
+            } else {
+                FxmlStage.openTarget(getClass(), myStage, info.getFile().getAbsolutePath());
+            }
+        }
+    }
+
+    @FXML
+    public void upAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -146,10 +376,10 @@ public class FilesTableController extends BaseController {
             if (index == 0) {
                 continue;
             }
-            FileInformation info = tableData.get(index);
-            tableData.set(index, tableData.get(index - 1));
-            tableData.set(index - 1, info);
-            filesTableView.getSelectionModel().select(index - 1);
+            FileInformation info = sourceFilesInformation.get(index);
+            sourceFilesInformation.set(index, sourceFilesInformation.get(index - 1));
+            sourceFilesInformation.set(index - 1, info);
+//            filesTableView.getSelectionModel().select(index - 1);
         }
         for (Integer index : selected) {
             if (index > 0) {
@@ -160,7 +390,7 @@ public class FilesTableController extends BaseController {
     }
 
     @FXML
-    void downAction(ActionEvent event) {
+    public void downAction(ActionEvent event) {
         List<Integer> selected = new ArrayList<>();
         selected.addAll(filesTableView.getSelectionModel().getSelectedIndices());
         if (selected.isEmpty()) {
@@ -168,16 +398,16 @@ public class FilesTableController extends BaseController {
         }
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
-            if (index == tableData.size() - 1) {
+            if (index == sourceFilesInformation.size() - 1) {
                 continue;
             }
-            FileInformation info = tableData.get(index);
-            tableData.set(index, tableData.get(index + 1));
-            tableData.set(index + 1, info);
+            FileInformation info = sourceFilesInformation.get(index);
+            sourceFilesInformation.set(index, sourceFilesInformation.get(index + 1));
+            sourceFilesInformation.set(index + 1, info);
         }
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
-            if (index < tableData.size() - 1) {
+            if (index < sourceFilesInformation.size() - 1) {
                 filesTableView.getSelectionModel().select(index + 1);
             }
         }
@@ -185,18 +415,12 @@ public class FilesTableController extends BaseController {
     }
 
     @FXML
-    void clearAction(ActionEvent event) {
-        tableData.clear();
-        addButton.setDisable(false);
+    public void clearAction() {
+        sourceFilesInformation.clear();
+        addFilesButton.setDisable(false);
         deleteButton.setDisable(true);
         upButton.setDisable(true);
         downButton.setDisable(true);
-        if (recoveryAllButton != null) {
-            recoveryAllButton.setDisable(true);
-        }
-        if (recoverySelectedButton != null) {
-            recoverySelectedButton.setDisable(true);
-        }
     }
 
     @FXML
@@ -209,158 +433,21 @@ public class FilesTableController extends BaseController {
         }
         for (int i = selected.size() - 1; i >= 0; i--) {
             int index = selected.get(i);
-            if (index < 0 || index > tableData.size() - 1) {
+            if (index < 0 || index > sourceFilesInformation.size() - 1) {
                 continue;
             }
-            tableData.remove(index);
+            sourceFilesInformation.remove(index);
         }
         filesTableView.refresh();
-    }
-
-    @FXML
-    void recoveryAllAction(ActionEvent event) {
-        if (tableData == null || tableData.isEmpty()) {
-            return;
-        }
-        for (FileInformation f : tableData) {
-            String originalName = f.getFileName();
-            File newName = new File(f.getNewName());
-            if (newName.exists()) {
-                if (newName.renameTo(new File(originalName))) {
-                    f.setHandled(AppVaribles.getMessage("Recovered"));
-                    f.setFileName(originalName);
-                    f.setNewName("");
-                } else {
-                    f.setHandled(AppVaribles.getMessage("FailRecovered"));
-                }
-            }
-        }
-        filesTableView.refresh();
-        addButton.setDisable(false);
-        deleteButton.setDisable(false);
-        upButton.setDisable(false);
-        downButton.setDisable(false);
-    }
-
-    @FXML
-    void recoverySelectedAction(ActionEvent event) {
-        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            return;
-        }
-        for (FileInformation f : selected) {
-            String originalName = f.getFileName();
-            File newName = new File(f.getNewName());
-            if (newName.exists()) {
-                if (newName.renameTo(new File(originalName))) {
-                    f.setHandled(AppVaribles.getMessage("Recovered"));
-                    f.setFileName(originalName);
-                    f.setNewName("");
-                } else {
-                    f.setHandled(AppVaribles.getMessage("FailRecovered"));
-                }
-            }
-        }
-        filesTableView.refresh();
-        addButton.setDisable(true);
-        deleteButton.setDisable(true);
     }
 
     public FileInformation findData(String filename) {
-        for (FileInformation d : tableData) {
+        for (FileInformation d : sourceFilesInformation) {
             if (d.getFileName().equals(filename)) {
                 return d;
             }
         }
         return null;
-    }
-
-    public ObservableList<FileInformation> getTableData() {
-        return tableData;
-    }
-
-    public void setTableData(ObservableList<FileInformation> tableData) {
-        this.tableData = tableData;
-    }
-
-    public Pane getFilesTablePane() {
-        return filesTablePane;
-    }
-
-    public void setFilesTablePane(Pane filesTablePane) {
-        this.filesTablePane = filesTablePane;
-    }
-
-    public Button getAddButton() {
-        return addButton;
-    }
-
-    public void setAddButton(Button addButton) {
-        this.addButton = addButton;
-    }
-
-    public Button getClearButton() {
-        return clearButton;
-    }
-
-    public void setClearButton(Button clearButton) {
-        this.clearButton = clearButton;
-    }
-
-    public Button getDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(Button deleteButton) {
-        this.deleteButton = deleteButton;
-    }
-
-    public TableView<FileInformation> getFilesTableView() {
-        return filesTableView;
-    }
-
-    public void setFilesTableView(TableView<FileInformation> filesTableView) {
-        this.filesTableView = filesTableView;
-    }
-
-    public TableColumn<FileInformation, String> getFileColumn() {
-        return fileColumn;
-    }
-
-    public void setFileColumn(TableColumn<FileInformation, String> fileColumn) {
-        this.fileColumn = fileColumn;
-    }
-
-    public TableColumn<FileInformation, String> getModifyTimeColumn() {
-        return modifyTimeColumn;
-    }
-
-    public void setModifyTimeColumn(TableColumn<FileInformation, String> modifyTimeColumn) {
-        this.modifyTimeColumn = modifyTimeColumn;
-    }
-
-    public TableColumn<FileInformation, String> getCreateTimeColumn() {
-        return createTimeColumn;
-    }
-
-    public void setCreateTimeColumn(TableColumn<FileInformation, String> createTimeColumn) {
-        this.createTimeColumn = createTimeColumn;
-    }
-
-    public TableColumn<FileInformation, String> getTypeColumn() {
-        return typeColumn;
-    }
-
-    public void setTypeColumn(TableColumn<FileInformation, String> typeColumn) {
-        this.typeColumn = typeColumn;
-    }
-
-    public TableColumn<FileInformation, Long> getSizeColumn() {
-        return sizeColumn;
-    }
-
-    public void setSizeColumn(TableColumn<FileInformation, Long> sizeColumn) {
-        this.sizeColumn = sizeColumn;
     }
 
 }

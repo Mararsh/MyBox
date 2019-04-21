@@ -20,6 +20,22 @@ public class ImageGray extends PixelsOperation {
         operationType = OperationType.Gray;
     }
 
+    public ImageGray(BufferedImage image) {
+        this.image = image;
+        this.operationType = OperationType.Gray;
+    }
+
+    public ImageGray(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Gray;
+    }
+
+    public ImageGray(Image image, ImageScope scope) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Gray;
+        this.scope = scope;
+    }
+
     @Override
     public BufferedImage operate() {
         if (image == null || operationType == null
@@ -30,7 +46,7 @@ public class ImageGray extends PixelsOperation {
         if (scope == null || scope.getScopeType() == ImageScope.ScopeType.All) {
             return byteGray(image);
         }
-        return operationImage();
+        return operateImage();
     }
 
     @Override

@@ -15,7 +15,7 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int webWidth, retry;
+    private int webWidth, retry, startPage;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
     private String webAddress, author, title, fontName;
@@ -306,6 +306,14 @@ public class WeiboSnapParameters {
 
     public void setDithering(boolean dithering) {
         this.dithering = dithering;
+    }
+
+    public int getStartPage() {
+        return startPage;
+    }
+
+    public void setStartPage(int startPage) {
+        this.startPage = startPage;
     }
 
 }

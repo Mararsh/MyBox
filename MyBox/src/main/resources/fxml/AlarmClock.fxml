@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AlarmClockController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -71,20 +71,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Edit" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" text="%Edit" VBox.vgrow="NEVER">
                             <content>
                                 <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <Label text="%Description" />
-                                                <TextField fx:id="descInput" prefHeight="30.0" prefWidth="347.0" />
+                                                <TextField fx:id="descInput" prefWidth="347.0" />
                                                 <Label text="%StartTime">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="startInput" prefHeight="30.0" prefWidth="190.0" promptText="2018-07-12 11:30:55" text="2018-07-12 11:30:55" />
+                                                <TextField fx:id="startInput" prefWidth="190.0" promptText="2018-07-12 11:30:55" text="2018-07-12 11:30:55" />
                                                 <CheckBox fx:id="activeCheck" mnemonicParsing="false" selected="true" text="%Active" />
                                             </children>
                                         </HBox>
@@ -99,8 +99,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <RadioButton mnemonicParsing="false" text="%EveryDay" toggleGroup="$typeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%Weekend" toggleGroup="$typeGroup" />
                                                 <RadioButton mnemonicParsing="false" text="%NotRepeat" toggleGroup="$typeGroup" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%TimeRepeat" visible="false" />
                                                 <RadioButton mnemonicParsing="false" text="%Every" toggleGroup="$typeGroup" />
-                                                <TextField fx:id="everyInput" prefHeight="30.0" prefWidth="76.0" />
+                                                <TextField fx:id="everyInput" prefWidth="76.0" />
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Days">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="unitGroup" />
@@ -156,7 +161,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="loopButton" mnemonicParsing="false" text="%LoopTimes" toggleGroup="$loopGroup" />
-                                                <TextField fx:id="loopInput" prefHeight="30.0" prefWidth="78.0" text="3" />
+                                                <TextField fx:id="loopInput" prefWidth="78.0" text="3" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
@@ -172,13 +177,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets left="20.0" />
                                                     </HBox.margin>
                                                 </Label>
-                                                <Slider fx:id="volumeSlider" blockIncrement="5.0" max="65.0" min="-60.0" prefHeight="44.0" prefWidth="255.0" showTickLabels="true" showTickMarks="true" />
+                                                <Slider fx:id="volumeSlider" blockIncrement="5.0" max="65.0" min="-60.0" prefWidth="255.0" showTickLabels="true" showTickMarks="true" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Add"
-                                                        styleClass="main-button" stylesheets="@../styles/MyBox.css" />
+                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Add" />
                                             </children>
                                         </HBox>
                                     </children>

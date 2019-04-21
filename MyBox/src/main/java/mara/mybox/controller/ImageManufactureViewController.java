@@ -1,13 +1,14 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -28,7 +29,7 @@ public class ImageManufactureViewController extends ImageManufactureController {
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initViewTab();
@@ -71,6 +72,8 @@ public class ImageManufactureViewController extends ImageManufactureController {
                 return;
             }
             super.initInterface();
+            tabPane.getSelectionModel().select(viewTab);
+
             zoomStep = (int) image.getWidth() / xZoomStep;
             stepInput.setText(zoomStep + "");
 
@@ -105,48 +108,48 @@ public class ImageManufactureViewController extends ImageManufactureController {
     @FXML
     @Override
     public void moveRight() {
-        FxmlTools.setScrollPane(scrollPane, 0 - moveStep, scrollPane.getVvalue());
+        FxmlControl.setScrollPane(scrollPane, 0 - moveStep, scrollPane.getVvalue());
         if (values.isRefSync() && refPane != null) {
-            FxmlTools.setScrollPane(refPane, 0 - moveStep, refPane.getVvalue());
+            FxmlControl.setScrollPane(refPane, 0 - moveStep, refPane.getVvalue());
         }
         if (scopePane != null) {
-            FxmlTools.setScrollPane(scopePane, 0 - moveStep, scopePane.getVvalue());
+            FxmlControl.setScrollPane(scopePane, 0 - moveStep, scopePane.getVvalue());
         }
     }
 
     @FXML
     @Override
     public void moveLeft() {
-        FxmlTools.setScrollPane(scrollPane, moveStep, scrollPane.getVvalue());
+        FxmlControl.setScrollPane(scrollPane, moveStep, scrollPane.getVvalue());
         if (values.isRefSync() && refPane != null) {
-            FxmlTools.setScrollPane(refPane, moveStep, refPane.getVvalue());
+            FxmlControl.setScrollPane(refPane, moveStep, refPane.getVvalue());
         }
         if (scopePane != null) {
-            FxmlTools.setScrollPane(scopePane, moveStep, scopePane.getVvalue());
+            FxmlControl.setScrollPane(scopePane, moveStep, scopePane.getVvalue());
         }
     }
 
     @FXML
     @Override
     public void moveUp() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), moveStep);
+        FxmlControl.setScrollPane(scrollPane, scrollPane.getHvalue(), moveStep);
         if (values.isRefSync() && refPane != null) {
-            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), moveStep);
+            FxmlControl.setScrollPane(refPane, refPane.getHvalue(), moveStep);
         }
         if (scopePane != null) {
-            FxmlTools.setScrollPane(scopePane, scopePane.getHvalue(), moveStep);
+            FxmlControl.setScrollPane(scopePane, scopePane.getHvalue(), moveStep);
         }
     }
 
     @FXML
     @Override
     public void moveDown() {
-        FxmlTools.setScrollPane(scrollPane, scrollPane.getHvalue(), 0 - moveStep);
+        FxmlControl.setScrollPane(scrollPane, scrollPane.getHvalue(), 0 - moveStep);
         if (values.isRefSync() && refPane != null) {
-            FxmlTools.setScrollPane(refPane, refPane.getHvalue(), 0 - moveStep);
+            FxmlControl.setScrollPane(refPane, refPane.getHvalue(), 0 - moveStep);
         }
         if (scopePane != null) {
-            FxmlTools.setScrollPane(scopePane, scopePane.getHvalue(), 0 - moveStep);
+            FxmlControl.setScrollPane(scopePane, scopePane.getHvalue(), 0 - moveStep);
         }
     }
 

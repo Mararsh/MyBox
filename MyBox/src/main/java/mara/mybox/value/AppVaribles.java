@@ -1,14 +1,17 @@
 package mara.mybox.value;
 
-import mara.mybox.value.CommonValues;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import javafx.stage.Stage;
 import mara.mybox.controller.AlarmClockController;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import static mara.mybox.value.CommonValues.BundleEnUS;
@@ -30,14 +33,16 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 public class AppVaribles {
 
     public static final Logger logger = LogManager.getLogger();
-    public static ResourceBundle CurrentBundle;
+    public static ResourceBundle currentBundle;
     public static Map<String, String> userConfigValues;
     public static Map<String, String> systemConfigValues;
     public static ScheduledExecutorService executorService;
     public static Map<Long, ScheduledFuture<?>> scheduledTasks;
     public static AlarmClockController alarmClockController;
-    public static MemoryUsageSetting PdfMemUsage;
-    public static int PaneFontSize;
+    public static MemoryUsageSetting pdfMemUsage;
+    public static int sceneFontSize, fileRecentNumber;
+    public static Map<Stage, BaseController> openedStages;
+    public static boolean openStageInNewWindow, restoreStagesSize, showComments;
 
     public AppVaribles() {
     }
@@ -45,8 +50,14 @@ public class AppVaribles {
     public static void initAppVaribles() {
         userConfigValues = new HashMap();
         systemConfigValues = new HashMap();
+        openedStages = new HashMap();
         getBundle();
         getPdfMem();
+        showComments = AppVaribles.getUserConfigBoolean("ShowComments", true);
+        openStageInNewWindow = AppVaribles.getUserConfigBoolean("OpenStageInNewWindow", false);
+        restoreStagesSize = AppVaribles.getUserConfigBoolean("RestoreStagesSize", true);
+        sceneFontSize = AppVaribles.getUserConfigInt("SceneFontSize", 15);
+        fileRecentNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 15);
     }
 
     public static void clear() {
@@ -70,19 +81,19 @@ public class AppVaribles {
         String lang = getLanguage();
         switch (lang.toLowerCase()) {
             case "zh":
-                AppVaribles.CurrentBundle = CommonValues.BundleZhCN;
+                AppVaribles.currentBundle = CommonValues.BundleZhCN;
                 break;
             case "en":
             default:
-                AppVaribles.CurrentBundle = CommonValues.BundleEnUS;
+                AppVaribles.currentBundle = CommonValues.BundleEnUS;
                 break;
         }
-        return AppVaribles.CurrentBundle;
+        return AppVaribles.currentBundle;
     }
 
     public static String getMessage(String thestr) {
         try {
-            return CurrentBundle.getString(thestr);
+            return currentBundle.getString(thestr);
         } catch (Exception e) {
             return thestr;
         }
@@ -124,30 +135,66 @@ public class AppVaribles {
         }
     }
 
+    public static boolean setShowComments(boolean value) {
+        if (AppVaribles.setUserConfigValue("ShowComments", value)) {
+            AppVaribles.showComments = value;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setOpenStageInNewWindow(boolean value) {
+        if (AppVaribles.setUserConfigValue("OpenStageInNewWindow", value)) {
+            AppVaribles.openStageInNewWindow = value;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean setRestoreStagesSize(boolean value) {
+        if (AppVaribles.setUserConfigValue("RestoreStagesSize", value)) {
+            AppVaribles.restoreStagesSize = value;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static MemoryUsageSetting setPdfMem(String value) {
         switch (value) {
             case "1GB":
                 AppVaribles.setUserConfigValue("PdfMemDefault", "1GB");
-                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
+                AppVaribles.pdfMemUsage = MemoryUsageSetting.setupMixed(1024 * 1024 * 1024, -1);
                 break;
             case "2GB":
                 AppVaribles.setUserConfigValue("PdfMemDefault", "2GB");
-                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
+                AppVaribles.pdfMemUsage = MemoryUsageSetting.setupMixed(2048 * 1024 * 1024, -1);
                 break;
             case "Unlimit":
                 AppVaribles.setUserConfigValue("PdfMemDefault", "Unlimit");
-                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
+                AppVaribles.pdfMemUsage = MemoryUsageSetting.setupMixed(-1, -1);
                 break;
             case "500MB":
             default:
                 AppVaribles.setUserConfigValue("PdfMemDefault", "500MB");
-                AppVaribles.PdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
+                AppVaribles.pdfMemUsage = MemoryUsageSetting.setupMixed(500 * 1024 * 1024, -1);
         }
-        return AppVaribles.PdfMemUsage;
+        return AppVaribles.pdfMemUsage;
     }
 
     public static MemoryUsageSetting getPdfMem() {
         return setPdfMem(getUserConfigValue("PdfMemDefault", "1GB"));
+    }
+
+    public static boolean setSceneFontSize(int size) {
+        if (AppVaribles.setUserConfigInt("SceneFontSize", size)) {
+            AppVaribles.sceneFontSize = size;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static String getStyle() {
@@ -172,20 +219,8 @@ public class AppVaribles {
         return getUserConfigInt("CommentsDelay", 3000);
     }
 
-    public static int getPaneFontSize() {
-        return getUserConfigInt("PaneFontSize", 15);
-    }
-
-    public static void setPaneFontSize(int size) {
-        setUserConfigInt("PaneFontSize", size);
-    }
-
-    public static boolean isShowComments() {
-        return AppVaribles.getUserConfigBoolean("ShowComments", true);
-    }
-
-    public static boolean isAlphaAsBlack() {
-        return AppVaribles.getUserConfigBoolean("AlphaAsBlack", false);
+    public static boolean isAlphaAsWhite() {
+        return AppVaribles.getUserConfigBoolean("AlphaAsWhite", true);
     }
 
     public static String getUserConfigValue(String key, String defaultValue) {
@@ -200,7 +235,7 @@ public class AppVaribles {
             }
             return value;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return null;
         }
     }
@@ -216,7 +251,7 @@ public class AppVaribles {
             }
             return v;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return defaultValue;
         }
     }
@@ -232,7 +267,7 @@ public class AppVaribles {
             }
             return v;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return defaultValue;
         }
     }
@@ -247,12 +282,14 @@ public class AppVaribles {
 
     public static File getUserConfigPath(String key, String defaultValue) {
         try {
-//            logger.debug("getUserConfigValue:" + key);
             String pathString;
             if (userConfigValues.containsKey(key)) {
                 pathString = userConfigValues.get(key);
             } else {
                 pathString = TableUserConf.read(key, defaultValue);
+            }
+            if (pathString == null) {
+                pathString = defaultValue;
             }
             File path = new File(pathString);
             if (!path.exists() || !path.isDirectory()) {
@@ -265,7 +302,7 @@ public class AppVaribles {
             userConfigValues.put(key, path.getAbsolutePath());
             return path;
         } catch (Exception e) {
-            logger.error(e.toString());
+//            logger.error(e.toString());
             return null;
         }
     }
@@ -277,6 +314,20 @@ public class AppVaribles {
         } else {
             return false;
         }
+    }
+
+    public static boolean resetWindows() {
+        if (!TableUserConf.deletePrefix("Interface_")) {
+            return false;
+        }
+        List<String> keys = new ArrayList();
+        keys.addAll(userConfigValues.keySet());
+        for (String key : keys) {
+            if (key.startsWith("Interface_")) {
+                userConfigValues.remove(key);
+            }
+        }
+        return true;
     }
 
     public static boolean setUserConfigValue(String key, String value) {
@@ -393,6 +444,18 @@ public class AppVaribles {
         } else {
             return false;
         }
+    }
+
+    public static void stageOpened(Stage stage, BaseController controller) {
+        openedStages.put(stage, controller);
+    }
+
+    public static void stageClosed(Stage stage) {
+        openedStages.remove(stage);
+    }
+
+    public static boolean stageRecorded(Stage stage) {
+        return openedStages.containsKey(stage);
     }
 
 }

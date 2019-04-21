@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.PdfBatchBaseController;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +18,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
@@ -25,8 +25,8 @@ import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -43,7 +43,7 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfSplitController extends PdfBaseController {
+public class PdfSplitController extends PdfBatchBaseController {
 
     final private String AuthorKey;
     private int pagesNumber, filesNumber;
@@ -66,11 +66,13 @@ public class PdfSplitController extends PdfBaseController {
     }
 
     public PdfSplitController() {
+        baseTitle = AppVaribles.getMessage("SplitPdf");
+
         AuthorKey = "AuthorKey";
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             allowPaused = false;
 
@@ -83,8 +85,8 @@ public class PdfSplitController extends PdfBaseController {
                             .or(sourceSelectionController.sourceFileInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.fromPageInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.toPageInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(PagesNumberInput.styleProperty().isEqualTo(badStyle))
                             .or(FilesNumberInput.styleProperty().isEqualTo(badStyle))
             );
@@ -94,7 +96,8 @@ public class PdfSplitController extends PdfBaseController {
         }
     }
 
-    private void initOptionsSection() {
+    @Override
+    public void initOptionsSection() {
         try {
             splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -136,11 +139,11 @@ public class PdfSplitController extends PdfBaseController {
 
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(pdfMemBox, tips);
+            FxmlControl.quickTooltip(pdfMemBox, tips);
 
             tips = new Tooltip(getMessage("StartEndComments"));
             tips.setFont(new Font(16));
-            FxmlTools.setComments(ListInput, tips);
+            FxmlControl.setComments(ListInput, tips);
 
             checkPdfMem();
 
@@ -271,41 +274,36 @@ public class PdfSplitController extends PdfBaseController {
         AppVaribles.setPdfMem("Unlimit");
     }
 
-    @FXML
-    protected void mouseEnterPane(MouseEvent event) {
-        checkPdfMem();
-    }
-
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
-            if (currentParameters == null) {
+            if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
             currentParameters.targetPath = new File(currentParameters.targetPath).getAbsolutePath();
 
-            final MemoryUsageSetting memSettings = AppVaribles.PdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
+            final MemoryUsageSetting memSettings = AppVaribles.pdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
 
             updateInterface("Started");
             task = new Task<Void>() {
-                private boolean fail;
+                private boolean ok;
                 private List<String> files, wrongList;
 
                 @Override
                 protected Void call() {
                     try {
-                        for (; currentParameters.currentFileIndex < sourceFiles.size(); currentParameters.currentFileIndex++) {
+                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            File file = sourceFiles.get(currentParameters.currentFileIndex);
+                            File file = sourceFiles.get(currentParameters.currentIndex);
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
@@ -315,7 +313,7 @@ public class PdfSplitController extends PdfBaseController {
                             files = new ArrayList<>();
                             wrongList = new ArrayList<>();
                             handleCurrentFile();
-                            markFileHandled(currentParameters.currentFileIndex);
+                            markFileHandled(currentParameters.currentIndex);
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -328,46 +326,18 @@ public class PdfSplitController extends PdfBaseController {
                             }
 
                         }
+                        ok = true;
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
 
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                String s = "";
-                                if (!wrongList.isEmpty()) {
-                                    s = AppVaribles.getMessage("WrongStartEnd") + "\n" + wrongList + "\n";
-                                    ListInput.setStyle(badStyle);
-                                }
-                                if (!files.isEmpty()) {
-                                    s += "\n" + AppVaribles.getMessage("FilesGeneratedUnder")
-                                            + " " + currentParameters.targetPath;
-                                    int num = files.size();
-                                    if (num > 10) {
-                                        num = 10;
-                                    }
-                                    for (int i = 0; i < num; i++) {
-                                        s += "\n" + files.get(i);
-                                    }
-                                }
-                                if (!s.isEmpty()) {
-                                    popInformation(s);
-                                }
-
-                            } catch (Exception e) {
-                                logger.error(e.toString());
-                            }
-                        }
-                    });
                     return null;
                 }
 
                 private void handleCurrentFile() {
                     try {
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
-                                AppVaribles.PdfMemUsage)) {
+                                AppVaribles.pdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -478,7 +448,8 @@ public class PdfSplitController extends PdfBaseController {
                             String pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber,
                                     (filesNumber + "").length());
                             String fname = currentParameters.targetPrefix + "_" + pageNumber + ".pdf";
-                            String fullname = currentParameters.targetPath + "/" + fname;
+                            actualParameters.finalTargetName = currentParameters.targetPath + "/" + fname;
+                            targetFiles.add(new File(actualParameters.finalTargetName));
 
                             doc.setDocumentInformation(info);
 
@@ -491,7 +462,7 @@ public class PdfSplitController extends PdfBaseController {
                             action.setDestination(dest);
                             doc.getDocumentCatalog().setOpenAction(action);
 
-                            doc.save(fullname);
+                            doc.save(actualParameters.finalTargetName);
                             doc.close();
                             files.add(fname);
                             currentParameters.currentNameNumber++;
@@ -505,6 +476,35 @@ public class PdfSplitController extends PdfBaseController {
                 protected void succeeded() {
                     super.succeeded();
                     updateInterface("Done");
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String s = "";
+                                if (!wrongList.isEmpty()) {
+                                    s = AppVaribles.getMessage("WrongStartEnd") + "\n" + wrongList + "\n";
+                                    ListInput.setStyle(badStyle);
+                                }
+                                if (!files.isEmpty()) {
+                                    s += "\n" + AppVaribles.getMessage("FilesGeneratedUnder")
+                                            + " " + currentParameters.targetPath;
+                                    int num = files.size();
+                                    if (num > 10) {
+                                        num = 10;
+                                    }
+                                    for (int i = 0; i < num; i++) {
+                                        s += "\n" + files.get(i);
+                                    }
+                                }
+                                if (!s.isEmpty()) {
+                                    popInformation(s);
+                                }
+
+                            } catch (Exception e) {
+                                logger.error(e.toString());
+                            }
+                        }
+                    });
                 }
 
                 @Override

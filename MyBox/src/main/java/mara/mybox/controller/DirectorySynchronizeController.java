@@ -17,7 +17,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
@@ -26,17 +25,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.controller.base.BatchBaseController;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ValueTools;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -44,7 +43,7 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class DirectorySynchronizeController extends BaseController {
+public class DirectorySynchronizeController extends BatchBaseController {
 
     protected boolean isConditional, startHandle;
     protected String lastFileName;
@@ -59,7 +58,7 @@ public class DirectorySynchronizeController extends BaseController {
     @FXML
     protected VBox dirsBox, conditionsBox, condBox, logsBox;
     @FXML
-    protected TextField sourcePathInput, maxLinesinput, notCopyInput;
+    protected TextField maxLinesinput, notCopyInput;
     @FXML
     protected ToggleGroup copyGroup;
     @FXML
@@ -70,10 +69,10 @@ public class DirectorySynchronizeController extends BaseController {
     protected DatePicker modifyAfterInput;
     @FXML
     protected TextArea logsTextArea;
-    @FXML
-    protected Button clearButton;
 
     public DirectorySynchronizeController() {
+        baseTitle = AppVaribles.getMessage("DirectorySynchronize");
+
         targetPathKey = "DirectorySynchronizeTargetPath";
         sourcePathKey = "DirectorySynchronizeSourcePath";
 
@@ -82,42 +81,22 @@ public class DirectorySynchronizeController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
 
-            sourcePathInput.setText(AppVaribles.getUserConfigPath(sourcePathKey).getAbsolutePath());
-            sourcePathInput.textProperty().addListener(new ChangeListener<String>() {
+            deleteNonExistedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    final File file = new File(newValue);
-                    if (!file.exists() || !file.isDirectory()) {
-                        sourcePathInput.setStyle(badStyle);
-                        return;
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldValue, Boolean newValue) {
+                    if (deleteNonExistedCheck.isSelected()) {
+                        deleteNonExistedCheck.setStyle("-fx-text-fill: #961c1c; -fx-font-weight: bolder;");
+                    } else {
+                        deleteNonExistedCheck.setStyle(null);
                     }
-                    sourcePathInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(LastPathKey, newValue);
-                    AppVaribles.setUserConfigValue(sourcePathKey, newValue);
                 }
             });
 
-            targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
-            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    final File file = new File(newValue);
-                    if (!file.isDirectory()) {
-                        targetPathInput.setStyle(badStyle);
-                        return;
-                    }
-                    targetPathInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(LastPathKey, newValue);
-                    AppVaribles.setUserConfigValue(targetPathKey, newValue);
-                }
-            });
-
-            FxmlTools.setNonnegativeValidation(maxLinesinput);
+            FxmlControl.setNonnegativeValidation(maxLinesinput);
 
             checkIsConditional();
             copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -143,62 +122,6 @@ public class DirectorySynchronizeController extends BaseController {
             logger.debug(e.toString());
         }
 
-    }
-
-    @FXML
-    protected void selectSourcePath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setUserConfigValue(sourcePathKey, directory.getPath());
-
-            sourcePathInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    protected void selectTargetPath(ActionEvent event) {
-        if (targetPathInput == null) {
-            return;
-        }
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
-            AppVaribles.setUserConfigValue(targetPathKey, directory.getPath());
-
-            targetPathInput.setText(directory.getPath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    @Override
-    protected void openTarget(ActionEvent event) {
-        try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     @FXML
@@ -249,7 +172,6 @@ public class DirectorySynchronizeController extends BaseController {
                         }
                     }
                 }
-
                 logsTextArea.setText(AppVaribles.getMessage("SourcePath") + ": " + sourcePathInput.getText() + "\n");
                 logsTextArea.appendText(AppVaribles.getMessage("TargetPath") + ": " + targetPathInput.getText() + "\n");
                 newLogs = new StringBuffer();
@@ -277,7 +199,6 @@ public class DirectorySynchronizeController extends BaseController {
                 }
                 targetPath.setWritable(true);
                 targetPath.setExecutable(true);
-
                 startHandle = true;
                 lastFileName = null;
 
@@ -358,22 +279,45 @@ public class DirectorySynchronizeController extends BaseController {
     }
 
     @Override
-    protected void updateInterface(final String newStatus) {
+    public void updateInterface(final String newStatus) {
         currentStatus = newStatus;
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (paused) {
-                        updateLogs(AppVaribles.getMessage("Paused"), true);
-                    } else {
-                        updateLogs(AppVaribles.getMessage(newStatus), true);
-                    }
-                    switch (newStatus) {
-                        case "Started":
-                            operationBarController.statusLabel.setText(getMessage("Handling...") + " "
-                                    + getMessage("StartTime")
-                                    + ": " + DateTools.datetimeToString(startTime));
+                if (paused) {
+                    updateLogs(AppVaribles.getMessage("Paused"), true);
+                } else {
+                    updateLogs(AppVaribles.getMessage(newStatus), true);
+                }
+                switch (newStatus) {
+                    case "Started":
+                        operationBarController.statusLabel.setText(getMessage("Handling...") + " "
+                                + getMessage("StartTime")
+                                + ": " + DateTools.datetimeToString(startTime));
+                        operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
+                        operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                cancelProcess(event);
+                            }
+                        });
+                        operationBarController.pauseButton.setVisible(true);
+                        operationBarController.pauseButton.setDisable(false);
+                        operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
+                        operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                pauseProcess(event);
+                            }
+                        });
+                        operationBarController.progressBar.setProgress(-1);
+                        dirsBox.setDisable(true);
+                        conditionsBox.setDisable(true);
+                        break;
+
+                    case "Done":
+                    default:
+                        if (paused) {
                             operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
                             operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -383,81 +327,37 @@ public class DirectorySynchronizeController extends BaseController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Pause"));
+                            operationBarController.pauseButton.setText(AppVaribles.getMessage("Continue"));
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
-                                    pauseProcess(event);
+                                    startAction();
                                 }
                             });
-                            operationBarController.progressBar.setProgress(-1);
-                            dirsBox.setDisable(true);
-                            conditionsBox.setDisable(true);
-                            break;
+                        } else {
+                            operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
+                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                @Override
+                                public void handle(ActionEvent event) {
+                                    startAction();
+                                }
+                            });
+                            operationBarController.pauseButton.setVisible(false);
+                            operationBarController.pauseButton.setDisable(true);
+                            operationBarController.progressBar.setProgress(1);
+                            dirsBox.setDisable(false);
+                            conditionsBox.setDisable(false);
+                        }
+                        donePost();
 
-                        case "Done":
-                        default:
-                            if (paused) {
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        cancelProcess(event);
-                                    }
-                                });
-                                operationBarController.pauseButton.setVisible(true);
-                                operationBarController.pauseButton.setDisable(false);
-                                operationBarController.pauseButton.setText(AppVaribles.getMessage("Continue"));
-                                operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        startAction();
-                                    }
-                                });
-                            } else {
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
-                                    @Override
-                                    public void handle(ActionEvent event) {
-                                        startAction();
-                                    }
-                                });
-                                operationBarController.pauseButton.setVisible(false);
-                                operationBarController.pauseButton.setDisable(true);
-                                operationBarController.progressBar.setProgress(1);
-                                dirsBox.setDisable(false);
-                                conditionsBox.setDisable(false);
-                            }
-                            showCost();
-                            updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                                    + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
-                            updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
-                            updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                                    + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
-                            if (copyAttr.isConditionalCopy() && copyAttr.isDeleteNotExisteds()) {
-                                updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
-                                        + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                                        + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
-                            }
-
-                            if (operationBarController.miaoCheck.isSelected()) {
-                                FxmlTools.miao3();
-                            }
-
-                    }
-
-                } catch (Exception e) {
-                    logger.error(e.toString());
                 }
             }
         });
 
     }
 
-    protected void showCost() {
+    @Override
+    public void showCost() {
         if (operationBarController.statusLabel == null) {
             return;
         }
@@ -478,6 +378,52 @@ public class DirectorySynchronizeController extends BaseController {
                 + getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + ", "
                 + getMessage("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.statusLabel.setText(s);
+    }
+
+    @Override
+    public void donePost() {
+        showCost();
+        updateLogs(getMessage("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
+                + AppVaribles.getMessage("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
+        updateLogs(AppVaribles.getMessage("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                + AppVaribles.getMessage("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                + AppVaribles.getMessage("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
+        updateLogs(AppVaribles.getMessage("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                + AppVaribles.getMessage("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                + AppVaribles.getMessage("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
+        if (copyAttr.isConditionalCopy() && copyAttr.isDeleteNotExisteds()) {
+            updateLogs(AppVaribles.getMessage("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                    + AppVaribles.getMessage("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                    + AppVaribles.getMessage("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+        }
+
+        if (operationBarController.miaoCheck.isSelected()) {
+            FxmlControl.miao3();
+        }
+
+        if (operationBarController.openCheck.isSelected()) {
+            openTarget(null);
+        }
+
+    }
+
+    @FXML
+    @Override
+    public void openTarget(ActionEvent event) {
+        try {
+            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public double countAverageTime(long cost) {
+        double avg = 0;
+        if (copyAttr.getCopiedFilesNumber() != 0) {
+            avg = ValueTools.roundDouble3((double) cost / copyAttr.getCopiedFilesNumber());
+        }
+        return avg;
     }
 
     protected void updateLogs(final String line) {
@@ -538,7 +484,7 @@ public class DirectorySynchronizeController extends BaseController {
             String srcFileName;
             long len;
             for (File srcFile : files) {
-                if (task.isCancelled()) {
+                if (task == null || task.isCancelled()) {
                     return false;
                 }
                 srcFileName = srcFile.getAbsolutePath();
@@ -659,7 +605,7 @@ public class DirectorySynchronizeController extends BaseController {
             String srcFileName;
             long len;
             for (File srcFile : files) {
-                if (task.isCancelled()) {
+                if (task == null || task.isCancelled()) {
                     return false;
                 }
                 srcFileName = srcFile.getAbsolutePath();
@@ -836,7 +782,7 @@ public class DirectorySynchronizeController extends BaseController {
             return true;
         }
         for (File targetFile : files) {
-            if (task.isCancelled()) {
+            if (task == null || task.isCancelled()) {
                 return false;
             }
             File srcFile = new File(sourcePath + File.separator + targetFile.getName());

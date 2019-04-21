@@ -5,6 +5,7 @@
  */
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -13,6 +14,8 @@ import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.ImageFileInformation;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -61,6 +64,11 @@ public class ImageInformationController extends BaseController {
     @FXML
     private TextField ImageOrientation, NumberOfImages, IndexOfImage;
 
+    public ImageInformationController() {
+        baseTitle = AppVaribles.getMessage("ImageInformation");
+
+    }
+
     @FXML
     private void closeStage(MouseEvent event) {
         try {
@@ -76,9 +84,9 @@ public class ImageInformationController extends BaseController {
             File file = finfo.getFile();
             FilesPath.setText(file.getParent());
             FileName.setText(file.getName());
-            CreateTime.setText(finfo.getCreateTime());
-            ModifyTime.setText(finfo.getModifyTime());
-            FileSize.setText(finfo.getFileSize());
+            CreateTime.setText(DateTools.datetimeToString(finfo.getCreateTime()));
+            ModifyTime.setText(DateTools.datetimeToString(finfo.getModifyTime()));
+            FileSize.setText(FileTools.showFileSize(finfo.getFileSize()));
             xPixels.setText(info.getWidth() + "");
             yPixels.setText(info.getHeight() + "");
             if (info.getwDensity() > 0) {

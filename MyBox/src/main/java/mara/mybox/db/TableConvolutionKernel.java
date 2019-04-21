@@ -44,7 +44,7 @@ public class TableConvolutionKernel extends DerbyBase {
 
     public static List<ConvolutionKernel> read() {
         List<ConvolutionKernel> records = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Convolution_Kernel ORDER BY name";
             ResultSet kResult = statement.executeQuery(sql);
@@ -98,7 +98,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (name == null) {
             return record;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT width FROM Convolution_Kernel WHERE name='" + name + "'";
             ResultSet kResult = statement.executeQuery(sql);
@@ -163,7 +163,7 @@ public class TableConvolutionKernel extends DerbyBase {
                 || record.getHeight() < 3 || record.getHeight() % 2 == 0) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT width FROM Convolution_Kernel WHERE name='" + record.getName() + "'";
             if (statement.executeQuery(sql).next()) {
@@ -198,7 +198,7 @@ public class TableConvolutionKernel extends DerbyBase {
     }
 
     public static boolean write(List<ConvolutionKernel> records) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (ConvolutionKernel k : records) {
@@ -223,7 +223,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (records == null || records.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (ConvolutionKernel a : records) {
@@ -241,7 +241,7 @@ public class TableConvolutionKernel extends DerbyBase {
         if (names == null || names.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (String name : names) {

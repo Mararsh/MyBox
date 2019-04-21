@@ -14,8 +14,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.text.Font;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.controller.base.BaseController;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 
@@ -27,28 +27,41 @@ import static mara.mybox.value.AppVaribles.getMessage;
 public class OperationController extends BaseController {
 
     @FXML
-    protected Button pauseButton, openTargetButton;
+    public Button pauseButton, openTargetButton;
     @FXML
-    protected ProgressBar progressBar, fileProgressBar;
+    public ProgressBar progressBar, fileProgressBar;
     @FXML
-    protected Label progressValue, fileProgressValue;
+    public Label progressValue, fileProgressValue;
     @FXML
-    protected CheckBox miaoCheck;
+    public CheckBox miaoCheck, openCheck;
 
     @Override
-    protected void initializeNext() {
-        Tooltip tips = new Tooltip(getMessage("MiaoPrompt"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(miaoCheck, tips);
+    public void initializeNext() {
 
-        miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                AppVaribles.setUserConfigValue("Miao", newValue);
+        if (miaoCheck != null) {
+            FxmlControl.quickTooltip(miaoCheck, new Tooltip(getMessage("MiaoPrompt")));
+            miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue("Miao", newValue);
 
-            }
-        });
-        miaoCheck.setSelected(AppVaribles.getUserConfigBoolean("Miao"));
+                }
+            });
+            miaoCheck.setSelected(AppVaribles.getUserConfigBoolean("Miao"));
+        }
+
+        if (openCheck != null) {
+            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue("OpenWhenComplete", newValue);
+
+                }
+            });
+            openCheck.setSelected(AppVaribles.getUserConfigBoolean("OpenWhenComplete"));
+        }
+
+        FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
 
     }
 
@@ -61,8 +74,7 @@ public class OperationController extends BaseController {
     }
 
     @FXML
-    @Override
-    protected void pauseProcess(ActionEvent event) {
+    public void pauseProcess(ActionEvent event) {
         if (parentController != null) {
             parentController.startAction();
         }
@@ -70,18 +82,12 @@ public class OperationController extends BaseController {
 
     @FXML
     @Override
-    protected void openTarget(ActionEvent event) {
+    public void openTarget(ActionEvent event) {
+
         if (parentController != null) {
+
             parentController.openTarget(event);
         }
-    }
-
-    public Button getStartButton() {
-        return startButton;
-    }
-
-    public void setStartButton(Button startButton) {
-        this.startButton = startButton;
     }
 
     public Button getPauseButton() {

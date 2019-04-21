@@ -1,7 +1,9 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.PdfBatchBaseController;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.MessageFormat;
 import java.util.Date;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
@@ -11,7 +13,7 @@ import javafx.scene.control.TextField;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -21,7 +23,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractTextsController extends PdfBaseController {
+public class PdfExtractTextsController extends PdfBatchBaseController {
 
     private String separator;
 
@@ -30,18 +32,22 @@ public class PdfExtractTextsController extends PdfBaseController {
     @FXML
     protected TextField separatorInput;
 
+    public PdfExtractTextsController() {
+        baseTitle = AppVaribles.getMessage("PdfExtractTexts");
+
+    }
+
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
-            targetIsFile = true;
             operationBarController.startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
-                            .or(Bindings.isEmpty(targetSelectionController.targetPathInput.textProperty()))
-                            .or(Bindings.isEmpty(targetSelectionController.targetFileInput.textProperty()))
+                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                            .or(Bindings.isEmpty(targetFileInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))
                             .or(sourceSelectionController.sourceFileInput.styleProperty().isEqualTo(badStyle))
-                            .or(targetSelectionController.targetPathInput.styleProperty().isEqualTo(badStyle))
+                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.fromPageInput.styleProperty().isEqualTo(badStyle))
                             .or(sourceSelectionController.toPageInput.styleProperty().isEqualTo(badStyle))
             );
@@ -59,26 +65,23 @@ public class PdfExtractTextsController extends PdfBaseController {
     }
 
     @Override
-    protected void sourceFileChanged(final File file) {
+    public void sourceFileChanged(final File file) {
         super.sourceFileChanged(file);
-        targetSelectionController.targetFileInput.setText(FileTools.getFilePrefix(file.getName()) + ".txt");
+        targetFileInput.setText(FileTools.getFilePrefix(file.getName()) + ".txt");
 
     }
 
     @Override
-    protected void makeMoreParameters() {
+    public void makeMoreParameters() {
         makeSingleParameters();
     }
 
     @Override
-    protected void doCurrentProcess() {
+    public void doCurrentProcess() {
         try {
-
-            if (currentParameters == null) {
+            if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
-            isTxt = true;
-
             currentParameters.startTime = new Date();
             currentParameters.currentTotalHandled = 0;
             separator = separatorInput.getText();
@@ -91,19 +94,21 @@ public class PdfExtractTextsController extends PdfBaseController {
                 @Override
                 protected Void call() {
                     try {
-                        for (; currentParameters.currentFileIndex < sourceFiles.size(); currentParameters.currentFileIndex++) {
+                        for (; currentParameters.currentIndex < sourceFiles.size(); currentParameters.currentIndex++) {
                             if (isCancelled()) {
                                 break;
                             }
-                            File file = sourceFiles.get(currentParameters.currentFileIndex);
+                            File file = sourceFiles.get(currentParameters.currentIndex);
                             currentParameters.sourceFile = file;
                             updateInterface("StartFile");
                             if (currentParameters.isBatch) {
-                                currentParameters.targetPrefix = FileTools.getFilePrefix(file.getName());
+                                actualParameters.finalTargetName = currentParameters.targetPath + "/"
+                                        + FileTools.getFilePrefix(file.getName()) + ".txt";
                             }
-
-                            handleCurrentFile();
-                            markFileHandled(currentParameters.currentFileIndex);
+                            targetFiles.add(new File(actualParameters.finalTargetName));
+                            int count = handleCurrentFile();
+                            markFileHandled(currentParameters.currentIndex,
+                                    MessageFormat.format(AppVaribles.getMessage("TotalExtractedCharactersCount"), count));
 
                             if (isCancelled() || isPreview) {
                                 break;
@@ -122,12 +127,16 @@ public class PdfExtractTextsController extends PdfBaseController {
                     return null;
                 }
 
-                private void handleCurrentFile() {
+                private int handleCurrentFile() {
+                    int count = 0;
                     try {
-                        finalTargetName = currentParameters.targetPath + "/" + currentParameters.targetPrefix;
-                        FileWriter writer = new FileWriter(finalTargetName, false);
+                        File file = new File(actualParameters.finalTargetName);
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        FileWriter writer = new FileWriter(actualParameters.finalTargetName, false);
                         try (PDDocument doc = PDDocument.load(currentParameters.sourceFile, currentParameters.password,
-                                AppVaribles.PdfMemUsage)) {
+                                AppVaribles.pdfMemUsage)) {
                             if (currentParameters.acumDigit < 1) {
                                 currentParameters.acumDigit = (doc.getNumberOfPages() + "").length();
                             }
@@ -156,6 +165,7 @@ public class PdfExtractTextsController extends PdfBaseController {
                                         writer.write(System.getProperty("line.separator"));
                                     }
                                     writer.flush();
+                                    count += text.length();
                                 }
 
                                 currentParameters.currentTotalHandled++;
@@ -168,6 +178,7 @@ public class PdfExtractTextsController extends PdfBaseController {
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
+                    return count;
                 }
 
                 @Override

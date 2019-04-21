@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.ValueTools;
@@ -21,6 +23,12 @@ public class ImageConvolution extends PixelsOperation {
     protected int matrixWidth, matrixHeight, edge_op, radiusX, radiusY, maxX, maxY;
     protected boolean keepOpacity, isEmboss, isGray;
     protected float[][] matrix;
+    protected int[][] intMatrix;
+    protected int sum;
+
+    public static enum BlurAlgorithm {
+        AverageBlur, GaussianBlur
+    }
 
     public ImageConvolution() {
         this.operationType = OperationType.Convolution;
@@ -52,6 +60,31 @@ public class ImageConvolution extends PixelsOperation {
         init(kernel);
     }
 
+    public ImageConvolution(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Convolution;
+    }
+
+    public ImageConvolution(Image image, ImageScope scope) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Convolution;
+        this.scope = scope;
+    }
+
+    public ImageConvolution(Image image, ConvolutionKernel kernel) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Convolution;
+        this.scope = null;
+        init(kernel);
+    }
+
+    public ImageConvolution(Image image, ImageScope scope, ConvolutionKernel kernel) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        this.operationType = OperationType.Convolution;
+        this.scope = scope;
+        init(kernel);
+    }
+
     private void init(ConvolutionKernel kernel) {
         setKernel(kernel);
     }
@@ -61,6 +94,13 @@ public class ImageConvolution extends PixelsOperation {
         matrix = kernel.getMatrix();
         matrixWidth = matrix[0].length;
         matrixHeight = matrix.length;
+        intMatrix = new int[matrixHeight][matrixWidth];
+        sum = 10000; // Run integer calcualation instead of float/double calculation
+        for (int matrixY = 0; matrixY < matrixHeight; matrixY++) {
+            for (int matrixX = 0; matrixX < matrixWidth; matrixX++) {
+                intMatrix[matrixY][matrixX] = Math.round(matrix[matrixY][matrixX] * sum);
+            }
+        }
         edge_op = kernel.getEdge();
         radiusX = matrixWidth / 2;
         radiusY = matrixHeight / 2;
@@ -81,7 +121,7 @@ public class ImageConvolution extends PixelsOperation {
     }
 
     @Override
-    public BufferedImage operationImage() {
+    public BufferedImage operateImage() {
         if (image == null || operationType == null) {
             return image;
         }
@@ -89,17 +129,17 @@ public class ImageConvolution extends PixelsOperation {
             return applyConvolution(image, kernel);
 
         }
-        return super.operationImage();
+        return super.operateImage();
     }
 
     @Override
-    protected void operatePixel(BufferedImage target, Color color, int x, int y) {
+    protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
         int pixel = image.getRGB(x, y);
         if (x < radiusX || x + radiusX > maxX
                 || y < radiusY || y + radiusY > maxY) {
             if (edge_op == ConvolutionKernel.Edge_Op.COPY) {
                 target.setRGB(x, y, pixel);
-                return;
+                return new Color(pixel, true);
             }
         }
         Color newColor = applyConvolution(x, y);
@@ -114,6 +154,7 @@ public class ImageConvolution extends PixelsOperation {
             }
         }
         target.setRGB(x, y, newColor.getRGB());
+        return newColor;
     }
 
     public Color applyConvolution(int x, int y) {
@@ -133,19 +174,19 @@ public class ImageConvolution extends PixelsOperation {
                         }
                     }
                     Color color = new Color(image.getRGB(convolveX, convolveY));
-                    red += color.getRed() * matrix[matrixY][matrixX];
-                    green += color.getGreen() * matrix[matrixY][matrixX];
-                    blue += color.getBlue() * matrix[matrixY][matrixX];
+                    red += color.getRed() * intMatrix[matrixY][matrixX];
+                    green += color.getGreen() * intMatrix[matrixY][matrixX];
+                    blue += color.getBlue() * intMatrix[matrixY][matrixX];
                     if (keepOpacity) {
-                        opacity += color.getAlpha() * matrix[matrixY][matrixX];
+                        opacity += color.getAlpha() * intMatrix[matrixY][matrixX];
                     }
                 }
             }
-            red = Math.min(Math.max(red, 0), 255);
-            green = Math.min(Math.max(green, 0), 255);
-            blue = Math.min(Math.max(blue, 0), 255);
+            red = Math.min(Math.max(red / sum, 0), 255);
+            green = Math.min(Math.max(green / sum, 0), 255);
+            blue = Math.min(Math.max(blue / sum, 0), 255);
             if (keepOpacity) {
-                opacity = Math.min(Math.max(opacity, 0), 255);
+                opacity = Math.min(Math.max(opacity / sum, 0), 255);
             } else {
                 opacity = 255;
             }
@@ -183,7 +224,7 @@ public class ImageConvolution extends PixelsOperation {
         }
         BufferedImage target = applyConvolveOp(clearedSource, imageOp);
         if (type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            PixelsOperation pixelsOperation = new PixelsOperation(target, null,
+            PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(target, null,
                     OperationType.RGB, ColorActionType.Increase);
             pixelsOperation.setIntPara1(128);
             target = pixelsOperation.operate();

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -10,7 +11,7 @@ import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.SoundTools;
 
@@ -28,8 +29,13 @@ public class AlarmClockRunController extends BaseController {
     @FXML
     private Label descLabel, soundLabel, timeLabel;
 
+    public AlarmClockRunController() {
+        baseTitle = AppVaribles.getMessage("AlarmClock");
+
+    }
+
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
         } catch (Exception e) {
             logger.error(e.toString());
@@ -38,7 +44,7 @@ public class AlarmClockRunController extends BaseController {
 
     @FXML
     private void manageAction(ActionEvent event) {
-        openStage(CommonValues.AlarmClockFxml, false, true);
+        openStage(CommonValues.AlarmClockFxml);
         knowAction(event);
     }
 
@@ -76,7 +82,7 @@ public class AlarmClockRunController extends BaseController {
                 try {
                     String sound = alarm.getSound();
                     if (AppVaribles.getMessage("meow").equals(sound)) {
-                        File miao = FxmlTools.getUserFile(getClass(), "/sound/miao4.mp3", "miao4.mp3");
+                        File miao = FxmlControl.getUserFile(getClass(), "/sound/miao4.mp3", "miao4.mp3");
                         sound = miao.getAbsolutePath();
                     }
                     player = SoundTools.playback(sound, alarm.getVolume());

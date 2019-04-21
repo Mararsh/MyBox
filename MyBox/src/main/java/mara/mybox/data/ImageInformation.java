@@ -3,8 +3,12 @@ package mara.mybox.data;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageTypeSpecifier;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 
 /**
@@ -14,10 +18,10 @@ import mara.mybox.tools.FileTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageInformation {
+public class ImageInformation extends ImageFileInformation {
 
     private ImageFileInformation imageFileInformation;
-    private String imageFormat, filename, sizeString;
+    private String imageFormat, filename, pixelsString, loadSizeString, fileSizeString;
     private String colorSpace, imageRotation, compressionType, bitDepth, extraFormat = "";
     private int index, width, height, colorChannels, tileWidth, tileHeight, tileOffetX, tileOffsetY;
     private List<ImageTypeSpecifier> imageTypes;
@@ -25,25 +29,27 @@ public class ImageInformation {
     private float aspectRatio;
     private int wDensity, hDensity;  // dpi
     private String metaData;
-    private boolean hasAlpha, isLossless, isTiled, hasThumbnails, isSampled;
+    private boolean hasAlpha, isLossless, isMultipleFrames, hasThumbnails, isSampled, isScaled, isTiled;
     private Image image;
     private BufferedImage bufferedImage;
     private List<BufferedImage> thumbnails;
+    private Map<String, Long> sizes;
 
     public ImageInformation() {
-        hasAlpha = isTiled = hasThumbnails = isSampled = isLossless = false;
+        hasAlpha = isMultipleFrames = hasThumbnails = isSampled = isLossless = false;
         index = 0;
     }
 
     public ImageInformation(File file) {
-        hasAlpha = isTiled = hasThumbnails = isSampled = isLossless = false;
+        super(file);
+        hasAlpha = isMultipleFrames = hasThumbnails = isSampled = isLossless = false;
         index = 0;
         filename = file.getAbsolutePath();
         imageFormat = FileTools.getFileSuffix(filename).toLowerCase();
     }
 
     public ImageInformation(Image image) {
-        hasAlpha = isTiled = hasThumbnails = isSampled = isLossless = false;
+        hasAlpha = isMultipleFrames = hasThumbnails = isSampled = isLossless = false;
         index = 0;
         this.image = image;
         if (image == null) {
@@ -51,6 +57,56 @@ public class ImageInformation {
         }
         width = (int) image.getWidth();
         height = (int) image.getHeight();
+    }
+
+    public static ImageFileInformation loadImageFileInformation(File file) {
+        String fileName = file.getAbsolutePath();
+        String format = FileTools.getFileSuffix(fileName).toLowerCase();
+        if ("raw".equals(format) || !file.exists()) {
+            return null;
+        }
+        return ImageFileReaders.readImageFileMetaData(fileName);
+    }
+
+    public static ImageInformation loadImageInformation(File file, int loadWidth, int frameIndex) {
+        ImageFileInformation imageFileInformation = ImageInformation.loadImageFileInformation(file);
+        if (imageFileInformation == null) {
+            return null;
+        }
+        return loadImageInformation(file, loadWidth, frameIndex, imageFileInformation);
+    }
+
+    public static ImageInformation loadImageInformation(File file, int loadWidth, int frameIndex,
+            ImageFileInformation imageFileInformation) {
+        boolean needSampled = ImageFileReaders.needSampled(imageFileInformation.getImageInformation(), 1);
+        return loadImageInformation(file, loadWidth, frameIndex, imageFileInformation, needSampled);
+    }
+
+    public static ImageInformation loadImageInformation(File file, int loadWidth, int frameIndex,
+            ImageFileInformation imageFileInformation, boolean needSampled) {
+        if (imageFileInformation == null) {
+            return null;
+        }
+        String fileName = file.getAbsolutePath();
+        String format = FileTools.getFileSuffix(fileName).toLowerCase();
+        ImageInformation imageInfo = imageFileInformation.getImageInformation();
+        BufferedImage bufferImage;
+        if (needSampled) {
+            bufferImage = ImageFileReaders.readFileByWidth(format, fileName,
+                    imageInfo.getSizes().get("sampledWidth").intValue());
+        } else {
+            bufferImage = ImageFileReaders.readImage(file);
+        }
+        boolean needScale = (loadWidth > 0 && loadWidth != bufferImage.getWidth());
+        if (needScale && !needSampled) {
+            bufferImage = ImageConvert.scaleImageWidthKeep(bufferImage, loadWidth);
+        }
+        Image theImage = SwingFXUtils.toFXImage(bufferImage, null);
+        imageInfo.setImage(theImage);
+        imageInfo.setIsSampled(needSampled);
+        imageInfo.setIsScaled(needScale);
+//        imageInfo.setIsMultipleFrames(imageFileInformation.getNumberOfImages() > 1);
+        return imageInfo;
     }
 
     public ImageFileInformation getImageFileInformation() {
@@ -173,12 +229,12 @@ public class ImageInformation {
         this.isLossless = isLossless;
     }
 
-    public boolean isIsTiled() {
-        return isTiled;
+    public boolean isIsMultipleFrames() {
+        return isMultipleFrames;
     }
 
-    public void setIsTiled(boolean isTiled) {
-        this.isTiled = isTiled;
+    public void setIsMultipleFrames(boolean isMultipleFrames) {
+        this.isMultipleFrames = isMultipleFrames;
     }
 
     public List<ImageTypeSpecifier> getImageTypes() {
@@ -261,30 +317,6 @@ public class ImageInformation {
         this.thumbnails = thumbnails;
     }
 
-    public String getImageFormat() {
-        return imageFormat;
-    }
-
-    public void setImageFormat(String imageFormat) {
-        this.imageFormat = imageFormat;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public String getSizeString() {
-        return sizeString;
-    }
-
-    public void setSizeString(String sizeString) {
-        this.sizeString = sizeString;
-    }
-
     public int getIndex() {
         return index;
     }
@@ -299,6 +331,77 @@ public class ImageInformation {
 
     public void setIsSampled(boolean isSampled) {
         this.isSampled = isSampled;
+    }
+
+    public boolean isIsScaled() {
+        return isScaled;
+    }
+
+    public void setIsScaled(boolean isScaled) {
+        this.isScaled = isScaled;
+    }
+
+    public boolean isIsTiled() {
+        return isTiled;
+    }
+
+    public void setIsTiled(boolean isTiled) {
+        this.isTiled = isTiled;
+    }
+
+    public Map<String, Long> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(Map<String, Long> sizes) {
+        this.sizes = sizes;
+    }
+
+    public String getPixelsString() {
+        if (imageFileInformation != null && imageFileInformation.getImageInformation() != null) {
+            pixelsString = (int) imageFileInformation.getImageInformation().getWidth() + "x"
+                    + (int) imageFileInformation.getImageInformation().getHeight();
+        } else if (image != null) {
+            pixelsString = (int) image.getWidth() + "x"
+                    + (int) image.getHeight();
+        } else {
+            pixelsString = "";
+        }
+        if (isSampled) {
+            pixelsString += " *";
+        }
+        return pixelsString;
+    }
+
+    public void setPixelsString(String pixelsString) {
+        this.pixelsString = pixelsString;
+    }
+
+    public String getLoadSizeString() {
+        if (image != null) {
+            loadSizeString = (int) image.getWidth() + "x"
+                    + (int) image.getHeight();
+        } else {
+            loadSizeString = "";
+        }
+        return loadSizeString;
+    }
+
+    public void setLoadSizeString(String loadSizeString) {
+        this.loadSizeString = loadSizeString;
+    }
+
+    public String getFileSizeString() {
+        if (imageFileInformation != null) {
+            fileSizeString = FileTools.showFileSize(imageFileInformation.getFileSize());
+        } else {
+            fileSizeString = "";
+        }
+        return fileSizeString;
+    }
+
+    public void setFileSizeString(String fileSizeString) {
+        this.fileSizeString = fileSizeString;
     }
 
 }

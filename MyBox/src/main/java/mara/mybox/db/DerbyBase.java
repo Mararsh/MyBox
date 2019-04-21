@@ -22,7 +22,10 @@ public class DerbyBase {
     protected static final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     protected static final String protocol = "jdbc:derby:";
     protected static final String dbName = CommonValues.AppDerbyPath.getAbsolutePath();
-    protected static final String parameters = ";user=mara;password=mybox;create=true";
+    protected static final String create = ";user=" + CommonValues.AppDerbyUser + ";password="
+            + CommonValues.AppDerbyPassword + ";create=true";
+    protected static final String login = ";user=" + CommonValues.AppDerbyUser + ";password="
+            + CommonValues.AppDerbyPassword + ";create=false";
 
     protected String Table_Name, Create_Table_Statement;
     protected List<String> Keys;
@@ -37,7 +40,7 @@ public class DerbyBase {
 
     public static boolean initTables() {
         loadDriver();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + create);
                 Statement statement = conn.createStatement()) {
             new TableSystemConf().init(statement);
             new TableUserConf().init(statement);
@@ -47,6 +50,7 @@ public class DerbyBase {
             new TableConvolutionKernel().init(statement);
             new TableFloatMatrix().init(statement);
             new TableImageInit().init(statement);
+            new TableVisitHistory().init(statement);
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -64,6 +68,7 @@ public class DerbyBase {
             new TableConvolutionKernel().drop();
             new TableFloatMatrix().drop();
             new TableImageInit().drop();
+            new TableVisitHistory().drop();
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -80,6 +85,7 @@ public class DerbyBase {
             new TableConvolutionKernel().clear();
             new TableFloatMatrix().clear();
             new TableImageInit().clear();
+            new TableVisitHistory().clear();
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -112,6 +118,7 @@ public class DerbyBase {
                 return false;
             }
             statement.executeUpdate(Create_Table_Statement);
+//            logger.debug(Create_Table_Statement);
             return true;
         } catch (Exception e) {
 //            logger.debug(e.toString());
@@ -120,7 +127,7 @@ public class DerbyBase {
     }
 
     public boolean init() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             statement.executeUpdate(Create_Table_Statement);
             return true;
@@ -131,7 +138,7 @@ public class DerbyBase {
     }
 
     public boolean clear() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM " + Table_Name;
             statement.executeUpdate(sql);
@@ -143,7 +150,7 @@ public class DerbyBase {
     }
 
     public boolean drop() {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DROP TABLE " + Table_Name;
             statement.executeUpdate(sql);
@@ -157,7 +164,7 @@ public class DerbyBase {
     public ResultSet executeSQL(String sql) {
         try {
             ResultSet resultSet;
-            try (Connection conn = DriverManager.getConnection(protocol + dbName + parameters);
+            try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
                     Statement statement = conn.createStatement()) {
                 resultSet = statement.executeQuery(sql);
             }

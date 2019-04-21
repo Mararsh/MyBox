@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BatchBaseController;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -13,12 +14,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.text.Font;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
 import mara.mybox.data.FileInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
@@ -29,7 +28,7 @@ import mara.mybox.tools.FileTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileCutController extends FilesBatchController {
+public class FileCutController extends BatchBaseController {
 
     private FileSplitType splitType;
     private int bytesNumber, filesNumber;
@@ -44,8 +43,13 @@ public class FileCutController extends FilesBatchController {
         FilesNumber, BytesNumber, StartEndList
     }
 
+    public FileCutController() {
+        baseTitle = AppVaribles.getMessage("FileCut");
+
+    }
+
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         splitGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> ov,
@@ -76,9 +80,7 @@ public class FileCutController extends FilesBatchController {
             }
         });
 
-        Tooltip tips = new Tooltip(getMessage("StartEndByteComments"));
-        tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(listInput, tips);
+        FxmlControl.quickTooltip(listInput, new Tooltip(getMessage("StartEndByteComments")));
 
     }
 
@@ -170,27 +172,7 @@ public class FileCutController extends FilesBatchController {
     }
 
     @Override
-    protected void initTargetSection() {
-        targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    final File file = new File(newValue);
-                    if (!file.exists() || !file.isDirectory()) {
-                        targetPathInput.setStyle(badStyle);
-                        return;
-                    }
-                    targetPathInput.setStyle(null);
-                    AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
-                } catch (Exception e) {
-                }
-            }
-        });
-        targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
-
-        operationBarController.openTargetButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
-                .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-        );
+    public void initTargetSection() {
 
         operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -203,7 +185,12 @@ public class FileCutController extends FilesBatchController {
     }
 
     @Override
-    protected String handleCurrentFile(FileInformation d) {
+    public void makeMoreParameters() {
+        makeBatchParameters();
+    }
+
+    @Override
+    public String handleCurrentFile(FileInformation d) {
         File file = d.getFile();
         currentParameters.sourceFile = file;
         String filename = file.getName();
@@ -223,6 +210,7 @@ public class FileCutController extends FilesBatchController {
         if (files == null) {
             return AppVaribles.getMessage("Failed");
         } else {
+            targetFiles.addAll(files);
             return MessageFormat.format(AppVaribles.getMessage("FilesGenerated"), files.size());
         }
     }

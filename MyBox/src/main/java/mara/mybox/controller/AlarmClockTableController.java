@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -38,7 +39,7 @@ public class AlarmClockTableController extends BaseController {
     @FXML
     private HBox alarmClocksPane;
     @FXML
-    private Button clearButton, deleteButton, editButton, activeButton, inactiveButton;
+    private Button clearButton, editButton, activeButton, inactiveButton;
     @FXML
     private TableView<AlarmClock> alarmClocksView;
     @FXML
@@ -47,7 +48,7 @@ public class AlarmClockTableController extends BaseController {
     private TableColumn<AlarmClock, String> nextTimeColumn, soundColumn, lastTimeColumn, startTimeColumn;
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             statusColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("status"));
             descriptionColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("description"));

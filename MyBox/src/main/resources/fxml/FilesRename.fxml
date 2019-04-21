@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRenameController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRenameController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -64,10 +64,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <items>
-                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" text="%AddFiles" />
-                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" text="%AddDirectory" />
-                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" text="%InsertFiles" />
-                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" text="%InsertDirectory" />
+                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction"   onMouseEntered="#popFileAdd"  text="%AddFiles" />
+                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction"  onMouseEntered="#popDirectoryAdd" text="%AddDirectory" />
+                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction"  onMouseEntered="#popFileInsert" text="%InsertFiles" />
+                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction"  onMouseEntered="#popDirectoryInsert" text="%InsertDirectory" />
                                                 <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%MoveUp" />
                                                 <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%MoveDown" />
                                                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
@@ -76,9 +76,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" text="%RecoverSelected" />
                                             </items>
                                         </ToolBar>
-                                        <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                             <content>
-                                                <TableView fx:id="sourceTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
+                                                <TableView fx:id="filesTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
                                                     <columns>
                                                         <TableColumn fx:id="handledColumn" prefWidth="220.0" text="%Handled" />
                                                         <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%OriginalFileName" />
@@ -101,7 +101,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <CheckBox fx:id="subDirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                                <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -118,7 +118,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Insets top="5.0" />
                             </VBox.margin>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
@@ -127,7 +127,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <Label text="%FileNamePrefix" />
                                                 <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
                                                 <CheckBox fx:id="stringCheck" mnemonicParsing="false" selected="true" text="%IncludeString" />
-                                                <TextField fx:id="stringInput" prefHeight="30.0" prefWidth="200.0" />
+                                                <TextField fx:id="stringInput" prefWidth="200.0" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -142,10 +142,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="acumFromInput" prefHeight="30.0" prefWidth="40.0" text="0" />
+                                                <TextField fx:id="acumFromInput" prefWidth="40.0" text="0" />
                                                 <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero" />
                                                 <Label text="%Digit" />
-                                                <TextField fx:id="digitInput" prefHeight="30.0" prefWidth="40.0" />
+                                                <TextField fx:id="digitInput" prefWidth="40.0" />
                                                 <Label text="%AccumDigitComments" />
                                             </children>
                                         </HBox>
@@ -179,7 +179,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%FileNameSuffix" />
                                                 <CheckBox fx:id="suffixCheck" mnemonicParsing="false" text="%ModifyAs" />
-                                                <TextField fx:id="suffixInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="suffixInput" prefWidth="80.0" />
                                             </children>
                                         </HBox>
                                     </children>

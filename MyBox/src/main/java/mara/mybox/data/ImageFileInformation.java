@@ -44,7 +44,7 @@ public class ImageFileInformation extends FileInformation {
     }
 
     public String getFilename() {
-        if (filename == null) {
+        if (filename == null && file != null) {
             filename = file.getAbsolutePath();
         }
         return filename;

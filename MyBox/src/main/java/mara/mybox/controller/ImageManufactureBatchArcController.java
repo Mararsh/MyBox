@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -18,9 +19,10 @@ import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.value.AppVaribles;
 
 /**
  * @Author Mara
@@ -44,17 +46,19 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     private ToggleGroup arcGroup;
 
     public ImageManufactureBatchArcController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchArc");
+
         ImageArcKey = "ImageArcKey";
         ImageArcPerKey = "ImageArcPerKey";
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
-
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(arcBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
@@ -65,12 +69,12 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
             super.initOptionsSection();
 
             arcBox.getItems().addAll(Arrays.asList("15", "30", "50", "150", "300", "10", "3"));
-            arcBox.valueProperty().addListener(new ChangeListener<String>() {
+            arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkArc();
@@ -80,10 +84,10 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
 
             Tooltip tips = new Tooltip("1~100");
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(perBox, tips);
+            FxmlControl.quickTooltip(perBox, tips);
 
             perBox.getItems().addAll(Arrays.asList("15", "25", "30", "10", "12", "8"));
-            perBox.valueProperty().addListener(new ChangeListener<String>() {
+            perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkPercent();
@@ -109,8 +113,8 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
 
     private void checkType() {
         arcBox.setDisable(true);
-        arcBox.getEditor().setStyle(null);
         perBox.setDisable(true);
+        arcBox.getEditor().setStyle(null);
         perBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) arcGroup.getSelectedToggle();
@@ -131,15 +135,15 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
         try {
             percent = Integer.valueOf(perBox.getValue());
             if (percent > 0 && percent <= 100) {
-                perBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(perBox);
             } else {
                 percent = 15;
-                perBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
             percent = 15;
-            perBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(perBox);
         }
     }
 
@@ -147,15 +151,15 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
         try {
             arc = Integer.valueOf(arcBox.getValue());
             if (arc >= 0) {
-                arcBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(arcBox);
             } else {
                 arc = 0;
-                arcBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(arcBox);
             }
         } catch (Exception e) {
             logger.debug(e.toString());
             arc = 0;
-            arcBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(arcBox);
         }
     }
 
@@ -182,7 +186,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
                 value = source.getWidth() * percent / 100;
             }
             BufferedImage target = ImageConvert.addArc(source, value,
-                    ImageTools.colorConvert(arcColorPicker.getValue()));
+                    ImageManufacture.toAwtColor(arcColorPicker.getValue()));
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

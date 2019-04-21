@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageSourcesController;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -37,10 +38,11 @@ import mara.mybox.data.ImageCombine;
 import mara.mybox.data.ImageCombine.ArrayType;
 import mara.mybox.data.ImageCombine.CombineSizeType;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.image.ImageTools;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.ImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.data.ImageInformation;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -82,6 +84,8 @@ public class ImagesCombineController extends ImageSourcesController {
     protected CheckBox openCheck;
 
     public ImagesCombineController() {
+        baseTitle = AppVaribles.getMessage("ImagesCombine");
+
         ImageCombineArrayTypeKey = "ImageCombineArrayTypeKey";
         ImageCombineCombineSizeTypeKey = "ImageCombineCombineSizeTypeKey";
         ImageCombineEachWidthKey = "ImageCombineEachWidthKey";
@@ -96,7 +100,7 @@ public class ImagesCombineController extends ImageSourcesController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             imageCombine = new ImageCombine();
 
@@ -112,7 +116,7 @@ public class ImagesCombineController extends ImageSourcesController {
     private void initArraySection() {
         try {
             columnsBox.getItems().addAll(Arrays.asList("2", "3", "4", "5", "6", "7", "8", "9", "10"));
-            columnsBox.valueProperty().addListener(new ChangeListener<String>() {
+            columnsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -120,24 +124,24 @@ public class ImagesCombineController extends ImageSourcesController {
                         int columnsValue = Integer.valueOf(newValue);
                         if (columnsValue > 0) {
                             imageCombine.setColumnsValue(columnsValue);
-                            columnsBox.getEditor().setStyle(null);
                             AppVaribles.setUserConfigValue(ImageCombineColumnsKey, columnsValue + "");
                             combineImages();
+                            FxmlControl.setEditorNormal(columnsBox);
                         } else {
                             imageCombine.setColumnsValue(-1);
-                            columnsBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(columnsBox);
                         }
 
                     } catch (Exception e) {
                         imageCombine.setColumnsValue(-1);
-                        columnsBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(columnsBox);
                     }
                 }
             });
             columnsBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageCombineColumnsKey, "2"));
 
             intervalBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
-            intervalBox.valueProperty().addListener(new ChangeListener<String>() {
+            intervalBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -145,24 +149,24 @@ public class ImagesCombineController extends ImageSourcesController {
                         int intervalValue = Integer.valueOf(newValue);
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
-                            intervalBox.getEditor().setStyle(null);
                             AppVaribles.setUserConfigValue(ImageCombineIntervalKey, intervalValue + "");
                             combineImages();
+                            FxmlControl.setEditorNormal(intervalBox);
                         } else {
                             imageCombine.setIntervalValue(-1);
-                            intervalBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intervalBox);
                         }
 
                     } catch (Exception e) {
                         imageCombine.setIntervalValue(-1);
-                        intervalBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intervalBox);
                     }
                 }
             });
             intervalBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageCombineIntervalKey, "5"));
 
             MarginsBox.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
-            MarginsBox.valueProperty().addListener(new ChangeListener<String>() {
+            MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -170,17 +174,17 @@ public class ImagesCombineController extends ImageSourcesController {
                         int MarginsValue = Integer.valueOf(newValue);
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
-                            MarginsBox.getEditor().setStyle(null);
                             AppVaribles.setUserConfigValue(ImageCombineMarginsKey, MarginsValue + "");
                             combineImages();
+                            FxmlControl.setEditorNormal(MarginsBox);
                         } else {
                             imageCombine.setMarginsValue(-1);
-                            MarginsBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(MarginsBox);
                         }
 
                     } catch (Exception e) {
                         imageCombine.setMarginsValue(-1);
-                        MarginsBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(MarginsBox);
                     }
                 }
             });
@@ -438,7 +442,7 @@ public class ImagesCombineController extends ImageSourcesController {
     }
 
     @Override
-    protected void setImageChanged(boolean c) {
+    public void setImageChanged(boolean c) {
         changed.setValue(c);
         long pixels = 0;
         for (ImageInformation m : sourceImages) {
@@ -554,34 +558,33 @@ public class ImagesCombineController extends ImageSourcesController {
 
         task = new Task<Void>() {
             private boolean ok;
+            private String filename;
 
             @Override
             protected Void call() throws Exception {
-                try {
-                    final String filename = targetFile.getAbsolutePath();
-                    String format = FileTools.getFileSuffix(filename);
-                    final BufferedImage bufferedImage = ImageTools.getBufferedImage(image);
-                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                    if (task.isCancelled()) {
-                        return null;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                popInformation(AppVaribles.getMessage("Successful"));
-                                if (openCheck.isSelected()) {
-                                    openImageViewer(filename);
-                                }
-                            } else {
-                                popError(AppVaribles.getMessage("Failed"));
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    logger.error(e.toString());
-                }
+                filename = targetFile.getAbsolutePath();
+                String format = FileTools.getFileSuffix(filename);
+                final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
+                ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                 return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ok) {
+                            popInformation(AppVaribles.getMessage("Successful"));
+                            if (openCheck.isSelected()) {
+                                openImageViewer(filename);
+                            }
+                        } else {
+                            popError(AppVaribles.getMessage("Failed"));
+                        }
+                    }
+                });
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);

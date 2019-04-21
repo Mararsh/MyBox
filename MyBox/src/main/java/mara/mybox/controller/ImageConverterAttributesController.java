@@ -18,14 +18,15 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import mara.mybox.controller.base.ImageAttributesBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert.KeepRatioType;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -35,23 +36,23 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
  */
 public class ImageConverterAttributesController extends ImageAttributesBaseController {
 
-    private boolean noRatio;
+    public boolean noRatio;
 
     @FXML
-    private HBox imageConvertAttributesPane;
+    public HBox imageConvertAttributesPane;
     @FXML
-    protected ToggleGroup ratioGroup;
+    public ToggleGroup ratioGroup;
     @FXML
-    protected TextField xInput, yInput;
+    public TextField xInput, yInput;
     @FXML
-    protected Button originalButton;
+    public Button originalButton;
     @FXML
-    protected CheckBox keepCheck, alphaCheck;
+    public CheckBox keepCheck, alphaCheck;
     @FXML
-    protected HBox ratioBox, ratioBaseBox;
+    public HBox ratioBox, ratioBaseBox, sizeBox;
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
 
         xInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -92,14 +93,14 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
         keepCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                attributes.setKeepRatio(newValue);
+                imageAttributes.setKeepRatio(newValue);
                 ratioBaseBox.setDisable(!newValue);
                 if (newValue) {
                     checkRatio();
                 }
             }
         });
-        attributes.setKeepRatio(keepCheck.isSelected());
+        imageAttributes.setKeepRatio(keepCheck.isSelected());
 
         ratioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -108,34 +109,34 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                 checkRatioAdjustion();
             }
         });
-        FxmlTools.setRadioSelected(ratioGroup, AppVaribles.getUserConfigValue("ic_ratioAdjustion", getMessage("BaseOnWidth")));
+        FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getUserConfigValue("ic_ratioAdjustion", getMessage("BaseOnWidth")));
         checkRatioAdjustion();
 
-        attributes.setSourceWidth(0);
-        attributes.setSourceHeight(0);
+        imageAttributes.setSourceWidth(0);
+        imageAttributes.setSourceHeight(0);
     }
 
     @FXML
-    protected void setOriginalSize() {
+    public void setOriginalSize() {
         noRatio = true;
-        if (attributes.getSourceWidth() > 0) {
-            xInput.setText(attributes.getSourceWidth() + "");
+        if (imageAttributes.getSourceWidth() > 0) {
+            xInput.setText(imageAttributes.getSourceWidth() + "");
         }
-        if (attributes.getSourceHeight() > 0) {
-            yInput.setText(attributes.getSourceHeight() + "");
+        if (imageAttributes.getSourceHeight() > 0) {
+            yInput.setText(imageAttributes.getSourceHeight() + "");
         }
         noRatio = false;
     }
 
     @FXML
-    protected void openPixelsCalculator(ActionEvent event) {
+    public void openPixelsCalculator(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.CurrentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.currentBundle);
             Pane pane = fxmlLoader.load();
             final PixelsCalculationController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            controller.setMyStage(stage);
-            controller.setSource(attributes, xInput, yInput);
+            final Stage stage = new Stage();
+            controller.myStage = stage;
+            controller.setSource(imageAttributes, xInput, yInput);
 
             Scene scene = new Scene(pane);
             stage.initModality(Modality.WINDOW_MODAL);
@@ -144,12 +145,13 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             stage.getIcons().add(CommonValues.AppIcon);
             stage.setScene(scene);
             stage.show();
+
             noRatio = true;
             stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
                     noRatio = false;
-                    if (!controller.stageClosing()) {
+                    if (!controller.leavingScene()) {
                         event.consume();
                     }
                 }
@@ -160,36 +162,36 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
 
     }
 
-    protected void checkRatioAdjustion() {
+    public void checkRatioAdjustion() {
         try {
             RadioButton selected = (RadioButton) ratioGroup.getSelectedToggle();
             String s = selected.getText();
             AppVaribles.setUserConfigValue("ic_ratioAdjustion", s);
             if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(KeepRatioType.BaseOnWidth);
+                imageAttributes.setRatioAdjustion(KeepRatioType.BaseOnWidth);
             } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(KeepRatioType.BaseOnHeight);
+                imageAttributes.setRatioAdjustion(KeepRatioType.BaseOnHeight);
             } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(KeepRatioType.BaseOnLarger);
+                imageAttributes.setRatioAdjustion(KeepRatioType.BaseOnLarger);
             } else if (getMessage("BaseOnSmaller").equals(s)) {
-                attributes.setRatioAdjustion(KeepRatioType.BaseOnSmaller);
+                imageAttributes.setRatioAdjustion(KeepRatioType.BaseOnSmaller);
             } else {
-                attributes.setRatioAdjustion(KeepRatioType.None);
+                imageAttributes.setRatioAdjustion(KeepRatioType.None);
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void checkRatio() {
+    public void checkRatio() {
         try {
             long x = Long.valueOf(xInput.getText());
             long y = Long.valueOf(yInput.getText());
-            attributes.setTargetWidth((int) x);
-            attributes.setTargetHeight((int) y);
-            int sourceX = attributes.getSourceWidth();
-            int sourceY = attributes.getSourceHeight();
-            if (noRatio || !attributes.isKeepRatio() || sourceX <= 0 || sourceY <= 0) {
+            imageAttributes.setTargetWidth((int) x);
+            imageAttributes.setTargetHeight((int) y);
+            int sourceX = imageAttributes.getSourceWidth();
+            int sourceY = imageAttributes.getSourceHeight();
+            if (noRatio || !imageAttributes.isKeepRatio() || sourceX <= 0 || sourceY <= 0) {
                 return;
             }
             long ratioX = Math.round(x * 1000 / sourceX);
@@ -197,7 +199,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             if (ratioX == ratioY) {
                 return;
             }
-            switch (attributes.getRatioAdjustion()) {
+            switch (imageAttributes.getRatioAdjustion()) {
                 case KeepRatioType.BaseOnWidth:
                     yInput.setText(Math.round(x * sourceY / sourceX) + "");
                     break;
@@ -223,8 +225,8 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
             }
             x = Long.valueOf(xInput.getText());
             y = Long.valueOf(yInput.getText());
-            attributes.setTargetWidth((int) x);
-            attributes.setTargetHeight((int) y);
+            imageAttributes.setTargetWidth((int) x);
+            imageAttributes.setTargetHeight((int) y);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -234,81 +236,16 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
         try {
             long x = Long.valueOf(xInput.getText());
             long y = Long.valueOf(yInput.getText());
-            attributes.setTargetWidth((int) x);
-            attributes.setTargetHeight((int) y);
+            imageAttributes.setTargetWidth((int) x);
+            imageAttributes.setTargetHeight((int) y);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
     }
 
-    public HBox getImageConvertAttributesPane() {
-        return imageConvertAttributesPane;
-    }
-
-    public void setImageConvertAttributesPane(HBox imageConvertAttributesPane) {
-        this.imageConvertAttributesPane = imageConvertAttributesPane;
-    }
-
-    public RadioButton getPcxSelect() {
-        return pcxSelect;
-    }
-
-    public void setPcxSelect(RadioButton pcxSelect) {
-        this.pcxSelect = pcxSelect;
-    }
-
-    public TextField getxInput() {
-        return xInput;
-    }
-
-    public void setxInput(TextField xInput) {
-        this.xInput = xInput;
-    }
-
-    public TextField getyInput() {
-        return yInput;
-    }
-
-    public void setyInput(TextField yInput) {
-        this.yInput = yInput;
-    }
-
-    public Button getOriginalButton() {
-        return originalButton;
-    }
-
-    public void setOriginalButton(Button originalButton) {
-        this.originalButton = originalButton;
-    }
-
-    public CheckBox getKeepCheck() {
-        return keepCheck;
-    }
-
-    public void setKeepCheck(CheckBox keepCheck) {
-        this.keepCheck = keepCheck;
-    }
-
-    public ToggleGroup getRatioGroup() {
-        return ratioGroup;
-    }
-
-    public void setRatioGroup(ToggleGroup ratioGroup) {
-        this.ratioGroup = ratioGroup;
-    }
-
-    public HBox getRatioBox() {
-        return ratioBox;
-    }
-
-    public void setRatioBox(HBox ratioBox) {
-        this.ratioBox = ratioBox;
-    }
-
-    @Override
     public ImageAttributes getAttributes() {
         getFinalXY();
-        return attributes;
+        return imageAttributes;
     }
 
 }

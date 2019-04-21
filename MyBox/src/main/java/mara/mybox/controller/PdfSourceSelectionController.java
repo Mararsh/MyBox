@@ -5,6 +5,7 @@
  */
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.PdfBatchBaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import javafx.application.Platform;
@@ -12,50 +13,44 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
+import mara.mybox.controller.PdfInformationController;
+import mara.mybox.controller.base.PdfBatchBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * FXML Controller class
  *
  * @author mara
  */
-public class PdfSourceSelectionController extends BaseController {
+public class PdfSourceSelectionController extends PdfBatchBaseController {
 
-    protected PdfInformation pdfInformation;
+    public PdfInformation pdfInformation;
 
     @FXML
-    protected Button sourceSelectButton, pdfOpenButon;
+    public Button pdfOpenButon;
     @FXML
-    protected TextField fromPageInput, toPageInput;
+    public TextField fromPageInput, toPageInput;
     @FXML
-    protected PasswordField passwordInput;
+    public PasswordField passwordInput;
 
     public PdfSourceSelectionController() {
+
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
-
             fileExtensionFilter = CommonValues.PdfExtensionFilter;
 
             sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
@@ -81,11 +76,11 @@ public class PdfSourceSelectionController extends BaseController {
                 }
             });
             if (fromPageInput != null) {
-                FxmlTools.setPositiveValidation(fromPageInput);
+                FxmlControl.setPositiveValidation(fromPageInput);
                 fromPageInput.setText("1");
             }
             if (toPageInput != null) {
-                FxmlTools.setPositiveValidation(toPageInput);
+                FxmlControl.setPositiveValidation(toPageInput);
             }
 
         } catch (Exception e) {
@@ -93,33 +88,15 @@ public class PdfSourceSelectionController extends BaseController {
         }
     }
 
-    @FXML
     @Override
-    protected void selectSourceFile(ActionEvent event) {
-        try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(parentController.sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            File file = fileChooser.showOpenDialog(getMyStage());
-            if (file == null) {
-                return;
-            }
-            parentController.sourceFile = file;
-            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
-            AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getParent());
-
-            if (sourceFileInput != null) {
-                sourceFileInput.setText(file.getAbsolutePath());
-            }
-
-            parentController.sourceFileChanged(file);
-
-        } catch (Exception e) {
-//            logger.error(e.toString());
+    public void addFile(File file) {
+        parentController.sourceFile = file;
+        if (sourceFileInput != null) {
+            sourceFileInput.setText(file.getAbsolutePath());
         }
+
+        parentController.recordFileAdded(file);
+        parentController.sourceFileChanged(file);
     }
 
     @FXML
@@ -129,28 +106,7 @@ public class PdfSourceSelectionController extends BaseController {
             return;
         }
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PdfInformationFxml), AppVaribles.CurrentBundle);
-            Pane root = fxmlLoader.load();
-            final PdfInformationController controller = fxmlLoader.getController();
-            Stage infoStage = new Stage();
-            controller.setMyStage(infoStage);
-            infoStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent event) {
-                    if (!controller.stageClosing()) {
-                        event.consume();
-                    }
-                }
-            });
-
-            infoStage.setTitle(getMyStage().getTitle());
-            infoStage.initModality(Modality.NONE);
-            infoStage.initStyle(StageStyle.DECORATED);
-            infoStage.initOwner(null);
-            infoStage.getIcons().add(CommonValues.AppIcon);
-            infoStage.setScene(new Scene(root));
-            infoStage.show();
-
+            final PdfInformationController controller = (PdfInformationController) openStage(CommonValues.PdfInformationFxml);
             controller.setInformation(pdfInformation);
 
         } catch (Exception e) {
@@ -159,7 +115,7 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     @FXML
-    protected void openPdfAction(ActionEvent event) {
+    public void openPdfAction(ActionEvent event) {
         if (pdfInformation == null) {
             return;
         }
@@ -176,11 +132,15 @@ public class PdfSourceSelectionController extends BaseController {
         pdfInformation = new PdfInformation(sourceFile);
         task = new Task<Void>() {
             @Override
-            protected Void call() throws Exception {
+            public Void call() throws Exception {
                 pdfInformation.readInformation(passwordInput.getText());
-                if (task.isCancelled()) {
-                    return null;
-                }
+
+                return null;
+            }
+
+            @Override
+            public void succeeded() {
+                super.succeeded();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -192,7 +152,6 @@ public class PdfSourceSelectionController extends BaseController {
                         parentController.sourceFileChanged(sourceFile);
                     }
                 });
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -202,11 +161,11 @@ public class PdfSourceSelectionController extends BaseController {
     }
 
     public int readFromPage() {
-        return FxmlTools.getInputInt(fromPageInput);
+        return FxmlControl.getInputInt(fromPageInput);
     }
 
     public int readToPage() {
-        return FxmlTools.getInputInt(toPageInput);
+        return FxmlControl.getInputInt(toPageInput);
     }
 
     public String readPassword() {
@@ -219,22 +178,6 @@ public class PdfSourceSelectionController extends BaseController {
 
     public void setPdfInformation(PdfInformation pdfInformation) {
         this.pdfInformation = pdfInformation;
-    }
-
-    public Button getSourceSelectButton() {
-        return sourceSelectButton;
-    }
-
-    public void setSourceSelectButton(Button sourceSelectButton) {
-        this.sourceSelectButton = sourceSelectButton;
-    }
-
-    public Button getInfoButton() {
-        return infoButton;
-    }
-
-    public void setInfoButton(Button infoButton) {
-        this.infoButton = infoButton;
     }
 
     public TextField getFromPageInput() {

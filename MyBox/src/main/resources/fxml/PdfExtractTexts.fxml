@@ -53,53 +53,79 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                <VBox>
                     <children>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF">
-                            <content>
-                                <fx:include fx:id="sourceSelection" source="PdfSourceSelection.fxml" />
-                            </content>
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
-                        </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles">
-                            <content>
-                                <VBox spacing="10.0">
-                                    <children>
-                                        <fx:include fx:id="targetSelection" source="TargetFileSelection.fxml" />
-                              <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                 <children>
-                                    <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" />
-                                    <TextField fx:id="separatorInput" prefHeight="30.0" prefWidth="918.0" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" HBox.hgrow="ALWAYS" />
-                                 </children>
-                              </HBox>
-                              <Label text="%InsertPageSeparatorComments" VBox.vgrow="NEVER">
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                              </Label>
-                                        <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="242.0" spacing="10.0">
+                        <VBox fx:id="paraBox" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF">
+                                    <content>
+                                        <fx:include fx:id="sourceSelection" source="PdfSourceSelection.fxml" />
+                                    </content>
+                                    <VBox.margin>
+                                        <Insets top="5.0" />
+                                    </VBox.margin>
+                                </TitledPane>
+                                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%TargetFiles">
+                                    <content>
+                                        <VBox spacing="10.0">
                                             <children>
-                                                <Label text="%PreviewPage">
-                                                    <HBox.margin>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%FilesPath" HBox.hgrow="NEVER">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </Label>
+                                                        <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
+                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath"   onMouseEntered="#popTargetPath" text="%Select..." HBox.hgrow="NEVER" />
+                                                    </children>
+                                                    <VBox.margin>
+                                                        <Insets left="10.0" right="10.0" />
+                                                    </VBox.margin>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%FileName" HBox.hgrow="NEVER" />
+                                                        <TextField fx:id="targetFileInput" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                    <VBox.margin>
+                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                    </VBox.margin>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <CheckBox fx:id="separatorCheck" mnemonicParsing="false" selected="true" text="%InsertPageSeparator" />
+                                                        <TextField fx:id="separatorInput" prefWidth="780.0" text="------------------------------&lt;Page Number&gt; / &lt;Total Number&gt;------------------------------" HBox.hgrow="ALWAYS" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="%InsertPageSeparatorComments" VBox.vgrow="NEVER">
+                                                    <VBox.margin>
                                                         <Insets />
-                                                    </HBox.margin>
+                                                    </VBox.margin>
                                                 </Label>
-                                                <TextField fx:id="previewInput" prefHeight="30.0" prefWidth="53.0" text="0" />
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" prefHeight="30.0" text="%Preview" />
+                                                <HBox alignment="CENTER_RIGHT" prefWidth="242.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%PreviewPage">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </Label>
+                                                        <TextField fx:id="previewInput" prefWidth="53.0" text="0" />
+                                                        <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
+                                                    </children>
+                                                    <VBox.margin>
+                                                        <Insets left="10.0" right="10.0" top="5.0" />
+                                                    </VBox.margin>
+                                                </HBox>
                                             </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
-                                            </VBox.margin>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </content>
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
-                        </TitledPane>
+                                        </VBox>
+                                    </content>
+                                    <VBox.margin>
+                                        <Insets top="5.0" />
+                                    </VBox.margin>
+                                </TitledPane>
+                            </children>
+                        </VBox>
                     </children>
                 </VBox>
                 <fx:include fx:id="operationBar" source="Operation.fxml" />

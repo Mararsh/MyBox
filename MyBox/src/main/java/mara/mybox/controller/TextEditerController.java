@@ -9,7 +9,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation;
@@ -25,13 +25,15 @@ import mara.mybox.tools.TextTools;
 public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
+        baseTitle = AppVaribles.getMessage("TextEditer");
+
         TipsLabelKey = "TextEditerTips";
 
         setTextType();
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             super.initializeNext();
             initCharsetTab();
@@ -45,11 +47,11 @@ public class TextEditerController extends FileEditerController {
 
         Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
         tips.setFont(new Font(16));
-        FxmlTools.quickTooltip(currentBox, tips);
+        FxmlControl.quickTooltip(currentBox, tips);
 
         List<String> setNames = TextTools.getCharsetNames();
         currentBox.getItems().addAll(setNames);
-        currentBox.valueProperty().addListener(new ChangeListener<String>() {
+        currentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 changeCurrentCharset();
@@ -58,7 +60,7 @@ public class TextEditerController extends FileEditerController {
 
         if (targetBox != null) {
             targetBox.getItems().addAll(setNames);
-            targetBox.valueProperty().addListener(new ChangeListener<String>() {
+            targetBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     targetInformation.setCharset(Charset.forName(newValue));
@@ -79,7 +81,7 @@ public class TextEditerController extends FileEditerController {
 
             tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
             tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(targetBomCheck, tips);
+            FxmlControl.quickTooltip(targetBomCheck, tips);
         }
     }
 

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -12,7 +13,7 @@ import javafx.scene.control.ToggleGroup;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
  * @Author Mara
@@ -33,16 +34,17 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     private TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
     public ImageManufactureBatchCropController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchCrop");
 
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(leftXInput.styleProperty().isEqualTo(badStyle))
                     .or(leftYInput.styleProperty().isEqualTo(badStyle))
                     .or(rightXInput.styleProperty().isEqualTo(badStyle))
@@ -57,7 +59,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
 
             centerWidthInput.textProperty().addListener(new ChangeListener<String>() {
@@ -260,7 +262,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
                 errorString = AppVaribles.getMessage("BeyondSize");
                 return null;
             }
-            return ImageConvert.cropImage(source, x1, y1, x2, y2);
+            return ImageConvert.cropOutside(source, x1, y1, x2, y2);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;

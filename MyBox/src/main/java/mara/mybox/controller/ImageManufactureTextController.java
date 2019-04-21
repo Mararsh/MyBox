@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import java.awt.GraphicsEnvironment;
+import mara.mybox.controller.base.ImageManufactureController;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -11,23 +11,27 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
+import mara.mybox.data.DoublePoint;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlControl;
 
 /**
  * @Author Mara
@@ -38,21 +42,29 @@ import static mara.mybox.fxml.FxmlTools.badStyle;
 public class ImageManufactureTextController extends ImageManufactureController {
 
     final protected String ImageFontSizeKey, ImageFontFamilyKey, ImageTextColorKey, ImageTextShadowKey;
-    protected int waterX, waterY, waterSize, waterShadow, waterAngle;
-    protected float waterTransparent = 0.5f;
+    protected int waterX, waterY, fontSize, waterShadow, waterAngle;
+    protected float fontOpacity = 0.5f;
+    protected Font waterFont;
+    protected String fontFamily, fontName;
+    protected Color fontColor;
+    protected java.awt.Font font;
+    protected FontPosture fontPosture;
+    protected FontWeight fontWeight;
 
     @FXML
     protected ToolBar textBar;
     @FXML
-    protected TextField waterInput, waterXInput, waterYInput;
+    protected TextField waterInput;
     @FXML
-    protected ComboBox waterSizeBox, waterTransparentBox, waterShadowBox, waterAngleBox;
-    @FXML
-    protected ColorPicker waterColorPicker;
+    protected ComboBox waterSizeBox, opacityBox, waterShadowBox, waterAngleBox;
     @FXML
     protected ChoiceBox waterStyleBox, waterFamilyBox;
     @FXML
-    protected CheckBox outlineCheck;
+    protected CheckBox outlineCheck, verticalCheck;
+    @FXML
+    private ImageView maskImageView;
+    @FXML
+    private Label textTipsLabel;
 
     public ImageManufactureTextController() {
         ImageFontSizeKey = "ImageFontSizeKey";
@@ -62,7 +74,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initTextTab();
@@ -80,21 +92,24 @@ public class ImageManufactureTextController extends ImageManufactureController {
             super.initInterface();
 
             isSettingValues = true;
+            tabPane.getSelectionModel().select(textTab);
+
             if (values.getImageInfo() != null
                     && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                waterTransparentBox.setDisable(true);
-                waterTransparentBox.getSelectionModel().select("1.0");
+                opacityBox.setDisable(true);
+                opacityBox.getSelectionModel().select("1.0");
             } else {
-                waterTransparentBox.setDisable(false);
+                opacityBox.setDisable(false);
             }
 
-            if (image.getWidth() > 2000 || image.getHeight() > 2000) {
-                waterShadowBox.setDisable(true);
-            } else {
-                waterShadowBox.setDisable(false);
-            }
+            waterX = (int) (imageView.getImage().getWidth() / 2);
+            waterY = (int) (imageView.getImage().getHeight() / 2);
+
+            maskImageView.setVisible(false);
+            pickColorButton.setSelected(false);
 
             isSettingValues = false;
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -104,249 +119,288 @@ public class ImageManufactureTextController extends ImageManufactureController {
     protected void initTextTab() {
         try {
 
-            Tooltip tips = new Tooltip(getMessage("textComments"));
-            tips.setFont(new Font(16));
-            FxmlTools.setComments(textBar, tips);
+            FxmlControl.quickTooltip(textTipsLabel, new Tooltip(getMessage("TextComments")));
 
-            waterXInput.textProperty().addListener(new ChangeListener<String>() {
+            fontFamily = AppVaribles.getUserConfigValue(ImageFontFamilyKey, "Arial");
+            fontWeight = FontWeight.NORMAL;
+            fontPosture = FontPosture.REGULAR;
+            fontSize = 24;
+            fontColor = Color.RED;
+            fontOpacity = 1.0f;
+            waterShadow = 0;
+            waterAngle = 0;
+
+            waterInput.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkWaterPosition();
+                public void changed(ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
+                    if (!newValue) {
+                        setAction();
+                    }
                 }
             });
-            waterYInput.textProperty().addListener(new ChangeListener<String>() {
+
+            waterFamilyBox.getItems().addAll(Font.getFamilies());
+            waterFamilyBox.getSelectionModel().select(fontFamily);
+            waterFamilyBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkWaterPosition();
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    fontFamily = newValue;
+                    AppVaribles.setUserConfigValue(ImageFontFamilyKey, newValue);
+                    setAction();
                 }
             });
+
+            List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
+            waterStyleBox.getItems().addAll(styles);
+            waterStyleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (AppVaribles.getMessage("Bold").equals(newValue)) {
+                        fontWeight = FontWeight.BOLD;
+                        fontPosture = FontPosture.REGULAR;
+
+                    } else if (AppVaribles.getMessage("Italic").equals(newValue)) {
+                        font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
+                        fontWeight = FontWeight.NORMAL;
+                        fontPosture = FontPosture.ITALIC;
+
+                    } else if (AppVaribles.getMessage("Bold Italic").equals(newValue)) {
+                        fontWeight = FontWeight.BOLD;
+                        fontPosture = FontPosture.ITALIC;
+
+                    } else {
+                        fontWeight = FontWeight.NORMAL;
+                        fontPosture = FontPosture.REGULAR;
+
+                    }
+                    setAction();
+                }
+            });
+            waterStyleBox.getSelectionModel().select(0);
 
             List<String> sizes = Arrays.asList(
                     "72", "18", "15", "9", "10", "12", "14", "17", "24", "36", "48", "64", "96");
             waterSizeBox.getItems().addAll(sizes);
-            waterSizeBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterSizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterSize = Integer.valueOf(newValue);
-                        waterSizeBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v > 0) {
+                            fontSize = v;
+                            setAction();
+                            FxmlControl.setEditorNormal(waterSizeBox);
+                        } else {
+                            FxmlControl.setEditorBadStyle(waterSizeBox);
+                        }
                     } catch (Exception e) {
-                        waterSize = 15;
-                        waterSizeBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterSizeBox);
                     }
                 }
             });
             waterSizeBox.getSelectionModel().select(0);
 
-            waterTransparentBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            waterTransparentBox.valueProperty().addListener(new ChangeListener<String>() {
+            colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+                @Override
+                public void changed(ObservableValue<? extends Color> observable,
+                        Color oldValue, Color newValue) {
+                    fontColor = newValue;
+                    AppVaribles.setUserConfigValue(ImageTextColorKey, newValue.toString());
+                    setAction();
+                }
+            });
+            colorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FF0000")));
+
+            opacityBox.getItems().addAll(Arrays.asList("1.0", "0.5", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
+            opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterTransparent = Float.valueOf(newValue);
-                        if (waterTransparent >= 0.0f && waterTransparent <= 1.0f) {
-                            waterSizeBox.getEditor().setStyle(null);
+                        float f = Float.valueOf(newValue);
+                        if (f >= 0.0f && f <= 1.0f) {
+                            fontOpacity = f;
+                            FxmlControl.setEditorNormal(opacityBox);
+                            setAction();
                         } else {
-                            waterTransparent = 0.5f;
-                            waterSizeBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(opacityBox);
                         }
                     } catch (Exception e) {
-                        waterTransparent = 0.5f;
-                        waterSizeBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(opacityBox);
                     }
                 }
             });
-            waterTransparentBox.getSelectionModel().select(0);
+            opacityBox.getSelectionModel().select(0);
 
             waterShadowBox.getItems().addAll(Arrays.asList("0", "4", "5", "3", "2", "1", "6"));
-            waterShadowBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterShadowBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterShadow = Integer.valueOf(newValue);
-                        if (waterShadow >= 0) {
-                            waterShadowBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            waterShadow = v;
                             AppVaribles.setUserConfigValue(ImageTextShadowKey, newValue);
+                            FxmlControl.setEditorNormal(waterShadowBox);
+                            setAction();
                         } else {
-                            waterShadow = 0;
-                            waterShadowBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(waterShadowBox);
                         }
                     } catch (Exception e) {
-                        waterShadow = 0;
-                        waterShadowBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterShadowBox);
                     }
                 }
             });
             waterShadowBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageTextShadowKey, "0"));
 
-            List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
-            waterStyleBox.getItems().addAll(styles);
-            waterStyleBox.getSelectionModel().select(0);
-
-            GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            String[] fontNames = e.getAvailableFontFamilyNames();
-            waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
-            waterFamilyBox.valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    AppVaribles.setUserConfigValue(ImageFontFamilyKey, newValue);
-                }
-            });
-
-            waterColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-                @Override
-                public void changed(ObservableValue<? extends Color> observable,
-                        Color oldValue, Color newValue) {
-                    AppVaribles.setUserConfigValue(ImageTextColorKey, newValue.toString());
-                }
-            });
-            waterColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FFFFFF")));
-
-            waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "75", "120", "135"));
+            waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
+                    "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             waterAngleBox.setVisibleRowCount(10);
-            waterAngleBox.valueProperty().addListener(new ChangeListener<String>() {
+            waterAngleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        waterAngle = Integer.valueOf(newValue);
-                        waterAngleBox.getEditor().setStyle(null);
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            waterAngle = v;
+                            FxmlControl.setEditorNormal(waterAngleBox);
+                            setAction();
+                        } else {
+                            FxmlControl.setEditorBadStyle(waterAngleBox);
+                        }
                     } catch (Exception e) {
-                        waterAngle = 0;
-                        waterAngleBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(waterAngleBox);
                     }
                 }
             });
             waterAngleBox.getSelectionModel().select(0);
-            waterAngle = 0;
 
-            popInformation(getMessage("ClickImageForText"));
+            outlineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
+                    setAction();
+                }
+            });
+
+            verticalCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observable,
+                        Boolean oldValue, Boolean newValue) {
+                    setAction();
+                }
+            });
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    private void checkWaterPosition() {
-        try {
-            waterX = Integer.valueOf(waterXInput.getText());
-            if (waterX >= 0 && waterX <= values.getCurrentImage().getWidth() - 1) {
-                waterXInput.setStyle(null);
-            } else {
-                waterXInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            waterXInput.setStyle(badStyle);
+    @FXML
+    @Override
+    public void paneClicked(MouseEvent event) {
+        if (imageView.getImage() == null) {
+            imageView.setCursor(Cursor.OPEN_HAND);
+            return;
         }
-
-        try {
-            waterY = Integer.valueOf(waterYInput.getText());
-            if (waterY >= 0 && waterY <= values.getCurrentImage().getHeight() - 1) {
-                waterYInput.setStyle(null);
-            } else {
-                waterYInput.setStyle(badStyle);
-            }
-        } catch (Exception e) {
-            waterYInput.setStyle(badStyle);
+        DoublePoint p = getImageXY(event, imageView);
+        if (p == null) {
+            return;
         }
+        if (pickColorButton.isSelected()) {
+            PixelReader pixelReader = imageView.getImage().getPixelReader();
+            Color color = pixelReader.getColor((int) Math.round(p.getX()), (int) Math.round(p.getY()));
+            colorPicker.setValue(color);
 
-        if (!isSettingValues) {
-            addText();
+        } else {
+            imageView.setCursor(Cursor.HAND);
+            waterX = (int) Math.round(p.getX());
+            waterY = (int) Math.round(p.getY());
+
+            setAction();
         }
 
     }
 
     @FXML
     @Override
-    public void clickImage(MouseEvent event) {
-        if (values.getCurrentImage() == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        imageView.setCursor(Cursor.HAND);
-
-        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / imageView.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / imageView.getBoundsInLocal().getHeight());
-
-        isSettingValues = true;
-        waterXInput.setText(x + "");
-        waterYInput.setText(y + "");
-        isSettingValues = false;
-
-        addText();
-
+    public void recoverAction() {
+        super.recoverAction();
+        setAction();
     }
 
-    @FXML
-    public void addText() {
-        if (waterInput.getText() == null || waterInput.getText().trim().isEmpty()
-                || waterY < 0 || waterY > values.getCurrentImage().getHeight() - 1
-                || waterX < 0 || waterX > values.getCurrentImage().getWidth() - 1) {
+    public void setAction() {
+        if (isSettingValues || imageView.getImage() == null
+                || waterX < 0 || waterY < 0
+                || waterX >= imageView.getImage().getWidth()
+                || waterY >= imageView.getImage().getHeight()) {
             return;
         }
-//        String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
-//        String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
-//        Font font;
-//        if (AppVaribles.getMessage("Bold").equals(fontStyle)) {
-//            font = Font.font(fontFamily, FontWeight.BOLD, waterSize);
-//        } else if (AppVaribles.getMessage("Italic").equals(fontStyle)) {
-//            font = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, waterSize);
-//        } else if (AppVaribles.getMessage("Bold Italic").equals(fontStyle)) {
-//            font = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, waterSize);
-//        } else {
-//            font = Font.font(fontFamily, FontWeight.NORMAL, waterSize);
-//        }
-//        final Image newImage = FxImageTools.addTextFx(currentImage, waterInput.getText(),
-//                font, waterColorPicker.getValue(), waterX, waterY, waterTransparent, waterShadow);
-//        if (newImage != null) {
-//            undoImage = currentImage;
-//            currentImage = newImage;
-//            imageView.setImage(newImage);
-//            imageChanged.set(true);
-//            return;
-//        }
-
-        // If JavaFx way fail for big image, then go the way of Java2D
+        maskImageView.setVisible(false);
         task = new Task<Void>() {
+            private Image newImage;
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
-                java.awt.Font font;
-                String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
-                if (AppVaribles.getMessage("Bold").equals(fontStyle)) {
-                    font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, waterSize);
-                } else if (AppVaribles.getMessage("Italic").equals(fontStyle)) {
-                    font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, waterSize);
-                } else if (AppVaribles.getMessage("Bold Italic").equals(fontStyle)) {
-                    font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, waterSize);
-                } else {
-                    font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, waterSize);
-                }
-                final Image newImage = ImageTools.addText(values.getCurrentImage(), waterInput.getText(),
-                        font, waterColorPicker.getValue(), waterX, waterY,
-                        waterTransparent, waterShadow, waterAngle, outlineCheck.isSelected());
-                if (task.isCancelled()) {
-                    return null;
-                }
-                recordImageHistory(ImageOperationType.Text, newImage);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
+                if (fontWeight == FontWeight.BOLD) {
+                    if (fontPosture == FontPosture.REGULAR) {
+                        font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, fontSize);
+                    } else {
+                        font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, fontSize);
                     }
-                });
+                } else {
+                    if (fontPosture == FontPosture.REGULAR) {
+                        font = new java.awt.Font(fontFamily, java.awt.Font.PLAIN, fontSize);
+                    } else {
+                        font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
+                    }
+                }
+                newImage = ImageManufacture.addText(imageView.getImage(), waterInput.getText(),
+                        font, fontColor, waterX, waterY,
+                        fontOpacity, waterShadow, waterAngle,
+                        outlineCheck.isSelected(), verticalCheck.isSelected());
+                ok = true;
                 return null;
             }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            maskImageView.setImage(newImage);
+                            maskImageView.setFitWidth(imageView.getFitWidth());
+                            maskImageView.setFitHeight(imageView.getFitHeight());
+                            maskImageView.setLayoutX(imageView.getLayoutX());
+                            maskImageView.setLayoutY(imageView.getLayoutY());
+                            maskImageView.setVisible(true);
+                        }
+                    });
+                }
+            }
+
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+
+    }
+
+    @FXML
+    @Override
+    public void okAction() {
+        if (isSettingValues || imageView.getImage() == null) {
+            return;
+        }
+        values.setUndoImage(imageView.getImage());
+        values.setCurrentImage(maskImageView.getImage());
+        imageView.setImage(maskImageView.getImage());
+        setImageChanged(true);
+        maskImageView.setVisible(false);
 
     }
 

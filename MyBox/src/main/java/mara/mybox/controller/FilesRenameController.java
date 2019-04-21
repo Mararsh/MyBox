@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BatchBaseController;
 import java.awt.Desktop;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +28,9 @@ import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileInformation;
-
+import mara.mybox.data.ProcessParameters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.FileTools.FileSortType;
+import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -39,7 +39,7 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesRenameController extends FilesBatchController {
+public class FilesRenameController extends BatchBaseController {
 
     protected List<String> targetNames;
     protected int currentAccum, digit;
@@ -62,6 +62,8 @@ public class FilesRenameController extends FilesBatchController {
     protected ToggleGroup sortGroup;
 
     public FilesRenameController() {
+        baseTitle = AppVaribles.getMessage("FilesRename");
+
         targetPathKey = "FileTargetPath";
         sourcePathKey = "FileSourcePath";
 
@@ -70,7 +72,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void initSourceSection() {
+    public void initSourceSection() {
         try {
             super.initSourceSection();
 
@@ -106,9 +108,9 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void checkTableSelected() {
+    public void checkTableSelected() {
         super.checkTableSelected();
-        ObservableList<Integer> selected = sourceTableView.getSelectionModel().getSelectedIndices();
+        ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
         boolean none = (selected == null || selected.isEmpty());
         if (none) {
             recoverySelectedButton.setDisable(true);
@@ -117,7 +119,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void initTargetSection() {
+    public void initTargetSection() {
 
         suffixCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -137,39 +139,50 @@ public class FilesRenameController extends FilesBatchController {
 
     @FXML
     @Override
-    protected void clearAction(ActionEvent event) {
+    public void clearAction() {
         sourceFilesInformation.clear();
-        sourceTableView.refresh();
+        filesTableView.refresh();
         addFilesButton.setDisable(false);
         addDirectoryButton.setDisable(false);
     }
 
     @Override
-    protected void makeActualParameters() {
-        if (actualParameters != null && paused) {
-            actualParameters.startIndex = actualParameters.currentIndex;
-            return;
-        }
+    public boolean makeActualParameters() {
+        try {
+            if (actualParameters != null && paused) {
+                actualParameters.startIndex = actualParameters.currentIndex;
+                return true;
+            }
 
-        actualParameters = new ProcessParameters();
-        actualParameters.currentIndex = 0;
-        sourcesHandling = new ArrayList();
-        if (sourceFilesInformation != null && !sourceFilesInformation.isEmpty()) {
+            actualParameters = new ProcessParameters();
+            actualParameters.currentIndex = 0;
+            targetPath = null;
+            actualParameters.isBatch = true;
+
+            sourcesIndice = new ArrayList();
+            sourceFiles = new ArrayList();
+            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+                actualParameters = null;
+                return false;
+            }
+
             if (isPreview) {
                 int index = 0;
-                ObservableList<Integer> selected = sourceTableView.getSelectionModel().getSelectedIndices();
+                ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
                 if (selected != null && !selected.isEmpty()) {
                     index = selected.get(0);
                 }
-                sourcesHandling.add(index);
+                sourceFiles.add(sourceFilesInformation.get(index).getFile());
+                sourcesIndice.add(index);
                 digit = 1;
                 digitInput.setText(digit + "");
             } else {
                 sortFileInformations(sourceFilesInformation);
                 for (int i = 0; i < sourceFilesInformation.size(); i++) {
-                    sourcesHandling.add(i);
+                    sourcesIndice.add(i);
+                    sourceFiles.add(sourceFilesInformation.get(i).getFile());
                 }
-                int bdigit = (sourcesHandling.size() + "").length();
+                int bdigit = (sourcesIndice.size() + "").length();
                 try {
                     digit = Integer.valueOf(digitInput.getText());
                     if (digit < bdigit) {
@@ -180,45 +193,73 @@ public class FilesRenameController extends FilesBatchController {
                 }
                 digitInput.setText(digit + "");
             }
+
+            targetFiles = new ArrayList();
+            newNames = new HashMap();
+
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
         }
-        newNames = new HashMap();
+
+    }
+
+    protected FileSortMode checkSortMode() {
+        RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
+        boolean desc = descentCheck.isSelected();
+        FileSortMode sortMode = FileSortMode.ModifyTimeDesc;
+        if (getMessage("OriginalFileName").equals(sort.getText())) {
+            if (desc) {
+                sortMode = FileSortMode.NameDesc;
+            } else {
+                sortMode = FileSortMode.NameAsc;
+            }
+        } else if (getMessage("CreateTime").equals(sort.getText())) {
+            if (desc) {
+                sortMode = FileSortMode.CreateTimeDesc;
+            } else {
+                sortMode = FileSortMode.CreateTimeAsc;
+            }
+
+        } else if (getMessage("ModifyTime").equals(sort.getText())) {
+            if (desc) {
+                sortMode = FileSortMode.ModifyTimeDesc;
+            } else {
+                sortMode = FileSortMode.ModifyTimeAsc;
+            }
+
+        } else if (getMessage("Size").equals(sort.getText())) {
+            if (desc) {
+                sortMode = FileSortMode.SizeDesc;
+            } else {
+                sortMode = FileSortMode.SizeAsc;
+            }
+
+        } else if (getMessage("AddedSequence").equals(sort.getText())) {
+            sortMode = null;
+
+        }
+        return sortMode;
 
     }
 
     protected void sortFileInformations(List<FileInformation> files) {
-        RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-        if (getMessage("OriginalFileName").equals(sort.getText())) {
-            FileTools.sortFileInformations(files, FileSortType.FileName);
-        } else if (getMessage("CreateTime").equals(sort.getText())) {
-            FileTools.sortFileInformations(files, FileSortType.CreateTime);
-        } else if (getMessage("ModifyTime").equals(sort.getText())) {
-            FileTools.sortFileInformations(files, FileSortType.ModifyTime);
-        } else if (getMessage("Size").equals(sort.getText())) {
-            FileTools.sortFileInformations(files, FileSortType.Size);
-        }
-        if (descentCheck.isSelected()) {
-            Collections.reverse(files);
+        FileSortMode sortMode = checkSortMode();
+        if (sortMode != null) {
+            FileTools.sortFileInformations(files, sortMode);
         }
     }
 
     protected void sortFiles(List<File> files) {
-        RadioButton sort = (RadioButton) sortGroup.getSelectedToggle();
-        if (getMessage("OriginalFileName").equals(sort.getText())) {
-            FileTools.sortFiles(files, FileSortType.FileName);
-        } else if (getMessage("CreateTime").equals(sort.getText())) {
-            FileTools.sortFiles(files, FileSortType.CreateTime);
-        } else if (getMessage("ModifyTime").equals(sort.getText())) {
-            FileTools.sortFiles(files, FileSortType.ModifyTime);
-        } else if (getMessage("Size").equals(sort.getText())) {
-            FileTools.sortFiles(files, FileSortType.Size);
-        }
-        if (descentCheck.isSelected()) {
-            Collections.reverse(files);
+        FileSortMode sortMode = checkSortMode();
+        if (sortMode != null) {
+            FileTools.sortFiles(files, sortMode);
         }
     }
 
     @Override
-    protected String handleCurrentFile(FileInformation d) {
+    public String handleCurrentFile(FileInformation d) {
         File file = d.getFile();
         currentParameters.sourceFile = file;
 
@@ -236,7 +277,10 @@ public class FilesRenameController extends FilesBatchController {
         String newName = makeFilename(file);
         try {
             if (newName != null) {
-                if (file.renameTo(new File(newName))) {
+                File newFile = new File(newName);
+                if (file.renameTo(newFile)) {
+                    currentParameters.finalTargetName = newName;
+                    targetFiles.add(newFile);
                     return newName;
                 } else {
                     return null;
@@ -251,7 +295,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected String handleCurrentDirectory(FileInformation d) {
+    public String handleCurrentDirectory(FileInformation d) {
         try {
             currentDir = d.getFile();
             dirFiles = dirRenamed = 0;
@@ -263,7 +307,7 @@ public class FilesRenameController extends FilesBatchController {
                     filters = null;
                 }
             }
-            renameDirectory(currentDir, filters, subDirCheck.isSelected());
+            renameDirectory(currentDir, filters, subdirCheck.isSelected());
             newNames.put(currentDir.getAbsolutePath(), currentNewNames);
             return MessageFormat.format(AppVaribles.getMessage("DirRenameSummary"), dirFiles, dirRenamed);
         } catch (Exception e) {
@@ -327,7 +371,8 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void donePost() {
+    public void donePost() {
+        super.donePost();
         addFilesButton.setDisable(true);
         addDirectoryButton.setDisable(true);
         insertFilesButton.setDisable(true);
@@ -335,6 +380,12 @@ public class FilesRenameController extends FilesBatchController {
         deleteButton.setDisable(true);
         recoveryAllButton.setDisable(false);
         recoverySelectedButton.setDisable(false);
+        filesTableView.refresh();
+    }
+
+    @Override
+    public void viewTarget(File file) {
+        openTarget(null);
     }
 
     protected String makeFilename(File file) {
@@ -412,7 +463,7 @@ public class FilesRenameController extends FilesBatchController {
                 newNames.remove(originalName);
             }
         }
-        sourceTableView.refresh();
+        filesTableView.refresh();
         addFilesButton.setDisable(false);
         addDirectoryButton.setDisable(false);
         insertFilesButton.setDisable(false);
@@ -426,7 +477,7 @@ public class FilesRenameController extends FilesBatchController {
 
     @FXML
     protected void recoverySelectedAction(ActionEvent event) {
-        ObservableList<FileInformation> selected = sourceTableView.getSelectionModel().getSelectedItems();
+        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -468,7 +519,7 @@ public class FilesRenameController extends FilesBatchController {
                 newNames.remove(originalName);
             }
         }
-        sourceTableView.refresh();
+        filesTableView.refresh();
         addFilesButton.setDisable(true);
         addDirectoryButton.setDisable(true);
         insertFilesButton.setDisable(true);
@@ -477,7 +528,7 @@ public class FilesRenameController extends FilesBatchController {
     }
 
     @Override
-    protected void openTarget(ActionEvent event) {
+    public void openTarget(ActionEvent event) {
         try {
             if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
                 return;
@@ -488,6 +539,7 @@ public class FilesRenameController extends FilesBatchController {
             } else {
                 Desktop.getDesktop().browse(new File(f.getParent()).toURI());
             }
+            recordFileOpened(f);
         } catch (Exception e) {
             logger.error(e.toString());
         }

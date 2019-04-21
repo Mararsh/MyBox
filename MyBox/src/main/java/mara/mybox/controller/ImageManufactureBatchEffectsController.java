@@ -1,5 +1,7 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
+import mara.mybox.controller.base.BaseController;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.image.ImageConvert;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageQuantization;
@@ -33,10 +34,12 @@ import mara.mybox.image.ImageGray;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.OperationType;
-import static mara.mybox.value.AppVaribles.getMessage;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ConvolutionKernel;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -69,19 +72,12 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             convolutionRadio, contrastRadio;
 
     public ImageManufactureBatchEffectsController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchEffects");
 
     }
 
     @Override
-    protected void initializeNext2() {
-        try {
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-    }
-
-    @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
 
             effectsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -93,12 +89,31 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             checkEffetcsOperationType();
 
-            FxmlTools.setComments(thresholdingRadio, new Tooltip(getMessage("ThresholdingComments")));
-            FxmlTools.setComments(posterizingRadio, new Tooltip(getMessage("QuantizationComments")));
-            FxmlTools.setComments(bwRadio, new Tooltip(getMessage("BWThresholdComments")));
+            FxmlControl.setComments(thresholdingRadio, new Tooltip(getMessage("ThresholdingComments")));
+            FxmlControl.setComments(posterizingRadio, new Tooltip(getMessage("QuantizationComments")));
+            FxmlControl.setComments(bwRadio, new Tooltip(getMessage("BWThresholdComments")));
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        if (event.isControlDown()) {
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
+            switch (key) {
+                case "k":
+                case "K":
+                    if (stringBox != null) {
+                        stringBox.show();
+                    }
+                    break;
+            }
         }
     }
 
@@ -180,7 +195,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         operationBarController.startButton.disableProperty().bind(
                 Bindings.isEmpty(targetPathInput.textProperty())
                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                        .or(Bindings.isEmpty(sourceFilesInformation))
+                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
         );
     }
 
@@ -191,19 +206,19 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox = new ComboBox();
             intBox.setEditable(true);
             intBox.setPrefWidth(80);
-            intBox.valueProperty().addListener(new ChangeListener<String>() {
+            intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            intBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(intBox);
                         } else {
-                            intBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        intBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intBox);
                     }
                 }
             });
@@ -211,7 +226,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getSelectionModel().select(0);
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
-            stringBox.valueProperty().addListener(new ChangeListener<String>() {
+            stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
@@ -220,9 +235,9 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         } else {
                             kernel = ConvolutionKernel.makeGaussKernel(intPara1);
                         }
-                        stringBox.getEditor().setStyle(null);
+                        FxmlControl.setEditorNormal(stringBox);
                     } catch (Exception e) {
-                        stringBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(stringBox);
                     }
                 }
             });
@@ -234,7 +249,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -246,7 +261,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intPara1 = ImageConvert.Direction.Top;
             stringLabel = new Label(getMessage("Direction"));
             stringBox = new ComboBox();
-            stringBox.valueProperty().addListener(new ChangeListener<String>() {
+            stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (newValue == null || newValue.trim().isEmpty()) {
@@ -283,19 +298,19 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox = new ComboBox();
             intBox.setEditable(false);
             intBox.setPrefWidth(80);
-            intBox.valueProperty().addListener(new ChangeListener<String>() {
+            intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara2 = v;
-                            intBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(intBox);
                         } else {
-                            intBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        intBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intBox);
                     }
                 }
             });
@@ -308,7 +323,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
         } catch (Exception e) {
@@ -321,7 +336,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
-            stringBox.valueProperty().addListener(new ChangeListener<String>() {
+            stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (getMessage("RGBUniformQuantization").equals(newValue)) {
@@ -339,19 +354,19 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox = new ComboBox();
             intBox.setEditable(false);
             intBox.setPrefWidth(120);
-            intBox.valueProperty().addListener(new ChangeListener<String>() {
+            intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             intPara1 = v;
-                            intBox.getEditor().setStyle(null);
+                            FxmlControl.setEditorNormal(intBox);
                         } else {
-                            intBox.getEditor().setStyle(badStyle);
+                            FxmlControl.setEditorBadStyle(intBox);
                         }
                     } catch (Exception e) {
-                        intBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(intBox);
                     }
                 }
             });
@@ -360,13 +375,13 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getSelectionModel().select(0);
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
-            FxmlTools.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
+            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
             operationBarController.startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
         } catch (Exception e) {
@@ -401,7 +416,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlTools.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
             Label smallValueLabel = new Label(getMessage("SmallValue"));
@@ -427,7 +442,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             thresholdingMinInput.setPrefWidth(100);
             thresholdingMinInput.setText("0");
-            FxmlTools.quickTooltip(thresholdingMinInput, new Tooltip("0~255"));
+            FxmlControl.quickTooltip(thresholdingMinInput, new Tooltip("0~255"));
 
             intPara3 = 255;
             Label bigValueLabel = new Label(getMessage("BigValue"));
@@ -453,7 +468,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             thresholdingMaxInput.setPrefWidth(100);
             thresholdingMaxInput.setText("255");
-            FxmlTools.quickTooltip(thresholdingMaxInput, new Tooltip("0~255"));
+            FxmlControl.quickTooltip(thresholdingMaxInput, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(intLabel, intInput,
                     bigValueLabel, thresholdingMaxInput,
@@ -462,7 +477,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     intInput.styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                             .or(thresholdingMinInput.styleProperty().isEqualTo(badStyle))
                             .or(thresholdingMaxInput.styleProperty().isEqualTo(badStyle))
             );
@@ -495,7 +510,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlTools.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
 
             intPara1 = 1;
             radioGroup = new ToggleGroup();
@@ -517,13 +532,14 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     }
                     intPara1 = (int) ((RadioButton) new_toggle).getUserData();
                     intInput.setDisable(intPara1 != 3);
+                    intInput.setStyle(null);
                 }
             });
             radio1.setSelected(true);
 
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
-            FxmlTools.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
+            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
 
             setBox.getChildren().addAll(radio1, radio2, radio3, intInput, valueCheck);
             operationBarController.startButton.disableProperty().bind(
@@ -561,14 +577,14 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("80");
-            FxmlTools.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(intLabel, intInput);
             operationBarController.startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -591,21 +607,21 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     int index = newValue.intValue();
                     if (index < 0 || index >= kernels.size()) {
                         kernel = null;
-                        stringBox.getEditor().setStyle(badStyle);
+                        FxmlControl.setEditorBadStyle(stringBox);
                         return;
                     }
                     kernel = kernels.get(index);
-                    stringBox.getEditor().setStyle(null);
+                    FxmlControl.setEditorNormal(stringBox);
                 }
             });
-            FxmlTools.quickTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
+            FxmlControl.quickTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
             setButton = new Button(getMessage("ManageDot"));
             setButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    BaseController c = openStage(CommonValues.ConvolutionKernelManagerFxml, false);
-                    c.setParentController(getMyController());
-                    c.setParentFxml(getMyFxml());
+                    BaseController c = openStage(CommonValues.ConvolutionKernelManagerFxml);
+                    c.parentController = myController;
+                    c.parentFxml = myFxml;
                 }
             });
             setBox.getChildren().addAll(stringLabel, stringBox, setButton);
@@ -613,7 +629,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     stringBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
+                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -634,57 +650,132 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             //                    getMessage("LumaHistogramEqualization"),
             //                    getMessage("AdaptiveHistogramEqualization")
             ));
-            stringBox.getSelectionModel().select(0);
-            stringBox.valueProperty().addListener(new ChangeListener<String>() {
+            stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (getMessage("GrayHistogramEqualization").equals(newValue)) {
-                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization;
+                    if (setBox.getChildren() != null) {
+                        if (setBox.getChildren().contains(intInput)) {
+                            setBox.getChildren().removeAll(intLabel, intInput);
+                        }
+                        if (setBox.getChildren().contains(intInput2)) {
+                            setBox.getChildren().removeAll(intLabel2, intInput2);
+                        }
+                    }
+                    operationBarController.startButton.disableProperty().unbind();
+                    if (getMessage("GrayHistogramStretching").equals(newValue)) {
+                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching;
+                        intPara1 = 100;
+                        intLabel = new Label(getMessage("LeftThreshold"));
+                        intInput = new TextField();
+                        intInput.textProperty().addListener(new ChangeListener<String>() {
+                            @Override
+                            public void changed(ObservableValue<? extends String> observable,
+                                    String oldValue, String newValue) {
+                                try {
+                                    int v = Integer.valueOf(intInput.getText());
+                                    if (v >= 0) {
+                                        intPara1 = v;
+                                        intInput.setStyle(null);
+                                    } else {
+                                        intInput.setStyle(badStyle);
+                                    }
+                                } catch (Exception e) {
+                                    intInput.setStyle(badStyle);
+                                }
+                            }
+                        });
+                        intInput.setPrefWidth(100);
+                        intInput.setText("100");
+
+                        intPara2 = 100;
+                        intLabel2 = new Label(getMessage("RightThreshold"));
+                        intInput2 = new TextField();
+                        intInput2.textProperty().addListener(new ChangeListener<String>() {
+                            @Override
+                            public void changed(ObservableValue<? extends String> observable,
+                                    String oldValue, String newValue) {
+                                try {
+                                    int v = Integer.valueOf(intInput2.getText());
+                                    if (v >= 0) {
+                                        intPara2 = v;
+                                        intInput2.setStyle(null);
+                                    } else {
+                                        intInput2.setStyle(badStyle);
+                                    }
+                                } catch (Exception e) {
+                                    intInput2.setStyle(badStyle);
+                                }
+                            }
+                        });
+                        intInput2.setPrefWidth(100);
+                        intInput2.setText("100");
+
+                        setBox.getChildren().addAll(intLabel, intInput, intLabel2, intInput2);
+                        operationBarController.startButton.disableProperty().bind(
+                                intInput.styleProperty().isEqualTo(badStyle)
+                                        .or(intInput2.styleProperty().isEqualTo(badStyle))
+                                        .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        );
                     } else if (getMessage("GrayHistogramShifting").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting;
-                    } else if (getMessage("GrayHistogramStretching").equals(newValue)) {
-                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching;
-                    } else if (getMessage("HSBHistogramEqualization").equals(newValue)) {
-                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
-                    } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
-                        contrastAlgorithm = ImageContrast.ContrastAlgorithm.Adaptive_Histogram_Equalization;
-                    }
-                }
-            });
-
-            intPara1 = 80;
-            intLabel = new Label(getMessage("Offset"));
-            intInput = new TextField();
-            intInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        int v = Integer.valueOf(intInput.getText());
-                        if (v >= 0 && v <= 255) {
-                            intPara1 = v;
-                            intInput.setStyle(null);
-                        } else {
-                            intInput.setStyle(badStyle);
-                            popError("0~255");
+                        intPara1 = 80;
+                        intLabel = new Label(getMessage("Offset"));
+                        intInput = new TextField();
+                        intInput.textProperty().addListener(new ChangeListener<String>() {
+                            @Override
+                            public void changed(ObservableValue<? extends String> observable,
+                                    String oldValue, String newValue) {
+                                try {
+                                    int v = Integer.valueOf(intInput.getText());
+                                    if (v >= -255 && v <= 255) {
+                                        intPara1 = v;
+                                        intInput.setStyle(null);
+                                    } else {
+                                        intInput.setStyle(badStyle);
+                                        popError("-255 ~ 255");
+                                    }
+                                } catch (Exception e) {
+                                    intInput.setStyle(badStyle);
+                                    popError("-255 ~ 255");
+                                }
+                            }
+                        });
+                        intInput.setPrefWidth(100);
+                        intInput.setText("10");
+                        FxmlControl.quickTooltip(intInput, new Tooltip("-255 ~ 255"));
+                        setBox.getChildren().addAll(intLabel, intInput);
+                        operationBarController.startButton.disableProperty().bind(
+                                intInput.styleProperty().isEqualTo(badStyle)
+                                        .or(Bindings.isEmpty(targetPathInput.textProperty()))
+                                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        );
+                    } else {
+                        if (getMessage("GrayHistogramEqualization").equals(newValue)) {
+                            contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization;
+                        } else if (getMessage("LumaHistogramEqualization").equals(newValue)) {
+                            contrastAlgorithm = ImageContrast.ContrastAlgorithm.Luma_Histogram_Equalization;
+                        } else if (getMessage("HSBHistogramEqualization").equals(newValue)) {
+                            contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
+                        } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
+                            contrastAlgorithm = ImageContrast.ContrastAlgorithm.Adaptive_Histogram_Equalization;
                         }
-                    } catch (Exception e) {
-                        popError("0~255");
+                        operationBarController.startButton.disableProperty().bind(
+                                Bindings.isEmpty(targetPathInput.textProperty())
+                                        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
+                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
+                        );
                     }
                 }
             });
-            intInput.setPrefWidth(100);
-            intInput.setText("80");
-            FxmlTools.quickTooltip(intInput, new Tooltip("0~255"));
+            stringBox.getSelectionModel().select(0);
 
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intInput);
-            operationBarController.startButton.disableProperty().bind(
-                    intInput.styleProperty().isEqualTo(badStyle)
-                            .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(sourceFilesInformation))
-            );
+            setBox.getChildren().addAll(stringLabel, stringBox);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -724,25 +815,6 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     }
 
     @Override
-    protected void keyEventsHandler(KeyEvent event) {
-        super.keyEventsHandler(event);
-        if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
-            }
-            switch (key) {
-                case "k":
-                case "K":
-                    if (stringBox != null) {
-                        stringBox.show();
-                    }
-                    break;
-            }
-        }
-    }
-
-    @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             BufferedImage target = null;
@@ -753,6 +825,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     case Contrast:
                         ImageContrast imageContrast = new ImageContrast(source, contrastAlgorithm);
                         imageContrast.setIntPara1(intPara1);
+                        imageContrast.setIntPara2(intPara2);
                         target = imageContrast.operate();
                         break;
                     case Convolution:
@@ -794,7 +867,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         target = imageConvolution.operate();
                         break;
                     case Thresholding:
-                        pixelsOperation = new PixelsOperation(ImageConvert.removeAlpha(source), effectType);
+                        pixelsOperation = PixelsOperation.newPixelsOperation(ImageConvert.removeAlpha(source), null, effectType);
                         pixelsOperation.setIntPara1(intPara1);
                         pixelsOperation.setIntPara2(intPara2);
                         pixelsOperation.setIntPara3(intPara3);
@@ -828,7 +901,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         target = imageBinary.operate();
                         break;
                     case Sepia:
-                        pixelsOperation = new PixelsOperation(source, effectType);
+                        pixelsOperation = PixelsOperation.newPixelsOperation(source, null, effectType);
                         pixelsOperation.setIntPara1(intPara1);
                         target = pixelsOperation.operate();
                         break;

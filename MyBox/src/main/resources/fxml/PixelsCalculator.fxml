@@ -23,7 +23,7 @@
                 <HBox fx:id="sourcePixelsBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="NEVER">
                     <children>
                         <Label text="%PixelsWidth" />
-                        <TextField fx:id="source_width" prefHeight="30.0" prefWidth="80.0" />
+                        <TextField fx:id="source_width" prefWidth="80.0" />
                         <Label text="%PixelsHeight" />
                         <TextField fx:id="source_height" prefWidth="80.0" />
                         <Label fx:id="ratioLabel" prefWidth="200.0" text="%AspectRatio" />
@@ -176,7 +176,7 @@
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$cp_DensityGroup" />
-                                                <TextField fx:id="cp_densityInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="cp_densityInput" prefWidth="80.0" />
                                                 <Label text="dpi" />
                                             </children>
                                         </HBox>
@@ -200,7 +200,7 @@
                                         <HBox fx:id="cs_pixelsBox" alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%PixelsWidth" />
-                                                <TextField fx:id="cs_width" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="cs_width" prefWidth="80.0" />
                                                 <Label text="%PixelsHeight" />
                                                 <TextField fx:id="cs_height" prefWidth="80.0" />
                                             </children>
@@ -235,7 +235,7 @@
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <RadioButton mnemonicParsing="false" text="%InputValue" toggleGroup="$cs_DensityGroup" />
-                                                <TextField fx:id="cs_densityInput" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="cs_densityInput" prefWidth="80.0" />
                                                 <Label text="dpi" />
                                             </children>
                                         </HBox>
@@ -301,7 +301,7 @@
                                         <HBox fx:id="cd_pixelsBox" alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
                                                 <Label text="%PixelsWidth" />
-                                                <TextField fx:id="cd_width" prefHeight="30.0" prefWidth="80.0" />
+                                                <TextField fx:id="cd_width" prefWidth="80.0" />
                                                 <Label text="%PixelsHeight" />
                                                 <TextField fx:id="cd_height" prefWidth="80.0" />
                                             </children>
@@ -341,7 +341,7 @@
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
                 <Button fx:id="useButton" disable="true" mnemonicParsing="false" onAction="#useResult" prefWidth="80.0" text="%Use" visible="false" />
-                <Button mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
+                <Button fx:id="closeButton" defaultButton="true" mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
             </children>
         </HBox>
     </children>

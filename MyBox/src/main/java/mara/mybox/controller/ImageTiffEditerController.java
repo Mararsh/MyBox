@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageSourcesController;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -14,13 +15,14 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
+import mara.mybox.data.VisitHistory;
+import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -39,11 +41,20 @@ public class ImageTiffEditerController extends ImageSourcesController {
     private TextField thresholdInput;
 
     public ImageTiffEditerController() {
+        baseTitle = AppVaribles.getMessage("ImageTiffEditer");
+
+        SourceFileType = VisitHistory.FileType.Tif;
+        SourcePathType = VisitHistory.FileType.Tif;
+        TargetFileType = VisitHistory.FileType.Tif;
+        TargetPathType = VisitHistory.FileType.Tif;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
+
         fileExtensionFilter = CommonValues.TiffExtensionFilter;
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
             attributes = new ImageAttributes();
             attributes.setImageFormat("tif");
@@ -197,44 +208,44 @@ public class ImageTiffEditerController extends ImageSourcesController {
     }
 
     @Override
-    protected void saveFileDo(final File outFile) {
+    public void saveFileDo(final File outFile) {
         try {
             task = new Task<Void>() {
                 private String ret;
 
                 @Override
                 protected Void call() throws Exception {
-                    try {
-                        ret = ImageTiffFile.writeTiffImagesWithInfo(sourceImages, attributes, outFile);
-                        if (task.isCancelled()) {
-                            return null;
-                        }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ret.isEmpty()) {
-                                    popInformation(AppVaribles.getMessage("Successful"));
-                                    if (viewCheck.isSelected()) {
-                                        try {
-                                            final ImageFramesViewerController controller
-                                                    = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml, false, true);
-                                            controller.setBaseTitle(AppVaribles.getMessage("ImageFramesViewer"));
-                                            controller.openFile(outFile);
-                                        } catch (Exception e) {
-                                            logger.error(e.toString());
-                                        }
-                                    }
-                                    setImageChanged(false);
-                                } else {
-                                    popError(AppVaribles.getMessage(ret));
-                                }
-                            }
-                        });
-                    } catch (Exception e) {
-                        logger.error(e.toString());
-                    }
+
+                    ret = ImageTiffFile.writeTiffImagesWithInfo(sourceImages, attributes, outFile);
+
                     return null;
                 }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ret.isEmpty()) {
+                                popInformation(AppVaribles.getMessage("Successful"));
+                                if (viewCheck.isSelected()) {
+                                    try {
+                                        final ImageFramesViewerController controller
+                                                = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+                                        controller.selectSourceFile(outFile);
+                                    } catch (Exception e) {
+                                        logger.error(e.toString());
+                                    }
+                                }
+                                setImageChanged(false);
+                            } else {
+                                popError(AppVaribles.getMessage(ret));
+                            }
+                        }
+                    });
+                }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);

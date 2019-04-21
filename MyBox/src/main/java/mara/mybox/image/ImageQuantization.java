@@ -2,6 +2,8 @@ package mara.mybox.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -30,6 +32,11 @@ public class ImageQuantization extends PixelsOperation {
 
     public ImageQuantization(BufferedImage image, QuantizationAlgorithm algorithm, int channelSize) {
         init(image, algorithm, channelSize);
+    }
+
+    public ImageQuantization(Image image) {
+        this.image = SwingFXUtils.fromFXImage(image, null);
+        init(this.image, QuantizationAlgorithm.RGB_Uniform, 8);
     }
 
     private void init(QuantizationAlgorithm algorithm, int channelSize) {

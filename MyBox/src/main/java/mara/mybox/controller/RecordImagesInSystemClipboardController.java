@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -20,10 +21,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.stage.DirectoryChooser;
-import mara.mybox.fxml.image.ImageTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.ImageManufacture;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileWriters;
@@ -31,6 +32,7 @@ import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.ImageAttributes;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.ValueTools;
@@ -60,7 +62,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @FXML
-    private Button openButton;
+    private Button openTargetButton;
     @FXML
     protected TitledPane targetPane, optionsPane;
     @FXML
@@ -75,6 +77,8 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     protected TextField thresholdInput;
 
     public RecordImagesInSystemClipboardController() {
+        baseTitle = AppVaribles.getMessage("RecordImagesInSystemClipBoard");
+
         targetPathKey = "SnapshotsTargetPath";
         TipsLabelKey = "RecordImagesTips";
 
@@ -82,7 +86,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             recordTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -92,14 +96,6 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 }
             });
             checkRecordType();
-
-            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    checkRecordType();
-                }
-            });
-            targetPathInput.setText(AppVaribles.getUserConfigPath(targetPathKey).getAbsolutePath());
 
             imageTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -111,7 +107,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             checkFormat();
 
             jpegBox.getItems().addAll(Arrays.asList("100", "75", "90", "50", "60", "80", "30", "10"));
-            jpegBox.valueProperty().addListener(new ChangeListener<String>() {
+            jpegBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
@@ -129,10 +125,17 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             });
             checkThreshold();
 
+            FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
 
+    }
+
+    @Override
+    public void checkTargetPathInput() {
+        checkRecordType();
     }
 
     private void checkRecordType() {
@@ -142,7 +145,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
         if (AppVaribles.getMessage("View").equals(selected.getText())) {
             recordType = RecordType.View;
             targetPane.setDisable(true);
-            openButton.setDisable(true);
+            openTargetButton.setDisable(true);
 
         } else {
 
@@ -156,12 +159,12 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             File file = new File(targetPathInput.getText());
             if (!file.exists() || !file.isDirectory()) {
                 targetPathInput.setStyle(badStyle);
-                openButton.setDisable(true);
+                openTargetButton.setDisable(true);
                 startButton.setDisable(true);
             } else {
                 AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
                 targetPath = file;
-                openButton.setDisable(false);
+                openTargetButton.setDisable(false);
             }
         }
     }
@@ -219,28 +222,6 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     @FXML
-    @Override
-    protected void selectTargetPath(ActionEvent event) {
-        if (targetPathInput == null) {
-            return;
-        }
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            targetPathInput.setText(directory.getAbsolutePath());
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
     protected void openTargetPath(ActionEvent event) {
         FxmlStage.openTarget(getClass(), null, new File(targetPathInput.getText()).getAbsolutePath());
     }
@@ -284,7 +265,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                     return;
                                 }
                                 isHandling = true;
-                                if (lastImage != null && ImageTools.isImageSame(lastImage, image)) {
+                                if (lastImage != null && ImageManufacture.isImageSame(lastImage, image)) {
                                     isHandling = false;
                                     return;
                                 }
@@ -323,7 +304,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     private void saveImage(Image image) {
-        BufferedImage bufferedImage = ImageTools.getBufferedImage(image);
+        BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
         ImageAttributes attributes = new ImageAttributes();
         switch (imageType) {
             case TIFF:

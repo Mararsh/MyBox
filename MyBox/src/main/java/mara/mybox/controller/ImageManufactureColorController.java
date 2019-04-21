@@ -1,32 +1,34 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.fxml.image.PixelsOperation;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
 
@@ -43,30 +45,60 @@ public class ImageManufactureColorController extends ImageManufactureController 
     private ColorActionType colorActionType;
 
     @FXML
-    protected Slider colorSlider;
-    @FXML
     protected ToggleGroup colorGroup;
     @FXML
-    protected TextField colorInput;
+    protected HBox setBox;
+    @FXML
+    protected ComboBox<String> valuesBox;
+    @FXML
+    protected Label colorUnit, preAlphaTipsLabel, scopeTipsLabel;
     @FXML
     protected Button decreaseButton, increaseButton, setButton, filterButton, invertButton;
     @FXML
-    protected RadioButton opacityRadio;
-    @FXML
-    protected Label colorUnit;
-    @FXML
-    protected HBox colorHBox, sliderHBox;
+    protected CheckBox preAlphaCheck;
 
     public ImageManufactureColorController() {
+
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initColorTab();
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void keyEventsHandler(KeyEvent event) {
+        super.keyEventsHandler(event);
+        if (event.isControlDown()) {
+            String key = event.getText();
+            if (key == null || key.isEmpty()) {
+                return;
+            }
+            switch (key) {
+                case "g":
+                case "G":
+                    if (setButton != null && setBox.getChildren().contains(setButton)) {
+                        setAction();
+                    }
+                    break;
+                case "q":
+                case "Q":
+                    if (increaseButton != null && setBox.getChildren().contains(increaseButton)) {
+                        increaseAction();
+                    }
+                    break;
+                case "w":
+                case "W":
+                    if (decreaseButton != null && setBox.getChildren().contains(decreaseButton)) {
+                        decreaseAction();
+                    }
+                    break;
+            }
         }
     }
 
@@ -80,41 +112,38 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 }
             });
 
-            colorSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    colorValue = newValue.intValue();
-                    colorInput.setText(colorValue + "");
-                }
-            });
+            setButton.disableProperty().bind(
+                    valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
 
-            colorInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkColorInput();
-                }
-            });
+            FxmlControl.quickTooltip(setButton, new Tooltip("CTRL+g"));
 
-            colorPicker.setValue(Color.TRANSPARENT);
+            increaseButton.disableProperty().bind(
+                    valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
 
-            Tooltip tips = new Tooltip("CTRL+q");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(setButton, tips);
+            FxmlControl.quickTooltip(increaseButton, new Tooltip("CTRL+q"));
 
-            tips = new Tooltip("CTRL+w");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(increaseButton, tips);
+            decreaseButton.disableProperty().bind(
+                    valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
 
-            tips = new Tooltip("CTRL+e");
-            tips.setFont(new Font(16));
-            FxmlTools.quickTooltip(decreaseButton, tips);
+            FxmlControl.quickTooltip(decreaseButton, new Tooltip("CTRL+w"));
 
-            colorPicker.setValue(Color.TRANSPARENT);
+            filterButton.disableProperty().bind(
+                    valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
 
-//            tips = new Tooltip(getMessage("ClickCurrentForNewColor"));
-//            tips.setFont(new Font(16));
-//            FxmlTools.setComments(colorPicker, tips);
+            invertButton.disableProperty().bind(
+                    valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
+            );
+
+            colorPicker = new ColorPicker(Color.TRANSPARENT);
+
+            FxmlControl.setComments(preAlphaTipsLabel, new Tooltip(getMessage("PremultipliedAlphaTips")));
+
+            FxmlControl.quickTooltip(scopeTipsLabel, new Tooltip(getMessage("ImageScopeTips")));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -128,16 +157,17 @@ public class ImageManufactureColorController extends ImageManufactureController 
             }
             super.initInterface();
             checkColorOperationType();
-            checkColorInput();
 
             isSettingValues = true;
+            tabPane.getSelectionModel().select(colorTab);
+
             if (values.getImageInfo() != null
                     && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                opacityRadio.setDisable(true);
-//                opacityRadio.setPrefWidth(0);
+                preAlphaCheck.setSelected(true);
+                preAlphaCheck.setDisable(true);
             } else {
-                opacityRadio.setDisable(false);
-                opacityRadio.setPrefWidth(USE_COMPUTED_SIZE);
+                preAlphaCheck.setSelected(false);
+                preAlphaCheck.setDisable(false);
             }
 
             isSettingValues = false;
@@ -148,150 +178,101 @@ public class ImageManufactureColorController extends ImageManufactureController 
     }
 
     private void checkColorOperationType() {
-        colorHBox.setDisable(true);
-        sliderHBox.setDisable(false);
-        setButton.setDisable(false);
-        decreaseButton.setDisable(false);
-        increaseButton.setDisable(false);
-        filterButton.setDisable(false);
-        invertButton.setDisable(false);
-        isSettingColor = false;
-        RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
-        if (getMessage("Brightness").equals(selected.getText())) {
-            colorOperationType = OperationType.Brightness;
-            colorSlider.setMax(100);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
+        try {
+            setBox.getChildren().clear();
+            valuesBox.getItems().clear();
+            FxmlControl.setEditorNormal(valuesBox);
+            pickColorButton.setSelected(false);
+
+            RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
+            if (getMessage("Brightness").equals(selected.getText())) {
+                colorOperationType = OperationType.Brightness;
+                makeValuesBox(100, 1);
+                colorUnit.setText("%");
+                setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
+            } else if (getMessage("Saturation").equals(selected.getText())) {
+                colorOperationType = OperationType.Saturation;
+                makeValuesBox(100, 1);
+                colorUnit.setText("%");
+                setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
+            } else if (getMessage("Hue").equals(selected.getText())) {
+                colorOperationType = OperationType.Hue;
+                makeValuesBox(360, 1);
+                colorUnit.setText(getMessage("Degree"));
+                setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
+            } else if (getMessage("Red").equals(selected.getText())) {
+                colorOperationType = OperationType.Red;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("Green").equals(selected.getText())) {
+                colorOperationType = OperationType.Green;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("Blue").equals(selected.getText())) {
+                colorOperationType = OperationType.Blue;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("Yellow").equals(selected.getText())) {
+                colorOperationType = OperationType.Yellow;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("Cyan").equals(selected.getText())) {
+                colorOperationType = OperationType.Cyan;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("Magenta").equals(selected.getText())) {
+                colorOperationType = OperationType.Magenta;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
+            } else if (getMessage("RGB").equals(selected.getText())) {
+                colorOperationType = OperationType.RGB;
+                makeValuesBox(255, 1);
+                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton);
+            } else if (getMessage("Opacity").equals(selected.getText())) {
+                colorOperationType = OperationType.Opacity;
+                makeValuesBox(100, 0);
+                colorUnit.setText("%");
+                setBox.getChildren().addAll(preAlphaTipsLabel, preAlphaCheck, valuesBox, colorUnit,
+                        setButton, increaseButton, decreaseButton);
+            } else if (getMessage("Color").equals(selected.getText())) {
+                colorOperationType = OperationType.Color;
+                setBox.getChildren().addAll(colorPicker, pickColorButton, setButton);
             }
-            filterButton.setDisable(true);
-            invertButton.setDisable(true);
-        } else if (getMessage("Saturation").equals(selected.getText())) {
-            colorOperationType = OperationType.Sauration;
-            colorSlider.setMax(100);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-            filterButton.setDisable(true);
-            invertButton.setDisable(true);
-        } else if (getMessage("Hue").equals(selected.getText())) {
-            colorOperationType = OperationType.Hue;
-            colorSlider.setMax(359);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText(getMessage("Degree"));
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-            filterButton.setDisable(true);
-            invertButton.setDisable(true);
-        } else if (getMessage("Red").equals(selected.getText())) {
-            colorOperationType = OperationType.Red;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("Green").equals(selected.getText())) {
-            colorOperationType = OperationType.Green;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("Blue").equals(selected.getText())) {
-            colorOperationType = OperationType.Blue;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("Yellow").equals(selected.getText())) {
-            colorOperationType = OperationType.Yellow;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("Cyan").equals(selected.getText())) {
-            colorOperationType = OperationType.Cyan;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("Magenta").equals(selected.getText())) {
-            colorOperationType = OperationType.Magenta;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-        } else if (getMessage("RGB").equals(selected.getText())) {
-            colorOperationType = OperationType.RGB;
-            colorSlider.setMax(255);
-            colorSlider.setMin(1);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("");
-            if (colorInput.getText().trim().isEmpty()) {
-                colorInput.setText("50");
-            }
-            filterButton.setDisable(true);
-            setButton.setDisable(true);
-        } else if (getMessage("Opacity").equals(selected.getText())) {
-            colorOperationType = OperationType.Opacity;
-            colorSlider.setMax(100);
-            colorSlider.setMin(0);
-            colorSlider.setBlockIncrement(1);
-            colorUnit.setText("%");
-            colorInput.setText("50");
-            decreaseButton.setDisable(true);
-            increaseButton.setDisable(true);
-            filterButton.setDisable(true);
-            invertButton.setDisable(true);
-        } else if (getMessage("Color").equals(selected.getText())) {
-            colorOperationType = OperationType.Color;
-            decreaseButton.setDisable(true);
-            increaseButton.setDisable(true);
-            filterButton.setDisable(true);
-            invertButton.setDisable(true);
-            colorHBox.setDisable(false);
-            sliderHBox.setDisable(true);
-            isSettingColor = true;
-        }
-        if (scope != null) {
-            showLabels();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
-    private void checkColorInput() {
+    private void makeValuesBox(final int max, final int min) {
         try {
-            colorValue = Integer.valueOf(colorInput.getText());
-            if (colorValue >= 0 && colorValue <= colorSlider.getMax()) {
-                colorInput.setStyle(null);
-                colorSlider.setValue(colorValue);
-            } else {
-                colorInput.setStyle(badStyle);
+            List<String> valueList = new ArrayList<>();
+            int step = (max - min) / 10;
+            for (int v = min; v < max; v += step) {
+                valueList.add(v + "");
             }
+            valueList.add(max + "");
+            valuesBox.getItems().addAll(valueList);
+            valuesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.valueOf(newValue);
+                        if (v >= min && v <= max) {
+                            colorValue = v;
+                            FxmlControl.setEditorNormal(valuesBox);
+                        } else {
+                            FxmlControl.setEditorBadStyle(valuesBox);
+                        }
+                    } catch (Exception e) {
+                        FxmlControl.setEditorBadStyle(valuesBox);
+                    }
+                }
+            });
+            valuesBox.getSelectionModel().select(valueList.size() / 2);
+
         } catch (Exception e) {
-            colorInput.setStyle(badStyle);
+            logger.error(e.toString());
         }
     }
 
@@ -325,52 +306,27 @@ public class ImageManufactureColorController extends ImageManufactureController 
         applyChange();
     }
 
-    @Override
-    protected void keyEventsHandler(KeyEvent event) {
-        super.keyEventsHandler(event);
-        if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
-            }
-            switch (key) {
-                case "q":
-                case "Q":
-                    if (setButton != null && !setButton.isDisabled()) {
-                        setAction();
-                    }
-                    break;
-                case "w":
-                case "W":
-                    if (increaseButton != null && !increaseButton.isDisabled()) {
-                        increaseAction();
-                    }
-                    break;
-                case "e":
-                case "E":
-                    if (decreaseButton != null && !decreaseButton.isDisabled()) {
-                        decreaseAction();
-                    }
-                    break;
-            }
-        }
-    }
-
     private void applyChange() {
         if (null == colorOperationType || colorActionType == null || scope == null) {
             return;
         }
         task = new Task<Void>() {
+            private Image newImage;
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                PixelsOperation pixelsOperation = new PixelsOperation(values.getCurrentImage(), scope,
-                        colorOperationType, colorActionType);
+                if (colorOperationType == OperationType.Opacity && preAlphaCheck.isSelected()) {
+                    colorOperationType = OperationType.PreOpacity;
+                }
+                PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(imageView.getImage(),
+                        scope, colorOperationType, colorActionType);
                 switch (colorOperationType) {
                     case Hue:
                         pixelsOperation.setFloatPara1(colorValue / 360.0f);
                         break;
                     case Brightness:
-                    case Sauration:
+                    case Saturation:
                         pixelsOperation.setFloatPara1(colorValue / 100.0f);
                         break;
                     case Red:
@@ -383,27 +339,37 @@ public class ImageManufactureColorController extends ImageManufactureController 
                         pixelsOperation.setIntPara1(colorValue);
                         break;
                     case Opacity:
+                    case PreOpacity:
                         pixelsOperation.setIntPara1(colorValue * 255 / 100);
                         break;
                     case Color:
                         pixelsOperation.setColorPara1(ImageColor.converColor(colorPicker.getValue()));
                         break;
                 }
-                final Image newImage = pixelsOperation.operateFxImage();
-                if (task.isCancelled()) {
+                newImage = pixelsOperation.operateFxImage();
+                if (task == null || task.isCancelled()) {
                     return null;
                 }
                 recordImageHistory(ImageOperationType.Color, newImage);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        values.setUndoImage(values.getCurrentImage());
-                        values.setCurrentImage(newImage);
-                        imageView.setImage(newImage);
-                        setImageChanged(true);
-                    }
-                });
+
+                ok = true;
                 return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            values.setUndoImage(imageView.getImage());
+                            values.setCurrentImage(newImage);
+                            imageView.setImage(newImage);
+                            setImageChanged(true);
+                        }
+                    });
+                }
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);

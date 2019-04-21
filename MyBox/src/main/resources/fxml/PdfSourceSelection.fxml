@@ -46,23 +46,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfSourceSelectionController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfSourceSelectionController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
             <children>
                 <Label text="%SourceFile" HBox.hgrow="NEVER" />
-                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" prefWidth="500.0" HBox.hgrow="ALWAYS">
+                <TextField fx:id="sourceFileInput" HBox.hgrow="ALWAYS">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>
                 </TextField>
-                <Button fx:id="sourceSelectButton" mnemonicParsing="false" onAction="#selectSourceFile" prefHeight="30.0" text="%Select...">
+                <Button fx:id="selectSourceButton" mnemonicParsing="false" onMouseEntered="#popSourceFile"  onAction="#selectSourceFile" text="%Select...">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>
                 </Button>
-            <Button fx:id="pdfOpenButon" disable="true" mnemonicParsing="false" onAction="#openPdfAction" text="%Open" />
-                <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction" prefHeight="30.0" text="%FileInformation">
+                <Button fx:id="pdfOpenButon" disable="true" mnemonicParsing="false" onAction="#openPdfAction" text="%Open" />
+                <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction" text="%FileInformation">
                     <HBox.margin>
                         <Insets />
                     </HBox.margin>

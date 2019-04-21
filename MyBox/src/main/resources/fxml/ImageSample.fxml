@@ -32,6 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -51,43 +52,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                             <items>
-                                <Button mnemonicParsing="false" onAction="#selectSourceFile" text="%Open" />
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
+                                <Label fx:id="sampledTips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" />
                                 <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                 <CheckBox fx:id="viewCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ViewAfterSave" />
                                 <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
                                 <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" text="%ImageMetaData" />
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <HBox fx:id="cropBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Label fx:id="cropLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%CropLabel" />
-                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="cropBar">
-                            <items>
-                                <Label text="%LeftTop" />
-                                <TextField fx:id="cropLeftXInput" prefWidth="80.0" promptText="X" />
-                                <TextField fx:id="cropLeftYInput" prefWidth="80.0" promptText="Y" />
-                                <Label text="%RightBottom" />
-                                <TextField fx:id="cropRightXInput" prefWidth="80.0" promptText="X" />
-                                <TextField fx:id="cropRightYInput" prefWidth="80.0" promptText="Y" />
-                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
                             </items>
                         </ToolBar>
                     </children>
@@ -96,6 +77,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
+                                <Label fx:id="sampleLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
                                 <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
                             </items>
                         </ToolBar>
@@ -119,37 +101,88 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     </padding>
                                 </Label>
                                 <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
+                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" text="%SelectAll" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
-                <HBox fx:id="showBox" alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Label fx:id="sampleLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " />
-                                <Button mnemonicParsing="false" visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
-                            <items>
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#imageSize" text="%ImageSize" />
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                    <content>
-                        <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="700.0" onMouseClicked="#clickImage" pickOnBounds="true" preserveRatio="true">
-                            <cursor>
-                                <Cursor fx:constant="OPEN_HAND" />
-                            </cursor>
-                        </ImageView>
-                    </content>
-                </ScrollPane>
+                <SplitPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <VBox fx:id="showBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <HBox fx:id="imageLabelBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel" />
+                                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
+                                        <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
+                                        <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" HBox.hgrow="NEVER" />
+                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
+                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%LoadedSize" />
+                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
+                                    </children>
+                                </HBox>
+                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" onMouseClicked="#imageClicked" pickOnBounds="true" preserveRatio="true">
+                                                </ImageView>
+                                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="MOVE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="W_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="NE_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="N_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="E_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="SE_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="N_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="SW_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                                    <cursor>
+                                                        <Cursor fx:constant="NW_RESIZE" />
+                                                    </cursor>
+                                                </Rectangle>
+                                                <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+
             </children>
             <BorderPane.margin>
                 <Insets />

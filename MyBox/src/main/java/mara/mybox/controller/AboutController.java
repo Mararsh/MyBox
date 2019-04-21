@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.awt.Desktop;
 import java.net.URI;
 import javafx.fxml.FXML;
@@ -7,7 +8,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -23,15 +24,19 @@ public class AboutController extends BaseController {
     @FXML
     private Hyperlink licenseLink, sourceLink, issuesLink, releasesLink, userGuideLink, cloudLink;
 
+    public AboutController() {
+        baseTitle = AppVaribles.getMessage("About");
+    }
+
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         version.setText(CommonValues.AppVersion);
         date.setText(CommonValues.AppVersionDate);
         userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
                 + CommonValues.AppVersion + "/MyBox-UserGuide-" + CommonValues.AppVersion
                 + "-Overview-" + AppVaribles.getLanguage() + ".pdf");
 
-        FxmlTools.miao8();
+        FxmlControl.miao8();
 
     }
 

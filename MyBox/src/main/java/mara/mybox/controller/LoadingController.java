@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ public class LoadingController extends BaseController {
     public void init(final Task<?> task) {
         try {
             progressIndicator.setProgress(-1F);
-            progressIndicator.progressProperty().bind(task.progressProperty());
+//            progressIndicator.progressProperty().bind(task.progressProperty());
             loadingTask = task;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -38,17 +39,31 @@ public class LoadingController extends BaseController {
 
     @FXML
     private void mybox(ActionEvent event) {
-        openStage(CommonValues.MyboxFxml, false, true);
+        openStage(CommonValues.MyboxFxml);
     }
 
     @FXML
-    private void cancelAction(ActionEvent event) {
-        loadingTask.cancel();
-        parentController.taskCanceled();
+    private void cancelAction() {
+        if (loadingTask != null) {
+            loadingTask.cancel();
+            loadingTask = null;
+        }
+        parentController.taskCanceled(loadingTask);
+
     }
 
     public void setInfo(String info) {
+        if (loadingTask == null || !loadingTask.isRunning()) {
+            return;
+        }
         infoLabel.setText(info);
+    }
+
+    public void setProgress(float value) {
+        if (loadingTask == null || !loadingTask.isRunning()) {
+            return;
+        }
+        progressIndicator.setProgress(value);
     }
 
     public ProgressIndicator getProgressIndicator() {

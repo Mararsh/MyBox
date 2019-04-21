@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.BaseController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +32,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -50,8 +52,8 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.tools.DateTools;
-import mara.mybox.fxml.FxmlTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ValueTools;
 
 /**
@@ -98,8 +100,12 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private RadioButton zeroRadio, keepRadio;
 
+    public ConvolutionKernelManagerController() {
+        baseTitle = AppVaribles.getMessage("ConvolutionKernelManager");
+    }
+
     @Override
-    protected void initializeNext() {
+    public void initializeNext() {
         try {
             initList();
             initEditFields();
@@ -154,7 +160,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         tableData.addAll(records);
 
         if (parentController != null && parentFxml != null) {
-            if (parentFxml.contains("ImageManufactureConvolution")) {
+            if (parentFxml.contains("ImageManufactureEffects")) {
                 ImageManufactureEffectsController p = (ImageManufactureEffectsController) parentController;
                 p.loadKernelsList(records);
             } else if (parentFxml.contains("ImageManufactureBatchEffects")) {
@@ -215,7 +221,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             List<String> sizeList = Arrays.asList(
                     "3", "5", "7", "9", "11", "13", "15", "17", "19");
             widthBox.getItems().addAll(sizeList);
-            widthBox.valueProperty().addListener(new ChangeListener<String>() {
+            widthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkSize();
@@ -223,7 +229,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             });
 
             heightBox.getItems().addAll(sizeList);
-            heightBox.valueProperty().addListener(new ChangeListener<String>() {
+            heightBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkSize();
@@ -249,6 +255,9 @@ public class ConvolutionKernelManagerController extends BaseController {
             checkEdges();
 
             actionBox.setDisable(true);
+
+            FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -303,25 +312,26 @@ public class ConvolutionKernelManagerController extends BaseController {
         try {
             width = Integer.valueOf((String) widthBox.getSelectionModel().getSelectedItem());
             if (width > 2 && width % 2 != 0) {
-                widthBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(widthBox);
             } else {
                 width = 0;
-                widthBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(widthBox);
             }
         } catch (Exception e) {
             width = 0;
-            widthBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(widthBox);
         }
+
         try {
             height = Integer.valueOf((String) heightBox.getSelectionModel().getSelectedItem());
             if (height > 2 && height % 2 != 0) {
-                heightBox.getEditor().setStyle(null);
+                FxmlControl.setEditorNormal(heightBox);
             } else {
-                heightBox.getEditor().setStyle(badStyle);
+                FxmlControl.setEditorBadStyle(heightBox);
             }
         } catch (Exception e) {
             height = 0;
-            heightBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(heightBox);
         }
         if (isSettingValues) {
             return;
@@ -434,7 +444,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         desInput.setText("");
         widthBox.getSelectionModel().select("3");
         heightBox.getSelectionModel().select("3");
-        FxmlTools.setRadioSelected(typeGroup, getMessage("None"));
+        FxmlControl.setRadioSelected(typeGroup, getMessage("None"));
         matrixValues = null;
         nameInput.setDisable(false);
         isSettingValues = false;
@@ -455,16 +465,16 @@ public class ConvolutionKernelManagerController extends BaseController {
         heightBox.getSelectionModel().select(kernel.getHeight() + "");
         type = kernel.getType();
         if (type == Convolution_Type.BLUR) {
-            FxmlTools.setRadioSelected(typeGroup, getMessage("Blur"));
+            FxmlControl.setRadioSelected(typeGroup, getMessage("Blur"));
         } else if (type == Convolution_Type.SHARPNEN) {
-            FxmlTools.setRadioSelected(typeGroup, getMessage("Sharpen"));
+            FxmlControl.setRadioSelected(typeGroup, getMessage("Sharpen"));
         } else if (type == Convolution_Type.EMBOSS) {
-            FxmlTools.setRadioSelected(typeGroup, getMessage("Emboss"));
+            FxmlControl.setRadioSelected(typeGroup, getMessage("Emboss"));
             grayCheck.setDisable(false);
         } else if (type == Convolution_Type.EDGE_DETECTION) {
-            FxmlTools.setRadioSelected(typeGroup, getMessage("EdgeDetection"));
+            FxmlControl.setRadioSelected(typeGroup, getMessage("EdgeDetection"));
         } else {
-            FxmlTools.setRadioSelected(typeGroup, getMessage("None"));
+            FxmlControl.setRadioSelected(typeGroup, getMessage("None"));
         }
         if (kernel.getEdge() == ConvolutionKernel.Edge_Op.COPY) {
             keepRadio.fire();
@@ -507,25 +517,32 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         task = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    List<String> names = new ArrayList<>();
-                    for (ConvolutionKernel k : selected) {
-                        names.add(k.getName());
-                    }
-                    TableConvolutionKernel.delete(names);
-                    TableFloatMatrix.delete(names);
+                ok = false;
+                List<String> names = new ArrayList<>();
+                for (ConvolutionKernel k : selected) {
+                    names.add(k.getName());
+                }
+                TableConvolutionKernel.delete(names);
+                TableFloatMatrix.delete(names);
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             loadList();
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -551,21 +568,27 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         task = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    new TableConvolutionKernel().clear();
-                    new TableFloatMatrix().clear();
+                new TableConvolutionKernel().clear();
+                new TableFloatMatrix().clear();
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             loadList();
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -646,21 +669,28 @@ public class ConvolutionKernelManagerController extends BaseController {
     @FXML
     private void examplesAction(ActionEvent event) {
         task = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    TableConvolutionKernel.writeExamples();
-                    TableFloatMatrix.writeExamples();
+                TableConvolutionKernel.writeExamples();
+                TableFloatMatrix.writeExamples();
+
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             loadList();
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -695,9 +725,9 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         ImageManufactureEffectsController c
-                = (ImageManufactureEffectsController) openStage(CommonValues.ImageManufactureEffectsFxml, false);
-        c.setParentController(getMyController());
-        c.setParentFxml(getMyFxml());
+                = (ImageManufactureEffectsController) openStage(CommonValues.ImageManufactureEffectsFxml);
+        c.parentController = myController;
+        c.parentFxml = myFxml;
         c.loadImage(new Image("img/p3.png"));
         c.setTab("effects");
         c.showRef();
@@ -711,22 +741,29 @@ public class ConvolutionKernelManagerController extends BaseController {
             return;
         }
         task = new Task<Void>() {
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
 
-                    TableConvolutionKernel.write(kernel);
-                    TableFloatMatrix.write(name, matrixValues);
+                TableConvolutionKernel.write(kernel);
+                TableFloatMatrix.write(name, matrixValues);
+
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             loadList();
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);

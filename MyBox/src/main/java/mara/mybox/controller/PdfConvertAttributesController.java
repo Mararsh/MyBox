@@ -13,10 +13,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import mara.mybox.controller.base.ImageAttributesBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlTools;
+import mara.mybox.fxml.FxmlControl;
 
 /**
  * @Author Mara
@@ -29,11 +31,13 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
     private final String PdfConvertDensityKey, PdfConvertDensityInputKey;
 
     @FXML
-    protected HBox pdfConvertAttributesPane;
+    public HBox pdfConvertAttributesPane;
     @FXML
-    protected ToggleGroup DensityGroup;
+    public ToggleGroup DensityGroup;
     @FXML
-    protected TextField densityInput;
+    public TextField densityInput;
+    @FXML
+    public Pane pdfConvertAttributes;
 
     public PdfConvertAttributesController() {
         PdfConvertDensityKey = "PdfConvertDensityKey";
@@ -41,7 +45,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
 
         DensityGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -50,7 +54,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
                 checkDensity();
             }
         });
-        FxmlTools.setRadioSelected(DensityGroup, AppVaribles.getUserConfigValue(PdfConvertDensityKey, "72dpi"));
+        FxmlControl.setRadioSelected(DensityGroup, AppVaribles.getUserConfigValue(PdfConvertDensityKey, "72dpi"));
         checkDensity();
         densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -60,7 +64,7 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             }
         });
         densityInput.setText(AppVaribles.getUserConfigValue(PdfConvertDensityInputKey, null));
-        FxmlTools.setNonnegativeValidation(densityInput);
+        FxmlControl.setNonnegativeValidation(densityInput);
 
     }
 
@@ -82,43 +86,19 @@ public class PdfConvertAttributesController extends ImageAttributesBaseControlle
             }
             if (getMessage("InputValue").equals(s)) {
                 if (inputValue > 0) {
-                    attributes.setDensity(inputValue);
+                    imageAttributes.setDensity(inputValue);
                     AppVaribles.setUserConfigValue(PdfConvertDensityKey, s);
                 } else {
-                    densityInput.setStyle(FxmlTools.badStyle);
+                    densityInput.setStyle(FxmlControl.badStyle);
                 }
 
             } else {
-                attributes.setDensity(Integer.parseInt(s.substring(0, s.length() - 3)));
+                imageAttributes.setDensity(Integer.parseInt(s.substring(0, s.length() - 3)));
                 AppVaribles.setUserConfigValue(PdfConvertDensityKey, s);
             }
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    public HBox getPdfConvertAttributesPane() {
-        return pdfConvertAttributesPane;
-    }
-
-    public void setPdfConvertAttributesPane(HBox pdfConvertAttributesPane) {
-        this.pdfConvertAttributesPane = pdfConvertAttributesPane;
-    }
-
-    public ToggleGroup getDensityGroup() {
-        return DensityGroup;
-    }
-
-    public void setDensityGroup(ToggleGroup DensityGroup) {
-        this.DensityGroup = DensityGroup;
-    }
-
-    public TextField getDensityInput() {
-        return densityInput;
-    }
-
-    public void setDensityInput(TextField densityInput) {
-        this.densityInput = densityInput;
     }
 
 }

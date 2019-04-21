@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
@@ -12,10 +13,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.getMessage;
-import static mara.mybox.fxml.FxmlTools.badStyle;
-import mara.mybox.image.ImageTransform;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.value.AppVaribles;
 
 /**
  * @Author Mara
@@ -44,16 +47,18 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     }
 
     public ImageManufactureBatchTransformController() {
+        baseTitle = AppVaribles.getMessage("ImageManufactureBatchTransform");
 
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
 
+            operationBarController.startButton.disableProperty().unbind();
             operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(sourceFilesInformation))
+                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
                     .or(shearBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(angleBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
@@ -64,7 +69,7 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     }
 
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         try {
             super.initOptionsSection();
 
@@ -82,7 +87,7 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
                     "0.7", "-0.7", "0.9", "-0.9", "0.8", "-0.8", "1", "-1",
                     "1.5", "-1.5", "2", "-2");
             shearBox.getItems().addAll(shears);
-            shearBox.valueProperty().addListener(new ChangeListener<String>() {
+            shearBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkShear();
@@ -100,7 +105,7 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
 
             angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
-            angleBox.valueProperty().addListener(new ChangeListener<String>() {
+            angleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkAngle();
@@ -115,10 +120,10 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
 
     private void checkTransformType() {
         shearBox.setDisable(true);
-        shearBox.getEditor().setStyle(null);
         angleBox.setDisable(true);
-        angleBox.getEditor().setStyle(null);
         angleSlider.setDisable(true);
+        shearBox.getEditor().setStyle(null);
+        angleBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) transformGroup.getSelectedToggle();
         if (getMessage("Shear").equals(selected.getText())) {
@@ -144,10 +149,10 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     private void checkShear() {
         try {
             shearX = Float.valueOf(shearBox.getValue());
-            shearBox.getEditor().setStyle(null);
+            FxmlControl.setEditorNormal(shearBox);
         } catch (Exception e) {
             shearX = 0;
-            shearBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(shearBox);
         }
     }
 
@@ -155,10 +160,10 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             rotateAngle = Integer.valueOf(angleBox.getValue());
             angleSlider.setValue(rotateAngle);
-            angleBox.getEditor().setStyle(null);
+            FxmlControl.setEditorNormal(angleBox);
         } catch (Exception e) {
             rotateAngle = 0;
-            angleBox.getEditor().setStyle(badStyle);
+            FxmlControl.setEditorBadStyle(angleBox);
         }
     }
 
@@ -167,16 +172,16 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = ImageTransform.shearImage(source, shearX, 0);
+                target = ImageConvert.shearImage(source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = ImageTransform.verticalMirrorImage(source);
+                target = ImageConvert.verticalMirrorImage(source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = ImageTransform.horizontalMirrorImage(source);
+                target = ImageConvert.horizontalMirrorImage(source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = ImageTransform.rotateImage(source, rotateAngle);
+                target = ImageConvert.rotateImage(source, rotateAngle);
             }
 
             return target;

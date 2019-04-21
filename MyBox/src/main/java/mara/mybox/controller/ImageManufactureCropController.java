@@ -1,25 +1,30 @@
 package mara.mybox.controller;
 
+import mara.mybox.controller.base.ImageManufactureController;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.image.ImageTools;
-import mara.mybox.fxml.image.FxmlScopeTools;
-import static mara.mybox.fxml.FxmlTools.badStyle;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.image.ImageScope.ScopeType;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.data.IntRectangle;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -29,17 +34,26 @@ import mara.mybox.data.IntRectangle;
  */
 public class ImageManufactureCropController extends ImageManufactureController {
 
-    @FXML
-    protected TextField cropLeftXInput, cropLeftYInput, cropRightXInput, cropRightYInput;
+    private ScopeType cropType;
+    protected int centerX, centerY, radius;
 
+    @FXML
+    protected ToggleGroup shapeGroup;
     @FXML
     protected ToolBar cropBar;
+    @FXML
+    protected HBox setBox, colorBox;
+    @FXML
+    protected Button transparentButton, withdrawButton, clearButton, cutInsideButton;
+    @FXML
+    protected Label cropTipsLabel;
 
     public ImageManufactureCropController() {
+
     }
 
     @Override
-    protected void initializeNext2() {
+    public void initializeNext2() {
         try {
             initCommon();
             initCropTab();
@@ -55,14 +69,23 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 return;
             }
             super.initInterface();
+            tabPane.getSelectionModel().select(cropTab);
+            if (values.getImageInfo() != null
+                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
+                if (colorBox.getChildren().contains(transparentButton)) {
+                    colorBox.getChildren().remove(transparentButton);
 
-            isSettingValues = true;
-            cropRightXInput.setText((int) values.getImage().getWidth() * 3 / 4 + "");
-            cropRightYInput.setText((int) values.getImage().getHeight() * 3 / 4 + "");
-            cropLeftXInput.setText((int) values.getImage().getWidth() / 4 + "");
-            cropLeftYInput.setText((int) values.getImage().getHeight() / 4 + "");
-            isSettingValues = false;
-            checkCropValues();
+                }
+                colorPicker.setValue(Color.WHITE);
+
+            } else {
+                if (!colorBox.getChildren().contains(transparentButton)) {
+                    colorBox.getChildren().add(transparentButton);
+                }
+                colorPicker.setValue(Color.TRANSPARENT);
+
+            }
+            checkCropType();
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -73,252 +96,232 @@ public class ImageManufactureCropController extends ImageManufactureController {
     protected void initCropTab() {
         try {
 
-            cropLeftXInput.textProperty().addListener(new ChangeListener<String>() {
+            shapeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropLeftYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropRightXInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
-                }
-            });
-            cropRightYInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkCropValues();
+                public void changed(ObservableValue<? extends Toggle> ov,
+                        Toggle old_toggle, Toggle new_toggle) {
+                    checkCropType();
                 }
             });
 
-            okButton.disableProperty().bind(
-                    cropLeftXInput.styleProperty().isEqualTo(badStyle)
-                            .or(cropLeftYInput.styleProperty().isEqualTo(badStyle))
-                            .or(cropRightXInput.styleProperty().isEqualTo(badStyle))
-                            .or(cropRightYInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(cropLeftXInput.textProperty()))
-                            .or(Bindings.isEmpty(cropLeftYInput.textProperty()))
-                            .or(Bindings.isEmpty(cropRightXInput.textProperty()))
-                            .or(Bindings.isEmpty(cropRightYInput.textProperty()))
-            );
+            maskPolygonLine.getPoints().addListener(new ListChangeListener<Double>() {
+                @Override
+                public void onChanged(ListChangeListener.Change<? extends Double> change) {
+                    if (cropType == ScopeType.Polygon) {
+                        boolean closed = maskPolygonData.getSize() > 2;
+                        okButton.setDisable(!closed);
+                        cutInsideButton.setDisable(!closed);
+                    }
+                }
+            });
+
+            FxmlControl.quickTooltip(cropTipsLabel, new Tooltip(getMessage("ImageShapeTip")));
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void checkCropValues() {
-        if (isSettingValues) {
-            return;
-        }
-        boolean areaValid = true;
+    private void checkCropType() {
         try {
-            cropLeftX = Integer.valueOf(cropLeftXInput.getText());
-            if (cropLeftX >= 0 && cropLeftX < values.getCurrentImage().getWidth()) {
-                cropLeftXInput.setStyle(null);
-            } else {
-                cropLeftXInput.setStyle(badStyle);
-                areaValid = false;
+            setBox.getChildren().clear();
+            promptLabel.setText("");
+            pickColorButton.setSelected(false);
+
+            initMaskControls(false);
+            RadioButton selected = (RadioButton) shapeGroup.getSelectedToggle();
+            if (getMessage("Rectangle").equals(selected.getText())) {
+                cropType = ScopeType.Rectangle;
+                initMaskRectangleLine(true);
+                okButton.setDisable(false);
+                cutInsideButton.setDisable(false);
+
+            } else if (getMessage("Circle").equals(selected.getText())) {
+                cropType = ScopeType.Circle;
+                initMaskCircleLine(true);
+                okButton.setDisable(false);
+                cutInsideButton.setDisable(false);
+
+            } else if (getMessage("Ellipse").equals(selected.getText())) {
+                cropType = ScopeType.Ellipse;
+                initMaskEllipseLine(true);
+                okButton.setDisable(false);
+                cutInsideButton.setDisable(false);
+
+            } else if (getMessage("Polygon").equals(selected.getText())) {
+                cropType = ScopeType.Polygon;
+                setBox.getChildren().addAll(clearButton, withdrawButton);
+                initMaskPolygonLine(true);
+                okButton.setDisable(true);
+                cutInsideButton.setDisable(true);
+                promptLabel.setText(getMessage("PolygonComments"));
+
             }
+
         } catch (Exception e) {
-            cropLeftXInput.setStyle(badStyle);
-            areaValid = false;
-        }
 
-        try {
-            cropLeftY = Integer.valueOf(cropLeftYInput.getText());
-            if (cropLeftY >= 0 && cropLeftY < values.getCurrentImage().getHeight()) {
-                cropLeftYInput.setStyle(null);
-            } else {
-                cropLeftYInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropLeftYInput.setStyle(badStyle);
-            areaValid = false;
         }
-
-        try {
-            cropRightX = Integer.valueOf(cropRightXInput.getText());
-            if (cropRightX >= 0 && cropRightX < values.getCurrentImage().getWidth()) {
-                cropRightXInput.setStyle(null);
-            } else {
-                cropRightXInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropRightXInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        try {
-            cropRightY = Integer.valueOf(cropRightYInput.getText());
-            if (cropRightY >= 0 && cropRightY < values.getCurrentImage().getHeight()) {
-                cropRightYInput.setStyle(null);
-            } else {
-                cropRightYInput.setStyle(badStyle);
-                areaValid = false;
-            }
-        } catch (Exception e) {
-            cropRightYInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (cropLeftX >= cropRightX) {
-            cropRightXInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (cropLeftY >= cropRightY) {
-            cropRightYInput.setStyle(badStyle);
-            areaValid = false;
-        }
-
-        if (areaValid) {
-            indicateCropScope();
-        } else {
-            popError(getMessage("InvalidRectangle"));
-        }
-
     }
 
-    protected void indicateCropScope() {
+    @FXML
+    public void setTransparentAction() {
+        colorPicker.setValue(Color.TRANSPARENT);
+    }
+
+    @FXML
+    public void setBlackAction() {
+        colorPicker.setValue(Color.BLACK);
+    }
+
+    @FXML
+    public void setWhiteAction() {
+        colorPicker.setValue(Color.WHITE);
+    }
+
+    @FXML
+    @Override
+    public void polygonWithdrawAction() {
+        maskPolygonData.removeLast();
+        drawMaskPolygonLine();
+    }
+
+    @FXML
+    @Override
+    public void polygonClearAction() {
+        maskPolygonData.clear();
+        drawMaskPolygonLine();
+    }
+
+    @FXML
+    public void cutInsideAction() {
+        imageView.setCursor(Cursor.OPEN_HAND);
         task = new Task<Void>() {
+            private Image newImage;
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    int lineWidth = 1;
-                    if (values.getCurrentImage().getWidth() >= 200) {
-                        lineWidth = (int) values.getCurrentImage().getWidth() / 200;
-                    }
-                    final Image newImage = FxmlScopeTools.indicateRectangle(values.getCurrentImage(),
-                            Color.RED, lineWidth,
-                            new IntRectangle(cropLeftX, cropLeftY, cropRightX, cropRightY));
-                    if (task.isCancelled()) {
-                        return null;
-                    }
+
+                switch (cropType) {
+                    case Rectangle:
+                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                                maskRectangleData, colorPicker.getValue());
+                        break;
+                    case Circle:
+                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                                maskCircleData, colorPicker.getValue());
+                        break;
+                    case Ellipse:
+                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                                maskEllipseData, colorPicker.getValue());
+                        break;
+                    case Polygon:
+                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                                maskPolygonData, colorPicker.getValue());
+                        break;
+                    default:
+                        newImage = null;
+                        break;
+                }
+                if (task == null || task.isCancelled()) {
+                    return null;
+                }
+                recordImageHistory(ImageOperationType.Crop, newImage);
+
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            values.setUndoImage(imageView.getImage());
+                            values.setCurrentImage(newImage);
                             imageView.setImage(newImage);
-//                            infoAction(AppVaribles.getMessage("CropComments"));
+                            setImageChanged(true);
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    @FXML
-    @Override
-    public void selectAllAction() {
-        isSettingValues = true;
-        cropLeftXInput.setText("0");
-        cropLeftYInput.setText("0");
-        cropRightXInput.setText((int) (values.getCurrentImage().getWidth() - 1) + "");
-        cropRightYInput.setText((int) (values.getCurrentImage().getHeight() - 1) + "");
-        isSettingValues = false;
-        checkCropValues();
-    }
-
-    @FXML
-    @Override
-    public void copyAction() {
-        copyAction(values.getCurrentImage());
-    }
-
-    @FXML
-    @Override
-    public void clickImage(MouseEvent event) {
-        if (values.getCurrentImage() == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        imageView.setCursor(Cursor.HAND);
-
-        int x = (int) Math.round(event.getX() * values.getCurrentImage().getWidth() / imageView.getBoundsInLocal().getWidth());
-        int y = (int) Math.round(event.getY() * values.getCurrentImage().getHeight() / imageView.getBoundsInLocal().getHeight());
-
-        if (event.getButton() == MouseButton.SECONDARY) {
-
-            isSettingValues = true;
-            cropRightXInput.setText(x + "");
-            cropRightYInput.setText(y + "");
-            isSettingValues = false;
-
-        } else if (event.getButton() == MouseButton.PRIMARY) {
-
-            isSettingValues = true;
-            cropLeftXInput.setText(x + "");
-            cropLeftYInput.setText(y + "");
-            isSettingValues = false;
-
-        }
-
-        checkCropValues();
-
     }
 
     @FXML
     @Override
     public void okAction() {
+        cutOutsideAction();
+    }
+
+    @FXML
+    public void cutOutsideAction() {
         imageView.setCursor(Cursor.OPEN_HAND);
         task = new Task<Void>() {
+            private Image newImage;
+            private boolean ok;
+
             @Override
             protected Void call() throws Exception {
-                try {
-                    final Image newImage = ImageTools.cropImage(values.getCurrentImage(),
-                            cropLeftX, cropLeftY, cropRightX, cropRightY);
-                    if (task.isCancelled()) {
-                        return null;
-                    }
-                    recordImageHistory(ImageOperationType.Crop, newImage);
+
+                switch (cropType) {
+                    case Rectangle:
+                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                                maskRectangleData, colorPicker.getValue());
+                        break;
+                    case Circle:
+                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                                maskCircleData, colorPicker.getValue());
+                        break;
+                    case Ellipse:
+                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                                maskEllipseData, colorPicker.getValue());
+                        break;
+                    case Polygon:
+                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                                maskPolygonData, colorPicker.getValue());
+                        break;
+                    default:
+                        newImage = null;
+                        break;
+                }
+                if (task == null || task.isCancelled()) {
+                    return null;
+                }
+                recordImageHistory(ImageOperationType.Crop, newImage);
+
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                if (ok) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            values.setUndoImage(values.getCurrentImage());
+                            values.setUndoImage(imageView.getImage());
                             values.setCurrentImage(newImage);
                             imageView.setImage(newImage);
                             setImageChanged(true);
-
-                            isSettingValues = true;
-                            cropRightXInput.setText((int) (values.getCurrentImage().getWidth() - 1) + "");
-                            cropRightYInput.setText((int) (values.getCurrentImage().getHeight() - 1) + "");
-                            cropLeftXInput.setText("0");
-                            cropLeftYInput.setText("0");
-                            isSettingValues = false;
-                            setBottomLabel();
-
+                            resetMaskControls();
                         }
                     });
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                return null;
             }
         };
         openHandlingStage(task, Modality.WINDOW_MODAL);
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+
     }
 
 }

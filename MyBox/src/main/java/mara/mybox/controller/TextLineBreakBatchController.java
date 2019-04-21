@@ -23,8 +23,13 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
     @FXML
     protected ToggleGroup lbGroup;
 
+    public TextLineBreakBatchController() {
+        baseTitle = AppVaribles.getMessage("TextLineBreakBatch");
+
+    }
+
     @Override
-    protected void initOptionsSection() {
+    public void initOptionsSection() {
         super.initOptionsSection();
 
         lbGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -65,6 +70,8 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
             targetInformation.setFile(targetFile);
             targetInformation.setCharset(sourceInformation.getCharset());
             if (TextTools.convertLineBreak(sourceInformation, targetInformation)) {
+                actualParameters.finalTargetName = targetFile.getAbsolutePath();
+                targetFiles.add(targetFile);
                 return AppVaribles.getMessage("Successful");
             } else {
                 return AppVaribles.getMessage("Failed");
