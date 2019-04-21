@@ -429,6 +429,7 @@ MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
 
 ![About](https://mararsh.github.io/MyBox/1.png)
 
+![About](https://mararsh.github.io/MyBox/2.png)
 
 
 
