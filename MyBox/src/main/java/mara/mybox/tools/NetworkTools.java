@@ -37,6 +37,7 @@ public class NetworkTools {
     }
 
     public static boolean checkWeiboPassport() {
+
         String passport;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("windows")) {

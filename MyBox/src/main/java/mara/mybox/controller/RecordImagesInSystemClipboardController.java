@@ -21,7 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import mara.mybox.fxml.ImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -32,7 +31,6 @@ import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.ImageAttributes;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.tools.ValueTools;
@@ -124,8 +122,6 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 }
             });
             checkThreshold();
-
-            FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
 
         } catch (Exception e) {
             logger.debug(e.toString());

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageSourcesController;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +115,7 @@ public class ImageGifEditerController extends ImageSourcesController {
             });
 
             saveButton.disableProperty().bind(
-                    Bindings.isEmpty(sourceImages)
+                    Bindings.isEmpty(tableData)
                             .or(widthInput.styleProperty().isEqualTo(badStyle))
                             .or(heightInput.styleProperty().isEqualTo(badStyle))
             );
@@ -177,7 +176,7 @@ public class ImageGifEditerController extends ImageSourcesController {
 
                 @Override
                 protected Void call() throws Exception {
-                    ret = ImageGifFile.writeImages(sourceImages, outFile,
+                    ret = ImageGifFile.writeImages(tableData, outFile,
                             interval, loopCheck.isSelected(), keepSize, width, height);
 
                     return null;

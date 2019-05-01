@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import mara.mybox.controller.base.ImageBatchBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
@@ -33,8 +32,6 @@ public class ImageConverterController extends ImageBatchBaseController {
 
     @FXML
     public ImageConverterAttributesController imageConverterAttributesController;
-    @FXML
-    protected Button viewButton;
 
     public ImageConverterController() {
         baseTitle = AppVaribles.getMessage("ImageConverter");
@@ -49,7 +46,7 @@ public class ImageConverterController extends ImageBatchBaseController {
             imageConverterAttributesController.parentFxml = myFxml;
             imageConverterAttributesController.originalButton.setDisable(true);
 
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceFileInput.textProperty())
                             .or(sourceFileInput.styleProperty().isEqualTo(badStyle))
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -66,7 +63,7 @@ public class ImageConverterController extends ImageBatchBaseController {
     }
 
     @FXML
-    protected void showImage(ActionEvent event) {
+    protected void viewAction(ActionEvent event) {
         FxmlStage.openImageViewer(getClass(), null, sourceFile);
     }
 

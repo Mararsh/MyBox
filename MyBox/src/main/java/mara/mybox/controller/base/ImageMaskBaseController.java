@@ -22,6 +22,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoublePenLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
@@ -45,6 +46,10 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
     public DoubleEllipse maskEllipseData;
     public DoublePolygon maskPolygonData;
     public DoublePolyline maskPolylineData;
+    public DoublePolyline maskLineData;
+    public List<Line> maskLineLines;
+    public DoublePenLines maskPenData;
+    public List<List<Line>> maskPenLines;
 
     public String ImageRulerXKey, ImageRulerYKey, ImagePopCooridnateKey;
 
@@ -385,6 +390,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
         initMaskEllipseLine(show);
         initMaskPolygonLine(show);
         initMaskPolyline(show);
+        initMaskline(show);
+        initMaskPenlines(show);
         drawMaskRulerX();
         drawMaskRulerY();
     }
@@ -405,6 +412,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
         if (maskPolyline != null && maskPolyline.isVisible()) {
             initMaskPolyline(true);
         }
+        initMaskline(true);
+        initMaskPenlines(true);
         drawMaskRulerX();
         drawMaskRulerY();
     }
@@ -840,6 +849,137 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
             return false;
         }
 
+    }
+
+    public void initMaskline(boolean show) {
+        if (imageView == null || maskPane == null) {
+            return;
+        }
+        if (show && imageView.getImage() != null) {
+            maskLineLines = new ArrayList();
+            maskLineData = new DoublePolyline();
+        } else {
+            if (maskLineLines != null) {
+                maskPane.getChildren().removeAll(maskLineLines);
+                maskLineLines.clear();
+            }
+            if (maskLineData != null) {
+                maskLineData.clear();
+            }
+        }
+
+    }
+
+    // Polyline of Java shows weird results. So I just use lines directly.
+    public boolean drawMaskLine(double strokeWidth, Color strokeColor, boolean dotted) {
+        maskPane.getChildren().removeAll(maskLineLines);
+        maskLineLines.clear();
+        polygonP1.setOpacity(0);
+        int size = maskLineData.getSize();
+        if (size == 0) {
+            return true;
+        }
+
+        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        if (size == 1) {
+            polygonP1.setOpacity(1);
+            DoublePoint p1 = maskLineData.get(0);
+            int anchorHW = AppVaribles.getUserConfigInt("AnchorWidth", 10) / 2;
+            polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
+            polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+        } else if (size > 1) {
+            double lastx = -1, lasty = -1, thisx, thisy;
+            for (DoublePoint p : maskLineData.getPoints()) {
+                thisx = p.getX() * xRatio;
+                thisy = p.getY() * yRatio;
+                if (lastx >= 0) {
+                    Line line = new Line(lastx, lasty, thisx, thisy);
+                    line.setStroke(strokeColor);
+                    line.setStrokeWidth(strokeWidth);
+                    line.getStrokeDashArray().clear();
+                    if (dotted) {
+                        line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
+                    }
+                    maskLineLines.add(line);
+                    maskPane.getChildren().add(line);
+                    line.setLayoutX(imageView.getLayoutX());
+                    line.setLayoutY(imageView.getLayoutY());
+                }
+                lastx = thisx;
+                lasty = thisy;
+            }
+        }
+        return true;
+    }
+
+    public void initMaskPenlines(boolean show) {
+        if (imageView == null || maskPane == null) {
+            return;
+        }
+        if (maskPenLines != null) {
+            for (List<Line> penline : maskPenLines) {
+                maskPane.getChildren().removeAll(penline);
+            }
+            maskPenLines.clear();
+        }
+        if (maskPenData != null) {
+            maskPenData.clear();
+        }
+        if (show) {
+            maskPenLines = new ArrayList();
+            maskPenData = new DoublePenLines();
+        }
+
+    }
+
+    public boolean drawMaskPenLines(double strokeWidth, Color strokeColor, boolean dotted) {
+        for (List<Line> penline : maskPenLines) {
+            maskPane.getChildren().removeAll(penline);
+        }
+        maskPenLines.clear();
+        polygonP1.setOpacity(0);
+        int size = maskPenData.getPointsSize();
+        if (size == 0) {
+            return true;
+        }
+        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        if (size == 1) {
+            polygonP1.setOpacity(1);
+            DoublePoint p1 = maskPenData.getPoint(0);
+            int anchorHW = AppVaribles.getUserConfigInt("AnchorWidth", 10) / 2;
+            polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
+            polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+        } else if (size > 1) {
+            double lastx = -1, lasty = -1, thisx, thisy;
+            for (List<DoublePoint> lineData : maskPenData.getLines()) {
+                List<Line> penLine = new ArrayList();
+                lastx = -1;
+                for (DoublePoint p : lineData) {
+                    thisx = p.getX() * xRatio;
+                    thisy = p.getY() * yRatio;
+                    if (lastx >= 0) {
+                        Line line = new Line(lastx, lasty, thisx, thisy);
+                        line.setStroke(strokeColor);
+                        line.setStrokeWidth(strokeWidth);
+                        line.getStrokeDashArray().clear();
+                        if (dotted) {
+                            line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
+                        }
+                        penLine.add(line);
+                        maskPane.getChildren().add(line);
+                        line.setLayoutX(imageView.getLayoutX());
+                        line.setLayoutY(imageView.getLayoutY());
+                    }
+                    lastx = thisx;
+                    lasty = thisy;
+                }
+                maskPenLines.add(penLine);
+            }
+
+        }
+        return true;
     }
 
     @FXML

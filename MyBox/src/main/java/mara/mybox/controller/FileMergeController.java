@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BatchBaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +25,7 @@ import mara.mybox.tools.ByteTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileMergeController extends BatchBaseController {
+public class FileMergeController extends FilesBatchController {
 
     public FileMergeController() {
         baseTitle = AppVaribles.getMessage("FileMerge");
@@ -53,9 +52,9 @@ public class FileMergeController extends BatchBaseController {
                 .or(targetFileInput.styleProperty().isEqualTo(badStyle))
         );
 
-        operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
+        startButton.disableProperty().bind(Bindings.isEmpty(targetFileInput.textProperty())
                 .or(targetFileInput.styleProperty().isEqualTo(badStyle))
-                .or(Bindings.isEmpty(sourceFilesInformation))
+                .or(Bindings.isEmpty(tableData))
         );
 
     }
@@ -88,7 +87,7 @@ public class FileMergeController extends BatchBaseController {
     @Override
     public void doCurrentProcess() {
         try {
-            if (targetFile == null || sourceFilesInformation.isEmpty()) {
+            if (targetFile == null || tableData.isEmpty()) {
                 return;
             }
             currentParameters.startTime = new Date();
@@ -108,7 +107,7 @@ public class FileMergeController extends BatchBaseController {
                                 if (isCancelled()) {
                                     break;
                                 }
-                                FileInformation d = sourceFilesInformation.get(sourcesIndice.get(currentParameters.currentIndex));
+                                FileInformation d = tableData.get(sourcesIndice.get(currentParameters.currentIndex));
                                 try (FileInputStream inputStream
                                         = new FileInputStream(d.getFile())) {
                                     while ((bufLen = inputStream.read(buf)) != -1) {
@@ -119,7 +118,7 @@ public class FileMergeController extends BatchBaseController {
                                     }
                                 }
                                 d.setHandled(AppVaribles.getMessage("Successful"));
-                                filesTableView.refresh();
+                                tableView.refresh();
                                 currentParameters.currentIndex++;
                                 currentParameters.currentTotalHandled++;
                                 updateProgress(currentParameters.currentIndex, sourcesIndice.size());

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BatchBaseController;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -36,7 +35,7 @@ import mara.mybox.value.CommonValues;
  * @Description
  * @License Apache License Version 2.0
  */
-public class TextEncodingBatchController extends BatchBaseController {
+public class TextEncodingBatchController extends FilesBatchController {
 
     protected boolean autoDetermine;
     protected FileEditInformation sourceInformation, targetInformation;
@@ -58,9 +57,9 @@ public class TextEncodingBatchController extends BatchBaseController {
     @Override
     public void initializeNext2() {
         try {
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
             logger.debug(e.toString());

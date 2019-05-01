@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import mara.mybox.data.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.data.ImageAttributes;
@@ -40,7 +41,7 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
     @Override
     public void initializeNext2() {
         try {
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -59,10 +60,11 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
             previewButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(pdfConvertAttributesController.rawSelect.selectedProperty())
-                            .or(operationBarController.startButton.disableProperty())
-                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(startButton.disableProperty())
+                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
             );
+            ControlStyle.setStyle(previewButton);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -126,9 +128,10 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
                             }
 
                             int count = handleCurrentFile();
-                            markFileHandled(currentParameters.currentIndex,
-                                    MessageFormat.format(AppVaribles.getMessage("TotalConvertedPagesCount"), count));
-
+                            if (currentParameters.isBatch) {
+                                markFileHandled(currentParameters.currentIndex,
+                                        MessageFormat.format(AppVaribles.getMessage("TotalConvertedPagesCount"), count));
+                            }
                             if (isCancelled() || isPreview) {
                                 break;
                             }
@@ -200,8 +203,8 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
                     updateInterface("Failed");
                 }
             };
-            operationBarController.progressValue.textProperty().bind(task.messageProperty());
-            operationBarController.progressBar.progressProperty().bind(task.progressProperty());
+            progressValue.textProperty().bind(task.messageProperty());
+            progressBar.progressProperty().bind(task.progressProperty());
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();

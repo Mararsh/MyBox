@@ -64,7 +64,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <content>
                                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                                             <content>
-                                                <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                                             </content>
                                         </ScrollPane>
                                     </content>
@@ -120,7 +120,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     <children>
                                                         <Label text="%FilesPath" />
                                                         <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" text="%Select..." />
+                                                        <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconFolder.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">

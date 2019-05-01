@@ -63,11 +63,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <Font size="24.0" />
                     </font>
                 </Label>
-            <Label fx:id="langLabel" onMouseEntered="#showLanguageMenu" text="Language/语言">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </Label>
+                <Label fx:id="langLabel" onMouseEntered="#showLanguageMenu" text="Language/语言">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Label>
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -192,7 +192,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </VBox>
                     </children>
                 </GridPane>
-            <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
+                <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
             </children>
         </VBox>
     </center>

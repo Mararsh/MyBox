@@ -1,5 +1,6 @@
 package mara.mybox.controller.base;
 
+import mara.mybox.controller.FilesBatchController;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -15,7 +16,7 @@ import mara.mybox.data.VisitHistory;
  * @Description
  * @License Apache License Version 2.0
  */
-public abstract class ImageBatchBaseController extends BatchBaseController {
+public abstract class ImageBatchBaseController extends FilesBatchController {
 
     public ImageInformation imageInformation;
 

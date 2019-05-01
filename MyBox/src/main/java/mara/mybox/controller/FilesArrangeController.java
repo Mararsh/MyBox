@@ -24,7 +24,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import mara.mybox.controller.base.BatchBaseController;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -41,7 +40,7 @@ import static mara.mybox.value.AppVaribles.logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesArrangeController extends BatchBaseController {
+public class FilesArrangeController extends FilesBatchController {
 
     protected String lastFileName;
     protected Date startTime;
@@ -106,7 +105,7 @@ public class FilesArrangeController extends BatchBaseController {
             initDirTab();
             initConditionTab();
 
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(sourcePathInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(sourcePathInput.styleProperty().isEqualTo(badStyle))
@@ -114,7 +113,7 @@ public class FilesArrangeController extends BatchBaseController {
             );
 
             operationBarController.openTargetButton.disableProperty().bind(
-                    operationBarController.startButton.disableProperty()
+                    startButton.disableProperty()
             );
 
         } catch (Exception e) {
@@ -371,8 +370,8 @@ public class FilesArrangeController extends BatchBaseController {
                             operationBarController.statusLabel.setText(getMessage("Handling...") + " "
                                     + getMessage("StartTime")
                                     + ": " + DateTools.datetimeToString(startTime));
-                            operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                            operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                            startButton.setText(AppVaribles.getMessage("Cancel"));
+                            startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
                                     cancelProcess(event);
@@ -395,8 +394,8 @@ public class FilesArrangeController extends BatchBaseController {
                         case "Done":
                         default:
                             if (paused) {
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Cancel"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                startButton.setText(AppVaribles.getMessage("Cancel"));
+                                startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
                                         cancelProcess(event);
@@ -413,8 +412,8 @@ public class FilesArrangeController extends BatchBaseController {
                                 });
 
                             } else {
-                                operationBarController.startButton.setText(AppVaribles.getMessage("Start"));
-                                operationBarController.startButton.setOnAction(new EventHandler<ActionEvent>() {
+                                startButton.setText(AppVaribles.getMessage("Start"));
+                                startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
                                         startAction();
@@ -492,7 +491,7 @@ public class FilesArrangeController extends BatchBaseController {
     @Override
     public void openTarget(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new File(targetPathInput.getText()).toURI());
+           browseURI(new File(targetPathInput.getText()).toURI());
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -686,7 +685,7 @@ public class FilesArrangeController extends BatchBaseController {
     }
 
     @FXML
-    protected void clearLogs(ActionEvent event) {
+    protected void clearAction(ActionEvent event) {
         logsTextArea.setText("");
     }
 

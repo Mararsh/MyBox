@@ -16,7 +16,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -56,10 +55,10 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(shadowBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
@@ -83,9 +82,7 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             });
             shadowBox.getSelectionModel().select(0);
 
-            Tooltip tips = new Tooltip("1~100");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(perBox, tips);
+            FxmlControl.quickTooltip(perBox, new Tooltip("1~100"));
 
             perBox.getItems().addAll(Arrays.asList("2", "1", "3", "5", "4", "6", "8", "7", "10", "9"));
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -115,8 +112,6 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
                     AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
                 }
             });
-
-            FxmlControl.quickTooltip(preAlphaCheck, new Tooltip(getMessage("PremultipliedAlphaTips")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -153,7 +148,6 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
                 FxmlControl.setEditorBadStyle(perBox);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
             percent = 15;
             FxmlControl.setEditorBadStyle(perBox);
         }

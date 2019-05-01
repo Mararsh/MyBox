@@ -10,8 +10,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -23,9 +21,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.data.DoubleRectangle;
 import static mara.mybox.value.AppVaribles.logger;
@@ -35,6 +31,7 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.ImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
 
@@ -50,19 +47,23 @@ public class ImageManufactureSizeController extends ImageManufactureController {
     protected int width, height;
     protected boolean noRatio;
     protected float scale = 1.0f;
-    protected CheckBox keepRatioCheck;
-    protected Label label1, label2;
-    protected TextField widthInput, heightInput;
-    protected ChoiceBox ratioBox;
-    protected ComboBox scaleBox;
-    protected Button originalButton, calculatorButton;
 
     @FXML
     protected ToggleGroup pixelsGroup;
     @FXML
     protected HBox setBox;
     @FXML
-    protected Label promptLabel;
+    protected ChoiceBox ratioBox;
+    @FXML
+    protected ComboBox scaleBox;
+    @FXML
+    protected Button originalButton, calculatorButton;
+    @FXML
+    protected TextField widthInput, heightInput;
+    @FXML
+    protected Label label1, label2;
+    @FXML
+    protected CheckBox keepRatioCheck;
 
     public enum SizeType {
         Dragging, Scale, Pixels
@@ -106,11 +107,23 @@ public class ImageManufactureSizeController extends ImageManufactureController {
 
     protected void initSizeTab() {
         try {
+
             attributes = new ImageAttributes();
-            ratioBox = new ChoiceBox();
-            widthInput = new TextField();
-            heightInput = new TextField();
-            keepRatioCheck = new CheckBox(getMessage("KeepRatio"));
+
+            widthInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkPixelsWidth();
+                }
+            });
+            heightInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    checkPixelsHeight();
+                }
+            });
 
             ratioBox.getItems().addAll(Arrays.asList(
                     getMessage("BaseOnWidth"), getMessage("BaseOnHeight"),
@@ -125,28 +138,6 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             });
             ratioBox.getSelectionModel().select(0);
 
-            label1 = new Label(getMessage("Width"));
-
-            widthInput.setPrefWidth(100);
-            widthInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkPixelsWidth();
-                }
-            });
-
-            label2 = new Label(getMessage("Height"));
-
-            heightInput.setPrefWidth(100);
-            heightInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkPixelsHeight();
-                }
-            });
-
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
@@ -154,7 +145,6 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 }
             });
 
-            originalButton = new Button(getMessage("OriginalSize"));
             originalButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -169,28 +159,19 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 }
             });
 
-            calculatorButton = new Button(getMessage("PixelsCalculator"));
             calculatorButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     try {
-                        attributes.setKeepRatio(keepRatioCheck.isSelected());
-                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.currentBundle);
-                        Pane pane = fxmlLoader.load();
-                        final PixelsCalculationController controller = fxmlLoader.getController();
-                        Stage stage = new Stage();
-                        controller.myStage = stage;
-                        controller.setSource(attributes, widthInput, heightInput);
+                        final PixelsCalculationController controller
+                                = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                                        CommonValues.PixelsCalculatorFxml,
+                                        true, Modality.WINDOW_MODAL, null);
 
-                        Scene scene = new Scene(pane);
-                        stage.initModality(Modality.WINDOW_MODAL);
-                        stage.initOwner(getMyStage());
-                        stage.setTitle(AppVaribles.getMessage("PixelsCalculator"));
-                        stage.getIcons().add(CommonValues.AppIcon);
-                        stage.setScene(scene);
-                        stage.show();
+                        attributes.setKeepRatio(keepRatioCheck.isSelected());
+                        controller.setSource(attributes, widthInput, heightInput);
                         noRatio = true;
-                        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                        controller.myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                             @Override
                             public void handle(WindowEvent event) {
                                 noRatio = false;
@@ -206,9 +187,6 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 }
             });
 
-            scaleBox = new ComboBox();
-            scaleBox.setPrefWidth(100);
-            scaleBox.setEditable(true);
             scaleBox.getItems().addAll(Arrays.asList("0.5", "2.0", "0.8", "0.1", "1.5", "3.0", "10.0", "0.01", "5.0", "0.3"));
             scaleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -267,7 +245,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             if (getMessage("AdjustByDragging").equals(selected.getText())) {
                 sizeType = SizeType.Dragging;
                 scaleBox.setDisable(false);
-                setBox.getChildren().addAll(keepRatioCheck);
+                setBox.getChildren().addAll(okButton, keepRatioCheck);
                 keepRatioCheck.setSelected(true);
                 okButton.setVisible(false);
                 initMaskRectangleLine(true);

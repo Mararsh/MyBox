@@ -80,10 +80,10 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(Bindings.isEmpty(waterInput.textProperty()))
                     .or(waterXInput.styleProperty().isEqualTo(badStyle))
                     .or(waterYInput.styleProperty().isEqualTo(badStyle))

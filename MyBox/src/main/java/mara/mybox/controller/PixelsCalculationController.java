@@ -22,7 +22,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert.KeepRatioType;
@@ -100,8 +99,6 @@ public class PixelsCalculationController extends BaseController {
                     recalculate();
                 }
             });
-
-            FxmlControl.quickTooltip(closeButton, new Tooltip("ENTER"));
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -50,6 +50,7 @@ import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -100,11 +101,10 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     protected Label editLabel, bomLabel, pageLabel, charsetLabel, selectionLabel;
     @FXML
-    protected Button createButton, charactersButton, linesButton, recoverButton,
-            redoButton, undoButton, cutButton, pasteButton,
+    protected Button charactersButton, linesButton,
             findFirstButton, findPreviousButton, findNextButton, findLastButton, countButton,
             replaceButton, replaceAllButton, filterButton,
-            pageGoButton, locateObjectButton, locateLineButton;
+            locateObjectButton, locateLineButton;
     @FXML
     protected TextField fromInput, toInput, pageSizeInput, pageInput, filterInput, findInput, replaceInput,
             currentLineBreak, objectNumberInput, lineInput;
@@ -196,18 +196,17 @@ public abstract class FileEditerController extends BaseController {
 
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        if (okButton != null) {
+            FxmlControl.quickTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+        }
+
+    }
+
     protected void initEditBar() {
         try {
-
-            FxmlControl.quickTooltip(pasteButton, new Tooltip("CTRL+v"));
-
-            FxmlControl.quickTooltip(redoButton, new Tooltip("CTRL+y"));
-
-            FxmlControl.quickTooltip(undoButton, new Tooltip("CTRL+z"));
-
-            FxmlControl.quickTooltip(cutButton, new Tooltip("CTRL+x"));
-
-            FxmlControl.quickTooltip(recoverButton, new Tooltip("CTRL+r"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -223,31 +222,6 @@ public abstract class FileEditerController extends BaseController {
                 return;
             }
             switch (key) {
-                // TextArea itself supports these shortcuts.
-//                case "v":
-//                case "V":
-//                    if (mainArea.isFocused() && !pasteButton.isDisabled()) {
-//                        pasteAction();
-//                    }
-//                    break;
-//                case "z":
-//                case "Z":
-//                    if (mainArea.isFocused() && !undoButton.isDisabled()) {
-//                        undoAction();
-//                    }
-//                    break;
-//                case "y":
-//                case "Y":
-//                    if (mainArea.isFocused() && !redoButton.isDisabled()) {
-//                        redoAction();
-//                    }
-//                    break;
-//                case "x":
-//                case "X":
-//                    if (mainArea.isFocused() && !cutButton.isDisabled()) {
-//                        cutAction();
-//                    }
-//                    break;
                 case "r":
                 case "R":
                     if (mainArea.isFocused() && !recoverButton.isDisabled()) {
@@ -636,26 +610,6 @@ public abstract class FileEditerController extends BaseController {
     protected void initReplaceTab() {
         try {
 
-            Tooltip tips = new Tooltip("CTRL+f");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(findFirstButton, tips);
-
-            tips = new Tooltip("CTRL+l");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(findLastButton, tips);
-
-            tips = new Tooltip("CTRL+n");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(findNextButton, tips);
-
-            tips = new Tooltip("CTRL+p");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(findPreviousButton, tips);
-
-            tips = new Tooltip("CTRL+e");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(replaceButton, tips);
-
             findGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -789,9 +743,6 @@ public abstract class FileEditerController extends BaseController {
                     if (!isSettingValues) {
                         setSecondAreaSelection();
                         boolean none = (newValue.getLength() == 0);
-                        deleteButton.setDisable(none);
-                        cutButton.setDisable(none);
-                        copyButton.setDisable(none);
                         IndexRange range = mainArea.getSelection();
                         int start, len;
                         if (editType == Edit_Type.Text) {
@@ -855,14 +806,14 @@ public abstract class FileEditerController extends BaseController {
             if (v > 0 && v <= sourceInformation.getPagesNumber()) {
                 currentPageTmp = v;
                 pageInput.setStyle(null);
-                pageGoButton.setDisable(false);
+                goButton.setDisable(false);
             } else {
                 pageInput.setStyle(badStyle);
-                pageGoButton.setDisable(true);
+                goButton.setDisable(true);
             }
         } catch (Exception e) {
             pageInput.setStyle(badStyle);
-            pageGoButton.setDisable(true);
+            goButton.setDisable(true);
         }
     }
 
@@ -942,108 +893,8 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     @Override
-    public void copyAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!copyButton.isDisabled()) {
-                mainArea.copy();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void pasteAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!pasteButton.isDisabled()) {
-                mainArea.paste();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void cutAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!cutButton.isDisabled()) {
-                mainArea.cut();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    @Override
-    public void deleteAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!deleteButton.isDisabled()) {
-                mainArea.deleteText(mainArea.getSelection());
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    @Override
-    public void selectAllAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!selectAllButton.isDisabled()) {
-                mainArea.selectAll();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void redoAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!redoButton.isDisabled()) {
-                mainArea.redo();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void undoAction() {
-        if (!mainArea.isFocused()) {
-            return;
-        }
-        try {
-            if (!undoButton.isDisabled()) {
-                mainArea.undo();
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    @FXML
-    protected void recoverAction() {
-        if (!mainArea.isFocused()) {
+    public void recoverAction() {
+        if (!mainArea.isFocused() && !recoverButton.isFocused()) {
             return;
         }
         try {
@@ -2352,7 +2203,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void saveAsAction() {
+    @Override
+    public void saveAsAction() {
         final FileChooser fileChooser = new FileChooser();
         File path = AppVaribles.getUserConfigPath(sourcePathKey);
         if (path.exists()) {
@@ -2425,7 +2277,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @FXML
-    protected void createAction() {
+    @Override
+    public void createAction() {
         try {
             if (!checkSavingForNextAction()) {
                 return;

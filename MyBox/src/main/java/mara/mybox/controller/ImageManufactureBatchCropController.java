@@ -42,9 +42,9 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(leftXInput.styleProperty().isEqualTo(badStyle))
                     .or(leftYInput.styleProperty().isEqualTo(badStyle))
                     .or(rightXInput.styleProperty().isEqualTo(badStyle))

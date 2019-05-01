@@ -10,12 +10,11 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -39,7 +38,7 @@ public class ImageManufactureMosaicController extends ImageManufactureController
     @FXML
     private ToggleGroup shapeGroup, typeGroup;
     @FXML
-    private Label shapeTipsLabel;
+    private ImageView shapeTipsView;
     @FXML
     private ComboBox<String> intensityBox;
     @FXML
@@ -125,8 +124,6 @@ public class ImageManufactureMosaicController extends ImageManufactureController
                     }
                 }
             });
-
-            FxmlControl.quickTooltip(shapeTipsLabel, new Tooltip(getMessage("ImageShapeTip")));
 
             okButton.disableProperty().bind(
                     intensityBox.getEditor().styleProperty().isEqualTo(badStyle)

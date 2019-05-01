@@ -41,19 +41,20 @@
 <p class="p3">Download</p>
 <p class="paragraph">Packages of each version have been uploaded at Release directory now. You can find them by clicking 
 <a href="https://github.com/Mararsh/MyBox/releases" target=_Blank> "releases"</a> tab in main page of this project. </p>
-<p class="paragraph">EXE package <a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-exe.zip"> MyBox-5.0-exe.zip</a> is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. </p>
-<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-jar.zip"> MyBox-5.0-jar.zip</a></p>
+<p class="paragraph">EXE package <a href="https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-exe.zip"> MyBox-5.1-exe.zip</a> is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. </p>
+<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-jar.zip"> MyBox-5.1-jar.zip</a></p>
 
 <p class="p3">Launch</p>
 <p class="paragraph">Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.</p>
 
 <p class="paragraph">Run following command to launch this program with Jar package:</p>
-<pre><code>                   java   -jar   MyBox-5.0.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-5.1.jar</code></pre>
 <p class="paragraph">A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
-<pre><code>                   java   -jar   MyBox-5.0.jar  /tmp/a1.jpg</code></pre>
+<pre><code>                   java   -jar   MyBox-5.1.jar  /tmp/a1.jpg</code></pre>
 
 <p class="p3">Limitation</p>
 <p class="paragraph">MyBox.exe can not be lanuched under path including non-English characters.</p>
+<p class="paragraph">Java 11 has changed a lot, so MyBox may not work on Java env higher than 10. Migration will be done later.</p>
 
 
 <p class="p1" >Resource Addresses</p>
@@ -75,13 +76,13 @@
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf</a></p>
-<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 5.0. Its features are mentioned below in summary.</p>
+<p class="paragraph">Current version is 5.1. Its features are mentioned below in summary.</p>
 <p class="p2" >Cross-platform</p>
-<p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java.</p>
+<p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 8/9/10.</p>
 <p class="p2" >Internationalized</p>
 <p class="paragraph">All codes of MyBox are internationalized. User can switch language in time.</p>
 <p class="paragraph">Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.</p>
@@ -148,12 +149,14 @@ histories can be saved automatically and set back. Number of updated histories c
 <li>Blend images. Options like intersected area and blending modes.</li>
 <li>Combine images. Options like array ordering, background color, interval, margins, and size.</li>
 <li>Combine images in PDF file.</li>
+<li>Add Alpha channel.</li>
 </ol>
 <p class="p3" >Part image</p>
 <ol>
 <li>Split image. By number, by size, or by customizing. Results can be saved as image files, multiple
 frames Tiff file, or PDF file.</li>
 <li>Subsample image. Options like sample region and sample ratio.</li>
+<li>Extract Alpha channel.</li>
 </ol>
 <p class="p3" >Big Image</p>
 <ol>
@@ -288,7 +291,7 @@ WeiBo contents. They can be used to extract texts in the pages.</li>
 <ol>
 <li>Whether restore last size of each scene. Whether open new stage to display scene. Whether pop
 recent visited files/directories.</li>
-<li>Language, font size, interface style, whether show comments.</li>
+<li>Language, font size, interface style, color of controls' pictures, whether show comments.</li>
 <li>Width and color of stroke and anchor. Whether anchors are solid.</li>
 <li>Whether display coordinate and rulers.</li>
 <li>Images histories number. Maximum width to display images.</li>
@@ -309,6 +312,12 @@ recent visited files/directories.</li>
 </ol>
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.</BR>
+Shorter tips to fit for 14 inches screen of laptop.</BR>
+Image tools: Extract/Add Alpha channel.</BR>
+Fix several problems, including error condition to filter transparent pixels in Image Manufacture.</BR>
+Happay Labor Day!</p>
+
 <p class="paragraph">2019-4-21 v5.0 Select scope or area by dragging anchors.</BR>
 Doodle: Paste picture, draw shape(rectangle/circle/ellipse/polygon) line or fill color in shape, draw lines by
 dragging mouse, in image. Stroke width and color, line dotted can be set.</BR>

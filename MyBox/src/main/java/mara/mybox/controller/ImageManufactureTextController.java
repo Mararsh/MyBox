@@ -12,7 +12,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -62,9 +61,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
     @FXML
     protected CheckBox outlineCheck, verticalCheck;
     @FXML
-    private ImageView maskImageView;
-    @FXML
-    private Label textTipsLabel;
+    private ImageView maskImageView, textTipsView;
 
     public ImageManufactureTextController() {
         ImageFontSizeKey = "ImageFontSizeKey";
@@ -119,7 +116,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
     protected void initTextTab() {
         try {
 
-            FxmlControl.quickTooltip(textTipsLabel, new Tooltip(getMessage("TextComments")));
+            FxmlControl.quickTooltip(textTipsView, new Tooltip(getMessage("TextComments")));
 
             fontFamily = AppVaribles.getUserConfigValue(ImageFontFamilyKey, "Arial");
             fontWeight = FontWeight.NORMAL;

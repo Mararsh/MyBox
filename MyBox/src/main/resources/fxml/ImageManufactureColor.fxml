@@ -58,26 +58,137 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
-                                <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
-                                <Label fx:id="tipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconOpen.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconAddFile.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconTips.png" />
+                                    </image>
+                                </ImageView>
                                 <Button mnemonicParsing="false" visible="false" />
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconZoomOut.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconZoomIn.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicBig.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicSmall.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
-                                <Button fx:id="undoButton" disable="true" mnemonicParsing="false" onAction="#undoAction" text="%Undo" />
-                                <Button fx:id="redoButton" disable="true" mnemonicParsing="false" onAction="#redoAction" text="%Redo" />
-                                <Button fx:id="recoverButton" disable="true" mnemonicParsing="false" onAction="#recoverAction" text="%Recover" />
-                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
-                                <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction" text="%Ref" />
-                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction" text="%Pop" />
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconUndo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconRedo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconRecover.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconCopy.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconRef.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPop.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSave.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </items>
                         </ToolBar>
                     </children>
@@ -105,41 +216,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                             <items>
                                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
-                                                                        <Label fx:id="scopeTipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
+                                                                        <ImageView fx:id="scopeTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconTips.png" />
+                                                                            </image>
+                                                                        </ImageView>
                                                                         <Label text="%Scope" />
-                                                                        <ComboBox fx:id="scopeListBox" prefWidth="300.0" />
+                                                                        <ComboBox fx:id="scopeListBox" prefWidth="260.0" />
+                                                                        <Label text="%Object">
+                                                                            <HBox.margin>
+                                                                                <Insets left="20.0" />
+                                                                            </HBox.margin>
+                                                                        </Label>
                                                                     </children>
                                                                 </HBox>
-                                                            </items>
-                                                        </ToolBar>
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
-                                                            <items>
-                                                                <RadioButton mnemonicParsing="false" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
-                                                            <items>
-                                                                <Label text="%Object" />
-                                                                <RadioButton mnemonicParsing="false" selected="true" text="%Brightness">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="colorGroup" />
-                                                                    </toggleGroup>
-                                                                </RadioButton>
-                                                                <RadioButton mnemonicParsing="false" text="%Saturation" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Hue" toggleGroup="$colorGroup" />
-                                                                <RadioButton fx:id="redRadio" mnemonicParsing="false" text="%Red" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Yellow" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Green" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Cyan" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Blue" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Magenta" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%RGB" toggleGroup="$colorGroup" />
-                                                                <RadioButton fx:id="opacityRadio" mnemonicParsing="false" text="%Opacity" toggleGroup="$colorGroup" />
-                                                                <RadioButton mnemonicParsing="false" text="%Color" toggleGroup="$colorGroup" />
+                                                                <ComboBox fx:id="objectBox" onMouseEntered="#popObjectBox" prefWidth="140.0" />
                                                             </items>
                                                         </ToolBar>
                                                     </children>
@@ -156,16 +247,68 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <HBox fx:id="setBox" alignment="CENTER" spacing="5.0">
                                                                     <children>
                                                                         <ColorPicker fx:id="colorPicker" />
-                                                                        <ToggleButton fx:id="pickColorButton" mnemonicParsing="false" text="%PickColor" />
+                                                                        <ToggleButton fx:id="pickColorButton" mnemonicParsing="false">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPickColor.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </ToggleButton>
                                                                         <ComboBox fx:id="valuesBox" editable="true" prefWidth="100.0" />
                                                                         <Label fx:id="colorUnit" text=" " />
-                                                                        <Label fx:id="preAlphaTipsLabel" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
+                                                                        <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconTips.png" />
+                                                                            </image>
+                                                                        </ImageView>
                                                                         <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                                                                        <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction" text="%Set" />
-                                                                        <Button fx:id="increaseButton" mnemonicParsing="false" onAction="#increaseAction" text="%Increase" />
-                                                                        <Button fx:id="decreaseButton" mnemonicParsing="false" onAction="#decreaseAction" text="%Decrease" />
-                                                                        <Button fx:id="invertButton" mnemonicParsing="false" onAction="#invertAction" text="%Invert" />
-                                                                        <Button fx:id="filterButton" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
+                                                                        <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconEqual.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="increaseButton" mnemonicParsing="false" onAction="#increaseAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconPlus.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="decreaseButton" mnemonicParsing="false" onAction="#decreaseAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconMinus.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="invertButton" mnemonicParsing="false" onAction="#invertAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconInvert.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="filterButton" mnemonicParsing="false" onAction="#filterAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconFilter.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                     </children>
                                                                 </HBox>
                                                             </items>
@@ -245,8 +388,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label fx:id="scopePointsLabel" text="%Points" />
                                                 <ComboBox fx:id="scopePointsBox" maxWidth="1.7976931348623157E308" />
-                                                <Button fx:id="scopeDeleteButton" mnemonicParsing="false" text="%Delete" />
-                                                <Button fx:id="scopeClearButton" mnemonicParsing="false" text="%Clear" />
+                                                <Button fx:id="scopeDeleteButton" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconDelete.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="scopeClearButton" mnemonicParsing="false">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Label fx:id="scopeColorsLabel" text="%Colors" />
                                                 <ComboBox fx:id="scopeColorsBox" maxWidth="1.7976931348623157E308" />
                                                 <ColorPicker fx:id="scopeColorPicker" />
@@ -304,8 +463,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox fx:id="areaSetBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
                                             <children>
-                                                <Button fx:id="polygonWithdrawButton" mnemonicParsing="false" onAction="#polygonWithdrawAction" text="%Withdraw" />
-                                                <Button fx:id="polygonClearButton" mnemonicParsing="false" onAction="#polygonClearAction" text="%Clear" />
+                                                <Button fx:id="polygonWithdrawButton" mnemonicParsing="false" onAction="#polygonWithdrawAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconWithdraw.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="polygonClearButton" mnemonicParsing="false" onAction="#polygonClearAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <CheckBox fx:id="areaExcludedCheck" mnemonicParsing="false" text="%AreaExclude" />
                                             </children>
                                         </HBox>

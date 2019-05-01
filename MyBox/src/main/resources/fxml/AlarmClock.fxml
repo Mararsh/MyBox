@@ -119,40 +119,63 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <Label text="%Sound" />
-                                                <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true" text="%meow">
+                                                <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true" >
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="soundGroup" />
                                                     </toggleGroup>
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconCat.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </RadioButton>
                                                 <RadioButton fx:id="wavButton" mnemonicParsing="false" text="%SystemSounds" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="wavInput" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectSound" text="%Select..." />
+                                                <Button  fx:id="selectSoundButton" mnemonicParsing="false" onAction="#selectSound">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
+                                                <Label text="%Sound" visible="false" />
                                                 <RadioButton fx:id="mp3Button" mnemonicParsing="false" text="%LocalMusic" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="mp3Input" promptText="" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectMusic" text="%Select..." />
+                                                <Button  fx:id="selectMusicButton" mnemonicParsing="false" onAction="#selectMusic">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                             <VBox.margin>
-                                                <Insets left="40.0" />
+                                                <Insets />
                                             </VBox.margin>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" disable="true" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
+                                                <Label text="%Sound" visible="false" />
                                                 <RadioButton fx:id="internetButton" mnemonicParsing="false" text="%InternetMusic" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="urlInput" promptText="%InternetMusicComments" HBox.hgrow="ALWAYS" />
                                             </children>
-                                            <padding>
-                                                <Insets left="40.0" />
-                                            </padding>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
+                                                <Label text="%Sound" visible="false" />
                                                 <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%SoundLoop">
                                                     <HBox.margin>
-                                                        <Insets left="40.0" />
+                                                        <Insets />
                                                     </HBox.margin>
                                                 </CheckBox>
                                                 <RadioButton fx:id="continuallyButton" mnemonicParsing="false" selected="true" text="%Continually">
@@ -166,12 +189,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <Button fx:id="playButton" disable="true" mnemonicParsing="false" onAction="#playSound" text="%Play">
-                                                    <HBox.margin>
-                                                        <Insets left="40.0" />
-                                                    </HBox.margin>
+                                                <Label text="%Sound" visible="false" />
+                                                <Button fx:id="playButton" disable="true" mnemonicParsing="false" onAction="#playSound">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPlay.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseSound" text="%Pause" />
+                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseSound" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPause.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Label text="%Volume">
                                                     <HBox.margin>
                                                         <Insets left="20.0" />

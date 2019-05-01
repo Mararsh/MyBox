@@ -57,12 +57,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
+                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconOpen.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+
                             </items>
                         </ToolBar>
                         <ToolBar fx:id="infoBar" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" text="%Edit" />
+                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconEdit.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </items>
                         </ToolBar>
                     </children>
@@ -71,16 +88,40 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                             <items>
-                                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" text="%View" />
-                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconView.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconMeta.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconInfo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button mnemonicParsing="false" onAction="#selectAll" text="%SelectAll" />
                                 <Button mnemonicParsing="false" onAction="#unselectAll" text="%UnselectAll" />
                                 <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Extract" />
-                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
+                                <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
                             </items>
                         </ToolBar>
-                        <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
                                 <TableColumn fx:id="sizeColumn" prefWidth="150.0" text="%Pixels" />
@@ -89,7 +130,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <TableColumn fx:id="indexColumn" text="%Index" />
                             </columns>
                         </TableView>
-                          <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
+                        <Label fx:id="sourcesLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
                     </children>
                 </VBox>
 

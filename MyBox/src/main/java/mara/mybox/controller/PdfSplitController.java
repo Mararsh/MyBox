@@ -78,7 +78,7 @@ public class PdfSplitController extends PdfBatchBaseController {
 
             initOptionsSection();
 
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
                             .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))
@@ -139,7 +139,6 @@ public class PdfSplitController extends PdfBatchBaseController {
 
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(pdfMemBox, tips);
 
             tips = new Tooltip(getMessage("StartEndComments"));
             tips.setFont(new Font(16));

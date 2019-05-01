@@ -31,7 +31,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
-
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -63,7 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                                     <content>
-                                        <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                        <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                                     </content>
                                 </ScrollPane>
                             </content>
@@ -89,9 +89,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <ColorPicker fx:id="marginsColorPicker" />
-                                                        <Button fx:id="marginsTrButton" mnemonicParsing="false" onAction="#setTransparentAction" text="%Transparent" />
-                                                        <Button fx:id="marginsWhiteButton" mnemonicParsing="false" onAction="#setWhiteAction" text="%White" />
-                                                        <Button fx:id="marginsBlackButton" mnemonicParsing="false" onAction="#setBlackAction" text="%Black" />
+                                                        <Button fx:id="transparentButton" mnemonicParsing="false" onAction="#setTransparentAction">
+                                                            <graphic>
+                                                                <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="whiteButton" mnemonicParsing="false" onAction="#setWhiteAction">
+                                                            <graphic>
+                                                                <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="blackButton" mnemonicParsing="false" onAction="#setBlackAction">
+                                                            <graphic>
+                                                                <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
                                                 <HBox fx:id="distanceBox" alignment="CENTER_LEFT" spacing="5.0">
@@ -106,6 +118,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ComboBox fx:id="marginWidthBox" editable="true" prefWidth="80.0" />
                                                     </children>
                                                 </HBox>
+                                                <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconTips.png" />
+                                                    </image>
+                                                </ImageView>
                                                 <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
                                                 <CheckBox fx:id="alphaWhiteCheck" mnemonicParsing="false" text="%ReplaceAlphaAsWhite" />
                                             </children>
@@ -136,9 +153,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" text="%Select..." />
-                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction" text="%Browse" />
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
+                                                <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconImageFolder.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="browseButton"  mnemonicParsing="false" onAction="#browseAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconBrowse.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPreview.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">

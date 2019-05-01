@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -30,11 +31,52 @@
                         </ToolBar>
                         <ToolBar fx:id="imageBar" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" text="%OpenInNewWindow" />
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
+                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconView.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconZoomOut.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconZoomIn.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicBig.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicSmall.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true" text="%OpenAfterSave" />
                                 <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                             </items>
@@ -47,17 +89,81 @@
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction" onMouseEntered="#popFileAdd" text="%Add" />
-                                        <Button fx:id="insertButton" mnemonicParsing="false" onAction="#insertAction" onMouseEntered="#popFileInsert" text="%Insert" />
-                                        <Button fx:id="upButton" mnemonicParsing="false" onAction="#upAction" text="%Up" />
-                                        <Button fx:id="downButton" mnemonicParsing="false" onAction="#downAction" text="%Down" />
-                                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#showMeta" text="%ImageMetaData" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" text="%ImageInformation" />
+                                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconAddFile.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconInsertFile.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconUp.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDown.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDeleteFile.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconMeta.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconInfo.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </items>
                                 </ToolBar>
-                                <TableView fx:id="sourceTable" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
                                         <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
@@ -91,9 +197,21 @@
                                                     <children>
                                                         <Label text="%Background" />
                                                         <ColorPicker fx:id="bgPicker" />
-                                                        <Button mnemonicParsing="false" onAction="#bgTransparent" text="%Transparent" />
-                                                        <Button mnemonicParsing="false" onAction="#bgWhite" text="%White" />
-                                                        <Button mnemonicParsing="false" onAction="#bgBlack" text="%Black" />
+                                                        <Button mnemonicParsing="false" onAction="#bgTransparent" >
+                                                            <graphic>
+                                                                <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button mnemonicParsing="false" onAction="#bgWhite">
+                                                            <graphic>
+                                                                <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button mnemonicParsing="false" onAction="#bgBlack" >
+                                                            <graphic>
+                                                                <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">

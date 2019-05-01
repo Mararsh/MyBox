@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageSourcesController;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
     @Override
     public void initializeNext() {
         try {
-            initSourceSection();
+            initTable();
             sourcesBox.setDisable(true);
             editButton.setDisable(true);
         } catch (Exception e) {
@@ -66,7 +65,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
 
     @Override
     public void checkTableSelected() {
-        int selected = sourceTable.getSelectionModel().getSelectedIndex();
+        int selected = tableView.getSelectionModel().getSelectedIndex();
         boolean none = (selected < 0);
         infoButton.setDisable(none);
         metaButton.setDisable(none);
@@ -82,7 +81,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
     @Override
     public void selectSourceFile(File file) {
         try {
-            sourceImages.clear();
+            tableData.clear();
 
             sourceFile = file;
             getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
@@ -160,12 +159,12 @@ public class ImageFramesViewerController extends ImageSourcesController {
                                     bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
                                 }
                                 isSettingValues = true;
-                                if (index < 0 || index >= sourceImages.size()) {
-                                    sourceImages.addAll(infos);
+                                if (index < 0 || index >= tableData.size()) {
+                                    tableData.addAll(infos);
                                 } else {
-                                    sourceImages.addAll(index, infos);
+                                    tableData.addAll(index, infos);
                                 }
-                                sourceTable.refresh();
+                                tableView.refresh();
                                 isSettingValues = false;
                                 setImageChanged(true);
                             } else {
@@ -186,7 +185,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
     @FXML
     protected void selectAll() {
         isSettingValues = true;
-        sourceTable.getSelectionModel().selectAll();
+        tableView.getSelectionModel().selectAll();
         isSettingValues = false;
         checkTableSelected();
     }
@@ -194,7 +193,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
     @FXML
     protected void unselectAll() {
         isSettingValues = true;
-        sourceTable.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().clearSelection();
         isSettingValues = false;
         checkTableSelected();
     }
@@ -206,12 +205,12 @@ public class ImageFramesViewerController extends ImageSourcesController {
             if (format.contains("tif")) {
                 final ImageTiffEditerController controller
                         = (ImageTiffEditerController) openStage(CommonValues.ImageTiffEditerFxml);
-                controller.loadFile(sourceFile, sourceImages);
+                controller.loadFile(sourceFile, tableData);
 
             } else if (format.contains("gif")) {
                 final ImageGifEditerController controller
                         = (ImageGifEditerController) openStage(CommonValues.ImageGifEditerFxml);
-                controller.loadFile(sourceFile, sourceImages);
+                controller.loadFile(sourceFile, tableData);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -221,11 +220,11 @@ public class ImageFramesViewerController extends ImageSourcesController {
     @FXML
     protected void extractAction() {
         try {
-            if (sourceFile == null || sourceImages.isEmpty()) {
+            if (sourceFile == null || tableData.isEmpty()) {
                 return;
             }
             final List<ImageInformation> selectedImages = new ArrayList<>();
-            selectedImages.addAll(sourceTable.getSelectionModel().getSelectedItems());
+            selectedImages.addAll(tableView.getSelectionModel().getSelectedItems());
             if (selectedImages.isEmpty()) {
                 return;
             }

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
 
@@ -27,6 +28,10 @@ public class LoadingController extends BaseController {
     @FXML
     private TextArea text;
 
+    public LoadingController() {
+        baseTitle = AppVaribles.getMessage("LoadingPage");
+    }
+
     public void init(final Task<?> task) {
         try {
             progressIndicator.setProgress(-1F);
@@ -45,10 +50,13 @@ public class LoadingController extends BaseController {
     @FXML
     private void cancelAction() {
         if (loadingTask != null) {
+            if (parentController != null) {
+                parentController.taskCanceled(loadingTask);
+            }
             loadingTask.cancel();
             loadingTask = null;
         }
-        parentController.taskCanceled(loadingTask);
+        this.closeStage();
 
     }
 

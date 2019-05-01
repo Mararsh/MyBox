@@ -11,7 +11,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +26,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.PdfTools;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -45,8 +45,6 @@ public class PdfViewController extends ImageViewerController {
 
     @FXML
     protected Label pageLabel;
-    @FXML
-    protected Button pageGoButton;
     @FXML
     protected TextField pageInput;
     @FXML
@@ -156,19 +154,17 @@ public class PdfViewController extends ImageViewerController {
                         if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
                             currentPageTmp = v;
                             pageInput.setStyle(null);
-                            pageGoButton.setDisable(false);
+                            goButton.setDisable(false);
                         } else {
                             pageInput.setStyle(badStyle);
-                            pageGoButton.setDisable(true);
+                            goButton.setDisable(true);
                         }
                     } catch (Exception e) {
                         pageInput.setStyle(badStyle);
-                        pageGoButton.setDisable(true);
+                        goButton.setDisable(true);
                     }
                 }
             });
-
-            FxmlControl.quickTooltip(nextButton, new Tooltip("ENTER"));
 
             scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -216,6 +212,15 @@ public class PdfViewController extends ImageViewerController {
                 Bindings.isNull(imageView.imageProperty())
         );
 
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        FxmlControl.quickTooltip(nextButton, new Tooltip(getMessage("NextPage") + "\nENTER / PAGE DOWN"));
+        FxmlControl.quickTooltip(previousButton, new Tooltip(getMessage("PreviousPage") + "\nPAGE UP"));
+        FxmlControl.quickTooltip(firstButton, new Tooltip(getMessage("FirstPage") + "\nCTRL+HOME"));
+        FxmlControl.quickTooltip(lastButton, new Tooltip(getMessage("LastPage") + "\nCTRL+END"));
     }
 
     private void setSize(int percent) {

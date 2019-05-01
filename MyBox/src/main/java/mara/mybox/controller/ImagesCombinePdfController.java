@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageSourcesController;
 import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -79,7 +78,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     @Override
     public void initializeNext() {
         try {
-            initSourceSection();
+            initTable();
             initOptionsSection();
             initTargetSection();
         } catch (Exception e) {
@@ -251,7 +250,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     private void initTargetSection() {
 
         targetBar.disableProperty().bind(
-                Bindings.isEmpty(sourceImages)
+                Bindings.isEmpty(tableData)
                         .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                         .or(customHeightInput.styleProperty().isEqualTo(badStyle))
                         .or(jpegBox.styleProperty().isEqualTo(badStyle))
@@ -458,7 +457,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
 
     @Override
     public void selectTargetFileFromPath(File path) {
-        if (sourceImages == null || sourceImages.isEmpty()) {
+        if (tableData == null || tableData.isEmpty()) {
             return;
         }
         if (hasSampled()) {
@@ -501,8 +500,8 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         info.setAuthor(authorInput.getText());
                         document.setDocumentInformation(info);
                         int count = 0;
-                        int total = sourceImages.size();
-                        for (ImageInformation source : sourceImages) {
+                        int total = tableData.size();
+                        for (ImageInformation source : tableData) {
                             if (task == null || task.isCancelled()) {
                                 document.close();
                                 return null;

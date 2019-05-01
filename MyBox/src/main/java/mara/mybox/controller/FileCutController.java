@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BatchBaseController;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import mara.mybox.tools.FileTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FileCutController extends BatchBaseController {
+public class FileCutController extends FilesBatchController {
 
     private FileSplitType splitType;
     private int bytesNumber, filesNumber;
@@ -174,9 +173,9 @@ public class FileCutController extends BatchBaseController {
     @Override
     public void initTargetSection() {
 
-        operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                .or(Bindings.isEmpty(sourceFilesInformation))
+                .or(Bindings.isEmpty(tableData))
                 .or(filesNumberInput.styleProperty().isEqualTo(badStyle))
                 .or(bytesNumberInput.styleProperty().isEqualTo(badStyle))
                 .or(listInput.styleProperty().isEqualTo(badStyle))

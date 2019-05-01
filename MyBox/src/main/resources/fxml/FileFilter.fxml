@@ -57,7 +57,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
-                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSave.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Label text="%FileFilterComments" />
                             </items>
                         </ToolBar>
@@ -116,14 +124,54 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                         <ToolBar fx:id="pageBar" disable="true" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction" text="%FirstPage" />
-                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction" text="%PreviousPage" />
-                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction" text="%NextPage" />
-                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction" text="%LastPage" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />
-                                <Button fx:id="pageGoButton" mnemonicParsing="false" onAction="#goPageAction" text="%Go" />
+                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconGo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="firstButton" mnemonicParsing="false" onAction="#firstAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconFirst.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="lastButton" mnemonicParsing="false" onAction="#lastAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconLast.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPrevious.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconNext.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </items>
                         </ToolBar>
                     </children>
@@ -134,4 +182,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
+   <bottom>
+      <HBox alignment="CENTER_LEFT">
+         <children>
+            <Label fx:id="bottomLabel" BorderPane.alignment="CENTER" />
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

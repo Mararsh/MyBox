@@ -7,22 +7,19 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 
 /**
  * @Author Mara
@@ -61,10 +58,10 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                     .or(customHeightInput.styleProperty().isEqualTo(badStyle))
                     .or(keepWidthInput.styleProperty().isEqualTo(badStyle))
@@ -242,19 +239,11 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     @FXML
     public void pixelsCalculator() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.currentBundle);
-            Pane pane = fxmlLoader.load();
-            final PixelsCalculationController controller = fxmlLoader.getController();
-            Stage stage = new Stage();
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getMyStage());
-            stage.setTitle(AppVaribles.getMessage("PixelsCalculator"));
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            stage.show();
+            final PixelsCalculationController controller
+                    = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                            CommonValues.PixelsCalculatorFxml,
+                            true, Modality.WINDOW_MODAL, null);
 
-            controller.myStage = stage;
             if (sizeType == SizeType.Custom) {
                 controller.setSource(null, customWidthInput, customHeightInput);
             } else if (sizeType == SizeType.Width) {

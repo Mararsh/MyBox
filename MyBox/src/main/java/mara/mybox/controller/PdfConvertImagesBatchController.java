@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import mara.mybox.data.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -23,8 +24,8 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().bind(
-                    Bindings.isEmpty(filesTableController.filesTableView.getItems())
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(pdfConvertAttributesController.densityInput.styleProperty().isEqualTo(badStyle))
@@ -34,9 +35,11 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
 
             previewButton.disableProperty().bind(
                     pdfConvertAttributesController.rawSelect.selectedProperty()
-                            .or(operationBarController.startButton.disableProperty())
-                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(startButton.disableProperty())
+                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
+
+            ControlStyle.setStyle(previewButton);
 
         } catch (Exception e) {
             logger.error(e.toString());

@@ -43,7 +43,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkLicense() {
         try {
-            Desktop.getDesktop().browse(new URI(licenseLink.getText()));
+           browseURI(new URI(licenseLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -52,7 +52,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkSource() {
         try {
-            Desktop.getDesktop().browse(new URI(sourceLink.getText()));
+           browseURI(new URI(sourceLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -61,7 +61,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkIssues() {
         try {
-            Desktop.getDesktop().browse(new URI(issuesLink.getText()));
+           browseURI(new URI(issuesLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -70,7 +70,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkReleases() {
         try {
-            Desktop.getDesktop().browse(new URI(releasesLink.getText()));
+           browseURI(new URI(releasesLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -79,7 +79,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkUserGuide() {
         try {
-            Desktop.getDesktop().browse(new URI(userGuideLink.getText()));
+           browseURI(new URI(userGuideLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -88,7 +88,7 @@ public class AboutController extends BaseController {
     @FXML
     private void linkCloud() {
         try {
-            Desktop.getDesktop().browse(new URI(cloudLink.getText()));
+           browseURI(new URI(cloudLink.getText()));
         } catch (Exception e) {
             logger.error(e.toString());
         }

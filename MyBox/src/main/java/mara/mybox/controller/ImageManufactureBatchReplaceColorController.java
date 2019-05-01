@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.RadioButton;
@@ -43,8 +42,6 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     @FXML
     private ColorPicker oldColorPicker, newColorPicker;
     @FXML
-    private Button transForScopeButton, transForNewButton;
-    @FXML
     private TextField distanceInput;
     @FXML
     private RadioButton colorRadio, hueRadio;
@@ -62,10 +59,10 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(distanceInput.styleProperty().isEqualTo(badStyle))
             );
 

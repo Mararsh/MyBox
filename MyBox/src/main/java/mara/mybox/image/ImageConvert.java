@@ -33,7 +33,6 @@ import mara.mybox.data.ImageCombine.CombineSizeType;
 import mara.mybox.data.ImageInformation;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
-import mara.mybox.data.IntRectangle;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.CommonValues.TRANSPARENT;
 
@@ -1037,7 +1036,7 @@ public class ImageConvert {
     }
 
     public static BufferedImage cropOutside(BufferedImage source,
-            IntRectangle rectangle) {
+            DoubleRectangle rectangle) {
         return cropOutside(source, rectangle.getSmallX(), rectangle.getSmallY(),
                 rectangle.getBigX(), rectangle.getBigY());
     }
@@ -1616,6 +1615,111 @@ public class ImageConvert {
         } catch (Exception e) {
             logger.error(e.toString());
             return source;
+        }
+    }
+
+    public static BufferedImage[] extractAlpha(BufferedImage source) {
+        try {
+            if (source == null) {
+                return null;
+            }
+            BufferedImage[] bfs = new BufferedImage[2];
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage alphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage noAlphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Color color, newColor;
+            int pixel;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    pixel = source.getRGB(i, j);
+                    color = new Color(pixel, true);
+
+                    newColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+                    noAlphaImage.setRGB(i, j, newColor.getRGB());
+
+                    newColor = new Color(0, 0, 0, color.getAlpha());
+                    alphaImage.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            bfs[0] = noAlphaImage;
+            bfs[1] = alphaImage;
+            return bfs;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage addAlpha(BufferedImage source,
+            BufferedImage alpha, boolean isPlus) {
+        try {
+            if (source == null || alpha == null
+                    || !alpha.getColorModel().hasAlpha()) {
+                return source;
+            }
+            int sourceWidth = source.getWidth();
+            int sourceHeight = source.getHeight();
+            int alphaWidth = alpha.getWidth();
+            int alphaHeight = alpha.getHeight();
+            boolean addAlpha = isPlus && source.getColorModel().hasAlpha();
+            BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, BufferedImage.TYPE_INT_ARGB);
+            Color sourceColor, alphaColor, newColor;
+            int alphaValue;
+            for (int j = 0; j < sourceHeight; j++) {
+                for (int i = 0; i < sourceWidth; i++) {
+
+                    if (i < alphaWidth && j < alphaHeight) {
+                        sourceColor = new Color(source.getRGB(i, j), addAlpha);
+                        alphaColor = new Color(alpha.getRGB(i, j), true);
+                        alphaValue = alphaColor.getAlpha();
+                        if (addAlpha) {
+                            alphaValue = Math.min(255, alphaValue + sourceColor.getAlpha());
+                        }
+                        newColor = new Color(sourceColor.getRed(),
+                                sourceColor.getGreen(), sourceColor.getBlue(), alphaValue);
+                        target.setRGB(i, j, newColor.getRGB());
+
+                    } else {
+                        target.setRGB(i, j, source.getRGB(i, j));
+                    }
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage addAlpha(BufferedImage source,
+            float opacity, boolean isPlus) {
+        try {
+            if (source == null || opacity < 0) {
+                return source;
+            }
+            int sourceWidth = source.getWidth();
+            int sourceHeight = source.getHeight();
+            boolean addAlpha = isPlus && source.getColorModel().hasAlpha();
+            BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, BufferedImage.TYPE_INT_ARGB);
+            Color sourceColor, newColor;
+            int opacityValue = Math.min(255, Math.round(opacity * 255));
+            for (int j = 0; j < sourceHeight; j++) {
+                for (int i = 0; i < sourceWidth; i++) {
+                    sourceColor = new Color(source.getRGB(i, j), addAlpha);
+                    if (addAlpha) {
+                        opacityValue = Math.min(255, opacityValue + sourceColor.getAlpha());
+                    }
+                    newColor = new Color(sourceColor.getRed(),
+                            sourceColor.getGreen(), sourceColor.getBlue(), opacityValue);
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
     }
 

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import mara.mybox.controller.base.BaseController;
 import com.sun.management.OperatingSystemMXBean;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import mara.mybox.data.ControlStyle;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.ValueTools;
@@ -51,17 +53,15 @@ public class MainMenuController extends BaseController {
     private long mb;
 
     @FXML
-    private VBox menuBox;
-    @FXML
     private Pane mainMenuPane;
     @FXML
-    private RadioMenuItem chineseMenuItem, englishMenuItem;
-    @FXML
-    private RadioMenuItem pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio,
-            font12MenuItem, font15MenuItem, font17MenuItem;
+    private RadioMenuItem chineseMenuItem, englishMenuItem,
+            pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio,
+            font12MenuItem, font15MenuItem, font17MenuItem,
+            defaultColorMenuItem, pinkMenuItem, redMenuItem, blueMenuItem, orangeMenuItem;
     @FXML
     private CheckMenuItem showCommentsCheck, stopAlarmCheck, monitorMemroyCheck, monitorCpuCheck,
-            newWindowCheck, replaceWhiteMenu, restoreStagesSizeCheck, popRecentCheck;
+            newWindowCheck, replaceWhiteMenu, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
     @FXML
     private Menu settingsMenu, recentMenu;
     @FXML
@@ -91,6 +91,7 @@ public class MainMenuController extends BaseController {
         stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
         monitorMemroyCheck.setSelected(AppVaribles.getUserConfigBoolean("MonitorMemroy", false));
         monitorCpuCheck.setSelected(AppVaribles.getUserConfigBoolean("MonitorCpu", false));
+        controlTextCheck.setSelected(AppVaribles.getUserConfigBoolean("ControlDisplayText", false));
         replaceWhiteMenu.setSelected(AppVaribles.isAlphaAsWhite());
         showCommentsCheck.setSelected(AppVaribles.showComments);
         newWindowCheck.setSelected(AppVaribles.openStageInNewWindow);
@@ -98,6 +99,8 @@ public class MainMenuController extends BaseController {
         popRecentCheck.setSelected(AppVaribles.fileRecentNumber > 0);
         checkMemroyMonitor();
         checkCpuMonitor();
+        checkControlColor();
+
     }
 
     private void checkRecent() {
@@ -162,6 +165,29 @@ public class MainMenuController extends BaseController {
             case "500MB":
             default:
                 pdf500mbRadio.setSelected(true);
+        }
+    }
+
+    protected void checkControlColor() {
+        switch (AppVaribles.ControlColor) {
+            case Default:
+                defaultColorMenuItem.setSelected(true);
+                break;
+            case Red:
+                redMenuItem.setSelected(true);
+                break;
+            case Pink:
+                pinkMenuItem.setSelected(true);
+                break;
+            case Blue:
+                blueMenuItem.setSelected(true);
+                break;
+            case Orange:
+                orangeMenuItem.setSelected(true);
+                break;
+            default:
+                defaultColorMenuItem.setSelected(true);
+                break;
         }
     }
 
@@ -281,14 +307,14 @@ public class MainMenuController extends BaseController {
             if (memoryBox == null) {
                 makeMemoryMonitorBox();
             }
-            if (!menuBox.getChildren().contains(memoryBox)) {
-                menuBox.getChildren().add(memoryBox);
+            if (!thisPane.getChildren().contains(memoryBox)) {
+                thisPane.getChildren().add(memoryBox);
             }
             startMemoryMonitorTimer();
         } else {
             stopMemoryMonitorTimer();
-            if (memoryBox != null && menuBox.getChildren().contains(memoryBox)) {
-                menuBox.getChildren().remove(memoryBox);
+            if (memoryBox != null && thisPane.getChildren().contains(memoryBox)) {
+                thisPane.getChildren().remove(memoryBox);
             }
         }
     }
@@ -374,14 +400,14 @@ public class MainMenuController extends BaseController {
             if (cpuBox == null) {
                 makeCpuMonitorBox();
             }
-            if (!menuBox.getChildren().contains(cpuBox)) {
-                menuBox.getChildren().add(cpuBox);
+            if (!thisPane.getChildren().contains(cpuBox)) {
+                thisPane.getChildren().add(cpuBox);
             }
             startCpuMonitorTimer();
         } else {
             stopCpuMonitorTimer();
-            if (cpuBox != null && menuBox.getChildren().contains(cpuBox)) {
-                menuBox.getChildren().remove(cpuBox);
+            if (cpuBox != null && thisPane.getChildren().contains(cpuBox)) {
+                thisPane.getChildren().remove(cpuBox);
             }
         }
     }
@@ -413,6 +439,43 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void setFont17(ActionEvent event) {
         AppVaribles.setSceneFontSize(17);
+        refresh();
+    }
+
+    @FXML
+    protected void setDefaultColor(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("default");
+        refresh();
+    }
+
+    @FXML
+    protected void setPink(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("pink");
+        refresh();
+    }
+
+    @FXML
+    protected void setRed(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("red");
+        refresh();
+    }
+
+    @FXML
+    protected void setBlue(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("blue");
+        refresh();
+    }
+
+    @FXML
+    protected void setOrange(ActionEvent event) {
+        ControlStyle.setConfigColorStyle("orange");
+        refresh();
+    }
+
+    @FXML
+    protected void setControlDisplayText(ActionEvent event) {
+        AppVaribles.controlDisplayText = controlTextCheck.isSelected();
+        AppVaribles.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
         refresh();
     }
 
@@ -451,9 +514,9 @@ public class MainMenuController extends BaseController {
     @FXML
     public void showCommentsAction() {
         if (AppVaribles.setShowComments(showCommentsCheck.isSelected())) {
-            popInformation(AppVaribles.getMessage("CommentsShown"));
+            parentController.popInformation(AppVaribles.getMessage("CommentsShown"));
         } else {
-            popInformation(AppVaribles.getMessage("CommentsHidden"));
+            parentController.popInformation(AppVaribles.getMessage("CommentsHidden"));
         }
     }
 
@@ -821,6 +884,16 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openImageAlphaExtract(ActionEvent event) {
+        loadScene(CommonValues.ImageAlphaExtractBatchFxml);
+    }
+
+    @FXML
+    private void openImageAlphaAdd(ActionEvent event) {
+        loadScene(CommonValues.ImageAlphaAddBatchFxml);
+    }
+
+    @FXML
     private void openConvolutionKernelManager(ActionEvent event) {
         loadScene(CommonValues.ConvolutionKernelManagerFxml);
     }
@@ -921,6 +994,21 @@ public class MainMenuController extends BaseController {
             }
         }
         return myStage;
+    }
+
+    @FXML
+    public void showHelpExternal(ActionEvent event) {
+        try {
+            File help = checkHelps();
+            if (help != null) {
+                if (!browseURI(help.toURI())) {
+                    parentController.popError(getMessage("DesktopNotSupportBrowse"));
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
     }
 
     public CheckMenuItem getShowCommentsCheck() {

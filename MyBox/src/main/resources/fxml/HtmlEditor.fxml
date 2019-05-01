@@ -61,10 +61,42 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     <children>
                                         <ToolBar VBox.vgrow="NEVER">
                                             <items>
-                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile" text="%Select..." />
-                                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" text="%Create" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" text="%Save" />
-                                                <Button mnemonicParsing="false" onAction="#saveAsAction" text="%SaveAs" />
+                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconAddFile.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSave.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction"   onMouseEntered="#popSaveAs">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSaveAs.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </items>
                                         </ToolBar>
                                         <HTMLEditor fx:id="htmlEdior" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
@@ -96,18 +128,66 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <items>
                                                 <Label text="%WebAddress" />
                                                 <ComboBox fx:id="urlBox" editable="true" prefWidth="450.0" />
-                                                <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" text="%Load" />
-                                                <Button mnemonicParsing="false" onAction="#refreshAction" text="%Refresh" />
+                                                <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconGo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button  fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconRecover.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </items>
                                         </ToolBar>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                             <children>
                                                 <ToolBar HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button mnemonicParsing="false" onAction="#backAction" text="%Back" />
-                                                        <Button mnemonicParsing="false" onAction="#forwardAction" text="%Forward" />
-                                                        <Button mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                                        <Button mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
+                                                        <Button  fx:id="previousButton" mnemonicParsing="false" onAction="#backAction" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconPrevious.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button  fx:id="nextButton" mnemonicParsing="false" onAction="#forwardAction" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconNext.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button   fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconZoomIn.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button   fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconZoomOut.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </items>
                                                 </ToolBar>
                                                 <ToolBar fx:id="snapBar" disable="true" HBox.hgrow="NEVER">
@@ -121,7 +201,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         </RadioButton>
                                                         <RadioButton mnemonicParsing="false" text="PDF" toggleGroup="$snapGroup" />
                                                         <CheckBox fx:id="windowSizeCheck" disable="true" mnemonicParsing="false" selected="true" text="%WindowSize" />
-                                                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapshot" text="%Snapshot" />
+                                                        <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapshot" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconSnapshot.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </items>
                                                 </ToolBar>
                                             </children>

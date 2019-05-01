@@ -53,6 +53,7 @@ public class VisitHistory {
         public static int Access = 1;
         public static int Read = 2;
         public static int Write = 3;
+        public static int Alpha = 4;
 
         public static int None = 100;
     }
@@ -87,18 +88,22 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentPath(int fileType) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        return getRecentPath(fileType, AppVaribles.fileRecentNumber);
+    }
+
+    public static List<VisitHistory> getRecentPath(int fileType, int number) {
+        if (number <= 0) {
             return null;
         }
         List<VisitHistory> records;
         if (fileType == FileType.MultipleFrames) {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
-            records = TableVisitHistory.find(ResourceType.Path, types, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.Path, types, number);
         } else if (fileType == FileType.Image) {
             int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
-            records = TableVisitHistory.find(ResourceType.Path, types, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.Path, types, number);
         } else {
-            records = TableVisitHistory.find(ResourceType.Path, fileType, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.Path, fileType, number);
         }
         return checkFilesExisted(records);
     }
@@ -158,19 +163,31 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentFile(int fileType) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        return getRecentFile(fileType, AppVaribles.fileRecentNumber);
+    }
+
+    public static List<VisitHistory> getRecentFile(int fileType, int number) {
+        if (number <= 0) {
             return null;
         }
         List<VisitHistory> records;
         if (fileType == FileType.MultipleFrames) {
             int[] types = {FileType.Gif, FileType.Tif, FileType.MultipleFrames};
-            records = TableVisitHistory.find(ResourceType.File, types, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.File, types, number);
         } else if (fileType == FileType.Image) {
             int[] types = {FileType.Image, FileType.Gif, FileType.Tif, FileType.MultipleFrames};
-            records = TableVisitHistory.find(ResourceType.File, types, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.File, types, number);
         } else {
-            records = TableVisitHistory.find(ResourceType.File, fileType, AppVaribles.fileRecentNumber);
+            records = TableVisitHistory.find(ResourceType.File, fileType, number);
         }
+        return checkFilesExisted(records);
+    }
+
+    public static List<VisitHistory> getRecentAlphaImages(int number) {
+        if (number <= 0) {
+            return null;
+        }
+        List<VisitHistory> records = TableVisitHistory.findAlphaImages(number);
         return checkFilesExisted(records);
     }
 

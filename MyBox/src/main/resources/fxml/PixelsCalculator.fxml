@@ -6,6 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 
 <VBox fx:id="thisPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PixelsCalculationController">
     <children>
@@ -341,7 +342,15 @@
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
                 <Button fx:id="useButton" disable="true" mnemonicParsing="false" onAction="#useResult" prefWidth="80.0" text="%Use" visible="false" />
-                <Button fx:id="closeButton" defaultButton="true" mnemonicParsing="false" onAction="#close" prefWidth="80.0" text="%Close" />
+                <Button fx:id="closeButton" defaultButton="true" mnemonicParsing="false" onAction="#close">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
         </HBox>
     </children>

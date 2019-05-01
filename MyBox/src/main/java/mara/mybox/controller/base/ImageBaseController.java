@@ -15,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -32,7 +31,6 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.data.ImageInformation;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVaribles.logger;
@@ -64,7 +62,8 @@ public abstract class ImageBaseController extends BaseController {
     @FXML
     public Label sampledTips;
     @FXML
-    public Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton;
+    public Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
+            rotateLeftButton, rotateRightButton, turnOverButton;
 
     public ImageBaseController() {
         SourceFileType = VisitHistory.FileType.Image;
@@ -95,29 +94,6 @@ public abstract class ImageBaseController extends BaseController {
 
     public void initializeNext2() {
 
-    }
-
-    @Override
-    public void setTips() {
-        super.setTips();
-
-        if (imageSizeButton != null) {
-            FxmlControl.quickTooltip(imageSizeButton, new Tooltip("CTRL+1"));
-        }
-
-        if (paneSizeButton != null) {
-            FxmlControl.quickTooltip(paneSizeButton, new Tooltip("CTRL+2"));
-
-        }
-
-        if (zoomInButton != null) {
-            FxmlControl.quickTooltip(zoomInButton, new Tooltip("CTRL+3"));
-
-        }
-
-        if (zoomOutButton != null) {
-            FxmlControl.quickTooltip(zoomOutButton, new Tooltip("CTRL+4"));
-        }
     }
 
     @Override
@@ -450,7 +426,7 @@ public abstract class ImageBaseController extends BaseController {
             alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonOpen) {
-                Desktop.getDesktop().browse(new File(path).toURI());
+               browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
                 final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), getMyStage());

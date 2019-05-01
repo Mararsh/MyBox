@@ -27,12 +27,60 @@
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button mnemonicParsing="false" onAction="#createAction" text="%Create" />
-                                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" text="%Edit" />
-                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" text="%Copy" />
-                                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction" text="%Delete" />
-                                        <Button mnemonicParsing="false" onAction="#clearAction" text="%Clear" />
-                                        <Button mnemonicParsing="false" onAction="#examplesAction" text="%Examples" />
+                                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconAddFile.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconEdit.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconCopy.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDeleteFile.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#examplesAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconExamples.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </items>
                                 </ToolBar>
                                 <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -117,7 +165,15 @@
                                         </Label>
                                         <HBox fx:id="actionBox" alignment="CENTER_RIGHT" spacing="10.0">
                                             <children>
-                                                <Button mnemonicParsing="false" onAction="#testAction" text="%Test" />
+                                                <Button fx:id="testButton" mnemonicParsing="false" onAction="#testAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconRun.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button mnemonicParsing="false" onAction="#zeroAction" text="0" />
                                                 <Button mnemonicParsing="false" onAction="#oneAction" text="1" />
                                                 <Button fx:id="gaussButton" mnemonicParsing="false" onAction="#gaussianDistribution" text="%GaussianDistribution" />

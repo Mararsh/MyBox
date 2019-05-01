@@ -1,6 +1,5 @@
 package mara.mybox.fxml;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +27,7 @@ import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
+import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
 import mara.mybox.value.AppVaribles;
@@ -35,6 +35,7 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -46,7 +47,8 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 public class FxmlStage {
 
-    public static BaseController initScene(Class theClass, final Stage stage, String newFxml) {
+    public static BaseController initScene(Class theClass, final Stage stage, final String newFxml,
+            StageStyle stageStyle) {
         try {
             if (stage == null) {
                 return null;
@@ -67,6 +69,9 @@ public class FxmlStage {
                 stage.setTitle(controller.getBaseTitle());
             }
             stage.setTitle(controller.getBaseTitle());
+            if (stageStyle != null) {
+                stage.initStyle(stageStyle);
+            }
             VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
 
             stage.getIcons().add(CommonValues.AppIcon);
@@ -94,9 +99,9 @@ public class FxmlStage {
             stage.show();
             stage.requestFocus();
 
-            controller.initStage();
-
             AppVaribles.stageOpened(stage, controller);
+
+            controller.afterSceneLoaded();
 
             Platform.setImplicitExit(AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty());
 
@@ -108,7 +113,7 @@ public class FxmlStage {
     }
 
     public static BaseController openStage(Class theClass, Stage myStage,
-            String newFxml, boolean isOwned, Modality modality) {
+            String newFxml, boolean isOwned, Modality modality, StageStyle stageStyle) {
         try {
             Stage stage = new Stage();
             stage.initModality(modality);
@@ -117,11 +122,17 @@ public class FxmlStage {
             } else {
                 stage.initOwner(null);
             }
-            return initScene(theClass, stage, newFxml);
+            return initScene(theClass, stage, newFxml, stageStyle);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static BaseController openStage(Class theClass, Stage myStage,
+            String newFxml, boolean isOwned, Modality modality) {
+        return openStage(theClass, myStage, newFxml, isOwned, modality, null);
+
     }
 
     public static BaseController openStage(Class theClass, Stage myStage,
@@ -134,7 +145,7 @@ public class FxmlStage {
         return openStage(theClass, myStage, newFxml, false, Modality.NONE);
     }
 
-    public static BaseController openScene(Class theClass, Stage stage, String newFxml) {
+    public static BaseController openScene(Class theClass, Stage stage, String newFxml, StageStyle stageStyle) {
         try {
             if (stage == null) {
                 stage = new Stage();
@@ -142,14 +153,19 @@ public class FxmlStage {
                 stage.initStyle(StageStyle.DECORATED);
                 stage.initOwner(null);
             }
-            return initScene(theClass, stage, newFxml);
+            return initScene(theClass, stage, newFxml, stageStyle);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
     }
 
+    public static BaseController openScene(Class theClass, Stage stage, String newFxml) {
+        return openScene(theClass, stage, newFxml, null);
+    }
+
     public static void closeStage(Stage stage) {
+
         AppVaribles.stageClosed(stage);
         stage.close();
         if (AppVaribles.openedStages.isEmpty()) {
@@ -190,7 +206,8 @@ public class FxmlStage {
             }
 
             if (AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty()) {
-                Platform.exit();
+                Platform.exit(); // Some thread may still be alive after this
+                System.exit(0);  // Go
             }
 
         } catch (Exception e) {
@@ -340,6 +357,9 @@ public class FxmlStage {
 
     public static ImageInformationController openImageInformation(Class theClass, Stage stage, ImageInformation info) {
         try {
+            if (info == null) {
+                return null;
+            }
             final ImageInformationController controller = (ImageInformationController) openScene(theClass, stage,
                     CommonValues.ImageInformationFxml);
             controller.loadInformation(info);
@@ -386,6 +406,22 @@ public class FxmlStage {
         }
     }
 
+    public static LoadingController openLoadingStage(Class theClass, Stage stage, Modality block, String info) {
+        try {
+            final LoadingController controller
+                    = (LoadingController) FxmlStage.openStage(theClass, stage, CommonValues.LoadingFxml,
+                            true, block, StageStyle.TRANSPARENT);
+            if (info != null) {
+                controller.setInfo(info);
+            }
+            return controller;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+
+    }
+
     public static BaseController openTarget(Class theClass, Stage stage,
             String filename) {
         return openTarget(theClass, stage, filename, true);
@@ -402,12 +438,7 @@ public class FxmlStage {
             return controller;
         }
         if (file.isDirectory()) {
-            try {
-                Desktop.getDesktop().browse(file.toURI());
-
-            } catch (Exception e) {
-
-            }
+            SystemTools.browseURI(file.toURI());
             return controller;
         }
 
@@ -427,7 +458,7 @@ public class FxmlStage {
         } else if (mustOpen) {
             controller = openBytesEditer(theClass, stage, file);
             //            try {
-//                Desktop.getDesktop().browse(file.toURI());
+//               browseURI(file.toURI());
 //            } catch (Exception e) {
 //            }
         }

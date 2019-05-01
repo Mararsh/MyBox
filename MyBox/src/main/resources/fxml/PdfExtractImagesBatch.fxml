@@ -59,7 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                        <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                                     </content>
                                 </ScrollPane>
                             </content>
@@ -76,8 +76,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </HBox.margin>
                                                 </Label>
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" text="%Select..." />
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                    <graphic> 
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconImageFolder.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectory" />
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPreview.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                             <VBox.margin>
                                                 <Insets left="10.0" right="10.0" />
@@ -101,14 +118,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </children>
                                             <VBox.margin>
                                                 <Insets left="10.0" right="10.0" top="10.0" />
-                                            </VBox.margin>
-                                        </HBox>
-                                        <HBox alignment="CENTER_RIGHT" prefWidth="242.0" spacing="10.0">
-                                            <children>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
-                                            </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
                                             </VBox.margin>
                                         </HBox>
                                     </children>

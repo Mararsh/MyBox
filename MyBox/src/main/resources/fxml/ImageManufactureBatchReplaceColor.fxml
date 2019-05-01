@@ -32,6 +32,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -46,9 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-            prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mara.mybox.controller.ImageManufactureBatchReplaceColorController">
+<BorderPane fx:id="thisPane" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureBatchReplaceColorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -64,7 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <content>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                                     <content>
-                                        <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                        <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                                     </content>
                                 </ScrollPane>
                             </content>
@@ -77,15 +76,27 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%OriginalColor" />
                                                 <ColorPicker fx:id="oldColorPicker" />
-                                                <Button fx:id="transForScopeButton" mnemonicParsing="false" onAction="#transparentForOld" text="%Transparent" />
-                                                <Button mnemonicParsing="false" onAction="#whiteForOld" text="%White" />
-                                                <Button mnemonicParsing="false" onAction="#blackForOld" text="%Black" />
+                                                <Button fx:id="transparentButton" mnemonicParsing="false" onAction="#transparentForOld" >
+                                                    <graphic>
+                                                        <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="whiteButton" mnemonicParsing="false" onAction="#whiteForOld" >
+                                                    <graphic>
+                                                        <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="blackButton" mnemonicParsing="false" onAction="#blackForOld" >
+                                                    <graphic>
+                                                        <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
                                                 <Label text="%Distance">
                                                     <HBox.margin>
                                                         <Insets left="20.0" />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="distanceInput"  prefWidth="58.0" text="0" />
+                                                <TextField fx:id="distanceInput" prefWidth="58.0" text="0" />
                                                 <RadioButton fx:id="colorRadio" mnemonicParsing="false" selected="true" text="%Color">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="replaceScopeGroup" />
@@ -103,9 +114,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%NewColor" />
                                                 <ColorPicker fx:id="newColorPicker" />
-                                                <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" text="%Transparent" />
-                                                <Button mnemonicParsing="false" onAction="#whiteForNew" text="%White" />
-                                                <Button mnemonicParsing="false" onAction="#blackForNew" text="%Black" />
+                                                <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" >
+                                                    <graphic>
+                                                        <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
+                                                <Button mnemonicParsing="false" onAction="#whiteForNew" >
+                                                    <graphic>
+                                                        <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
+                                                <Button mnemonicParsing="false" onAction="#blackForNew" >
+                                                    <graphic>
+                                                        <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -133,9 +156,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" text="%Select..." />
-                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction" text="%Browse" />
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#preview" text="%Preview" />
+                                               <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconImageFolder.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                               <Button fx:id="browseButton"  mnemonicParsing="false" onAction="#browseAction" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconBrowse.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPreview.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -164,9 +211,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <ToggleGroup fx:id="targetExistGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
                                                 <Label text="%Suffix" />
-                                                <TextField fx:id="targetSuffixInput"  prefWidth="70.0" text="-m" />
+                                                <TextField fx:id="targetSuffixInput" prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>

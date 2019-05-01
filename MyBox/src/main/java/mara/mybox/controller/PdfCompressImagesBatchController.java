@@ -28,12 +28,12 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
     public void initializeNext2() {
         try {
             allowPaused = false;
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(targetPathInput.textProperty())
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(jpegBox.styleProperty().isEqualTo(badStyle))
                             .or(thresholdInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
             logger.debug(e.toString());

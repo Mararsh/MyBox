@@ -13,11 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Tooltip;
 import mara.mybox.controller.base.BaseController;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * FXML Controller class
@@ -39,7 +36,6 @@ public class OperationController extends BaseController {
     public void initializeNext() {
 
         if (miaoCheck != null) {
-            FxmlControl.quickTooltip(miaoCheck, new Tooltip(getMessage("MiaoPrompt")));
             miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -60,8 +56,6 @@ public class OperationController extends BaseController {
             });
             openCheck.setSelected(AppVaribles.getUserConfigBoolean("OpenWhenComplete"));
         }
-
-        FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
 
     }
 

@@ -67,15 +67,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <Insets />
                                                     </HBox.margin>
                                                 </TextField>
-                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile"   text="%Select...">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
+                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconOpen.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </Button>
-                                                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#showImage"  text="%View">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
+                                                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#viewAction"  >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconView.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
                                                 </Button>
                                             </children>
                                             <VBox.margin>
@@ -113,7 +121,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     </HBox.margin>
                                                 </Label>
                                                 <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
-                                                <Button mnemonicParsing="false" onAction="#selectTargetPath"   onMouseEntered="#popTargetPath" text="%Select..." HBox.hgrow="NEVER" />
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"   onMouseEntered="#popTargetPath" HBox.hgrow="NEVER" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconImageFolder.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                             <VBox.margin>
                                                 <Insets left="10.0" right="10.0" />

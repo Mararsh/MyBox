@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -46,6 +46,7 @@ import mara.mybox.data.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.PixelBlend;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -374,7 +375,8 @@ public class ImagesBlendController extends ImageViewerController {
             popMenu.hide();
             popMenu = null;
         }
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType);
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
         if (his == null || his.isEmpty()) {
             return;
         }
@@ -395,6 +397,36 @@ public class ImagesBlendController extends ImageViewerController {
             });
             popMenu.getItems().add(menu);
         }
+
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        selectForegroundImage(event);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
     }
@@ -511,7 +543,8 @@ public class ImagesBlendController extends ImageViewerController {
             popMenu.hide();
             popMenu = null;
         }
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType);
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
         if (his == null || his.isEmpty()) {
             return;
         }
@@ -532,6 +565,36 @@ public class ImagesBlendController extends ImageViewerController {
             });
             popMenu.getItems().add(menu);
         }
+
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        selectBackgroundImage(event);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
     }
@@ -618,7 +681,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openTargetPath(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(targetPath.toURI());
+            browseURI(targetPath.toURI());
             recordFileOpened(targetPath);
         } catch (Exception e) {
 

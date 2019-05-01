@@ -27,15 +27,15 @@ public class PdfExtractTextsBatchController extends PdfExtractTextsController {
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().bind(
-                    Bindings.isEmpty(filesTableController.filesTableView.getItems())
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
             );
 
             previewButton.disableProperty().bind(
-                    operationBarController.startButton.disableProperty()
-                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                    startButton.disableProperty()
+                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
 
         } catch (Exception e) {

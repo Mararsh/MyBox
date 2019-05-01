@@ -30,8 +30,8 @@ public class PdfExtractImagesBatchController extends PdfExtractImagesController 
             appendPageNumber.setSelected(AppVaribles.getUserConfigBoolean("pei_appendPageNumber"));
             appendIndex.setSelected(AppVaribles.getUserConfigBoolean("pei_appendIndex"));
 
-            operationBarController.startButton.disableProperty().bind(
-                    Bindings.isEmpty(filesTableController.filesTableView.getItems())
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
             );

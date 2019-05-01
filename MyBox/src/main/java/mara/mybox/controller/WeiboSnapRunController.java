@@ -29,19 +29,15 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
@@ -80,9 +76,8 @@ public class WeiboSnapRunController extends BaseController {
     private Timer loadTimer, snapTimer;
     private long loadStartTime, snapStartTime, startTime;
     private boolean loadFailed, loadCompleted, snapFailed, snapCompleted, mainCompleted, isLoadingWeiboPassport,
-            commentsLoaded, picturedsLoaded, startPageChecked, skipPage;
+            commentsLoaded, picturedsLoaded, startPageChecked, skipPage, parentOpened;
     private WeiboSnapingInfoController loadingController;
-    private Stage loadingStage;
     private String pdfFilename, htmlFilename, pixFilePrefix;
     private String currentAddress, currentMonthString, accountName, baseText, errorString;
     private Date currentMonth, firstMonth, lastMonth, lastPictureLoad;
@@ -410,20 +405,16 @@ public class WeiboSnapRunController extends BaseController {
 
     private boolean openLoadingStage() {
         try {
-            if (loadingStage != null && loadingController != null) {
+            if (loadingController != null) {
                 return true;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.WeiboSnapingInfoFxml), AppVaribles.currentBundle);
-            Pane pane = fxmlLoader.load();
-            loadingController = fxmlLoader.getController();
-            loadingController.setParent(this);
-            loadingStage = new Stage();
 
-            loadingStage.initModality(Modality.WINDOW_MODAL);
-            loadingStage.initStyle(StageStyle.TRANSPARENT);
-            loadingStage.initOwner(getMyStage());
-            loadingStage.setScene(new Scene(pane));
-            loadingStage.show();
+            loadingController
+                    = (WeiboSnapingInfoController) FxmlStage.openStage(getClass(), myStage,
+                            CommonValues.WeiboSnapingInfoFxml,
+                            true, Modality.WINDOW_MODAL, StageStyle.TRANSPARENT);
+            loadingController.setParent(this);
+
             return true;
 
         } catch (Exception e) {
@@ -457,7 +448,7 @@ public class WeiboSnapRunController extends BaseController {
             loadStartTime = new Date().getTime();
             TimerTask mainTask = new TimerTask() {
                 int lastHeight = 0, newHeight = -1;
-                long maxDelay = loadLoopInterval * 60;
+                long maxDelay = loadLoopInterval * 20;
                 private String contents;
 
                 @Override
@@ -465,7 +456,7 @@ public class WeiboSnapRunController extends BaseController {
                     try {
                         if (new Date().getTime() - loadStartTime >= maxDelay) {
                             loadFailed = loadCompleted = true;
-//                            errorString = AppVaribles.getMessage("TimeOver");
+                            errorString = AppVaribles.getMessage("TimeOver");
                         }
                         if (loadFailed || loadCompleted) {
                             quit();
@@ -479,9 +470,16 @@ public class WeiboSnapRunController extends BaseController {
                                     newHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
                                     contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
                                     loadingController.setText(AppVaribles.getMessage("PageHeightLoaded") + ": " + newHeight);
-                                    loadingController.addLine(AppVaribles.getMessage("CharactersLoaded") + ": " + +contents.length());
+                                    loadingController.addLine(AppVaribles.getMessage("CharactersLoaded") + ": " + contents.length());
+                                    loadingController.addLine(AppVaribles.getMessage("SnapingStartTime") + ": " + DateTools.datetimeToString(loadStartTime)
+                                            + " (" + AppVaribles.getMessage("ElapsedTime") + ": " + DateTools.showTime(new Date().getTime() - loadStartTime) + ")");
                                     showMemInfo();
-                                    if (contents.contains("帐号登录")) {
+                                    if (contents.contains("Request-URI Too Long")) {
+                                        loadFailed = loadCompleted = true;
+                                        errorString = AppVaribles.getMessage("WeiBo414");
+                                        quit();
+                                        return;
+                                    } else if (contents.contains("帐号登录")) {
                                         loadFailed = loadCompleted = true;
                                         errorString = AppVaribles.getMessage("NonExistedWeiboAccount");
                                         quit();
@@ -558,8 +556,10 @@ public class WeiboSnapRunController extends BaseController {
                             }
                             if (loadFailed) {
                                 alertError(errorString);
-                                if (parent == null) {
+                                if (parent == null && !parentOpened) {
+                                    logger.debug("openParent");
                                     openStage(CommonValues.WeiboSnapFxml);
+                                    parentOpened = true;
                                 }
                                 endSnap();
                             } else {
@@ -1431,7 +1431,7 @@ public class WeiboSnapRunController extends BaseController {
                 parent.setDuration(currentMonthString, "");
             }
             AppVaribles.setUserConfigValue("WeiboLastStartMonthKey", currentMonthString);
-            if (parameters.isOpenPathWhenStop()) {
+            if (parameters.isOpenPathWhenStop() && rootPath != null) {
                 FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
             }
             closeStage();
@@ -1442,30 +1442,33 @@ public class WeiboSnapRunController extends BaseController {
 
     @Override
     public boolean leavingScene() {
-        webEngine.getLoadWorker().cancel();
-        webEngine = null;
         if (loadTimer != null) {
             loadTimer.cancel();
         }
         if (snapTimer != null) {
             snapTimer.cancel();
         }
-        if (loadingStage != null) {
-            loadingStage.close();
+        if (loadingController != null) {
+            loadingController.closeStage();
         }
+
+        webEngine.getLoadWorker().cancel();
+        webEngine = null;
 
         /* When quit whole app from Failed path in "loadMain()", threads may NOT quit
          * and cause wrong results of next execution due to unknow reason
          * With below statement, the thread quit any way as need. DO NOT know what's the bug!
          * Another solution is to open a window but not quit whole app.
          */
-        Thread thread = Thread.currentThread();
-        System.gc();
-
+//        Thread thread = Thread.currentThread();
+//        System.gc();
         return super.leavingScene();
     }
 
     public void openPath() {
+        if (rootPath == null) {
+            return;
+        }
         FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
     }
 

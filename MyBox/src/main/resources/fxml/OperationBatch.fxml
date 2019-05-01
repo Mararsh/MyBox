@@ -56,9 +56,33 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <Label fx:id="fileProgressValue" prefWidth="80.0" HBox.hgrow="NEVER" />
                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                 <Label fx:id="progressValue" prefWidth="110.0" HBox.hgrow="NEVER" />
-                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget" text="%Open" HBox.hgrow="NEVER" />
-                <CheckBox fx:id="openCheck" mnemonicParsing="false" text="%OpenWhenComplete" />
-                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" text="%meow" HBox.hgrow="NEVER" />
+                <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTarget"  HBox.hgrow="NEVER" >
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOpen.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <CheckBox fx:id="openCheck" mnemonicParsing="false" >
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOpen2.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <CheckBox fx:id="miaoCheck" mnemonicParsing="false"  HBox.hgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconCat.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
             </children>
             <VBox.margin>
                 <Insets top="5.0" />

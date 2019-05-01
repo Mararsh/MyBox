@@ -7,7 +7,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
@@ -15,7 +14,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
@@ -44,8 +43,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     @FXML
     protected ColorPicker marginsColorPicker;
     @FXML
-    protected Button marginsWhiteButton, marginsBlackButton, marginsTrButton;
-    @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
             preAlphaCheck, alphaWhiteCheck;
     @FXML
@@ -54,6 +51,8 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     private TextField distanceInput;
     @FXML
     protected RadioButton blurMarginsRadio;
+    @FXML
+    protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchMarginsController() {
         baseTitle = AppVaribles.getMessage("ImageManufactureBatchMargins");
@@ -63,10 +62,10 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(marginWidthBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(marginsTopCheck.styleProperty().isEqualTo(badStyle))
             );
@@ -74,6 +73,16 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
         } catch (Exception e) {
             logger.debug(e.toString());
         }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+
+        checkOperationType();
+        distanceInput.setText("20");
+        marginWidthBox.getSelectionModel().select(0);
+
     }
 
     @Override
@@ -86,7 +95,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     checkOperationType();
                 }
             });
-            checkOperationType();
 
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -95,7 +103,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     checkColor();
                 }
             });
-            distanceInput.setText("20");
 
             marginWidthBox.getItems().addAll(Arrays.asList(
                     "50", "20", "10", "5", "100", "200", "300", "150", "500"));
@@ -108,7 +115,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     checkMarginWidth();
                 }
             });
-            marginWidthBox.getSelectionModel().select(0);
 
             alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
             alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -118,8 +124,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                     AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
                 }
             });
-
-            FxmlControl.quickTooltip(preAlphaCheck, new Tooltip(getMessage("PremultipliedAlphaTips")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -150,7 +154,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
 
         } else if (getMessage("BlurMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.BlurMargins;
-            setBox.getChildren().addAll(widthBox, preAlphaCheck, alphaWhiteCheck);
+            setBox.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck, alphaWhiteCheck);
             checkMarginWidth();
             distanceInput.setStyle(null);
 

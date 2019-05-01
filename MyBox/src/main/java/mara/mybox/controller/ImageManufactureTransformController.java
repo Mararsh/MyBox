@@ -39,7 +39,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
     @FXML
     protected Slider angleSlider;
     @FXML
-    protected Button leftButton, rightButton, shearButton;
+    protected Button shearButton;
     @FXML
     protected HBox tranBox;
 
@@ -106,8 +106,8 @@ public class ImageManufactureTransformController extends ImageManufactureControl
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                     rotateAngle = newValue.intValue();
                     angleBox.getEditor().setText(rotateAngle + "");
-                    leftButton.setDisable(false);
-                    rightButton.setDisable(false);
+                    rotateLeftButton.setDisable(false);
+                    rotateRightButton.setDisable(false);
                 }
             });
 
@@ -119,13 +119,13 @@ public class ImageManufactureTransformController extends ImageManufactureControl
                     try {
                         rotateAngle = Integer.valueOf(newValue);
                         angleSlider.setValue(rotateAngle);
-                        leftButton.setDisable(false);
-                        rightButton.setDisable(false);
+                        rotateLeftButton.setDisable(false);
+                        rotateRightButton.setDisable(false);
                         FxmlControl.setEditorNormal(angleBox);
                     } catch (Exception e) {
                         rotateAngle = 0;
-                        leftButton.setDisable(true);
-                        rightButton.setDisable(true);
+                        rotateLeftButton.setDisable(true);
+                        rotateRightButton.setDisable(true);
                         FxmlControl.setEditorBadStyle(angleBox);
                     }
                 }
@@ -138,7 +138,8 @@ public class ImageManufactureTransformController extends ImageManufactureControl
     }
 
     @FXML
-    public void rightRotate() {
+    @Override
+    public void rotateRight() {
         task = new Task<Void>() {
             private Image newImage;
             private boolean ok;
@@ -179,7 +180,8 @@ public class ImageManufactureTransformController extends ImageManufactureControl
     }
 
     @FXML
-    public void leftRotate() {
+    @Override
+    public void rotateLeft() {
         task = new Task<Void>() {
             private Image newImage;
             private boolean ok;

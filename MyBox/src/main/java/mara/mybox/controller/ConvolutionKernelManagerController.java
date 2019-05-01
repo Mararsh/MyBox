@@ -437,7 +437,8 @@ public class ConvolutionKernelManagerController extends BaseController {
     }
 
     @FXML
-    private void createAction(ActionEvent event) {
+    @Override
+    public void createAction() {
         isSettingValues = true;
         kernel = new ConvolutionKernel();
         nameInput.setText("");

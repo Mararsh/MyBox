@@ -54,6 +54,14 @@
 }
 
 
+.open-button {
+    -fx-background-image: url("../img/iconOpen.png");
+    -fx-background-size: 20 20;
+    -fx-background-repeat: no-repeat;
+    -fx-background-color: transparent;
+    -fx-background-position:center center;
+}
+
 /*  http://fxexperience.com/2011/12/styling-fx-buttons-with-css/  */
 .main-button, .main-button:pressed, .main-button:hover, .main-button:focused {
     -fx-padding: 8 15 15 15;

@@ -55,10 +55,10 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     public void initializeNext2() {
         try {
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(shearBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(angleBox.getEditor().styleProperty().isEqualTo(badStyle))
             );

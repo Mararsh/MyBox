@@ -9,9 +9,8 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
@@ -19,7 +18,6 @@ import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.ImageManufacture;
-import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -37,7 +35,7 @@ public class ImageManufactureShadowController extends ImageManufactureController
     @FXML
     protected CheckBox preAlphaCheck;
     @FXML
-    protected Label preAlphaTipsLabel;
+    protected ImageView preAlphaTipsView;
 
     public ImageManufactureShadowController() {
         ImageShadowKey = "ImageShadowKey";
@@ -125,8 +123,6 @@ public class ImageManufactureShadowController extends ImageManufactureController
 //                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
 //                }
 //            });
-            FxmlControl.quickTooltip(preAlphaTipsLabel, new Tooltip(getMessage("PremultipliedAlphaTips")));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }

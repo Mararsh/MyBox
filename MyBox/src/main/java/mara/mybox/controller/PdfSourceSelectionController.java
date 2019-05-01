@@ -5,7 +5,6 @@
  */
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.PdfBatchBaseController;
 import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import javafx.application.Platform;
@@ -14,7 +13,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -37,8 +35,6 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
 
     public PdfInformation pdfInformation;
 
-    @FXML
-    public Button pdfOpenButon;
     @FXML
     public TextField fromPageInput, toPageInput;
     @FXML
@@ -115,7 +111,7 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
     }
 
     @FXML
-    public void openPdfAction(ActionEvent event) {
+    public void viewAction(ActionEvent event) {
         if (pdfInformation == null) {
             return;
         }
@@ -147,7 +143,7 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
                         if (pdfInformation != null) {
                             toPageInput.setText(pdfInformation.getNumberOfPages() + "");
                             infoButton.setDisable(false);
-                            pdfOpenButon.setDisable(false);
+                            viewButton.setDisable(false);
                         }
                         parentController.sourceFileChanged(sourceFile);
                     }

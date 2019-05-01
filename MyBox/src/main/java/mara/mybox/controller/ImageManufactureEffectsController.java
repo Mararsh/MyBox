@@ -22,9 +22,11 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
+import mara.mybox.data.ControlStyle;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -69,14 +71,11 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
     private BlurAlgorithm blurAlgorithm;
 
     @FXML
-    protected ToggleGroup effectsGroup;
-    @FXML
     protected HBox setBox, tabBox;
     @FXML
-    protected RadioButton thresholdingRadio, posterizingRadio, bwRadio,
-            convolutionRadio, contrastRadio;
+    protected ComboBox<String> objectBox;
     @FXML
-    protected Label scopeTipsLabel;
+    protected ImageView scopeTipsView;
 
     public ImageManufactureEffectsController() {
     }
@@ -112,20 +111,19 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     protected void initEffectsTab() {
         try {
-            effectsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            List<String> objects = Arrays.asList(getMessage("Contrast"), getMessage("Clarity"),
+                    getMessage("Posterizing"), getMessage("Thresholding"),
+                    getMessage("Gray"), getMessage("BlackOrWhite"), getMessage("Sepia"),
+                    getMessage("EdgeDetection"), getMessage("Emboss"),
+                    getMessage("Blur"), getMessage("Sharpen"), getMessage("Convolution"));
+            objectBox.getItems().addAll(objects);
+            objectBox.setVisibleRowCount(objects.size());
+            objectBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     checkEffetcsOperationType();
                 }
             });
-            checkEffetcsOperationType();
-
-            FxmlControl.setComments(thresholdingRadio, new Tooltip(getMessage("ThresholdingComments")));
-            FxmlControl.setComments(posterizingRadio, new Tooltip(getMessage("QuantizationComments")));
-            FxmlControl.setComments(bwRadio, new Tooltip(getMessage("BWThresholdComments")));
-
-            FxmlControl.quickTooltip(scopeTipsLabel, new Tooltip(getMessage("ImageScopeTips")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -142,8 +140,9 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
             isSettingValues = true;
             tabPane.getSelectionModel().select(effectsTab);
-
             isSettingValues = false;
+
+            objectBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -158,6 +157,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
         intLabel = intLabel2 = intLabel3 = intLabel4 = stringLabel = null;
         radio1 = radio2 = radio3 = radio4 = null;
         setButton = null;
+        tipsView = null;
         scopeListBox.setDisable(false);
     }
 
@@ -169,8 +169,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             stringBox = null;
             radioGroup = null;
 
-            RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
-            String selectedString = selected.getText();
+            String selectedString = objectBox.getSelectionModel().getSelectedItem();
             if (getMessage("Blur").equals(selectedString)) {
                 effectType = OperationType.Blur;
                 makeBlurBox();
@@ -350,6 +349,11 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     private void makePosterizingBox() {
         try {
+            tipsView = new ImageView();
+            tipsView.setFitWidth(20);
+            tipsView.setFitHeight(20);
+            ControlStyle.setStyle(tipsView, "quantizationTipsView", true);
+
             quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
@@ -393,7 +397,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
             FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
+            setBox.getChildren().addAll(tipsView, stringLabel, stringBox, intLabel, intBox, valueCheck);
             okButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
@@ -406,6 +410,11 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     private void makeThresholdingBox() {
         try {
+            tipsView = new ImageView();
+            tipsView.setFitWidth(20);
+            tipsView.setFitHeight(20);
+            ControlStyle.setStyle(tipsView, "thresholdingTipsView", true);
+
             intPara1 = 128;
             intLabel = new Label(getMessage("Threshold"));
             intInput = new TextField();
@@ -484,7 +493,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             intInput3.setText("255");
             FxmlControl.quickTooltip(intInput3, new Tooltip("0~255"));
 
-            setBox.getChildren().addAll(intLabel, intInput,
+            setBox.getChildren().addAll(tipsView, intLabel, intInput,
                     intLabel2, intInput2,
                     intLabel3, intInput3);
             okButton.disableProperty().bind(
@@ -500,6 +509,11 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
     private void makeBlackWhiteBox() {
         try {
+            tipsView = new ImageView();
+            tipsView.setFitWidth(20);
+            tipsView.setFitHeight(20);
+            ControlStyle.setStyle(tipsView, "BWThresholdTipsView", true);
+
             intPara2 = 128;
             intInput = new TextField();
             intInput.textProperty().addListener(new ChangeListener<String>() {
@@ -561,7 +575,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             extraScopeCheck();
             FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
 
-            setBox.getChildren().addAll(radio1, radio2, radio3,
+            setBox.getChildren().addAll(tipsView, radio1, radio2, radio3,
                     intInput, setButton, valueCheck);
             okButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
@@ -797,7 +811,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
     }
 
     public void applyKernel(ConvolutionKernel kernel) {
-        convolutionRadio.fire();
+        objectBox.getSelectionModel().select(getMessage("Convolution"));
         if (stringBox.getItems().contains(kernel.getName())) {
             stringBox.getSelectionModel().select(kernel.getName());
         } else {
@@ -824,6 +838,11 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
         } else {
             FxmlControl.setEditorBadStyle(stringBox);
         }
+    }
+
+    @FXML
+    public void popObjectBox() {
+        objectBox.show();
     }
 
     @FXML

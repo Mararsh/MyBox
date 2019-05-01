@@ -129,7 +129,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void checkEffetcsOperationType() {
         try {
             setBox.getChildren().clear();
-            operationBarController.startButton.disableProperty().unbind();
+            startButton.disableProperty().unbind();
             removeTmpControls();
             stringBox = null;
             radioGroup = null;
@@ -192,10 +192,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     }
 
     private void bindStart() {
-        operationBarController.startButton.disableProperty().bind(
+        startButton.disableProperty().bind(
                 Bindings.isEmpty(targetPathInput.textProperty())
                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                        .or(Bindings.isEmpty(tableView.getItems()))
         );
     }
 
@@ -244,12 +244,12 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             stringBox.getItems().addAll(Arrays.asList(getMessage("AverageBlur"), getMessage("GaussianBlur")));
             stringBox.getSelectionModel().select(getMessage("AverageBlur"));
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -319,11 +319,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             valueCheck = new CheckBox(getMessage("Gray"));
             valueCheck.setSelected(true);
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
         } catch (Exception e) {
@@ -377,11 +377,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             valueCheck.setSelected(true);
             FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
         } catch (Exception e) {
@@ -473,11 +473,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             setBox.getChildren().addAll(intLabel, intInput,
                     bigValueLabel, thresholdingMaxInput,
                     smallValueLabel, thresholdingMinInput);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
                             .or(thresholdingMinInput.styleProperty().isEqualTo(badStyle))
                             .or(thresholdingMaxInput.styleProperty().isEqualTo(badStyle))
             );
@@ -542,7 +542,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
 
             setBox.getChildren().addAll(radio1, radio2, radio3, intInput, valueCheck);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
             );
         } catch (Exception e) {
@@ -580,11 +580,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(intLabel, intInput);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -625,11 +625,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                 }
             });
             setBox.getChildren().addAll(stringLabel, stringBox, setButton);
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     stringBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                            .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
             logger.error(e.toString());
@@ -661,7 +661,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                             setBox.getChildren().removeAll(intLabel2, intInput2);
                         }
                     }
-                    operationBarController.startButton.disableProperty().unbind();
+                    startButton.disableProperty().unbind();
                     if (getMessage("GrayHistogramStretching").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching;
                         intPara1 = 100;
@@ -711,12 +711,12 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         intInput2.setText("100");
 
                         setBox.getChildren().addAll(intLabel, intInput, intLabel2, intInput2);
-                        operationBarController.startButton.disableProperty().bind(
+                        startButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)
                                         .or(intInput2.styleProperty().isEqualTo(badStyle))
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(Bindings.isEmpty(tableView.getItems()))
                                         .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                         );
                     } else if (getMessage("GrayHistogramShifting").equals(newValue)) {
@@ -747,11 +747,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         intInput.setText("10");
                         FxmlControl.quickTooltip(intInput, new Tooltip("-255 ~ 255"));
                         setBox.getChildren().addAll(intLabel, intInput);
-                        operationBarController.startButton.disableProperty().bind(
+                        startButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)
                                         .or(Bindings.isEmpty(targetPathInput.textProperty()))
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(Bindings.isEmpty(tableView.getItems()))
                                         .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                         );
                     } else {
@@ -764,10 +764,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
                             contrastAlgorithm = ImageContrast.ContrastAlgorithm.Adaptive_Histogram_Equalization;
                         }
-                        operationBarController.startButton.disableProperty().bind(
+                        startButton.disableProperty().bind(
                                 Bindings.isEmpty(targetPathInput.textProperty())
                                         .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                                        .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                                        .or(Bindings.isEmpty(tableView.getItems()))
                                         .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                         );
                     }

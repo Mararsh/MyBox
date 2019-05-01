@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="menuBox" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MainMenuController">
+<VBox fx:id="thisPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MainMenuController">
     <children>
         <HBox fx:id="mainMenuPane" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
             <children>
@@ -18,7 +18,7 @@
                                 <CheckMenuItem fx:id="monitorCpuCheck" mnemonicParsing="false" onAction="#checkCpuMonitor" text="%MonitorCpu" />
                                 <MenuItem mnemonicParsing="false" onAction="#jvmProperties" text="%JvmProperties" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#refresh" text="%RereshWindow" />
+                                <MenuItem mnemonicParsing="false" onAction="#refresh" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />
@@ -97,6 +97,7 @@
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -104,13 +105,14 @@
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageSample" text="%ImageSubsample" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
-                                <!--                        <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
                                 <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
@@ -166,6 +168,37 @@
                                 <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" text="%FontSize15" toggleGroup="$fontSizeGroup" />
                                 <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" text="%FontSize17" toggleGroup="$fontSizeGroup" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
+
+                                <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
+
+                                <!--                                <Menu mnemonicParsing="false" text="%ControlsContent">
+                                    <items>
+                                        <RadioMenuItem fx:id="graphicMenuItem" mnemonicParsing="false" onAction="#setGraphicOnly" text="%Graphic">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="controlContentGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem  fx:id="graphicTopMenuItem" mnemonicParsing="false" onAction="#setGraphicTop" text="%GraphicTop" toggleGroup="$controlContentGroup" />
+                                        <RadioMenuItem  fx:id="graphicBottomMenuItem" mnemonicParsing="false" onAction="#setGraphicBottom" text="%GraphicBottom" toggleGroup="$controlContentGroup" />
+                                        <RadioMenuItem  fx:id="graphicLeftMenuItem" mnemonicParsing="false" onAction="#setGraphicLeft" text="%GraphicLeft" toggleGroup="$controlContentGroup" />
+                                        <RadioMenuItem fx:id="graphicRightMenuItem"  mnemonicParsing="false" onAction="#setGraphicRight" text="%GraphicRight" toggleGroup="$controlContentGroup" />
+                                        <RadioMenuItem fx:id="textOnlyMenuItem"  mnemonicParsing="false" onAction="#setTextOnly" text="%Text" toggleGroup="$controlContentGroup" />
+                                    </items>
+                                </Menu>-->
+
+                                <Menu mnemonicParsing="false" text="%ControlsColor">
+                                    <items>
+                                        <RadioMenuItem fx:id="defaultColorMenuItem" mnemonicParsing="false" onAction="#setDefaultColor" text="%DefaultColor">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="colorGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem  fx:id="pinkMenuItem" mnemonicParsing="false" onAction="#setPink" text="%Pink" toggleGroup="$colorGroup" />
+                                        <RadioMenuItem  fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%Red" toggleGroup="$colorGroup" />
+                                        <RadioMenuItem  fx:id="blueMenuItem" mnemonicParsing="false" onAction="#setBlue" text="%Blue" toggleGroup="$colorGroup" />
+                                        <RadioMenuItem fx:id="orangeMenuItem"  mnemonicParsing="false" onAction="#setOrange" text="%Orange" toggleGroup="$colorGroup" />
+                                    </items>
+                                </Menu>
 
                                 <Menu mnemonicParsing="false" text="%InterfaceStyle">
                                     <items>

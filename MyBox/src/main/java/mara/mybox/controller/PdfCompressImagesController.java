@@ -69,7 +69,7 @@ public class PdfCompressImagesController extends PdfBatchBaseController {
     @Override
     public void initializeNext2() {
         allowPaused = false;
-        operationBarController.startButton.disableProperty().bind(
+        startButton.disableProperty().bind(
                 Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                         .or(Bindings.isEmpty(sourceSelectionController.fromPageInput.textProperty()))
                         .or(Bindings.isEmpty(sourceSelectionController.toPageInput.textProperty()))

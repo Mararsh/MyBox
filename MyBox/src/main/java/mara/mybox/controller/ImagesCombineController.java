@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageSourcesController;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class ImagesCombineController extends ImageSourcesController {
         try {
             imageCombine = new ImageCombine();
 
-            initSourceSection();
+            initTable();
             initArraySection();
             initSizeSection();
             initTargetSection();
@@ -432,7 +431,7 @@ public class ImagesCombineController extends ImageSourcesController {
         try {
 
             imageBar.disableProperty().bind(
-                    Bindings.isEmpty(sourceImages)
+                    Bindings.isEmpty(tableData)
                             .or(hasSampled)
             );
 
@@ -445,10 +444,10 @@ public class ImagesCombineController extends ImageSourcesController {
     public void setImageChanged(boolean c) {
         changed.setValue(c);
         long pixels = 0;
-        for (ImageInformation m : sourceImages) {
+        for (ImageInformation m : tableData) {
             pixels += m.getWidth() * m.getHeight();
         }
-        sourcesLabel.setText(getMessage("TotalImages") + ":" + sourceImages.size() + "  "
+        sourcesLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
                 + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
         if (hasSampled()) {
             hasSampled.set(true);
@@ -479,7 +478,7 @@ public class ImagesCombineController extends ImageSourcesController {
     }
 
     private void combineImages() {
-        if (sourceImages == null || sourceImages.isEmpty()
+        if (tableData == null || tableData.isEmpty()
                 || totalWidthInput.getStyle().equals(badStyle)
                 || totalHeightInput.getStyle().equals(badStyle)
                 || eachWidthInput.getStyle().equals(badStyle)
@@ -491,11 +490,11 @@ public class ImagesCombineController extends ImageSourcesController {
         }
 
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-            image = ImageConvert.combineSingleColumn(imageCombine, sourceImages, false, true);
+            image = ImageConvert.combineSingleColumn(imageCombine, tableData, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-            image = ImageConvert.combineSingleRow(imageCombine, sourceImages, false, true);
+            image = ImageConvert.combineSingleRow(imageCombine, tableData, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
-            image = combineImagesColumns(sourceImages);
+            image = combineImagesColumns(tableData);
         } else {
             image = null;
         }

@@ -1,7 +1,10 @@
 package mara.mybox.tools;
 
+import java.awt.Desktop;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.io.File;
+import java.net.URI;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
@@ -108,6 +111,35 @@ public class SystemTools {
             clipboard.clear();
         }
         return text;
+    }
+
+    public static void browseURL(String url) {
+        try {
+            browseURI(new URI(url));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void browseURL(File file) {
+        try {
+            browseURI(file.toURI());
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void browseURI(URI url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(url);
+            } else {
+                logger.error("Desktop is not supported");
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
 }

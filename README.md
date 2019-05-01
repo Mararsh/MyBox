@@ -8,21 +8,23 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的releases页签）。
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用：
-[MyBox-5.0-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-exe.zip) 。
+[MyBox-5.1-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-exe.zip) 。
 
 在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-5.0-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-5.0-jar.zip) 
+[MyBox-5.1-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-jar.zip) 
 
 ## 运行
 在Windows上双击“MyBox.exe”即可运行MyBox。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
 
 在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.0.jar</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.1.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.0.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.1.jar   /tmp/a1.jpg</CODE></PRE>
 
 ## 限制
 在包含非英文字符的路径下无法启动MyBox.exe。请解包到纯英文目录下。
+
+Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以运行。以后将实现迁移。
 
 
 # 资源地址
@@ -46,13 +48,13 @@
 
 [桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v3.9/MyBox-UserGuide-3.9-NetworkTools-zh.pdf)
+[网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf)
 
 
 # 当前版本
-当前是版本5.0，已实现的特点概述如下。
+当前是版本5.1，已实现的特点概述如下。
 ## 跨平台
-纯Java实现且基于开源库，因此MyBox可运行于所有支持Java的平台。
+纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 8/9/10的平台。
 ## 国际化
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
 ## PDF工具
@@ -114,9 +116,11 @@
 1. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
 2. 图片的混合。支持选择交叉区域、多种混合模式。
 3. 将多个图片合成PDF文件
+4. 添加透明通道
 ### 图像局部化
 1. 图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
 2. 图像的降采样。可以设置采样区域、采样比例。
+3. 提取透明通道
 ### 大图片的处理
 1. 评估加载整个图像所需内存,判断能否加载整个图像。
 2. 若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。
@@ -190,7 +194,7 @@
 9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
 ## 设置
 1. 是否恢复界面上次尺寸、是否在新窗口中打开界面、是否弹出最近访问的文件/目录
-2. 语言、字体大小、皮肤、是否显示注释
+2. 语言、字体大小、皮肤、按钮颜色、是否显示注释
 3. 画笔/锚点的宽度和颜色、锚点是否实心
 4. 图像是否显示坐标、横标尺、纵标尺。
 5. 图像历史个数、图像最大显示宽度
@@ -209,6 +213,12 @@
 
 # 开发日志
 ```
+2019-5-1 版本5.1 界面：控件显示为图片，5种颜色可选，可选是否显示控件文字。
+简化小提示，以适应14英寸的笔记本屏幕。
+图像工具：提取/添加透明通道。
+修正若干问题，包括：图像处理中过滤透明像素的错误条件。
+劳动节快乐！
+
 2019-4-21 版本5.0 以拖拉锚点的方式选择图像操作的区域。
 “涂鸦”：在图像上粘贴图片、添加形状（矩形/圆形/椭圆/多边形）的线条或填充形状、绘制多笔一线或一笔一线。
 画笔的宽度、颜色、实虚可选。

@@ -137,8 +137,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @FXML
     protected ComboBox<Color> scopeColorsBox;
     @FXML
-    protected Button selectRefButton, undoButton, redoButton, popButton, refButton,
-            scopeDeleteButton, scopeClearButton, polygonWithdrawButton, polygonClearButton;
+    protected Button scopeDeleteButton, scopeClearButton, polygonWithdrawButton, polygonClearButton;
     @FXML
     protected CheckBox showRefCheck, showScopeCheck, saveCheck, areaExcludedCheck, colorExcludedCheck;
     @FXML
@@ -287,7 +286,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         return;
                     } else if (getMessage("OpenPathDot").equals(hisBox.getItems().get(index))) {
                         try {
-                            Desktop.getDesktop().browse(new File(AppVaribles.getImageHisPath()).toURI());
+                           browseURI(new File(AppVaribles.getImageHisPath()).toURI());
                         } catch (Exception e) {
                             logger.error(e.toString());
                         }
@@ -302,20 +301,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             hisBox.setVisibleRowCount(15);
             int max = AppVaribles.getUserConfigInt("MaxImageHistories", 20);
             hisBox.setDisable(max <= 0);
-
-            FxmlControl.quickTooltip(saveButton, new Tooltip("CTRL+s"));
-
-            FxmlControl.quickTooltip(recoverButton, new Tooltip("CTRL+r"));
-
-            FxmlControl.quickTooltip(redoButton, new Tooltip("CTRL+y"));
-
-            FxmlControl.quickTooltip(undoButton, new Tooltip("CTRL+z"));
-
             FxmlControl.quickTooltip(hisBox, new Tooltip("CTRL+h"));
-
-            FxmlControl.quickTooltip(refButton, new Tooltip("CTRL+f"));
-
-            FxmlControl.quickTooltip(popButton, new Tooltip("CTRL+p"));
 
             if (ImageTipsKey != null) {
                 FxmlControl.quickTooltip(imageTipsLabel, new Tooltip(getMessage(ImageTipsKey)));
@@ -326,10 +312,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             if (showScopeCheck != null && scopeBox != null) {
                 initScopeControls();
-            }
-
-            if (pickColorButton != null) {
-                FxmlControl.quickTooltip(pickColorButton, new Tooltip(getMessage("ColorPickerComments")));
             }
 
             initMaskControls(false);
@@ -634,8 +616,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
             isSettingValues = false;
 
             initMaskControls(false);
-            imageBox.getChildren().remove(areaSetBox);
             areaSetBox.getChildren().clear();
+            imageBox.getChildren().remove(areaSetBox);
 
             scopeSetBox.getChildren().clear();
             scopeView.setImage(scope.getImage());
@@ -1168,8 +1150,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
             values.setImage(image);
             values.setImageInfo(imageInformation);
             values.setCurrentImage(image);
-            values.setRefImage(image);
-            values.setRefInfo(imageInformation);
+            if (values.getRefImage() == null) {
+                values.setRefImage(image);
+                values.setRefInfo(imageInformation);
+            }
             scope = new ImageScope(image);
             isSettingValues = false;
             if (image == null
@@ -1816,6 +1800,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void createAction() {
         ImageManufactureMarginsController c
                 = (ImageManufactureMarginsController) loadScene(CommonValues.ImageManufactureMarginsFxml);

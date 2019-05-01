@@ -30,10 +30,10 @@ import static mara.mybox.value.AppVaribles.logger;
 public class MyBoxController extends BaseController {
 
     private ContextMenu pdfMenu, imageMenu, fileMenu, desktopMenu, languageMenu,
-            networkMenu, recentMenu;
+            networkMenu, recentMenu, dataMenu;
 
     @FXML
-    private VBox imageBox, pdfBox, fileBox, desktopBox, recentBox, networkBox;
+    private VBox imageBox, pdfBox, fileBox, desktopBox, recentBox, networkBox, dataBox;
     @FXML
     private Label langLabel;
 
@@ -50,7 +50,8 @@ public class MyBoxController extends BaseController {
             initDesktopToolsMenu();
             initFileToolsMenu();
             initNetworkToolsMenu();
-            initOtherMenu();
+            initLanguageMenu();
+            initDataMenu();
 
             List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
             if (alarms != null) {
@@ -266,7 +267,7 @@ public class MyBoxController extends BaseController {
                 ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
                 framesMenu, new SeparatorMenuItem(), mergeMenu, new SeparatorMenuItem(), partMenu, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                //                imageStatistic, new SeparatorMenuItem(),
+                imageStatistic, new SeparatorMenuItem(),
                 convolutionKernelManager, colorPalette, pixelsCalculator);
     }
 
@@ -523,8 +524,16 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem imageAlphaExtract = new MenuItem(AppVaribles.getMessage("ImageAlphaExtract"));
+        imageAlphaExtract.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageAlphaExtractBatchFxml);
+            }
+        });
+
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("ImagePart"));
-        manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample);
+        manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample, imageAlphaExtract);
         return manufactureSubMenu;
 
     }
@@ -555,8 +564,16 @@ public class MyBoxController extends BaseController {
             }
         });
 
+        MenuItem imageAlphaAdd = new MenuItem(AppVaribles.getMessage("ImageAlphaAdd"));
+        imageAlphaAdd.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ImageAlphaAddBatchFxml);
+            }
+        });
+
         Menu manufactureSubMenu = new Menu(AppVaribles.getMessage("MergeImages"));
-        manufactureSubMenu.getItems().addAll(ImagesBlend, ImageCombine, imagesCombinePdf);
+        manufactureSubMenu.getItems().addAll(ImagesBlend, ImageCombine, imagesCombinePdf, imageAlphaAdd);
         return manufactureSubMenu;
 
     }
@@ -689,7 +706,32 @@ public class MyBoxController extends BaseController {
 
     }
 
-    private void initOtherMenu() {
+    private void initDataMenu() {
+        MenuItem htmlEditor = new MenuItem(AppVaribles.getMessage("HtmlEditor"));
+        htmlEditor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                HtmlEditorController controller
+                        = (HtmlEditorController) loadScene(CommonValues.HtmlEditorFxml);
+//                controller.switchBroswerTab();
+            }
+        });
+
+        MenuItem weiboSnap = new MenuItem(AppVaribles.getMessage("WeiboSnap"));
+        weiboSnap.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                WeiboSnapController controller
+                        = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
+            }
+        });
+        dataMenu = new ContextMenu();
+        dataMenu.setAutoHide(true);
+        dataMenu.getItems().addAll(weiboSnap, htmlEditor);
+
+    }
+
+    private void initLanguageMenu() {
         MenuItem setEnglish = new MenuItem("English");
         setEnglish.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -763,6 +805,11 @@ public class MyBoxController extends BaseController {
     }
 
     @FXML
+    void showDataMenu(MouseEvent event) {
+        showMenu(dataBox, dataMenu, event);
+    }
+
+    @FXML
     private void showAbout(MouseEvent event) {
         openStage(CommonValues.AboutFxml);
         hideMenus(event);
@@ -776,6 +823,7 @@ public class MyBoxController extends BaseController {
         pdfMenu.hide();
         networkMenu.hide();
         languageMenu.hide();
+        dataMenu.hide();
         if (recentMenu != null) {
             recentMenu.hide();
         }

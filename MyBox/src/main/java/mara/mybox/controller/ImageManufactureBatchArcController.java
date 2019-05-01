@@ -15,7 +15,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -55,10 +54,10 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     @Override
     public void initializeNext2() {
         try {
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(arcBox.getEditor().styleProperty().isEqualTo(badStyle))
                     .or(perBox.getEditor().styleProperty().isEqualTo(badStyle))
             );
@@ -82,9 +81,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             });
             arcBox.getSelectionModel().select(0);
 
-            Tooltip tips = new Tooltip("1~100");
-            tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(perBox, tips);
+            FxmlControl.quickTooltip(perBox, new Tooltip("1~100"));
 
             perBox.getItems().addAll(Arrays.asList("15", "25", "30", "10", "12", "8"));
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {

@@ -28,7 +28,7 @@
                     <content>
                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                             <content>
-                                <fx:include fx:id="filesTable" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </ScrollPane>
                     </content>
@@ -82,8 +82,24 @@
                                     <children>
                                         <Label text="%FileName" />
                                         <TextField fx:id="targetFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button mnemonicParsing="false" onAction="#selectTargetFile" onMouseEntered="#popTargetFile" text="%Select..." />
-                                        <Button fx:id="openTargetButton" disable="true" mnemonicParsing="false" onAction="#openTargetAction" text="%Open" />
+                                        <Button fx:id="selectTargetFileButton" mnemonicParsing="false" onAction="#selectTargetFile" onMouseEntered="#popTargetFile" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconOpen.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="viewTargetFileButton" disable="true" mnemonicParsing="false" onAction="#viewAction" >
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconView.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </HBox>
                             </children>

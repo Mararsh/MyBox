@@ -32,12 +32,44 @@
                                                 <Label fx:id="foreTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ForegroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <Button mnemonicParsing="false" onAction="#selectForegroundImage" onMouseEntered="#popForeground" text="%Select..." />
+                                                        <Button fx:id="openForeImageButton" mnemonicParsing="false" onAction="#selectForegroundImage" onMouseEntered="#popForeground" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconOpen.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <HBox fx:id="foreBox" alignment="CENTER_LEFT" disable="true" spacing="10.0" HBox.hgrow="NEVER">
                                                             <children>
-                                                                <Button mnemonicParsing="false" onAction="#openForegroundImage" text="%Open" />
-                                                                <Button mnemonicParsing="false" onAction="#setForegroundPaneSize" text="%PaneSize" />
-                                                                <Button mnemonicParsing="false" onAction="#setForegroundImageSize" text="%ImageSize" />
+                                                                <Button fx:id="viewForeImageButton" mnemonicParsing="false" onAction="#openForegroundImage" >
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconView.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="foreImagePaneSizeButton" mnemonicParsing="false" onAction="#setForegroundPaneSize" >
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconPicBig.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="foreImageImageSizeButton" mnemonicParsing="false" onAction="#setForegroundImageSize">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconPicSmall.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -59,12 +91,44 @@
                                                 <Label fx:id="backTitle" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%BackgroundImage" />
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <Button mnemonicParsing="false" onAction="#selectBackgroundImage" onMouseEntered="#popBackground" text="%Select..." />
+                                                        <Button fx:id="openBackImageButton" mnemonicParsing="false" onAction="#selectBackgroundImage" onMouseEntered="#popBackground" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconOpen.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                         <HBox fx:id="backBox" alignment="CENTER_LEFT" disable="true" spacing="10.0">
                                                             <children>
-                                                                <Button mnemonicParsing="false" onAction="#openBackgroundImage" text="%Open" />
-                                                                <Button mnemonicParsing="false" onAction="#setBackgroundPaneSize" text="%PaneSize" />
-                                                                <Button mnemonicParsing="false" onAction="#setBackgroundImageSize" text="%ImageSize" />
+                                                                <Button fx:id="viewBackImageButton" mnemonicParsing="false" onAction="#openBackgroundImage" >
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconView.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="backImagePaneSizeButton" mnemonicParsing="false" onAction="#setBackgroundPaneSize" >
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconPicBig.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="backImageImageSizeButton" mnemonicParsing="false" onAction="#setBackgroundImageSize">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconPicSmall.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -150,11 +214,52 @@
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="NEVER">
                                             <children>
-                                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" text="%OpenInNewWindow" />
-                                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" text="%ZoomOut" />
-                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" text="%ZoomIn" />
-                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize" text="%PaneSize" />
-                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" text="%ImageSize" />
+                                                <Button fx:id="newWindowButton" mnemonicParsing="false" onAction="#newWindow" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconView.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconZoomOut.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+
+                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconZoomIn.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPicBig.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" >
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPicSmall.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                             </children>
                                         </HBox>

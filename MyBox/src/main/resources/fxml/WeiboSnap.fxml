@@ -21,161 +21,239 @@
     <center>
         <VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
-                <TitledPane text="%WebPageOptions" VBox.vgrow="NEVER">
+                <TitledPane text="%Options" VBox.vgrow="NEVER">
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%WeiboAddress" />
-                                        <TextField fx:id="addressInput" prefWidth="295.0" />
-                                        <Label fx:id="weiboTips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Tips" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%StartMonth" />
-                                        <TextField fx:id="startMonthInput" prefWidth="90.0" promptText="2016-05" />
-                                        <Label text="%EmptyForVeryStart" />
-                                        <Label text="%StartPage" />
-                                        <TextField fx:id="startPageInput" prefWidth="40.0" />
-                                        <Label text="%EndMonth">
-                                            <padding>
-                                                <Insets left="30.0" />
-                                            </padding>
-                                        </Label>
-                                        <TextField fx:id="endMonthInput" prefWidth="90.0" promptText="2018-09" />
-                                        <Label text="%EmptyForNow" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <CheckBox fx:id="expandCommentsCheck" mnemonicParsing="false" selected="true" text="%ExpandComments">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </CheckBox>
-                                        <CheckBox fx:id="expandPicturesCheck" mnemonicParsing="false" selected="true" text="%ExpandPictures" />
-                                        <Label text="%FailedRetryTimes">
-                                            <HBox.margin>
-                                                <Insets left="70.0" />
-                                            </HBox.margin>
-                                        </Label>
-                                        <ComboBox fx:id="retryBox" prefWidth="80.0" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <TitledPane text="%SnapOptions" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox spacing="10.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
-                                        <Label text="%WebPageScale" />
-                                        <ComboBox fx:id="zoomBox" editable="true" prefWidth="106.0" />
-                                        <Label text="%WebWidth">
-                                            <padding>
-                                                <Insets left="20.0" />
-                                            </padding>
-                                        </Label>
-                                        <ComboBox fx:id="widthBox" editable="true" prefWidth="145.0" />
-                                        <Label text="%SnapWidthComments" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%Format" />
-                                        <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="%PNG">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="formatGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
-                                        <ComboBox fx:id="jpegBox" editable="true" prefWidth="100.0" />
-                                        <Label text="\%">
-                                            <padding>
-                                                <Insets right="10.0" />
-                                            </padding>
-                                        </Label>
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%Format" visible="false" />
-                                        <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
-                                        <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
-                                        <Label text="%EmptyForDefault" />
-                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
-                <TitledPane text="%PdfOptions" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox spacing="10.0">
-                            <children>
-                                <HBox fx:id="sizeBox" alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
-                                        <Label text="%PageSize">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <RadioButton fx:id="imageSizeRadio" mnemonicParsing="false" selected="true" text="%ImagesSize">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="sizeGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
-                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
-                                        <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
-                                        <Label text="%UnitPixels" />
-                                        <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
-                                        <TextField fx:id="customHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%PageMargin">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
-                                        <Label text="%Author">
-                                            <padding>
-                                                <Insets left="10.0" />
-                                            </padding>
-                                        </Label>
-                                        <TextField fx:id="authorInput" prefWidth="200.0" promptText="Mara">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </TextField>
-                                        <Label text="%DefaultDisplayScale" />
-                                        <ComboBox fx:id="pdfScaleBox" editable="true" prefWidth="91.0" />
-                                        <Label text="\%" />
-                                    </children>
-                                </HBox>
-                                <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%MaxMainMemPDF" />
-                                        <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="pdfMemGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
-                                        <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
-                                        <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
-                                    </children>
-                                </HBox>
+                        <TabPane tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="%WebPageOptions">
+                                 <content>
+                                    <VBox spacing="10.0">
+                                       <children>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%WeiboAddress" />
+                                                          <TextField fx:id="addressInput" prefWidth="295.0" />
+                                                          <ImageView fx:id="weiboTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                              <image>
+                                                                  <Image url="@../buttons/iconTips.png" />
+                                                              </image>
+                                                          </ImageView>
+                                                      </children>
+                                                  </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%StartMonth" />
+                                                          <TextField fx:id="startMonthInput" prefWidth="90.0" promptText="2016-05" />
+                                                          <Label text="%EmptyForVeryStart" />
+                                                          <Label text="%StartPage">
+                                                   <HBox.margin>
+                                                      <Insets left="30.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                          <TextField fx:id="startPageInput" prefWidth="40.0" />
+                                                      </children>
+                                                  </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%EndMonth" />
+                                                <TextField fx:id="endMonthInput" prefWidth="90.0" promptText="2018-09" />
+                                                <Label text="%EmptyForNow" />
+                                             </children>
+                                          </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <CheckBox fx:id="expandCommentsCheck" mnemonicParsing="false" selected="true" text="%ExpandComments">
+                                                              <HBox.margin>
+                                                                  <Insets />
+                                                              </HBox.margin>
+                                                          </CheckBox>
+                                                          <CheckBox fx:id="expandPicturesCheck" mnemonicParsing="false" selected="true" text="%ExpandPictures" />
+                                                      </children>
+                                                  </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="140.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%FailedRetryTimes">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <ComboBox fx:id="retryBox" prefWidth="80.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="171.0" spacing="10.0">
+                                             <children>
+                                                      <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
+                                                      <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
+                                                      <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true">
+                                                          <graphic>
+                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                  <image>
+                                                                      <Image url="@../buttons/iconCat.png" />
+                                                                  </image>
+                                                              </ImageView>
+                                                          </graphic>
+                                                      </CheckBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                            </Tab>
+                            <Tab text="%SnapOptions">
+                                 <content>
+                                    <VBox spacing="10.0">
+                                       <children>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                      <children>
+                                                          <Label text="%WebPageScale" />
+                                                          <ComboBox fx:id="zoomBox" editable="true" prefWidth="106.0" />
+                                                      </children>
+                                                  </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%WebWidth" />
+                                                <ComboBox fx:id="widthBox" editable="true" prefWidth="145.0" />
+                                                <Label text="%SnapWidthComments" />
+                                             </children>
+                                          </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%Format" />
+                                                          <RadioButton fx:id="pngRadio" mnemonicParsing="false" selected="true" text="%PNG">
+                                                              <toggleGroup>
+                                                                  <ToggleGroup fx:id="formatGroup" />
+                                                              </toggleGroup>
+                                                          </RadioButton>
+                                                      </children>
+                                                  </HBox>
+                                          <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="100.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%Format" visible="false" />
+                                                <RadioButton mnemonicParsing="false" text="%JpegQuailty" toggleGroup="$formatGroup" />
+                                                <ComboBox fx:id="jpegBox" editable="true" prefWidth="100.0" />
+                                                <Label text="\%">
+                                                   <padding>
+                                                      <Insets right="10.0" />
+                                                   </padding>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%Format" visible="false" />
+                                                          <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
+                                                          <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
+                                                          <Label text="%EmptyForDefault" />
+                                                          <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+                                                      </children>
+                                                  </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                            </Tab>
+                              <Tab text="%PdfOptions">
+                                 <content>
+                                    <VBox spacing="10.0">
+                                       <children>
+                                                  <HBox fx:id="sizeBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                      <children>
+                                                          <Label text="%PageSize">
+                                                              <HBox.margin>
+                                                                  <Insets />
+                                                              </HBox.margin>
+                                                          </Label>
+                                                          <RadioButton fx:id="imageSizeRadio" mnemonicParsing="false" selected="true" text="%ImagesSize">
+                                                              <toggleGroup>
+                                                                  <ToggleGroup fx:id="sizeGroup" />
+                                                              </toggleGroup>
+                                                          </RadioButton>
+                                                          <Label text="%UnitPixels" />
+                                                      </children>
+                                                  </HBox>
+                                          <HBox fx:id="sizeBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%PageSize" visible="false">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <RadioButton mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
+                                                <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
+                                                <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
+                                             </children>
+                                          </HBox>
+                                          <HBox fx:id="sizeBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" spacing="10.0">
+                                             <children>
+                                                <Label text="%PageSize" visible="false">
+                                                   <HBox.margin>
+                                                      <Insets />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
+                                                <Label text="%UnitPixels" />
+                                                <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
+                                                <TextField fx:id="customHeightInput" disable="true" prefWidth="70.0" promptText="%Height" />
+                                             </children>
+                                          </HBox>
+                                                  <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%PageMargin">
+                                                              <HBox.margin>
+                                                                  <Insets />
+                                                              </HBox.margin>
+                                                          </Label>
+                                                          <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
+                                                          <Label text="%Author">
+                                                              <padding>
+                                                                  <Insets left="10.0" />
+                                                              </padding>
+                                                          </Label>
+                                                          <TextField fx:id="authorInput" prefWidth="200.0" promptText="Mara">
+                                                              <HBox.margin>
+                                                                  <Insets />
+                                                              </HBox.margin>
+                                                          </TextField>
+                                                          <Label text="%DefaultDisplayScale" />
+                                                          <ComboBox fx:id="pdfScaleBox" editable="true" prefWidth="91.0" />
+                                                          <Label text="\%" />
+                                                      </children>
+                                                  </HBox>
+                                                  <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                      <children>
+                                                          <Label text="%MaxMainMemPDF" />
+                                                          <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
+                                                              <toggleGroup>
+                                                                  <ToggleGroup fx:id="pdfMemGroup" />
+                                                              </toggleGroup>
+                                                          </RadioButton>
+                                                          <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
+                                                          <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
+                                                          <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
+                                                      </children>
+                                                  </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </TabPane>
                             </children>
                         </VBox>
                     </content>
@@ -188,16 +266,28 @@
                                     <children>
                                         <Label text="%FilesPath" />
                                         <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" text="%Select..." />
-                                        <Label text="%CategoryFiles" />
-                                        <RadioButton fx:id="monthsPathsRadio" mnemonicParsing="false" selected="true" text="%InMonthsPaths">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="categoryGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="onePathRadio" mnemonicParsing="false" text="%InOnePath" toggleGroup="$categoryGroup" />
+                                        <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconFolder.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </HBox>
+                        <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
+                           <children>
+                              <Label text="%CategoryFiles" />
+                              <RadioButton fx:id="monthsPathsRadio" mnemonicParsing="false" selected="true" text="%InMonthsPaths">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="categoryGroup" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="onePathRadio" mnemonicParsing="false" text="%InOnePath" toggleGroup="$categoryGroup" />
+                           </children>
+                        </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
                                         <CheckBox fx:id="htmlCheck" mnemonicParsing="false" selected="true" text="%SaveHtmlFiles" />
@@ -206,7 +296,6 @@
                                         <CheckBox fx:id="keepPageCheck" mnemonicParsing="false" text="%KeepEachPagePdf" />
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER" />
                             </children>
                         </VBox>
                     </content>
@@ -214,15 +303,24 @@
                 <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                     <children>
                         <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Start" />
-                        <Button fx:id="exampleButton" mnemonicParsing="false" onAction="#exampleAction" text="%WowAsExample">
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
+                        <Button fx:id="wowButton" mnemonicParsing="false" onAction="#exampleAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconWOW.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#suggestedSettings" text="%SuggestedSettings" />
-                        <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
-                        <CheckBox fx:id="openPathCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%OpenPathWhenStop" />
-                        <CheckBox fx:id="miaoCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onMouseEntered="#callMiao" selected="true" text="%meow" />
+                        <Button fx:id="suggestButton" mnemonicParsing="false" onAction="#suggestedSettings">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconIdea.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <VBox.margin>
                         <Insets bottom="15.0" top="10.0" />

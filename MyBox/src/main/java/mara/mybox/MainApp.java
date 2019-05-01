@@ -30,6 +30,8 @@ public class MainApp extends Application {
             // https://pdfbox.apache.org/2.0/getting-started.html
             System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
+            // https://blog.csdn.net/weixin_42156742/article/details/81386226
+            System.setProperty("java.awt.headless", "false");
 
             File userPath = new File(CommonValues.AppDataRoot);
             if (!userPath.exists()) {
@@ -49,6 +51,7 @@ public class MainApp extends Application {
             }
 
             // The following 3 statements should be done in this order
+            logger.info("Initialize data...");
             DerbyBase.initTables();
             AppVaribles.initAppVaribles();
             DerbyBase.checkUpdates();
@@ -56,7 +59,9 @@ public class MainApp extends Application {
             ImageValue.registrySupportedImageFormats();
             ImageIO.setUseCache(true);
             ImageIO.setCacheDirectory(CommonValues.AppTempPath);
+//            ControlStyle.loadIcons(getClass());
 
+            logger.info("Loading interface...");
 //            if (getParameters().getRaw() != null && !getParameters().getRaw().isEmpty()) {
 //                logger.debug(getParameters().getRaw().get(0));
 //            }

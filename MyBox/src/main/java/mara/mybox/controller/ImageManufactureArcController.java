@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -29,8 +28,6 @@ public class ImageManufactureArcController extends ImageManufactureController {
     final protected String ImageArcKey;
     protected int arc;
 
-    @FXML
-    protected Button transForArcButton;
     @FXML
     protected ComboBox arcBox;
 
@@ -62,10 +59,10 @@ public class ImageManufactureArcController extends ImageManufactureController {
 
             if (values.getImageInfo() != null
                     && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                transForArcButton.setDisable(true);
+                transparentButton.setDisable(true);
                 colorPicker.setValue(Color.WHITE);
             } else {
-                transForArcButton.setDisable(false);
+                transparentButton.setDisable(false);
                 colorPicker.setValue(Color.TRANSPARENT);
             }
 
@@ -115,17 +112,17 @@ public class ImageManufactureArcController extends ImageManufactureController {
     }
 
     @FXML
-    public void arcTransparentAction() {
+    public void setTransparentAction() {
         colorPicker.setValue(Color.TRANSPARENT);
     }
 
     @FXML
-    public void arcWhiteAction() {
+    public void setWhiteAction() {
         colorPicker.setValue(Color.WHITE);
     }
 
     @FXML
-    public void arcBlackAction() {
+    public void setBlackAction() {
         colorPicker.setValue(Color.BLACK);
     }
 

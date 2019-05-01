@@ -25,6 +25,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
+import mara.mybox.data.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
@@ -54,11 +55,11 @@ public class SettingsController extends BaseController {
     private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
     private CheckBox showCommentsCheck, stopAlarmCheck, newWindowCheck, alphaWhiteCheck, restoreStagesSizeCheck,
-            anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, removeAlphaCopyCheck;
+            anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, removeAlphaCopyCheck, controlsTextCheck;
     @FXML
     private TextField imageMaxHisInput, tempDirInput, fileRecentInput;
     @FXML
-    protected ComboBox<String> styleBox, imageWidthBox, fontSizeBox, strokeWidthBox, anchorWidthBox;
+    protected ComboBox<String> styleBox, controlsColorBox, imageWidthBox, fontSizeBox, strokeWidthBox, anchorWidthBox;
     @FXML
     protected HBox pdfMemBox, imageHisBox;
     @FXML
@@ -229,7 +230,6 @@ public class SettingsController extends BaseController {
 
             Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(pdfMemBox, tips);
 
             tips = new Tooltip(getMessage("ImageHisComments"));
             tips.setFont(new Font(16));
@@ -306,6 +306,32 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            controlsColorBox.getItems().addAll(Arrays.asList(
+                    getMessage("DefaultColor"), getMessage("Pink"),
+                    getMessage("Red"), getMessage("Blue"),
+                    getMessage("Orange")
+            ));
+            controlsColorBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (newValue != null && !newValue.isEmpty()) {
+                        checkControlsColor(newValue);
+                    }
+                }
+            });
+
+            controlsTextCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVaribles.controlDisplayText = controlsTextCheck.isSelected();
+                    AppVaribles.setUserConfigValue("ControlDisplayText", controlsTextCheck.isSelected());
+                    refresh();
+                }
+            });
+
             imageWidthBox.getItems().addAll(Arrays.asList(
                     "4096", "2048", "8192", "1024", "10240", "6144", "512", "15360", "20480", "30720"));
             imageWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -346,9 +372,9 @@ public class SettingsController extends BaseController {
             });
             removeAlphaCopyCheck.setSelected(AppVaribles.getUserConfigBoolean("RemoveAlphaCopy", true));
 
-            FxmlControl.quickTooltip(closeButton, new Tooltip("ENTER"));
-
+            isSettingValues = true;
             initValues();
+            isSettingValues = false;
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -399,6 +425,29 @@ public class SettingsController extends BaseController {
                 default:
                     break;
             }
+
+            switch (AppVaribles.ControlColor) {
+                case Default:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("DefaultColor"));
+                    break;
+                case Red:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Red"));
+                    break;
+                case Pink:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Pink"));
+                    break;
+                case Blue:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Blue"));
+                    break;
+                case Orange:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Orange"));
+                    break;
+                default:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("DefaultColor"));
+                    break;
+            }
+
+            controlsTextCheck.setSelected(AppVaribles.getUserConfigBoolean("ControlDisplayText", false));
 
             imageWidthBox.getSelectionModel().select(AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096) + "");
 
@@ -457,6 +506,31 @@ public class SettingsController extends BaseController {
             } else if (getMessage("WhiteOnVioletredStyle").equals(s)) {
                 setStyle(CommonValues.WhiteOnPurpleStyle);
             }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    protected void checkControlsColor(String s) {
+        try {
+            if (isSettingValues) {
+                return;
+            }
+            if (getMessage("DefaultColor").equals(s)) {
+                ControlStyle.setConfigColorStyle("default");
+            } else if (getMessage("Pink").equals(s)) {
+                ControlStyle.setConfigColorStyle("Pink");
+            } else if (getMessage("Red").equals(s)) {
+                ControlStyle.setConfigColorStyle("Red");
+            } else if (getMessage("Blue").equals(s)) {
+                ControlStyle.setConfigColorStyle("Blue");
+            } else if (getMessage("Orange").equals(s)) {
+                ControlStyle.setConfigColorStyle("Orange");
+            } else {
+                return;
+            }
+            refresh();
         } catch (Exception e) {
             logger.error(e.toString());
         }

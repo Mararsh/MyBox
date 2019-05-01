@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -13,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
@@ -23,6 +26,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Font;
 import javafx.stage.PopupWindow;
 import javafx.stage.Screen;
 import javax.sound.sampled.Clip;
@@ -31,9 +35,9 @@ import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.SoundTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
-import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.CommonValues.AppDataRoot;
 import javafx.stage.Stage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -128,6 +132,7 @@ public class FxmlControl {
     // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay
     public static void quickTooltip(final Node node, final Tooltip tooltip) {
         node.setOnMouseMoved(null);
+        tooltip.setFont(new Font(AppVaribles.sceneFontSize));
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -144,6 +149,7 @@ public class FxmlControl {
 
     public static void setComments(final Node node, final Tooltip tooltip) {
         node.setOnMouseMoved(null);
+        tooltip.setFont(new Font(AppVaribles.sceneFontSize));
         node.setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -523,6 +529,22 @@ public class FxmlControl {
     public static void locateBelow(Region region, PopupWindow window) {
         Bounds bounds = region.localToScreen(region.getBoundsInLocal());
         window.show(region, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight() + 5);
+    }
+
+    public static List<Node> traverseNode(Node node, List<Node> children) {
+        if (node == null) {
+            return children;
+        }
+        if (children == null) {
+            children = new ArrayList();
+        }
+        children.add(node);
+        if (node instanceof Parent) {
+            for (Node c : ((Parent) node).getChildrenUnmodifiable()) {
+                traverseNode(c, children);
+            }
+        }
+        return children;
     }
 
 }

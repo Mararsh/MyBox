@@ -13,8 +13,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import mara.mybox.fxml.FxmlControl;
+import javafx.scene.image.ImageView;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -47,6 +46,8 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     private Label colorUnit;
     @FXML
     protected CheckBox preAlphaCheck;
+    @FXML
+    protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchColorController() {
         baseTitle = AppVaribles.getMessage("ImageManufactureBatchColor");
@@ -56,12 +57,11 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     @Override
     public void initializeNext2() {
         try {
-            super.initOptionsSection();
 
-            operationBarController.startButton.disableProperty().unbind();
-            operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                    .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                    .or(Bindings.isEmpty(tableView.getItems()))
                     .or(colorInput.styleProperty().isEqualTo(badStyle))
             );
 
@@ -73,6 +73,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     @Override
     public void initOptionsSection() {
         try {
+            super.initOptionsSection();
 
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -109,8 +110,6 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             });
             checkColorActionType();
 
-            FxmlControl.quickTooltip(preAlphaCheck, new Tooltip(getMessage("PremultipliedAlphaTips")));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -125,6 +124,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
         decreaseRadio.setDisable(false);
         setRadio.setSelected(true);
         preAlphaCheck.setVisible(false);
+        preAlphaTipsView.setVisible(false);
         RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
         if (getMessage("Brightness").equals(selected.getText())) {
             colorOperationType = OperationType.Brightness;
@@ -225,6 +225,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
             invertRadio.setDisable(true);
             filterRadio.setDisable(true);
             preAlphaCheck.setVisible(true);
+            preAlphaTipsView.setVisible(true);
         } else if (getMessage("RGB").equals(selected.getText())) {
             colorOperationType = OperationType.RGB;
             colorSlider.setMax(255);

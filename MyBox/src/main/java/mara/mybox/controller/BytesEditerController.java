@@ -407,8 +407,8 @@ public class BytesEditerController extends FileEditerController {
         } else {
             displayArea.clear();
         }
-        if (loadingController != null && loadingController.getMyStage() != null) {
-            loadingController.getMyStage().close();
+        if (loadingController != null) {
+            loadingController.closeStage();
         }
         isSettingValues = false;
     }
@@ -443,7 +443,7 @@ public class BytesEditerController extends FileEditerController {
     @FXML
     private void openAscii() {
         try {
-            Desktop.getDesktop().browse(new URI("https://en.wikipedia.org/wiki/ASCII"));
+           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));
         } catch (Exception e) {
             logger.error(e.toString());
         }

@@ -297,6 +297,22 @@
             <p class="link"><a href="https://www.cnblogs.com/maohuidong/p/8044568.html" target=_blank>https://www.cnblogs.com/maohuidong/p/8044568.html</a></p>
         </div>
 
+
+        <br><br>
+        <div id="ImageSize">
+            <P class="p1">Image Size</P>
+            <P class="paragraph">The following concepts are different:</P>
+            <UL>
+                <LI>“Orginal Size”: pixels number saved in image file.</LI>
+                <LI>“Loaded Size”: pixels number in memory which can be changed by Load/Crop/Transform.</LI>
+                <LI>“Display Size”: pixels number in screen after user zooms image in interface.</LI>
+                <LI>“Selected Size”: screen area selected by user, which will be mapped to memory area and calculated according to scale ratio of orginal size.</LI>
+            </UL>
+            <P class="paragraph">Example, an image has original size 1000x500, loaded size 800x400, display size 600x300, and selected size 700x200.</P>
+            <P class="paragraph">By setting loaded size, large image can be read in memory while small image can be scaled to view.</P>
+            <P class="paragraph">Loaded size is different from zooming in interface. Loaded pixels determine memory usage, while interface zooming only affect pixels in screen.</P>
+        </div>
+
         <br><br>
         <div id="PackExe">
             <P class="p1">How to pack execution program</P>

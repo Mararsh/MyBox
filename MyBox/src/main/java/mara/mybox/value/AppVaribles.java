@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.stage.Stage;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.controller.base.BaseController;
+import mara.mybox.data.ControlStyle;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import static mara.mybox.value.CommonValues.BundleEnUS;
@@ -42,22 +43,32 @@ public class AppVaribles {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber;
     public static Map<Stage, BaseController> openedStages;
-    public static boolean openStageInNewWindow, restoreStagesSize, showComments;
+    public static boolean openStageInNewWindow, restoreStagesSize, showComments,
+            controlDisplayText;
+    public static ControlStyle.ColorStyle ControlColor;
 
     public AppVaribles() {
+
     }
 
     public static void initAppVaribles() {
-        userConfigValues = new HashMap();
-        systemConfigValues = new HashMap();
-        openedStages = new HashMap();
-        getBundle();
-        getPdfMem();
-        showComments = AppVaribles.getUserConfigBoolean("ShowComments", true);
-        openStageInNewWindow = AppVaribles.getUserConfigBoolean("OpenStageInNewWindow", false);
-        restoreStagesSize = AppVaribles.getUserConfigBoolean("RestoreStagesSize", true);
-        sceneFontSize = AppVaribles.getUserConfigInt("SceneFontSize", 15);
-        fileRecentNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 15);
+        try {
+            userConfigValues = new HashMap();
+            systemConfigValues = new HashMap();
+            openedStages = new HashMap();
+            getBundle();
+            getPdfMem();
+            showComments = AppVaribles.getUserConfigBoolean("ShowComments", true);
+            openStageInNewWindow = AppVaribles.getUserConfigBoolean("OpenStageInNewWindow", false);
+            restoreStagesSize = AppVaribles.getUserConfigBoolean("RestoreStagesSize", true);
+            sceneFontSize = AppVaribles.getUserConfigInt("SceneFontSize", 15);
+            fileRecentNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 15);
+            ControlColor = ControlStyle.getConfigColorStyle();
+            controlDisplayText = AppVaribles.getUserConfigBoolean("ControlDisplayText", false);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
     }
 
     public static void clear() {
@@ -447,10 +458,12 @@ public class AppVaribles {
     }
 
     public static void stageOpened(Stage stage, BaseController controller) {
+//        logger.debug(stage.getTitle() + " " + AppVaribles.openedStages.size());
         openedStages.put(stage, controller);
     }
 
     public static void stageClosed(Stage stage) {
+//        logger.debug(stage.getTitle() + " " + AppVaribles.openedStages.size());
         openedStages.remove(stage);
     }
 

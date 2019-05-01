@@ -56,16 +56,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <Insets />
                     </HBox.margin>
                 </TextField>
-                <Button fx:id="selectSourceButton" mnemonicParsing="false" onMouseEntered="#popSourceFile"  onAction="#selectSourceFile" text="%Select...">
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
+                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconOpen.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </Button>
-                <Button fx:id="pdfOpenButon" disable="true" mnemonicParsing="false" onAction="#openPdfAction" text="%Open" />
-                <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction" text="%FileInformation">
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
+                <Button fx:id="viewButton" disable="true" mnemonicParsing="false" onAction="#viewAction" >
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconView.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="infoButton" disable="true" mnemonicParsing="false" onAction="#infoAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconInfo.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
                 </Button>
             </children>
             <VBox.margin>

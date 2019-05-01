@@ -13,10 +13,10 @@ import mara.mybox.tools.FileTools;
  */
 public class ImageFileInformation extends FileInformation {
 
-    private String imageFormat, filename;
-    private ImageInformation imageInformation;
-    private List<ImageInformation> imagesInformation;
-    private int numberOfImages;
+    protected String imageFormat, filename;
+    protected ImageInformation imageInformation;
+    protected List<ImageInformation> imagesInformation;
+    protected int numberOfImages;
 
     public ImageFileInformation() {
     }

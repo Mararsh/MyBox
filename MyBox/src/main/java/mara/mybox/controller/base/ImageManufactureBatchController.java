@@ -54,9 +54,9 @@ public class ImageManufactureBatchController extends ImageBatchBaseController {
         });
         checkFileType();
 
-        operationBarController.startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
+        startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                .or(Bindings.isEmpty(filesTableController.filesTableView.getItems()))
+                .or(Bindings.isEmpty(tableView.getItems()))
         );
 
         browseButton.setDisable(true);
@@ -105,7 +105,7 @@ public class ImageManufactureBatchController extends ImageBatchBaseController {
             actualParameters.finalTargetName = targetName;
             result = writeCurrentFile();
         }
-        browseButton.setDisable(targetFiles.size() > 0);
+        browseButton.setDisable(targetFiles.isEmpty());
         return result;
     }
 

@@ -13,16 +13,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -34,6 +39,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
@@ -43,6 +50,7 @@ import mara.mybox.data.DoublePenLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.ImageCell;
 import mara.mybox.fxml.ImageManufacture;
@@ -72,32 +80,32 @@ public class ImageManufactureDoodleController extends ImageManufactureController
     private ScopeType shapeType;
     private int strokeWidth, arcWidth;
     private double lastX, lastY;
-    private DoublePolyline lineData;
-    private List<Line> lineLines;
-    private DoublePenLines penData;
-    private List<List<Line>> penLines;
 
     @FXML
     private ToggleGroup doodleGroup;
     @FXML
-    private HBox setBox1, setBox2;
+    private VBox barsBox;
+    @FXML
+    private HBox setBox1, setBox2, setBox3;
     @FXML
     private ComboBox<Image> pixBox;
     @FXML
     private ComboBox<String> shapesBox, strokeWidthBox, strokeTypeBox, blendBox, opacityBox, arcBox;
     @FXML
     private Label blendLabel, opacityLabel, shapeLabel, strokeWidthLabel,
-            strokeColorLabel, arcLabel, shapeTipsLabel, fitLabel;
+            strokeColorLabel, arcLabel, fitLabel;
     @FXML
-    private Button pixSelectButton, pasteButton, withdrawButton, clearButton;
+    private Button pixSelectButton, withdrawButton, clearButton;
     @FXML
     private CheckBox keepRatioCheck, fillCheck, dottedCheck;
     @FXML
-    private ImageView picView, maskImageView;
+    private ImageView picView, maskImageView, shapeTipsView;
     @FXML
     private ColorPicker fillColorPicker;
     @FXML
     private ToggleButton pickFillColorButton;
+    @FXML
+    private RadioButton pictureRadio;
 
     public ImageManufactureDoodleController() {
     }
@@ -114,6 +122,31 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+
+        maskImageView.setVisible(false);
+        lastX = lastY = -1;
+        maskLineData = new DoublePolyline();
+        maskLineLines = new ArrayList();
+        maskPenData = new DoublePenLines();
+        maskPenLines = new ArrayList();
+        setBox1.getChildren().clear();
+        setBox2.getChildren().clear();
+
+        isSettingValues = true;
+        fillColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("ImageDoodleFillColor", "#FFFFFF")));
+        colorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("ImageDoodleStrokerColor", "#FF0000")));
+        dottedCheck.setSelected(AppVaribles.getUserConfigBoolean("ImageDoodleDotted", false));
+        isSettingValues = false;
+
+        opacityBox.getSelectionModel().select(0);
+        blendBox.getSelectionModel().select(0);
+
+        FxmlControl.quickTooltip(clearButton, new Tooltip("Delete / CTRL+d"));
     }
 
     @Override
@@ -154,8 +187,10 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 return;
             }
             super.initInterface();
+
             isSettingValues = true;
             tabPane.getSelectionModel().select(doodleTab);
+
             strokeWidthBox.getItems().clear();
             List<String> ws = new ArrayList();
             ws.addAll(Arrays.asList("3", "0", "1", "2", "5", "8"));
@@ -185,10 +220,10 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             isSettingValues = false;
 
-            checkDoodleType();
             if (values.isIsPaste()) {
                 pasteAction();
-                values.setIsPaste(false);
+            } else {
+                checkDoodleType();
             }
 
         } catch (Exception e) {
@@ -199,15 +234,6 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
     protected void initDoodleTab() {
         try {
-            maskImageView.setVisible(false);
-            lastX = lastY = -1;
-            lineData = new DoublePolyline();
-            lineLines = new ArrayList();
-            penData = new DoublePenLines();
-            penLines = new ArrayList();
-            setBox1.getChildren().clear();
-            setBox2.getChildren().clear();
-
             doodleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -255,7 +281,6 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                     opacityBox.setDisable(blendMode != PixelBlend.ImagesBlendMode.NORMAL);
                 }
             });
-            blendBox.getSelectionModel().select(0);
 
             opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
             opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -275,7 +300,6 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                     }
                 }
             });
-            opacityBox.getSelectionModel().select(0);
 
             keepRatioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -382,17 +406,8 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 }
             });
 
-            isSettingValues = true;
-            fillColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("ImageDoodleFillColor", "#FFFFFF")));
-            colorPicker.setValue(Color.web(AppVaribles.getUserConfigValue("ImageDoodleStrokerColor", "#FF0000")));
-            dottedCheck.setSelected(AppVaribles.getUserConfigBoolean("ImageDoodleDotted", false));
-            isSettingValues = false;
-
-            setBox1.getChildren().clear();
-
-            FxmlControl.quickTooltip(pasteButton, new Tooltip("CTRL+v"));
-            FxmlControl.quickTooltip(clearButton, new Tooltip("Delete / CTRL+d"));
-            FxmlControl.quickTooltip(shapeTipsLabel, new Tooltip(getMessage("ImageShapeTip")));
+            setBox3.getChildren().clear();
+            barsBox.getChildren().remove(setBox3);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -406,14 +421,14 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             okButton.disableProperty().unbind();
             maskImageView.setVisible(false);
             initMaskControls(false);
-            maskPane.getChildren().removeAll(lineLines);
-            lineLines.clear();
-            lineData.clear();
-            for (List<Line> penline : penLines) {
+            maskPane.getChildren().removeAll(maskLineLines);
+            maskLineLines.clear();
+            maskLineData.clear();
+            for (List<Line> penline : maskPenLines) {
                 maskPane.getChildren().removeAll(penline);
             }
-            penLines.clear();
-            penData.clear();
+            maskPenLines.clear();
+            maskPenData.clear();
             pickColorButton.setSelected(false);
             pickFillColorButton.setSelected(false);
 
@@ -440,7 +455,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             } else if (getMessage("Shape").equals(selected.getText())) {
                 opType = DoodleType.Shape;
-                setBox1.getChildren().addAll(fitLabel, shapeTipsLabel, shapeLabel, shapesBox,
+                setBox1.getChildren().addAll(fitLabel, shapeTipsView, shapeLabel, shapesBox,
                         strokeWidthLabel, strokeWidthBox, strokeColorLabel, colorPicker, pickColorButton);
                 setBox2.getChildren().addAll(dottedCheck, fillCheck, fillColorPicker, pickFillColorButton);
                 isSettingValues = true;
@@ -469,6 +484,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
     }
 
     private void checkShapeType() {
+
         if (isSettingValues) {
             return;
         }
@@ -547,6 +563,18 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             if (file == null) {
                 return;
             }
+            pixSelected(file);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void pixSelected(final File file) {
+        try {
+            if (file == null) {
+                return;
+            }
             recordFileOpened(file);
 
             Task selectTask = new Task<Void>() {
@@ -586,12 +614,18 @@ public class ImageManufactureDoodleController extends ImageManufactureController
     }
 
     @FXML
+    @Override
     public void pasteAction() {
+        values.setIsPaste(false);
         Image clipImage = SystemTools.fetchImageInClipboard(false);
         if (clipImage != null) {
             picture = clipImage;
-            picView.setImage(clipImage);
-            drawMaskPicture();
+            if (!pictureRadio.isSelected()) {
+                doodleGroup.selectToggle(pictureRadio);
+            } else {
+                picView.setImage(clipImage);
+                drawMaskPicture();
+            }
         } else {
             popInformation(getMessage("NoImageInClipboard"));
         }
@@ -602,6 +636,64 @@ public class ImageManufactureDoodleController extends ImageManufactureController
     public void picClicked() {
         picture = picView.getImage();
         drawMaskPicture();
+    }
+
+    @FXML
+    public void popPixFile(MouseEvent event) {
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+            popMenu = null;
+        }
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
+        if (his == null || his.isEmpty()) {
+            return;
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        for (VisitHistory h : his) {
+            final String fname = h.getResourceValue();
+            MenuItem menu = new MenuItem(fname);
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    pixSelected(new File(fname));
+                }
+            });
+            popMenu.getItems().add(menu);
+        }
+
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        selectPixAction();
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
+        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+
     }
 
     @FXML
@@ -622,16 +714,16 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 }
                 break;
             case Line:
-                maskPane.getChildren().removeAll(lineLines);
-                lineLines.clear();
-                lineData.clear();
+                maskPane.getChildren().removeAll(maskLineLines);
+                maskLineLines.clear();
+                maskLineData.clear();
                 break;
             case Pen:
-                for (List<Line> penline : penLines) {
+                for (List<Line> penline : maskPenLines) {
                     maskPane.getChildren().removeAll(penline);
                 }
-                penLines.clear();
-                penData.clear();
+                maskPenLines.clear();
+                maskPenData.clear();
                 break;
             default:
                 break;
@@ -648,11 +740,11 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 }
                 break;
             case Line:
-                lineData.removeLast();
+                maskLineData.removeLast();
                 drawMaskLine();
                 break;
             case Pen:
-                penData.removeLastLine();
+                maskPenData.removeLastLine();
                 drawMaskPenLines();
                 break;
             default:
@@ -723,6 +815,15 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+
+    }
+
+    @Override
+    public void drawMaskControls() {
+        super.drawMaskControls();
+
+        drawMaskLine();
+        drawMaskPenLines();
 
     }
 
@@ -929,6 +1030,22 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         return true;
     }
 
+    // Polyline of Java shows weird results. So I just use lines directly.
+    public boolean drawMaskLine() {
+        if (opType != DoodleType.Line || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
+        return drawMaskLine(strokeWidth, colorPicker.getValue(), dottedCheck.isSelected());
+
+    }
+
+    public boolean drawMaskPenLines() {
+        if (opType != DoodleType.Pen || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
+        return drawMaskPenLines(strokeWidth, colorPicker.getValue(), dottedCheck.isSelected());
+    }
+
     @FXML
     public void mousePressed(MouseEvent event) {
 
@@ -943,7 +1060,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 return;
             }
             scrollPane.setPannable(false);
-            lineData.add(p);
+            maskLineData.add(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskLine();
@@ -951,7 +1068,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         } else if (opType == DoodleType.Pen) {
 
             scrollPane.setPannable(false);
-            penData.startLine(p);
+            maskPenData.startLine(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskPenLines();
@@ -973,7 +1090,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 return;
             }
             scrollPane.setPannable(false);
-            lineData.add(p);
+            maskLineData.add(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskLine();
@@ -981,7 +1098,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         } else if (opType == DoodleType.Pen) {
 
             scrollPane.setPannable(false);
-            penData.addPoint(p);
+            maskPenData.addPoint(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskPenLines();
@@ -1004,13 +1121,13 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             if (lastX == event.getX() && lastY == event.getY()) {
                 return;
             }
-            lineData.add(p);
+            maskLineData.add(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskLine();
 
         } else if (opType == DoodleType.Pen) {
-            penData.endLine(p);
+            maskPenData.endLine(p);
             lastX = event.getX();
             lastY = event.getY();
             drawMaskPenLines();
@@ -1055,123 +1172,26 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 return;
             }
             if (opType == DoodleType.Line) {
-                DoublePoint p0 = lineData.get(0);
+                DoublePoint p0 = maskLineData.get(0);
                 double offsetX = p.getX() - p0.getX();
                 double offsetY = p.getY() - p0.getY();
                 if (offsetX != 0 || offsetY != 0) {
-                    lineData = lineData.move(offsetX, offsetY);
+                    maskLineData = maskLineData.move(offsetX, offsetY);
                     drawMaskLine();
                 }
 
             } else if (opType == DoodleType.Pen) {
-                DoublePoint p0 = penData.getPoint(0);
+                DoublePoint p0 = maskPenData.getPoint(0);
                 double offsetX = p.getX() - p0.getX();
                 double offsetY = p.getY() - p0.getY();
                 if (offsetX != 0 || offsetY != 0) {
-                    penData = penData.move(offsetX, offsetY);
+                    maskPenData = maskPenData.move(offsetX, offsetY);
                     drawMaskPenLines();
                 }
 
             }
 
         }
-    }
-
-    // Polyline of Java shows weird results. So I just use lines directly.
-    public boolean drawMaskLine() {
-        if (opType != DoodleType.Line) {
-            return false;
-        }
-        maskPane.getChildren().removeAll(lineLines);
-        lineLines.clear();
-        polygonP1.setOpacity(0);
-        int size = lineData.getSize();
-        if (size == 0) {
-            return true;
-        }
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
-        if (size == 1) {
-            polygonP1.setOpacity(1);
-            DoublePoint p1 = lineData.get(0);
-            int anchorHW = AppVaribles.getUserConfigInt("AnchorWidth", 10) / 2;
-            polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
-            polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
-        } else if (size > 1) {
-            double lastx = -1, lasty = -1, thisx, thisy;
-            for (DoublePoint p : lineData.getPoints()) {
-                thisx = p.getX() * xRatio;
-                thisy = p.getY() * yRatio;
-                if (lastx >= 0) {
-                    Line line = new Line(lastx, lasty, thisx, thisy);
-                    line.setStroke(colorPicker.getValue());
-                    line.setStrokeWidth(strokeWidth);
-                    line.getStrokeDashArray().clear();
-                    if (dottedCheck.isSelected()) {
-                        line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
-                    }
-                    lineLines.add(line);
-                    maskPane.getChildren().add(line);
-                    line.setLayoutX(imageView.getLayoutX());
-                    line.setLayoutY(imageView.getLayoutY());
-                }
-                lastx = thisx;
-                lasty = thisy;
-            }
-        }
-        return true;
-    }
-
-    public boolean drawMaskPenLines() {
-        if (opType != DoodleType.Pen) {
-            return false;
-        }
-        for (List<Line> penline : penLines) {
-            maskPane.getChildren().removeAll(penline);
-        }
-        penLines.clear();
-        polygonP1.setOpacity(0);
-        int size = penData.getPointsSize();
-        if (size == 0) {
-            return true;
-        }
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
-        if (size == 1) {
-            polygonP1.setOpacity(1);
-            DoublePoint p1 = penData.getPoint(0);
-            int anchorHW = AppVaribles.getUserConfigInt("AnchorWidth", 10) / 2;
-            polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
-            polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
-        } else if (size > 1) {
-            double lastx = -1, lasty = -1, thisx, thisy;
-            for (List<DoublePoint> lineData : penData.getLines()) {
-                List<Line> penLine = new ArrayList();
-                lastx = -1;
-                for (DoublePoint p : lineData) {
-                    thisx = p.getX() * xRatio;
-                    thisy = p.getY() * yRatio;
-                    if (lastx >= 0) {
-                        Line line = new Line(lastx, lasty, thisx, thisy);
-                        line.setStroke(colorPicker.getValue());
-                        line.setStrokeWidth(strokeWidth);
-                        line.getStrokeDashArray().clear();
-                        if (dottedCheck.isSelected()) {
-                            line.getStrokeDashArray().addAll(strokeWidth * 1d, strokeWidth * 3d);
-                        }
-                        penLine.add(line);
-                        maskPane.getChildren().add(line);
-                        line.setLayoutX(imageView.getLayoutX());
-                        line.setLayoutY(imageView.getLayoutY());
-                    }
-                    lastx = thisx;
-                    lasty = thisy;
-                }
-                penLines.add(penLine);
-            }
-
-        }
-        return true;
     }
 
     @FXML
@@ -1200,19 +1220,19 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                         }
                         break;
                     case Line:
-                        if (lineData == null && lineData.getSize() < 2) {
+                        if (maskLineData == null && maskLineData.getSize() < 2) {
                             return null;
                         }
                         newImage = ImageManufacture.drawLines(imageView.getImage(),
-                                lineData, colorPicker.getValue(), strokeWidth,
+                                maskLineData, colorPicker.getValue(), strokeWidth,
                                 dottedCheck.isSelected());
                         break;
                     case Pen:
-                        if (penData == null && penData.getPointsSize() == 0) {
+                        if (maskPenData == null && maskPenData.getPointsSize() == 0) {
                             return null;
                         }
                         newImage = ImageManufacture.drawLines(imageView.getImage(),
-                                penData, colorPicker.getValue(), strokeWidth,
+                                maskPenData, colorPicker.getValue(), strokeWidth,
                                 dottedCheck.isSelected());
                         break;
                     default:
@@ -1281,12 +1301,12 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                                     break;
                                 case Line:
                                     offset = imageView.getFitWidth() / 3;
-                                    lineData = lineData.move(offset);
+                                    maskLineData = maskLineData.move(offset);
                                     drawMaskLine();
                                     break;
                                 case Pen:
                                     offset = imageView.getFitWidth() / 3;
-                                    penData = penData.move(offset);
+                                    maskPenData = maskPenData.move(offset);
                                     drawMaskPenLines();
                                     break;
                                 default:

@@ -47,7 +47,7 @@ public class PdfMergeController extends PdfBatchBaseController {
     final private String AuthorKey;
 
     @FXML
-    private Button openTargetButton;
+    private Button viewTargetFileButton;
     @FXML
     private TextField authorInput;
     @FXML
@@ -83,7 +83,7 @@ public class PdfMergeController extends PdfBatchBaseController {
             targetFileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    openTargetButton.setDisable(true);
+                    viewTargetFileButton.setDisable(true);
                     try {
                         targetFile = new File(newValue);
                         if (!newValue.toLowerCase().endsWith(".pdf")) {
@@ -99,7 +99,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                     }
                 }
             });
-            saveButton.disableProperty().bind(Bindings.isEmpty(filesTableController.filesTableView.getItems())
+            saveButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
                     .or(Bindings.isEmpty(targetFileInput.textProperty()))
                     .or(targetFileInput.styleProperty().isEqualTo(badStyle))
             );
@@ -125,7 +125,6 @@ public class PdfMergeController extends PdfBatchBaseController {
 
         Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
         tips.setFont(new Font(16));
-        FxmlControl.quickTooltip(pdfMemBox, tips);
 
         checkPdfMem();
 
@@ -170,20 +169,20 @@ public class PdfMergeController extends PdfBatchBaseController {
     }
 
     @FXML
-    protected void openTargetAction(ActionEvent event) {
+    protected void viewAction(ActionEvent event) {
         if (!targetFile.exists()) {
-            openTargetButton.setDisable(true);
+            viewTargetFileButton.setDisable(true);
             return;
         }
-        openTargetButton.setDisable(false);
+        viewTargetFileButton.setDisable(false);
         FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
     }
 
     @FXML
     @Override
     public void saveAction() {
-        sourceFilesInformation = filesTableController.sourceFilesInformation;
-        if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()
+        tableData = tableData;
+        if (tableData == null || tableData.isEmpty()
                 || targetFile == null) {
             return;
         }
@@ -198,7 +197,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                     final MemoryUsageSetting memSettings = AppVaribles.pdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
 
                     PDFMergerUtility mergePdf = new PDFMergerUtility();
-                    for (FileInformation source : sourceFilesInformation) {
+                    for (FileInformation source : tableData) {
                         mergePdf.addSource(source.getFile());
                     }
                     mergePdf.setDestinationFileName(targetFile.getAbsolutePath());
@@ -226,7 +225,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                     }
 
                     if (deleteCheck.isSelected()) {
-                        for (FileInformation source : sourceFilesInformation) {
+                        for (FileInformation source : tableData) {
                             try {
                                 source.getFile().delete();
                             } catch (Exception e) {
@@ -235,7 +234,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                filesTableController.clearAction();
+                                tableController.clearFilesAction();
                             }
                         });
                     }
@@ -259,7 +258,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                         try {
                             if (ok && targetFile.exists()) {
                                 FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
-                                openTargetButton.setDisable(false);
+                                viewTargetFileButton.setDisable(false);
                             } else {
                                 popError(errorString);
                             }

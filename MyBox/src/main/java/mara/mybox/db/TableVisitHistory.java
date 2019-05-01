@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.data.VisitHistory.FileType;
 import mara.mybox.data.VisitHistory.OperationType;
 import mara.mybox.data.VisitHistory.ResourceType;
 import mara.mybox.tools.DateTools;
@@ -258,6 +259,68 @@ public class TableVisitHistory extends DerbyBase {
             logger.debug(e.toString());
         }
         return null;
+    }
+
+    public static List<VisitHistory> findAlphaImages(int count) {
+        List<VisitHistory> records = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                Statement statement = conn.createStatement()) {
+            if (count > 0) {
+                statement.setMaxRows(count);
+            }
+            String sql;
+            sql = " SELECT   * FROM visit_history "
+                    + " WHERE resource_type=" + ResourceType.File
+                    + " AND file_type=" + FileType.Image
+                    + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png', '.pcx', '.tif', 'tiff') "
+                    + " ORDER BY last_visit_time  DESC  ";
+            ResultSet results = statement.executeQuery(sql);
+            while (results.next()) {
+                VisitHistory his = new VisitHistory();
+                his.setResourceType(ResourceType.File);
+                his.setFileType(FileType.Image);
+                his.setOperationType(results.getInt("operation_type"));
+                his.setResourceValue(results.getString("resource_value"));
+                his.setDataMore(results.getString("data_more"));
+                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
+                his.setVisitCount(results.getInt("visit_count"));
+                records.add(his);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return records;
+    }
+
+    public static List<VisitHistory> findNoAlphaImages(int count) {
+        List<VisitHistory> records = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                Statement statement = conn.createStatement()) {
+            if (count > 0) {
+                statement.setMaxRows(count);
+            }
+            String sql;
+            sql = " SELECT   * FROM visit_history "
+                    + " WHERE resource_type=" + ResourceType.File
+                    + " AND file_type=" + FileType.Image
+                    + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
+                    + " ORDER BY last_visit_time  DESC  ";
+            ResultSet results = statement.executeQuery(sql);
+            while (results.next()) {
+                VisitHistory his = new VisitHistory();
+                his.setResourceType(ResourceType.File);
+                his.setFileType(FileType.Image);
+                his.setOperationType(results.getInt("operation_type"));
+                his.setResourceValue(results.getString("resource_value"));
+                his.setDataMore(results.getString("data_more"));
+                his.setLastVisitTime(results.getTimestamp("last_visit_time"));
+                his.setVisitCount(results.getInt("visit_count"));
+                records.add(his);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return records;
     }
 
     public static boolean update(int resourceType, int fileType, int operationType, String value) {

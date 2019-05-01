@@ -8,19 +8,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.data.DoubleRectangle;
@@ -48,18 +48,20 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
     @FXML
     protected ComboBox marginWidthBox;
     @FXML
-    protected Button marginsWhiteButton, marginsBlackButton, marginsTrButton;
-    @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
-            preAlphaCheck, alphaWhiteCheck;
+            preAlphaCheck;
     @FXML
-    private HBox colorBox, distanceBox, widthBox, setBox, marginsBox;
+    private HBox colorBox, distanceBox, widthBox, setBox, marginsBox, setBox2, alphaBox;
     @FXML
     private TextField distanceInput;
     @FXML
     protected RadioButton blurMarginsRadio, dragRadio;
     @FXML
-    protected Label preAlphaTipsLabel, marginsLabel;
+    protected ImageView preAlphaTipsView;
+    @FXML
+    protected VBox barsBox;
+    @FXML
+    protected ToolBar tmpToolbar;
 
     public ImageManufactureMarginsController() {
     }
@@ -83,6 +85,15 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
     }
 
     @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+
+        distanceInput.setText("20");
+        checkOperationType();
+
+    }
+
+    @Override
     protected void initInterface() {
         try {
             if (values == null || values.getImage() == null) {
@@ -95,11 +106,11 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
 
             if (values.getImageInfo() != null
                     && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                marginsTrButton.setDisable(true);
+                transparentButton.setDisable(true);
                 preAlphaCheck.setSelected(true);
                 preAlphaCheck.setDisable(true);
             } else {
-                marginsTrButton.setDisable(false);
+                transparentButton.setDisable(false);
                 preAlphaCheck.setSelected(false);
                 preAlphaCheck.setDisable(false);
             }
@@ -130,7 +141,6 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                     checkOperationType();
                 }
             });
-            checkOperationType();
 
             distanceInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -139,7 +149,6 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                     checkColor();
                 }
             });
-            distanceInput.setText("20");
 
             marginWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -151,21 +160,13 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                 }
             });
 
-            alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
-            alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
-                }
-            });
-
-            FxmlControl.quickTooltip(preAlphaTipsLabel, new Tooltip(getMessage("PremultipliedAlphaTips")));
-
             okButton.disableProperty().bind(
                     marginWidthBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(distanceInput.styleProperty().isEqualTo(badStyle))
             );
+
+            setBox2.getChildren().clear();
+            barsBox.getChildren().remove(tmpToolbar);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -180,7 +181,7 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
         RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
         if (getMessage("Dragging").equals(selected.getText())) {
             opType = OperationType.SetMarginsByDragging;
-            setBox.getChildren().addAll(marginsLabel, colorBox);
+            setBox.getChildren().addAll(colorBox);
             promptLabel.setText(getMessage("DragMarginsComments"));
             initMaskRectangleLine(true);
 
@@ -190,23 +191,23 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
 
             if (getMessage("AddMargins").equals(selected.getText())) {
                 opType = OperationType.AddMargins;
-                setBox.getChildren().addAll(marginsLabel, marginsBox, colorBox, widthBox);
+                setBox.getChildren().addAll(colorBox, widthBox, marginsBox);
                 checkMarginWidth();
 
             } else if (getMessage("CutMarginsByWidth").equals(selected.getText())) {
                 opType = OperationType.CutMarginsByWidth;
-                setBox.getChildren().addAll(marginsLabel, marginsBox, widthBox);
+                setBox.getChildren().addAll(widthBox, marginsBox);
                 checkMarginWidth();
 
             } else if (getMessage("CutMarginsByColor").equals(selected.getText())) {
                 opType = OperationType.CutMarginsByColor;
-                setBox.getChildren().addAll(marginsLabel, marginsBox, colorBox, distanceBox);
+                setBox.getChildren().addAll(colorBox, distanceBox, marginsBox);
                 marginWidthBox.getEditor().setStyle(null);
                 checkColor();
 
             } else if (getMessage("Blur").equals(selected.getText())) {
                 opType = OperationType.BlurMargins;
-                setBox.getChildren().addAll(marginsBox, widthBox, preAlphaTipsLabel, preAlphaCheck, alphaWhiteCheck);
+                setBox.getChildren().addAll(alphaBox, widthBox, marginsBox);
                 checkMarginWidth();
 
             }

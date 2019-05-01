@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageSourcesController;
 import java.io.File;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -95,7 +94,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
             });
 
             saveButton.disableProperty().bind(
-                    Bindings.isEmpty(sourceImages)
+                    Bindings.isEmpty(tableData)
                             .or(thresholdInput.styleProperty().isEqualTo(badStyle))
             );
 
@@ -216,7 +215,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
                 @Override
                 protected Void call() throws Exception {
 
-                    ret = ImageTiffFile.writeTiffImagesWithInfo(sourceImages, attributes, outFile);
+                    ret = ImageTiffFile.writeTiffImagesWithInfo(tableData, attributes, outFile);
 
                     return null;
                 }

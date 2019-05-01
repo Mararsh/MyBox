@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import mara.mybox.controller.base.ImageManufactureController;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -13,11 +14,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -27,10 +26,10 @@ import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -45,17 +44,17 @@ public class ImageManufactureColorController extends ImageManufactureController 
     private ColorActionType colorActionType;
 
     @FXML
-    protected ToggleGroup colorGroup;
-    @FXML
     protected HBox setBox;
     @FXML
-    protected ComboBox<String> valuesBox;
+    protected ComboBox<String> valuesBox, objectBox;
     @FXML
-    protected Label colorUnit, preAlphaTipsLabel, scopeTipsLabel;
+    protected Label colorUnit;
     @FXML
     protected Button decreaseButton, increaseButton, setButton, filterButton, invertButton;
     @FXML
     protected CheckBox preAlphaCheck;
+    @FXML
+    protected ImageView scopeTipsView, preAlphaTipsView;
 
     public ImageManufactureColorController() {
 
@@ -104,10 +103,15 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
     protected void initColorTab() {
         try {
-            colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            List<String> objects = Arrays.asList(getMessage("Brightness"), getMessage("Hue"), getMessage("Saturation"),
+                    getMessage("Red"), getMessage("Green"), getMessage("Blue"),
+                    getMessage("Cyan"), getMessage("Yellow"), getMessage("Magenta"),
+                    getMessage("RGB"), getMessage("Opacity"), getMessage("Color"));
+            objectBox.getItems().addAll(objects);
+            objectBox.setVisibleRowCount(objects.size());
+            objectBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
                     checkColorOperationType();
                 }
             });
@@ -140,10 +144,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
             colorPicker = new ColorPicker(Color.TRANSPARENT);
 
-            FxmlControl.setComments(preAlphaTipsLabel, new Tooltip(getMessage("PremultipliedAlphaTips")));
-
-            FxmlControl.quickTooltip(scopeTipsLabel, new Tooltip(getMessage("ImageScopeTips")));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -156,7 +156,6 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 return;
             }
             super.initInterface();
-            checkColorOperationType();
 
             isSettingValues = true;
             tabPane.getSelectionModel().select(colorTab);
@@ -169,8 +168,10 @@ public class ImageManufactureColorController extends ImageManufactureController 
                 preAlphaCheck.setSelected(false);
                 preAlphaCheck.setDisable(false);
             }
-
             isSettingValues = false;
+
+            objectBox.getSelectionModel().select(0);
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -184,57 +185,57 @@ public class ImageManufactureColorController extends ImageManufactureController 
             FxmlControl.setEditorNormal(valuesBox);
             pickColorButton.setSelected(false);
 
-            RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
-            if (getMessage("Brightness").equals(selected.getText())) {
+            String selected = objectBox.getSelectionModel().getSelectedItem();
+            if (getMessage("Brightness").equals(selected)) {
                 colorOperationType = OperationType.Brightness;
                 makeValuesBox(100, 1);
                 colorUnit.setText("%");
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Saturation").equals(selected.getText())) {
+            } else if (getMessage("Saturation").equals(selected)) {
                 colorOperationType = OperationType.Saturation;
                 makeValuesBox(100, 1);
                 colorUnit.setText("%");
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Hue").equals(selected.getText())) {
+            } else if (getMessage("Hue").equals(selected)) {
                 colorOperationType = OperationType.Hue;
                 makeValuesBox(360, 1);
                 colorUnit.setText(getMessage("Degree"));
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Red").equals(selected.getText())) {
+            } else if (getMessage("Red").equals(selected)) {
                 colorOperationType = OperationType.Red;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Green").equals(selected.getText())) {
+            } else if (getMessage("Green").equals(selected)) {
                 colorOperationType = OperationType.Green;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Blue").equals(selected.getText())) {
+            } else if (getMessage("Blue").equals(selected)) {
                 colorOperationType = OperationType.Blue;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Yellow").equals(selected.getText())) {
+            } else if (getMessage("Yellow").equals(selected)) {
                 colorOperationType = OperationType.Yellow;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Cyan").equals(selected.getText())) {
+            } else if (getMessage("Cyan").equals(selected)) {
                 colorOperationType = OperationType.Cyan;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Magenta").equals(selected.getText())) {
+            } else if (getMessage("Magenta").equals(selected)) {
                 colorOperationType = OperationType.Magenta;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("RGB").equals(selected.getText())) {
+            } else if (getMessage("RGB").equals(selected)) {
                 colorOperationType = OperationType.RGB;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Opacity").equals(selected.getText())) {
+            } else if (getMessage("Opacity").equals(selected)) {
                 colorOperationType = OperationType.Opacity;
                 makeValuesBox(100, 0);
                 colorUnit.setText("%");
-                setBox.getChildren().addAll(preAlphaTipsLabel, preAlphaCheck, valuesBox, colorUnit,
+                setBox.getChildren().addAll(preAlphaTipsView, preAlphaCheck, valuesBox, colorUnit,
                         setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Color").equals(selected.getText())) {
+            } else if (getMessage("Color").equals(selected)) {
                 colorOperationType = OperationType.Color;
                 setBox.getChildren().addAll(colorPicker, pickColorButton, setButton);
             }
@@ -274,6 +275,11 @@ public class ImageManufactureColorController extends ImageManufactureController 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @FXML
+    public void popObjectBox() {
+        objectBox.show();
     }
 
     @FXML

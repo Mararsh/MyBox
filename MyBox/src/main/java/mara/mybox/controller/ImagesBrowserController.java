@@ -58,6 +58,7 @@ import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -68,14 +69,14 @@ import mara.mybox.image.file.ImageFileWriters;
 public class ImagesBrowserController extends ImageViewerController {
 
     private final ObservableList<File> imageFileList = FXCollections.observableArrayList();
-    private final ObservableList<ImageInformation> imageInfoList = FXCollections.observableArrayList();
+    private final ObservableList<ImageInformation> tableData = FXCollections.observableArrayList();
     private int rowsNum, colsNum, filesNumber;
     private List<VBox> imageBoxList;
     private List<ScrollPane> imageScrollList;
     private List<ImageView> imageViewList;
     private List<TextField> imageTitleList;
 
-    private TableView<ImageInformation> sourceTable;
+    private TableView<ImageInformation> tableView;
     private TableColumn<ImageInformation, Image> imageColumn;
     private TableColumn<ImageInformation, String> fileColumn, formatColumn, pixelsColumn, csColumn, loadColumn;
     private TableColumn<ImageInformation, Integer> indexColumn;
@@ -97,8 +98,6 @@ public class ImagesBrowserController extends ImageViewerController {
     @FXML
     protected VBox imagesPane;
     @FXML
-    protected Button selectButton, viewButton;
-    @FXML
     protected ToolBar setBar, fileOpBar;
     @FXML
     protected ComboBox<String> colsnumBox, filesBox;
@@ -108,6 +107,8 @@ public class ImagesBrowserController extends ImageViewerController {
     private CheckBox saveRotationCheck;
     @FXML
     private Label totalLabel;
+    @FXML
+    private Button filesListButton, thumbsListButton;
 
     public ImagesBrowserController() {
         baseTitle = AppVaribles.getMessage("ImagesBrowser");
@@ -123,7 +124,6 @@ public class ImagesBrowserController extends ImageViewerController {
             colsNum = -1;
             currentAngle = 0;
             displayMode = DisplayMode.ImagesGrid;
-            FxmlControl.quickTooltip(selectButton, new Tooltip(AppVaribles.getMessage("ImagesMutipleTips")));
 
             List<String> cvalues = Arrays.asList("3", "4", "6",
                     AppVaribles.getMessage("ThumbnailsList"),
@@ -144,7 +144,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             displayMode = DisplayMode.FilesList;
                         } else {
                             if (displayMode != DisplayMode.ImagesGrid) {
-                                imageInfoList.clear();
+                                tableData.clear();
                             }
                             displayMode = DisplayMode.ImagesGrid;
                             colsNum = Integer.valueOf(newValue);
@@ -197,6 +197,10 @@ public class ImagesBrowserController extends ImageViewerController {
             imagesPane.disableProperty().bind(
                     Bindings.isEmpty(imageFileList)
             );
+
+            FxmlControl.quickTooltip(filesListButton, new Tooltip(getMessage("FilesList")));
+
+            FxmlControl.quickTooltip(thumbsListButton, new Tooltip(getMessage("ThumbnailsList")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -328,18 +332,18 @@ public class ImagesBrowserController extends ImageViewerController {
             protected Void call() throws Exception {
                 selected = new ArrayList();
                 if (selectedIndexes == null || selectedIndexes.isEmpty()) {
-                    for (int i = 0; i < imageInfoList.size(); i++) {
-                        ImageInformation info = imageInfoList.get(i);
+                    for (int i = 0; i < tableData.size(); i++) {
+                        ImageInformation info = tableData.get(i);
                         ImageInformation newInfo = rotate(info, rotateAngle);
-                        imageInfoList.set(i, newInfo);
+                        tableData.set(i, newInfo);
                     }
                 } else {
                     selected.addAll(selectedIndexes);
                     for (int i = 0; i < selectedIndexes.size(); i++) {
                         int index = selectedIndexes.get(i);
-                        ImageInformation info = imageInfoList.get(index);
+                        ImageInformation info = tableData.get(index);
                         ImageInformation newInfo = rotate(info, rotateAngle);
-                        imageInfoList.set(index, newInfo);
+                        tableData.set(index, newInfo);
                     }
                 }
                 ok = true;
@@ -356,12 +360,12 @@ public class ImagesBrowserController extends ImageViewerController {
                             if (displayMode == DisplayMode.ImagesGrid) {
                                 for (int i = 0; i < imageViewList.size(); i++) {
                                     ImageView iView = imageViewList.get(i);
-                                    iView.setImage(imageInfoList.get(i).getImage());
+                                    iView.setImage(tableData.get(i).getImage());
                                 }
                             } else {
-                                sourceTable.refresh();
+                                tableView.refresh();
                                 for (int i = 0; i < selected.size(); i++) {
-                                    sourceTable.getSelectionModel().select(selected.get(i));
+                                    tableView.getSelectionModel().select(selected.get(i));
                                 }
                             }
                         }
@@ -603,8 +607,7 @@ public class ImagesBrowserController extends ImageViewerController {
     }
 
     @FXML
-    @Override
-    public void deleteAction() {
+    public void deleteFilesAction() {
         try {
             if (selectedImages == null || selectedImages.isEmpty()) {
                 fileOpBar.setDisable(true);
@@ -725,7 +728,7 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private void makeGridBox() {
 
-        int num = imageInfoList.size();
+        int num = tableData.size();
         HBox line = new HBox();
         for (int i = 0; i < num; i++) {
             if (i % colsNum == 0) {
@@ -771,7 +774,7 @@ public class ImagesBrowserController extends ImageViewerController {
             vbox.getChildren().add(titleInput);
             vbox.getChildren().add(sPane);
 
-            final ImageInformation imageInfo = imageInfoList.get(i);
+            final ImageInformation imageInfo = tableData.get(i);
             final File file = imageInfo.getImageFileInformation().getFile();
 
             iView.setImage(imageInfo.getImage());
@@ -847,7 +850,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
             });
 
-            imageInfoList.add(imageInfo);
+            tableData.add(imageInfo);
             imageScrollList.add(sPane);
             imageViewList.add(iView);
             imageTitleList.add(titleInput);
@@ -871,12 +874,12 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private void makeSourceTable() {
         try {
-            sourceTable = new TableView<>();
-            sourceTable.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-            VBox.setVgrow(sourceTable, Priority.ALWAYS);
-            HBox.setHgrow(sourceTable, Priority.ALWAYS);
-            sourceTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            sourceTable.setTableMenuButtonVisible(true);
+            tableView = new TableView<>();
+            tableView.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            VBox.setVgrow(tableView, Priority.ALWAYS);
+            HBox.setHgrow(tableView, Priority.ALWAYS);
+            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            tableView.setTableMenuButtonVisible(true);
 
             fileColumn = new TableColumn<>(AppVaribles.getMessage("File"));
             fileColumn.setPrefWidth(220);
@@ -1057,19 +1060,19 @@ public class ImagesBrowserController extends ImageViewerController {
                 });
                 loadColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("loadSizeString"));
 
-                sourceTable.getColumns().addAll(imageColumn, fileColumn, formatColumn, csColumn, pixelsColumn, fileSizeColumn, loadColumn,
+                tableView.getColumns().addAll(imageColumn, fileColumn, formatColumn, csColumn, pixelsColumn, fileSizeColumn, loadColumn,
                         isMutipleFramesColumn, indexColumn, isSampledColumn, isScaledColumn, modifiedTimeColumn, createTimeColumn);
             } else {
-                sourceTable.getColumns().addAll(fileColumn, formatColumn, csColumn, pixelsColumn, fileSizeColumn,
+                tableView.getColumns().addAll(fileColumn, formatColumn, csColumn, pixelsColumn, fileSizeColumn,
                         isMutipleFramesColumn, indexColumn, modifiedTimeColumn, createTimeColumn);
             }
 
-            sourceTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
                 @Override
                 public void changed(ObservableValue ov, Object t, Object t1) {
                     if (!isSettingValues) {
-                        selectedImages = sourceTable.getSelectionModel().getSelectedItems();
-                        selectedIndexes = sourceTable.getSelectionModel().getSelectedIndices();
+                        selectedImages = tableView.getSelectionModel().getSelectedItems();
+                        selectedIndexes = tableView.getSelectionModel().getSelectedIndices();
                         fileOpBar.setDisable(selectedImages.isEmpty());
                         viewButton.setDisable(selectedImages.size() > 1);
                         infoButton.setDisable(selectedImages.size() > 1);
@@ -1077,10 +1080,10 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                 }
             });
-            sourceTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    ImageInformation info = sourceTable.getSelectionModel().getSelectedItem();
+                    ImageInformation info = tableView.getSelectionModel().getSelectedItem();
                     if (info == null) {
                         return;
                     }
@@ -1101,9 +1104,9 @@ public class ImagesBrowserController extends ImageViewerController {
                 return;
             }
             makeSourceTable();
-            imagesPane.getChildren().add(sourceTable);
-            sourceTable.setItems(null);
-            sourceTable.refresh();
+            imagesPane.getChildren().add(tableView);
+            tableView.setItems(null);
+            tableView.refresh();
             if (imageFileList == null || imageFileList.isEmpty()) {
                 return;
             }
@@ -1126,8 +1129,8 @@ public class ImagesBrowserController extends ImageViewerController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            sourceTable.setItems(imageInfoList);
-                            sourceTable.refresh();
+                            tableView.setItems(tableData);
+                            tableView.refresh();
                         }
                     });
                 }
@@ -1143,10 +1146,10 @@ public class ImagesBrowserController extends ImageViewerController {
 
     private void loadImageInfos() {
         Map<String, ImageInformation> oldList = new HashMap();
-        for (ImageInformation info : imageInfoList) {
+        for (ImageInformation info : tableData) {
             oldList.put(info.getFilename(), info);
         }
-        imageInfoList.clear();
+        tableData.clear();
         ImageInformation imageInfo;
         int width;
         if (displayMode == DisplayMode.ImagesGrid) {
@@ -1168,7 +1171,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     imageInfo = ImageInformation.loadImageInformation(file, width, 0);
                 }
             }
-            imageInfoList.add(imageInfo);
+            tableData.add(imageInfo);
         }
     }
 
@@ -1307,8 +1310,8 @@ public class ImagesBrowserController extends ImageViewerController {
             previousButton.setDisable(false);
         }
 
-        if (loadingController != null && loadingController.getMyStage() != null) {
-            loadingController.getMyStage().close();
+        if (loadingController != null) {
+            loadingController.closeStage();
         }
         makeImagesPane();
     }

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BatchBaseController;
 import java.awt.Desktop;
 import java.io.File;
 import java.text.MessageFormat;
@@ -12,7 +11,6 @@ import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,7 +37,7 @@ import mara.mybox.tools.ValueTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class FilesRenameController extends BatchBaseController {
+public class FilesRenameController extends FilesBatchController {
 
     protected List<String> targetNames;
     protected int currentAccum, digit;
@@ -72,35 +70,28 @@ public class FilesRenameController extends BatchBaseController {
     }
 
     @Override
-    public void initSourceSection() {
+    public void initTable() {
         try {
-            super.initSourceSection();
+            super.initTable();
 
             newColumn.setCellValueFactory(new PropertyValueFactory<FileInformation, String>("newName"));
-
-            sourceFilesInformation.addListener(new ListChangeListener() {
-                @Override
-                public void onChanged(ListChangeListener.Change change) {
-                    checkDataChanged();
-                }
-            });
-            checkDataChanged();
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    protected void checkDataChanged() {
-        digitInput.setText((sourceFilesInformation.size() + "").length() + "");
-        if (sourceFilesInformation.isEmpty()) {
+    @Override
+    public void dataChanged() {
+        digitInput.setText((tableData.size() + "").length() + "");
+        if (tableData.isEmpty()) {
             recoverySelectedButton.setDisable(true);
             recoveryAllButton.setDisable(true);
             insertFilesButton.setDisable(true);
             insertDirectoryButton.setDisable(true);
-            upButton.setDisable(true);
-            downButton.setDisable(true);
-            deleteButton.setDisable(true);
+            moveUpButton.setDisable(true);
+            moveDownButton.setDisable(true);
+            deleteFilesButton.setDisable(true);
             clearButton.setDisable(true);
         } else {
             clearButton.setDisable(false);
@@ -108,9 +99,9 @@ public class FilesRenameController extends BatchBaseController {
     }
 
     @Override
-    public void checkTableSelected() {
-        super.checkTableSelected();
-        ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
+    public void tableSelected() {
+        super.tableSelected();
+        ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
         boolean none = (selected == null || selected.isEmpty());
         if (none) {
             recoverySelectedButton.setDisable(true);
@@ -130,8 +121,8 @@ public class FilesRenameController extends BatchBaseController {
         });
         suffixInput.setDisable(!suffixCheck.isSelected());
 
-        operationBarController.startButton.disableProperty().bind(
-                Bindings.isEmpty(sourceFilesInformation)
+        startButton.disableProperty().bind(
+                Bindings.isEmpty(tableData)
                         .or(addFilesButton.disableProperty())
         );
 
@@ -139,9 +130,9 @@ public class FilesRenameController extends BatchBaseController {
 
     @FXML
     @Override
-    public void clearAction() {
-        sourceFilesInformation.clear();
-        filesTableView.refresh();
+    public void clearFilesAction() {
+        tableData.clear();
+        tableView.refresh();
         addFilesButton.setDisable(false);
         addDirectoryButton.setDisable(false);
     }
@@ -161,26 +152,26 @@ public class FilesRenameController extends BatchBaseController {
 
             sourcesIndice = new ArrayList();
             sourceFiles = new ArrayList();
-            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+            if (tableData == null || tableData.isEmpty()) {
                 actualParameters = null;
                 return false;
             }
 
             if (isPreview) {
                 int index = 0;
-                ObservableList<Integer> selected = filesTableView.getSelectionModel().getSelectedIndices();
+                ObservableList<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
                 if (selected != null && !selected.isEmpty()) {
                     index = selected.get(0);
                 }
-                sourceFiles.add(sourceFilesInformation.get(index).getFile());
+                sourceFiles.add(tableData.get(index).getFile());
                 sourcesIndice.add(index);
                 digit = 1;
                 digitInput.setText(digit + "");
             } else {
-                sortFileInformations(sourceFilesInformation);
-                for (int i = 0; i < sourceFilesInformation.size(); i++) {
+                sortFileInformations(tableData);
+                for (int i = 0; i < tableData.size(); i++) {
                     sourcesIndice.add(i);
-                    sourceFiles.add(sourceFilesInformation.get(i).getFile());
+                    sourceFiles.add(tableData.get(i).getFile());
                 }
                 int bdigit = (sourcesIndice.size() + "").length();
                 try {
@@ -380,7 +371,7 @@ public class FilesRenameController extends BatchBaseController {
         deleteButton.setDisable(true);
         recoveryAllButton.setDisable(false);
         recoverySelectedButton.setDisable(false);
-        filesTableView.refresh();
+        tableView.refresh();
     }
 
     @Override
@@ -422,10 +413,10 @@ public class FilesRenameController extends BatchBaseController {
 
     @FXML
     protected void recoveryAllAction(ActionEvent event) {
-        if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+        if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        for (FileInformation f : sourceFilesInformation) {
+        for (FileInformation f : tableData) {
             String originalName = f.getFileName();
             if (f.getIsFile()) {
                 String newName = f.getNewName();
@@ -463,21 +454,21 @@ public class FilesRenameController extends BatchBaseController {
                 newNames.remove(originalName);
             }
         }
-        filesTableView.refresh();
+        tableView.refresh();
         addFilesButton.setDisable(false);
         addDirectoryButton.setDisable(false);
         insertFilesButton.setDisable(false);
         insertDirectoryButton.setDisable(false);
-        deleteButton.setDisable(false);
-        upButton.setDisable(false);
-        downButton.setDisable(false);
+        deleteFilesButton.setDisable(false);
+        moveUpButton.setDisable(false);
+        moveDownButton.setDisable(false);
         recoverySelectedButton.setDisable(true);
         recoveryAllButton.setDisable(true);
     }
 
     @FXML
     protected void recoverySelectedAction(ActionEvent event) {
-        ObservableList<FileInformation> selected = filesTableView.getSelectionModel().getSelectedItems();
+        ObservableList<FileInformation> selected = tableView.getSelectionModel().getSelectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -519,25 +510,25 @@ public class FilesRenameController extends BatchBaseController {
                 newNames.remove(originalName);
             }
         }
-        filesTableView.refresh();
+        tableView.refresh();
         addFilesButton.setDisable(true);
         addDirectoryButton.setDisable(true);
         insertFilesButton.setDisable(true);
         insertDirectoryButton.setDisable(true);
-        deleteButton.setDisable(true);
+        deleteFilesButton.setDisable(true);
     }
 
     @Override
     public void openTarget(ActionEvent event) {
         try {
-            if (sourceFilesInformation == null || sourceFilesInformation.isEmpty()) {
+            if (tableData == null || tableData.isEmpty()) {
                 return;
             }
-            File f = new File(sourceFilesInformation.get(0).getFileName());
+            File f = new File(tableData.get(0).getFileName());
             if (f.isDirectory()) {
-                Desktop.getDesktop().browse(new File(f.getPath()).toURI());
+               browseURI(new File(f.getPath()).toURI());
             } else {
-                Desktop.getDesktop().browse(new File(f.getParent()).toURI());
+               browseURI(new File(f.getParent()).toURI());
             }
             recordFileOpened(f);
         } catch (Exception e) {

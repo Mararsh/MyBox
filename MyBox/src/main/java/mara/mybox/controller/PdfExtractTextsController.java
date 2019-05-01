@@ -40,7 +40,7 @@ public class PdfExtractTextsController extends PdfBatchBaseController {
     @Override
     public void initializeNext2() {
         try {
-            operationBarController.startButton.disableProperty().bind(
+            startButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(Bindings.isEmpty(targetFileInput.textProperty()))
@@ -54,8 +54,8 @@ public class PdfExtractTextsController extends PdfBatchBaseController {
 
             previewButton.disableProperty().bind(
                     Bindings.isEmpty(sourceSelectionController.sourceFileInput.textProperty())
-                            .or(operationBarController.startButton.disableProperty())
-                            .or(operationBarController.startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
+                            .or(startButton.disableProperty())
+                            .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
             );
 

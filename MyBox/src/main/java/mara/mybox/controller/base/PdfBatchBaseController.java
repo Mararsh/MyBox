@@ -1,8 +1,8 @@
 package mara.mybox.controller.base;
 
+import mara.mybox.controller.FilesBatchController;
 import java.io.File;
 import java.util.ArrayList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import mara.mybox.controller.PdfSourceSelectionController;
 import static mara.mybox.value.AppVaribles.logger;
@@ -17,7 +17,7 @@ import mara.mybox.tools.FileTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public abstract class PdfBatchBaseController extends BatchBaseController {
+public abstract class PdfBatchBaseController extends FilesBatchController {
 
     public String PdfSourceFromKey, PdfSourceToKey;
 
@@ -84,7 +84,7 @@ public abstract class PdfBatchBaseController extends BatchBaseController {
 
     @FXML
     @Override
-    public void preview(ActionEvent event) {
+    public void previewAction() {
         isPreview = true;
         makeActualParameters();
         previewParameters = copyParameters(actualParameters);
@@ -113,10 +113,11 @@ public abstract class PdfBatchBaseController extends BatchBaseController {
     @Override
     public void makeSingleParameters() {
         actualParameters.isBatch = false;
-
+        
         actualParameters.sourceFile = sourceSelectionController.pdfInformation.getFile();
         sourceFiles = new ArrayList();
         sourceFiles.add(actualParameters.sourceFile);
+        logger.debug(sourceFiles.size());
 
         actualParameters.fromPage = sourceSelectionController.readFromPage() - 1; // Interface From 1, actual from 0
 //        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.fromPage);

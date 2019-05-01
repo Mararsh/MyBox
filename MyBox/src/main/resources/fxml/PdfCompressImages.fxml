@@ -116,7 +116,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                     <children>
                                                         <Label text="%FileName" />
                                                         <TextField fx:id="targetFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button mnemonicParsing="false" onAction="#selectTargetFile"  onMouseEntered="#popTargetFile" text="%Select..." />
+                                                        <Button fx:id="selectTargetFileButton" mnemonicParsing="false" onAction="#selectTargetFile"  onMouseEntered="#popTargetFile" >
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconOpen.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
                                             </children>

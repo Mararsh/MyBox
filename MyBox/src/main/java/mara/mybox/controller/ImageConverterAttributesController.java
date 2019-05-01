@@ -5,8 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -14,9 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.base.ImageAttributesBaseController;
 import static mara.mybox.value.AppVaribles.logger;
@@ -27,6 +23,7 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlStage;
 
 /**
  * @Author Mara
@@ -131,23 +128,15 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     @FXML
     public void openPixelsCalculator(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.PixelsCalculatorFxml), AppVaribles.currentBundle);
-            Pane pane = fxmlLoader.load();
-            final PixelsCalculationController controller = fxmlLoader.getController();
-            final Stage stage = new Stage();
-            controller.myStage = stage;
+            final PixelsCalculationController controller
+                    = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                            CommonValues.PixelsCalculatorFxml,
+                            true, Modality.WINDOW_MODAL, null);
+
             controller.setSource(imageAttributes, xInput, yInput);
 
-            Scene scene = new Scene(pane);
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(getMyStage());
-            stage.setTitle(AppVaribles.getMessage("PixelsCalculator"));
-            stage.getIcons().add(CommonValues.AppIcon);
-            stage.setScene(scene);
-            stage.show();
-
             noRatio = true;
-            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            controller.myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
                     noRatio = false;
@@ -156,6 +145,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
                     }
                 }
             });
+
         } catch (Exception e) {
             logger.error(e.toString());
         }

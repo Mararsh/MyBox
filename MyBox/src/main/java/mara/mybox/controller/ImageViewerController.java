@@ -67,9 +67,9 @@ import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.IntStatisticColorCell;
 import mara.mybox.image.ImageStatistic;
 import mara.mybox.image.file.ImageFileReaders;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools.FileSortMode;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -98,8 +98,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     @FXML
     protected VBox contentBox, imageBox;
     @FXML
-    protected Button upButton, downButton, renameButton, metaButton, manufactureButton, statisticButton,
-            saveAsButton, cropButton, recoverButton, saveSelectedButton, splitButton, sampleButton;
+    public Button moveUpButton, moveDownButton, manufactureButton, statisticButton, splitButton, sampleButton, browseButton;
     @FXML
     protected SplitPane splitPane;
     @FXML
@@ -169,18 +168,6 @@ public class ImageViewerController extends ImageMaskBaseController {
                 return;
             }
             switch (key) {
-                case "r":
-                case "R":
-                    if (recoverButton != null) {
-                        recoverAction();
-                    }
-                    break;
-                case "x":
-                case "X":
-                    if (cropButton != null) {
-                        cropAction();
-                    }
-                    break;
                 case "t":
                 case "T":
                     if (selectCheck != null) {
@@ -198,6 +185,21 @@ public class ImageViewerController extends ImageMaskBaseController {
             operation1Box.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
             );
+        }
+
+        if (manufactureButton != null) {
+            FxmlControl.quickTooltip(manufactureButton, new Tooltip(getMessage("Manufacture")));
+        }
+        if (splitButton != null) {
+            FxmlControl.quickTooltip(splitButton, new Tooltip(getMessage("Split")));
+        }
+
+        if (sampleButton != null) {
+            FxmlControl.quickTooltip(sampleButton, new Tooltip(getMessage("Sample")));
+        }
+
+        if (browseButton != null) {
+            FxmlControl.quickTooltip(browseButton, new Tooltip(getMessage("Browse")));
         }
 
         if (selectCheck != null) {
@@ -256,16 +258,6 @@ public class ImageViewerController extends ImageMaskBaseController {
             xyText.setVisible(coordinateCheck.isSelected());
         }
 
-        if (recoverButton != null) {
-            Tooltip tips = new Tooltip("CTRL+r");
-            FxmlControl.quickTooltip(recoverButton, tips);
-        }
-
-        if (cropButton != null) {
-            Tooltip tips = new Tooltip("CTRL+x");
-            FxmlControl.quickTooltip(cropButton, tips);
-        }
-
     }
 
     protected void checkCoordinate() {
@@ -281,7 +273,9 @@ public class ImageViewerController extends ImageMaskBaseController {
             selectAllButton.setDisable(!selectCheck.isSelected());
         }
 
-        initMaskRectangleLine(selectCheck.isSelected());
+        if (selectCheck != null) {
+            initMaskRectangleLine(selectCheck.isSelected());
+        }
         updateLabelTitle();
     }
 
@@ -378,19 +372,25 @@ public class ImageViewerController extends ImageMaskBaseController {
         imageView.fitWidthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                refinePane();
+                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                    refinePane();
+                }
             }
         });
         imageView.fitHeightProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                refinePane();
+                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                    refinePane();
+                }
             }
         });
         scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                refinePane();
+                if (Math.abs(new_val.intValue() - old_val.intValue()) > 20) {
+                    refinePane();
+                }
             }
         });
     }
@@ -1135,7 +1135,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     }
 
     @FXML
-    public void browseImagesAction() {
+    public void browseAction() {
         try {
             final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), null);
             if (controller != null && sourceFile != null) {
@@ -1294,6 +1294,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     }
 
     @FXML
+    @Override
     public void cropAction() {
         if (imageView == null || imageView.getImage() == null) {
             return;
@@ -1371,6 +1372,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     }
 
     @FXML
+    @Override
     public void recoverAction() {
         if (imageView == null) {
             return;
@@ -1509,6 +1511,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     }
 
     @FXML
+    @Override
     public void saveAsAction() {
         if (imageView == null) {
             return;

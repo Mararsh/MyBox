@@ -1,7 +1,7 @@
 package mara.mybox.controller.base;
 
-import mara.mybox.fxml.FxmlStage;
 import java.awt.Desktop;
+import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -19,8 +19,9 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -28,8 +29,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -40,11 +43,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MainMenuController;
 import mara.mybox.controller.OperationController;
+import mara.mybox.data.ControlStyle;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
@@ -65,7 +68,8 @@ import static mara.mybox.value.CommonValues.AppDataRoot;
 public class BaseController implements Initializable {
 
     public String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey;
-    public int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType;
+    public int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
+            operationType;
     public List<FileChooser.ExtensionFilter> fileExtensionFilter;
     public String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
     public Stage myStage;
@@ -89,12 +93,17 @@ public class BaseController implements Initializable {
     @FXML
     public OperationController operationBarController;
     @FXML
-    public Button selectSourceButton, newButton, copyButton, deleteButton, saveButton, infoButton, selectAllButton,
-            okButton, startButton, firstButton, lastButton, previousButton, nextButton, previewButton;
+    public Button selectSourceButton, createButton, copyButton, pasteButton,
+            deleteButton, saveButton, infoButton, metaButton, selectAllButton,
+            okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
+            cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
+            undoButton, redoButton, transparentButton, whiteButton, blackButton;
     @FXML
     public VBox paraBox;
     @FXML
     public Label bottomLabel, tipsLabel;
+    @FXML
+    public ImageView tipsView;
 
     public BaseController() {
         baseTitle = AppVaribles.getMessage("AppTitle");
@@ -105,6 +114,7 @@ public class BaseController implements Initializable {
         TargetFileType = 0;
         AddFileType = 0;
         AddPathType = 0;
+        operationType = 0;
 
         LastPathKey = "LastPathKey";
         targetPathKey = "targetPath";
@@ -116,6 +126,7 @@ public class BaseController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+//
             myFxml = FxmlControl.getFxmlPath(url.getPath());
             myController = this;
             baseName = FileTools.getFilePrefix(myFxml);
@@ -135,13 +146,11 @@ public class BaseController implements Initializable {
                         keyEventsHandler(event);
                     }
                 });
-
             }
 
-            setTips();
             initControls();
-
             initializeNext();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -151,8 +160,10 @@ public class BaseController implements Initializable {
         getMyStage();
     }
 
-    public void initStage() {
+    public void afterSceneLoaded() {
         getMyScene();
+        getMyStage();
+
         final String prefix;
         if (baseName.contains("ImageManufacture") && !baseName.contains("ImageManufactureBatch")) {
             prefix = "Interface_" + "ImageManufacture";
@@ -169,10 +180,16 @@ public class BaseController implements Initializable {
                 myStage.sizeToScene();
                 int v = AppVaribles.getUserConfigInt(prefix + "StageWidth", -1);
                 if (v > 0) {
+                    if (v < Math.min(400, myStage.getWidth())) {
+                        v = 400;
+                    }
                     myStage.setWidth(v);
                 }
                 v = AppVaribles.getUserConfigInt(prefix + "StageHeight", -1);
                 if (v > 0) {
+                    if (v < Math.min(400, myStage.getHeight())) {
+                        v = 400;
+                    }
                     myStage.setHeight(v);
                 }
                 myStage.centerOnScreen();
@@ -203,56 +220,23 @@ public class BaseController implements Initializable {
 
         }
 
-        thisPane.requestFocus();
+        Parent root = myScene.getRoot();
+        root.requestFocus();
+        root.applyCss();
+        root.layout();
+        initStyle(root);
 
     }
 
-    public void setTips() {
-
-        if (tipsLabel != null && TipsLabelKey != null) {
-            FxmlControl.quickTooltip(tipsLabel, new Tooltip(getMessage(TipsLabelKey)));
+    public void initStyle(Node node) {
+        if (node == null) {
+            return;
         }
-
-        if (okButton != null) {
-            FxmlControl.quickTooltip(okButton, new Tooltip("ENTER / F1 / CTRL+g"));
-        }
-
-        if (newButton != null) {
-            FxmlControl.quickTooltip(newButton, new Tooltip("CTRL+n"));
-        }
-
-        if (deleteButton != null) {
-            FxmlControl.quickTooltip(deleteButton, new Tooltip("CTRL+d / DELETE"));
-        }
-
-        if (copyButton != null) {
-            FxmlControl.quickTooltip(copyButton, new Tooltip("CTRL+c"));
-        }
-
-        if (saveButton != null) {
-            FxmlControl.quickTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
-
-        }
-
-        if (infoButton != null) {
-            FxmlControl.quickTooltip(infoButton, new Tooltip("CTRL+i"));
-        }
-
-        if (selectAllButton != null) {
-            FxmlControl.quickTooltip(selectAllButton, new Tooltip("CTRL+a"));
-        }
-
-        if (nextButton != null) {
-            FxmlControl.quickTooltip(nextButton, new Tooltip("PAGE DOWN"));
-        }
-        if (previousButton != null) {
-            FxmlControl.quickTooltip(previousButton, new Tooltip("PAGE UP"));
-        }
-        if (firstButton != null) {
-            FxmlControl.quickTooltip(firstButton, new Tooltip("HOME"));
-        }
-        if (lastButton != null) {
-            FxmlControl.quickTooltip(lastButton, new Tooltip("END"));
+        ControlStyle.setStyle(node);
+        if (node instanceof Parent) {
+            for (Node c : ((Parent) node).getChildrenUnmodifiable()) {
+                initStyle(c);
+            }
         }
     }
 
@@ -277,29 +261,7 @@ public class BaseController implements Initializable {
                 sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        if (newValue == null || newValue.isEmpty()) {
-                            sourceFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        final File file = new File(newValue);
-                        if (!file.exists()) {
-                            sourceFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        sourceFileInput.setStyle(null);
-                        sourceFile = file;
-                        sourceFileChanged(file);
-                        if (parentController != null) {
-                            parentController.sourceFileChanged(file);
-                        }
-                        if (file.isDirectory()) {
-                            AppVaribles.setUserConfigValue(sourcePathKey, file.getPath());
-                        } else {
-                            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
-                            if (targetPrefixInput != null) {
-                                targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
-                            }
-                        }
+                        checkSourceFileInput();
                     }
                 });
             }
@@ -361,8 +323,43 @@ public class BaseController implements Initializable {
                 }
             }
 
+            if (tipsLabel != null && TipsLabelKey != null) {
+                FxmlControl.quickTooltip(tipsLabel, new Tooltip(getMessage(TipsLabelKey)));
+            }
+
+            if (tipsView != null && TipsLabelKey != null) {
+                FxmlControl.quickTooltip(tipsView, new Tooltip(getMessage(TipsLabelKey)));
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public void checkSourceFileInput() {
+        String v = sourceFileInput.getText();
+        if (v == null || v.isEmpty()) {
+            sourceFileInput.setStyle(badStyle);
+            return;
+        }
+        final File file = new File(v);
+        if (!file.exists()) {
+            sourceFileInput.setStyle(badStyle);
+            return;
+        }
+        sourceFileInput.setStyle(null);
+        sourceFile = file;
+        sourceFileChanged(file);
+        if (parentController != null) {
+            parentController.sourceFileChanged(file);
+        }
+        if (file.isDirectory()) {
+            AppVaribles.setUserConfigValue(sourcePathKey, file.getPath());
+        } else {
+            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
+            if (targetPrefixInput != null) {
+                targetPrefixInput.setText(FileTools.getFilePrefix(file.getName()));
+            }
         }
     }
 
@@ -395,66 +392,96 @@ public class BaseController implements Initializable {
 
     public void keyEventsHandler(KeyEvent event) {
         if (event.isControlDown()) {
-            String key = event.getText();
-            if (key == null || key.isEmpty()) {
-                return;
+            switch (event.getCode()) {
+                case HOME:
+                    if (firstButton != null && !firstButton.isDisabled()) {
+                        firstAction();
+                    }
+                    return;
+                case END:
+                    if (lastButton != null && !lastButton.isDisabled()) {
+                        lastAction();
+                    }
+                    return;
             }
-            switch (key) {
-                case "n":
-                case "N":
-                    if (newButton != null && !newButton.isDisabled()) {
-                        newAction();
-                    }
-                    break;
-                case "g":
-                case "G":
-                    if (okButton != null && !okButton.isDisabled()) {
-                        okAction();
-                    }
-                    break;
-                case "c":
-                case "C":
-                    if (copyButton != null && !copyButton.isDisabled()) {
-                        copyAction();
-                    }
-                    break;
-                case "s":
-                case "S":
-                    if (saveButton != null && !saveButton.isDisabled()) {
-                        saveAction();
-                    }
-                    break;
-                case "i":
-                case "I":
-                    if (infoButton != null && !infoButton.isDisabled()) {
-                        infoAction();
-                    }
-                    break;
-                case "d":
-                case "D":
-                    if (deleteButton != null && !deleteButton.isDisabled()) {
-                        deleteAction();
-                    }
-                    break;
-                case "a":
-                case "A":
-                    if (selectAllButton != null && !selectAllButton.isDisabled()) {
-                        selectAllAction();
-                    }
-                    break;
-                case "m":
-                case "M":
-                    if (mainMenuController != null) {
-                        mainMenuController.getShowCommentsCheck().setSelected(!mainMenuController.getShowCommentsCheck().isSelected());
-                        mainMenuController.showCommentsAction();
-                    }
-                    break;
-                case "-":
-                    setSceneFontSize(AppVaribles.sceneFontSize - 1);
-                    break;
-                case "=":
-                    setSceneFontSize(AppVaribles.sceneFontSize + 1);
-                    break;
+            String key = event.getText();
+            if (key != null) {
+                switch (key) {
+                    case "n":
+                    case "N":
+                        if (createButton != null && !createButton.isDisabled()) {
+                            createAction();
+                        }
+                        break;
+                    case "g":
+                    case "G":
+                        if (okButton != null && !okButton.isDisabled()) {
+                            okAction();
+                        }
+                        break;
+                    case "c":
+                    case "C":
+                        if (copyButton != null && !copyButton.isDisabled()) {
+                            copyAction();
+                        }
+                        break;
+                    case "v":
+                    case "V":
+                        if (pasteButton != null && !pasteButton.isDisabled()) {
+                            pasteAction();
+                        }
+                        break;
+                    case "s":
+                    case "S":
+                        if (saveButton != null && !saveButton.isDisabled()) {
+                            saveAction();
+                        }
+                        break;
+                    case "i":
+                    case "I":
+                        if (infoButton != null && !infoButton.isDisabled()) {
+                            infoAction();
+                        }
+                        break;
+                    case "d":
+                    case "D":
+                        if (deleteButton != null && !deleteButton.isDisabled()) {
+                            deleteAction();
+                        }
+                        break;
+                    case "a":
+                    case "A":
+                        if (selectAllButton != null && !selectAllButton.isDisabled()) {
+                            selectAllAction();
+                        }
+                        break;
+                    case "x":
+                    case "X":
+                        if (cropButton != null && !cropButton.isDisabled()) {
+                            cropAction();
+                        }
+                        break;
+                    case "r":
+                    case "R":
+                        if (recoverButton != null && !recoverButton.isDisabled()) {
+                            recoverAction();
+                        }
+                        break;
+                    case "m":
+                    case "M":
+                        if (mainMenuController != null) {
+                            mainMenuController.getShowCommentsCheck().setSelected(!mainMenuController.getShowCommentsCheck().isSelected());
+                            mainMenuController.showCommentsAction();
+                        }
+                        break;
+                    case "-":
+                        setSceneFontSize(AppVaribles.sceneFontSize - 1);
+                        break;
+                    case "=":
+                        setSceneFontSize(AppVaribles.sceneFontSize + 1);
+                        break;
+                }
+
             }
 
         } else {
@@ -465,16 +492,7 @@ public class BaseController implements Initializable {
                             deleteAction();
                         }
                         break;
-                    case HOME:
-                        if (firstButton != null && !firstButton.isDisabled()) {
-                            firstAction();
-                        }
-                        break;
-                    case END:
-                        if (lastButton != null && !lastButton.isDisabled()) {
-                            lastAction();
-                        }
-                        break;
+
                     case PAGE_UP:
                         if (previousButton != null && !previousButton.isDisabled()) {
                             previousAction();
@@ -507,7 +525,7 @@ public class BaseController implements Initializable {
     }
 
     public void initializeNext() {
-
+//
     }
 
     public void setInterfaceStyle(Scene scene, String style) {
@@ -551,19 +569,25 @@ public class BaseController implements Initializable {
     }
 
     public BaseController refreshBase() {
-        String title = myStage.getTitle();
-        BaseController c, p = parentController;
-        c = loadScene(myFxml);
-        if (c == null) {
+        try {
+            String title = myStage.getTitle();
+            BaseController c, p = parentController;
+            c = loadScene(myFxml);
+            if (c == null) {
+                return null;
+            }
+            myStage.setTitle(title);
+            if (p != null) {
+                c.parentFxml = myFxml;
+                c.parentController = p;
+                p.refresh();
+            }
+            c.getMyStage().requestFocus();
+            return c;
+        } catch (Exception e) {
+            logger.error(e.toString());
             return null;
         }
-        myStage.setTitle(title);
-        if (p != null) {
-            c.parentFxml = myFxml;
-            c.parentController = p;
-            p.refresh();
-        }
-        return c;
     }
 
     @FXML
@@ -779,7 +803,63 @@ public class BaseController implements Initializable {
         }
     }
 
+    @FXML
+    public void selectSourcePath(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            if (path != null) {
+                chooser.setInitialDirectory(path);
+            }
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            selectSourcePath(directory);
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void selectSourcePath(File directory) {
+        if (sourcePathInput != null) {
+            sourcePathInput.setText(directory.getPath());
+        }
+        recordFileWritten(directory);
+    }
+
     public void openTarget(ActionEvent event) {
+
+    }
+
+    @FXML
+    public void addFilesAction(ActionEvent event) {
+
+    }
+
+    public void addFile(File file) {
+
+    }
+
+    @FXML
+    public void insertFilesAction(ActionEvent event) {
+
+    }
+
+    public void insertFile(File file) {
+
+    }
+
+    public void addDirectory(File directory) {
+
+    }
+
+    public void insertDirectory(File directory) {
+
+    }
+
+    @FXML
+    public void saveAsAction() {
 
     }
 
@@ -789,12 +869,17 @@ public class BaseController implements Initializable {
             popMenu.hide();
             popMenu = null;
         }
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType);
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his;
+        if (operationType == VisitHistory.OperationType.Alpha) {
+            his = VisitHistory.getRecentAlphaImages(fileNumber);
+        } else {
+            his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
+        }
         if (his == null || his.isEmpty()) {
             return;
         }
         popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
         popMenu.setAutoHide(true);
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
@@ -807,6 +892,36 @@ public class BaseController implements Initializable {
             });
             popMenu.getItems().add(menu);
         }
+
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        selectSourceFile(event);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
     }
@@ -820,7 +935,13 @@ public class BaseController implements Initializable {
         if (AddFileType <= 0) {
             AddFileType = SourceFileType;
         }
-        List<VisitHistory> his = VisitHistory.getRecentFile(AddFileType);
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his;
+        if (operationType == VisitHistory.OperationType.Alpha) {
+            his = VisitHistory.getRecentAlphaImages(fileNumber);
+        } else {
+            his = VisitHistory.getRecentFile(AddFileType, fileNumber);
+        }
         if (his == null || his.isEmpty()) {
             return;
         }
@@ -837,11 +958,37 @@ public class BaseController implements Initializable {
             });
             popMenu.getItems().add(menu);
         }
+
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        addFilesAction(event);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
-
-    }
-
-    public void addFile(File file) {
 
     }
 
@@ -854,7 +1001,13 @@ public class BaseController implements Initializable {
         if (AddFileType <= 0) {
             AddFileType = SourceFileType;
         }
-        List<VisitHistory> his = VisitHistory.getRecentFile(AddFileType);
+        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        List<VisitHistory> his;
+        if (operationType == VisitHistory.OperationType.Alpha) {
+            his = VisitHistory.getRecentAlphaImages(fileNumber);
+        } else {
+            his = VisitHistory.getRecentFile(AddFileType, fileNumber);
+        }
         if (his == null || his.isEmpty()) {
             return;
         }
@@ -872,11 +1025,36 @@ public class BaseController implements Initializable {
             popMenu.getItems().add(menu);
         }
 
+        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
+        if (his != null) {
+            popMenu.getItems().add(new SeparatorMenuItem());
+            for (VisitHistory h : his) {
+                final String pathname = h.getResourceValue();
+                MenuItem menu = new MenuItem(pathname);
+                menu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
+                        insertFilesAction(event);
+                    }
+                });
+                popMenu.getItems().add(menu);
+            }
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
-
-    }
-
-    public void insertFile(File file) {
 
     }
 
@@ -907,11 +1085,18 @@ public class BaseController implements Initializable {
             popMenu.getItems().add(menu);
         }
 
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
-
-    }
-
-    public void addDirectory(File directory) {
 
     }
 
@@ -942,11 +1127,18 @@ public class BaseController implements Initializable {
             popMenu.getItems().add(menu);
         }
 
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
-
-    }
-
-    public void insertDirectory(File directory) {
 
     }
 
@@ -974,33 +1166,19 @@ public class BaseController implements Initializable {
             popMenu.getItems().add(menu);
         }
 
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
-    }
-
-    @FXML
-    public void selectSourcePath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if (path != null) {
-                chooser.setInitialDirectory(path);
-            }
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            selectSourcePath(directory);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void selectSourcePath(File directory) {
-        if (sourcePathInput != null) {
-            sourcePathInput.setText(directory.getPath());
-        }
-        recordFileWritten(directory);
     }
 
     @FXML
@@ -1026,6 +1204,18 @@ public class BaseController implements Initializable {
             });
             popMenu.getItems().add(menu);
         }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
     }
@@ -1055,6 +1245,58 @@ public class BaseController implements Initializable {
             popMenu.getItems().add(menu);
         }
 
+        popMenu.getItems().add(new SeparatorMenuItem());
+        menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
+        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+
+    }
+
+    @FXML
+    public void popSaveAs(MouseEvent event) { //
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+            popMenu = null;
+        }
+        List<VisitHistory> his = VisitHistory.getRecentPath(TargetPathType);
+        if (his == null || his.isEmpty()) {
+            return;
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        MenuItem menu;
+        for (VisitHistory h : his) {
+            final String pathname = h.getResourceValue();
+            menu = new MenuItem(pathname);
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVaribles.setUserConfigValue(targetPathKey, pathname);
+                    saveAsAction();
+                }
+            });
+            popMenu.getItems().add(menu);
+        }
+
+        popMenu.getItems().add(new SeparatorMenuItem());
+        menu = new MenuItem(getMessage("MenuClose"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                popMenu.hide();
+                popMenu = null;
+            }
+        });
+        popMenu.getItems().add(menu);
+
         FxmlControl.locateBelow((Region) event.getSource(), popMenu);
 
     }
@@ -1070,12 +1312,17 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void newAction() {
+    public void createAction() {
 
     }
 
     @FXML
     public void copyAction() {
+
+    }
+
+    @FXML
+    public void pasteAction() {
 
     }
 
@@ -1086,6 +1333,16 @@ public class BaseController implements Initializable {
 
     @FXML
     public void deleteAction() {
+
+    }
+
+    @FXML
+    public void cropAction() {
+
+    }
+
+    @FXML
+    public void recoverAction() {
 
     }
 
@@ -1176,10 +1433,31 @@ public class BaseController implements Initializable {
         }
     }
 
+    public boolean browseURI(URI uri) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    try {
+                        desktop.browse(uri);
+                        return true;
+                    } catch (Exception ioe) {
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+
+        }
+        popError(getMessage("DesktopNotSupportBrowse"));
+        return false;
+    }
+
     @FXML
     public void openUserPath(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new File(AppDataRoot).toURI());
+            browseURI(new File(AppDataRoot).toURI());
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1199,19 +1477,6 @@ public class BaseController implements Initializable {
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @FXML
-    public void showHelpExternal(ActionEvent event) {
-        try {
-            File help = checkHelps();
-            if (help != null) {
-                Desktop.getDesktop().browse(help.toURI());
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
     }
 
     public File checkHelps() {
@@ -1264,7 +1529,7 @@ public class BaseController implements Initializable {
                     "/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", false);
             if (jvm_help != null) {
                 URI uri = jvm_help.toURI();
-                Desktop.getDesktop().browse(new URI(uri.getScheme(), uri.getHost(), uri.getPath(), "#Memory"));
+                browseURI(new URI(uri.getScheme(), uri.getHost(), uri.getPath(), "#Memory"));
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1480,41 +1745,13 @@ public class BaseController implements Initializable {
 
     public LoadingController openHandlingStage(Modality block, String info) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.currentBundle);
-            Pane pane = fxmlLoader.load();
-            LoadingController controller = fxmlLoader.getController();
-            final Stage loadingStage = new Stage();
-
-            loadingStage.initModality(block);
-//            loadingStage.initStyle(StageStyle.UNDECORATED);
-            loadingStage.initStyle(StageStyle.TRANSPARENT);
-            loadingStage.initOwner(myStage);
-            loadingStage.setScene(new Scene(pane));
-            loadingStage.show();
-
-            if (info != null) {
-                controller.setInfo(info);
-            }
-            controller.myStage = loadingStage;
-
+            final LoadingController controller
+                    = (LoadingController) FxmlStage.openLoadingStage(getClass(), myStage, block, info);
             return controller;
-
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
-//        try {
-//            LoadingController controller = (LoadingController) FxmlStage.openNewStage(getClass(),
-//                    myStage, CommonValues.LoadingFxml, true, block);
-//            controller.myStage.initStyle(StageStyle.TRANSPARENT);
-//            if (info != null) {
-//                controller.setInfo(info);
-//            }
-//            return controller;
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            return null;
-//        }
     }
 
     public LoadingController openHandlingStage(final Task<?> task, Modality block) {
@@ -1523,43 +1760,31 @@ public class BaseController implements Initializable {
 
     public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(CommonValues.LoadingFxml), AppVaribles.currentBundle);
-            Pane pane = fxmlLoader.load();
-            LoadingController controller = fxmlLoader.getController();
+            final LoadingController controller
+                    = (LoadingController) FxmlStage.openLoadingStage(getClass(), myStage, block, info);
+            final Stage loadingStage = controller.myStage;
+
             controller.init(task);
             controller.parentController = myController;
-
-            final Stage loadingStage = new Stage();
-            loadingStage.initModality(block);
-//            loadingStage.initStyle(StageStyle.UNDECORATED);
-            loadingStage.initStyle(StageStyle.TRANSPARENT);
-            loadingStage.initOwner(myStage);
-            loadingStage.setScene(new Scene(pane));
-            loadingStage.show();
-
-            if (info != null) {
-                controller.setInfo(info);
-            }
-            controller.myStage = loadingStage;
 
             task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    loadingStage.close();
+                    controller.closeStage();
                 }
             });
             task.setOnCancelled(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
                     popInformation(AppVaribles.getMessage("Canceled"));
-                    loadingStage.close();
+                    controller.closeStage();
                 }
             });
             task.setOnFailed(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
                     popError(AppVaribles.getMessage("Error"));
-                    loadingStage.close();
+                    controller.closeStage();
                 }
             });
             return controller;

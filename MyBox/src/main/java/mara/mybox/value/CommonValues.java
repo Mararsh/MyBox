@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.0";
-    public static final String AppVersionDate = "2019-04-21";
+    public static final String AppVersion = "5.1";
+    public static final String AppVersionDate = "2019-05-01";
 
     public static final String AppDataRoot = System.getProperty("user.home") + File.separator + "mybox";
     public static final File AppTempPath = new File(AppDataRoot + File.separator + "AppTemp");
@@ -114,6 +114,8 @@ public class CommonValues {
     public static final String ImageTiffEditerFxml = "/fxml/ImageTiffEditer.fxml";
     public static final String ImageFramesViewerFxml = "/fxml/ImageFramesViewer.fxml";
     public static final String ImageStatisticFxml = "/fxml/ImageStatistic.fxml";
+    public static final String ImageAlphaExtractBatchFxml = "/fxml/ImageAlphaExtractBatch.fxml";
+    public static final String ImageAlphaAddBatchFxml = "/fxml/ImageAlphaAddBatch.fxml";
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";

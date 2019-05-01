@@ -11,12 +11,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
@@ -62,7 +62,7 @@ public class WeiboSnapController extends BaseController {
     private TextField addressInput, startMonthInput, endMonthInput, startPageInput,
             customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    private Button exampleButton;
+    private Button wowButton;
     @FXML
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
@@ -72,7 +72,7 @@ public class WeiboSnapController extends BaseController {
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    private Label weiboTips;
+    private ImageView weiboTipsView;
 
     public WeiboSnapController() {
         baseTitle = AppVaribles.getMessage("WeiboSnap");
@@ -105,10 +105,6 @@ public class WeiboSnapController extends BaseController {
             initSnapOptions();
             initPdfOptionsSection();
             initTargetOptions();
-
-            FxmlControl.quickTooltip(miaoCheck, new Tooltip(getMessage("MiaoPrompt")));
-            FxmlControl.quickTooltip(startButton, new Tooltip("ENTER"));
-            FxmlControl.quickTooltip(weiboTips, new Tooltip(getMessage("WeiboAddressComments")));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -548,10 +544,6 @@ public class WeiboSnapController extends BaseController {
         });
         authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
-        tips = new Tooltip(getMessage("PdfMemComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.quickTooltip(pdfMemBox, tips);
-
         checkPdfMem();
 
     }
@@ -779,9 +771,7 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("MergePDFComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.quickTooltip(keepPageCheck, tips);
+        FxmlControl.quickTooltip(keepPageCheck, new Tooltip(AppVaribles.getMessage("MergePDFComments")));
 
         startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -794,7 +784,7 @@ public class WeiboSnapController extends BaseController {
                 .or(pdfCheck.styleProperty().isEqualTo(badStyle))
         );
 
-        exampleButton.disableProperty().bind(startButton.disableProperty());
+        wowButton.disableProperty().bind(startButton.disableProperty());
 
     }
 

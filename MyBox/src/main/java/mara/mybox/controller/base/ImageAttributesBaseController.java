@@ -140,10 +140,6 @@ public class ImageAttributesBaseController extends BaseController {
         imageAttributes.setIsDithering(ditherCheck.isSelected());
         FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
-        if (pcxSelect != null) {
-            FxmlControl.quickTooltip(pcxSelect, new Tooltip(getMessage("PcxComments")));
-        }
-
         initializeNext2();
     }
 

@@ -9,7 +9,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -44,9 +43,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
     @FXML
     protected HBox setBox, colorBox;
     @FXML
-    protected Button transparentButton, withdrawButton, clearButton, cutInsideButton;
-    @FXML
-    protected Label cropTipsLabel;
+    protected Button withdrawButton, clearButton, cutInsideButton, cutOutsideButton;
 
     public ImageManufactureCropController() {
 
@@ -109,13 +106,13 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 public void onChanged(ListChangeListener.Change<? extends Double> change) {
                     if (cropType == ScopeType.Polygon) {
                         boolean closed = maskPolygonData.getSize() > 2;
-                        okButton.setDisable(!closed);
+                        cutOutsideButton.setDisable(!closed);
                         cutInsideButton.setDisable(!closed);
                     }
                 }
             });
 
-            FxmlControl.quickTooltip(cropTipsLabel, new Tooltip(getMessage("ImageShapeTip")));
+            FxmlControl.quickTooltip(cutOutsideButton, new Tooltip(getMessage("OK") + "\nENTER"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -133,26 +130,26 @@ public class ImageManufactureCropController extends ImageManufactureController {
             if (getMessage("Rectangle").equals(selected.getText())) {
                 cropType = ScopeType.Rectangle;
                 initMaskRectangleLine(true);
-                okButton.setDisable(false);
+                cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
             } else if (getMessage("Circle").equals(selected.getText())) {
                 cropType = ScopeType.Circle;
                 initMaskCircleLine(true);
-                okButton.setDisable(false);
+                cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
             } else if (getMessage("Ellipse").equals(selected.getText())) {
                 cropType = ScopeType.Ellipse;
                 initMaskEllipseLine(true);
-                okButton.setDisable(false);
+                cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
             } else if (getMessage("Polygon").equals(selected.getText())) {
                 cropType = ScopeType.Polygon;
                 setBox.getChildren().addAll(clearButton, withdrawButton);
                 initMaskPolygonLine(true);
-                okButton.setDisable(true);
+                cutOutsideButton.setDisable(true);
                 cutInsideButton.setDisable(true);
                 promptLabel.setText(getMessage("PolygonComments"));
 

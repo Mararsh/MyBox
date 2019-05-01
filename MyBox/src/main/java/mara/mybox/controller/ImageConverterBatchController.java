@@ -25,8 +25,8 @@ public class ImageConverterBatchController extends ImageConverterController {
             imageConverterAttributesController.parentFxml = myFxml;
             imageConverterAttributesController.originalButton.setDisable(true);
 
-            operationBarController.startButton.disableProperty().bind(
-                    Bindings.isEmpty(filesTableController.filesTableView.getItems())
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
                             .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                             .or(imageConverterAttributesController.xInput.styleProperty().isEqualTo(badStyle))

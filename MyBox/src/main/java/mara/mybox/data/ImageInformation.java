@@ -20,20 +20,20 @@ import mara.mybox.tools.FileTools;
  */
 public class ImageInformation extends ImageFileInformation {
 
-    private ImageFileInformation imageFileInformation;
-    private String imageFormat, filename, pixelsString, loadSizeString, fileSizeString;
-    private String colorSpace, imageRotation, compressionType, bitDepth, extraFormat = "";
-    private int index, width, height, colorChannels, tileWidth, tileHeight, tileOffetX, tileOffsetY;
-    private List<ImageTypeSpecifier> imageTypes;
-    private ImageTypeSpecifier rawImageType;
-    private float aspectRatio;
-    private int wDensity, hDensity;  // dpi
-    private String metaData;
-    private boolean hasAlpha, isLossless, isMultipleFrames, hasThumbnails, isSampled, isScaled, isTiled;
-    private Image image;
-    private BufferedImage bufferedImage;
-    private List<BufferedImage> thumbnails;
-    private Map<String, Long> sizes;
+    protected ImageFileInformation imageFileInformation;
+    protected String pixelsString, loadSizeString, fileSizeString;
+    protected String colorSpace, imageRotation, compressionType, bitDepth, extraFormat = "";
+    protected int index, width, height, colorChannels, tileWidth, tileHeight, tileOffetX, tileOffsetY;
+    protected List<ImageTypeSpecifier> imageTypes;
+    protected ImageTypeSpecifier rawImageType;
+    protected float aspectRatio;
+    protected int wDensity, hDensity;  // dpi
+    protected String metaData;
+    protected boolean hasAlpha, isLossless, isMultipleFrames, hasThumbnails, isSampled, isScaled, isTiled;
+    protected Image image;
+    protected BufferedImage bufferedImage;
+    protected List<BufferedImage> thumbnails;
+    protected Map<String, Long> sizes;
 
     public ImageInformation() {
         hasAlpha = isMultipleFrames = hasThumbnails = isSampled = isLossless = false;
@@ -45,7 +45,10 @@ public class ImageInformation extends ImageFileInformation {
         hasAlpha = isMultipleFrames = hasThumbnails = isSampled = isLossless = false;
         index = 0;
         filename = file.getAbsolutePath();
-        imageFormat = FileTools.getFileSuffix(filename).toLowerCase();
+        imageFormat = FileTools.getFileSuffix(filename);
+        if (imageFormat != null) {
+            imageFormat = imageFormat.toLowerCase();
+        }
     }
 
     public ImageInformation(Image image) {

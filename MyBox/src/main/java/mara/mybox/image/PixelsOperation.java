@@ -9,7 +9,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.IntPoint;
-import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -291,24 +290,31 @@ public class PixelsOperation {
             int pixel;
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
+                    pixel = image.getRGB(x, y);
                     Color color = new Color(image.getRGB(x, y), true);
-                    inScope = isWhole || scope.inScope(x, y, color);
-                    if (isDithering && y == thisLineY) {
-                        color = thisLine[x];
-                    }
-                    if (isShowScope) {
-                        if (inScope) {
-                            newColor = color;
-                            target.setRGB(x, y, color.getRGB());
-                        } else {
-                            newColor = operatePixel(target, color, x, y);
-                        }
+                    if (pixel == 0) {  // pass transparency
+                        newColor = color;
+
                     } else {
-                        if (inScope) {
-                            newColor = operatePixel(target, color, x, y);
+
+                        inScope = isWhole || scope.inScope(x, y, color);
+                        if (isDithering && y == thisLineY) {
+                            color = thisLine[x];
+                        }
+                        if (isShowScope) {
+                            if (inScope) {
+                                newColor = color;
+                                target.setRGB(x, y, color.getRGB());
+                            } else {
+                                newColor = operatePixel(target, color, x, y);
+                            }
                         } else {
-                            newColor = color;
-                            target.setRGB(x, y, color.getRGB());
+                            if (inScope) {
+                                newColor = operatePixel(target, color, x, y);
+                            } else {
+                                newColor = color;
+                                target.setRGB(x, y, color.getRGB());
+                            }
                         }
                     }
                     dithering(target, color, newColor, x, y);
@@ -383,7 +389,9 @@ public class PixelsOperation {
                     int pixel = image.getRGB(x, y);
                     Color color = new Color(pixel, true);
                     if (scope.inColorMatch(startColor, color)) {
-                        if (isScope) {
+                        if (pixel == 0) {
+                            target.setRGB(x, y, pixel);
+                        } else if (isScope) {
                             if (excluded) {
                                 operatePixel(target, color, x, y);
                             } else {
@@ -412,17 +420,18 @@ public class PixelsOperation {
     }
 
     protected Color operatePixel(BufferedImage target, int x, int y) {
-        Color color = new Color(image.getRGB(x, y), true);
-        return operatePixel(target, color, x, y);
+        int pixel = image.getRGB(x, y);
+        Color color = new Color(pixel, true);
+        if (pixel == 0) {
+            return color;
+        } else {
+            return operatePixel(target, color, x, y);
+        }
     }
 
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
         Color newColor;
-        if (color == CommonValues.TRANSPARENT) {
-            newColor = color;
-        } else {
-            newColor = operateColor(color);
-        }
+        newColor = operateColor(color);
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
     }

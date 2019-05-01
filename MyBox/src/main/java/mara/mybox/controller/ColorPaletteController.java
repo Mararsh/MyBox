@@ -6,12 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.fxml.FxmlColor.rgb2AlphaHex;
 import static mara.mybox.fxml.FxmlColor.rgb2Hex;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 
@@ -41,8 +39,6 @@ public class ColorPaletteController extends BaseController {
         try {
             colorPicker.setValue(Color.WHITE);
             colorAction();
-
-            FxmlControl.quickTooltip(closeButton, new Tooltip("ENTER"));
 
         } catch (Exception e) {
 

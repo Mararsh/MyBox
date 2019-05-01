@@ -41,7 +41,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -56,7 +55,6 @@ import mara.mybox.fxml.ImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileReaders;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.ImageAttributes;
 import mara.mybox.fxml.FxmlStage;
@@ -67,6 +65,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import mara.mybox.tools.ValueTools;
+import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -103,7 +102,7 @@ public class ImageSplitController extends ImageViewerController {
     @FXML
     private ToggleGroup splitGroup, sizeGroup, formatGroup, colorGroup, compressionGroup, binaryGroup;
     @FXML
-    private Button imagesButton, tiffButton, pdfButton;
+    private Button saveImagesButton, saveTiffButton, savePdfButton, clearColsButton, clearRowsButton;
     @FXML
     private TextField rowsInput, colsInput, customizedRowsInput, customizedColsInput,
             customWidthInput, customHeightInput, authorInput, pdfThresholdInput, headerInput, tiffThresholdInput;
@@ -137,6 +136,19 @@ public class ImageSplitController extends ImageViewerController {
         }
     }
 
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+        checkSplitMethod();
+        checkColorType();
+        checkPageSize();
+        checkPdfFormat();
+        checkJpegQuality();
+        checkPdfThreshold();
+        FxmlControl.quickTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+
+    }
+
     private void initCommon() {
         scrollPane.setDisable(true);
         opBar.setDisable(true);
@@ -145,8 +157,6 @@ public class ImageSplitController extends ImageViewerController {
 
         splitValid = new SimpleBooleanProperty(false);
 
-        FxmlControl.setComments(imagesButton, new Tooltip(getMessage("FilePrefixInput")));
-
         displaySizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -154,17 +164,17 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        imagesButton.disableProperty().bind(
+        saveImagesButton.disableProperty().bind(
                 splitValid.isEqualTo(new SimpleBooleanProperty(false))
         );
-        pdfButton.disableProperty().bind(
+        savePdfButton.disableProperty().bind(
                 splitValid.isEqualTo(new SimpleBooleanProperty(false))
                         .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                         .or(customHeightInput.styleProperty().isEqualTo(badStyle))
                         .or(jpegBox.styleProperty().isEqualTo(badStyle))
                         .or(pdfThresholdInput.styleProperty().isEqualTo(badStyle))
         );
-        tiffButton.disableProperty().bind(
+        saveTiffButton.disableProperty().bind(
                 splitValid.isEqualTo(new SimpleBooleanProperty(false))
                         .or(tiffThresholdInput.styleProperty().isEqualTo(badStyle))
         );
@@ -178,7 +188,6 @@ public class ImageSplitController extends ImageViewerController {
                 checkSplitMethod();
             }
         });
-        checkSplitMethod();
 
         rowsInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -415,7 +424,6 @@ public class ImageSplitController extends ImageViewerController {
                     checkColorType();
                 }
             });
-            checkColorType();
 
             compressionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -556,7 +564,6 @@ public class ImageSplitController extends ImageViewerController {
                 checkPageSize();
             }
         });
-        checkPageSize();
 
         standardSizeBox.getItems().addAll(Arrays.asList(
                 "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
@@ -625,7 +632,6 @@ public class ImageSplitController extends ImageViewerController {
                 checkPdfFormat();
             }
         });
-        checkPdfFormat();
 
         jpegBox.getItems().addAll(Arrays.asList(
                 "100",
@@ -645,7 +651,6 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
         jpegBox.getSelectionModel().select(0);
-        checkJpegQuality();
 
         pdfThresholdInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -653,7 +658,6 @@ public class ImageSplitController extends ImageViewerController {
                 checkPdfThreshold();
             }
         });
-        checkPdfThreshold();
 
         FxmlControl.setComments(pdfDitherCheck, new Tooltip(getMessage("DitherComments")));
 
@@ -696,9 +700,7 @@ public class ImageSplitController extends ImageViewerController {
             });
             fontBox.getSelectionModel().select(0);
 
-            Tooltip tips = new Tooltip(getMessage("FontFileComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(fontBox, tips);
+            FxmlControl.setComments(fontBox, new Tooltip(getMessage("FontFileComments")));
 
         }
 
@@ -1471,7 +1473,7 @@ public class ImageSplitController extends ImageViewerController {
                             if (ok && targetFile.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 FxmlStage.openPdfViewer(getClass(), null, targetFile);
-//                                Desktop.getDesktop().browse(targetFile.toURI());
+//                               browseURI(targetFile.toURI());
                             } else {
                                 popError(AppVaribles.getMessage("Failed"));
                             }
