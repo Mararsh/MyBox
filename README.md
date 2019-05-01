@@ -433,6 +433,8 @@ MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
 
 [EncodingDetect  https://www.cnblogs.com/ChurchYim/p/8427373.html](https://www.cnblogs.com/ChurchYim/p/8427373.html)
 
+[Free Icons  https://icons8.com/icons/set/home](https://icons8.com/icons/set/home)
+
 
 # 主界面
 ![About](https://mararsh.github.io/MyBox/0.png)
