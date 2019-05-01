@@ -441,13 +441,6 @@ MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
 
 ![About](https://mararsh.github.io/MyBox/2.png)
 
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('a[href^="http"]').each(function() {
-			$(this).attr('target', '_blank');
-		});
-	});
-</script>
 
 
 
