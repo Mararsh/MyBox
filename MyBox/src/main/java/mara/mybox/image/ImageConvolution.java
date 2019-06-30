@@ -7,8 +7,8 @@ import java.awt.image.Kernel;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.ConvolutionKernel;
+import mara.mybox.tools.MatrixTools;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -205,11 +205,11 @@ public class ImageConvolution extends PixelsOperation {
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
                 || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            clearedSource = ImageConvert.clearAlpha(source);
+            clearedSource = ImageManufacture.clearAlpha(source);
         } else {
             clearedSource = source;
         }
-        float[] k = ValueTools.matrix2Array(convolutionKernel.getMatrix());
+        float[] k = MatrixTools.matrix2Array(convolutionKernel.getMatrix());
         if (k == null) {
             return clearedSource;
         }

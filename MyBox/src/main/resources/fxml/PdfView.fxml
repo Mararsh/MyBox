@@ -1,35 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Copyright (c) 2010, 2014, Oracle and/or its affiliates.
-All rights reserved. Use is subject to license terms.
-
-This file is available and licensed under the following license:
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
- - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the distribution.
- - Neither the name of Oracle Corporation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 -->
 
 <?import javafx.scene.Cursor?>
@@ -80,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <ToolBar HBox.hgrow="NEVER">
                                     <items>
                                         <CheckBox fx:id="openSaveCheck" mnemonicParsing="false" text="%OpenAfterSave" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -89,7 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" >
+                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -98,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="saveButton"  mnemonicParsing="false" onAction="#saveAsAction"  onMouseEntered="#popSaveAs">
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -107,7 +81,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" >
+                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -135,7 +109,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
                                 <Label text="\%" />
                                 <ComboBox fx:id="sizeBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" >
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -144,7 +118,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -153,7 +127,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -162,7 +136,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -172,7 +146,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                     </graphic>
                                 </Button>
 
-                                <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight" >
+                                <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -181,7 +155,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft" >
+                                <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -190,7 +164,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="turnOverButton" mnemonicParsing="false" onAction="#turnOver" >
+                                <Button fx:id="turnOverButton" mnemonicParsing="false" onAction="#turnOver">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -203,7 +177,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         </ToolBar>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308">
+                <HBox fx:id="operation3Box" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308">
                     <children>
                         <ToolBar HBox.hgrow="ALWAYS">
                             <items>
@@ -218,66 +192,82 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
                                 <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" />
                                 <CheckBox fx:id="selectCheck" mnemonicParsing="false" text="%Select" />
+                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnails" />
+                        <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%PDFOutline" />
                             </items>
                         </ToolBar>
                     </children>
                 </HBox>
-                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                    <content>
-                        <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
-                            <children>
-                                <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+            <SplitPane fx:id="viewPane" dividerPositions="0.18218623481781376, 0.37044534412955465" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+               <items>
+                  <ScrollPane fx:id="thumbScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <VBox fx:id="thumbBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane fx:id="outlineScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TreeView fx:id="outlineTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                     </content>
+                  </ScrollPane>
+                      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                          <content>
+                              <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                  <children>
+                                      <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
                                 </ImageView>
-                                <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
-                                    <cursor>
-                                        <Cursor fx:constant="MOVE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="W_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="NE_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="N_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="E_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="SE_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="N_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="SW_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                    <cursor>
-                                        <Cursor fx:constant="NW_RESIZE" />
-                                    </cursor>
-                                </Rectangle>
-                                <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </ScrollPane>
+                                      <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                          <cursor>
+                                              <Cursor fx:constant="MOVE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="W_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="NE_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="N_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="E_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="SE_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="N_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="SW_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                          <cursor>
+                                              <Cursor fx:constant="NW_RESIZE" />
+                                          </cursor>
+                                      </Rectangle>
+                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                                  </children>
+                              </AnchorPane>
+                          </content>
+                      </ScrollPane>
+               </items>
+            </SplitPane>
                 <HBox fx:id="pageNavBox" alignment="CENTER_LEFT" disable="true" VBox.vgrow="NEVER">
                     <children>
                         <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
@@ -290,7 +280,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />
-                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction" >
+                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goPageAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>

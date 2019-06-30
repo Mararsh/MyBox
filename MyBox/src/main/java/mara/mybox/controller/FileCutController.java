@@ -79,7 +79,7 @@ public class FileCutController extends FilesBatchController {
             }
         });
 
-        FxmlControl.quickTooltip(listInput, new Tooltip(getMessage("StartEndByteComments")));
+        FxmlControl.setTooltip(listInput, new Tooltip(getMessage("StartEndByteComments")));
 
     }
 

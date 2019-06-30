@@ -41,20 +41,23 @@
 <p class="p3">Download</p>
 <p class="paragraph">Packages of each version have been uploaded at Release directory now. You can find them by clicking 
 <a href="https://github.com/Mararsh/MyBox/releases" target=_Blank> "releases"</a> tab in main page of this project. </p>
-<p class="paragraph">EXE package <a href="https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-exe.zip"> MyBox-5.1-exe.zip</a> is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. </p>
-<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.1/MyBox-5.1-jar.zip"> MyBox-5.1-jar.zip</a></p>
+<p class="paragraph">EXE package <a href="https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-exe.zip"> MyBox-5.2-exe.zip</a> is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)</p>
+<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-jar.zip"> MyBox-5.2-jar.zip</a></p>
 
 <p class="p3">Launch</p>
 <p class="paragraph">Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.</p>
 
 <p class="paragraph">Run following command to launch this program with Jar package:</p>
-<pre><code>                   java   -jar   MyBox-5.1.jar</code></pre>
+<pre><code>                   java   -jar   MyBox-5.2.jar</code></pre>
 <p class="paragraph">A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
-<pre><code>                   java   -jar   MyBox-5.1.jar  /tmp/a1.jpg</code></pre>
+<pre><code>                   java   -jar   MyBox-5.2.jar  /tmp/a1.jpg</code></pre>
 
 <p class="p3">Limitation</p>
 <p class="paragraph">MyBox.exe can not be lanuched under path including non-English characters.</p>
-<p class="paragraph">Java 11 has changed a lot, so MyBox may not work on Java env higher than 10. Migration will be done later.</p>
+<p class="paragraph">Java 11 has changed a lot, so MyBox may not work on Java env higher than 10. 
+This is the last version based on Java 8 and later versions will be based on Java 12.</p>
+<p class="paragraph">The embedded Derby is in single-application mode, so only one instance of MyBox can read/write db. 
+That is, multiple instances of MyBox can run at same time but only the first one can save and visit configuration data while others can do most things except for accessing user's data.</p>
 
 
 <p class="p1" >Resource Addresses</p>
@@ -80,15 +83,19 @@
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 5.1. Its features are mentioned below in summary.</p>
+<p class="paragraph">Current version is 5.2. Its features are mentioned below in summary.</p>
 <p class="p2" >Cross-platform</p>
 <p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 8/9/10.</p>
+<p class="paragraph">This is the last version based on Java 8 and later versions will be based on Java 12.</p>
+
 <p class="p2" >Internationalized</p>
 <p class="paragraph">All codes of MyBox are internationalized. User can switch language in time.</p>
 <p class="paragraph">Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.</p>
 <p class="p2" >PDF Tools</p>
 <ol>
-<li>View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.</li>
+<li>View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.</br>
+	BookMarks(Table of Contents) and thumbnails can be shown.
+</li>
 <li>Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.</li>
 <li>Combine multiple images as PDF file. Options like compression, page size, margin size, header,</li>
 author, etc. Support Chinese and tool can locate system font files. User can input path of ttf font file.</li>
@@ -98,6 +105,7 @@ author, etc. Support Chinese and tool can locate system font files. User can inp
 <li>Extract images in PDF file. Page range can be set.</li>
 <li>Extract texts in PDF file. Splitting line can be customized.</li>
 <li>Handle PDF files in batch way.</li>
+<li>Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.</li>
 <li>Maximum main memory of PDF handling can be set.</li>
 </ol>
 <p class="p2" >Image Tools</p>
@@ -193,13 +201,107 @@ minimum, maximum of occurance of each color channel, and their histograms.</li>
 </ol>
 <p class="p3" >Others</p>
 <ol>
-<li>Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.</li>
+<li>Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.</br>
+	Adobe YCCK/CMYK jpg file can be decoded.</li>
 <li>Manufacture images in batch.</li>
 <li>Convert images into other formats, with options like color space, size, compression, quality, etc.</li>
 <li>Color palette.</li>
 <li>Pixels calculator</li>
 <li>Convolution Kernels Manager</li>
 </ol>
+
+<p class="p2" >Data Tools</p>
+<p class="p3" >Matrices Calculation</p>
+<ol>
+	<li>Edit matrix data:
+		<ol class="l2">
+			<li>Filter special characters in input/pasted data to fit for data in some format.</li>
+			<li>Convert current matrix data into row vector, column vector, or matrix in defined columns number automatically.</li>
+			<li>Generate identify matrix, random matrix, or random square matrix automatically.</li>
+		</ol>
+	</li>
+	<li>Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, 
+	Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, 
+	Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power.</li>
+	<li>Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge.</li>
+</ol>
+
+<p class="p3" >Color Space</p>
+<ol>
+	<li>Draw Chromaticity Diagram:
+		<ol class="l2">
+			<li>Outlines of standard data, including CIE 1931 2 Degree Observer(D50), CIE 1964 10 Degree Observer(D50), 
+				CIE RGB Gamut, ECI RGB Gamut, sRGB Gamut, Adobe RGB Gamut, Apple RGB Gamut, PAL RGB Gamut, 
+				NTSC RGB Gamut, ColorMath ProPhoto RGB Gamut, SMPTE-C RGB Gamut.</li>
+			<li>Standard illuminants(White points), including A, C, D50, D55, D65, E.</li>
+			<li>User can fill in tristimulus values or color coordinate or select color, and the tool will calculate values in kinds of color space 
+				and display the calculated color in the chromaticity diagram.</li>
+			<li>User can input or import spectral data, and the tool will filter special characters and display the spectral values in the chromaticity diagram.</li>
+			<li>User can select to show or hide the items of above data in the chromaticity diagram.</li>
+			<li>User can select the background color of the chromaticity diagram as transparent, white, or black. Dot size or line size can be selected for outlines. 
+				Grid and wave values can be selected to show or hide too.</li>
+			<li>Table and texts are shown for standard data, including CIE 1931 2 Degree Observer 1nm, CIE 1931 2 Degree Observer 5nm, 
+				CIE 1964 10 Degree Observer 1nm, CIE 1964 10 Degree Observer 5nm. Data texts can be exported.</li>
+		</ol>
+	</li>
+	<li>Edit ICC profile:
+		<ol class="l2">
+			<li>Predefined standard ICC profiles, including Java Embeded ICC like sRGB/XYZ/PYCC/GRAY/LINEAR_RGB, files from ECI like ECI_CMYK/ECI_RGB_v2, 
+				and files from Adobe like Adobe_RGB/Apple_RGB/CMYK.</li>
+			<li>All fields in header can be edited. "Profile id" is calculated as MD5 digest automatically when ICC profile is saved.</li>
+			<li>Tags table shows fields of tag, name, type, offset, size, description, decoded data, and raw data of bytes in hexadeciaml.</li>
+			<li>Editable tag types include: Text, MultiLocalizedUnicode, Signature, DateTime, XYZ, Curve, ViewingConditions, Measurement, S15Fixed16Array.</br>
+				Tag type "LUT" is not editable in this version.	</li>
+			<li>Option "Normalize data of LUT in range of 0~1".</li>
+			<li>Whole ICC profile is read as XML and can be exported. Data not decodes are shown as bytes in hexadeciaml.</li>
+			<li>Loaded ICC data can be modified and saved as new ICC profile.</li>
+		</ol>
+	</li>
+	<li>RGB Color Space:
+		<ol class="l2">
+			<li>User select or input RGB color space(Primaries and white), select or input reference white, 
+				and the tool will calculate the adapted primaries values automatically and show the calculation procedure.</li>
+			<li>Decimal scale can be set.</li>
+			<li>Adaption algorithm can be selected from Bradford, XYZ Scaling, and Von Kries.</li>
+			<li>Predefined standard RGB color spaces include CIE RGB, ECI RGB, sRGB, Adobe RGB, Apple RGB, PAL RGB, NTSC RGB, ColorMath ProPhoto RGB, SMPTE-C RGB.</li>
+			<li>Predefined illuminants include A, B, C, D50, D55, D65, D75, E, F1~F12 of CIE 1931 and CIE 1964.</li>
+			<li>Table and texts are shown for adapted primaries by different RGB color spaces, different illuminants, and different algorithms. Data texts can be exported.</li>
+		</ol>
+	</li>
+	<li>Transform Matrices between Linear RGB and XYZ:
+		<ol class="l2">
+			<li>User select or input RGB color space(Primaries and white), select or input reference white of XYZ color space, 
+				and the tool will calculate the transform matrix between the linear RGB and XYZ automatically and show the calculation procedure.</li>
+			<li>Table and texts are shown for transform matrices by different RGB color spaces, different reference whites of XYZ, and different algorithms. 
+				Data texts can be exported.</li>
+		</ol>
+	</li>
+	<li>Transform Matrices between Linear RGB and Linear RGB:
+		<ol class="l2">
+			<li>User select or input source and target RGB color spaces(Primaries and white),  
+				and the tool will calculate the transform matrix between the 2 linear RGB color spaces automatically and show the calculation procedure..</li>
+			<li>Table and texts are shown for transform matrices by different RGB color spaces and different algorithms. 
+				Data texts can be exported.</li>
+		</ol>
+	</li>
+	<li>Illuminants:
+		<ol class="l2">
+			<li>User input source color(relative/tristimulus/coordinate), select or input source white and target white, 
+				and the tool will calculate the adapted color automatically and show the calculation procedure..</li>
+			<li>Table and texts are shown for standard illuminants list including color values, color temperature, and description.  
+				Data texts can be exported.</li>
+		</ol>
+	</li>
+	<li>Chromatic Adaptation Matrices:
+		<ol class="l2">
+			<li>User select or input source white and target white, 
+				and the tool will calculate the chromatic adaptation matrix automatically and show the calculation procedure..</li>
+			<li>Table and texts are shown for chromatic adaptation matrices by different standard illuminants and different algorithms. 
+				Data texts can be exported.</li>
+		</ol>
+	</li>
+</ol>
+
 <p class="p2" >Desktop Tools</p>
 <p class="p3" >Manage Directories</p>
 <ol>
@@ -263,6 +365,7 @@ When break lines by bytes number, crossing pages need not concerned.</li>
 <li>Convert files' line break in batch.</li>
 <li>Split file, by files number, by bytes number, or by start-end list.</li>
 <li>Merge files.</li>
+<li>Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.</li>
 <li>Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.</li>
 </ol>
 <p class="p2" >Network Tools</p>
@@ -312,6 +415,17 @@ recent visited files/directories.</li>
 </ol>
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2019-6-30 v5.2 Improve image decoding. Adobe YCCK/CMYK jpg file can be viewed. 
+Attributes and meta data of all images in multi-frames image file are read and displayed.</BR>
+PDF file can be viewed with bookmarks(Table of contents) and thumbnails. 
+PDF file's attributes like author, version, user password, user permissions, and owner password etc can be modified.</BR>
+Matrices Calculation. Edit matrix data: adapt formatted data; transform matrix data into row vector, column vector, or another matrix in defined column number;
+generate identify matrix, random matrix, random square matrix automatically with defined column/row number. 
+Unary matrix calculation: Transpose, Row Echelon Form, Reduced Row Echelon Form, Determinant By Elimination, Determinant By Complement Minor, Inverse Matrix By Elimination, Inverse Matrix By Adjoint, Matrix Rank, Adjoint Matrix, Complement Minor, Normalize, Set Decimal Scale, Set As Integer, Multiply Number, Divide By Number, Power. 
+Binary matrices calculation: Plus, Minus, Hadamard Product, Kronecker Product, Horizontally Merge, Vertically Merge. </BR>
+Tools of Color Space: draw Chromaticity Diagram, edit ICC profile, adapt primaries of RGB Color Space, transform matrices between Linear RGB and XYZ, transform matrices between Linear RGB and Linear RGB，chromatic adaptation, standard illuminants, chromatic adaptation matrices.</BR>
+Fix bugs: “414 Request-URI Too Large” is returned in WeiBo snap tool constantly; tooltip blinks at edge of screen; some links do not work.</p>
+
 <p class="paragraph">2019-5-1 v5.1 Interface: Controls are displayed in pictures which can be selected in 5 colors and whether display texts.</BR>
 Shorter tips to fit for 14 inches screen of laptop.</BR>
 Image tools: Extract/Add Alpha channel.</BR>
@@ -483,6 +597,10 @@ It is based on following open sources softwares or libraries:
 <img src="1-en.png" width="800px"><br><br>
 
 <img src="2-en.png" width="800px"><br><br>
+
+<img src="3-en.png" width="800px"><br><br>
+
+<img src="4-en.png" width="800px"><br><br>
 
 <a href="https://github.com/Mararsh/MyBox"><img src="home.jpg" width="60px"></a> 
 

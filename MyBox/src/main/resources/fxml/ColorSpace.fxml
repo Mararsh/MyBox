@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RGBColorSpaceController">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+            <Label text="%ValuesType" />
+                <RadioButton mnemonicParsing="false" selected="true" text="%RelativeValues">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="valueGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%NormalizedValuesCC" toggleGroup="$valueGroup">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%Tristimulus" toggleGroup="$valueGroup">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </RadioButton>
+                <Label fx:id="commentsLabel">
+                    <HBox.margin>
+                        <Insets left="20.0" />
+                    </HBox.margin>
+                </Label>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+            <Label text="%Primaries" />
+                <RadioButton mnemonicParsing="false" selected="true" text="%RGBBased">
+               <toggleGroup>
+                  <ToggleGroup fx:id="primaryGroup" />
+               </toggleGroup>
+                </RadioButton>
+                <ComboBox fx:id="csSelector" prefWidth="160.0" />
+            <RadioButton layoutX="833.0" layoutY="15.0" mnemonicParsing="false" text="%CIEBased" toggleGroup="$primaryGroup" />
+            <ComboBox fx:id="csSelector1" layoutX="202.0" layoutY="10.0" prefWidth="120.0" />
+            <RadioButton layoutX="87.0" layoutY="15.0" mnemonicParsing="false" text="%IccProfile" toggleGroup="$primaryGroup" />
+                <RadioButton mnemonicParsing="false" text="%Input" toggleGroup="$primaryGroup">
+                    <padding>
+                        <Insets left="5.0" />
+                    </padding>
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </RadioButton>
+            </children>
+        </HBox>
+        <VBox fx:id="primariesBox" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="35.0" spacing="10.0">
+                    <children>
+                        <Label prefWidth="80.0" text="%Red" />
+                        <Label fx:id="redXLabel" text="X">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="redXInput" prefWidth="150.0" />
+                        <Label fx:id="redYLabel" text="Y" />
+                        <TextField fx:id="redYInput" prefWidth="150.0" />
+                        <Label fx:id="redZLabel" text="Z" />
+                        <TextField fx:id="redZInput" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label prefWidth="80.0" text="%Green" />
+                        <Label fx:id="greenXLabel" text="X">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="greenXInput" prefWidth="150.0" />
+                        <Label fx:id="greenYLabel" text="Y" />
+                        <TextField fx:id="greenYInput" prefWidth="150.0" />
+                        <Label fx:id="greenZLabel" text="Z" />
+                        <TextField fx:id="greenZInput" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label prefWidth="80.0" text="%Blue" />
+                        <Label fx:id="blueXLabel" text="X">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="blueXInput" prefWidth="150.0" />
+                        <Label fx:id="blueYLabel" text="Y" />
+                        <TextField fx:id="blueYInput" prefWidth="150.0" />
+                        <Label fx:id="blueZLabel" text="Z" />
+                        <TextField fx:id="blueZInput" prefWidth="150.0" />
+                    </children>
+                </HBox>
+            </children>
+            <VBox.margin>
+                <Insets left="30.0" />
+            </VBox.margin>
+        </VBox>
+        <VBox fx:id="whiteVBox" spacing="5.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="10.0">
+                    <children>
+                  <Label text="%ReferenceWhite" />
+                        <RadioButton fx:id="standardIllumRadio" mnemonicParsing="false" selected="true" text="%StandardIlluminant">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="wGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <ComboBox fx:id="illumSelector" prefWidth="220.0" />
+                        <RadioButton fx:id="inputWPRadio" mnemonicParsing="false" text="%Input" toggleGroup="$wGroup">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </RadioButton>
+                    </children>
+                </HBox>
+                <HBox fx:id="whiteHBox" alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label prefWidth="80.0" text="%White" />
+                        <Label fx:id="whiteXLabel" text="X">
+                            <HBox.margin>
+                                <Insets />
+                            </HBox.margin>
+                        </Label>
+                        <TextField fx:id="whiteXInput" prefWidth="150.0" />
+                        <Label fx:id="whiteYLabel" text="Y" />
+                        <TextField fx:id="whiteYInput" prefWidth="150.0" />
+                        <Label fx:id="whiteZLabel" text="Z" />
+                        <TextField fx:id="whiteZInput" prefWidth="150.0" />
+                    </children>
+                    <VBox.margin>
+                        <Insets left="30.0" />
+                    </VBox.margin>
+                </HBox>
+            </children>
+        </VBox>
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="%ReferenceWhite" />
+            <RadioButton fx:id="standardIllumRadio1" mnemonicParsing="false" selected="true" text="%StandardIlluminant">
+               <toggleGroup>
+                  <ToggleGroup fx:id="wGroup1" />
+               </toggleGroup>
+            </RadioButton>
+            <ComboBox fx:id="illumSelector1" prefWidth="220.0" />
+            <RadioButton fx:id="inputWPRadio1" mnemonicParsing="false" text="%Input" toggleGroup="$wGroup1">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </RadioButton>
+         </children>
+      </HBox>
+    </children>
+</VBox>

@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import mara.mybox.controller.base.ImageManufactureController.ImageOperationType;
-import mara.mybox.data.ImageHistory;
+import mara.mybox.image.ImageHistory;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVaribles.logger;
 

@@ -26,7 +26,7 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageFileInformation;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;

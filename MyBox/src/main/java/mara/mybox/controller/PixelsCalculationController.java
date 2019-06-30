@@ -24,13 +24,13 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert.KeepRatioType;
+import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
 
 /**
  * @Author Mara
@@ -58,7 +58,7 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     private ComboBox<String> predeinfedDisplayList, predeinfedIconList, predeinfedPrintList, predeinfedPhotoList;
     @FXML
-    private Button useButton, closeButton;
+    private Button useButton;
     @FXML
     private HBox cd_pixelsBox, sourcePixelsBox, cs_pixelsBox, ratioBox, sourceBox, adjustBox;
     @FXML
@@ -320,7 +320,7 @@ public class PixelsCalculationController extends BaseController {
                     sourceX = Integer.valueOf(newValue);
                     if (sourceY > 0) {
                         ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
-                                + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
+                                + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
                 } catch (Exception e) {
@@ -339,7 +339,7 @@ public class PixelsCalculationController extends BaseController {
                     sourceY = Integer.valueOf(newValue);
                     if (sourceX > 0) {
                         ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
-                                + ValueTools.roundDouble3(1.0f * sourceX / sourceY));
+                                + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
                 } catch (Exception e) {
@@ -681,11 +681,6 @@ public class PixelsCalculationController extends BaseController {
     }
 
     @FXML
-    private void close(ActionEvent event) {
-        closeStage();
-    }
-
-    @FXML
     private void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
             alertInformation(AppVaribles.getMessage("Invalid"));
@@ -786,7 +781,7 @@ public class PixelsCalculationController extends BaseController {
         selectY = Integer.valueOf(vs[1]);
         String label = AppVaribles.getMessage("SelectedPixelsNumber") + ": " + v + "  "
                 + AppVaribles.getMessage("AspectRatio") + ": "
-                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+                + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         useButton.setDisable(false);
         adjustValues();
@@ -842,7 +837,7 @@ public class PixelsCalculationController extends BaseController {
                 + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
                 + cp_density + "dpi" + "   "
                 + AppVaribles.getMessage("AspectRatio") + ": "
-                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+                + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
     }
@@ -893,13 +888,13 @@ public class PixelsCalculationController extends BaseController {
             adjustLabel.setText("");
             return;
         }
-        double cmX = ValueTools.roundDouble2(selectX * 2.54f / cs_density);
-        double cmY = ValueTools.roundDouble2(selectY * 2.54f / cs_density);
+        double cmX = DoubleTools.scale2(selectX * 2.54f / cs_density);
+        double cmY = DoubleTools.scale2(selectY * 2.54f / cs_density);
         String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
                 + cs_density + "dpi" + "   "
                 + AppVaribles.getMessage("AspectRatio") + ": "
-                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+                + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
     }
@@ -925,7 +920,7 @@ public class PixelsCalculationController extends BaseController {
                 + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
                 + densityX + "dpi x " + densityY + "dpi   "
                 + AppVaribles.getMessage("AspectRatio") + ": "
-                + ValueTools.roundDouble3(1.0f * selectX / selectY);
+                + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
 
@@ -978,7 +973,7 @@ public class PixelsCalculationController extends BaseController {
         String label = AppVaribles.getMessage("AdjustedPixelsNumber") + ": "
                 + finalX + "x" + finalY + "   "
                 + AppVaribles.getMessage("AspectRatio") + ": "
-                + ValueTools.roundDouble3(1.0f * finalX / finalY);
+                + DoubleTools.scale3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }
 

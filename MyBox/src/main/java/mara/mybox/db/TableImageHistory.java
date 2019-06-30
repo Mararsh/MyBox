@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.data.ImageHistory;
+import mara.mybox.image.ImageHistory;
 import mara.mybox.tools.DateTools;
 
 /**

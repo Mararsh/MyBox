@@ -29,7 +29,7 @@ public class TableSystemConf extends DerbyBase {
         };
         Create_Table_Statement
                 = " CREATE TABLE System_Conf ( "
-                + "  key_Name  VARCHAR(50) NOT NULL PRIMARY KEY, "
+                + "  key_Name  VARCHAR(100) NOT NULL PRIMARY KEY, "
                 + "  int_Value INTEGER, "
                 + "  default_int_Value INTEGER, "
                 + "  string_Value VARCHAR(1024), "

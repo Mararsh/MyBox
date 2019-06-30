@@ -42,9 +42,9 @@ import mara.mybox.controller.ImageViewerController;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -68,7 +68,7 @@ public class ImageSourcesController extends ImageViewerController {
     @FXML
     public TableColumn<ImageInformation, Image> imageColumn;
     @FXML
-    public TableColumn<ImageInformation, String> handledColumn, fileColumn, sizeColumn, typeColumn;
+    public TableColumn<ImageInformation, String> handledColumn, fileColumn, pixelsColumn, colorSpaceColumn;
     @FXML
     public TableColumn<ImageInformation, Integer> indexColumn;
     @FXML
@@ -106,10 +106,10 @@ public class ImageSourcesController extends ImageViewerController {
             }
             fileColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("filename"));
             fileColumn.setPrefWidth(320);
-            typeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("colorSpace"));
+            colorSpaceColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("colorSpace"));
             indexColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Integer>("index"));
-            sizeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("pixelsString"));
-            sizeColumn.setCellFactory(new Callback<TableColumn<ImageInformation, String>, TableCell<ImageInformation, String>>() {
+            pixelsColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("pixelsString"));
+            pixelsColumn.setCellFactory(new Callback<TableColumn<ImageInformation, String>, TableCell<ImageInformation, String>>() {
                 @Override
                 public TableCell<ImageInformation, String> call(TableColumn<ImageInformation, String> param) {
                     TableCell<ImageInformation, String> cell = new TableCell<ImageInformation, String>() {
@@ -261,7 +261,7 @@ public class ImageSourcesController extends ImageViewerController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(sourcePathKey, file.getParent());
+            recordFileWritten(file);
             targetFile = file;
             optionsBox.setDisable(false);
             sourcesBox.setDisable(false);
@@ -340,7 +340,7 @@ public class ImageSourcesController extends ImageViewerController {
             pixels += m.getWidth() * m.getHeight();
         }
         sourcesLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
+                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
 
         hasSampled.set(hasSampled());
 
@@ -427,11 +427,13 @@ public class ImageSourcesController extends ImageViewerController {
     }
 
     @FXML
+    @Override
     public void addFilesAction(ActionEvent event) {
         addAction(tableData.size());
     }
 
     @FXML
+    @Override
     public void insertFilesAction(ActionEvent event) {
         int index = tableView.getSelectionModel().getSelectedIndex();
         if (index >= 0) {

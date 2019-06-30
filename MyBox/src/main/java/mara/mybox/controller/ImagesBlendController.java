@@ -34,7 +34,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
 import mara.mybox.image.file.ImageFileReaders;
@@ -42,7 +42,7 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.PixelBlend;
@@ -381,6 +381,10 @@ public class ImagesBlendController extends ImageViewerController {
             return;
         }
         popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
+        imenu.setStyle("-fx-text-fill: #2e598a;");
+        popMenu.getItems().add(imenu);
         List<String> files = new ArrayList();
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
@@ -402,6 +406,9 @@ public class ImagesBlendController extends ImageViewerController {
         his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
         if (his != null) {
             popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
+            dmenu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(dmenu);
             for (VisitHistory h : his) {
                 final String pathname = h.getResourceValue();
                 MenuItem menu = new MenuItem(pathname);
@@ -418,6 +425,7 @@ public class ImagesBlendController extends ImageViewerController {
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -476,8 +484,7 @@ public class ImagesBlendController extends ImageViewerController {
                 return;
             }
             backFile = file;
-            AppVaribles.setUserConfigValue(LastPathKey, backFile.getParent());
-            AppVaribles.setUserConfigValue(sourcePathKey, backFile.getParent());
+            recordFileOpened(backFile);
 
             final String fileName = file.getPath();
             task = new Task<Void>() {
@@ -653,7 +660,7 @@ public class ImagesBlendController extends ImageViewerController {
                     try {
                         String filename = targetFile.getAbsolutePath();
                         String format = FileTools.getFileSuffix(filename);
-                        final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
+                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
                         if (task == null || task.isCancelled()) {
                             return null;
                         }
@@ -743,7 +750,7 @@ public class ImagesBlendController extends ImageViewerController {
 
         bottomLabel.setText(AppVaribles.getMessage("Loading..."));
 
-        image = ImageManufacture.blendImages(foreImage, backImage,
+        image = FxmlImageManufacture.blendImages(foreImage, backImage,
                 location, x, y, intersectOnlyCheck.isSelected(), blendMode, opacity);
         if (image == null) {
             bottomLabel.setText("");

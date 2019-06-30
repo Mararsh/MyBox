@@ -26,7 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import mara.mybox.data.ControlStyle;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -38,7 +38,7 @@ import mara.mybox.image.ImageContrast;
 import mara.mybox.image.ImageGray;
 import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageContrast.ContrastAlgorithm;
-import mara.mybox.image.ImageConvert.Direction;
+import mara.mybox.image.ImageManufacture.Direction;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.image.ImageConvolution.BlurAlgorithm;
@@ -75,7 +75,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
     @FXML
     protected ComboBox<String> objectBox;
     @FXML
-    protected ImageView scopeTipsView;
+    protected ImageView scopeTipsView, ditherTipsView;
 
     public ImageManufactureEffectsController() {
     }
@@ -396,8 +396,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             intBox.getSelectionModel().select(0);
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
-            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
-            setBox.getChildren().addAll(tipsView, stringLabel, stringBox, intLabel, intBox, valueCheck);
+            setBox.getChildren().addAll(tipsView, stringLabel, stringBox, intLabel, intBox, ditherTipsView, valueCheck);
             okButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
@@ -439,7 +438,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
             intLabel2 = new Label(getMessage("SmallValue"));
@@ -465,7 +464,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             });
             intInput2.setPrefWidth(100);
             intInput2.setText("0");
-            FxmlControl.quickTooltip(intInput2, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput2, new Tooltip("0~255"));
 
             intPara3 = 255;
             intLabel3 = new Label(getMessage("BigValue"));
@@ -491,7 +490,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             });
             intInput3.setPrefWidth(100);
             intInput3.setText("255");
-            FxmlControl.quickTooltip(intInput3, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput3, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(tipsView, intLabel, intInput,
                     intLabel2, intInput2,
@@ -535,7 +534,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             setButton = new Button(getMessage("Calculate"));
             setButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -573,10 +572,9 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
 
             valueCheck = new CheckBox(getMessage("Dithering"));
             extraScopeCheck();
-            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
 
             setBox.getChildren().addAll(tipsView, radio1, radio2, radio3,
-                    intInput, setButton, valueCheck);
+                    intInput, setButton, ditherTipsView, valueCheck);
             okButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
             );
@@ -626,7 +624,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
             });
             intInput.setPrefWidth(100);
             intInput.setText("80");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(intLabel, intInput);
             okButton.disableProperty().bind(
@@ -660,7 +658,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                     FxmlControl.setEditorNormal(stringBox);
                 }
             });
-            FxmlControl.quickTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
+            FxmlControl.setTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
             setButton = new Button(getMessage("ManageDot"));
             setButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -788,7 +786,7 @@ public class ImageManufactureEffectsController extends ImageManufactureControlle
                         });
                         intInput.setPrefWidth(100);
                         intInput.setText("10");
-                        FxmlControl.quickTooltip(intInput, new Tooltip("-255 ~ 255"));
+                        FxmlControl.setTooltip(intInput, new Tooltip("-255 ~ 255"));
                         setBox.getChildren().addAll(intLabel, intInput);
                         okButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)

@@ -16,7 +16,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**

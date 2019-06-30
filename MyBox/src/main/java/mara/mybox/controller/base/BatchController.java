@@ -30,7 +30,7 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -45,6 +45,7 @@ public abstract class BatchController<T> extends TableController<T> {
     public TargetExistType targetExistType;
     public int dirTotal, dirOk;
     public List<Integer> sourcesIndice;
+    public List<String> filesPassword;
     public String creatSubdirKey, previewKey, fillZeroKey;
     public String appendColorKey, appendCompressionTypeKey;
     public String appendDensityKey, appendQualityKey, appendSizeKey;
@@ -67,7 +68,7 @@ public abstract class BatchController<T> extends TableController<T> {
     public abstract void makeMoreParameters();
 
     // "targetFiles" and "actualParameters.finalTargetName" should be written by subClass
-    public abstract void handleCurrentFile();
+    public abstract boolean handleCurrentFile();
 
     public abstract File getTableFile(int index);
 
@@ -146,7 +147,7 @@ public abstract class BatchController<T> extends TableController<T> {
         if (file == null) {
             return;
         }
-        FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
+        view(file);
     }
 
     @FXML
@@ -176,7 +177,7 @@ public abstract class BatchController<T> extends TableController<T> {
             }
 
             if (path != null && path.exists()) {
-                FxmlStage.openTarget(getClass(), null, path.getAbsolutePath());
+                view(path);
                 recordFileOpened(path);
             } else {
                 popInformation(AppVaribles.getMessage("NoFileGenerated"));
@@ -193,7 +194,7 @@ public abstract class BatchController<T> extends TableController<T> {
             if (targetFiles == null || targetFiles.isEmpty()) {
                 return;
             }
-            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), null);
+            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
             if (controller != null) {
                 controller.loadImages(targetFiles.subList(0, Math.min(9, targetFiles.size())), 3);
             }
@@ -719,7 +720,7 @@ public abstract class BatchController<T> extends TableController<T> {
     public double countAverageTime(long cost) {
         double avg = 0;
         if (currentParameters.currentTotalHandled != 0) {
-            avg = ValueTools.roundDouble3((double) cost / currentParameters.currentTotalHandled);
+            avg = DoubleTools.scale3((double) cost / currentParameters.currentTotalHandled);
         }
         return avg;
     }

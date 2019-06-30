@@ -6,7 +6,7 @@ import mara.mybox.controller.base.ImageManufactureBatchController;
 import javafx.beans.binding.Bindings;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
@@ -23,7 +23,7 @@ import mara.mybox.value.CommonValues;
 public class ImageAlphaExtractBatchController extends ImageManufactureBatchController {
 
     public ImageAlphaExtractBatchController() {
-        baseTitle = AppVaribles.getMessage("ImageExtractAlpha");
+        baseTitle = AppVaribles.getMessage("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
         TipsLabelKey = "ImageAlphaExtractTips";
@@ -50,7 +50,7 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
     protected String writeCurrentFile() {
         try {
             BufferedImage source = ImageFileReaders.readImage(currentParameters.sourceFile);
-            BufferedImage[] targets = ImageConvert.extractAlpha(source);
+            BufferedImage[] targets = ImageManufacture.extractAlpha(source);
             if (targets == null) {
                 return AppVaribles.getMessage("Failed");
             }

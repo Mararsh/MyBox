@@ -46,7 +46,7 @@ public class AlarmClockTask extends TimerTask {
                 @Override
                 public void run() {
                     try {
-                        final AlarmClockRunController controller = (AlarmClockRunController) FxmlStage.openStage(getClass(),
+                        final AlarmClockRunController controller = (AlarmClockRunController) FxmlStage.openStage(
                                 null, CommonValues.AlarmClockRunFxml, false);
                         controller.runAlarm(alarm);
 

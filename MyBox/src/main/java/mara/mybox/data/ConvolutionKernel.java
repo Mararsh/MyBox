@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.MatrixTools;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVaribles;
 
 /**
@@ -533,13 +535,13 @@ public class ConvolutionKernel {
             }
         }
         for (int k = 0; k < size; k++) {
-            data[k] = ValueTools.roundFloat5(data[k] / sum);
+            data[k] = FloatTools.roundFloat5(data[k] / sum);
         }
         return data;
     }
 
     public static float[][] makeGaussMatrix(int radius) {
-        return ValueTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
+        return MatrixTools.array2Matrix(makeGaussArray(radius), radius * 2 + 1);
 
     }
 
@@ -643,53 +645,53 @@ public class ConvolutionKernel {
 
     public static float[][] makeEmbossMatrix(int direction, int size) {
         float[][] m = null;
-        if (direction == ImageConvert.Direction.Top) {
+        if (direction == ImageManufacture.Direction.Top) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossTopKernel, size);
+                m = MatrixTools.array2Matrix(embossTopKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossTopKernel5, size);
+                m = MatrixTools.array2Matrix(embossTopKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.Bottom) {
+        } else if (direction == ImageManufacture.Direction.Bottom) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossBottomKernel, size);
+                m = MatrixTools.array2Matrix(embossBottomKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossBottomKernel5, size);
+                m = MatrixTools.array2Matrix(embossBottomKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.Left) {
+        } else if (direction == ImageManufacture.Direction.Left) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossLeftKernel, size);
+                m = MatrixTools.array2Matrix(embossLeftKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossLeftKernel5, size);
+                m = MatrixTools.array2Matrix(embossLeftKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.Right) {
+        } else if (direction == ImageManufacture.Direction.Right) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossRightKernel, size);
+                m = MatrixTools.array2Matrix(embossRightKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossRightKernel5, size);
+                m = MatrixTools.array2Matrix(embossRightKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.LeftTop) {
+        } else if (direction == ImageManufacture.Direction.LeftTop) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossLeftTopKernel, size);
+                m = MatrixTools.array2Matrix(embossLeftTopKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossLeftTopKernel5, size);
+                m = MatrixTools.array2Matrix(embossLeftTopKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.RightBottom) {
+        } else if (direction == ImageManufacture.Direction.RightBottom) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossRightBottomKernel, size);
+                m = MatrixTools.array2Matrix(embossRightBottomKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossRightBottomKernel5, size);
+                m = MatrixTools.array2Matrix(embossRightBottomKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.LeftBottom) {
+        } else if (direction == ImageManufacture.Direction.LeftBottom) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossLeftBottomKernel, size);
+                m = MatrixTools.array2Matrix(embossLeftBottomKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossLeftBottomKernel5, size);
+                m = MatrixTools.array2Matrix(embossLeftBottomKernel5, size);
             }
-        } else if (direction == ImageConvert.Direction.RightTop) {
+        } else if (direction == ImageManufacture.Direction.RightTop) {
             if (size == 3) {
-                m = ValueTools.array2Matrix(embossRightTopKernel, size);
+                m = MatrixTools.array2Matrix(embossRightTopKernel, size);
             } else if (size == 5) {
-                m = ValueTools.array2Matrix(embossRightTopKernel5, size);
+                m = MatrixTools.array2Matrix(embossRightTopKernel5, size);
             }
         }
         return m;

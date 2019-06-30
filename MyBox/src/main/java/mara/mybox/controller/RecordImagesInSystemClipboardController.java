@@ -22,18 +22,18 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.IntTools;
 
 /**
  * @Author Mara
@@ -219,7 +219,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
 
     @FXML
     protected void openTargetPath(ActionEvent event) {
-        FxmlStage.openTarget(getClass(), null, new File(targetPathInput.getText()).getAbsolutePath());
+        view(new File(targetPathInput.getText()));
     }
 
     @FXML
@@ -261,7 +261,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                     return;
                                 }
                                 isHandling = true;
-                                if (lastImage != null && ImageManufacture.isImageSame(lastImage, image)) {
+                                if (lastImage != null && FxmlImageManufacture.isImageSame(lastImage, image)) {
                                     isHandling = false;
                                     return;
                                 }
@@ -273,7 +273,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                 recordedNumber++;
                                 recordLabel.setText(MessageFormat.format(AppVaribles.getMessage("RecordingImages"), recordedNumber));
                                 if (viewImages) {
-                                    ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+                                    ImageViewerController controller = FxmlStage.openImageViewer( null);
                                     controller.loadImage(image);
                                     controller.getMyStage().setMaximized(true);
                                 }
@@ -300,7 +300,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     }
 
     private void saveImage(Image image) {
-        BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
+        BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
         ImageAttributes attributes = new ImageAttributes();
         switch (imageType) {
             case TIFF:
@@ -310,7 +310,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 attributes.setCompressionType("CCITT T.6");
                 break;
             case JPG:
-                bufferedImage = ImageConvert.clearAlpha(bufferedImage);
+                bufferedImage = ImageManufacture.clearAlpha(bufferedImage);
                 attributes.setImageFormat("jpg");
                 attributes.setCompressionType("JPEG");
                 attributes.setQuality(jpegQuality);
@@ -322,10 +322,10 @@ public class RecordImagesInSystemClipboardController extends BaseController {
 
         }
         File file = new File(filePrefix + DateTools.nowString3() + "-"
-                + ValueTools.getRandomInt(1000) + "." + attributes.getImageFormat());
+                + IntTools.getRandomInt(1000) + "." + attributes.getImageFormat());
         while (file.exists()) {
             file = new File(filePrefix + DateTools.nowString3() + "-"
-                    + ValueTools.getRandomInt(1000) + "." + attributes.getImageFormat());
+                    + IntTools.getRandomInt(1000) + "." + attributes.getImageFormat());
         }
         ImageFileWriters.writeImageFile(bufferedImage, attributes, file.getAbsolutePath());
     }

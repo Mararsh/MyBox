@@ -275,6 +275,16 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
         }
     }
 
+    private int getRulerStep(double width) {
+        if (width <= 1000) {
+            return 10;
+        } else if (width <= 10000) {
+            return (int) (width / 1000) * 10;
+        } else {
+            return (int) (width / 10000) * 10;
+        }
+    }
+
     @Override
     public void drawMaskRulerX() {
         if (needNotRulers || maskPane == null || imageView.getImage() == null) {
@@ -285,7 +295,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
             Color strokeColor = Color.web(AppVaribles.getUserConfigValue("StrokeColor", "#FF0000"));
             double imageWidth = getImageWidth();
             double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
-            for (int i = 10; i < imageWidth; i += 10) {
+            int step = getRulerStep(imageWidth);
+            for (int i = step; i < imageWidth; i += step) {
                 double x = i * ratio;
                 Line line = new Line(x, 0, x, 8);
                 line.setId("MaskRulerX" + i);
@@ -296,7 +307,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
                 maskPane.getChildren().add(line);
             }
             String style = " -fx-font-size: 0.8em; ";
-            for (int i = 100; i < imageWidth; i += 100) {
+            int step10 = step * 10;
+            for (int i = step10; i < imageWidth; i += step10) {
                 double x = i * ratio;
                 Line line = new Line(x, 0, x, 15);
                 line.setId("MaskRulerX" + i);
@@ -340,7 +352,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
             Color strokeColor = Color.web(AppVaribles.getUserConfigValue("StrokeColor", "#FF0000"));
             double imageHeight = getImageHeight();
             double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
-            for (int j = 10; j < imageHeight; j += 10) {
+            int step = getRulerStep(imageHeight);
+            for (int j = step; j < imageHeight; j += step) {
                 double y = j * ratio;
                 Line line = new Line(0, y, 8, y);
                 line.setId("MaskRulerY" + j);
@@ -351,7 +364,8 @@ public abstract class ImageMaskBaseController extends ImageBaseController {
                 maskPane.getChildren().add(line);
             }
             String style = " -fx-font-size: 0.8em; ";
-            for (int j = 100; j < imageHeight; j += 100) {
+            int step10 = step * 10;
+            for (int j = step10; j < imageHeight; j += step10) {
                 double y = j * ratio;
                 Line line = new Line(0, y, 15, y);
                 line.setId("MaskRulerY" + j);

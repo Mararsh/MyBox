@@ -1,5 +1,9 @@
 package mara.mybox.controller;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import mara.mybox.controller.base.BaseController;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -7,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
@@ -24,7 +29,7 @@ public class LoadingController extends BaseController {
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
-    private Label infoLabel;
+    private Label infoLabel, timeLabel;
     @FXML
     private TextArea text;
 
@@ -37,6 +42,36 @@ public class LoadingController extends BaseController {
             progressIndicator.setProgress(-1F);
 //            progressIndicator.progressProperty().bind(task.progressProperty());
             loadingTask = task;
+            if (timeLabel != null) {
+                showTimer();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public void showTimer() {
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+            final long startTime = new Date().getTime();
+            final String prefix = AppVaribles.getMessage("StartTime") + ": " + DateTools.nowString()
+                    + "   " + AppVaribles.getMessage("ElapsedTime") + ": ";
+            final String suffix = " " + AppVaribles.getMessage("Seconds");
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            long d = (new Date().getTime() - startTime) / 1000;
+                            timeLabel.setText(prefix + d + suffix);
+                        }
+                    });
+                }
+            }, 0, 1000);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -55,6 +90,9 @@ public class LoadingController extends BaseController {
             }
             loadingTask.cancel();
             loadingTask = null;
+        }
+        if (timer != null) {
+            timer.cancel();
         }
         this.closeStage();
 

@@ -23,6 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -50,15 +51,15 @@ public abstract class TableController<T> extends BaseController {
     @FXML
     public TableView<T> tableView;
     @FXML
-    public TableColumn<T, Image> imageColumn;
-    @FXML
-    public TableColumn<T, Integer> indexColumn;
-    @FXML
-    public TableColumn<T, String> handledColumn, fileColumn, colorColumn;
+    public TableColumn<T, String> handledColumn, fileColumn, colorSpaceColumn, pixelsColumn;
     @FXML
     public TableColumn<T, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
     @FXML
     public TableColumn<T, Boolean> typeColumn;
+    @FXML
+    public TableColumn<T, Image> imageColumn;
+    @FXML
+    public TableColumn<T, Integer> indexColumn;
     @FXML
     public VBox tableBox;
     @FXML
@@ -163,12 +164,6 @@ public abstract class TableController<T> extends BaseController {
                 fileColumn.setCellValueFactory(new PropertyValueFactory<T, String>("fileName"));
                 fileColumn.setPrefWidth(320);
             }
-            if (colorColumn != null) {
-                colorColumn.setCellValueFactory(new PropertyValueFactory<T, String>("colorSpace"));
-            }
-            if (indexColumn != null) {
-                indexColumn.setCellValueFactory(new PropertyValueFactory<T, Integer>("index"));
-            }
             if (sizeColumn != null) {
                 sizeColumn.setCellValueFactory(new PropertyValueFactory<T, Long>("fileSize"));
                 sizeColumn.setCellFactory(new Callback<TableColumn<T, Long>, TableCell<T, Long>>() {
@@ -183,30 +178,6 @@ public abstract class TableController<T> extends BaseController {
                                 if (item != null && item > 0) {
                                     text.setText(FileTools.showFileSize(item));
                                     setGraphic(text);
-                                }
-                            }
-                        };
-                        return cell;
-                    }
-                });
-            }
-
-            if (imageColumn != null) {
-                imageColumn.setCellValueFactory(new PropertyValueFactory<T, Image>("image"));
-                imageColumn.setCellFactory(new Callback<TableColumn<T, Image>, TableCell<T, Image>>() {
-                    @Override
-                    public TableCell<T, Image> call(TableColumn<T, Image> param) {
-                        final ImageView imageview = new ImageView();
-                        imageview.setPreserveRatio(true);
-                        imageview.setFitWidth(100);
-                        imageview.setFitHeight(100);
-                        TableCell<T, Image> cell = new TableCell<T, Image>() {
-                            @Override
-                            public void updateItem(final Image item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (item != null) {
-                                    imageview.setImage(item);
-                                    setGraphic(imageview);
                                 }
                             }
                         };
@@ -282,6 +253,63 @@ public abstract class TableController<T> extends BaseController {
                         return cell;
                     }
                 });
+            }
+
+            if (imageColumn != null) {
+                imageColumn.setCellValueFactory(new PropertyValueFactory<T, Image>("image"));
+                imageColumn.setCellFactory(new Callback<TableColumn<T, Image>, TableCell<T, Image>>() {
+                    @Override
+                    public TableCell<T, Image> call(TableColumn<T, Image> param) {
+                        final ImageView imageview = new ImageView();
+                        imageview.setPreserveRatio(true);
+                        imageview.setFitWidth(100);
+                        imageview.setFitHeight(100);
+                        TableCell<T, Image> cell = new TableCell<T, Image>() {
+                            @Override
+                            public void updateItem(final Image item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    imageview.setImage(item);
+                                    setGraphic(imageview);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
+
+            if (pixelsColumn != null) {
+                pixelsColumn.setCellValueFactory(new PropertyValueFactory<T, String>("pixelsString"));
+                pixelsColumn.setCellFactory(new Callback<TableColumn<T, String>, TableCell<T, String>>() {
+                    @Override
+                    public TableCell<T, String> call(TableColumn<T, String> param) {
+                        TableCell<T, String> cell = new TableCell<T, String>() {
+                            final Text text = new Text();
+
+                            @Override
+                            public void updateItem(final String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    text.setText(item);
+                                    if (item.contains("*")) {
+                                        text.setFill(Color.RED);
+                                    }
+                                    setGraphic(text);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
+
+            if (colorSpaceColumn != null) {
+                colorSpaceColumn.setCellValueFactory(new PropertyValueFactory<T, String>("colorSpace"));
+            }
+
+            if (indexColumn != null) {
+                indexColumn.setCellValueFactory(new PropertyValueFactory<T, Integer>("index"));
             }
         } catch (Exception e) {
             logger.error(e.toString());

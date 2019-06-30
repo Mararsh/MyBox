@@ -50,8 +50,8 @@ public class MyBoxController extends BaseController {
             initDesktopToolsMenu();
             initFileToolsMenu();
             initNetworkToolsMenu();
+            initDataToolsMenu();
             initLanguageMenu();
-            initDataMenu();
 
             List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
             if (alarms != null) {
@@ -77,6 +77,14 @@ public class MyBoxController extends BaseController {
             @Override
             public void handle(ActionEvent event) {
                 loadScene(CommonValues.PdfViewFxml);
+            }
+        });
+
+        MenuItem PDFAttributes = new MenuItem(AppVaribles.getMessage("PDFAttributes"));
+        PDFAttributes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.PdfAttributesFxml);
             }
         });
 
@@ -171,7 +179,7 @@ public class MyBoxController extends BaseController {
         pdfMenu = new ContextMenu();
         pdfMenu.setAutoHide(true);
         pdfMenu.getItems().addAll(
-                pdfView, new SeparatorMenuItem(),
+                pdfView, PDFAttributes, new SeparatorMenuItem(),
                 pdfConvertImages, pdfConvertImagesBatch, new SeparatorMenuItem(),
                 pdfExtractImages, pdfExtractImagesBatch, pdfExtractTexts, pdfExtractTextsBatch, new SeparatorMenuItem(),
                 imagesCombinePdf, new SeparatorMenuItem(),
@@ -259,16 +267,17 @@ public class MyBoxController extends BaseController {
         Menu framesMenu = initImageFramesMenu();
         Menu partMenu = initImagePartMenu();
         Menu mergeMenu = initImageMergeMenu();
+        Menu csMenu = initColorSpaceMenu();
 
         imageMenu = new ContextMenu();
         imageMenu.setAutoHide(true);
         imageMenu.getItems().addAll(
                 imageViewer, imagesBrowser, new SeparatorMenuItem(),
                 ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
-                framesMenu, new SeparatorMenuItem(), mergeMenu, new SeparatorMenuItem(), partMenu, new SeparatorMenuItem(),
+                framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
                 imageConverter, imageConverterBatch, new SeparatorMenuItem(),
-                imageStatistic, new SeparatorMenuItem(),
-                convolutionKernelManager, colorPalette, pixelsCalculator);
+                //                imageStatistic, new SeparatorMenuItem(),
+                convolutionKernelManager, pixelsCalculator, colorPalette, csMenu);
     }
 
     private Menu initImageSubToolsMenu() {
@@ -578,6 +587,88 @@ public class MyBoxController extends BaseController {
 
     }
 
+    private Menu initColorSpaceMenu() {
+        MenuItem IccEditor = new MenuItem(AppVaribles.getMessage("IccProfileEditor"));
+        IccEditor.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.IccProfileEditorFxml);
+            }
+        });
+
+        MenuItem ChromaticityDiagram = new MenuItem(AppVaribles.getMessage("DrawChromaticityDiagram"));
+        ChromaticityDiagram.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ChromaticityDiagramFxml);
+            }
+        });
+
+        MenuItem ChromaticAdaptationMatrix = new MenuItem(AppVaribles.getMessage("ChromaticAdaptationMatrix"));
+        ChromaticAdaptationMatrix.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ChromaticAdaptationMatrixFxml);
+            }
+        });
+
+        MenuItem ColorPalette = new MenuItem(AppVaribles.getMessage("ColorPalette"));
+        ColorPalette.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                openStage(CommonValues.ColorPaletteFxml);
+            }
+        });
+
+        MenuItem ColorConversion = new MenuItem(AppVaribles.getMessage("ColorConversion"));
+        ColorConversion.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.ColorConversionFxml);
+            }
+        });
+
+        MenuItem RGBColorSpaces = new MenuItem(AppVaribles.getMessage("RGBColorSpaces"));
+        RGBColorSpaces.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.RGBColorSpacesFxml);
+            }
+        });
+
+        MenuItem RGB2XYZConversionMatrix = new MenuItem(AppVaribles.getMessage("LinearRGB2XYZMatrix"));
+        RGB2XYZConversionMatrix.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.RGB2XYZConversionMatrixFxml);
+            }
+        });
+
+        MenuItem RGB2RGBConversionMatrix = new MenuItem(AppVaribles.getMessage("LinearRGB2RGBMatrix"));
+        RGB2RGBConversionMatrix.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.RGB2RGBConversionMatrixFxml);
+            }
+        });
+
+        MenuItem Illuminants = new MenuItem(AppVaribles.getMessage("Illuminants"));
+        Illuminants.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.IlluminantsFxml);
+            }
+        });
+
+        Menu csMenu = new Menu(AppVaribles.getMessage("ColorSpace"));
+        csMenu.getItems().addAll(ChromaticityDiagram, IccEditor,
+                //                ColorConversion,
+                RGBColorSpaces, RGB2XYZConversionMatrix, RGB2RGBConversionMatrix,
+                Illuminants, ChromaticAdaptationMatrix);
+        return csMenu;
+
+    }
+
     private void initDesktopToolsMenu() {
         MenuItem filesRename = new MenuItem(AppVaribles.getMessage("FilesRename"));
         filesRename.setOnAction(new EventHandler<ActionEvent>() {
@@ -700,34 +791,29 @@ public class MyBoxController extends BaseController {
                         = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
             }
         });
+
         networkMenu = new ContextMenu();
         networkMenu.setAutoHide(true);
         networkMenu.getItems().addAll(weiboSnap, htmlEditor);
 
     }
 
-    private void initDataMenu() {
-        MenuItem htmlEditor = new MenuItem(AppVaribles.getMessage("HtmlEditor"));
-        htmlEditor.setOnAction(new EventHandler<ActionEvent>() {
+    private void initDataToolsMenu() {
+
+        Menu csMenu = initColorSpaceMenu();
+
+        MenuItem MatricesCalculation = new MenuItem(AppVaribles.getMessage("MatricesCalculation"));
+        MatricesCalculation.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                HtmlEditorController controller
-                        = (HtmlEditorController) loadScene(CommonValues.HtmlEditorFxml);
-//                controller.switchBroswerTab();
+                loadScene(CommonValues.MatricesCalculationFxml);
             }
         });
 
-        MenuItem weiboSnap = new MenuItem(AppVaribles.getMessage("WeiboSnap"));
-        weiboSnap.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                WeiboSnapController controller
-                        = (WeiboSnapController) loadScene(CommonValues.WeiboSnapFxml);
-            }
-        });
         dataMenu = new ContextMenu();
         dataMenu.setAutoHide(true);
-        dataMenu.getItems().addAll(weiboSnap, htmlEditor);
+        dataMenu.getItems().addAll(csMenu,
+                new SeparatorMenuItem(), MatricesCalculation);
 
     }
 

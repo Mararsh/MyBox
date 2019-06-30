@@ -1,35 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Copyright (c) 2010, 2014, Oracle and/or its affiliates.
-All rights reserved. Use is subject to license terms.
-
-This file is available and licensed under the following license:
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
- - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the distribution.
- - Neither the name of Oracle Corporation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 -->
 
 <?import javafx.scene.*?>
@@ -73,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                         <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
                                 <Button fx:id="saveImagesButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
-                                <Button fx:id="saveTiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction" >
+                                <Button fx:id="saveTiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -82,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="savePdfButton" mnemonicParsing="false" onAction="#saveAsPdfAction" >
+                                <Button fx:id="savePdfButton" mnemonicParsing="false" onAction="#saveAsPdfAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -91,7 +65,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -100,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -178,7 +152,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                         <TextField fx:id="rowsInput" prefWidth="70.0" />
                                                                         <Label fx:id="colsLabel" text="%ColumnsNumber" />
                                                                         <TextField fx:id="colsInput" prefWidth="70.0" />
-                                                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction" >
+                                                                        <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -211,7 +185,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                     <children>
                                                                         <Label text="%SplittingRows" />
                                                                         <TextField fx:id="customizedRowsInput" prefWidth="200.0" promptText="%SplitByComma" />
-                                                                        <Button fx:id="clearRowsButton" mnemonicParsing="false" onAction="#clearRows" >
+                                                                        <Button fx:id="clearRowsButton" mnemonicParsing="false" onAction="#clearRows">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -223,7 +197,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                         <Label prefWidth="20.0" text=" " />
                                                                         <Label text="%SplittingColumns" />
                                                                         <TextField fx:id="customizedColsInput" prefWidth="200.0" promptText="%SplitByComma" />
-                                                                        <Button fx:id="clearColsButton" mnemonicParsing="false" onAction="#clearCols" >
+                                                                        <Button fx:id="clearColsButton" mnemonicParsing="false" onAction="#clearCols">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -312,6 +286,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
                                                         <TextField fx:id="tiffThresholdInput" prefWidth="80.0" promptText="0~255" />
                                                         <Label text="%EmptyForDefault" />
+                                                        <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconTips.png" />
+                                                            </image>
+                                                        </ImageView>
                                                         <CheckBox fx:id="tiffDitherCheck" mnemonicParsing="false" text="%Dithering" />
                                                     </items>
                                                 </ToolBar>
@@ -342,8 +321,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                             </toggleGroup>
                                                         </RadioButton>
                                                         <RadioButton fx:id="eachHeightRadio" mnemonicParsing="false" text="%StandardSize" toggleGroup="$sizeGroup" />
-                                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="180.0" />
-                                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="120.0" />
+                                                        <ComboBox fx:id="standardSizeBox" disable="true" prefWidth="150.0" />
+                                                        <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="100.0" />
                                                         <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$sizeGroup" />
                                                         <Label text="%UnitPixels" />
                                                         <TextField fx:id="customWidthInput" disable="true" prefWidth="70.0" promptText="%Width" />
@@ -377,7 +356,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 <Insets right="10.0" />
                                                             </padding>
                                                         </Label>
-                                                        <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
+                                                        <RadioButton mnemonicParsing="false" text="%BlackOrWhite" toggleGroup="$formatGroup" />
                                                         <TextField fx:id="pdfThresholdInput" prefWidth="60.0" promptText="0~255" />
                                                         <CheckBox fx:id="pdfDitherCheck" mnemonicParsing="false" text="%Dithering" />
                                                     </items>
@@ -393,9 +372,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ToolBar>
                                                 <ToolBar HBox.hgrow="NEVER">
                                                     <items>
-                                                        <Label text="%PageMargin" />
-                                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
-                                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber" />
                                                         <Label text="%Author">
                                                             <padding>
                                                                 <Insets left="10.0" />
@@ -403,9 +379,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         </Label>
                                                         <TextField fx:id="authorInput" prefWidth="100.0" />
                                                         <Label text="%PageHeader" />
-                                                        <TextField fx:id="headerInput" prefWidth="200.0" />
+                                                        <TextField fx:id="headerInput" prefWidth="140.0" />
+                                                        <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconTips.png" />
+                                                            </image>
+                                                        </ImageView>
                                                         <Label text="%FontFile" />
-                                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="150.0" />
+                                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="140.0" />
+                                                        <Label text="%Margin" />
+                                                        <ComboBox fx:id="MarginsBox" editable="true" prefWidth="80.0" />
+                                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%PageNumber2" />
                                                     </items>
                                                 </ToolBar>
                                             </children>
@@ -428,7 +412,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
                                         <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" HBox.hgrow="NEVER" />
                                         <CheckBox fx:id="displaySizeCheck" mnemonicParsing="false" selected="true" text="%DisplaySize" />
-                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -438,7 +422,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </graphic>
                                         </Button>
 
-                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -456,7 +440,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

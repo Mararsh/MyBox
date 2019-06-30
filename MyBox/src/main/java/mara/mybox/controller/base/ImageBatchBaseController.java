@@ -5,8 +5,8 @@ import java.io.File;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.stage.Modality;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.VisitHistory;
 

@@ -25,14 +25,14 @@ import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 import mara.mybox.data.DoubleRectangle;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
@@ -164,7 +164,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 public void handle(ActionEvent event) {
                     try {
                         final PixelsCalculationController controller
-                                = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                                = (PixelsCalculationController) FxmlStage.openStage( myStage,
                                         CommonValues.PixelsCalculatorFxml,
                                         true, Modality.WINDOW_MODAL, null);
 
@@ -193,7 +193,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         scale = Float.valueOf(newValue);
-                        if (scale > 0) {
+                        if (scale >= 0) {
                             if (imageView.getImage() != null) {
                                 noRatio = true;
                                 widthInput.setText(Math.round(imageView.getImage().getWidth() * scale) + "");
@@ -356,17 +356,17 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             widthInput.setDisable(false);
             heightInput.setDisable(false);
             if (getMessage("BaseOnWidth").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvert.KeepRatioType.BaseOnWidth);
+                attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnWidth);
                 heightInput.setDisable(true);
             } else if (getMessage("BaseOnHeight").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvert.KeepRatioType.BaseOnHeight);
+                attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnHeight);
                 widthInput.setDisable(true);
             } else if (getMessage("BaseOnLarger").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvert.KeepRatioType.BaseOnLarger);
+                attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnLarger);
             } else if (getMessage("BaseOnSmaller").equals(s)) {
-                attributes.setRatioAdjustion(ImageConvert.KeepRatioType.BaseOnSmaller);
+                attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnSmaller);
             } else {
-                attributes.setRatioAdjustion(ImageConvert.KeepRatioType.None);
+                attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.None);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -402,20 +402,20 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 return;
             }
             switch (attributes.getRatioAdjustion()) {
-                case ImageConvert.KeepRatioType.BaseOnWidth:
+                case ImageManufacture.KeepRatioType.BaseOnWidth:
                     heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     break;
-                case ImageConvert.KeepRatioType.BaseOnHeight:
+                case ImageManufacture.KeepRatioType.BaseOnHeight:
                     widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     break;
-                case ImageConvert.KeepRatioType.BaseOnLarger:
+                case ImageManufacture.KeepRatioType.BaseOnLarger:
                     if (ratioX > ratioY) {
                         heightInput.setText(Math.round(width * sourceY / sourceX) + "");
                     } else {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     }
                     break;
-                case ImageConvert.KeepRatioType.BaseOnSmaller:
+                case ImageManufacture.KeepRatioType.BaseOnSmaller:
                     if (ratioX > ratioY) {
                         widthInput.setText(Math.round(height * sourceX / sourceY) + "");
                     } else {
@@ -452,7 +452,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.scaleImage(imageView.getImage(), scale);
+                newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), scale);
                 if (task == null || task.isCancelled()) {
                     return null;
                 }
@@ -492,7 +492,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.scaleImage(imageView.getImage(), width, height);
+                newImage = FxmlImageManufacture.scaleImage(imageView.getImage(), width, height);
                 if (task == null || task.isCancelled()) {
                     return null;
                 }

@@ -18,8 +18,9 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.1";
-    public static final String AppVersionDate = "2019-05-01";
+    public static final String AppVersion = "5.2";
+    public static final String AppVersionDate = "2019-06-30";
+    public static final String AppDocVersion = "5.0";
 
     public static final String AppDataRoot = System.getProperty("user.home") + File.separator + "mybox";
     public static final File AppTempPath = new File(AppDataRoot + File.separator + "AppTemp");
@@ -54,6 +55,7 @@ public class CommonValues {
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
     public static final String JvmPropertiesFxml = "/fxml/JvmProperties.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
+    public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
     public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
     public static final String PdfExtractTextsFxml = "/fxml/PdfExtractTexts.fxml";
@@ -119,6 +121,16 @@ public class CommonValues {
     public static final String PixelsCalculatorFxml = "/fxml/PixelsCalculator.fxml";
     public static final String ConvolutionKernelManagerFxml = "/fxml/ConvolutionKernelManager.fxml";
     public static final String ColorPaletteFxml = "/fxml/ColorPalette.fxml";
+    public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
+    public static final String ChromaticLinksFxml = "/fxml/ChromaticLinks.fxml";
+    public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
+    public static final String ChromaticAdaptationMatrixFxml = "/fxml/ChromaticAdaptationMatrix.fxml";
+    public static final String ColorConversionFxml = "/fxml/ColorConversion.fxml";
+    public static final String RGBColorSpacesFxml = "/fxml/RGBColorSpaces.fxml";
+    public static final String RGB2XYZConversionMatrixFxml = "/fxml/RGB2XYZConversionMatrix.fxml";
+    public static final String RGB2RGBConversionMatrixFxml = "/fxml/RGB2RGBConversionMatrix.fxml";
+    public static final String IlluminantsFxml = "/fxml/Illuminants.fxml";
+    public static final String MatricesCalculationFxml = "/fxml/MatricesCalculation.fxml";
     public static final String FilesRenameFxml = "/fxml/FilesRename.fxml";
     public static final String DirectorySynchronizeFxml = "/fxml/DirectorySynchronize.fxml";
     public static final String FilesArrangementFxml = "/fxml/FilesArrange.fxml";
@@ -155,8 +167,6 @@ public class CommonValues {
     public static final String DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
     public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
-
-    public static final int InvalidValue = -9999999;
 
     public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList() {
         {
@@ -239,6 +249,7 @@ public class CommonValues {
             add("pnm");
             add("gif");
             add("wbmp");
+            add("pcx");
         }
     };
 
@@ -251,6 +262,7 @@ public class CommonValues {
             add(new FileChooser.ExtensionFilter("gif", "*.gif"));
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
             add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
+            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
         }
     };
 
@@ -259,17 +271,17 @@ public class CommonValues {
             add("png");
             add("tif");
             add("tiff");
-            add("pcx");
+//            add("pcx");
         }
     };
 
     public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png",
-                    "*.tif", "*.tiff", "*.pcx"));
+                    "*.tif", "*.tiff"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
+//            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
         }
     };
 
@@ -296,6 +308,29 @@ public class CommonValues {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> IccProfileExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("icc", "*.icc", "*.icm"));
+            add(new FileChooser.ExtensionFilter("icc", "*.icc"));
+            add(new FileChooser.ExtensionFilter("icm", "*.icm"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> TxtExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("txt", "*.txt"));
+            add(new FileChooser.ExtensionFilter("*", "*.*"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> XmlExtensionFilter = new ArrayList() {
+        {
+            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+        }
+    };
+
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
+
+    public static String Indent = "    ";
 
 }

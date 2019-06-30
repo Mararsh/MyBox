@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -334,11 +333,11 @@ public class FilesRenameController extends FilesBatchController {
             for (File file : files) {
                 if (file.isFile()) {
                     dirFiles++;
-                    String originalName = file.getAbsolutePath();
+                    String originalName = file.getName();
                     if (filters != null) {
                         boolean isValid = false;
                         for (String name : filters) {
-                            if (FileTools.getFileName(originalName).contains(name)) {
+                            if (originalName.contains(name)) {
                                 isValid = true;
                                 break;
                             }
@@ -394,7 +393,7 @@ public class FilesRenameController extends FilesBatchController {
             if (accumCheck.isSelected()) {
                 String pageNumber = currentAccum + "";
                 if (fillZero.isSelected()) {
-                    pageNumber = ValueTools.fillLeftZero(currentAccum, digit);
+                    pageNumber = StringTools.fillLeftZero(currentAccum, digit);
                 }
                 filename += pageNumber;
                 currentAccum++;
@@ -526,9 +525,9 @@ public class FilesRenameController extends FilesBatchController {
             }
             File f = new File(tableData.get(0).getFileName());
             if (f.isDirectory()) {
-               browseURI(new File(f.getPath()).toURI());
+                browseURI(new File(f.getPath()).toURI());
             } else {
-               browseURI(new File(f.getParent()).toURI());
+                browseURI(new File(f.getParent()).toURI());
             }
             recordFileOpened(f);
         } catch (Exception e) {

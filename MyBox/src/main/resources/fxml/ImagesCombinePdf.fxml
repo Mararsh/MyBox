@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -27,7 +31,7 @@
                             <children>
                                 <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                                     <items>
-                                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd" >
+                                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -36,7 +40,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert" >
+                                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -45,7 +49,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction" >
+                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -54,7 +58,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction" >
+                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -72,7 +76,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
+                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -81,7 +85,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction" >
+                                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -90,7 +94,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -99,7 +103,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -114,8 +118,8 @@
                                 <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
-                                        <TableColumn fx:id="sizeColumn" prefWidth="150.0" text="%Pixels" />
-                                        <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Color" />
+                                        <TableColumn fx:id="pixelsColumn" prefWidth="150.0" text="%Pixels" />
+                                        <TableColumn fx:id="colorSpaceColumn" prefWidth="100.0" text="%Color" />
                                         <TableColumn fx:id="fileColumn" prefWidth="600.0" text="%File" />
                                         <TableColumn fx:id="indexColumn" prefWidth="100.0" text="%Index" />
                                     </columns>
@@ -160,6 +164,11 @@
                                         <Label text="%UnitPixels" />
                                         <TextField fx:id="customWidthInput" disable="true" prefWidth="100.0" promptText="%Width" />
                                         <TextField fx:id="customHeightInput" disable="true" prefWidth="100.0" promptText="%Height" />
+                                        <ImageView fx:id="pdfPageSizeTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                            </image>
+                                        </ImageView>
                                     </children>
                                     <VBox.margin>
                                         <Insets top="5.0" />
@@ -193,6 +202,11 @@
                                         <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
                                         <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                         <Label text="%EmptyForDefault" />
+                                        <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                            </image>
+                                        </ImageView>
                                         <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                     </children>
                                 </HBox>
@@ -232,9 +246,17 @@
                                             </HBox.margin>
                                         </Label>
                                         <TextField fx:id="headerInput" prefWidth="350.0" />
-                                        <Label text="%FontFile">
+                                        <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                            </image>
                                             <HBox.margin>
                                                 <Insets left="10.0" />
+                                            </HBox.margin>
+                                        </ImageView>
+                                        <Label text="%FontFile">
+                                            <HBox.margin>
+                                                <Insets />
                                             </HBox.margin>
                                         </Label>
                                         <ComboBox fx:id="fontBox" editable="true" prefWidth="200.0" />

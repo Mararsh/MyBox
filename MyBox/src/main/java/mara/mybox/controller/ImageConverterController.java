@@ -10,10 +10,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import mara.mybox.controller.base.ImageBatchBaseController;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -64,7 +64,7 @@ public class ImageConverterController extends ImageBatchBaseController {
 
     @FXML
     protected void viewAction(ActionEvent event) {
-        FxmlStage.openImageViewer(getClass(), null, sourceFile);
+        FxmlStage.openImageViewer( null, sourceFile);
     }
 
     @Override
@@ -175,38 +175,6 @@ public class ImageConverterController extends ImageBatchBaseController {
                     return null;
                 }
 
-                private boolean handleCurrentFile() {
-                    try {
-                        BufferedImage bufferedImage = ImageFileReaders.readImage(currentParameters.sourceFile);
-                        int w = imageAttributes.getTargetWidth();
-                        int h = imageAttributes.getTargetHeight();
-                        if (w <= 0 && currentParameters.isBatch) {
-                            w = bufferedImage.getWidth();
-                        }
-                        if (h <= 0 && currentParameters.isBatch) {
-                            h = bufferedImage.getHeight();
-                        }
-                        String targetName = makeFilename(w, h);
-                        if (targetName == null) {
-                            return false;
-                        }
-                        actualParameters.finalTargetName = targetName;
-                        bufferedImage = ImageConvert.scaleImage(bufferedImage, w, h);
-                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, imageAttributes);
-                        ImageFileWriters.writeImageFile(bufferedImage, imageAttributes, actualParameters.finalTargetName);
-                        targetFile = new File(actualParameters.finalTargetName);
-                        if (targetFile.exists()) {
-                            targetFiles.add(targetFile);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } catch (Exception e) {
-                        logger.error(e.toString());
-                        return false;
-                    }
-                }
-
                 @Override
                 protected void succeeded() {
                     super.succeeded();
@@ -234,6 +202,39 @@ public class ImageConverterController extends ImageBatchBaseController {
         } catch (Exception e) {
             updateInterface("Failed");
             logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public boolean handleCurrentFile() {
+        try {
+            BufferedImage bufferedImage = ImageFileReaders.readImage(currentParameters.sourceFile);
+            int w = imageAttributes.getTargetWidth();
+            int h = imageAttributes.getTargetHeight();
+            if (w <= 0 && currentParameters.isBatch) {
+                w = bufferedImage.getWidth();
+            }
+            if (h <= 0 && currentParameters.isBatch) {
+                h = bufferedImage.getHeight();
+            }
+            String targetName = makeFilename(w, h);
+            if (targetName == null) {
+                return false;
+            }
+            actualParameters.finalTargetName = targetName;
+            bufferedImage = ImageManufacture.scaleImage(bufferedImage, w, h);
+            bufferedImage = ImageFileWriters.convertColor(bufferedImage, imageAttributes);
+            ImageFileWriters.writeImageFile(bufferedImage, imageAttributes, actualParameters.finalTargetName);
+            targetFile = new File(actualParameters.finalTargetName);
+            if (targetFile.exists()) {
+                targetFiles.add(targetFile);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
         }
     }
 

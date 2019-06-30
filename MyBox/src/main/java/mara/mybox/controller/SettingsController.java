@@ -25,7 +25,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
-import mara.mybox.data.ControlStyle;
+import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
@@ -54,7 +54,7 @@ public class SettingsController extends BaseController {
     @FXML
     private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
     @FXML
-    private CheckBox showCommentsCheck, stopAlarmCheck, newWindowCheck, alphaWhiteCheck, restoreStagesSizeCheck,
+    private CheckBox stopAlarmCheck, newWindowCheck, alphaWhiteCheck, restoreStagesSizeCheck,
             anchorSolidCheck, coordinateCheck, rulerXCheck, rulerYCheck, removeAlphaCopyCheck, controlsTextCheck;
     @FXML
     private TextField imageMaxHisInput, tempDirInput, fileRecentInput;
@@ -65,7 +65,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected ColorPicker strokeColorPicker, anchorColorPicker;
     @FXML
-    private Button setImageHisButton, setFileRecentButton, closeButton;
+    private Button setImageHisButton, setFileRecentButton;
 
     public SettingsController() {
         baseTitle = AppVaribles.getMessage("Settings");
@@ -207,13 +207,6 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            showCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-                    AppVaribles.setShowComments(showCommentsCheck.isSelected());
-                }
-            });
-
             newWindowCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -233,7 +226,7 @@ public class SettingsController extends BaseController {
 
             tips = new Tooltip(getMessage("ImageHisComments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(imageHisBox, tips);
+            FxmlControl.setTooltip(imageHisBox, tips);
 
             rulerXCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -308,7 +301,7 @@ public class SettingsController extends BaseController {
 
             controlsColorBox.getItems().addAll(Arrays.asList(
                     getMessage("DefaultColor"), getMessage("Pink"),
-                    getMessage("Red"), getMessage("Blue"),
+                    getMessage("Red"), getMessage("LightBlue"), getMessage("Blue"),
                     getMessage("Orange")
             ));
             controlsColorBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -384,7 +377,6 @@ public class SettingsController extends BaseController {
     protected void initValues() {
         try {
             stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
-            showCommentsCheck.setSelected(AppVaribles.showComments);
             newWindowCheck.setSelected(AppVaribles.openStageInNewWindow);
 
             maxImageHis = AppVaribles.getUserConfigInt("MaxImageHistories", 20);
@@ -438,6 +430,9 @@ public class SettingsController extends BaseController {
                     break;
                 case Blue:
                     controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Blue"));
+                    break;
+                case LightBlue:
+                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("LightBlue"));
                     break;
                 case Orange:
                     controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Orange"));
@@ -712,7 +707,7 @@ public class SettingsController extends BaseController {
                 alertError(AppVaribles.getMessage("DirectoryReserved"));
                 return;
             }
-            AppVaribles.setUserConfigValue(LastPathKey, directory.getPath());
+            recordFileWritten(directory);
             AppVaribles.setUserConfigValue(CommonValues.userTempPathKey, directory.getPath());
 
             tempDirInput.setText(directory.getPath());
@@ -726,11 +721,6 @@ public class SettingsController extends BaseController {
     public void clearSettings(ActionEvent event) {
         super.clearSettings(event);
         refresh();
-    }
-
-    @FXML
-    private void close() {
-        closeStage();
     }
 
 }

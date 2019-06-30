@@ -9,6 +9,7 @@ import com.github.jaiimageio.impl.plugins.bmp.BMPMetadata;
 import com.github.jaiimageio.plugins.bmp.BMPImageWriteParam;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -17,11 +18,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import static mara.mybox.image.ImageValue.dpi2dpm;
-import mara.mybox.data.ImageInformation;
-import static mara.mybox.value.AppVaribles.logger;
-
+import mara.mybox.image.ImageInformation;
 
 /**
  * @Author Mara
@@ -31,8 +30,6 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/bmp_metadata.html
 public class ImageBmpFile {
-
-    
 
     public static String[] getBmpCompressionTypes() {
         return new BMPImageWriteParam(null).getCompressionTypes();
@@ -110,46 +107,46 @@ public class ImageBmpFile {
         }
     }
 
-    public static void explainBmpMetaData(Map<String, Map<String, Map<String, String>>> metaData,
+    public static void explainBmpMetaData(Map<String, Map<String, List<Map<String, String>>>> metaData,
             ImageInformation info) {
         try {
             String format = "com_sun_media_imageio_plugins_bmp_image_1.0";
             if (!metaData.containsKey(format)) {
                 return;
             }
-            Map<String, Map<String, String>> javax_imageio_bmp = metaData.get(format);
+            Map<String, List<Map<String, String>>> javax_imageio_bmp = metaData.get(format);
             if (javax_imageio_bmp.containsKey("Width")) {
-                Map<String, String> Width = javax_imageio_bmp.get("Width");
+                Map<String, String> Width = javax_imageio_bmp.get("Width").get(0);
                 if (Width.containsKey("value")) {
                     info.setWidth(Integer.valueOf(Width.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("Height")) {
-                Map<String, String> Height = javax_imageio_bmp.get("Height");
+                Map<String, String> Height = javax_imageio_bmp.get("Height").get(0);
                 if (Height.containsKey("value")) {
                     info.setHeight(Integer.valueOf(Height.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("X")) {    // PixelsPerMeter
-                Map<String, String> X = javax_imageio_bmp.get("X");
+                Map<String, String> X = javax_imageio_bmp.get("X").get(0);
                 if (X.containsKey("value")) {
-                    info.setwDensity(ImageValue.dpm2dpi(Integer.valueOf(X.get("value"))));
+                    info.setXDpi(ImageValue.dpm2dpi(Integer.valueOf(X.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("Y")) {   // PixelsPerMeter
-                Map<String, String> Y = javax_imageio_bmp.get("Y");
+                Map<String, String> Y = javax_imageio_bmp.get("Y").get(0);
                 if (Y.containsKey("value")) {
-                    info.sethDensity(ImageValue.dpm2dpi(Integer.valueOf(Y.get("value"))));
+                    info.setYDpi(ImageValue.dpm2dpi(Integer.valueOf(Y.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("BitsPerPixel")) {
-                Map<String, String> BitsPerPixel = javax_imageio_bmp.get("BitsPerPixel");
+                Map<String, String> BitsPerPixel = javax_imageio_bmp.get("BitsPerPixel").get(0);
                 if (BitsPerPixel.containsKey("value")) {
-                    info.setBitDepth(BitsPerPixel.get("value"));
+                    info.setBitDepth(Integer.valueOf(BitsPerPixel.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("Compression")) {
-                Map<String, String> Compression = javax_imageio_bmp.get("Compression");
+                Map<String, String> Compression = javax_imageio_bmp.get("Compression").get(0);
                 if (Compression.containsKey("value")) {
                     info.setCompressionType(Compression.get("value"));
                 }

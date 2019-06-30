@@ -16,11 +16,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.ImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVaribles;
 
 /**
@@ -81,7 +81,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             });
             arcBox.getSelectionModel().select(0);
 
-            FxmlControl.quickTooltip(perBox, new Tooltip("1~100"));
+            FxmlControl.setTooltip(perBox, new Tooltip("1~100"));
 
             perBox.getItems().addAll(Arrays.asList("15", "25", "30", "10", "12", "8"));
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -182,8 +182,8 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
             if (isPercent) {
                 value = source.getWidth() * percent / 100;
             }
-            BufferedImage target = ImageConvert.addArc(source, value,
-                    ImageManufacture.toAwtColor(arcColorPicker.getValue()));
+            BufferedImage target = ImageManufacture.addArc(source, value,
+                    FxmlImageManufacture.toAwtColor(arcColorPicker.getValue()));
             return target;
         } catch (Exception e) {
             logger.error(e.toString());

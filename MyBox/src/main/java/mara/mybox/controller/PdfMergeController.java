@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import mara.mybox.controller.base.PdfBatchBaseController;
-import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.util.Calendar;
 import javafx.application.Platform;
@@ -104,7 +103,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                     .or(targetFileInput.styleProperty().isEqualTo(badStyle))
             );
 
-            FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -175,13 +174,12 @@ public class PdfMergeController extends PdfBatchBaseController {
             return;
         }
         viewTargetFileButton.setDisable(false);
-        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
+        view(targetFile);
     }
 
     @FXML
     @Override
     public void saveAction() {
-        tableData = tableData;
         if (tableData == null || tableData.isEmpty()
                 || targetFile == null) {
             return;
@@ -257,7 +255,7 @@ public class PdfMergeController extends PdfBatchBaseController {
                     public void run() {
                         try {
                             if (ok && targetFile.exists()) {
-                                FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
+                                view(targetFile);
                                 viewTargetFileButton.setDisable(false);
                             } else {
                                 popError(errorString);

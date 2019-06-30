@@ -15,7 +15,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -172,7 +172,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     private void checkScale() {
         try {
             scale = Float.valueOf(scaleBox.getSelectionModel().getSelectedItem());
-            if (scale > 0) {
+            if (scale >= 0) {
                 FxmlControl.setEditorNormal(scaleBox);
             } else {
                 FxmlControl.setEditorBadStyle(scaleBox);
@@ -240,7 +240,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     public void pixelsCalculator() {
         try {
             final PixelsCalculationController controller
-                    = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                    = (PixelsCalculationController) FxmlStage.openStage( myStage,
                             CommonValues.PixelsCalculatorFxml,
                             true, Modality.WINDOW_MODAL, null);
 
@@ -264,16 +264,16 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
         try {
             BufferedImage target = null;
             if (sizeType == SizeType.Scale) {
-                target = ImageConvert.scaleImage(source, scale);
+                target = ImageManufacture.scaleImage(source, scale);
 
             } else if (sizeType == SizeType.Width) {
-                target = ImageConvert.scaleImageWidthKeep(source, keepWidth);
+                target = ImageManufacture.scaleImageWidthKeep(source, keepWidth);
 
             } else if (sizeType == SizeType.Height) {
-                target = ImageConvert.scaleImageHeightKeep(source, keepHeight);
+                target = ImageManufacture.scaleImageHeightKeep(source, keepHeight);
 
             } else if (sizeType == SizeType.Custom) {
-                target = ImageConvert.scaleImage(source, customWidth, customHeight);
+                target = ImageManufacture.scaleImage(source, customWidth, customHeight);
             }
 
             return target;

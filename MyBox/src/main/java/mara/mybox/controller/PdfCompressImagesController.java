@@ -19,15 +19,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.tools.FileTools;
 import mara.mybox.image.ImageBinary;
-import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -122,7 +118,6 @@ public class PdfCompressImagesController extends PdfBatchBaseController {
             }
         });
         checkThreshold();
-        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -396,7 +391,7 @@ public class PdfCompressImagesController extends PdfBatchBaseController {
     }
 
     protected void makeTargetFile(File file) {
-        targetFile = new File(targetPath.getAbsolutePath() + File.separator + FileTools.getFileName(file.getName()));
+        targetFile = new File(targetPath.getAbsolutePath() + File.separator + file.getName());
     }
 
 }

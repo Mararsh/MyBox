@@ -13,11 +13,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
-import mara.mybox.data.ControlStyle;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
@@ -35,7 +34,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
     final protected String ImageReferenceDisplayKey;
 
     @FXML
-    protected ToolBar refBar;
+    protected HBox refButtonsBox;
     @FXML
     protected CheckBox refSyncCheck;
     @FXML
@@ -67,10 +66,10 @@ public class ImageManufactureRefController extends ImageManufactureController {
             tabPane.getSelectionModel().select(refTab);
 
             refSyncCheck.setSelected(values.isRefSync());
-            refBar.setDisable(!values.isShowRef());
+            refButtonsBox.setDisable(!showRefCheck.isSelected());
 
             isSettingValues = false;
-            ControlStyle.setStyle(selectSourceButton);
+
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -95,7 +94,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
     @Override
     protected void checkReferencePane() {
         super.checkReferencePane();
-        refBar.setDisable(!values.isShowRef());
+        refButtonsBox.setDisable(!showRefCheck.isSelected());
     }
 
     @FXML
@@ -146,6 +145,9 @@ public class ImageManufactureRefController extends ImageManufactureController {
         }
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
+        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
+        imenu.setStyle("-fx-text-fill: #2e598a;");
+        popMenu.getItems().add(imenu);
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             MenuItem menu = new MenuItem(fname);
@@ -162,6 +164,9 @@ public class ImageManufactureRefController extends ImageManufactureController {
         his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
         if (his != null) {
             popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
+            dmenu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(dmenu);
             for (VisitHistory h : his) {
                 final String pathname = h.getResourceValue();
                 MenuItem menu = new MenuItem(pathname);
@@ -178,6 +183,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

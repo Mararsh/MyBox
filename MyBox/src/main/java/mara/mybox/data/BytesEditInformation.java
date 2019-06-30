@@ -7,9 +7,9 @@ import java.io.OutputStreamWriter;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.countNumber;
-import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -709,7 +709,7 @@ public class BytesEditInformation extends FileEditInformation {
                         lines[i] += " ";
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {
-                                String lineNumber = ValueTools.fillRightBlank(lineStart + i, 15);
+                                String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);
                                 writer.write(lineNumber + "    " + lines[i] + System.lineSeparator());
                             } else {
                                 writer.write(lines[i] + System.lineSeparator());

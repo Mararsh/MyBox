@@ -24,13 +24,13 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageGray;
-import mara.mybox.image.ImageConvert;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageAttributes;
 import static mara.mybox.image.file.ImageBmpFile.writeBmpImageFile;
-import static mara.mybox.image.file.ImageJpegFile.writeJPEGImageFile;
+import static mara.mybox.image.file.ImageJpgFile.writeJPEGImageFile;
+import static mara.mybox.image.file.ImagePcxFile.writePcxImageFile;
 import static mara.mybox.image.file.ImagePngFile.writePNGImageFile;
 import static mara.mybox.image.file.ImageRawFile.writeRawImageFile;
-import static mara.mybox.image.file.ImagePcxFile.writePcxImageFile;
 
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -92,6 +92,9 @@ public class ImageFileWriters {
                 case "bmp":
                     attributes.setCompressionType("BI_RGB");
                     break;
+                case "pcx":
+                    image = ImageManufacture.clearAlpha(image);  // Fail to load pcx with alpha channel.
+                    break;
             }
             attributes.setQuality(100);
             return writeImageFile(image, attributes, outFile);
@@ -110,7 +113,7 @@ public class ImageFileWriters {
         File file;
         try {
             format = attributes.getImageFormat().toLowerCase();
-            image = ImageConvert.checkAlpha(image, format);
+            image = ImageManufacture.checkAlpha(image, format);
 
             file = new File(outFile);
             if (file.exists()) {
@@ -322,7 +325,7 @@ public class ImageFileWriters {
                 bufferedImage = imageGray.operate();
 
             } else if (ImageType.RGB == attributes.getColorSpace()) {
-                bufferedImage = ImageConvert.clearAlpha(bufferedImage);
+                bufferedImage = ImageManufacture.clearAlpha(bufferedImage);
             }
             return bufferedImage;
         } catch (Exception e) {

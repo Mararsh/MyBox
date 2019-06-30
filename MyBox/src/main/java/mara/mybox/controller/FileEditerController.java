@@ -48,6 +48,7 @@ import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Filter_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -68,7 +69,6 @@ public abstract class FileEditerController extends BaseController {
     protected SimpleBooleanProperty fileChanged;
     protected boolean findWhole, charsetByUser;
     protected FileEditInformation sourceInformation, targetInformation;
-    protected SaveAsType saveAsType;
     protected TextArea displayArea;
     protected String filterConditions = "";
     protected Filter_Type filterType;
@@ -80,10 +80,6 @@ public abstract class FileEditerController extends BaseController {
     protected enum Action {
         None, FindFirst, FindNext, FindPrevious, FindLast, Replace, ReplaceAll, Filter,
         SetPageSize, NextPage, PreviousPage, FirstPage, LastPage, GoPage
-    }
-
-    public enum SaveAsType {
-        Load, Open, None
     }
 
     @FXML
@@ -200,7 +196,7 @@ public abstract class FileEditerController extends BaseController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         if (okButton != null) {
-            FxmlControl.quickTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+            FxmlControl.setTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
         }
 
     }
@@ -272,6 +268,7 @@ public abstract class FileEditerController extends BaseController {
             if (backgroundTask != null && backgroundTask.isRunning()) {
                 backgroundTask.cancel();
             }
+
             isSettingValues = true;
             fileChanged = new SimpleBooleanProperty(false);
             long fileCurrentFound = -1;
@@ -284,6 +281,7 @@ public abstract class FileEditerController extends BaseController {
                 currentPage = 1;
                 currentFound = -1;
             }
+
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
             sourceInformation.setPageSize(AppVaribles.getUserConfigInt(PageSizeKey, 100000));
@@ -291,12 +289,14 @@ public abstract class FileEditerController extends BaseController {
             if (fileCurrentFound >= 0) {
                 sourceInformation.setCurrentFound(fileCurrentFound);
             }
+
             sourceInformation.setFindString(findString);
             targetInformation = FileEditInformation.newEditInformation(editType);
             mainArea.clear();
             if (displayArea != null) {
                 displayArea.clear();
             }
+
             lineArea.clear();
             bottomLabel.setText("");
             selectionLabel.setText("");
@@ -304,6 +304,7 @@ public abstract class FileEditerController extends BaseController {
             pageInput.setText("");
             pageInput.setStyle(null);
             pageLabel.setText("");
+
             if (bomLabel != null) {
                 bomLabel.setText("");
             }
@@ -319,6 +320,7 @@ public abstract class FileEditerController extends BaseController {
             if (recoverButton != null) {
                 recoverButton.setDisable(file == null);
             }
+
             if (currentLineBreak != null) {
                 switch (System.lineSeparator()) {
                     case "\r\n":
@@ -341,6 +343,7 @@ public abstract class FileEditerController extends BaseController {
                 targetInformation.setLineBreak(sourceInformation.getLineBreak());
                 targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
             }
+
             if (currentBox != null) {
                 if (charsetByUser) {
                     sourceInformation.setCharset(Charset.forName(currentBox.getSelectionModel().getSelectedItem()));
@@ -366,6 +369,7 @@ public abstract class FileEditerController extends BaseController {
                 }
             }
             isSettingValues = false;
+
             mainArea.requestFocus();
 
         } catch (Exception e) {
@@ -437,7 +441,7 @@ public abstract class FileEditerController extends BaseController {
 
             Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(currentBox, tips);
+            FxmlControl.setTooltip(currentBox, tips);
 
             List<String> setNames = TextTools.getCharsetNames();
             currentBox.getItems().addAll(setNames);
@@ -479,11 +483,11 @@ public abstract class FileEditerController extends BaseController {
 
             Tooltip tips = new Tooltip(AppVaribles.getMessage("SeparateByCommaBlanksInvolved"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(filterInput, tips);
+            FxmlControl.setTooltip(filterInput, tips);
 
             tips = new Tooltip(AppVaribles.getMessage("FilterTypesComments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(filterTypesBox, tips);
+            FxmlControl.setTooltip(filterTypesBox, tips);
 
             filterGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -909,7 +913,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         AppVaribles.setUserConfigInt(PageSizeKey, (int) pageSize);
@@ -936,7 +940,7 @@ public abstract class FileEditerController extends BaseController {
         }
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
         }
@@ -1021,7 +1025,7 @@ public abstract class FileEditerController extends BaseController {
         sourceInformation.setFindString(findString);
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
             if (sourceInformation.getCurrentFound() < 0) {
@@ -1100,7 +1104,7 @@ public abstract class FileEditerController extends BaseController {
         }
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
             if (sourceInformation.getCurrentFound() < 0) {
@@ -1182,7 +1186,7 @@ public abstract class FileEditerController extends BaseController {
         }
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
         }
@@ -1264,7 +1268,7 @@ public abstract class FileEditerController extends BaseController {
         }
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
         }
@@ -1387,7 +1391,7 @@ public abstract class FileEditerController extends BaseController {
         sourceInformation.setReplaceString(replaceString);
         final boolean whole = findWhole && (sourceInformation.getPagesNumber() > 1);
         if (whole) {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1466,7 +1470,7 @@ public abstract class FileEditerController extends BaseController {
         if (isSettingValues || filterButton.isDisabled()) {
             return;
         }
-        if (!checkSavingForNextAction() || sourceFile == null
+        if (!checkBeforeNextAction() || sourceFile == null
                 || filterStrings == null || filterStrings.length == 0) {
             return;
         }
@@ -1494,7 +1498,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void nextAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         if (sourceInformation.getObjectsNumber() <= sourceInformation.getCurrentPageObjectEnd()) {
@@ -1509,7 +1513,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void previousAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         if (sourceInformation.getCurrentPage() <= 1) {
@@ -1524,7 +1528,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void firstAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         sourceInformation.setCurrentPage(1);
@@ -1535,7 +1539,7 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void lastAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         sourceInformation.setCurrentPage(sourceInformation.getPagesNumber());
@@ -1545,7 +1549,7 @@ public abstract class FileEditerController extends BaseController {
 
     @FXML
     protected void goPageAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         if (currentPageTmp > sourceInformation.getPagesNumber()) {
@@ -2210,6 +2214,9 @@ public abstract class FileEditerController extends BaseController {
         if (path.exists()) {
             fileChooser.setInitialDirectory(path);
         }
+        if (sourceFile != null) {
+            fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+        }
         fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
         final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
@@ -2280,7 +2287,7 @@ public abstract class FileEditerController extends BaseController {
     @Override
     public void createAction() {
         try {
-            if (!checkSavingForNextAction()) {
+            if (!checkBeforeNextAction()) {
                 return;
             }
             initPage(null);
@@ -2292,7 +2299,7 @@ public abstract class FileEditerController extends BaseController {
     }
 
     @Override
-    public boolean checkSavingForNextAction() {
+    public boolean checkBeforeNextAction() {
         if (fileChanged == null || !fileChanged.getValue()) {
             return true;
         } else {

@@ -15,10 +15,10 @@ import mara.mybox.controller.base.TableController;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -74,7 +74,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
             pixels += m.getWidth() * m.getHeight();
         }
         tableLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
+                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
 
         hasSampled.set(hasSampled());
 
@@ -204,7 +204,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
             if (info == null) {
                 return;
             }
-            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer( null);
             if (controller != null) {
                 controller.loadImage(info);
             }
@@ -220,7 +220,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageInformation(getClass(), null, info);
+        FxmlStage.openImageInformation( null, info);
     }
 
     @FXML
@@ -229,7 +229,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageMetaData(getClass(), null, info);
+        FxmlStage.openImageMetaData( null, info);
     }
 
 }

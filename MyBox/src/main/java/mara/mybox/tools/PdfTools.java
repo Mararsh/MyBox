@@ -1,6 +1,6 @@
 package mara.mybox.tools;
 
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,13 +12,14 @@ import java.util.List;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
+import mara.mybox.data.PdfInformation;
 import mara.mybox.image.ImageBinary;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.data.WeiboSnapParameters;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -29,6 +30,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -57,11 +59,11 @@ public class PdfTools {
     }
 
     public static float pixels2mm(float pixels) {
-        return ValueTools.roundFloat2(pixels * 25.4f / 72f);
+        return FloatTools.roundFloat2(pixels * 25.4f / 72f);
     }
 
     public static float pixels2inch(float pixels) {
-        return ValueTools.roundFloat2(pixels / 72f);
+        return FloatTools.roundFloat2(pixels / 72f);
     }
 
     public static int mm2pixels(float mm) {
@@ -88,12 +90,12 @@ public class PdfTools {
                     imageObject = CCITTFactory.createFromImage(document, bufferedImage);
                     break;
                 case Jpeg:
-                    bufferedImage = ImageConvert.checkAlpha(bufferedImage, "jpg");
+                    bufferedImage = ImageManufacture.checkAlpha(bufferedImage, "jpg");
                     imageObject = JPEGFactory.createFromImage(document, bufferedImage, jpegQuality / 100f);
                     break;
                 default:
                     if (sourceFormat != null) {
-                        bufferedImage = ImageConvert.checkAlpha(bufferedImage, sourceFormat);
+                        bufferedImage = ImageManufacture.checkAlpha(bufferedImage, sourceFormat);
                     }
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     break;
@@ -164,7 +166,7 @@ public class PdfTools {
                 int marginSize = 20, total = images.size();
                 for (Image image : images) {
                     PDImageXObject imageObject;
-                    bufferedImage = ImageManufacture.getBufferedImage(image);
+                    bufferedImage = FxmlImageManufacture.getBufferedImage(image);
                     imageObject = LosslessFactory.createFromImage(document, bufferedImage);
                     if (isImageSize) {
                         pageSize = new PDRectangle(imageObject.getWidth() + marginSize * 2, imageObject.getHeight() + marginSize * 2);
@@ -250,7 +252,7 @@ public class PdfTools {
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
                                 break;
                             case Jpeg:
-                                bufferedImage = ImageManufacture.checkAlpha(image, "jpg");
+                                bufferedImage = FxmlImageManufacture.checkAlpha(image, "jpg");
                                 break;
                             default:
                                 bufferedImage = SwingFXUtils.fromFXImage(image, null);
@@ -462,7 +464,7 @@ public class PdfTools {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
+                    wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                 }
                 int count = 0;
                 int total = (rows.size() - 1) * (cols.size() - 1);
@@ -476,7 +478,7 @@ public class PdfTools {
                         if (imageInformation.isIsSampled()) {
                             target = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         } else {
-                            target = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
+                            target = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         }
                         PdfTools.writePage(document, font, sourceFormat, target,
                                 ++count, total, pdfFormat,
@@ -530,6 +532,44 @@ public class PdfTools {
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
+        }
+    }
+
+    public static boolean setAttributes(File file, String ownerPassword, PdfInformation info) {
+        try {
+            if (file == null || info == null) {
+                return false;
+            }
+            try (PDDocument doc = PDDocument.load(file, ownerPassword, AppVaribles.pdfMemUsage)) {
+                PDDocumentInformation docInfo = doc.getDocumentInformation();
+                docInfo.setAuthor(info.getAuthor());
+                docInfo.setTitle(info.getTitle());
+                docInfo.setSubject(info.getSubject());
+                docInfo.setCreator(info.getCreator());
+                docInfo.setProducer(info.getProducer());
+                Calendar c = Calendar.getInstance();
+                if (info.getCreateTime() != null) {
+                    c.setTime(info.getCreateTime());
+                    docInfo.setCreationDate(c);
+                }
+                if (info.getModifyTime() != null) {
+                    c.setTime(info.getModifyTime());
+                    docInfo.setModificationDate(c);
+                }
+                docInfo.setKeywords(info.getKeywords());
+                doc.setDocumentInformation(docInfo);
+                if (info.getVersion() >= 0) {
+                    doc.setVersion(info.getVersion());
+                }
+                StandardProtectionPolicy policy
+                        = new StandardProtectionPolicy(info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
+                doc.protect(policy);
+                doc.save(file);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return false;
         }
     }
 

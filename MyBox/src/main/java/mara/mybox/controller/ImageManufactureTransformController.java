@@ -12,15 +12,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 
 /**
  * @Author Mara
@@ -75,10 +72,6 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 //    }
     protected void initTransformTab() {
         try {
-
-            Tooltip tips = new Tooltip(getMessage("transformComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(tranBox, tips);
 
             List<String> shears = Arrays.asList(
                     "0.5", "-0.5", "0.4", "-0.4", "0.2", "-0.2", "0.1", "-0.1",
@@ -146,7 +139,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.rotateImage(imageView.getImage(), rotateAngle);
+                newImage = FxmlImageManufacture.rotateImage(imageView.getImage(), rotateAngle);
                 if (task == null || task.isCancelled()) {
                     return null;
                 }
@@ -188,7 +181,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.rotateImage(imageView.getImage(), 360 - rotateAngle);
+                newImage = FxmlImageManufacture.rotateImage(imageView.getImage(), 360 - rotateAngle);
                 if (task == null || task.isCancelled()) {
                     return null;
                 }
@@ -230,7 +223,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.horizontalImage(imageView.getImage());
+                newImage = FxmlImageManufacture.horizontalImage(imageView.getImage());
                 if (task == null || task.isCancelled()) {
                     return null;
                 }
@@ -272,7 +265,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.verticalImage(imageView.getImage());
+                newImage = FxmlImageManufacture.verticalImage(imageView.getImage());
                 if (task == null || task.isCancelled()) {
                     return null;
                 }
@@ -314,7 +307,7 @@ public class ImageManufactureTransformController extends ImageManufactureControl
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.shearImage(imageView.getImage(), shearX, 0);
+                newImage = FxmlImageManufacture.shearImage(imageView.getImage(), shearX, 0);
                 if (task == null || task.isCancelled()) {
                     return null;
                 }

@@ -54,7 +54,8 @@ import mara.mybox.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 
 /**
  * @Author Mara
@@ -256,7 +257,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
             actionBox.setDisable(true);
 
-            FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -612,7 +613,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         isSettingValues = true;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
-                matrixInputs[j][i].setText(ValueTools.roundFloat5(matrixValues[j][i] / sum) + "");
+                matrixInputs[j][i].setText(FloatTools.roundFloat5(matrixValues[j][i] / sum) + "");
             }
         }
         isSettingValues = false;

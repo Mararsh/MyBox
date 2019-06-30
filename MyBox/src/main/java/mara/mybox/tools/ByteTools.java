@@ -15,6 +15,42 @@ public class ByteTools {
 
     public static int Invalid_Byte = -999;
 
+    //  Big-Endian
+    public static int bytesToInt(byte[] b) {
+        return b[3] & 0xFF
+                | (b[2] & 0xFF) << 8
+                | (b[1] & 0xFF) << 16
+                | (b[0] & 0xFF) << 24;
+    }
+
+    public static int bytesToUshort(byte[] b) {
+        return b[1] & 0xFF
+                | (b[0] & 0xFF) << 8;
+    }
+
+    public static byte[] intToBytes(int a) {
+        return new byte[]{
+            (byte) ((a >> 24) & 0xFF),
+            (byte) ((a >> 16) & 0xFF),
+            (byte) ((a >> 8) & 0xFF),
+            (byte) (a & 0xFF)
+        };
+    }
+
+    public static byte[] unsignedShortToBytes(int s) {
+        return new byte[]{
+            (byte) ((s >> 8) & 0xFF),
+            (byte) (s & 0xFF)
+        };
+    }
+
+    public static byte[] shortToBytes(short s) {
+        return new byte[]{
+            (byte) ((s >> 8) & 0xFF),
+            (byte) (s & 0xFF)
+        };
+    }
+
     public static String byteToHex(byte b) {
         String hex = Integer.toHexString(b & 0xFF);
         if (hex.length() < 2) {
@@ -81,7 +117,56 @@ public class ByteTools {
         return s;
     }
 
+    public static String bytesToHexFormat(byte[] bytes, int newLineWidth) {
+        StringBuilder sb = new StringBuilder();
+        int count = 1;
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(bytes[i] & 0xFF);
+            if (hex.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(hex).append(" ");
+            if (count % newLineWidth == 0) {
+                sb.append("\n");
+            }
+            count++;
+        }
+        String s = sb.toString();
+        s = s.toUpperCase();
+        return s;
+    }
+
+    public static byte[] hexToBytes(String inHex) {
+        try {
+            int hexlen = inHex.length();
+            byte[] result;
+            if (hexlen % 2 == 1) {
+                hexlen++;
+                result = new byte[(hexlen / 2)];
+                inHex = "0" + inHex;
+            } else {
+                result = new byte[(hexlen / 2)];
+            }
+            int j = 0;
+            for (int i = 0; i < hexlen; i += 2) {
+                result[j] = hexToByte(inHex.substring(i, i + 2));
+                j++;
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static byte hexToByte(String inHex) {
+        try {
+            return (byte) Integer.parseInt(inHex, 16);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static byte hexToByteAnyway(String inHex) {
         try {
             return (byte) Integer.parseInt(inHex, 16);
         } catch (Exception e) {
@@ -167,27 +252,31 @@ public class ByteTools {
         }
     }
 
-    public static byte[] hexToBytes(String inHex) {
-        int hexlen = inHex.length();
-        byte[] result;
-        if (hexlen % 2 == 1) {
-            hexlen++;
-            result = new byte[(hexlen / 2)];
-            inHex = "0" + inHex;
-        } else {
-            result = new byte[(hexlen / 2)];
+    public static byte[] hexToBytesAnyway(String inHex) {
+        try {
+            int hexlen = inHex.length();
+            byte[] result;
+            if (hexlen % 2 == 1) {
+                hexlen++;
+                result = new byte[(hexlen / 2)];
+                inHex = "0" + inHex;
+            } else {
+                result = new byte[(hexlen / 2)];
+            }
+            int j = 0;
+            for (int i = 0; i < hexlen; i += 2) {
+                result[j] = hexToByteAnyway(inHex.substring(i, i + 2));
+                j++;
+            }
+            return result;
+        } catch (Exception e) {
+            return null;
         }
-        int j = 0;
-        for (int i = 0; i < hexlen; i += 2) {
-            result[j] = hexToByte(inHex.substring(i, i + 2));
-            j++;
-        }
-        return result;
     }
 
     public static byte[] hexFormatToBytes(String hexFormat) {
         String hex = hexFormat.replaceAll(" ", "").replaceAll("\n", "");
-        return hexToBytes(hex);
+        return hexToBytesAnyway(hex);
     }
 
     public static byte[] subBytes(byte[] bytes, int off, int length) {
@@ -196,6 +285,7 @@ public class ByteTools {
             System.arraycopy(bytes, off, newBytes, 0, length);
             return newBytes;
         } catch (Exception e) {
+            logger.debug(bytes.length + " " + off + " " + length);
             logger.debug(e.toString());
             return null;
         }
@@ -346,5 +436,6 @@ public class ByteTools {
             return -1;
         }
     }
+
 
 }

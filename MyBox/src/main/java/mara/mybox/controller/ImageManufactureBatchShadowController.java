@@ -17,11 +17,11 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 
 /**
@@ -82,7 +82,7 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             });
             shadowBox.getSelectionModel().select(0);
 
-            FxmlControl.quickTooltip(perBox, new Tooltip("1~100"));
+            FxmlControl.setTooltip(perBox, new Tooltip("1~100"));
 
             perBox.getItems().addAll(Arrays.asList("2", "1", "3", "5", "4", "6", "8", "7", "10", "9"));
             perBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -194,9 +194,9 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             Color color = shadowColorPicker.getValue();
             BufferedImage target;
             if (preAlphaCheck.isSelected()) {
-                target = ImageConvert.addShadowNoAlpha(source, value, ImageManufacture.toAwtColor(color));
+                target = ImageManufacture.addShadowNoAlpha(source, value, FxmlImageManufacture.toAwtColor(color));
             } else {
-                target = ImageConvert.addShadowAlpha(source, value, ImageManufacture.toAwtColor(color));
+                target = ImageManufacture.addShadowAlpha(source, value, FxmlImageManufacture.toAwtColor(color));
             }
             return target;
         } catch (Exception e) {

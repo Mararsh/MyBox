@@ -15,7 +15,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 
 /**
  * @Author Mara
@@ -135,7 +135,7 @@ public class ImageManufactureArcController extends ImageManufactureController {
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.addArc(imageView.getImage(), arc, colorPicker.getValue());
+                newImage = FxmlImageManufacture.addArc(imageView.getImage(), arc, colorPicker.getValue());
                 if (task == null || task.isCancelled()) {
                     return null;
                 }

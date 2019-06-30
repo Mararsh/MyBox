@@ -16,11 +16,11 @@ import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.base.ImageAttributesBaseController;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert.KeepRatioType;
+import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
@@ -129,7 +129,7 @@ public class ImageConverterAttributesController extends ImageAttributesBaseContr
     public void openPixelsCalculator(ActionEvent event) {
         try {
             final PixelsCalculationController controller
-                    = (PixelsCalculationController) FxmlStage.openStage(getClass(), myStage,
+                    = (PixelsCalculationController) FxmlStage.openStage(myStage,
                             CommonValues.PixelsCalculatorFxml,
                             true, Modality.WINDOW_MODAL, null);
 

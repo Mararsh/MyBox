@@ -1,6 +1,8 @@
 package mara.mybox.value;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +11,12 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import javafx.scene.control.Tooltip;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.controller.base.BaseController;
-import mara.mybox.data.ControlStyle;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
 import static mara.mybox.value.CommonValues.BundleEnUS;
@@ -43,9 +47,9 @@ public class AppVaribles {
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber;
     public static Map<Stage, BaseController> openedStages;
-    public static boolean openStageInNewWindow, restoreStagesSize, showComments,
-            controlDisplayText;
+    public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText;
     public static ControlStyle.ColorStyle ControlColor;
+    public static Class env;
 
     public AppVaribles() {
 
@@ -55,20 +59,38 @@ public class AppVaribles {
         try {
             userConfigValues = new HashMap();
             systemConfigValues = new HashMap();
+            env = userConfigValues.getClass();
             openedStages = new HashMap();
             getBundle();
             getPdfMem();
-            showComments = AppVaribles.getUserConfigBoolean("ShowComments", true);
             openStageInNewWindow = AppVaribles.getUserConfigBoolean("OpenStageInNewWindow", false);
             restoreStagesSize = AppVaribles.getUserConfigBoolean("RestoreStagesSize", true);
             sceneFontSize = AppVaribles.getUserConfigInt("SceneFontSize", 15);
             fileRecentNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 15);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVaribles.getUserConfigBoolean("ControlDisplayText", false);
+            setTipTime();
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
+    }
+
+    // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay?noredirect=1
+    // https://www.jianshu.com/p/5ecec2c4d224
+    public static void setTipTime() {
+        try {
+            Tooltip tooltip = new Tooltip();
+            Class tipClass = tooltip.getClass();
+            Field f = tipClass.getDeclaredField("BEHAVIOR");
+            f.setAccessible(true);
+            Class TooltipBehavior = Class.forName("javafx.scene.control.Tooltip$TooltipBehavior");
+            Constructor constructor = TooltipBehavior.getDeclaredConstructor(Duration.class, Duration.class, Duration.class, boolean.class);
+            constructor.setAccessible(true);
+            f.set(TooltipBehavior, constructor.newInstance(new Duration(10), new Duration(360000), new Duration(10), false));
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public static void clear() {
@@ -146,15 +168,6 @@ public class AppVaribles {
         }
     }
 
-    public static boolean setShowComments(boolean value) {
-        if (AppVaribles.setUserConfigValue("ShowComments", value)) {
-            AppVaribles.showComments = value;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public static boolean setOpenStageInNewWindow(boolean value) {
         if (AppVaribles.setUserConfigValue("OpenStageInNewWindow", value)) {
             AppVaribles.openStageInNewWindow = value;
@@ -227,7 +240,7 @@ public class AppVaribles {
     }
 
     public static int getCommentsDelay() {
-        return getUserConfigInt("CommentsDelay", 3000);
+        return getUserConfigInt("CommentsDelay", 2000);
     }
 
     public static boolean isAlphaAsWhite() {
@@ -247,7 +260,7 @@ public class AppVaribles {
             return value;
         } catch (Exception e) {
 //            logger.error(e.toString());
-            return null;
+            return defaultValue;
         }
     }
 

@@ -14,11 +14,11 @@ import javafx.stage.Modality;
 import mara.mybox.controller.base.BatchController;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.data.FileInformation;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
@@ -106,7 +106,7 @@ public class ImagesBatchController extends BatchController<ImageInformation> {
             pixels += m.getWidth() * m.getHeight();
         }
         tableLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
+                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
 
         hasSampled.set(hasSampled());
 
@@ -236,7 +236,7 @@ public class ImagesBatchController extends BatchController<ImageInformation> {
             if (info == null) {
                 return;
             }
-            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer( null);
             if (controller != null) {
                 controller.loadImage(info);
             }
@@ -252,7 +252,7 @@ public class ImagesBatchController extends BatchController<ImageInformation> {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageInformation(getClass(), null, info);
+        FxmlStage.openImageInformation( null, info);
     }
 
     @FXML
@@ -261,14 +261,14 @@ public class ImagesBatchController extends BatchController<ImageInformation> {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageMetaData(getClass(), null, info);
+        FxmlStage.openImageMetaData( null, info);
     }
 
     @Override
-    public void handleCurrentFile() {
+    public boolean handleCurrentFile() {
         ImageInformation d = tableData.get(sourcesIndice.get(currentParameters.currentIndex));
         if (d == null) {
-            return;
+            return false;
         }
         File file = d.getFile();
         currentParameters.sourceFile = file;
@@ -283,6 +283,7 @@ public class ImagesBatchController extends BatchController<ImageInformation> {
         d.setHandled(result);
         tableView.refresh();
         currentParameters.currentTotalHandled++;
+        return true;
     }
 
     @Override

@@ -9,15 +9,14 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import mara.mybox.data.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -64,7 +63,6 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
                             .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
                             .or(previewInput.styleProperty().isEqualTo(badStyle))
             );
-            ControlStyle.setStyle(previewButton);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -260,7 +258,7 @@ public class PdfConvertImagesController extends PdfBatchBaseController {
         ImageAttributes attributes = pdfConvertAttributesController.imageAttributes;
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
-            pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
+            pageNumber = StringTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
         }
         String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix + "_" + pageNumber;
         if (currentParameters.aColor) {

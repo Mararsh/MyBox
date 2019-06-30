@@ -1,36 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <!--
-Copyright (c) 2010, 2014, Oracle and/or its affiliates.
-All rights reserved. Use is subject to license terms.
-
-This file is available and licensed under the following license:
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
- - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the distribution.
- - Neither the name of Oracle Corporation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -76,24 +52,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%OriginalColor" />
                                                 <ColorPicker fx:id="oldColorPicker" />
-                                                <Button fx:id="transparentButton" mnemonicParsing="false" onAction="#transparentForOld" >
+                                                <Button fx:id="transparentButton" mnemonicParsing="false" onAction="#transparentForOld">
                                                     <graphic>
                                                         <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="whiteButton" mnemonicParsing="false" onAction="#whiteForOld" >
+                                                <Button fx:id="whiteButton" mnemonicParsing="false" onAction="#whiteForOld">
                                                     <graphic>
                                                         <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="blackButton" mnemonicParsing="false" onAction="#blackForOld" >
+                                                <Button fx:id="blackButton" mnemonicParsing="false" onAction="#blackForOld">
                                                     <graphic>
                                                         <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
                                                 </Button>
-                                                <Label text="%Distance">
+                                                <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconTips.png" />
+                                                    </image>
                                                     <HBox.margin>
                                                         <Insets left="20.0" />
+                                                    </HBox.margin>
+                                                </ImageView>
+                                                <Label text="%Distance">
+                                                    <HBox.margin>
+                                                        <Insets />
                                                     </HBox.margin>
                                                 </Label>
                                                 <TextField fx:id="distanceInput" prefWidth="58.0" text="0" />
@@ -114,17 +98,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%NewColor" />
                                                 <ColorPicker fx:id="newColorPicker" />
-                                                <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew" >
+                                                <Button fx:id="transForNewButton" mnemonicParsing="false" onAction="#transparentForNew">
                                                     <graphic>
                                                         <Rectangle fill="#ffffff00" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
                                                 </Button>
-                                                <Button mnemonicParsing="false" onAction="#whiteForNew" >
+                                                <Button mnemonicParsing="false" onAction="#whiteForNew">
                                                     <graphic>
                                                         <Rectangle fill="WHITE" height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
                                                 </Button>
-                                                <Button mnemonicParsing="false" onAction="#blackForNew" >
+                                                <Button mnemonicParsing="false" onAction="#blackForNew">
                                                     <graphic>
                                                         <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
                                                     </graphic>
@@ -156,25 +140,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <Label text="%FilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                               <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconImageFolder.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                               <Button fx:id="browseButton"  mnemonicParsing="false" onAction="#browseAction" >
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconBrowse.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction" >
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconImageFolder.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconBrowse.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

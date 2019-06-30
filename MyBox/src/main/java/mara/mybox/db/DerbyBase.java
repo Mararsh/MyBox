@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.List;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ConvolutionKernel;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -95,15 +94,13 @@ public class DerbyBase {
 
     public static boolean checkUpdates() {
         try {
-            if (!AppVaribles.getSystemConfigBoolean("UpdatedTables4.2", false)) {
-                logger.debug("Updating TableConvolutionKernel 4.2");
-                List<ConvolutionKernel> records = TableConvolutionKernel.read();
-                TableConvolutionKernel t = new TableConvolutionKernel();
-                t.drop();
-                t.init();
-                if (TableConvolutionKernel.write(records)) {
-                    AppVaribles.setSystemConfigValue("UpdatedTables4.2", true);
-                }
+            if (!AppVaribles.getSystemConfigBoolean("UpdatedTables5.2", false)) {
+                DerbyBase t = new DerbyBase();
+                String sql = "ALTER TABLE User_Conf  alter  column  key_Name set data type VARCHAR(100)";
+                t.update(sql);
+                sql = "ALTER TABLE System_Conf  alter  column  key_Name set data type VARCHAR(100)";
+                t.update(sql);
+                AppVaribles.setSystemConfigValue("UpdatedTables5.2", true);
             }
             return true;
         } catch (Exception e) {
@@ -161,7 +158,7 @@ public class DerbyBase {
         }
     }
 
-    public ResultSet executeSQL(String sql) {
+    public ResultSet query(String sql) {
         try {
             ResultSet resultSet;
             try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
@@ -172,6 +169,20 @@ public class DerbyBase {
         } catch (Exception e) {
             logger.debug(e.toString());
             return null;
+        }
+    }
+
+    public int update(String sql) {
+        try {
+            int ret;
+            try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+                    Statement statement = conn.createStatement()) {
+                ret = statement.executeUpdate(sql);
+            }
+            return ret;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return -1;
         }
     }
 

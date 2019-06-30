@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="730.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MatricesCalculationController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox fx:id="mainBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <ToolBar VBox.vgrow="NEVER">
+                    <items>
+                        <RadioButton mnemonicParsing="false" selected="true" text="%UnaryCalculation">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="calTypeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="%BinaryCalculation" toggleGroup="$calTypeGroup" />
+                        <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
+                        <Label text="%DecimalScale" />
+                        <TextField fx:id="scaleInput" prefWidth="60.0" text="6" />
+                    </items>
+                </ToolBar>
+                <VBox fx:id="cpBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <children>
+                        <ToolBar>
+                            <items>
+                                <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
+                                <Button fx:id="verticalMergeButton" layoutX="1098.0" layoutY="10.0" mnemonicParsing="false" onAction="#verticalMergeAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconVerticalMerge.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="horizontalMergeButton" layoutX="1053.0" layoutY="10.0" mnemonicParsing="false" onAction="#horizontalMergeAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconHorizontalMerge.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="matrixPlusButton" mnemonicParsing="false" onAction="#plusAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPlus.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="matrixMinusButton" mnemonicParsing="false" onAction="#minusAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconMinus.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="hadamardProductButton" layoutX="1278.0" layoutY="10.0" mnemonicParsing="false" onAction="#hadamardProductAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconAsterisk.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="kroneckerProductButton" layoutX="1278.0" layoutY="10.0" mnemonicParsing="false" onAction="#kroneckerProductAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconCancel.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="matrixMultiplyButton" mnemonicParsing="false" onAction="#multiplyAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconMultiply.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </items>
+                        </ToolBar>
+                        <VBox fx:id="cBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                            <children>
+                                <fx:include fx:id="matrixResult" source="MatrixCalculationResult.fxml" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+                <SplitPane fx:id="dataPane" dividerPositions="0.4493541808293678" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <VBox fx:id="apBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <VBox fx:id="aBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%MatrixA" VBox.vgrow="NEVER" />
+                                        <fx:include fx:id="matrixA" source="MatrixCalculation.fxml" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="bpBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <VBox fx:id="bBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%MatrixB" />
+                                        <fx:include fx:id="matrixB" source="MatrixCalculation.fxml" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="bottomLabel" text="%MatricesCalculationComments" wrapText="true"  styleClass="blue-label" stylesheets="@../styles/MyBox.css"/>
+            </children>
+            <BorderPane.margin>
+                <Insets left="10.0" top="10.0" />
+            </BorderPane.margin>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.IntTools;
 
 /**
  * @Author Mara
@@ -117,7 +118,7 @@ public class IntStatistic {
         if (values == null || values.length == 0) {
             return mid;
         }
-        int[] sorted = ValueTools.sortArray(values);
+        int[] sorted = IntTools.sortArray(values);
         if (sorted.length % 2 == 0) {
             mid = (sorted[sorted.length / 2] + sorted[sorted.length / 2 - 1]) / 2;
         } else {
@@ -130,7 +131,7 @@ public class IntStatistic {
         if (values == null || values.length == 0) {
             return -1;
         }
-        int[] sorted = ValueTools.sortArray(values);
+        int[] sorted = IntTools.sortArray(values);
         int mid = sorted[sorted.length / 2];
         for (int i = 0; i < values.length; i++) {
             if (values[i] == mid) {

@@ -24,7 +24,7 @@ import javafx.scene.layout.Region;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -174,6 +174,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
         }
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
+        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
+        imenu.setStyle("-fx-text-fill: #2e598a;");
+        popMenu.getItems().add(imenu);
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             MenuItem menu = new MenuItem(fname);
@@ -190,6 +193,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
         his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
         if (his != null) {
             popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
+            dmenu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(dmenu);
             for (VisitHistory h : his) {
                 final String pathname = h.getResourceValue();
                 MenuItem menu = new MenuItem(pathname);
@@ -206,6 +212,7 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -236,9 +243,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
             }
             BufferedImage target;
             if (useOpacityValue) {
-                target = ImageConvert.addAlpha(source, opacityValue, blendMode == AlphaBlendMode.Plus);
+                target = ImageManufacture.addAlpha(source, opacityValue, blendMode == AlphaBlendMode.Plus);
             } else {
-                target = ImageConvert.addAlpha(source, alphaImage, blendMode == AlphaBlendMode.Plus);
+                target = ImageManufacture.addAlpha(source, alphaImage, blendMode == AlphaBlendMode.Plus);
             }
             return target;
         } catch (Exception e) {

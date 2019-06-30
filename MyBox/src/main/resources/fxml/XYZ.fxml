@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="mara.mybox.controller.XYZController">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <RadioButton mnemonicParsing="false" selected="true" text="%RelativeValues">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="valueGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%NormalizedValuesCC" toggleGroup="$valueGroup">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%Tristimulus" toggleGroup="$valueGroup">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </RadioButton>
+            </children>
+        </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="X" fx:id="xLabel">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </Label>
+                <TextField prefWidth="150.0" fx:id="xInput" />
+                <Label fx:id="yLabel" text="Y" />
+                <TextField fx:id="yInput" prefWidth="150.0" />
+                <Label fx:id="zLabel" text="Z" />
+                <TextField fx:id="zInput" prefWidth="150.0" />
+                <Label fx:id="commentsLabel" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

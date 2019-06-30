@@ -53,8 +53,8 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.ImageCell;
-import mara.mybox.fxml.ImageManufacture;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope.ScopeType;
 import mara.mybox.image.PixelBlend;
 import mara.mybox.image.file.ImageFileReaders;
@@ -146,7 +146,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         opacityBox.getSelectionModel().select(0);
         blendBox.getSelectionModel().select(0);
 
-        FxmlControl.quickTooltip(clearButton, new Tooltip("Delete / CTRL+d"));
+        FxmlControl.setTooltip(clearButton, new Tooltip("Delete / CTRL+d"));
     }
 
     @Override
@@ -651,6 +651,9 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         }
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
+        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
+        imenu.setStyle("-fx-text-fill: #2e598a;");
+        popMenu.getItems().add(imenu);
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             MenuItem menu = new MenuItem(fname);
@@ -667,6 +670,9 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
         if (his != null) {
             popMenu.getItems().add(new SeparatorMenuItem());
+            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
+            dmenu.setStyle("-fx-text-fill: #2e598a;");
+            popMenu.getItems().add(dmenu);
             for (VisitHistory h : his) {
                 final String pathname = h.getResourceValue();
                 MenuItem menu = new MenuItem(pathname);
@@ -683,6 +689,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
         popMenu.getItems().add(new SeparatorMenuItem());
         MenuItem menu = new MenuItem(getMessage("MenuClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -771,9 +778,9 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             @Override
             protected Void call() throws Exception {
-                Image foreImage = ImageManufacture.scaleImage(picture,
+                Image foreImage = FxmlImageManufacture.scaleImage(picture,
                         (int) maskRectangleData.getWidth(), (int) maskRectangleData.getHeight(),
-                        keepRatioCheck.isSelected(), ImageConvert.KeepRatioType.BaseOnLarger);
+                        keepRatioCheck.isSelected(), ImageManufacture.KeepRatioType.BaseOnLarger);
 
                 if (keepRatioCheck.isSelected()) {
                     maskRectangleData = new DoubleRectangle(
@@ -782,7 +789,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                             maskRectangleData.getSmallY() + foreImage.getHeight() - 1);
                 }
 
-                mixedImage = ImageManufacture.blendImages(foreImage, imageView.getImage(),
+                mixedImage = FxmlImageManufacture.blendImages(foreImage, imageView.getImage(),
                         (int) maskRectangleData.getSmallX(),
                         (int) maskRectangleData.getSmallY(),
                         blendMode, opacity);
@@ -849,7 +856,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.drawRectangle(imageView.getImage(),
+                newImage = FxmlImageManufacture.drawRectangle(imageView.getImage(),
                         maskRectangleData, colorPicker.getValue(), strokeWidth,
                         arcWidth, dottedCheck.isSelected(),
                         fillCheck.isSelected(), fillColorPicker.getValue());
@@ -896,7 +903,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.drawCircle(imageView.getImage(),
+                newImage = FxmlImageManufacture.drawCircle(imageView.getImage(),
                         maskCircleData, colorPicker.getValue(), strokeWidth,
                         dottedCheck.isSelected(),
                         fillCheck.isSelected(), fillColorPicker.getValue());
@@ -943,7 +950,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.drawEllipse(imageView.getImage(),
+                newImage = FxmlImageManufacture.drawEllipse(imageView.getImage(),
                         maskEllipseData, colorPicker.getValue(), strokeWidth,
                         dottedCheck.isSelected(),
                         fillCheck.isSelected(), fillColorPicker.getValue());
@@ -994,7 +1001,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.drawPolygon(imageView.getImage(),
+                newImage = FxmlImageManufacture.drawPolygon(imageView.getImage(),
                         maskPolygonData, colorPicker.getValue(), strokeWidth,
                         dottedCheck.isSelected(),
                         fillCheck.isSelected(), fillColorPicker.getValue());
@@ -1223,7 +1230,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                         if (maskLineData == null && maskLineData.getSize() < 2) {
                             return null;
                         }
-                        newImage = ImageManufacture.drawLines(imageView.getImage(),
+                        newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
                                 maskLineData, colorPicker.getValue(), strokeWidth,
                                 dottedCheck.isSelected());
                         break;
@@ -1231,7 +1238,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                         if (maskPenData == null && maskPenData.getPointsSize() == 0) {
                             return null;
                         }
-                        newImage = ImageManufacture.drawLines(imageView.getImage(),
+                        newImage = FxmlImageManufacture.drawLines(imageView.getImage(),
                                 maskPenData, colorPicker.getValue(), strokeWidth,
                                 dottedCheck.isSelected());
                         break;

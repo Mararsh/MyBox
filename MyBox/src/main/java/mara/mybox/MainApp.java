@@ -28,7 +28,7 @@ public class MainApp extends Application {
         try {
 
             // https://pdfbox.apache.org/2.0/getting-started.html
-            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+//            System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
             System.setProperty("org.apache.pdfbox.rendering.UsePureJavaCMYKConversion", "true");
             // https://blog.csdn.net/weixin_42156742/article/details/81386226
             System.setProperty("java.awt.headless", "false");
@@ -79,12 +79,12 @@ public class MainApp extends Application {
                 }
             }
             if (inFile != null) {
-                BaseController controller = FxmlStage.openTarget(getClass(), stage, inFile, false);
+                BaseController controller = FxmlStage.openTarget(stage, inFile, false);
                 if (controller == null) {
-                    FxmlStage.openMyBox(getClass(), stage);
+                    FxmlStage.openMyBox(stage);
                 }
             } else {
-                FxmlStage.openMyBox(getClass(), stage);
+                FxmlStage.openMyBox(stage);
             }
 
             //            logger.debug(Screen.getPrimary().getDpi());

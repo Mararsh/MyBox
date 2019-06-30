@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.LinksController">
+    <children>
+        <GridPane alignment="CENTER_LEFT" hgap="10.0" vgap="10.0">
+            <columnConstraints>
+                <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="150.0" />
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <VBox.margin>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </VBox.margin>
+            <children>
+                <Label text="%ICCWebsite" />
+                <Label text="%ICCProfileTags" GridPane.rowIndex="1" />
+                <Label text="%ColorCalculator" GridPane.rowIndex="7" />
+                <Label text="%IccProfilesAdobe" GridPane.rowIndex="3" />
+                <Hyperlink onAction="#link" text="http://www.color.org" underline="true" GridPane.columnIndex="1" />
+                <Label text="%StandardsRGB" GridPane.rowIndex="5" />
+                <Hyperlink onAction="#link" text="https://sno.phy.queensu.ca/~phil/exiftool/TagNames/ICC_Profile.html" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="%RGBXYZMatrices" GridPane.rowIndex="6" />
+                <Hyperlink onAction="#link" text="http://www.easyrgb.com/en/math.php" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Hyperlink onAction="#link" text="https://supportdownloads.adobe.com/detail.jsp?ftpID=3680" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Hyperlink onAction="#link" text="https://www.w3.org/Graphics/Color/sRGB.html" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Hyperlink onAction="#link" text="http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Hyperlink layoutX="194.0" layoutY="225.0" onAction="#link" text="https://www.rit.edu/science/pocs/useful-data" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                <Label layoutX="10.0" layoutY="229.0" text="%ColorData" GridPane.rowIndex="10" />
+                <Hyperlink layoutX="194.0" layoutY="269.0" onAction="#link" text="https://www.codeproject.com/Articles/1202772/Color-Topics-for-Programmers" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                <Label layoutX="10.0" layoutY="273.0" text="%ColorTopics" GridPane.rowIndex="12" />
+                <Label text="%ColorSpace" GridPane.rowIndex="4" />
+                <Hyperlink onAction="#link" text="http://brucelindbloom.com/index.html?WorkingSpaceInfo.html#Specifications" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Hyperlink onAction="#link" text="http://brucelindbloom.com/index.html?ColorCalculator.html" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Hyperlink onAction="#link" text="https://www.w3.org/TR/css-color-4/#lab-to-rgb" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                <Label text="%ChromaticAdaptation" GridPane.rowIndex="14" />
+                <Hyperlink onAction="#link" text="http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                <Label text="%ChromaticityDiagram" GridPane.rowIndex="15" />
+                <Hyperlink onAction="#link" text="http://demonstrations.wolfram.com/CIEChromaticityDiagram/" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                <Hyperlink layoutX="194.0" layoutY="404.0" onAction="#link" text="http://www.thefullwiki.org/Standard_illuminant" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                <Hyperlink layoutX="194.0" layoutY="314.0" onAction="#link" text="http://davengrace.com/cgi-bin/cspace.pl" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <Label layoutX="10.0" layoutY="130.0" text="%IccProfilesECI" GridPane.rowIndex="2" />
+            <Hyperlink layoutX="188.0" layoutY="126.0" onAction="#link" text="http://www.eci.org/en/downloads" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            </children>
+        </GridPane>
+    </children>
+</VBox>

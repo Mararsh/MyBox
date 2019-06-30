@@ -1,5 +1,7 @@
 package mara.mybox.fxml;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -11,7 +13,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -24,7 +25,7 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.PopupWindow;
@@ -32,11 +33,11 @@ import javafx.stage.Screen;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.tools.SoundTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
 import static mara.mybox.value.CommonValues.AppDataRoot;
 import javafx.stage.Stage;
+import static mara.mybox.value.AppVaribles.env;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -48,6 +49,8 @@ import static mara.mybox.value.AppVaribles.logger;
 public class FxmlControl {
 
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
+    public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
+    public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public static void miao3() {
         playSound("/sound/miao3.mp3", "miao3.mp3");
@@ -57,13 +60,48 @@ public class FxmlControl {
         playSound("/sound/miao8.mp3", "miao8.mp3");
     }
 
+    public static Node findNode(Pane pane, String nodeId) {
+        try {
+            Node node = pane.lookup("#" + nodeId);
+            return node;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean setStyle(Pane pane, String nodeId, String style) {
+        try {
+            Node node = pane.lookup("#" + nodeId);
+            return setStyle(node, style);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean setStyle(Node node, String style) {
+        try {
+            if (node == null) {
+                return false;
+            }
+            if (node instanceof ComboBox) {
+                ComboBox c = (ComboBox) node;
+                c.getEditor().setStyle(style);
+            } else {
+                node.setStyle(style);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static void playSound(final String file, final String userFile) {
 
         Task miaoTask = new Task<Void>() {
             @Override
             protected Void call() {
                 try {
-                    File miao = FxmlControl.getUserFile(getClass(), file, userFile);
+                    File miao = FxmlControl.getUserFile(file, userFile);
                     FloatControl control = SoundTools.getControl(miao);
                     Clip player = SoundTools.playback(miao, control.getMaximum() * 0.6f);
                     player.start();
@@ -129,46 +167,14 @@ public class FxmlControl {
         return false;
     }
 
-    // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay
-    public static void quickTooltip(final Node node, final Tooltip tooltip) {
-        node.setOnMouseMoved(null);
+    public static void setTooltip(final Node node, final Tooltip tooltip) {
         tooltip.setFont(new Font(AppVaribles.sceneFontSize));
-        node.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
-            }
-        });
-        node.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                tooltip.hide();
-            }
-        });
+//        tooltip.setAutoHide(true);
+        Tooltip.install(node, tooltip);
     }
 
-    public static void setComments(final Node node, final Tooltip tooltip) {
-        node.setOnMouseMoved(null);
-        tooltip.setFont(new Font(AppVaribles.sceneFontSize));
-        node.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (AppVaribles.showComments) {
-                    tooltip.show(node, event.getScreenX(), event.getScreenY() + 15);
-                }
-            }
-        });
-        node.setOnMouseExited(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                tooltip.hide();
-            }
-        });
-    }
-
-    public static void removeTooltip(final Node node) {
-        node.setOnMouseMoved(null);
-        node.setOnMouseExited(null);
+    public static void removeTooltip(final Node node, final Tooltip tooltip) {
+        Tooltip.uninstall(node, tooltip);
     }
 
     public static String getFxmlPath(String fullPath) {
@@ -186,7 +192,8 @@ public class FxmlControl {
         try {
             return Integer.parseInt(input.getText());
         } catch (Exception e) {
-            return CommonValues.InvalidValue;
+            throw new IllegalArgumentException(
+                    "InvalidData");
         }
     }
 
@@ -305,14 +312,14 @@ public class FxmlControl {
         });
     }
 
-    public static File getUserFile(Class someClass, String resourceFile, String userFile) {
-        return getUserFile(someClass, resourceFile, userFile, false);
+    public static File getUserFile(String resourceFile, String userFile) {
+        return getUserFile(resourceFile, userFile, false);
     }
 
     // Solution from https://stackoverflow.com/questions/941754/how-to-get-a-path-to-a-resource-in-a-java-jar-file
-    public static File getUserFile(Class someClass, String resourceFile, String userFile,
+    public static File getUserFile(String resourceFile, String userFile,
             boolean deleteExisted) {
-        if (someClass == null || resourceFile == null || userFile == null) {
+        if (resourceFile == null || userFile == null) {
             return null;
         }
         File file = new File(AppDataRoot + "/" + userFile);
@@ -323,10 +330,11 @@ public class FxmlControl {
                 return file;
             }
         }
-        URL url = someClass.getResource(resourceFile);
+
+        URL url = env.getResource(resourceFile);
         if (url.toString().startsWith("jar:")) {
             try {
-                try (InputStream input = someClass.getResourceAsStream(resourceFile);
+                try (InputStream input = env.getResourceAsStream(resourceFile);
                         OutputStream out = new FileOutputStream(file)) {
                     int read;
                     byte[] bytes = new byte[1024];
@@ -339,21 +347,21 @@ public class FxmlControl {
             }
         } else {
             //this will probably work in your IDE, but not from a JAR
-            file = new File(someClass.getResource(resourceFile).getFile());
+            file = new File(env.getResource(resourceFile).getFile());
         }
         return file;
     }
 
-    public static File getResourceFile(Class someClass, String resourceFile) {
-        if (someClass == null || resourceFile == null) {
+    public static File getResourceFile(String resourceFile) {
+        if (resourceFile == null) {
             return null;
         }
 
         File file = null;
-        URL url = someClass.getResource(resourceFile);
+        URL url = env.getResource(resourceFile);
         if (url.toString().startsWith("jar:")) {
             try {
-                InputStream input = someClass.getResourceAsStream(resourceFile);
+                InputStream input = env.getResourceAsStream(resourceFile);
                 file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
                 OutputStream out = new FileOutputStream(file);
                 int read;
@@ -367,7 +375,7 @@ public class FxmlControl {
             }
         } else {
             //this will probably work in your IDE, but not from a JAR
-            file = new File(someClass.getResource(resourceFile).getFile());
+            file = new File(env.getResource(resourceFile).getFile());
         }
         return file;
     }
@@ -386,6 +394,10 @@ public class FxmlControl {
         setEditorStyle(box, badStyle);
     }
 
+    public static void setEditorWarnStyle(final ComboBox box) {
+        setEditorStyle(box, warnStyle);
+    }
+
     public static void setEditorNormal(final ComboBox box) {
         setEditorStyle(box, null);
     }
@@ -396,8 +408,11 @@ public class FxmlControl {
                 return;
             }
             double xOffset = pNnode.getWidth() - node.getBoundsInLocal().getWidth();
+
             if (xOffset > 0) {
+//                logger.debug(pNnode.getWidth() + " " + node.getBoundsInLocal().getWidth());
                 node.setLayoutX(pNnode.getLayoutX() + xOffset / 2);
+//                logger.debug(pNnode.getLayoutX() + " " + xOffset / 2 + " " + node.getLayoutX());
             } else {
                 node.setLayoutX(0);
             }

@@ -21,13 +21,12 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.fxml.ImageManufacture;
-import mara.mybox.image.ImageConvert;
-import mara.mybox.data.ImageAttributes;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import static mara.mybox.value.AppVaribles.logger;
-
+import mara.mybox.fxml.FxmlImageManufacture;
 import org.w3c.dom.Node;
 
 /**
@@ -38,8 +37,6 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class ImageTiffFile {
-
-    
 
     public static String[] getTiffCompressionTypes() {
         return new TIFFImageWriteParam(null).getCompressionTypes();
@@ -149,11 +146,11 @@ public class ImageTiffFile {
                     y = getRationalValue(metaData.get("YResolution"));
                 }
                 if (BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER == unit) {
-                    info.setwDensity(ImageValue.dpcm2dpi(x));
-                    info.sethDensity(ImageValue.dpcm2dpi(y));
+                    info.setXDpi(ImageValue.dpcm2dpi(x));
+                    info.setYDpi(ImageValue.dpcm2dpi(y));
                 } else {
-                    info.setwDensity(x);
-                    info.sethDensity(y);
+                    info.setXDpi(x);
+                    info.setYDpi(y);
                 }
             }
         } catch (Exception e) {
@@ -429,7 +426,7 @@ public class ImageTiffFile {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
+                    wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                 }
                 for (int i = 0; i < rows.size() - 1; i++) {
                     y1 = rows.get(i);
@@ -439,7 +436,7 @@ public class ImageTiffFile {
                         x2 = cols.get(j + 1);
                         BufferedImage bufferedImage;
                         if (!imageInformation.isIsSampled()) {
-                            bufferedImage = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
+                            bufferedImage = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         } else {
                             bufferedImage = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         }

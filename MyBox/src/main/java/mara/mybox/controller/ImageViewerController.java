@@ -55,13 +55,13 @@ import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.controller.base.ImageMaskBaseController;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.data.ImageFileInformation;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.IntStatisticColorCell;
@@ -188,18 +188,18 @@ public class ImageViewerController extends ImageMaskBaseController {
         }
 
         if (manufactureButton != null) {
-            FxmlControl.quickTooltip(manufactureButton, new Tooltip(getMessage("Manufacture")));
+            FxmlControl.setTooltip(manufactureButton, new Tooltip(getMessage("Manufacture")));
         }
         if (splitButton != null) {
-            FxmlControl.quickTooltip(splitButton, new Tooltip(getMessage("Split")));
+            FxmlControl.setTooltip(splitButton, new Tooltip(getMessage("Split")));
         }
 
         if (sampleButton != null) {
-            FxmlControl.quickTooltip(sampleButton, new Tooltip(getMessage("Sample")));
+            FxmlControl.setTooltip(sampleButton, new Tooltip(getMessage("Sample")));
         }
 
         if (browseButton != null) {
-            FxmlControl.quickTooltip(browseButton, new Tooltip(getMessage("Browse")));
+            FxmlControl.setTooltip(browseButton, new Tooltip(getMessage("Browse")));
         }
 
         if (selectCheck != null) {
@@ -213,7 +213,7 @@ public class ImageViewerController extends ImageMaskBaseController {
             selectCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageSelectKey, false));
             checkSelect();
             Tooltip tips = new Tooltip("CTRL+t");
-            FxmlControl.quickTooltip(selectCheck, tips);
+            FxmlControl.setTooltip(selectCheck, tips);
         }
 
         if (deleteConfirmCheck != null) {
@@ -263,6 +263,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     protected void checkCoordinate() {
         AppVaribles.setUserConfigValue(ImagePopCooridnateKey, coordinateCheck.isSelected());
         xyText.setVisible(coordinateCheck.isSelected());
+        xyLabel.setVisible(coordinateCheck.isSelected());
     }
 
     protected void checkSelect() {
@@ -325,7 +326,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                 loadWidthBox.getSelectionModel().select(v + "");
             }
             isSettingValues = false;
-            FxmlControl.quickTooltip(loadWidthBox, new Tooltip(AppVaribles.getMessage("ImageLoadWidthCommnets")));
+            FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVaribles.getMessage("ImageLoadWidthCommnets")));
         }
 
     }
@@ -819,7 +820,6 @@ public class ImageViewerController extends ImageMaskBaseController {
         if (file == null) {
             return;
         }
-        super.sourceFileChanged(file);
         careFrames = true;
         loadImage(file, loadWidth);
     }
@@ -890,7 +890,7 @@ public class ImageViewerController extends ImageMaskBaseController {
             if (imageInformation != null && imageInformation.isIsSampled()) {
                 if (sampledTips != null) {
                     sampledTips.setVisible(true);
-                    FxmlControl.quickTooltip(sampledTips, new Tooltip(getSmapledInfo()));
+                    FxmlControl.setTooltip(sampledTips, new Tooltip(getSmapledInfo()));
                 }
                 loadWidth = (int) image.getWidth();
                 loadSampledImage();
@@ -961,7 +961,7 @@ public class ImageViewerController extends ImageMaskBaseController {
         helpLink.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                showHelp(event);
+                developerGuide(event);
             }
         });
         box.getChildren().add(label);
@@ -1016,17 +1016,17 @@ public class ImageViewerController extends ImageMaskBaseController {
     }
 
     @Override
-    public void loadMultipleFramesImage() {
-        String format = FileTools.getFileSuffix(sourceFile.getAbsolutePath()).toLowerCase();
+    public void loadMultipleFramesImage(File file) {
+        String format = FileTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
         if (format.contains("gif")) {
             final ImageGifViewerController controller
                     = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-            controller.loadImage(sourceFile.getAbsolutePath());
+            controller.loadImage(file.getAbsolutePath());
 
         } else {
             final ImageFramesViewerController controller
                     = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-            controller.selectSourceFile(sourceFile);
+            controller.selectSourceFile(file);
         }
 
     }
@@ -1137,7 +1137,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     @FXML
     public void browseAction() {
         try {
-            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), null);
+            final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
             if (controller != null && sourceFile != null) {
                 controller.loadImages(sourceFile.getParentFile(), 9);
             }
@@ -1149,7 +1149,7 @@ public class ImageViewerController extends ImageMaskBaseController {
     @FXML
     public void viewImageAction() {
         try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
             if (controller != null && sourceFile != null) {
                 controller.loadImage(sourceFile);
             }
@@ -1238,7 +1238,7 @@ public class ImageViewerController extends ImageMaskBaseController {
 
             @Override
             protected Void call() throws Exception {
-                newImage = ImageManufacture.rotateImage(imageView.getImage(), rotateAngle);
+                newImage = FxmlImageManufacture.rotateImage(imageView.getImage(), rotateAngle);
 
                 return null;
             }
@@ -1354,16 +1354,16 @@ public class ImageViewerController extends ImageMaskBaseController {
                     && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
                 return null;
             }
-            return ImageManufacture.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
+            return FxmlImageManufacture.cropOutsideFx(inImage, maskRectangleData, Color.WHITE);
 
         } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            return ImageManufacture.cropOutsideFx(inImage, maskCircleData, Color.WHITE);
+            return FxmlImageManufacture.cropOutsideFx(inImage, maskCircleData, Color.WHITE);
 
         } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            return ImageManufacture.cropOutsideFx(inImage, maskEllipseData, Color.WHITE);
+            return FxmlImageManufacture.cropOutsideFx(inImage, maskEllipseData, Color.WHITE);
 
         } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            return ImageManufacture.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
+            return FxmlImageManufacture.cropOutsideFx(inImage, maskPolygonData, Color.WHITE);
 
         } else {
             return null;
@@ -1408,7 +1408,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                     areaImage = imageView.getImage();
                 }
                 if (AppVaribles.getUserConfigBoolean("RemoveAlphaCopy", true)) {
-                    areaImage = ImageManufacture.clearAlpha(areaImage);
+                    areaImage = FxmlImageManufacture.clearAlpha(areaImage);
                 }
                 ok = true;
                 return null;
@@ -1468,7 +1468,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                 @Override
                 protected Void call() throws Exception {
                     String format = FileTools.getFileSuffix(sourceFile.getName());
-                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(imageView.getImage());
+                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(imageView.getImage());
                     if (bufferedImage == null || task == null || task.isCancelled()) {
                         return null;
                     }
@@ -1522,6 +1522,9 @@ public class ImageViewerController extends ImageMaskBaseController {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
+            if (sourceFile != null) {
+                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            }
             fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -1540,7 +1543,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                     }
 
                     String format = FileTools.getFileSuffix(file.getName());
-                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(selected);
+                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(selected);
                     if (task == null || task.isCancelled()) {
                         return null;
                     }
@@ -1727,7 +1730,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                 }
             } else {
                 final ImageManufactureController controller
-                        = (ImageManufactureController) FxmlStage.openScene(getClass(), null,
+                        = (ImageManufactureController) FxmlStage.openScene(null,
                                 CommonValues.ImageManufactureFileFxml);
                 controller.loadImage(sourceFile, image, imageInformation);
                 controller.loadData(imageData);

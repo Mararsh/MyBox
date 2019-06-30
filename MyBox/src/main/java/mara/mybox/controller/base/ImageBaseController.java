@@ -1,6 +1,5 @@
 package mara.mybox.controller.base;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
@@ -24,14 +23,14 @@ import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.data.ImageFileInformation;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -75,6 +74,8 @@ public abstract class ImageBaseController extends BaseController {
 
         targetPathKey = "ImageTargetPath";
         sourcePathKey = "ImageSourcePath";
+
+        SaveAsOptionsKey = "ImageSaveAsKey";
 
         fileExtensionFilter = CommonValues.ImageExtensionFilter;
         careFrames = true;
@@ -167,40 +168,30 @@ public abstract class ImageBaseController extends BaseController {
     }
 
     public void loadImage(final File file, final boolean onlyInformation,
-            final int inLoadWidth, final int inFrameIndex, boolean inCareFrames) {
-        sourceFile = file;
-        imageInformation = null;
-        image = null;
-        imageData = null;
-        loadWidth = inLoadWidth;
-        frameIndex = inFrameIndex;
-        careFrames = inCareFrames;
+            final int inLoadWidth, final int inFrameIndex, final boolean inCareFrames) {
+
         final String fileName = file.getPath();
-        getMyStage().setTitle(getBaseTitle() + " " + fileName);
         loadTask = new Task<Void>() {
             private boolean ok, multiplied;
+            private ImageInformation imageInfo;
 
             @Override
             public Void call() {
-                ImageFileInformation imageFileInformation
+
+                final ImageFileInformation imageFileInformation
                         = ImageInformation.loadImageFileInformation(file);
                 if (imageFileInformation == null
                         || imageFileInformation.getImagesInformation() == null
                         || imageFileInformation.getImagesInformation().isEmpty()) {
                     return null;
                 }
-                imageInformation = imageFileInformation.getImageInformation();
-                if (loadTask == null || loadTask.isCancelled()) {
+
+                String format = FileTools.getFileSuffix(fileName).toLowerCase();
+                if (loadTask == null || loadTask.isCancelled() || "raw".equals(format)) {
                     return null;
                 }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        afterInfoLoaded();
-                    }
-                });
-                String format = FileTools.getFileSuffix(fileName).toLowerCase();
-                if (!"raw".equals(format) && !onlyInformation) {
+
+                if (!onlyInformation) {
                     if (imageFileInformation.getImagesInformation().size() > 1
                             && careFrames) {
                         multiplied = true;
@@ -214,14 +205,16 @@ public abstract class ImageBaseController extends BaseController {
                                 if (loadTask == null || !loadTask.isRunning() || loadingController == null) {
                                     return;
                                 }
+                                imageInfo = imageFileInformation.getImageInformation();
                                 loadingController.setInfo(MessageFormat.format(AppVaribles.getMessage("ImageLargeSampling"),
-                                        imageInformation.getWidth() + "x" + imageInformation.getHeight()));
+                                        imageInfo.getWidth() + "x" + imageInfo.getHeight()));
                             }
                         });
                     }
-                    imageInformation = ImageInformation.loadImageInformation(file,
-                            loadWidth, frameIndex, imageFileInformation, needSampled);
-                    image = imageInformation.getImage();
+
+                    imageInfo = ImageInformation.loadImage(file,
+                            inLoadWidth, inFrameIndex, imageFileInformation, needSampled);
+
                 }
 
                 ok = true;
@@ -231,16 +224,26 @@ public abstract class ImageBaseController extends BaseController {
             @Override
             public void succeeded() {
                 super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ok) {
+                            sourceFile = file;
+                            imageInformation = imageInfo;
+                            image = imageInformation.getImage();;
+                            imageData = null;
+                            loadWidth = inLoadWidth;
+                            frameIndex = inFrameIndex;
+                            careFrames = inCareFrames;
+                            getMyStage().setTitle(getBaseTitle() + " " + fileName);
+                            afterInfoLoaded();
                             afterImageLoaded();
+                        } else if (multiplied) {
+                            loadMultipleFramesImage(file);
                         }
-                    });
-                } else if (multiplied) {
-                    loadMultipleFramesImage();
-                }
+                    }
+                });
             }
 
             @Override
@@ -314,7 +317,7 @@ public abstract class ImageBaseController extends BaseController {
         sourceFile = null;
         imageInformation = null;
         imageData = null;
-        image = ImageManufacture.scaleImage(inImage, maxWidth);
+        image = FxmlImageManufacture.scaleImage(inImage, maxWidth);
         loadWidth = maxWidth;
         afterImageLoaded();
         setImageChanged(true);
@@ -331,7 +334,7 @@ public abstract class ImageBaseController extends BaseController {
     public void afterImageLoaded() {
     }
 
-    public void loadMultipleFramesImage() {
+    public void loadMultipleFramesImage(File file) {
 
     }
 
@@ -340,12 +343,12 @@ public abstract class ImageBaseController extends BaseController {
     }
 
     public void openImageManufacture(String filename) {
-        FxmlStage.openImageManufacture(getClass(), null, new File(filename));
+        FxmlStage.openImageManufacture(null, new File(filename));
     }
 
     public void openImageViewer(Image image) {
         try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
             if (controller != null) {
                 controller.loadImage(image);
             }
@@ -356,7 +359,7 @@ public abstract class ImageBaseController extends BaseController {
 
     public void openImageViewer(ImageInformation info) {
         try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(getClass(), null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
             if (controller != null) {
                 controller.loadImage(info);
             }
@@ -366,35 +369,35 @@ public abstract class ImageBaseController extends BaseController {
     }
 
     public void openImageViewer(String file) {
-        FxmlStage.openImageViewer(getClass(), null, new File(file));
+        FxmlStage.openImageViewer(null, new File(file));
     }
 
     public void showImageInformation(ImageInformation info) {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageInformation(getClass(), null, info);
+        FxmlStage.openImageInformation(null, info);
     }
 
     public void showImageMetaData(ImageInformation info) {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageMetaData(getClass(), null, info);
+        FxmlStage.openImageMetaData(null, info);
     }
 
     public void showImageStatistic(ImageInformation info) {
         if (info == null) {
             return;
         }
-        FxmlStage.openImageStatistic(getClass(), null, info);
+        FxmlStage.openImageStatistic(null, info);
     }
 
     public void showImageStatistic(Image image) {
         if (image == null) {
             return;
         }
-        FxmlStage.openImageStatistic(getClass(), null, image);
+        FxmlStage.openImageStatistic(null, image);
     }
 
     public void multipleFilesGenerated(final List<String> fileNames) {
@@ -426,15 +429,15 @@ public abstract class ImageBaseController extends BaseController {
             alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonOpen) {
-               browseURI(new File(path).toURI());
+                browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), getMyStage());
+                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getMyStage());
                 if (controller != null && sourceFile != null) {
                     controller.loadFiles(fileNames);
                 }
             } else if (result.get() == buttonBrowseNew) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getClass(), null);
+                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
                 if (controller != null && sourceFile != null) {
                     controller.loadFiles(fileNames);
                 }

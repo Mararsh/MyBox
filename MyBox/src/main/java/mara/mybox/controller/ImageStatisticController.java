@@ -22,15 +22,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
@@ -125,12 +122,6 @@ public class ImageStatisticController extends ImageViewerController {
     }
 
     private void initColorTab() {
-
-        Tooltip tips = new Tooltip(getMessage("QuantizationComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.setComments(colorBar, tips);
-
-        FxmlControl.setComments(ditheringCheck, new Tooltip(getMessage("DitherComments")));
 
         colorTable.setItems(colorList);
         colorValueColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));

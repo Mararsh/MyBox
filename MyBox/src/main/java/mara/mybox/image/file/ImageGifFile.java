@@ -18,15 +18,15 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import static mara.mybox.image.file.ImageFileReaders.needSampled;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.tools.ValueTools;
 
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
@@ -132,6 +132,44 @@ public class ImageGifFile {
         return image;
     }
 
+    public static BufferedImage readBrokenGifFile(String src, int index, int xscale, int yscale) {
+        BufferedImage image = null;
+        try {
+            try (FileInputStream in = new FileInputStream(src)) {
+                final GifImage gif = GifDecoder.read(in);
+//                logger.error(gif.getFrameCount());
+                image = gif.getFrame(index);
+                int width = (int) (image.getWidth() / xscale);
+                int height = (int) (image.getHeight() / yscale);
+                image = ImageManufacture.scaleImage(image, width, height);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return image;
+    }
+
+    public static List<BufferedImage> readBrokenGifFile(String src, int xscale, int yscale) {
+        try {
+//            logger.debug("readBrokenGifFile");
+            List<BufferedImage> images = new ArrayList<>();
+            try (FileInputStream in = new FileInputStream(src)) {
+                final GifImage gif = GifDecoder.read(in);
+                final int frameCount = gif.getFrameCount();
+                for (int i = 0; i < frameCount; i++) {
+                    final BufferedImage img = gif.getFrame(i);
+                    int width = (int) (img.getWidth() / xscale);
+                    int height = (int) (img.getHeight() / yscale);
+                    images.add(ImageManufacture.scaleImage(img, width, height));
+                }
+            }
+            return images;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static List<BufferedImage> readBrokenGifFileWithWidth(String src, int width) {
         try {
 //            logger.debug("readBrokenGifFile");
@@ -141,7 +179,7 @@ public class ImageGifFile {
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; i++) {
                     final BufferedImage img = gif.getFrame(i);
-                    images.add(ImageConvert.scaleImageWidthKeep(img, width));
+                    images.add(ImageManufacture.scaleImageWidthKeep(img, width));
                 }
             }
             return images;
@@ -164,7 +202,7 @@ public class ImageGifFile {
                     final BufferedImage img = gif.getFrame(i);
                     if (needSampled) {
                         Map<String, Long> sizes = info.getSizes();
-                        images.add(ImageConvert.scaleImageWidthKeep(img, sizes.get("sampledWidth").intValue()));
+                        images.add(ImageManufacture.scaleImageWidthKeep(img, sizes.get("sampledWidth").intValue()));
                         info.setIsSampled(true);
                     } else {
                         images.add(img);
@@ -189,7 +227,7 @@ public class ImageGifFile {
                 bufferedImage = gif.getFrame(0);
                 if (needSampled) {
                     Map<String, Long> sizes = imageInfo.getSizes();
-                    bufferedImage = ImageConvert.scaleImageWidthKeep(bufferedImage, sizes.get("sampledWidth").intValue());
+                    bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, sizes.get("sampledWidth").intValue());
                     imageInfo.setIsSampled(true);
                 } else {
                     imageInfo.setIsSampled(false);
@@ -226,7 +264,7 @@ public class ImageGifFile {
             int digit = (size + "").length();
             List<String> names = new ArrayList<>();
             for (int i = from; i <= to; i++) {
-                filename = filePrefix + "-" + ValueTools.fillLeftZero(i, digit) + "." + format;
+                filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
                 ImageFileWriters.writeImageFile(images.get(i), format, filename);
                 names.add(filename);
             }
@@ -391,7 +429,7 @@ public class ImageGifFile {
                     BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
                     if (bufferedImage != null) {
                         if (!keepSize) {
-                            bufferedImage = ImageConvert.scaleImage(bufferedImage, width, height);
+                            bufferedImage = ImageManufacture.scaleImage(bufferedImage, width, height);
                         }
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }

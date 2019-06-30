@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>

@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
@@ -16,11 +17,11 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
@@ -67,8 +68,8 @@ public class ImageFramesViewerController extends ImageSourcesController {
     public void checkTableSelected() {
         int selected = tableView.getSelectionModel().getSelectedIndex();
         boolean none = (selected < 0);
-        infoButton.setDisable(none);
-        metaButton.setDisable(none);
+//        infoButton.setDisable(none);
+//        metaButton.setDisable(none);
         viewButton.setDisable(none);
         extractButton.setDisable(none);
         if (none) {
@@ -79,29 +80,14 @@ public class ImageFramesViewerController extends ImageSourcesController {
     }
 
     @Override
-    public void selectSourceFile(File file) {
-        try {
-            tableData.clear();
+    public void selectSourceFile(final File file) {
+        tableData.clear();
+        sourceFile = file;
+        getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
+        sourcesBox.setDisable(false);
+        editButton.setDisable(false);
+        recordFileOpened(file);
 
-            sourceFile = file;
-            getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
-            sourcesBox.setDisable(false);
-            editButton.setDisable(false);
-            recordFileOpened(file);
-
-            List<File> files = new ArrayList<>();
-            files.add(file);
-            showFiles(0, files);
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
-    protected void showFiles(final int index, final List<File> files) {
-        if (files == null || files.isEmpty()) {
-            return;
-        }
         task = new Task<Void>() {
             private List<ImageInformation> infos;
             private String ret;
@@ -113,33 +99,29 @@ public class ImageFramesViewerController extends ImageSourcesController {
                 infos = new ArrayList<>();
                 ret = "";
                 hasSampled = false;
-                for (File file : files) {
+                final String fileName = file.getPath();
+                ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
+                imageInformation = finfo.getImageInformation();
+                String format = finfo.getImageFormat();
+                if ("raw".equals(format)) {
+                    return null;
+                }
+                List<BufferedImage> bufferImages = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
+                if (bufferImages == null || bufferImages.isEmpty()) {
+                    ret = "FailedReadFile";
+                    return null;
+                }
+                for (int i = 0; i < bufferImages.size(); i++) {
                     if (task == null || task.isCancelled()) {
                         return null;
                     }
-                    final String fileName = file.getPath();
-                    ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
-                    String format = finfo.getImageFormat();
-                    if ("raw".equals(format)) {
-                        continue;
+                    ImageInformation minfo = finfo.getImagesInformation().get(i);
+                    if (minfo.isIsSampled()) {
+                        hasSampled = true;
                     }
-                    List<BufferedImage> bufferImages = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
-                    if (bufferImages == null || bufferImages.isEmpty()) {
-                        ret = "FailedReadFile";
-                        break;
-                    }
-                    for (int i = 0; i < bufferImages.size(); i++) {
-                        if (task == null || task.isCancelled()) {
-                            return null;
-                        }
-                        ImageInformation minfo = finfo.getImagesInformation().get(i);
-                        if (minfo.isIsSampled()) {
-                            hasSampled = true;
-                        }
-                        image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
-                        minfo.setImage(image);
-                        infos.add(minfo);
-                    }
+                    Image image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
+                    minfo.setImage(image);
+                    infos.add(minfo);
                 }
 
                 ok = true;
@@ -159,11 +141,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
                                     bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
                                 }
                                 isSettingValues = true;
-                                if (index < 0 || index >= tableData.size()) {
-                                    tableData.addAll(infos);
-                                } else {
-                                    tableData.addAll(index, infos);
-                                }
+                                tableData.addAll(infos);
                                 tableView.refresh();
                                 isSettingValues = false;
                                 setImageChanged(true);
@@ -180,6 +158,18 @@ public class ImageFramesViewerController extends ImageSourcesController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    @Override
+    public void infoAction() {
+        showImageInformation(imageInformation);
+    }
+
+    @FXML
+    @Override
+    public void popMetaData() {
+        showImageMetaData(imageInformation);
     }
 
     @FXML
@@ -257,7 +247,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
                         if (task == null || task.isCancelled()) {
                             return null;
                         }
-                        filename = filePrefix + "-" + ValueTools.fillLeftZero(i, digit) + "." + format;
+                        filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
                         BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
                         if (bufferedImage == null) {
                             continue;

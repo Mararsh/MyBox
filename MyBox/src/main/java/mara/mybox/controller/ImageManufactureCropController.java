@@ -19,7 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageScope.ScopeType;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
@@ -112,7 +112,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 }
             });
 
-            FxmlControl.quickTooltip(cutOutsideButton, new Tooltip(getMessage("OK") + "\nENTER"));
+            FxmlControl.setTooltip(cutOutsideButton, new Tooltip(getMessage("OK") + "\nENTER"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -201,19 +201,19 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
                 switch (cropType) {
                     case Rectangle:
-                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropInsideFx(imageView.getImage(),
                                 maskRectangleData, colorPicker.getValue());
                         break;
                     case Circle:
-                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropInsideFx(imageView.getImage(),
                                 maskCircleData, colorPicker.getValue());
                         break;
                     case Ellipse:
-                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropInsideFx(imageView.getImage(),
                                 maskEllipseData, colorPicker.getValue());
                         break;
                     case Polygon:
-                        newImage = ImageManufacture.cropInsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropInsideFx(imageView.getImage(),
                                 maskPolygonData, colorPicker.getValue());
                         break;
                     default:
@@ -269,19 +269,19 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
                 switch (cropType) {
                     case Rectangle:
-                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropOutsideFx(imageView.getImage(),
                                 maskRectangleData, colorPicker.getValue());
                         break;
                     case Circle:
-                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropOutsideFx(imageView.getImage(),
                                 maskCircleData, colorPicker.getValue());
                         break;
                     case Ellipse:
-                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropOutsideFx(imageView.getImage(),
                                 maskEllipseData, colorPicker.getValue());
                         break;
                     case Polygon:
-                        newImage = ImageManufacture.cropOutsideFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cropOutsideFx(imageView.getImage(),
                                 maskPolygonData, colorPicker.getValue());
                         break;
                     default:

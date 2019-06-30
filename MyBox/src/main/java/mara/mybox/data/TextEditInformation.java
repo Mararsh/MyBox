@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.countNumber;
-import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -627,7 +627,7 @@ public class TextEditInformation extends FileEditInformation {
                     for (int i = 0; i < lines.length - 1; i++) {
                         if (isMatchFilters(lines[i])) {
                             if (recordLineNumbers) {
-                                String lineNumber = ValueTools.fillRightBlank(lineStart + i, 15);
+                                String lineNumber = StringTools.fillRightBlank(lineStart + i, 15);
                                 writer.write(lineNumber + "    " + lines[i] + lineBreakValue);
                             } else {
                                 writer.write(lines[i] + lineBreakValue);
@@ -637,7 +637,7 @@ public class TextEditInformation extends FileEditInformation {
                     if (bufStr.endsWith(lineBreakValue)) {
                         if (isMatchFilters(lines[lines.length - 1])) {
                             if (recordLineNumbers) {
-                                String lineNumber = ValueTools.fillRightBlank(lineStart + lines.length - 1, 15);
+                                String lineNumber = StringTools.fillRightBlank(lineStart + lines.length - 1, 15);
                                 writer.write(lineNumber + "    " + lines[lines.length - 1] + lineBreakValue);
                             } else {
                                 writer.write(lines[lines.length - 1] + lineBreakValue);
@@ -652,7 +652,7 @@ public class TextEditInformation extends FileEditInformation {
                 if (!crossString.isEmpty()) {
                     if (isMatchFilters(crossString)) {
                         if (recordLineNumbers) {
-                            String lineNumber = ValueTools.fillRightBlank(lineEnd, 15);
+                            String lineNumber = StringTools.fillRightBlank(lineEnd, 15);
                             writer.write(lineNumber + "    " + crossString);
                         } else {
                             writer.write(crossString);

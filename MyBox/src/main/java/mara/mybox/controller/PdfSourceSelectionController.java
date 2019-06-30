@@ -7,16 +7,18 @@ package mara.mybox.controller;
 
 import mara.mybox.fxml.FxmlStage;
 import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Modality;
-import mara.mybox.controller.PdfInformationController;
+
 import mara.mybox.controller.base.PdfBatchBaseController;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
@@ -25,6 +27,8 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
 /**
  * FXML Controller class
@@ -37,17 +41,15 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
 
     @FXML
     public TextField fromPageInput, toPageInput;
-    @FXML
-    public PasswordField passwordInput;
 
     public PdfSourceSelectionController() {
+        fileExtensionFilter = CommonValues.PdfExtensionFilter;
 
     }
 
     @Override
     public void initializeNext() {
         try {
-            fileExtensionFilter = CommonValues.PdfExtensionFilter;
 
             sourceFileInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -61,14 +63,8 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
                         sourceFileInput.setStyle(badStyle);
                         return;
                     }
-                    sourceFileInput.setStyle(null);
-                    parentController.sourceFile = file;
-                    if (file.isDirectory()) {
-                        AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getPath());
-                    } else {
-                        AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getParent());
-                    }
-                    loadPdfInformation();
+
+                    loadPdfInformation(file, null);
                 }
             });
             if (fromPageInput != null) {
@@ -115,36 +111,67 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
         if (pdfInformation == null) {
             return;
         }
-        FxmlStage.openPdfViewer(getClass(), null, pdfInformation.getFile());
+        FxmlStage.openPdfViewer( null, pdfInformation.getFile());
     }
 
-    public void loadPdfInformation() {
-        if (sourceFile == null) {
+    public void loadPdfInformation(final File file, final String inPassword) {
+        if (file == null) {
             return;
         }
         toPageInput.setText("");
         infoButton.setDisable(true);
 
-        pdfInformation = new PdfInformation(sourceFile);
+        pdfInformation = new PdfInformation(file);
+        sourceFileInput.setStyle(badStyle);
         task = new Task<Void>() {
+            private boolean ok, pop;
+
             @Override
             public Void call() throws Exception {
-                pdfInformation.readInformation(passwordInput.getText());
-
+                try {
+                    try (PDDocument doc = PDDocument.load(file, inPassword, AppVaribles.pdfMemUsage)) {
+                        pdfInformation.setUserPassword(inPassword);
+                        pdfInformation.readInfo(doc);
+                        ok = true;
+                    }
+                } catch (InvalidPasswordException e) {
+                    pop = true;
+                } catch (IOException e) {
+                }
+                if (pop) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextInputDialog dialog = new TextInputDialog();
+                            dialog.setContentText(AppVaribles.getMessage("Password"));
+                            Optional<String> result = dialog.showAndWait();
+                            if (result.isPresent()) {
+                                loadPdfInformation(file, result.get());
+                            }
+                        }
+                    });
+                }
                 return null;
             }
 
             @Override
             public void succeeded() {
                 super.succeeded();
+                if (!ok) {
+                    return;
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        if (pdfInformation != null) {
-                            toPageInput.setText(pdfInformation.getNumberOfPages() + "");
-                            infoButton.setDisable(false);
-                            viewButton.setDisable(false);
+                        sourceFileInput.setStyle(null);
+                        if (file.isDirectory()) {
+                            AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getPath());
+                        } else {
+                            AppVaribles.setUserConfigValue(parentController.sourcePathKey, file.getParent());
                         }
+                        toPageInput.setText(pdfInformation.getNumberOfPages() + "");
+                        infoButton.setDisable(false);
+                        viewButton.setDisable(false);
                         parentController.sourceFileChanged(sourceFile);
                     }
                 });
@@ -162,10 +189,6 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
 
     public int readToPage() {
         return FxmlControl.getInputInt(toPageInput);
-    }
-
-    public String readPassword() {
-        return passwordInput.getText();
     }
 
     public PdfInformation getPdfInformation() {
@@ -190,14 +213,6 @@ public class PdfSourceSelectionController extends PdfBatchBaseController {
 
     public void setToPageInput(TextField toPageInput) {
         this.toPageInput = toPageInput;
-    }
-
-    public PasswordField getPasswordInput() {
-        return passwordInput;
-    }
-
-    public void setPasswordInput(PasswordField passwordInput) {
-        this.passwordInput = passwordInput;
     }
 
 }

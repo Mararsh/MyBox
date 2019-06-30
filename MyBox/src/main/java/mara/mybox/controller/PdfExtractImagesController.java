@@ -14,7 +14,7 @@ import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -230,7 +230,7 @@ public class PdfExtractImagesController extends PdfBatchBaseController {
     protected String makeFilename(String suffix, int page, int index) {
         String pageNumber = currentParameters.currentNameNumber + "";
         if (currentParameters.fill) {
-            pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
+            pageNumber = StringTools.fillLeftZero(currentParameters.currentNameNumber, currentParameters.acumDigit);
         }
         String fname = currentParameters.targetPath + "/" + currentParameters.targetPrefix + "_" + pageNumber;
         if (appendPageNumber.isSelected()) {

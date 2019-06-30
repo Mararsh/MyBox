@@ -19,7 +19,7 @@ import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.rendering.ImageType;

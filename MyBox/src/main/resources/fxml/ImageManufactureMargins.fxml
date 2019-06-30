@@ -1,36 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Copyright (c) 2010, 2014, Oracle and/or its affiliates.
-All rights reserved. Use is subject to license terms.
-
-This file is available and licensed under the following license:
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
- - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the distribution.
- - Neither the name of Oracle Corporation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 -->
+
+
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -180,7 +156,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-
+                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSaveAs.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                                 <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -270,32 +254,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                     </graphic>
                                                                                 </ToggleButton>
                                                                             </children>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
+                                                                            <HBox.margin>
+                                                                                <Insets left="10.0" right="10.0" />
+                                                                            </HBox.margin>
                                                                         </HBox>
                                                                         <HBox fx:id="distanceBox" alignment="CENTER_LEFT" spacing="10.0">
                                                                             <children>
                                                                                 <Label text="%ColorDistance" />
                                                                                 <TextField fx:id="distanceInput" prefWidth="50.0" />
                                                                             </children>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
+                                                                            <HBox.margin>
+                                                                                <Insets left="10.0" right="10.0" />
+                                                                            </HBox.margin>
                                                                         </HBox>
-                                                      <HBox fx:id="alphaBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                         <children>
-                                                            <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/iconTips.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                            <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
-                                                         </children>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
-                                                      </HBox>
+                                                                        <HBox fx:id="alphaBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                                            <children>
+                                                                                <ImageView fx:id="preAlphaTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                                <CheckBox fx:id="preAlphaCheck" mnemonicParsing="false" text="%PremultipliedAlpha" />
+                                                                            </children>
+                                                                            <HBox.margin>
+                                                                                <Insets left="10.0" right="10.0" />
+                                                                            </HBox.margin>
+                                                                        </HBox>
                                                                     </children>
                                                                 </HBox>
                                                                 <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
@@ -311,21 +295,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                         </HBox>
                                                     </items>
                                                 </ToolBar>
-                                    <ToolBar fx:id="tmpToolbar" layoutX="10.0" layoutY="44.0" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
-                                       <items>
-                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
-                                             <children>
-                                                <HBox fx:id="setBox2" alignment="CENTER" spacing="2.0">
-                                                   <children>
-                                                      <HBox fx:id="widthBox" alignment="CENTER_LEFT" spacing="10.0">
-                                                         <children>
-                                                            <Label text="%Width" />
-                                                            <ComboBox fx:id="marginWidthBox" editable="true" prefWidth="80.0" />
-                                                         </children>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
-                                                      </HBox>
+                                                <ToolBar fx:id="tmpToolbar" layoutX="10.0" layoutY="44.0" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
+                                                    <items>
+                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
+                                                            <children>
+                                                                <HBox fx:id="setBox2" alignment="CENTER" spacing="2.0">
+                                                                    <children>
+                                                                        <HBox fx:id="widthBox" alignment="CENTER_LEFT" spacing="10.0">
+                                                                            <children>
+                                                                                <Label text="%Width" />
+                                                                                <ComboBox fx:id="marginWidthBox" editable="true" prefWidth="80.0" />
+                                                                            </children>
+                                                                            <HBox.margin>
+                                                                                <Insets left="10.0" right="10.0" />
+                                                                            </HBox.margin>
+                                                                        </HBox>
                                                                         <HBox fx:id="marginsBox" alignment="CENTER_LEFT" spacing="2.0">
                                                                             <children>
                                                                                 <CheckBox fx:id="marginsTopCheck" mnemonicParsing="false" selected="true" text="%Top" />
@@ -333,25 +317,25 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                 <CheckBox fx:id="marginsLeftCheck" mnemonicParsing="false" selected="true" text="%Left" />
                                                                                 <CheckBox fx:id="marginsRightCheck" mnemonicParsing="false" selected="true" text="%Right" />
                                                                             </children>
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
+                                                                            <HBox.margin>
+                                                                                <Insets left="10.0" right="10.0" />
+                                                                            </HBox.margin>
                                                                         </HBox>
-                                                   </children>
-                                                </HBox>
-                                                <Button fx:id="okButton1" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/iconOK.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </HBox>
-                                       </items>
-                                    </ToolBar>
+                                                                    </children>
+                                                                </HBox>
+                                                                <Button fx:id="okButton1" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </items>
+                                                </ToolBar>
                                             </children>
                                         </VBox>
                                     </content>

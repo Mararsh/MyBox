@@ -44,6 +44,8 @@ public class VisitHistory {
         public static int Sound = 9;
         public static int Video = 10;
         public static int Html = 11;
+        public static int Icc = 12;
+        public static int Xml = 13;
 
         public static int None = 100;
     }

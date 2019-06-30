@@ -16,7 +16,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlControl;
@@ -76,10 +75,6 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         try {
             super.initOptionsSection();
 
-            Tooltip tips = new Tooltip(getMessage("ColorMatchComments2"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(colorBox, tips);
-
             newColorPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
                 public void changed(ObservableValue<? extends Color> observable,
@@ -124,9 +119,9 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
         isColor = getMessage("Color").equals(selected.getText());
         if (isColor) {
-            FxmlControl.quickTooltip(distanceInput, new Tooltip("0 ~ 255"));
+            FxmlControl.setTooltip(distanceInput, new Tooltip("0 ~ 255"));
         } else {
-            FxmlControl.quickTooltip(distanceInput, new Tooltip("0 ~ 360"));
+            FxmlControl.setTooltip(distanceInput, new Tooltip("0 ~ 360"));
         }
         checkDistance();
     }

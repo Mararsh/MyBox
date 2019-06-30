@@ -52,10 +52,10 @@ import mara.mybox.fxml.FxmlStage;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -198,9 +198,9 @@ public class ImagesBrowserController extends ImageViewerController {
                     Bindings.isEmpty(imageFileList)
             );
 
-            FxmlControl.quickTooltip(filesListButton, new Tooltip(getMessage("FilesList")));
+            FxmlControl.setTooltip(filesListButton, new Tooltip(getMessage("FilesList")));
 
-            FxmlControl.quickTooltip(thumbsListButton, new Tooltip(getMessage("ThumbnailsList")));
+            FxmlControl.setTooltip(thumbsListButton, new Tooltip(getMessage("ThumbnailsList")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -386,7 +386,7 @@ public class ImagesBrowserController extends ImageViewerController {
         try {
             File file = info.getImageFileInformation().getFile();
             BufferedImage bufferedImage = ImageFileReaders.readImage(file);
-            bufferedImage = ImageConvert.rotateImage(bufferedImage, rotateAngle);
+            bufferedImage = ImageManufacture.rotateImage(bufferedImage, rotateAngle);
             ImageFileWriters.writeImageFile(bufferedImage, file);
             ImageInformation newInfo = loadImageInfo(file);
             return newInfo;
@@ -573,7 +573,7 @@ public class ImagesBrowserController extends ImageViewerController {
             ImageInformation info = selectedImages.get(0);
             if (info != null) {
                 File file = info.getImageFileInformation().getFile();
-                FxmlStage.openImageViewer(getClass(), null, file);
+                FxmlStage.openImageViewer( null, file);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -816,7 +816,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     renameButton.setDisable(selectedImages.size() > 1);
 
                     if (event.getClickCount() > 1) {
-                        FxmlStage.openImageViewer(getClass(), null, file);
+                        FxmlStage.openImageViewer( null, file);
                     }
                 }
             });
@@ -839,10 +839,10 @@ public class ImagesBrowserController extends ImageViewerController {
                             + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(file.length()) + "\n"
                             + AppVaribles.getMessage("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "\n"
                             + AppVaribles.getMessage("LoadedSize") + ":"
-                            + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "  "
+                            + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "\n"
                             + AppVaribles.getMessage("DisplayedSize") + ":"
                             + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
-                    popInformation(str2, 1000);
+                    popInformation(str2, 2000);
                     if (popup != null && popup.isShowing()) {
                         Region region = (Region) event.getSource();
                         FxmlControl.locateCenter(region, popup);
@@ -1089,7 +1089,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                     File file = info.getImageFileInformation().getFile();
                     if (event.getClickCount() > 1) {
-                        FxmlStage.openImageViewer(getClass(), null, file);
+                        FxmlStage.openImageViewer( null, file);
                     }
                 }
             });
@@ -1164,11 +1164,11 @@ public class ImagesBrowserController extends ImageViewerController {
                 if (displayMode == DisplayMode.FilesList) {
                     imageInfo = ImageInformation.loadImageFileInformation(file).getImageInformation();
                 } else {
-                    imageInfo = ImageInformation.loadImageInformation(file, width, 0);
+                    imageInfo = ImageInformation.loadImage(file, width, 0);
                 }
             } else {
                 if (displayMode != DisplayMode.FilesList && imageInfo.getImage() == null) {
-                    imageInfo = ImageInformation.loadImageInformation(file, width, 0);
+                    imageInfo = ImageInformation.loadImage(file, width, 0);
                 }
             }
             tableData.add(imageInfo);
@@ -1186,7 +1186,7 @@ public class ImagesBrowserController extends ImageViewerController {
         if (displayMode == DisplayMode.FilesList) {
             imageInfo = ImageInformation.loadImageFileInformation(file).getImageInformation();
         } else {
-            imageInfo = ImageInformation.loadImageInformation(file, width, 0);
+            imageInfo = ImageInformation.loadImage(file, width, 0);
         }
         return imageInfo;
     }

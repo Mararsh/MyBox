@@ -31,7 +31,7 @@ import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -444,7 +444,7 @@ public class FilesArrangeController extends FilesBatchController {
         long cost = (new Date().getTime() - startTime.getTime()) / 1000;
         double avg = 0;
         if (copyAttr.getCopiedFilesNumber() != 0) {
-            avg = ValueTools.roundDouble3((double) cost / copyAttr.getCopiedFilesNumber());
+            avg = DoubleTools.scale3((double) cost / copyAttr.getCopiedFilesNumber());
         }
         String s;
         if (paused) {

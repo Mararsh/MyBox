@@ -16,10 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -67,12 +64,8 @@ public class WeiboSnapController extends BaseController {
     private CheckBox pdfCheck, htmlCheck, pixCheck, keepPageCheck, miaoCheck, ditherCheck,
             expandCommentsCheck, expandPicturesCheck, openPathCheck, closeWindowCheck;
     @FXML
-    private HBox sizeBox, pdfMemBox;
-    @FXML
     private RadioButton imageSizeRadio, monthsPathsRadio, pngRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
-    @FXML
-    private ImageView weiboTipsView;
 
     public WeiboSnapController() {
         baseTitle = AppVaribles.getMessage("WeiboSnap");
@@ -150,7 +143,7 @@ public class WeiboSnapController extends BaseController {
         });
         addressInput.setText(AppVaribles.getUserConfigValue(WeiboLastAddressKey, "https://www.weibo.com/wow"));
 
-        FxmlControl.quickTooltip(startMonthInput, new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth")));
+        FxmlControl.setTooltip(startMonthInput, new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth")));
         startMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -359,7 +352,6 @@ public class WeiboSnapController extends BaseController {
             }
         });
         checkThreshold();
-        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
     }
 
@@ -418,10 +410,6 @@ public class WeiboSnapController extends BaseController {
     }
 
     protected void initPdfOptionsSection() {
-
-        Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -771,7 +759,7 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        FxmlControl.quickTooltip(keepPageCheck, new Tooltip(AppVaribles.getMessage("MergePDFComments")));
+        FxmlControl.setTooltip(keepPageCheck, new Tooltip(AppVaribles.getMessage("MergePDFComments")));
 
         startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))

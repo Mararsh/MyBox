@@ -1,8 +1,11 @@
 package mara.mybox.tools;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -47,31 +50,40 @@ public class FileTools {
         return filename.substring(0, pos);
     }
 
-    public static String getFileName(final String filename) {
-        if (filename == null) {
-            return null;
-        }
-        String fname = filename;
-        int pos = filename.lastIndexOf("/");
-        if (pos >= 0) {
-            fname = fname.substring(pos + 1);
-        }
-        return fname;
-    }
-
+//    public static String getFileName(final String filename) {
+//        if (filename == null) {
+//            return null;
+//        }
+//        try {
+//            String fname = filename;
+//            int pos = filename.lastIndexOf("/");
+//            if (pos >= 0) {
+//                fname = fname.substring(pos + 1);
+//            }
+//            pos = filename.lastIndexOf("\\");
+//            if (pos >= 0) {
+//                fname = fname.substring(pos + 1);
+//            }
+//            return fname;
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
     public static String getFilePrefix(File file) {
         try {
-            return getFilePrefix(file.getAbsolutePath());
+            return getFilePrefix(file.getName());
         } catch (Exception e) {
             return null;
         }
     }
 
+    // filename may include path or not, it is decided by caller
     public static String getFilePrefix(final String filename) {
-        String fname = getFileName(filename);
-        if (fname == null) {
+        //        String fname = getFileName(filename);
+        if (filename == null) {
             return null;
         }
+        String fname = filename;
         int pos = fname.lastIndexOf(".");
         if (pos >= 0) {
             fname = fname.substring(0, pos);
@@ -128,9 +140,9 @@ public class FileTools {
     }
 
     public static File getTempFile() {
-        File file = new File(AppTempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
+        File file = new File(AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100));
         while (file.exists()) {
-            file = new File(AppTempPath + File.separator + new Date().getTime() + ValueTools.getRandomInt(100));
+            file = new File(AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100));
         }
         return file;
     }
@@ -185,31 +197,31 @@ public class FileTools {
     public static String showFileSize(long size) {
         double kb = size * 1.0f / 1024;
         if (kb < 1024) {
-            return ValueTools.roundDouble3(kb) + " KB";
+            return DoubleTools.scale3(kb) + " KB";
         } else {
             double mb = size * 1.0f / (1024 * 1024);
             if (mb < 1024) {
-                return ValueTools.roundDouble3(mb) + " MB";
+                return DoubleTools.scale3(mb) + " MB";
             } else {
                 double gb = size * 1.0f / (1024 * 1024 * 1024);
-                return ValueTools.roundDouble3(gb) + " GB";
+                return DoubleTools.scale3(gb) + " GB";
             }
         }
     }
 
     public static String showFileSize2(long size) {
         double kb = size * 1.0f / 1024;
-        String s = ValueTools.roundDouble3(kb) + " KB";
+        String s = DoubleTools.scale3(kb) + " KB";
         if (kb < 1024) {
             return s;
         }
 
         double mb = size * 1.0f / (1024 * 1024);
         if (mb < 1024) {
-            return s + " (" + ValueTools.roundDouble3(mb) + " MB)";
+            return s + " (" + DoubleTools.scale3(mb) + " MB)";
         } else {
             double gb = size * 1.0f / (1024 * 1024 * 1024);
-            return s + " (" + ValueTools.roundDouble3(gb) + " GB)";
+            return s + " (" + DoubleTools.scale3(gb) + " GB)";
         }
 
     }
@@ -571,7 +583,7 @@ public class FileTools {
                 while ((fileIndex < filesNumber)
                         && (bufLen = inputStream.read(buf)) != -1) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {
@@ -587,7 +599,7 @@ public class FileTools {
                 bufLen = inputStream.read(buf);
                 if (bufLen > 0) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         outputStream.write(buf);
@@ -620,7 +632,7 @@ public class FileTools {
                 int bufLen, fileIndex = 1, startIndex = 0, endIndex = 0;
                 while ((bufLen = inputStream.read(buf)) != -1) {
                     endIndex += bufLen;
-                    newFilename = filename + "-cut-f" + ValueTools.fillLeftZero(fileIndex, digit)
+                    newFilename = filename + "-cut-f" + StringTools.fillLeftZero(fileIndex, digit)
                             + "-b" + (startIndex + 1) + "-b" + endIndex;
                     try (FileOutputStream outputStream = new FileOutputStream(newFilename)) {
                         if (bytesNumber > bufLen) {
@@ -721,6 +733,85 @@ public class FileTools {
             return true;
         } catch (Exception e) {
             logger.debug(e.toString());
+            return false;
+        }
+    }
+
+    public static byte[] readBytes(File file) {
+        byte[] data = null;
+        try {
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                data = new byte[(int) file.length()];
+                inputStream.read(data);
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return data;
+    }
+
+    public static byte[] readBytes(File file, long offset, int length) {
+        if (file == null || offset < 0 || length <= 0) {
+            return null;
+        }
+        try {
+            byte[] data = null;
+            try (FileInputStream inputStream = new FileInputStream(file)) {
+                data = new byte[length];
+                inputStream.skip(offset);
+                inputStream.read(data);
+            }
+            return data;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+
+    }
+
+    public static String readTexts(File file) {
+        try {
+            StringBuilder s = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    s.append(line).append(System.lineSeparator());
+                }
+            }
+            return s.toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static boolean writeFile(File file, String data) {
+        try {
+            if (file == null || data == null) {
+                return false;
+            }
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(data);
+                writer.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
+
+    public static boolean writeFile(File file, byte[] data) {
+        try {
+            if (file == null || data == null) {
+                return false;
+            }
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                outputStream.write(data);
+                outputStream.flush();
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
             return false;
         }
     }

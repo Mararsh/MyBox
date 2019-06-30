@@ -29,7 +29,7 @@ import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
@@ -309,25 +309,25 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
 
                 switch (opType) {
                     case SetMarginsByDragging:
-                        newImage = ImageManufacture.dragMarginsFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.dragMarginsFx(imageView.getImage(),
                                 colorPicker.getValue(), maskRectangleData);
                         recordImageHistory(ImageOperationType.Add_Margins, newImage);
                         break;
                     case CutMarginsByWidth:
-                        newImage = ImageManufacture.cutMarginsByWidth(imageView.getImage(), addedWidth,
+                        newImage = FxmlImageManufacture.cutMarginsByWidth(imageView.getImage(), addedWidth,
                                 marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                 marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                         recordImageHistory(ImageOperationType.Cut_Margins, newImage);
                         break;
                     case CutMarginsByColor:
-                        newImage = ImageManufacture.cutMarginsByColor(imageView.getImage(),
+                        newImage = FxmlImageManufacture.cutMarginsByColor(imageView.getImage(),
                                 colorPicker.getValue(), distance,
                                 marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                 marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                         recordImageHistory(ImageOperationType.Cut_Margins, newImage);
                         break;
                     case AddMargins:
-                        newImage = ImageManufacture.addMarginsFx(imageView.getImage(),
+                        newImage = FxmlImageManufacture.addMarginsFx(imageView.getImage(),
                                 colorPicker.getValue(), addedWidth,
                                 marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                 marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
@@ -335,11 +335,11 @@ public class ImageManufactureMarginsController extends ImageManufactureControlle
                         break;
                     case BlurMargins:
                         if (preAlphaCheck.isSelected()) {
-                            newImage = ImageManufacture.blurMarginsNoAlpha(imageView.getImage(), addedWidth,
+                            newImage = FxmlImageManufacture.blurMarginsNoAlpha(imageView.getImage(), addedWidth,
                                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                         } else {
-                            newImage = ImageManufacture.blurMarginsAlpha(imageView.getImage(), addedWidth,
+                            newImage = FxmlImageManufacture.blurMarginsAlpha(imageView.getImage(), addedWidth,
                                     marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                     marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                         }

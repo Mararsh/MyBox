@@ -66,7 +66,7 @@ public class ImageManufactureBrowseController extends ImageManufactureController
     @FXML
     @Override
     public void nextAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         if (nextFile != null) {
@@ -78,7 +78,7 @@ public class ImageManufactureBrowseController extends ImageManufactureController
     @FXML
     @Override
     public void previousAction() {
-        if (!checkSavingForNextAction()) {
+        if (!checkBeforeNextAction()) {
             return;
         }
         if (previousFile != null) {

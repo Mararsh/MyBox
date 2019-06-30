@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -105,11 +111,14 @@
         <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
                 <TableColumn fx:id="handledColumn" prefWidth="174.0" text="%Handled" />
-                <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
-                <TableColumn fx:id="sizeColumn" prefWidth="150.0" text="%Pixels" />
-                <TableColumn fx:id="typeColumn" prefWidth="100.0" text="%Color" />
-                <TableColumn fx:id="fileColumn" prefWidth="600.0" text="%File" />
-                <TableColumn fx:id="indexColumn" prefWidth="100.0" text="%Index" />
+                <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
+                <TableColumn fx:id="pixelsColumn" prefWidth="120.0" text="%Pixels" />
+                <TableColumn fx:id="colorSpaceColumn" prefWidth="100.0" text="%ColorSpace" />
+                <TableColumn fx:id="fileColumn" prefWidth="160.0" text="%File" />
+                <TableColumn fx:id="indexColumn" prefWidth="70.0" text="%Index" />
+                <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
+                <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
+                <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
         <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />

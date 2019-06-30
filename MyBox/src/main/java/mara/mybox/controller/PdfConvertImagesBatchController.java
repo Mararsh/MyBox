@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import mara.mybox.data.ControlStyle;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -38,8 +37,6 @@ public class PdfConvertImagesBatchController extends PdfConvertImagesController 
                             .or(startButton.disableProperty())
                             .or(startButton.textProperty().isNotEqualTo(AppVaribles.getMessage("Start")))
             );
-
-            ControlStyle.setStyle(previewButton);
 
         } catch (Exception e) {
             logger.error(e.toString());

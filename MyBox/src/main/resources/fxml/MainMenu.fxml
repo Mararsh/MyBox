@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
@@ -29,6 +33,7 @@
                         <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPDFAttributes" text="%PDFAttributes" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
@@ -91,7 +96,6 @@
                                         <MenuItem mnemonicParsing="false" onAction="#openImageGifEditer" text="%ImageGifEditer" />
                                     </items>
                                 </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%MergeImages">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
@@ -100,7 +104,6 @@
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                     </items>
                                 </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%ImagePart">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImageSplit" text="%ImageSplit" />
@@ -111,12 +114,42 @@
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />
+                                <!--                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openConvolutionKernelManager" text="%ConvolutionKernelManager" />
-                                <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPixelsCalculator" text="%PixelsCalculator" />
+                                <MenuItem mnemonicParsing="false" onAction="#openColorPalette" text="%ColorPalette" />
+                                <Menu mnemonicParsing="false" text="%ColorSpace">
+                                    <items>
+                                        <!--<MenuItem mnemonicParsing="false" onAction="#openColorConversion" text="%ColorConversion" />-->
+                                        <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openIccProfileEditor" text="%IccProfileEditor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGBColorSpaces" text="%RGBColorSpaces" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGB2XYZConversionMatrix" text="%LinearRGB2XYZMatrix" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGB2RGBConversionMatrix" text="%LinearRGB2RGBMatrix" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openIlluminants" text="%Illuminants" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openChromaticAdaptationMatrix" text="%ChromaticAdaptationMatrix" />
+                                    </items>
+                                </Menu>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="%DataTools">
+                            <items>
+                                <Menu mnemonicParsing="false" text="%ColorSpace">
+                                    <items>
+                                        <!--<MenuItem mnemonicParsing="false" onAction="#openColorConversion" text="%ColorConversion" />-->
+                                        <MenuItem mnemonicParsing="false" onAction="#openChromaticityDiagram" text="%DrawChromaticityDiagram" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openIccProfileEditor" text="%IccProfileEditor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGBColorSpaces" text="%RGBColorSpaces" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGB2XYZConversionMatrix" text="%LinearRGB2XYZMatrix" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openRGB2RGBConversionMatrix" text="%LinearRGB2RGBMatrix" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openIlluminants" text="%Illuminants" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openChromaticAdaptationMatrix" text="%ChromaticAdaptationMatrix" />
+                                    </items>
+                                </Menu>
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMatricesCalculation" text="%MatricesCalculation" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="%DesktopTools">
@@ -157,8 +190,6 @@
                                 </RadioMenuItem>
                                 <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <CheckMenuItem fx:id="showCommentsCheck" mnemonicParsing="false" onAction="#showCommentsAction" text="%ShowComments" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" text="%FontSize12">
                                     <toggleGroup>
@@ -171,21 +202,6 @@
 
                                 <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
 
-                                <!--                                <Menu mnemonicParsing="false" text="%ControlsContent">
-                                    <items>
-                                        <RadioMenuItem fx:id="graphicMenuItem" mnemonicParsing="false" onAction="#setGraphicOnly" text="%Graphic">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="controlContentGroup" />
-                                            </toggleGroup>
-                                        </RadioMenuItem>
-                                        <RadioMenuItem  fx:id="graphicTopMenuItem" mnemonicParsing="false" onAction="#setGraphicTop" text="%GraphicTop" toggleGroup="$controlContentGroup" />
-                                        <RadioMenuItem  fx:id="graphicBottomMenuItem" mnemonicParsing="false" onAction="#setGraphicBottom" text="%GraphicBottom" toggleGroup="$controlContentGroup" />
-                                        <RadioMenuItem  fx:id="graphicLeftMenuItem" mnemonicParsing="false" onAction="#setGraphicLeft" text="%GraphicLeft" toggleGroup="$controlContentGroup" />
-                                        <RadioMenuItem fx:id="graphicRightMenuItem"  mnemonicParsing="false" onAction="#setGraphicRight" text="%GraphicRight" toggleGroup="$controlContentGroup" />
-                                        <RadioMenuItem fx:id="textOnlyMenuItem"  mnemonicParsing="false" onAction="#setTextOnly" text="%Text" toggleGroup="$controlContentGroup" />
-                                    </items>
-                                </Menu>-->
-
                                 <Menu mnemonicParsing="false" text="%ControlsColor">
                                     <items>
                                         <RadioMenuItem fx:id="defaultColorMenuItem" mnemonicParsing="false" onAction="#setDefaultColor" text="%DefaultColor">
@@ -195,6 +211,7 @@
                                         </RadioMenuItem>
                                         <RadioMenuItem  fx:id="pinkMenuItem" mnemonicParsing="false" onAction="#setPink" text="%Pink" toggleGroup="$colorGroup" />
                                         <RadioMenuItem  fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%Red" toggleGroup="$colorGroup" />
+                                        <RadioMenuItem  fx:id="lightBlueMenuItem" mnemonicParsing="false" onAction="#setLightBlue" text="%LightBlue" toggleGroup="$colorGroup" />
                                         <RadioMenuItem  fx:id="blueMenuItem" mnemonicParsing="false" onAction="#setBlue" text="%Blue" toggleGroup="$colorGroup" />
                                         <RadioMenuItem fx:id="orangeMenuItem"  mnemonicParsing="false" onAction="#setOrange" text="%Orange" toggleGroup="$colorGroup" />
                                     </items>
@@ -220,14 +237,18 @@
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <CheckMenuItem fx:id="replaceWhiteMenu" mnemonicParsing="false" onAction="#replaceWhiteAction" text="%ReplaceAlphaAsWhite" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <RadioMenuItem fx:id="pdf500mbRadio" mnemonicParsing="false" onAction="#PdfMem500MB" text="%PDFMem500MB">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="pdfMemGroup" />
-                                    </toggleGroup>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="pdf1gbRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="%PDFMem1GB" toggleGroup="$pdfMemGroup" />
-                                <RadioMenuItem fx:id="pdf2gbRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="%PDFMem2GB" toggleGroup="$pdfMemGroup" />
-                                <RadioMenuItem fx:id="pdfUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%PDFMemUnlimit" toggleGroup="$pdfMemGroup" />
+                                <Menu mnemonicParsing="false" text="%MaxMainMemPDF">
+                                    <items>
+                                        <RadioMenuItem fx:id="pdf500mbRadio" mnemonicParsing="false" onAction="#PdfMem500MB" text="500MB">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="pdfMemGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem fx:id="pdf1gbRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1GB" toggleGroup="$pdfMemGroup" />
+                                        <RadioMenuItem fx:id="pdf2gbRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2GB" toggleGroup="$pdfMemGroup" />
+                                        <RadioMenuItem fx:id="pdfUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
+                                    </items>
+                                </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <CheckMenuItem fx:id="stopAlarmCheck" mnemonicParsing="false" onAction="#setStopAlarm" selected="true" text="%StopAlarmsExit" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -240,8 +261,15 @@
                         <Menu fx:id="recentMenu" mnemonicParsing="false" text="%RecentAccessed" />
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#showHelp" text="%Help" />
-                                <MenuItem mnemonicParsing="false" onAction="#showHelpExternal" text="%HelpInExternal" />
+                                <MenuItem mnemonicParsing="false" onAction="#developerGuide" text="%DeveloperGuide" />
+                                <MenuItem mnemonicParsing="false" onAction="#developerGuideExternal" text="%DeveloperGuideInExternal" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#userGuideOverview" text="%UserGuideOverview" />
+                                <MenuItem mnemonicParsing="false" onAction="#userGuidePdfTools" text="%UserGuidePdfTools" />
+                                <MenuItem mnemonicParsing="false" onAction="#userGuideImageTools" text="%UserGuideImageTools" />
+                                <MenuItem mnemonicParsing="false" onAction="#userGuideDesktopTools" text="%UserGuideDesktopTools" />
+                                <MenuItem mnemonicParsing="false" onAction="#userGuideNetworkTools" text="%UserGuideNetworkTools" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                             </items>
                         </Menu>

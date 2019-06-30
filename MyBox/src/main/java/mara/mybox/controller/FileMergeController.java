@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -172,7 +171,7 @@ public class FileMergeController extends FilesBatchController {
 
     @Override
     public void openTarget(ActionEvent event) {
-        FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
+        view(targetFile);
     }
 
 }

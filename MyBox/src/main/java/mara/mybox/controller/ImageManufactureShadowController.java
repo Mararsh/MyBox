@@ -17,7 +17,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 
 /**
  * @Author Mara
@@ -147,10 +147,10 @@ public class ImageManufactureShadowController extends ImageManufactureController
             @Override
             protected Void call() throws Exception {
                 if (preAlphaCheck.isSelected()) {
-                    newImage = ImageManufacture.addShadowNoAlpha(imageView.getImage(),
+                    newImage = FxmlImageManufacture.addShadowNoAlpha(imageView.getImage(),
                             shadow, colorPicker.getValue());
                 } else {
-                    newImage = ImageManufacture.addShadowAlpha(imageView.getImage(),
+                    newImage = FxmlImageManufacture.addShadowAlpha(imageView.getImage(),
                             shadow, colorPicker.getValue());
                 }
                 if (task == null || task.isCancelled()) {

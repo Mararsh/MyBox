@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
-import static mara.mybox.image.file.ImageJpegFile.getJpegCompressionTypes;
+import static mara.mybox.image.file.ImageJpgFile.getJpegCompressionTypes;
 
 import org.apache.pdfbox.rendering.ImageType;
 

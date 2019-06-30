@@ -120,19 +120,19 @@ public class ImageManufactureColorController extends ImageManufactureController 
                     valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
             );
 
-            FxmlControl.quickTooltip(setButton, new Tooltip("CTRL+g"));
+            FxmlControl.setTooltip(setButton, new Tooltip("CTRL+g"));
 
             increaseButton.disableProperty().bind(
                     valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
             );
 
-            FxmlControl.quickTooltip(increaseButton, new Tooltip("CTRL+q"));
+            FxmlControl.setTooltip(increaseButton, new Tooltip("CTRL+q"));
 
             decreaseButton.disableProperty().bind(
                     valuesBox.getEditor().styleProperty().isEqualTo(badStyle)
             );
 
-            FxmlControl.quickTooltip(decreaseButton, new Tooltip("CTRL+w"));
+            FxmlControl.setTooltip(decreaseButton, new Tooltip("CTRL+w"));
 
             filterButton.disableProperty().bind(
                     valuesBox.getEditor().styleProperty().isEqualTo(badStyle)

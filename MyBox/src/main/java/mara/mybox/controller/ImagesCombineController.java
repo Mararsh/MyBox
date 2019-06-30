@@ -29,20 +29,20 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageCombine;
-import mara.mybox.data.ImageCombine.ArrayType;
-import mara.mybox.data.ImageCombine.CombineSizeType;
+import mara.mybox.image.ImageCombine;
+import mara.mybox.image.ImageCombine.ArrayType;
+import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -448,7 +448,7 @@ public class ImagesCombineController extends ImageSourcesController {
             pixels += m.getWidth() * m.getHeight();
         }
         sourcesLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + ValueTools.formatData(pixels));
+                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
         if (hasSampled()) {
             hasSampled.set(true);
         } else {
@@ -490,9 +490,9 @@ public class ImagesCombineController extends ImageSourcesController {
         }
 
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-            image = ImageConvert.combineSingleColumn(imageCombine, tableData, false, true);
+            image = ImageManufacture.combineSingleColumn(imageCombine, tableData, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-            image = ImageConvert.combineSingleRow(imageCombine, tableData, false, true);
+            image = ImageManufacture.combineSingleRow(imageCombine, tableData, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
             image = combineImagesColumns(tableData);
         } else {
@@ -519,16 +519,16 @@ public class ImagesCombineController extends ImageSourcesController {
             for (ImageInformation imageInfo : images) {
                 rowImages.add(imageInfo);
                 if (rowImages.size() == imageCombine.getColumnsValue()) {
-                    Image rowImage = ImageConvert.combineSingleRow(imageCombine, rowImages, true, false);
+                    Image rowImage = ImageManufacture.combineSingleRow(imageCombine, rowImages, true, false);
                     rows.add(new ImageInformation(rowImage));
                     rowImages = new ArrayList();
                 }
             }
             if (!rowImages.isEmpty()) {
-                Image rowImage = ImageConvert.combineSingleRow(imageCombine, rowImages, true, false);
+                Image rowImage = ImageManufacture.combineSingleRow(imageCombine, rowImages, true, false);
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = ImageConvert.combineSingleColumn(imageCombine, rows, true, true);
+            Image newImage = ImageManufacture.combineSingleColumn(imageCombine, rows, true, true);
             return newImage;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -563,7 +563,7 @@ public class ImagesCombineController extends ImageSourcesController {
             protected Void call() throws Exception {
                 filename = targetFile.getAbsolutePath();
                 String format = FileTools.getFileSuffix(filename);
-                final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(image);
+                final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
                 ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                 return null;
             }

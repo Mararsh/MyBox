@@ -90,7 +90,7 @@ public class AlarmClockController extends BaseController {
     public void initializeNext() {
         try {
             AppVaribles.alarmClockController = this;
-            miao = FxmlControl.getUserFile(getClass(), "/sound/miao4.mp3", "miao4.mp3");
+            miao = FxmlControl.getUserFile("/sound/miao4.mp3", "miao4.mp3");
 
             alertClockTableController.setAlarmClockController(this);
 
@@ -188,7 +188,7 @@ public class AlarmClockController extends BaseController {
                             .or(urlInput.styleProperty().isEqualTo(badStyle))
             );
 
-            FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
 
             FloatControl control = SoundTools.getControl(miao);
             volumeSlider.setMax(control.getMaximum());
@@ -502,7 +502,7 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            recordFileOpened(file);
             AppVaribles.setUserConfigValue(SystemMediaPathKey, file.getParent());
 
             wavInput.setText(file.getAbsolutePath());
@@ -526,7 +526,7 @@ public class AlarmClockController extends BaseController {
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+            recordFileOpened(file);
             AppVaribles.setUserConfigValue(MusicPathKey, file.getParent());
 
             mp3Input.setText(file.getAbsolutePath());

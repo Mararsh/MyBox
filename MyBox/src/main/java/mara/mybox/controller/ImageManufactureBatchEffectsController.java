@@ -21,10 +21,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageConvolution;
@@ -70,6 +71,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     @FXML
     protected RadioButton thresholdingRadio, posterizingRadio, bwRadio,
             convolutionRadio, contrastRadio;
+    @FXML
+    protected ImageView effectTipsView, ditherTipsView;
 
     public ImageManufactureBatchEffectsController() {
         baseTitle = AppVaribles.getMessage("ImageManufactureBatchEffects");
@@ -79,7 +82,6 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     @Override
     public void initOptionsSection() {
         try {
-
             effectsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
@@ -87,15 +89,17 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     checkEffetcsOperationType();
                 }
             });
-            checkEffetcsOperationType();
-
-            FxmlControl.setComments(thresholdingRadio, new Tooltip(getMessage("ThresholdingComments")));
-            FxmlControl.setComments(posterizingRadio, new Tooltip(getMessage("QuantizationComments")));
-            FxmlControl.setComments(bwRadio, new Tooltip(getMessage("BWThresholdComments")));
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    @Override
+    public void afterSceneLoaded() {
+        super.afterSceneLoaded();
+
+        checkEffetcsOperationType();
     }
 
     @Override
@@ -123,7 +127,6 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         intInput = intInput2 = intInput3 = intInput4 = null;
         intLabel = intLabel2 = intLabel3 = intLabel4 = stringLabel = null;
         radio1 = radio2 = radio3 = radio4 = null;
-        setButton = null;
     }
 
     private void checkEffetcsOperationType() {
@@ -258,7 +261,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeEmbossBox() {
         try {
-            intPara1 = ImageConvert.Direction.Top;
+            intPara1 = ImageManufacture.Direction.Top;
             stringLabel = new Label(getMessage("Direction"));
             stringBox = new ComboBox();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -268,23 +271,23 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         return;
                     }
                     if (getMessage("Top").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.Top;
+                        intPara1 = ImageManufacture.Direction.Top;
                     } else if (getMessage("Bottom").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.Bottom;
+                        intPara1 = ImageManufacture.Direction.Bottom;
                     } else if (getMessage("Left").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.Top;
+                        intPara1 = ImageManufacture.Direction.Top;
                     } else if (getMessage("Right").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.Right;
+                        intPara1 = ImageManufacture.Direction.Right;
                     } else if (getMessage("LeftTop").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.LeftTop;
+                        intPara1 = ImageManufacture.Direction.LeftTop;
                     } else if (getMessage("RightBottom").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.RightBottom;
+                        intPara1 = ImageManufacture.Direction.RightBottom;
                     } else if (getMessage("LeftBottom").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.LeftBottom;
+                        intPara1 = ImageManufacture.Direction.LeftBottom;
                     } else if (getMessage("RightTop").equals(newValue)) {
-                        intPara1 = ImageConvert.Direction.RightTop;
+                        intPara1 = ImageManufacture.Direction.RightTop;
                     } else {
-                        intPara1 = ImageConvert.Direction.Top;
+                        intPara1 = ImageManufacture.Direction.Top;
                     }
                 }
             });
@@ -333,6 +336,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makePosterizingBox() {
         try {
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("QuantizationComments")));
+
             quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
             stringLabel = new Label(getMessage("Algorithm"));
             stringBox = new ComboBox();
@@ -375,8 +380,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getSelectionModel().select(0);
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
-            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
-            setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
+
+            setBox.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, ditherTipsView, valueCheck);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -392,6 +397,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeThresholdingBox() {
         try {
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("ThresholdingComments")));
+
             intPara1 = 128;
             intLabel = new Label(getMessage("Threshold"));
             intInput = new TextField();
@@ -416,7 +423,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
             Label smallValueLabel = new Label(getMessage("SmallValue"));
@@ -442,7 +449,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             thresholdingMinInput.setPrefWidth(100);
             thresholdingMinInput.setText("0");
-            FxmlControl.quickTooltip(thresholdingMinInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(thresholdingMinInput, new Tooltip("0~255"));
 
             intPara3 = 255;
             Label bigValueLabel = new Label(getMessage("BigValue"));
@@ -468,9 +475,9 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             thresholdingMaxInput.setPrefWidth(100);
             thresholdingMaxInput.setText("255");
-            FxmlControl.quickTooltip(thresholdingMaxInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(thresholdingMaxInput, new Tooltip("0~255"));
 
-            setBox.getChildren().addAll(intLabel, intInput,
+            setBox.getChildren().addAll(effectTipsView, intLabel, intInput,
                     bigValueLabel, thresholdingMaxInput,
                     smallValueLabel, thresholdingMinInput);
             startButton.disableProperty().bind(
@@ -489,6 +496,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeBlackWhiteBox() {
         try {
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("BWThresholdComments")));
+
             intPara2 = 128;
             intInput = new TextField();
             intInput.textProperty().addListener(new ChangeListener<String>() {
@@ -510,7 +519,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("128");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara1 = 1;
             radioGroup = new ToggleGroup();
@@ -539,9 +548,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
             valueCheck = new CheckBox(getMessage("Dithering"));
             valueCheck.setSelected(true);
-            FxmlControl.setComments(valueCheck, new Tooltip(getMessage("DitherComments")));
 
-            setBox.getChildren().addAll(radio1, radio2, radio3, intInput, valueCheck);
+            setBox.getChildren().addAll(effectTipsView, radio1, radio2, radio3, intInput, ditherTipsView, valueCheck);
             startButton.disableProperty().bind(
                     intInput.styleProperty().isEqualTo(badStyle)
             );
@@ -577,7 +585,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intInput.setPrefWidth(100);
             intInput.setText("80");
-            FxmlControl.quickTooltip(intInput, new Tooltip("0~255"));
+            FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             setBox.getChildren().addAll(intLabel, intInput);
             startButton.disableProperty().bind(
@@ -614,7 +622,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     FxmlControl.setEditorNormal(stringBox);
                 }
             });
-            FxmlControl.quickTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
+            FxmlControl.setTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
             setButton = new Button(getMessage("ManageDot"));
             setButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -745,7 +753,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         });
                         intInput.setPrefWidth(100);
                         intInput.setText("10");
-                        FxmlControl.quickTooltip(intInput, new Tooltip("-255 ~ 255"));
+                        FxmlControl.setTooltip(intInput, new Tooltip("-255 ~ 255"));
                         setBox.getChildren().addAll(intLabel, intInput);
                         startButton.disableProperty().bind(
                                 intInput.styleProperty().isEqualTo(badStyle)
@@ -867,7 +875,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         target = imageConvolution.operate();
                         break;
                     case Thresholding:
-                        pixelsOperation = PixelsOperation.newPixelsOperation(ImageConvert.removeAlpha(source), null, effectType);
+                        pixelsOperation = PixelsOperation.newPixelsOperation(ImageManufacture.removeAlpha(source), null, effectType);
                         pixelsOperation.setIntPara1(intPara1);
                         pixelsOperation.setIntPara2(intPara2);
                         pixelsOperation.setIntPara3(intPara3);
@@ -875,7 +883,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         break;
                     case Quantization:
                         int channelSize = (int) Math.round(Math.pow(intPara1, 1.0 / 3.0));
-                        ImageQuantization quantization = new ImageQuantization(ImageConvert.removeAlpha(source),
+                        ImageQuantization quantization = new ImageQuantization(ImageManufacture.removeAlpha(source),
                                 quantizationAlgorithm, channelSize);
                         quantization.setIsDithering(valueCheck.isSelected());
                         target = quantization.operate();

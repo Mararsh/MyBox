@@ -5,14 +5,17 @@
  */
 package mara.mybox.controller;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import mara.mybox.controller.base.BaseController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -32,22 +35,37 @@ public class ImageMetaDataController extends BaseController {
 
     }
 
-    @FXML
-    private void closeStage(MouseEvent event) {
-        try {
-            closeStage();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void loadData(ImageInformation info) {
+    public void loadImageFileMeta(ImageInformation info) {
         try {
             if (info == null || info.getFilename() == null) {
                 return;
             }
             fileInput.setText(info.getFilename());
-            metaDataInput.setText(info.getMetaData());
+            ImageFileInformation finfo = info.getImageFileInformation();
+            metaDataInput.setText("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            metaDataInput.appendText("<ImageMetadata file=\"" + finfo.getFileName() + "\">\n");
+            int count = 1;
+            for (ImageInformation imageInfo : finfo.getImagesInformation()) {
+                metaDataInput.appendText("    <Image index=\"" + count + "\">\n");
+                metaDataInput.appendText(imageInfo.getMetaDataXml());
+                metaDataInput.appendText("    </Image>\n");
+                count++;
+            }
+            metaDataInput.appendText("</ImageMetadata>\n");
+            myStage.setAlwaysOnTop(true);
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            metaDataInput.home();
+                            metaDataInput.requestFocus();
+                        }
+                    });
+                }
+            }, 1000);
 
         } catch (Exception e) {
             logger.error(e.toString());

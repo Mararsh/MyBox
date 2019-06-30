@@ -17,16 +17,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.StringTools;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -35,7 +32,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
-import mara.mybox.tools.ValueTools;
 
 /**
  * @Author Mara
@@ -136,13 +132,6 @@ public class PdfSplitController extends PdfBatchBaseController {
                 }
             });
             authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
-
-            Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
-            tips.setFont(new Font(16));
-
-            tips = new Tooltip(getMessage("StartEndComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(ListInput, tips);
 
             checkPdfMem();
 
@@ -444,7 +433,7 @@ public class PdfSplitController extends PdfBatchBaseController {
                         info.setProducer("MyBox v" + CommonValues.AppVersion);
                         info.setAuthor(authorInput.getText());
                         for (PDDocument doc : docs) {
-                            String pageNumber = ValueTools.fillLeftZero(currentParameters.currentNameNumber,
+                            String pageNumber = StringTools.fillLeftZero(currentParameters.currentNameNumber,
                                     (filesNumber + "").length());
                             String fname = currentParameters.targetPrefix + "_" + pageNumber + ".pdf";
                             actualParameters.finalTargetName = currentParameters.targetPath + "/" + fname;

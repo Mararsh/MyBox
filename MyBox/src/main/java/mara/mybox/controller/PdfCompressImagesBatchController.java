@@ -47,7 +47,7 @@ public class PdfCompressImagesBatchController extends PdfCompressImagesControlle
 
     @Override
     protected void makeTargetFile(File file) {
-        String filename = FileTools.getFileName(file.getName());
+        String filename = file.getName();
         targetFile = new File(targetPath.getAbsolutePath() + File.separator + filename);
         if (targetExistType == TargetExistType.Rename) {
             while (targetFile.exists()) {

@@ -115,7 +115,7 @@ public class TextEncodingBatchController extends FilesBatchController {
 
             Tooltip tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(targetBomCheck, tips);
+            FxmlControl.setTooltip(targetBomCheck, tips);
         }
     }
 
@@ -197,11 +197,11 @@ public class TextEncodingBatchController extends FilesBatchController {
                 File targetFile = new File(targetPath + File.separator + srcFile.getName());
                 if (srcFile.isFile()) {
                     dirTotal++;
-                    String originalName = srcFile.getAbsolutePath();
+                    String originalName = srcFile.getName();
                     if (filesNameCheck.isSelected() && names.length > 0) {
                         boolean isValid = false;
                         for (String name : names) {
-                            if (FileTools.getFileName(originalName).contains(name)) {
+                            if (originalName.contains(name)) {
                                 isValid = true;
                                 break;
                             }

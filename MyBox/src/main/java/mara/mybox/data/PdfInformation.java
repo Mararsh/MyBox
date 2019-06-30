@@ -11,6 +11,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -23,12 +25,14 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 public class PdfInformation {
 
     private File file;
-    private String title, subject, author, creator, producer;
+    private String userPassword, ownerPassword, title, subject, author, creator, producer, keywords;
     private float version;
     private int numberOfPages;
     private Date createTime, modifyTime;
     private String firstPageSize, firstPageSize2;
     private PDDocument doc;
+    private PDDocumentOutline outline;
+    private AccessPermission access;
     private boolean infoLoaded;
 
     public PdfInformation() {
@@ -41,6 +45,7 @@ public class PdfInformation {
 
     public void openDocument(String password) {
         try {
+            this.userPassword = password;
             if (doc == null) {
                 doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage);
             }
@@ -81,7 +86,9 @@ public class PdfInformation {
             subject = docInfo.getSubject();
             author = docInfo.getAuthor();
             numberOfPages = doc.getNumberOfPages();
+            keywords = docInfo.getKeywords();
             version = doc.getVersion();
+            access = doc.getCurrentAccessPermission();
 
             PDPage page = doc.getPage(0);
             String size = "";
@@ -108,13 +115,14 @@ public class PdfInformation {
                         + PdfTools.pixels2mm(box.getHeight()) + "mm";
             }
             firstPageSize2 = size;
+            outline = doc.getDocumentCatalog().getDocumentOutline();
             infoLoaded = true;
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
-    public void readInformation(String password) {
+    public void loadInfo(String password) {
         try {
             openDocument(password);
             if (doc == null) {
@@ -125,6 +133,11 @@ public class PdfInformation {
         } catch (Exception e) {
             logger.error(e.toString());
         }
+    }
+
+    public void readInfo(PDDocument doc) {
+        this.doc = doc;
+        loadInformation();
     }
 
     public BufferedImage readPageAsImage(int page) {
@@ -144,6 +157,9 @@ public class PdfInformation {
         }
     }
 
+    /*
+        get/set
+     */
     public File getFile() {
         return file;
     }
@@ -254,6 +270,46 @@ public class PdfInformation {
 
     public void setInfoLoaded(boolean infoLoaded) {
         this.infoLoaded = infoLoaded;
+    }
+
+    public PDDocumentOutline getOutline() {
+        return outline;
+    }
+
+    public void setOutline(PDDocumentOutline outline) {
+        this.outline = outline;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public AccessPermission getAccess() {
+        return access;
+    }
+
+    public void setAccess(AccessPermission access) {
+        this.access = access;
+    }
+
+    public String getOwnerPassword() {
+        return ownerPassword;
+    }
+
+    public void setOwnerPassword(String ownerPassword) {
+        this.ownerPassword = ownerPassword;
     }
 
 }

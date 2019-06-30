@@ -18,18 +18,17 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.fxml.ImageManufacture;
-import mara.mybox.data.ImageFileInformation;
-import mara.mybox.image.ImageColor;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageFileInformation;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import static mara.mybox.image.ImageValue.pixelSizeMm2dpi;
 import static mara.mybox.image.file.ImageGifFile.readBrokenGifFile;
-import static mara.mybox.image.file.ImageGifFile.readBrokenGifFileWithWidth;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.data.ImageInformation;
-import mara.mybox.tools.FileTools;
+import mara.mybox.image.ImageInformation;
+import mara.mybox.color.ColorBase;
+import mara.mybox.image.ImageColor;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -49,15 +48,69 @@ public class ImageFileReaders {
         BufferedImage image = null;
         try {
             image = ImageIO.read(file);
-        } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//            if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
-            if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
-                String filename = file.getAbsolutePath();
-                String format = FileTools.getFileSuffix(filename).toLowerCase();
-                if (format.toLowerCase().equals("gif")) {
-                    image = ImageGifFile.readBrokenGifFile(filename, 0);
+        } catch (Exception e) {
+            image = readBrokenImage(e, file);
+        }
+        return image;
+    }
+
+    public static BufferedImage readImage(File file, ImageInformation imageInfo) {
+        if (file == null) {
+            return null;
+        }
+        BufferedImage image;
+        try {
+            image = ImageIO.read(file);
+        } catch (Exception e) {
+            image = readBrokenImage(e, file, imageInfo);
+        }
+        return image;
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file) {
+        return readBrokenImage(e, file, 1);
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
+        return readBrokenImage(e, file, 0, 1, 1);
+
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, int index, int xscale, int yscale) {
+        BufferedImage image = null;
+        try {
+            ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
+            image = readBrokenImage(e, file, finfo.getImageInformation(), index, xscale, yscale);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+        }
+        return image;
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo) {
+        return readBrokenImage(e, file, imageInfo, 0, 1, 1);
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
+            int index, int xscale, int yscale) {
+        BufferedImage image = null;
+        String format = imageInfo.getImageFormat();
+        switch (format) {
+            case "gif":
+                // Read Gif with JDK api normally. When broken, use DhyanB's API.
+                // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
+                if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+                    image = ImageGifFile.readBrokenGifFile(file.getAbsolutePath(), index, xscale, yscale);
                 }
-            }
+                break;
+            case "jpg":
+            case "jpeg":
+                if (e.toString().contains("Unsupported Image Type") && imageInfo.getColorChannels() == 4) {
+                    image = ImageJpgFile.readBrokenJpgFile(file, imageInfo, index, xscale, yscale);
+                }
+                break;
+            default:
+                logger.error(e.toString());
         }
         return image;
     }
@@ -128,13 +181,13 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFileByHeight(String format, String filename, int height) {
-        BufferedImage bufferedImage = null;
+        BufferedImage bufferedImage;
+        int scale = 1;
         try {
 
             ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
-                int scale;
                 if (reader.getHeight(0) <= height) {
                     scale = 1;
                 } else {
@@ -151,19 +204,18 @@ public class ImageFileReaders {
                 reader.dispose();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            bufferedImage = readBrokenImage(e, new File(filename), scale);
         }
         return bufferedImage;
     }
 
     public static BufferedImage readFileByWidth(String format, String filename, int width) {
         BufferedImage bufferedImage = null;
+        int scale = 1;
         try {
-
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
-                int scale;
                 if (reader.getWidth(0) <= width) {
                     scale = 1;
                 } else {
@@ -179,7 +231,7 @@ public class ImageFileReaders {
                 reader.dispose();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            bufferedImage = readBrokenImage(e, new File(filename), scale);
         }
         return bufferedImage;
     }
@@ -187,7 +239,6 @@ public class ImageFileReaders {
     public static BufferedImage readFileByScale(String format, String filename, int scale) {
         BufferedImage bufferedImage = null;
         try {
-
             ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
@@ -198,7 +249,7 @@ public class ImageFileReaders {
                 reader.dispose();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            bufferedImage = readBrokenImage(e, new File(filename), scale);
         }
         return bufferedImage;
     }
@@ -232,7 +283,7 @@ public class ImageFileReaders {
                 reader.dispose();
             }
         } catch (Exception e) {
-            logger.error(e.toString());
+            bufferedImage = readBrokenImage(e, new File(filename), 0, sampleWidth, sampleHeight);
         }
         return bufferedImage;
     }
@@ -241,34 +292,25 @@ public class ImageFileReaders {
         try {
             List<BufferedImage> images = new ArrayList<>();
             ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
-            boolean broken = false;
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 int count = 0;
                 while (true) {
+                    BufferedImage m;
                     try {
-                        BufferedImage m = reader.read(count);
-                        if (m != null) {
-                            images.add(m);
-                            count++;
-                        } else {
-                            break;
-                        }
-                    } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        logger.error(e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
-                                && format.toLowerCase().equals("gif")) {
-                            broken = true;
-                        }
+                        m = reader.read(count);
+                    } catch (Exception e) {
+                        m = readBrokenImage(e, new File(filename), count, 1, 1);
+                    }
+                    if (m != null) {
+                        images.add(m);
+                        count++;
+                    } else {
                         break;
                     }
                 }
                 reader.dispose();
-                if (broken) {
-                    return readBrokenGifFile(filename);
-                } else {
-                    return images;
-                }
+                return images;
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -286,38 +328,30 @@ public class ImageFileReaders {
                 int count = 0, scale;
                 ImageReadParam param = reader.getDefaultReadParam();
                 while (true) {
+                    if (reader.getWidth(count) <= width) {
+                        scale = 1;
+                    } else {
+                        scale = reader.getWidth(count) / width + 1;
+                        if (scale < 2) {
+                            scale = 2;
+                        }
+                    }
+                    BufferedImage m;
                     try {
-                        if (reader.getWidth(count) <= width) {
-                            scale = 1;
-                        } else {
-                            scale = reader.getWidth(count) / width + 1;
-                            if (scale < 2) {
-                                scale = 2;
-                            }
-                        }
                         param.setSourceSubsampling(scale, scale, 0, 0);
-                        BufferedImage m = reader.read(count, param);
-                        if (m != null) {
-                            images.add(m);
-                            count++;
-                        } else {
-                            break;
-                        }
-                    } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        logger.error(e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
-                                && format.toLowerCase().equals("gif")) {
-                            broken = true;
-                        }
+                        m = reader.read(count, param);
+                    } catch (Exception e) {
+                        m = readBrokenImage(e, new File(filename), scale);
+                    }
+                    if (m != null) {
+                        images.add(m);
+                        count++;
+                    } else {
                         break;
                     }
                 }
                 reader.dispose();
-                if (broken) {
-                    return readBrokenGifFileWithWidth(filename, width);
-                } else {
-                    return images;
-                }
+                return images;
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -373,14 +407,14 @@ public class ImageFileReaders {
                 if (imageInfo.getBufferedImage() != null) {
                     bufferedImage = imageInfo.getBufferedImage();
                 } else if (imageInfo.getImage() != null) {
-                    bufferedImage = ImageManufacture.getBufferedImage(imageInfo.getImage());
+                    bufferedImage = FxmlImageManufacture.getBufferedImage(imageInfo.getImage());
                 }
             }
             if (bufferedImage == null) {
                 String fname = imageInfo.getFilename();
                 if (fname != null) {
                     if (imageInfo.getIndex() <= 0) {
-                        bufferedImage = ImageFileReaders.readImage(new File(fname));
+                        bufferedImage = ImageFileReaders.readImage(new File(fname), imageInfo);
                     } else {
                         bufferedImage = ImageFileReaders.readFrame(imageInfo.getImageFormat(), fname, imageInfo.getIndex());
                     }
@@ -424,9 +458,14 @@ public class ImageFileReaders {
                         }
                     }
 //                    logger.debug(needSampled + " " + scale);
-                    param.setSourceSubsampling(scale, scale, 0, 0);
                     try {
-                        BufferedImage m = reader.read(i, param);
+                        BufferedImage m;
+                        try {
+                            param.setSourceSubsampling(scale, scale, 0, 0);
+                            m = reader.read(i, param);
+                        } catch (Exception e) {
+                            m = readBrokenImage(e, new File(filename), scale);
+                        }
                         if (scale == 1) {
                             info.setIsSampled(false);
                             info.setBufferedImage(m);
@@ -434,15 +473,10 @@ public class ImageFileReaders {
                             info.setIsSampled(true);
 //                            info.setSampledBufferedImage(m);
                         }
-                        info.setIndex(i);
+                        info.setIndex(i + 1);
                         images.add(m);
-                    } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-                        logger.error(format + "  " + e.toString());
-                        if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
-                                && format.toLowerCase().equals("gif")) {
-                            images = readBrokenGifFile(filename, imagesInfo);
-                            break;
-                        }
+                    } catch (Exception e) {
+                        logger.error(e.toString());
                     }
                 }
                 reader.dispose();
@@ -478,9 +512,14 @@ public class ImageFileReaders {
                         }
                     }
                 }
-                param.setSourceSubsampling(scale, scale, 0, 0);
                 try {
-                    bufferedImage = reader.read(0, param);
+                    try {
+                        param.setSourceSubsampling(scale, scale, 0, 0);
+                        bufferedImage = reader.read(0, param);
+                    } catch (Exception e) {
+                        bufferedImage = readBrokenImage(e, new File(filename), scale);
+                    }
+
                     if (imageInfo != null) {
                         if (scale == 1) {
                             imageInfo.setIsSampled(false);
@@ -517,11 +556,8 @@ public class ImageFileReaders {
                 reader.setInput(in, false);
                 try {
                     bufferedImage = reader.read(index);
-                } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-                    logger.error(e.toString());
-                    if (format.toLowerCase().equals("gif")) {
-                        bufferedImage = ImageGifFile.readBrokenGifFile(filename, index);
-                    }
+                } catch (Exception e) {
+                    bufferedImage = readBrokenImage(e, new File(filename), index, 1, 1);
                 }
                 reader.dispose();
             }
@@ -557,7 +593,12 @@ public class ImageFileReaders {
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
                 param.setSourceRegion(bounds);
-                bufferedImage = reader.read(0, param);
+                try {
+                    bufferedImage = reader.read(0, param);
+                } catch (Exception e) {
+                    bufferedImage = readBrokenImage(e, new File(filename));
+                    bufferedImage = bufferedImage.getSubimage(bounds.x, bounds.y, bounds.width, bounds.height);
+                }
                 reader.dispose();
             }
             return bufferedImage;
@@ -583,19 +624,19 @@ public class ImageFileReaders {
                     int num = reader.getNumImages(true);
                     fileInfo.setNumberOfImages(num);
                     String format = reader.getFormatName().toLowerCase();
-                    if (!format.equals(fileInfo.getImageFormat())) {
-                        fileInfo.setImageFormat(format);
-                    }
+                    fileInfo.setImageFormat(format);
 
                     List<ImageInformation> imagesInfo = new ArrayList<>();
                     for (int i = 0; i < num; i++) {
-                        ImageInformation imageInfo = new ImageInformation(file);
+                        ImageInformation imageInfo = ImageInformation.create(format, file);
                         imageInfo.setImageFileInformation(fileInfo);
                         imageInfo.setImageFormat(format);
                         imageInfo.setWidth(reader.getWidth(i));
                         imageInfo.setHeight(reader.getHeight(i));
                         imageInfo.setIsMultipleFrames(num > 1);
                         imageInfo.setIsTiled(reader.isImageTiled(i));
+                        imageInfo.setIndex(i + 1);
+
                         Iterator<ImageTypeSpecifier> types = reader.getImageTypes(i);
                         List<ImageTypeSpecifier> typesValue = new ArrayList<>();
                         if (types != null) {
@@ -604,25 +645,28 @@ public class ImageFileReaders {
                             }
                             if (!typesValue.isEmpty()) {
                                 try {
-                                    ColorModel cm = typesValue.get(0).getColorModel();
+                                    imageInfo.setRawImageType(reader.getRawImageType(i));
+                                    ColorModel cm = reader.getRawImageType(i).getColorModel();
                                     ColorSpace cs = cm.getColorSpace();
-                                    imageInfo.setColorSpace(ImageColor.getColorSpaceName(cs.getType()));
+                                    imageInfo.setColorSpace(ColorBase.colorSpaceType(cs.getType()));
                                     imageInfo.setColorChannels(cm.getNumComponents());
-                                    imageInfo.setBitDepth(cm.getPixelSize() + "");
+                                    imageInfo.setBitDepth(cm.getPixelSize());
+//                                    logger.debug(" colorSpaceType:" + ColorBase.colorSpaceType(cs.getType())
+//                                            + " getNumComponents:" + cm.getNumComponents() + " getPixelSize:" + cm.getPixelSize());
                                 } catch (Exception e) {
-                                    logger.error(e.toString());
+//                                    logger.error(e.toString());
                                 }
                             }
                         }
-                        imageInfo.setImageTypes(typesValue);
+                        imageInfo.setImageTypeSpecifiers(typesValue);
                         try {
-                            imageInfo.setAspectRatio(reader.getAspectRatio(i));
-                            imageInfo.setRawImageType(reader.getRawImageType(i));
+                            imageInfo.setPixelAspectRatio(reader.getAspectRatio(i));
                         } catch (Exception e) {
                             logger.error(e.toString());
                         }
                         try {
                             imageInfo.setHasThumbnails(reader.hasThumbnails(i));
+                            imageInfo.setNumberOfThumbnails(reader.getNumThumbnails(i));
                         } catch (Exception e) {
                             logger.error(e.toString());
                         }
@@ -654,10 +698,16 @@ public class ImageFileReaders {
             if (imageInfo == null || iioMetaData == null) {
                 return;
             }
-            Map<String, Map<String, Map<String, String>>> metaData = new HashMap();
             StringBuilder metaDataXml = new StringBuilder();
-            readImageMetaData(iioMetaData, metaData, metaDataXml);
-            imageInfo.setMetaData(metaDataXml.toString());
+            String[] formatNames = iioMetaData.getMetadataFormatNames();
+            Map<String, Map<String, List<Map<String, String>>>> metaData = new HashMap();
+            for (String formatName : formatNames) {
+                Map<String, List<Map<String, String>>> formatMetaData = new HashMap();
+                readImageMetaData(formatMetaData, metaDataXml, iioMetaData.getAsTree(formatName), 2);
+                metaData.put(formatName, formatMetaData);
+            }
+            imageInfo.setMetaData(metaData);
+            imageInfo.setMetaDataXml(metaDataXml.toString());
 
             explainCommonMetaData(metaData, imageInfo);
             switch (format.toLowerCase()) {
@@ -666,14 +716,14 @@ public class ImageFileReaders {
                     break;
                 case "jpg":
                 case "jpeg":
-                    ImageJpegFile.explainJpegMetaData(metaData, imageInfo);
+                    ImageJpgFile.explainJpegMetaData(metaData, imageInfo);
                     break;
                 case "bmp":
                     ImageBmpFile.explainBmpMetaData(metaData, imageInfo);
                     break;
                 case "tif":
                 case "tiff":
-                    ImageTiffFile.explainTiffMetaData(imageInfo.getMetaData(), imageInfo);
+                    ImageTiffFile.explainTiffMetaData(imageInfo.getMetaDataXml(), imageInfo);
                     break;
                 default:
 
@@ -685,32 +735,13 @@ public class ImageFileReaders {
         }
     }
 
-    public static void readImageMetaData(IIOMetadata iioMetaData,
-            Map<String, Map<String, Map<String, String>>> meteData, StringBuilder metaDataXml) {
-        try {
-            if (iioMetaData == null) {
-                return;
-            }
-            String[] formatNames = iioMetaData.getMetadataFormatNames();
-            int length = formatNames.length;
-            for (int i = 0; i < length; i++) {
-                Map<String, Map<String, String>> formatMetaData = new HashMap();
-                readImageMetaData(formatMetaData, metaDataXml, iioMetaData.getAsTree(formatNames[i]), 0);
-                meteData.put(formatNames[i], formatMetaData);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public static void readImageMetaData(Map<String, Map<String, String>> formatMetaData,
+    public static void readImageMetaData(Map<String, List<Map<String, String>>> formatMetaData,
             StringBuilder metaDataXml, Node node, int level) {
         String lineSeparator = System.getProperty("line.separator");
         for (int i = 0; i < level; i++) {
             metaDataXml.append("    ");
         }
         metaDataXml.append("<").append(node.getNodeName());
-
         NamedNodeMap map = node.getAttributes();
         if (map != null && map.getLength() > 0) {
             Map<String, String> nodeAttrs = new HashMap();
@@ -721,7 +752,14 @@ public class ImageFileReaders {
                 metaDataXml.append(" ").append(attr.getNodeName()).append("=\"")
                         .append(attr.getNodeValue()).append("\"");
             }
-            formatMetaData.put(node.getNodeName(), nodeAttrs);
+            List<Map<String, String>> nodeAttrsList;
+            if (formatMetaData.get(node.getNodeName()) == null) {
+                nodeAttrsList = new ArrayList();
+            } else {
+                nodeAttrsList = formatMetaData.get(node.getNodeName());
+            }
+            nodeAttrsList.add(nodeAttrs);
+            formatMetaData.put(node.getNodeName(), nodeAttrsList);
         }
 
         Node child = node.getFirstChild();
@@ -741,83 +779,278 @@ public class ImageFileReaders {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
-    public static void explainCommonMetaData(Map<String, Map<String, Map<String, String>>> metaData,
+    public static void explainCommonMetaData(Map<String, Map<String, List<Map<String, String>>>> metaData,
             ImageInformation imageInfo) {
         try {
             if (!metaData.containsKey("javax_imageio_1.0")) {
                 return;
             }
-            Map<String, Map<String, String>> javax_imageio = metaData.get("javax_imageio_1.0");
+            Map<String, List<Map<String, String>>> javax_imageio = metaData.get("javax_imageio_1.0");
 //            logger.debug("explainCommonMetaData");
             if (javax_imageio.containsKey("ColorSpaceType")) {
-                Map<String, String> ColorSpaceType = javax_imageio.get("ColorSpaceType");
+                Map<String, String> ColorSpaceType = javax_imageio.get("ColorSpaceType").get(0);
                 if (ColorSpaceType.containsKey("name")) {
                     imageInfo.setColorSpace(ColorSpaceType.get("name"));
+//                    logger.debug(" colorSpaceType:" + ColorSpaceType.get("name"));
                 }
             }
             if (javax_imageio.containsKey("NumChannels")) {
-                Map<String, String> NumChannels = javax_imageio.get("NumChannels");
+                Map<String, String> NumChannels = javax_imageio.get("NumChannels").get(0);
                 if (NumChannels.containsKey("value")) {
                     imageInfo.setColorChannels(Integer.valueOf(NumChannels.get("value")));
+//                    logger.debug(" NumChannels:" + NumChannels.get("value"));
                 }
             }
+            if (javax_imageio.containsKey("Gamma")) {
+                Map<String, String> Gamma = javax_imageio.get("Gamma").get(0);
+                if (Gamma.containsKey("value")) {
+                    imageInfo.setGamma(Float.valueOf(Gamma.get("value")));
+                }
+            }
+            if (javax_imageio.containsKey("BlackIsZero")) {
+                Map<String, String> BlackIsZero = javax_imageio.get("BlackIsZero").get(0);
+                if (BlackIsZero.containsKey("value")) {
+                    imageInfo.setBlackIsZero(BlackIsZero.get("value").equals("TRUE"));
+                }
+            }
+            if (javax_imageio.containsKey("PaletteEntry")) {
+                List<Map<String, String>> PaletteEntryList = javax_imageio.get("PaletteEntry");
+                imageInfo.setAttribute("PaletteSize", PaletteEntryList.size());
+//                List<ImageColor> Palette = new ArrayList();
+//                for (Map<String, String> PaletteEntry : PaletteEntryList) {
+//                    int index = Integer.valueOf(PaletteEntry.get("index"));
+//                    int red = Integer.valueOf(PaletteEntry.get("red"));
+//                    int green = Integer.valueOf(PaletteEntry.get("green"));
+//                    int blue = Integer.valueOf(PaletteEntry.get("blue"));
+//                    int alpha = 255;
+//                    if (PaletteEntry.containsKey("alpha")) {
+//                        alpha = Integer.valueOf(PaletteEntry.get("alpha"));
+//                    }
+//                    Palette.add(new ImageColor(index, red, green, blue, alpha));
+//                }
+//                imageInfo.setPalette(Palette);
+            }
+            if (javax_imageio.containsKey("BackgroundIndex")) {
+                Map<String, String> BackgroundIndex = javax_imageio.get("BackgroundIndex").get(0);
+                if (BackgroundIndex.containsKey("value")) {
+                    imageInfo.setBackgroundIndex(Integer.valueOf(BackgroundIndex.get("value")));
+                }
+            }
+            if (javax_imageio.containsKey("BackgroundColor")) {
+                Map<String, String> BackgroundColor = javax_imageio.get("BackgroundColor").get(0);
+                int red = Integer.valueOf(BackgroundColor.get("red"));
+                int green = Integer.valueOf(BackgroundColor.get("green"));
+                int blue = Integer.valueOf(BackgroundColor.get("blue"));
+                imageInfo.setBackgroundColor(new ImageColor(red, green, blue));
+            }
             if (javax_imageio.containsKey("CompressionTypeName")) {
-                Map<String, String> CompressionTypeName = javax_imageio.get("CompressionTypeName");
+                Map<String, String> CompressionTypeName = javax_imageio.get("CompressionTypeName").get(0);
                 if (CompressionTypeName.containsKey("value")) {
                     imageInfo.setCompressionType(CompressionTypeName.get("value"));
                 }
             }
             if (javax_imageio.containsKey("Lossless")) {
-                Map<String, String> Lossless = javax_imageio.get("Lossless");
+                Map<String, String> Lossless = javax_imageio.get("Lossless").get(0);
                 if (Lossless.containsKey("value")) {
                     imageInfo.setIsLossless(Lossless.get("value").equals("TRUE"));
                 }
             }
+            if (javax_imageio.containsKey("NumProgressiveScans")) {
+                Map<String, String> NumProgressiveScans = javax_imageio.get("NumProgressiveScans").get(0);
+                if (NumProgressiveScans.containsKey("value")) {
+                    imageInfo.setNumProgressiveScans(Integer.valueOf(NumProgressiveScans.get("value")));
+                }
+            }
+            if (javax_imageio.containsKey("BitRate")) {
+                Map<String, String> BitRate = javax_imageio.get("BitRate").get(0);
+                if (BitRate.containsKey("value")) {
+                    imageInfo.setBitRate(Float.valueOf(BitRate.get("value")));
+                }
+            }
+            if (javax_imageio.containsKey("PlanarConfiguration")) {
+                Map<String, String> PlanarConfiguration = javax_imageio.get("PlanarConfiguration").get(0);
+                if (PlanarConfiguration.containsKey("value")) {
+                    imageInfo.setPlanarConfiguration(PlanarConfiguration.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("SampleFormat")) {
+                Map<String, String> SampleFormat = javax_imageio.get("SampleFormat").get(0);
+                if (SampleFormat.containsKey("value")) {
+                    imageInfo.setSampleFormat(SampleFormat.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("BitsPerSample")) {
+                Map<String, String> BitsPerSample = javax_imageio.get("BitsPerSample").get(0);
+                if (BitsPerSample.containsKey("value")) {
+                    imageInfo.setBitsPerSample(BitsPerSample.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("SignificantBitsPerSample")) {
+                Map<String, String> SignificantBitsPerSample = javax_imageio.get("SignificantBitsPerSample").get(0);
+                if (SignificantBitsPerSample.containsKey("value")) {
+                    imageInfo.setSignificantBitsPerSample(SignificantBitsPerSample.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("SampleMSB")) {
+                Map<String, String> SampleMSB = javax_imageio.get("SampleMSB").get(0);
+                if (SampleMSB.containsKey("value")) {
+                    imageInfo.setSampleMSB(SampleMSB.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("PixelAspectRatio")) {
+                Map<String, String> PixelAspectRatio = javax_imageio.get("PixelAspectRatio").get(0);
+                if (PixelAspectRatio.containsKey("value")) {
+                    imageInfo.setPixelAspectRatio(Float.valueOf(PixelAspectRatio.get("value")));
+                }
+            }
             if (javax_imageio.containsKey("ImageOrientation")) {
-                Map<String, String> ImageOrientation = javax_imageio.get("ImageOrientation");
+                Map<String, String> ImageOrientation = javax_imageio.get("ImageOrientation").get(0);
                 if (ImageOrientation.containsKey("value")) {
                     imageInfo.setImageRotation(ImageOrientation.get("value"));
                 }
             }
-            if (javax_imageio.containsKey("Alpha")) {
-                Map<String, String> Alpha = javax_imageio.get("Alpha");
-                if (Alpha.containsKey("value")) {
-                    imageInfo.setHasAlpha(!Alpha.get("value").equals("none"));
-                }
-            }
             if (javax_imageio.containsKey("HorizontalPixelSize")) { // The width of a pixel, in millimeters
-                Map<String, String> HorizontalPixelSize = javax_imageio.get("HorizontalPixelSize");
+                Map<String, String> HorizontalPixelSize = javax_imageio.get("HorizontalPixelSize").get(0);
                 if (HorizontalPixelSize.containsKey("value")) {
                     float v = Float.valueOf(HorizontalPixelSize.get("value"));
-                    imageInfo.setwDensity(pixelSizeMm2dpi(v));
-//                    logger.debug("HorizontalPixelSize:" + imageInfo.gethResolution());
+                    imageInfo.setHorizontalPixelSize(v);
+                    imageInfo.setXDpi(pixelSizeMm2dpi(v));
                 }
             }
             if (javax_imageio.containsKey("VerticalPixelSize")) { // The height of a pixel, in millimeters
-                Map<String, String> VerticalPixelSize = javax_imageio.get("VerticalPixelSize");
+                Map<String, String> VerticalPixelSize = javax_imageio.get("VerticalPixelSize").get(0);
                 if (VerticalPixelSize.containsKey("value")) {
                     float v = Float.valueOf(VerticalPixelSize.get("value"));
-                    imageInfo.sethDensity(pixelSizeMm2dpi(v));
-//                    logger.debug("VerticalPixelSize:" + imageInfo.getvResolution());
+                    imageInfo.setVerticalPixelSize(v);
+                    imageInfo.setYDpi(pixelSizeMm2dpi(v));
+                }
+            }
+            if (javax_imageio.containsKey("HorizontalPhysicalPixelSpacing")) {
+                Map<String, String> HorizontalPhysicalPixelSpacing = javax_imageio.get("HorizontalPhysicalPixelSpacing").get(0);
+                if (HorizontalPhysicalPixelSpacing.containsKey("value")) {
+                    float v = Float.valueOf(HorizontalPhysicalPixelSpacing.get("value"));
+                    imageInfo.setHorizontalPhysicalPixelSpacing(v);
+                }
+            }
+            if (javax_imageio.containsKey("VerticalPhysicalPixelSpacing")) {
+                Map<String, String> VerticalPhysicalPixelSpacing = javax_imageio.get("VerticalPhysicalPixelSpacing").get(0);
+                if (VerticalPhysicalPixelSpacing.containsKey("value")) {
+                    float v = Float.valueOf(VerticalPhysicalPixelSpacing.get("value"));
+                    imageInfo.setVerticalPhysicalPixelSpacing(v);
+                }
+            }
+            if (javax_imageio.containsKey("HorizontalPosition")) {
+                Map<String, String> HorizontalPosition = javax_imageio.get("HorizontalPosition").get(0);
+                if (HorizontalPosition.containsKey("value")) {
+                    float v = Float.valueOf(HorizontalPosition.get("value"));
+                    imageInfo.setHorizontalPosition(v);
+                }
+            }
+            if (javax_imageio.containsKey("VerticalPosition")) {
+                Map<String, String> VerticalPosition = javax_imageio.get("VerticalPosition").get(0);
+                if (VerticalPosition.containsKey("value")) {
+                    float v = Float.valueOf(VerticalPosition.get("value"));
+                    imageInfo.setVerticalPosition(v);
+                }
+            }
+            if (javax_imageio.containsKey("HorizontalPixelOffset")) {
+                Map<String, String> HorizontalPixelOffset = javax_imageio.get("HorizontalPixelOffset").get(0);
+                if (HorizontalPixelOffset.containsKey("value")) {
+                    float v = Float.valueOf(HorizontalPixelOffset.get("value"));
+                    imageInfo.setHorizontalPixelOffset(v);
+                }
+            }
+            if (javax_imageio.containsKey("VerticalPixelOffset")) {
+                Map<String, String> VerticalPixelOffset = javax_imageio.get("VerticalPixelOffset").get(0);
+                if (VerticalPixelOffset.containsKey("value")) {
+                    float v = Float.valueOf(VerticalPixelOffset.get("value"));
+                    imageInfo.setVerticalPixelOffset(v);
+                }
+            }
+            if (javax_imageio.containsKey("HorizontalScreenSize")) {
+                Map<String, String> HorizontalScreenSize = javax_imageio.get("HorizontalScreenSize").get(0);
+                if (HorizontalScreenSize.containsKey("value")) {
+                    float v = Float.valueOf(HorizontalScreenSize.get("value"));
+                    imageInfo.setHorizontalScreenSize(v);
+                }
+            }
+            if (javax_imageio.containsKey("VerticalScreenSize")) {
+                Map<String, String> VerticalScreenSize = javax_imageio.get("VerticalScreenSize").get(0);
+                if (VerticalScreenSize.containsKey("value")) {
+                    float v = Float.valueOf(VerticalScreenSize.get("value"));
+                    imageInfo.setVerticalScreenSize(v);
                 }
             }
             if (javax_imageio.containsKey("FormatVersion")) {
-                Map<String, String> FormatVersion = javax_imageio.get("FormatVersion");
+                Map<String, String> FormatVersion = javax_imageio.get("FormatVersion").get(0);
                 if (FormatVersion.containsKey("value")) {
-                    if (!imageInfo.getImageFormat().equals(FormatVersion.get("value"))) {
-                        String extra = imageInfo.getExtraFormat();
-                        if (extra == null) {
-                            imageInfo.setExtraFormat(FormatVersion.get("value"));
-                        } else if (!FormatVersion.get("value").equals(extra)) {
-                            imageInfo.setExtraFormat(extra + " " + FormatVersion.get("value"));
-                        }
-                    }
+                    imageInfo.setFormatVersion(FormatVersion.get("value"));
                 }
             }
-            if (javax_imageio.containsKey("BitsPerSample")) {
-                Map<String, String> BitsPerSample = javax_imageio.get("BitsPerSample");
-                if (BitsPerSample.containsKey("value")) {
-                    imageInfo.setBitDepth(BitsPerSample.get("value"));
+            if (javax_imageio.containsKey("SubimageInterpretation")) {
+                Map<String, String> SubimageInterpretation = javax_imageio.get("SubimageInterpretation").get(0);
+                if (SubimageInterpretation.containsKey("value")) {
+                    imageInfo.setSubimageInterpretation(SubimageInterpretation.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("ImageCreationTime")) {
+                Map<String, String> ImageCreationTime = javax_imageio.get("ImageCreationTime").get(0);
+                String t = ImageCreationTime.get("year") + "-" + ImageCreationTime.get("month") + "-"
+                        + ImageCreationTime.get("day");
+                if (ImageCreationTime.containsKey("hour")) {
+                    t += " " + ImageCreationTime.get("hour");
+                } else {
+                    t += " 00";
+                }
+                if (ImageCreationTime.containsKey("minute")) {
+                    t += ":" + ImageCreationTime.get("minute");
+                } else {
+                    t += ":00";
+                }
+                if (ImageCreationTime.containsKey("second")) {
+                    t += ":" + ImageCreationTime.get("second");
+                } else {
+                    t += ":00";
+                }
+                imageInfo.setImageCreationTime(t);
+            }
+            if (javax_imageio.containsKey("ImageModificationTime")) {
+                Map<String, String> ImageModificationTime = javax_imageio.get("ImageModificationTime").get(0);
+                String t = ImageModificationTime.get("year") + "-" + ImageModificationTime.get("month") + "-"
+                        + ImageModificationTime.get("day");
+                if (ImageModificationTime.containsKey("hour")) {
+                    t += " " + ImageModificationTime.get("hour");
+                } else {
+                    t += " 00";
+                }
+                if (ImageModificationTime.containsKey("minute")) {
+                    t += ":" + ImageModificationTime.get("minute");
+                } else {
+                    t += ":00";
+                }
+                if (ImageModificationTime.containsKey("second")) {
+                    t += ":" + ImageModificationTime.get("second");
+                } else {
+                    t += ":00";
+                }
+                imageInfo.setImageModificationTime(t);
+            }
+            if (javax_imageio.containsKey("Alpha")) {
+                Map<String, String> Alpha = javax_imageio.get("Alpha").get(0);
+                if (Alpha.containsKey("value")) {
+                    imageInfo.setAlpha(Alpha.get("value"));
+                }
+            }
+            if (javax_imageio.containsKey("TransparentIndex")) {
+                Map<String, String> TransparentIndex = javax_imageio.get("TransparentIndex").get(0);
+                if (TransparentIndex.containsKey("value")) {
+                    imageInfo.setTransparentIndex(Integer.valueOf(TransparentIndex.get("value")));
+                }
+            }
+            if (javax_imageio.containsKey("TransparentColor")) {
+                Map<String, String> TransparentColor = javax_imageio.get("TransparentColor").get(0);
+                if (TransparentColor.containsKey("value")) {
+                    imageInfo.setTransparentColor(TransparentColor.get("value"));
                 }
             }
 

@@ -45,13 +45,13 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.FloatTools;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -86,7 +86,7 @@ public class WeiboSnapRunController extends BaseController {
     private Map<String, List<File>> pdfs;
     private Runtime r;
     private final int MaxStasisTimes, MinAccessInterval, MaxAccessInterval;
-    private final long mb, loadLoopInterval, snapLoopInterval;
+    private final long mb, loadLoopInterval, snapLoopInterval, pageAccessDelay;
     private final String expandCommentsScript, findPicturesScript, picturesNumberScript, expandPicturesScript, clearScripts;
     private final String AllPicturesLoaded, PictureLoaded, PictureTimeOver, CommentsLoaded, CommentsTimeOver;
     private File tempdir;
@@ -110,6 +110,7 @@ public class WeiboSnapRunController extends BaseController {
         loadLoopInterval = MinAccessInterval * 3;
         MaxStasisTimes = 6;
         snapLoopInterval = 300;
+        pageAccessDelay = 20 * 1000;
 
         expandCommentsScript
                 = " function myboxExpandComments() { "
@@ -410,7 +411,7 @@ public class WeiboSnapRunController extends BaseController {
             }
 
             loadingController
-                    = (WeiboSnapingInfoController) FxmlStage.openStage(getClass(), myStage,
+                    = (WeiboSnapingInfoController) FxmlStage.openStage( myStage,
                             CommonValues.WeiboSnapingInfoFxml,
                             true, Modality.WINDOW_MODAL, StageStyle.TRANSPARENT);
             loadingController.setParent(this);
@@ -474,7 +475,7 @@ public class WeiboSnapRunController extends BaseController {
                                     loadingController.addLine(AppVaribles.getMessage("SnapingStartTime") + ": " + DateTools.datetimeToString(loadStartTime)
                                             + " (" + AppVaribles.getMessage("ElapsedTime") + ": " + DateTools.showTime(new Date().getTime() - loadStartTime) + ")");
                                     showMemInfo();
-                                    if (contents.contains("Request-URI Too Long")) {
+                                    if (contents.contains("Request-URI Too Large") || contents.contains("Request-URI Too Long")) {
                                         loadFailed = loadCompleted = true;
                                         errorString = AppVaribles.getMessage("WeiBo414");
                                         quit();
@@ -789,12 +790,12 @@ public class WeiboSnapRunController extends BaseController {
         String memInfo = "MyBox"
                 //                    + "  " + AppVaribles.getMessage("AvailableProcessors") + ":" + availableProcessors
                 + "  " + AppVaribles.getMessage("AvaliableMemory") + ":" + maxMemory + "MB"
-                + "  " + AppVaribles.getMessage("RequiredMemory") + ":" + totalMemory + "MB(" + ValueTools.roundFloat2(totalMemory * 100.0f / physicalTotal) + "%)"
-                + "  " + AppVaribles.getMessage("UsedMemory") + ":" + usedMemory + "MB(" + ValueTools.roundFloat2(usedMemory * 100.0f / physicalTotal) + "%)";
+                + "  " + AppVaribles.getMessage("RequiredMemory") + ":" + totalMemory + "MB(" + FloatTools.roundFloat2(totalMemory * 100.0f / physicalTotal) + "%)"
+                + "  " + AppVaribles.getMessage("UsedMemory") + ":" + usedMemory + "MB(" + FloatTools.roundFloat2(usedMemory * 100.0f / physicalTotal) + "%)";
 
         memInfo += "\n" + System.getProperty("os.name")
                 + "  " + AppVaribles.getMessage("TotalPhysicalMemory") + ":" + physicalTotal + "MB"
-                + "  " + AppVaribles.getMessage("UsedPhysicalMemory") + ":" + physicalUse + "MB (" + ValueTools.roundFloat2(physicalUse * 100.0f / physicalTotal) + "%)";
+                + "  " + AppVaribles.getMessage("UsedPhysicalMemory") + ":" + physicalUse + "MB (" + FloatTools.roundFloat2(physicalUse * 100.0f / physicalTotal) + "%)";
 
         loadingController.showMem(memInfo);
 
@@ -875,7 +876,12 @@ public class WeiboSnapRunController extends BaseController {
                                         }
                                         if (!mainCompleted) {
                                             contents = (String) webEngine.executeScript("document.documentElement.outerHTML");
-                                            if (contents.contains("查看更早微博")) {
+                                            if (contents.contains("Request-URI Too Large") || contents.contains("Request-URI Too Long")) {
+                                                loadFailed = loadCompleted = true;
+                                                errorString = AppVaribles.getMessage("WeiBo414");
+                                                quit();
+                                                return;
+                                            } else if (contents.contains("查看更早微博")) {
                                                 mainCompleted();
                                             } else if (contents.contains("还没有发过微博")) {
                                                 currentPage = 0;
@@ -1078,7 +1084,7 @@ public class WeiboSnapRunController extends BaseController {
                         if (fname.isEmpty()) {
                             continue;
                         }
-                        suffix = FileTools.getFileSuffix(FileTools.getFileName(pix[i]));
+                        suffix = FileTools.getFileSuffix(pix[i]);
                         if (suffix.isEmpty()) {
                             suffix = "jpg";
                             fname += "." + suffix;
@@ -1133,6 +1139,11 @@ public class WeiboSnapRunController extends BaseController {
                 retried++;
                 loadingController.showError(errorString + "\n"
                         + MessageFormat.format(AppVaribles.getMessage("RetryingTimes"), retried));
+
+                loadingController.setInfo(AppVaribles.getMessage("WeiboSpleeping"));
+                showBaseInfo();
+                Thread.sleep(pageAccessDelay * retried);
+
                 loadPage(currentAddress);
                 return;
             }
@@ -1158,7 +1169,6 @@ public class WeiboSnapRunController extends BaseController {
             }
             webEngine.executeScript("window.scrollTo(0,0 );");
             webEngine.executeScript("document.getElementsByTagName('body')[0].style.zoom = " + parameters.getZoomScale() + ";");
-            Thread.sleep(loadLoopInterval);
             pageHeight = (Integer) webEngine.executeScript("document.documentElement.scrollHeight || document.body.scrollHeight;");
             screenHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
             screenWidth = (Integer) webEngine.executeScript("document.documentElement.clientWidth || document.body.clientWidth;");
@@ -1225,7 +1235,7 @@ public class WeiboSnapRunController extends BaseController {
                                         if (parameters.isUseTempFiles()) {
                                             try {
                                                 String filename = pdfFilename + "-Image" + imageNumber + ".png";
-                                                bufferedImage = ImageManufacture.getBufferedImage(snapshot);
+                                                bufferedImage = FxmlImageManufacture.getBufferedImage(snapshot);
                                                 snapshot = null;
                                                 ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
                                                 bufferedImage = null;
@@ -1245,7 +1255,7 @@ public class WeiboSnapRunController extends BaseController {
                                             Image lasSnap = images.get(images.size() - 1);
                                             int y1 = snapHeight - pageHeight + 100;
 //                                            logger.debug(pageHeight + " " + snapHeight + " " + screenHeight + " " + y1);
-                                            lasSnap = ImageManufacture.cropOutsideFx(lasSnap, 0, y1,
+                                            lasSnap = FxmlImageManufacture.cropOutsideFx(lasSnap, 0, y1,
                                                     (int) lasSnap.getWidth() - 1, (int) lasSnap.getHeight() - 1);
                                             images.set(images.size() - 1, lasSnap);
                                         }
@@ -1281,7 +1291,7 @@ public class WeiboSnapRunController extends BaseController {
 
                             if (!snapFailed) {
                                 if (!parameters.isImagePerScreen() && !images.isEmpty()) {
-                                    Image finalImage = ImageManufacture.combineSingleColumn(images);
+                                    Image finalImage = FxmlImageManufacture.combineSingleColumn(images);
                                     logger.debug("combineSingleColumn");
                                     images = new ArrayList<>();
                                     if (finalImage == null) {
@@ -1432,7 +1442,7 @@ public class WeiboSnapRunController extends BaseController {
             }
             AppVaribles.setUserConfigValue("WeiboLastStartMonthKey", currentMonthString);
             if (parameters.isOpenPathWhenStop() && rootPath != null) {
-                FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
+                view(rootPath);
             }
             closeStage();
         } catch (Exception e) {
@@ -1469,7 +1479,7 @@ public class WeiboSnapRunController extends BaseController {
         if (rootPath == null) {
             return;
         }
-        FxmlStage.openTarget(getClass(), null, rootPath.getAbsolutePath());
+        view(rootPath);
     }
 
     public WeiboSnapController getParent() {

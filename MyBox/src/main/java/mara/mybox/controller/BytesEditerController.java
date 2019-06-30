@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Desktop;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -443,7 +442,8 @@ public class BytesEditerController extends FileEditerController {
     @FXML
     private void openAscii() {
         try {
-           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));
+            browseURI(new URI("https://www.ascii-code.com/"));
+//           browseURI(new URI("https://en.wikipedia.org/wiki/ASCII"));  // this address in unavaliable to someones
         } catch (Exception e) {
             logger.error(e.toString());
         }

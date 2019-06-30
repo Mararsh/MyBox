@@ -19,10 +19,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
@@ -214,32 +214,32 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
             BufferedImage target;
             switch (opType) {
                 case CutMarginsByWidth:
-                    target = ImageConvert.cutMargins(source,
-                            ImageManufacture.toAwtColor(marginsColorPicker.getValue()),
+                    target = ImageManufacture.cutMargins(source,
+                            FxmlImageManufacture.toAwtColor(marginsColorPicker.getValue()),
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case CutMarginsByColor:
-                    target = ImageConvert.cutMargins(source,
+                    target = ImageManufacture.cutMargins(source,
                             width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case AddMargins:
-                    target = ImageConvert.addMargins(source,
-                            ImageManufacture.toAwtColor(marginsColorPicker.getValue()), width,
+                    target = ImageManufacture.addMargins(source,
+                            FxmlImageManufacture.toAwtColor(marginsColorPicker.getValue()), width,
                             marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                             marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
                     break;
                 case BlurMargins:
                     if (preAlphaCheck.isSelected()) {
-                        target = ImageConvert.blurMarginsNoAlpha(source,
+                        target = ImageManufacture.blurMarginsNoAlpha(source,
                                 width,
                                 marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                 marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
 
                     } else {
-                        target = ImageConvert.blurMarginsAlpha(source,
+                        target = ImageManufacture.blurMarginsAlpha(source,
                                 width,
                                 marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
                                 marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());

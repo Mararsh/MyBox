@@ -1,7 +1,7 @@
 package mara.mybox.image;
 
 import java.awt.Color;
-import java.awt.color.ColorSpace;
+import static mara.mybox.value.AppVaribles.getMessage;
 
 /**
  * @Author Mara
@@ -11,6 +11,40 @@ import java.awt.color.ColorSpace;
  */
 public class ImageColor {
 
+    private int index, red, green, blue, alpha = 255;
+
+    public ImageColor(int red, int green, int blue) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+    }
+
+    public ImageColor(int red, int green, int blue, int alpha) {
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
+    }
+
+    public ImageColor(int index, int red, int green, int blue, int alpha) {
+        this.index = index;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
+    }
+
+    @Override
+    public String toString() {
+        return getMessage("Red") + ": " + red
+                + getMessage("Green") + ": " + green
+                + getMessage("Blue") + ": " + blue
+                + getMessage("Alpha") + ": " + alpha;
+    }
+
+    /*
+        Static methods
+     */
     public static int RGB2Pixel(int r, int g, int b, int a) {
         return RGB2Pixel(new Color(r, g, b, a));
     }
@@ -75,75 +109,6 @@ public class ImageColor {
     public static String pixel2hex(int pixel) {
         Color c = new Color(pixel);
         return String.format("#%02X%02X%02X", c.getRed(), c.getGreen(), c.getBlue());
-    }
-
-    public static String getColorSpaceName(int colorType) {
-        switch (colorType) {
-            case ColorSpace.TYPE_XYZ:
-                return "XYZ";
-            case ColorSpace.TYPE_Lab:
-                return "Lab";
-            case ColorSpace.TYPE_Luv:
-                return "Luv";
-            case ColorSpace.TYPE_YCbCr:
-                return "YCbCr";
-            case ColorSpace.TYPE_Yxy:
-                return "Yxy";
-            case ColorSpace.TYPE_RGB:
-                return "RGB";
-            case ColorSpace.TYPE_GRAY:
-                return "GRAY";
-            case ColorSpace.TYPE_HSV:
-                return "HSV";
-            case ColorSpace.TYPE_HLS:
-                return "HLS";
-            case ColorSpace.TYPE_CMYK:
-                return "CMYK";
-            case ColorSpace.TYPE_CMY:
-                return "CMY";
-            case ColorSpace.TYPE_2CLR:
-                return "2CLR";
-            case ColorSpace.TYPE_3CLR:
-                return "3CLR";
-            case ColorSpace.TYPE_4CLR:
-                return "4CLR";
-            case ColorSpace.TYPE_5CLR:
-                return "5CLR";
-            case ColorSpace.TYPE_6CLR:
-                return "6CLR";
-            case ColorSpace.TYPE_7CLR:
-                return "CMY";
-            case ColorSpace.TYPE_8CLR:
-                return "8CLR";
-            case ColorSpace.TYPE_9CLR:
-                return "9CLR";
-            case ColorSpace.TYPE_ACLR:
-                return "ACLR";
-            case ColorSpace.TYPE_BCLR:
-                return "BCLR";
-            case ColorSpace.TYPE_CCLR:
-                return "CCLR";
-            case ColorSpace.TYPE_DCLR:
-                return "DCLR";
-            case ColorSpace.TYPE_ECLR:
-                return "ECLR";
-            case ColorSpace.TYPE_FCLR:
-                return "FCLR";
-            case ColorSpace.CS_sRGB:
-                return "sRGB";
-            case ColorSpace.CS_LINEAR_RGB:
-                return "LINEAR_RGB";
-            case ColorSpace.CS_CIEXYZ:
-                return "CIEXYZ";
-            case ColorSpace.CS_PYCC:
-                return "PYCC";
-            case ColorSpace.CS_GRAY:
-                return "GRAY";
-            default:
-                return "UNKOWN";
-
-        }
-
     }
 
     // 0.0-1.0
@@ -349,6 +314,49 @@ public class ImageColor {
 
     public static int YCbCr2pixel(int Y, int Cb, int Cr) {
         return YCbCr2rgb(Y, Cb, Cr).getRGB();
+    }
+
+    /*
+        get/set
+     */
+    public int getRed() {
+        return red;
+    }
+
+    public void setRed(int red) {
+        this.red = red;
+    }
+
+    public int getGreen() {
+        return green;
+    }
+
+    public void setGreen(int green) {
+        this.green = green;
+    }
+
+    public int getBlue() {
+        return blue;
+    }
+
+    public void setBlue(int blue) {
+        this.blue = blue;
+    }
+
+    public int getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(int alpha) {
+        this.alpha = alpha;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
 }

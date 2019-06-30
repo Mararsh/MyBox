@@ -71,7 +71,7 @@ public abstract class PdfBatchBaseController extends FilesBatchController {
         if (file == null) {
             return;
         }
-        super.sourceFileChanged(file);
+        sourceFile = file;
 
         String filename = file.getName();
         if (targetPrefixInput != null) {
@@ -113,18 +113,17 @@ public abstract class PdfBatchBaseController extends FilesBatchController {
     @Override
     public void makeSingleParameters() {
         actualParameters.isBatch = false;
-        
+
         actualParameters.sourceFile = sourceSelectionController.pdfInformation.getFile();
         sourceFiles = new ArrayList();
         sourceFiles.add(actualParameters.sourceFile);
-        logger.debug(sourceFiles.size());
+        actualParameters.password = sourceSelectionController.pdfInformation.getUserPassword();
 
         actualParameters.fromPage = sourceSelectionController.readFromPage() - 1; // Interface From 1, actual from 0
 //        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.fromPage);
         actualParameters.toPage = sourceSelectionController.readToPage() - 1;  // Interface From 1, actual from 0
 //        AppVaribles.setUserConfigInt(PdfSourceFromKey, actualParameters.toPage);
         actualParameters.currentNameNumber = actualParameters.acumFrom;
-        actualParameters.password = sourceSelectionController.readPassword();
         actualParameters.startPage = actualParameters.fromPage;
         if (acumFromInput != null) {
             actualParameters.acumFrom = FxmlControl.getInputInt(acumFromInput);

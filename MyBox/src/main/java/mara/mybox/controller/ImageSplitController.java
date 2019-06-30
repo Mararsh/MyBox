@@ -47,16 +47,16 @@ import javafx.stage.Modality;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlStage;
 import static mara.mybox.image.file.ImageTiffFile.getMeta;
 import static mara.mybox.image.file.ImageTiffFile.getPara;
@@ -64,7 +64,7 @@ import static mara.mybox.image.file.ImageTiffFile.getWriter;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.tools.ValueTools;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -145,7 +145,7 @@ public class ImageSplitController extends ImageViewerController {
         checkPdfFormat();
         checkJpegQuality();
         checkPdfThreshold();
-        FxmlControl.quickTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+        FxmlControl.setTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
 
     }
 
@@ -449,8 +449,6 @@ public class ImageSplitController extends ImageViewerController {
                 }
             });
 
-            FxmlControl.setComments(tiffDitherCheck, new Tooltip(getMessage("DitherComments")));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -659,8 +657,6 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        FxmlControl.setComments(pdfDitherCheck, new Tooltip(getMessage("DitherComments")));
-
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -699,8 +695,6 @@ public class ImageSplitController extends ImageViewerController {
                 }
             });
             fontBox.getSelectionModel().select(0);
-
-            FxmlControl.setComments(fontBox, new Tooltip(getMessage("FontFileComments")));
 
         }
 
@@ -1178,8 +1172,8 @@ public class ImageSplitController extends ImageViewerController {
 
             if (displaySizeCheck.isSelected()) {
                 String style = " -fx-font-size: 1.2em; ";
-                ValueTools.sortList(rows);
-                ValueTools.sortList(cols);
+                DoubleTools.sortList(rows);
+                DoubleTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; i++) {
                     double row = rows.get(i) * ratioy / scale;
                     int hv = rows.get(i + 1) - rows.get(i) + 1;
@@ -1290,7 +1284,7 @@ public class ImageSplitController extends ImageViewerController {
                 final String filename = sourceFile.getAbsolutePath();
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
-                    wholeSource = ImageManufacture.getBufferedImage(image);
+                    wholeSource = FxmlImageManufacture.getBufferedImage(image);
                 }
                 int total = (rows.size() - 1) * (cols.size() - 1);
                 for (int i = 0; i < rows.size() - 1; i++) {
@@ -1309,7 +1303,7 @@ public class ImageSplitController extends ImageViewerController {
                         if (imageInformation.isIsSampled()) {
                             target = ImageFileReaders.readRectangle(sourceFormat, filename, x1, y1, x2, y2);
                         } else {
-                            target = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
+                            target = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                         }
                         if (imageTask == null || imageTask.isCancelled()) {
                             return null;
@@ -1408,7 +1402,7 @@ public class ImageSplitController extends ImageViewerController {
                     int x1, y1, x2, y2;
                     BufferedImage wholeSource = null;
                     if (!imageInformation.isIsSampled()) {
-                        wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
+                        wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                     }
                     int count = 0;
                     int total = (rows.size() - 1) * (cols.size() - 1);
@@ -1428,7 +1422,7 @@ public class ImageSplitController extends ImageViewerController {
                             if (imageInformation.isIsSampled()) {
                                 target = ImageFileReaders.readRectangle(sourceFormat, sourcefile, x1, y1, x2, y2);
                             } else {
-                                target = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
+                                target = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                             }
                             if (pdfTask == null || pdfTask.isCancelled()) {
                                 return null;
@@ -1472,7 +1466,7 @@ public class ImageSplitController extends ImageViewerController {
                         try {
                             if (ok && targetFile.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
-                                FxmlStage.openPdfViewer(getClass(), null, targetFile);
+                                FxmlStage.openPdfViewer( null, targetFile);
 //                               browseURI(targetFile.toURI());
                             } else {
                                 popError(AppVaribles.getMessage("Failed"));
@@ -1525,7 +1519,7 @@ public class ImageSplitController extends ImageViewerController {
                         int x1, y1, x2, y2;
                         BufferedImage wholeSource = null;
                         if (!imageInformation.isIsSampled()) {
-                            wholeSource = ImageManufacture.getBufferedImage(imageInformation.getImage());
+                            wholeSource = FxmlImageManufacture.getBufferedImage(imageInformation.getImage());
                         }
                         int total = (rows.size() - 1) * (cols.size() - 1);
                         for (int i = 0; i < rows.size() - 1; i++) {
@@ -1542,7 +1536,7 @@ public class ImageSplitController extends ImageViewerController {
                                 x2 = cols.get(j + 1);
                                 BufferedImage bufferedImage;
                                 if (!imageInformation.isIsSampled()) {
-                                    bufferedImage = ImageConvert.cropOutside(wholeSource, x1, y1, x2, y2);
+                                    bufferedImage = ImageManufacture.cropOutside(wholeSource, x1, y1, x2, y2);
                                 } else {
                                     bufferedImage = ImageFileReaders.readRectangle(sourceFormat, filename, x1, y1, x2, y2);
                                 }

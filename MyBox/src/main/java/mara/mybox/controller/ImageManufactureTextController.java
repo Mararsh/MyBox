@@ -29,7 +29,7 @@ import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 
 /**
@@ -116,7 +116,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
     protected void initTextTab() {
         try {
 
-            FxmlControl.quickTooltip(textTipsView, new Tooltip(getMessage("TextComments")));
+            FxmlControl.setTooltip(textTipsView, new Tooltip(getMessage("TextComments")));
 
             fontFamily = AppVaribles.getUserConfigValue(ImageFontFamilyKey, "Arial");
             fontWeight = FontWeight.NORMAL;
@@ -353,7 +353,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
                         font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
                     }
                 }
-                newImage = ImageManufacture.addText(imageView.getImage(), waterInput.getText(),
+                newImage = FxmlImageManufacture.addText(imageView.getImage(), waterInput.getText(),
                         font, fontColor, waterX, waterY,
                         fontOpacity, waterShadow, waterAngle,
                         outlineCheck.isSelected(), verticalCheck.isSelected());

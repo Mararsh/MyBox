@@ -1,36 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <!--
-Copyright (c) 2010, 2014, Oracle and/or its affiliates.
-All rights reserved. Use is subject to license terms.
-
-This file is available and licensed under the following license:
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
- - Redistributions of source code must retain the above copyright
-   notice, this list of conditions and the following disclaimer.
- - Redistributions in binary form must reproduce the above copyright
-   notice, this list of conditions and the following disclaimer in
-   the documentation and/or other materials provided with the distribution.
- - Neither the name of Oracle Corporation nor the names of its
-   contributors may be used to endorse or promote products derived
-   from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -67,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" >
+                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -88,7 +64,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                             <children>
                                 <ToolBar fx:id="hotBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                                     <items>
-                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -98,7 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </graphic>
                                         </Button>
 
-                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -107,7 +83,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                        <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -116,7 +92,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" >
+                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -126,7 +102,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             </graphic>
                                         </Button>
                                         <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
-                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" >
+                                        <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -135,7 +111,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" >
+                                        <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -144,7 +120,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction" >
+                                        <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -153,7 +129,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" >
+                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -162,7 +138,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction" >
+                                        <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -171,7 +147,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction" >
+                                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -180,7 +156,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" >
+                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconSaveAs.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -205,7 +190,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                             <children>
                                                 <ToolBar fx:id="fileBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -214,7 +199,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -223,7 +208,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="statisticButton" mnemonicParsing="false" onAction="#statisticAction" >
+                                                        <!--                                                        <Button fx:id="statisticButton" mnemonicParsing="false" onAction="#statisticAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -231,26 +216,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
-                                                        </Button>
+                                                        </Button>-->
                                                         <CheckBox fx:id="saveCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
+                                                        <ChoiceBox fx:id="saveAsOptionsBox" prefWidth="200.0" />
+                                                        <Label text="%SaveAsOption" />
                                                     </items>
-                                                </ToolBar>
-                                                <ToolBar fx:id="saveAsBar" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
-                                                    <items>
-                                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction"   onMouseEntered="#popSaveAs">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/iconSaveAs.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
-                                                        <ChoiceBox fx:id="saveAsOptions" prefWidth="200.0" />
-                                                    </items>
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
                                                 </ToolBar>
                                             </children>
                                         </HBox>

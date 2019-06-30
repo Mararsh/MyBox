@@ -5,6 +5,7 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.io.File;
 import java.net.URI;
+import java.security.MessageDigest;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
@@ -21,6 +22,22 @@ public class SystemTools {
 
     public static float jreVersion() {
         return Float.parseFloat(System.getProperty("java.version").substring(0, 3));
+    }
+
+    public static String os() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            return "win";
+
+        } else if (os.contains("linux")) {
+            return "linux";
+
+        } else if (os.contains("mac")) {
+            return "mac";
+
+        } else {
+            return "other";
+        }
     }
 
     // https://blog.csdn.net/sdtvyyb_007/article/details/77160239
@@ -85,6 +102,15 @@ public class SystemTools {
         }
     }
 
+    public static long getAvaliableMemory() {
+        Runtime r = Runtime.getRuntime();
+        return r.maxMemory() - (r.totalMemory() - r.freeMemory());
+    }
+
+    public static long getAvaliableMemoryMB() {
+        return getAvaliableMemory() / (1024 * 1024);
+    }
+
     public static Point getMousePoint() {
         return MouseInfo.getPointerInfo().getLocation();
     }
@@ -139,6 +165,38 @@ public class SystemTools {
 
         } catch (Exception e) {
             logger.error(e.toString());
+        }
+    }
+
+    public static String IccProfilePath() {
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("windows")) {
+            return "C:\\Windows\\System32\\spool\\drivers\\color";
+
+        } else if (os.contains("linux")) {
+            // /usr/share/color/icc
+            // /usr/local/share/color/icc
+            // /home/USER_NAME/.color/icc
+            return "/usr/share/color/icc";
+
+        } else if (os.contains("mac")) {
+            // /Library/ColorSync/Profiles
+            // /Users/USER_NAME/Library/ColorSync/Profile
+            return "/Library/ColorSync/Profiles";
+
+        } else {
+            return null;
+        }
+    }
+
+    public static byte[] MD5(byte[] bytes) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(bytes);
+            return digest;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
         }
     }
 

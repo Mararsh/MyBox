@@ -8,13 +8,12 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.data.ImageAttributes;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.ImageValue;
 import org.apache.pdfbox.rendering.ImageType;
@@ -138,7 +137,6 @@ public class ImageAttributesBaseController extends BaseController {
             }
         });
         imageAttributes.setIsDithering(ditherCheck.isSelected());
-        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         initializeNext2();
     }
@@ -180,6 +178,7 @@ public class ImageAttributesBaseController extends BaseController {
                 case "bmp":
                 case "pnm":
                 case "gif":
+                case "pcx":
                     ARGB.setDisable(true);
                     Binary.setDisable(false);
                     RGB.setDisable(false);

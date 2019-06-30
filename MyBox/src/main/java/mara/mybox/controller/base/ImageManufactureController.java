@@ -1,6 +1,5 @@
 package mara.mybox.controller.base;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -45,8 +44,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.controller.ImageManufactureMarginsController;
@@ -58,14 +57,14 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.value.AppVaribles;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.ImageHistory;
-import mara.mybox.data.ImageInformation;
-import mara.mybox.data.ImageManufactureValues;
+import mara.mybox.image.ImageHistory;
+import mara.mybox.image.ImageInformation;
+import mara.mybox.image.ImageManufactureValues;
 import mara.mybox.fxml.ColorCell;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope.ColorScopeType;
 import mara.mybox.image.ImageScope.ScopeType;
@@ -259,9 +258,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            Tooltip tips = new Tooltip(getMessage("ImageRefTips"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(showRefCheck, tips);
             showRefCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -269,9 +265,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-//            tips = new Tooltip(getMessage("ImageHisComments"));
-//            tips.setFont(new Font(16));
-//            FxmlTools.setComments(hisBox, tips);
             hisBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                 @Override
                 public void changed(ObservableValue ov, Number oldValue, Number newValue) {
@@ -286,7 +279,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         return;
                     } else if (getMessage("OpenPathDot").equals(hisBox.getItems().get(index))) {
                         try {
-                           browseURI(new File(AppVaribles.getImageHisPath()).toURI());
+                            browseURI(new File(AppVaribles.getImageHisPath()).toURI());
                         } catch (Exception e) {
                             logger.error(e.toString());
                         }
@@ -301,10 +294,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
             hisBox.setVisibleRowCount(15);
             int max = AppVaribles.getUserConfigInt("MaxImageHistories", 20);
             hisBox.setDisable(max <= 0);
-            FxmlControl.quickTooltip(hisBox, new Tooltip("CTRL+h"));
+            FxmlControl.setTooltip(hisBox, new Tooltip("CTRL+h"));
 
             if (ImageTipsKey != null) {
-                FxmlControl.quickTooltip(imageTipsLabel, new Tooltip(getMessage(ImageTipsKey)));
+                FxmlControl.setTooltip(imageTipsLabel, new Tooltip(getMessage(ImageTipsKey)));
             } else {
                 imageSetBox.getChildren().remove(imageTipsLabel);
                 imageTipsLabel.setVisible(false);
@@ -431,7 +424,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected void initScopeControls() {
         try {
 
-            FxmlControl.setComments(showScopeCheck, new Tooltip(getMessage("ShowScopeComments")));
             showScopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -495,7 +487,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     checkMatchType();
                 }
             });
-            FxmlControl.setComments(scopeMatchBox, new Tooltip(getMessage("ColorMatchComments")));
             scopeMatchBox.getSelectionModel().select(AppVaribles.getUserConfigValue("ImageScopeMatchType", getMessage("Color")));
 
             scopeDistanceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -980,7 +971,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 max = 100;
             }
             Tooltip tips = new Tooltip("0~" + max);
-            FxmlControl.quickTooltip(scopeDistanceBox, tips);
+            FxmlControl.setTooltip(scopeDistanceBox, tips);
 
             List<String> values = new ArrayList();
             for (int i = 0; i <= max; i += 10) {
@@ -1475,7 +1466,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 try {
-                    final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(newImage);
+                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(newImage);
                     String filename = imageHistoriesPath + File.separator
                             + FileTools.getFilePrefix(values.getSourceFile().getName())
                             + "_" + (new Date().getTime()) + "_" + updateType
@@ -1756,7 +1747,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 if (values.getImageInfo() != null) {
                     format = values.getImageInfo().getImageFormat();
                 }
-                final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(imageView.getImage());
+                final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(imageView.getImage());
                 if (bufferedImage == null || task == null || task.isCancelled()) {
                     return null;
                 }
@@ -1801,13 +1792,80 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
     @FXML
     @Override
+    public void saveAsAction() {
+        try {
+            final FileChooser fileChooser = new FileChooser();
+            File path = AppVaribles.getUserConfigPath(targetPathKey);
+            if (path.exists()) {
+                fileChooser.setInitialDirectory(path);
+            }
+            if (sourceFile != null) {
+                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            }
+            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            final File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return;
+            }
+            recordFileWritten(file);
+
+            task = new Task<Void>() {
+                private boolean ok;
+
+                @Override
+                protected Void call() throws Exception {
+                    String format = FileTools.getFileSuffix(file.getName());
+                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(imageView.getImage());
+                    if (task == null || task.isCancelled()) {
+                        return null;
+                    }
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (values.getSourceFile() == null
+                                        || saveAsType == SaveAsType.Load) {
+                                    sourceFileChanged(file);
+
+                                } else if (saveAsType == SaveAsType.Open) {
+                                    openImageManufacture(file.getAbsolutePath());
+                                }
+                                popInformation(AppVaribles.getMessage("Successful"));
+                            }
+                        });
+                    }
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @FXML
+    @Override
     public void createAction() {
         ImageManufactureMarginsController c
                 = (ImageManufactureMarginsController) loadScene(CommonValues.ImageManufactureMarginsFxml);
         if (c == null) {
             return;
         }
-        Image newImage = ImageManufacture.createImage(200, 200, Color.WHITE);
+        Image newImage = FxmlImageManufacture.createImage(200, 200, Color.WHITE);
         c.loadImage(newImage);
         c.setDragMode();
 
@@ -2184,7 +2242,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
     }
 
     @Override
-    public boolean checkSavingForNextAction() {
+    public boolean checkBeforeNextAction() {
         if (isSwitchingTab || imageView.getImage() == null || !imageChanged) {
             return true;
         }

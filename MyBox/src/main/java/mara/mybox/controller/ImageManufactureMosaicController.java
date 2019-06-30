@@ -20,7 +20,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageScope.ScopeType;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.value.AppVaribles.logger;
 
 /**
@@ -189,19 +189,19 @@ public class ImageManufactureMosaicController extends ImageManufactureController
 
                 switch (shapeType) {
                     case Rectangle:
-                        newImage = ImageManufacture.makeMosaic(imageView.getImage(),
+                        newImage = FxmlImageManufacture.makeMosaic(imageView.getImage(),
                                 maskRectangleData, intensity, isMosaic, excludeCheck.isSelected());
                         break;
                     case Circle:
-                        newImage = ImageManufacture.makeMosaic(imageView.getImage(),
+                        newImage = FxmlImageManufacture.makeMosaic(imageView.getImage(),
                                 maskCircleData, intensity, isMosaic, excludeCheck.isSelected());
                         break;
                     case Ellipse:
-                        newImage = ImageManufacture.makeMosaic(imageView.getImage(),
+                        newImage = FxmlImageManufacture.makeMosaic(imageView.getImage(),
                                 maskEllipseData, intensity, isMosaic, excludeCheck.isSelected());
                         break;
                     case Polygon:
-                        newImage = ImageManufacture.makeMosaic(imageView.getImage(),
+                        newImage = FxmlImageManufacture.makeMosaic(imageView.getImage(),
                                 maskPolygonData, intensity, isMosaic, excludeCheck.isSelected());
                         break;
                     default:

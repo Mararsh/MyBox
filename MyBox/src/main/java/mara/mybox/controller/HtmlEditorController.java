@@ -39,7 +39,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.InputEvent;
@@ -47,7 +46,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -71,7 +69,7 @@ import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.tools.FileTools;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
@@ -381,10 +379,6 @@ public class HtmlEditorController extends BaseController {
             });
             checkOneImage();
 
-            Tooltip tips = new Tooltip(getMessage("htmlSnapComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(snapBar, tips);
-
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
@@ -589,6 +583,7 @@ public class HtmlEditorController extends BaseController {
 
     @Override
     public void sourceFileChanged(final File file) {
+        sourceFile = file;
         loadHtml(file);
     }
 
@@ -717,6 +712,9 @@ public class HtmlEditorController extends BaseController {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
+            if (sourceFile != null) {
+                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            }
             fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
             final File file = fileChooser.showSaveDialog(getMyStage());
             if (file == null) {
@@ -780,7 +778,7 @@ public class HtmlEditorController extends BaseController {
         if (file == null) {
             return;
         }
-        AppVaribles.setUserConfigValue(LastPathKey, file.getParent());
+        recordFileWritten(file);
         if (isOneImage) {
             AppVaribles.setUserConfigValue(HtmlImagePathKey, file.getParent());
         } else {
@@ -813,7 +811,7 @@ public class HtmlEditorController extends BaseController {
                 loadingController = null;
             }
             loadingController
-                    = (LoadingController) FxmlStage.openLoadingStage(getClass(), myStage, Modality.WINDOW_MODAL, null);
+                    = (LoadingController) FxmlStage.openLoadingStage(myStage, Modality.WINDOW_MODAL, null);
 
             if (timer != null) {
                 timer.cancel();
@@ -908,10 +906,10 @@ public class HtmlEditorController extends BaseController {
 
                                     Image snapshot = webView.snapshot(parameters, null);
                                     if (totalHeight < snapHeight + snapStep) { // last snap
-                                        snapshot = ImageManufacture.cropOutsideFx(snapshot, 0, snapStep - (totalHeight - snapHeight),
+                                        snapshot = FxmlImageManufacture.cropOutsideFx(snapshot, 0, snapStep - (totalHeight - snapHeight),
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     } else {
-                                        snapshot = ImageManufacture.cropOutsideFx(snapshot, 0, 0,
+                                        snapshot = FxmlImageManufacture.cropOutsideFx(snapshot, 0, 0,
                                                 width - 1, (int) snapshot.getHeight() - 1);
                                     }
                                     images.add(snapshot);
@@ -922,10 +920,10 @@ public class HtmlEditorController extends BaseController {
                                         loadingController.setInfo(AppVaribles.getMessage("WritingFile"));
                                         boolean success = true;
                                         if (isOneImage) {
-                                            Image finalImage = ImageManufacture.combineSingleColumn(images);
+                                            Image finalImage = FxmlImageManufacture.combineSingleColumn(images);
                                             if (finalImage != null) {
                                                 String format = FileTools.getFileSuffix(targetFile.getAbsolutePath());
-                                                final BufferedImage bufferedImage = ImageManufacture.getBufferedImage(finalImage);
+                                                final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(finalImage);
                                                 ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
                                             } else {
                                                 success = false;
@@ -934,7 +932,7 @@ public class HtmlEditorController extends BaseController {
                                             success = PdfTools.htmlIntoPdf(images, targetFile, windowSizeCheck.isSelected());
                                         }
                                         if (success && targetFile.exists()) {
-                                            FxmlStage.openTarget(getClass(), null, targetFile.getAbsolutePath());
+                                            view(targetFile);
                                         } else {
                                             popError(AppVaribles.getMessage("Failed"));
                                         }
@@ -1042,7 +1040,7 @@ public class HtmlEditorController extends BaseController {
     }
 
     @Override
-    public boolean checkSavingForNextAction() {
+    public boolean checkBeforeNextAction() {
 //        logger.debug(fileChanged.getValue());
 
         if (fileChanged == null || !fileChanged.getValue()) {

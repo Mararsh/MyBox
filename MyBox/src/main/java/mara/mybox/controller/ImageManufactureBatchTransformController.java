@@ -17,7 +17,7 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 
 /**
@@ -172,16 +172,16 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         try {
             BufferedImage target = null;
             if (transformType == TransformType.Shear) {
-                target = ImageConvert.shearImage(source, shearX, 0);
+                target = ImageManufacture.shearImage(source, shearX, 0);
 
             } else if (transformType == TransformType.VerticalMirror) {
-                target = ImageConvert.verticalMirrorImage(source);
+                target = ImageManufacture.verticalMirrorImage(source);
 
             } else if (transformType == TransformType.HorizontalMirror) {
-                target = ImageConvert.horizontalMirrorImage(source);
+                target = ImageManufacture.horizontalMirrorImage(source);
 
             } else if (transformType == TransformType.Rotate) {
-                target = ImageConvert.rotateImage(source, rotateAngle);
+                target = ImageManufacture.rotateImage(source, rotateAngle);
             }
 
             return target;

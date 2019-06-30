@@ -24,10 +24,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 
 /**
@@ -341,7 +341,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.REGULAR, waterSize);
         }
 
-        color = ImageManufacture.toAwtColor(waterColorPicker.getValue());
+        color = FxmlImageManufacture.toAwtColor(waterColorPicker.getValue());
 
         final String msg = waterInput.getText().trim();
         final Text text = new Text(msg);
@@ -386,7 +386,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     break;
             }
 
-            BufferedImage target = ImageConvert.addText(source,
+            BufferedImage target = ImageManufacture.addText(source,
                     waterInput.getText().trim(), font, color,
                     x, y, opacity, waterShadow, waterAngle,
                     outlineCheck.isSelected(), verticalCheck.isSelected());

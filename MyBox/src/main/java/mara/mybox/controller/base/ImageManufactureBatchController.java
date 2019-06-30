@@ -43,7 +43,7 @@ public class ImageManufactureBatchController extends ImageBatchBaseController {
     public void initTargetSection() {
         super.initTargetSection();
 
-        FxmlControl.quickTooltip(pcxRadio, new Tooltip(getMessage("PcxComments")));
+        FxmlControl.setTooltip(pcxRadio, new Tooltip(getMessage("PcxComments")));
 
         fileTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override

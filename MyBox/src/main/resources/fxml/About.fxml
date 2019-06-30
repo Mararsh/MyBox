@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
@@ -7,23 +13,23 @@
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.AboutController">
     <children>
-        <GridPane alignment="CENTER_LEFT">
+        <GridPane alignment="CENTER_LEFT" hgap="15.0" vgap="15.0">
             <columnConstraints>
                 <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="150.0" />
                 <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0"  vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <VBox.margin>
                 <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
@@ -37,18 +43,18 @@
                 <Label fx:id="date" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label text="%License" GridPane.rowIndex="3" />
                 <Label text="%FreeOpenSource" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Hyperlink fx:id="licenseLink" onAction="#linkLicense" text="http://www.apache.org/licenses/LICENSE-2.0" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Hyperlink fx:id="licenseLink" onAction="#link" text="http://www.apache.org/licenses/LICENSE-2.0" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <Label text="%SourceCode" GridPane.rowIndex="5" />
-                <Hyperlink fx:id="sourceLink" onAction="#linkSource" text="https://github.com/Mararsh/MyBox" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <Hyperlink fx:id="sourceLink" onAction="#link" text="https://github.com/Mararsh/MyBox" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                 <Label text="%LatestRelease" GridPane.rowIndex="6" />
-                <Hyperlink fx:id="releasesLink" onAction="#linkReleases" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                <Hyperlink fx:id="releasesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/releases" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label text="%KnownIssues" GridPane.rowIndex="7" />
-                <Hyperlink fx:id="issuesLink" onAction="#linkIssues" text="https://github.com/Mararsh/MyBox/issues" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Hyperlink fx:id="issuesLink" onAction="#link" text="https://github.com/Mararsh/MyBox/issues" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                 <Label text="%WelcomePR" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                 <Label text="%UserGuide" GridPane.rowIndex="9" />
-                <Hyperlink fx:id="userGuideLink" onAction="#linkUserGuide" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Hyperlink fx:id="userGuideLink" onAction="#link" text="https://mararsh.github.io/MyBox/MyBox-UserGuide.pdf" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                 <Label text="%CloudStorage" GridPane.rowIndex="10" />
-                <Hyperlink fx:id="cloudLink" onAction="#linkCloud" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                <Hyperlink fx:id="cloudLink" onAction="#link" text="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F" underline="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             </children>
         </GridPane>
     </children>

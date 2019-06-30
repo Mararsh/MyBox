@@ -47,7 +47,7 @@ public class TextEditerController extends FileEditerController {
 
         Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
         tips.setFont(new Font(16));
-        FxmlControl.quickTooltip(currentBox, tips);
+        FxmlControl.setTooltip(currentBox, tips);
 
         List<String> setNames = TextTools.getCharsetNames();
         currentBox.getItems().addAll(setNames);
@@ -81,7 +81,7 @@ public class TextEditerController extends FileEditerController {
 
             tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
             tips.setFont(new Font(16));
-            FxmlControl.quickTooltip(targetBomCheck, tips);
+            FxmlControl.setTooltip(targetBomCheck, tips);
         }
     }
 

@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="730.0" prefWidth="1250.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ChromaticityDiagramController">
+    <top>
+        <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+            <children>
+                <TabPane fx:id="displayPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                    <tabs>
+                        <Tab fx:id="cieTab" closable="false" text="%ChromaticDiagram">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                    <children>
+                                        <ToolBar>
+                                            <items>
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <children>
+                                                        <ImageView fx:id="linksView" fitHeight="20.0" fitWidth="20.0" onMouseClicked="#openLinks" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconLink.png" />
+                                                            </image>
+                                                            <cursor>
+                                                                <Cursor fx:constant="HAND" />
+                                                            </cursor>
+                                                        </ImageView>
+                                                    </children>
+                                                </HBox>
+                                                <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Label text="%Background" />
+                                                <ComboBox fx:id="backgroundBox" prefWidth="150.0" />
+                                                <Label text="%DataDots" />
+                                                <ComboBox fx:id="dotTypeBox" prefWidth="120.0" />
+                                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOutDiagram">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconZoomOut.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomInDiagram">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconZoomIn.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSizeDiagram">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconPicBig.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popDiagramPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconSave.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </items>
+                                        </ToolBar>
+                                        <ToolBar layoutX="20.0" layoutY="20.0" prefHeight="40.0" prefWidth="200.0" style="-fx-font-size: 12px;">
+                                            <items>
+                                                <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <CheckBox fx:id="inputCheck" mnemonicParsing="false" text="%Input" />
+                                                <CheckBox fx:id="calculateCheck" layoutX="142.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%Calculate" />
+                                                <CheckBox fx:id="gridCheck" layoutX="10.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%Grid" />
+                                                <CheckBox fx:id="waveCheck" mnemonicParsing="false" selected="true" text="%Wave" />
+                                                <CheckBox fx:id="whitePointsCheck" layoutX="10.0" layoutY="17.0" mnemonicParsing="false" selected="true" text="%WhitePoints" />
+                                                <CheckBox fx:id="degree2Check" mnemonicParsing="false" selected="true" text="%2Degree" />
+                                                <CheckBox fx:id="degree10Check" mnemonicParsing="false" text="%10Degree" />
+                                                <CheckBox fx:id="cdCIECheck" mnemonicParsing="false" selected="true" text="CIE">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdECICheck" mnemonicParsing="false" selected="true" text="ECI">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdSRGBCheck" mnemonicParsing="false" selected="true" text="sRGB">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdAdobeCheck" mnemonicParsing="false" text="Adobe">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdAppleCheck" mnemonicParsing="false" text="Apple">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdPALCheck" mnemonicParsing="false" text="PAL">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdNTSCCheck" mnemonicParsing="false" text="NTSC">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdColorMatchCheck" mnemonicParsing="false" text="ColorMatch">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdProPhotoCheck" mnemonicParsing="false" text="ProPhoto">
+                                                </CheckBox>
+                                                <CheckBox fx:id="cdSMPTECCheck" layoutX="602.0" layoutY="13.0" mnemonicParsing="false" text="SMPTE-C" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </items>
+                                        </ToolBar>
+                                        <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                            <items>
+                                                <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar fx:id="dataToolbar" VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label text="%CIE1931Observer2DegreeD50" />
+                                                                <RadioButton mnemonicParsing="false" selected="true" text="%Calculate">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="dataGroup" />
+                                                                    </toggleGroup>
+                                                   <padding>
+                                                      <Insets left="30.0" />
+                                                   </padding>
+                                                                </RadioButton>
+                                                                <RadioButton mnemonicParsing="false" text="%Input" toggleGroup="$dataGroup" />
+                                                            </items>
+                                                        </ToolBar>
+                                                        <VBox fx:id="calculateBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="%Tristimulus" />
+                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                    <children>
+                                                                        <Label text="X" />
+                                                                        <TextField fx:id="XInput" prefWidth="160.0" />
+                                                                        <Label text="Y" />
+                                                                        <TextField fx:id="YInput" prefWidth="160.0" text="1" />
+                                                                        <Label text="Z" />
+                                                                        <TextField fx:id="ZInput" prefWidth="160.0" />
+                                                                        <Button fx:id="calculateXYZButton" mnemonicParsing="false" onAction="#calculateXYZAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconCalculator.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </HBox>
+                                                                <Label text="%ColorCoordinate">
+                                                                    <VBox.margin>
+                                                                        <Insets top="20.0" />
+                                                                    </VBox.margin>
+                                                                </Label>
+                                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
+                                                                    <children>
+                                                                        <Label text="x" />
+                                                                        <TextField prefWidth="160.0" fx:id="xInput" />
+                                                                        <Label text="y" />
+                                                                        <TextField fx:id="yInput" prefWidth="160.0" />
+                                                                        <Button fx:id="calculateXYButton" mnemonicParsing="false" onAction="#calculateXYAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/iconCalculator.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                      <ColorPicker fx:id="colorPicker" />
+                                                                    </children>
+                                                                    <VBox.margin>
+                                                                        <Insets />
+                                                                    </VBox.margin>
+                                                                </HBox>
+                                                                <Label text="%ColorValues">
+                                                                    <VBox.margin>
+                                                                        <Insets top="20.0" />
+                                                                    </VBox.margin>
+                                                                </Label>
+                                                <TableView fx:id="calculatedValuesTable" VBox.vgrow="ALWAYS">
+                                                  <columns>
+                                                    <TableColumn fx:id="colorSpaceColumn" prefWidth="140.0" text="%ColorSpace" />
+                                                    <TableColumn fx:id="conditionsColumn" prefWidth="171.0" text="%Conditions" />
+                                                      <TableColumn fx:id="valuesColumn" prefWidth="271.0" text="%Values" />
+                                                  </columns>
+                                                </TableView>
+                                                            </children>
+                                                            <VBox.margin>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </VBox.margin>
+                                                        </VBox>
+                                                        <VBox fx:id="inputBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
+                                                            <children>
+                                                                <TabPane layoutX="10.0" layoutY="276.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                                                    <tabs>
+                                                                        <Tab closable="false" text="%SourceFile">
+                                                                            <content>
+                                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                                                    <children>
+                                                                                        <ToolBar VBox.vgrow="NEVER">
+                                                                                            <items>
+                                                                                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                                                    <graphic>
+                                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                                            <image>
+                                                                                                                <Image url="@../buttons/iconOpen.png" />
+                                                                                                            </image>
+                                                                                                        </ImageView>
+                                                                                                    </graphic>
+                                                                                                </Button>
+                                                                                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                                    <image>
+                                                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                                                    </image>
+                                                                                                </ImageView>
+                                                                                                <Label maxWidth="1.7976931348623157E308" text="" HBox.hgrow="ALWAYS" />
+                                                                                            </items>
+                                                                                        </ToolBar>
+                                                                                        <TextArea fx:id="sourceInputArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                                    </children>
+                                                                                </VBox>
+                                                                            </content>
+                                                                        </Tab>
+                                                                        <Tab closable="false" text="%Data">
+                                                                            <content>
+                                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                                                    <children>
+                                                                                        <ToolBar VBox.vgrow="NEVER">
+                                                                                            <items>
+                                                                                                <Label maxWidth="1.7976931348623157E308" text="" HBox.hgrow="ALWAYS" />
+                                                                                                <Button fx:id="displayDataButton" mnemonicParsing="false" onAction="#displayDataAction">
+                                                                                                    <graphic>
+                                                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                                            <image>
+                                                                                                                <Image url="@../buttons/iconGraph.png" />
+                                                                                                            </image>
+                                                                                                        </ImageView>
+                                                                                                    </graphic>
+                                                                                                </Button>
+                                                                                            </items>
+                                                                                        </ToolBar>
+                                                                                        <TextArea fx:id="sourceDataArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                                    </children>
+                                                                                </VBox>
+                                                                            </content>
+                                                                        </Tab>
+                                                                    </tabs>
+                                                                </TabPane>
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </VBox>
+                                                <ScrollPane fx:id="cieDiagramScroll" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="150.0" prefViewportWidth="200.0">
+                                                    <content>
+                                                        <AnchorPane>
+                                                            <children>
+                                                                <ImageView fx:id="cieDiagram" fitHeight="247.0" fitWidth="389.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                        </AnchorPane>
+                                                    </content>
+                                                </ScrollPane>
+                                            </items>
+                                        </SplitPane>
+                                  <Label fx:id="bottomLabel" text="%ChromaticityDiagramComments" wrapText="true" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab fx:id="d2Tab" closable="false" text="%CIE2Degree1nm">
+                            <content>
+                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="d2n1TableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="wave2n1Column" prefWidth="133.0" text="%WaveLength" />
+                                                        <TableColumn fx:id="tx2n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusX" />
+                                                        <TableColumn fx:id="ty2n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
+                                                        <TableColumn fx:id="tz2n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
+                                                        <TableColumn fx:id="nx2n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedX" />
+                                                        <TableColumn fx:id="ny2n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedY" />
+                                                        <TableColumn fx:id="nz2n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedZ" />
+                                                        <TableColumn fx:id="rx2n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeX" />
+                                                        <TableColumn fx:id="ry2n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeY" />
+                                                        <TableColumn fx:id="rz2n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeZ" />
+                                                        <TableColumn fx:id="r2n1Column" minWidth="1.0" prefWidth="133.0" text="%Red" />
+                                                        <TableColumn fx:id="g2n1Column" minWidth="1.0" prefWidth="133.0" text="%Green" />
+                                                        <TableColumn fx:id="b2n1Column" minWidth="1.0" prefWidth="133.0" text="%Blue" />
+                                                        <TableColumn fx:id="ri2n1Column" minWidth="1.0" prefWidth="133.0" text="%Red-Integer" />
+                                                        <TableColumn fx:id="gi2n1Column" minWidth="1.0" prefWidth="133.0" text="%Green-Integer" />
+                                                        <TableColumn fx:id="bi2n1Column" minWidth="1.0" prefWidth="133.0" text="%Blue-Integer" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab closable="false" text="%Texts">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="export21Button" mnemonicParsing="false" onAction="#export21Action" onMouseEntered="#pop21Path">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconExport.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </items>
+                                                        </ToolBar>
+                                                        <TextArea fx:id="d2n1Area" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </content>
+                        </Tab>
+                        <Tab closable="false" text="%CIE2Degree5nm">
+                            <content>
+                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="d2n5TableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="wave2n5Column" prefWidth="133.0" text="%WaveLength" />
+                                                        <TableColumn fx:id="tx2n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusX" />
+                                                        <TableColumn fx:id="ty2n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
+                                                        <TableColumn fx:id="tz2n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
+                                                        <TableColumn fx:id="nx2n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedX" />
+                                                        <TableColumn fx:id="ny2n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedY" />
+                                                        <TableColumn fx:id="nz2n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedZ" />
+                                                        <TableColumn fx:id="rx2n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeX" />
+                                                        <TableColumn fx:id="ry2n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeY" />
+                                                        <TableColumn fx:id="rz2n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeZ" />
+                                                        <TableColumn fx:id="r2n5Column" minWidth="1.0" prefWidth="133.0" text="%Red" />
+                                                        <TableColumn fx:id="g2n5Column" minWidth="1.0" prefWidth="133.0" text="%Green" />
+                                                        <TableColumn fx:id="b2n5Column" minWidth="1.0" prefWidth="133.0" text="%Blue" />
+                                                        <TableColumn fx:id="ri2n5Column" minWidth="1.0" prefWidth="133.0" text="%Red-Integer" />
+                                                        <TableColumn fx:id="gi2n5Column" minWidth="1.0" prefWidth="133.0" text="%Green-Integer" />
+                                                        <TableColumn fx:id="bi2n5Column" minWidth="1.0" prefWidth="133.0" text="%Blue-Integer" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab closable="false" text="%Texts">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="export25Button" mnemonicParsing="false" onAction="#export25Action" onMouseEntered="#pop25Path">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconExport.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </items>
+                                                        </ToolBar>
+                                                        <TextArea fx:id="d2n5Area" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </content>
+                        </Tab>
+                        <Tab closable="false" text="%CIE10Degree1nm">
+                            <content>
+                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="d10n1TableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="wave10n1Column" prefWidth="133.0" text="%WaveLength" />
+                                                        <TableColumn fx:id="tx10n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusX" />
+                                                        <TableColumn fx:id="ty10n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
+                                                        <TableColumn fx:id="tz10n1Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
+                                                        <TableColumn fx:id="nx10n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedX" />
+                                                        <TableColumn fx:id="ny10n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedY" />
+                                                        <TableColumn fx:id="nz10n1Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedZ" />
+                                                        <TableColumn fx:id="rx10n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeX" />
+                                                        <TableColumn fx:id="ry10n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeY" />
+                                                        <TableColumn fx:id="rz10n1Column" minWidth="1.0" prefWidth="133.0" text="%RelativeZ" />
+                                                        <TableColumn fx:id="r10n1Column" minWidth="1.0" prefWidth="133.0" text="%Red" />
+                                                        <TableColumn fx:id="g10n1Column" minWidth="1.0" prefWidth="133.0" text="%Green" />
+                                                        <TableColumn fx:id="b10n1Column" minWidth="1.0" prefWidth="133.0" text="%Blue" />
+                                                        <TableColumn fx:id="ri10n1Column" minWidth="1.0" prefWidth="133.0" text="%Red-Integer" />
+                                                        <TableColumn fx:id="gi10n1Column" minWidth="1.0" prefWidth="133.0" text="%Green-Integer" />
+                                                        <TableColumn fx:id="bi10n1Column" minWidth="1.0" prefWidth="133.0" text="%Blue-Integer" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab closable="false" text="%Texts">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="export101Button" mnemonicParsing="false" onAction="#export101Action" onMouseEntered="#pop101Path">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconExport.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </items>
+                                                        </ToolBar>
+                                                        <TextArea fx:id="d10n1Area" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </content>
+                        </Tab>
+                        <Tab closable="false" text="%CIE10Degree5nm">
+                            <content>
+                                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <tabs>
+                                        <Tab closable="false" text="%Table">
+                                            <content>
+                                                <TableView fx:id="d10n5TableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="wave10n5Column" prefWidth="133.0" text="%WaveLength" />
+                                                        <TableColumn fx:id="tx10n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusX" />
+                                                        <TableColumn fx:id="ty10n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusY" />
+                                                        <TableColumn fx:id="tz10n5Column" minWidth="1.0" prefWidth="133.0" text="%TristimulusZ" />
+                                                        <TableColumn fx:id="nx10n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedX" />
+                                                        <TableColumn fx:id="ny10n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedY" />
+                                                        <TableColumn fx:id="nz10n5Column" minWidth="1.0" prefWidth="133.0" text="%NormalizedZ" />
+                                                        <TableColumn fx:id="rx10n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeX" />
+                                                        <TableColumn fx:id="ry10n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeY" />
+                                                        <TableColumn fx:id="rz10n5Column" minWidth="1.0" prefWidth="133.0" text="%RelativeZ" />
+                                                        <TableColumn fx:id="r10n5Column" minWidth="1.0" prefWidth="133.0" text="%Red" />
+                                                        <TableColumn fx:id="g10n5Column" minWidth="1.0" prefWidth="133.0" text="%Green" />
+                                                        <TableColumn fx:id="b10n5Column" minWidth="1.0" prefWidth="133.0" text="%Blue" />
+                                                        <TableColumn fx:id="ri10n5Column" minWidth="1.0" prefWidth="133.0" text="%Red-Integer" />
+                                                        <TableColumn fx:id="gi10n5Column" minWidth="1.0" prefWidth="133.0" text="%Green-Integer" />
+                                                        <TableColumn fx:id="bi10n5Column" minWidth="1.0" prefWidth="133.0" text="%Blue-Integer" />
+                                                    </columns>
+                                                </TableView>
+                                            </content>
+                                        </Tab>
+                                        <Tab closable="false" text="%Texts">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <ToolBar VBox.vgrow="NEVER">
+                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="export105Button" mnemonicParsing="false" onAction="#export105Action" onMouseEntered="#pop105Path">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconExport.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </items>
+                                                        </ToolBar>
+                                                        <TextArea fx:id="d10n5Area" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="displayArea" stylesheets="@../styles/MyBox.css" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
+                                    </tabs>
+                                </TabPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
+    </center>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER" />
+    </bottom>
+</BorderPane>

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
@@ -24,7 +23,6 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import static mara.mybox.value.AppVaribles.logger;
@@ -33,7 +31,7 @@ import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.data.ImageInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
 import static mara.mybox.value.AppVaribles.getMessage;
@@ -88,10 +86,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
 
     @Override
     public void initOptionsSection() {
-
-        Tooltip tips = new Tooltip(getMessage("PdfPageSizeComments"));
-        tips.setFont(new Font(16));
-        FxmlControl.setComments(sizeBox, tips);
 
         sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -189,7 +183,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             }
         });
         checkThreshold();
-        FxmlControl.setComments(ditherCheck, new Tooltip(getMessage("DitherComments")));
 
         MarginsBox.getItems().addAll(Arrays.asList("20", "10", "15", "5", "25", "30"));
         MarginsBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -231,10 +224,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             });
             fontBox.getSelectionModel().select(0);
 
-            tips = new Tooltip(getMessage("FontFileComments"));
-            tips.setFont(new Font(16));
-            FxmlControl.setComments(fontBox, tips);
-
         }
 
         authorInput.textProperty().addListener(new ChangeListener<String>() {
@@ -257,7 +246,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         .or(thresholdInput.styleProperty().isEqualTo(badStyle))
         );
 
-        FxmlControl.quickTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+        FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
     }
 
     private void checkPageSize() {
@@ -535,7 +524,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                             if (ok && file.exists()) {
                                 popInformation(AppVaribles.getMessage("Successful"));
                                 if (viewCheck.isSelected()) {
-                                    FxmlStage.openTarget(getClass(), null, file.getAbsolutePath());
+                                    view(file);
                                 }
                             } else {
                                 popError(AppVaribles.getMessage("ImageCombinePdfFail"));
