@@ -7,13 +7,14 @@
 ## 下载
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的releases页签）。
 以下是最新版本的链接：
-平台 | 链接 | 运行需要 
-- | - | - 
-win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 无
-win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | Java 12或更高版本
-linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | Java 12或更高版本
-mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | Java 12或更高版本
-win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | Java 12或更高版本
+
+| 平台 | 链接 | 运行需要 |
+| - | - | -  |
+| win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 无 |
+| win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | Java 12或更高版本 |
+| linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | Java 12或更高版本 |
+| mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | Java 12或更高版本 |
+| win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | Java 12或更高版本 |
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用(请解包到纯英文目录下) 。
 
