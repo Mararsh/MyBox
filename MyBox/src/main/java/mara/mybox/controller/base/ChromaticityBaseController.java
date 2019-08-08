@@ -1,34 +1,25 @@
 package mara.mybox.controller.base;
 
 import java.io.File;
-import java.util.ArrayList;
-import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
-import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.CommonValues;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.stage.FileChooser;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
+import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -39,18 +30,18 @@ import static mara.mybox.value.AppVaribles.getMessage;
  */
 public class ChromaticityBaseController extends BaseController {
 
-    public int scale = 8;
-    public double sourceX, sourceY, sourceZ, targetX, targetY, targetZ;
-    public ChromaticAdaptation.ChromaticAdaptationAlgorithm algorithm;
-    public String exportName;
+    protected int scale = 8;
+    protected double sourceX, sourceY, sourceZ, targetX, targetY, targetZ;
+    protected ChromaticAdaptation.ChromaticAdaptationAlgorithm algorithm;
+    protected String exportName;
 
     @FXML
-    public TextField scaleInput;
+    protected TextField scaleInput;
     @FXML
-    public ToggleGroup algorithmGroup;
+    protected ToggleGroup algorithmGroup;
 
     public ChromaticityBaseController() {
-        baseTitle = AppVaribles.getMessage("Chromaticity");
+        baseTitle = AppVaribles.message("Chromaticity");
         exportName = "ChromaticityData";
 
         SourceFileType = VisitHistory.FileType.Text;
@@ -60,7 +51,8 @@ public class ChromaticityBaseController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        fileExtensionFilter = CommonValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonValues.TxtExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -139,55 +131,37 @@ public class ChromaticityBaseController extends BaseController {
     }
 
     @FXML
-    public void popExportPath(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Text);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void popExportPath(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        dmenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(dmenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    exportAction();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
 
+            @Override
+            public void handleSelect() {
+                exportAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     // should rewrite this
@@ -197,14 +171,8 @@ public class ChromaticityBaseController extends BaseController {
 
     @FXML
     public void exportAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName(exportName);
-        fileChooser.getExtensionFilters().addAll(CommonValues.TxtExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                exportName, CommonValues.TxtExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -228,9 +196,9 @@ public class ChromaticityBaseController extends BaseController {
                         if (ok) {
                             view(file);
 //                            browseURI(file.toURI());
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });

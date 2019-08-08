@@ -26,8 +26,9 @@ import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -54,7 +55,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     protected Button calculateButton, calculateAllButton, exportButton;
 
     public RGB2RGBConversionMatrixController() {
-        baseTitle = AppVaribles.getMessage("LinearRGB2RGBMatrix");
+        baseTitle = AppVaribles.message("LinearRGB2RGBMatrix");
         exportName = "LinearRGB2RGBMatrix";
     }
 
@@ -221,13 +222,13 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     algorithm, scale, true);
             double[][] conversionMatrix = (double[][]) rgb2rgb.get("conversionMatrix");
             double[][] conversionMatrixInverse = MatrixTools.inverse(conversionMatrix);
-            calculateArea.appendText(getMessage("Source") + " -> " + getMessage("Target") + " =\n");
+            calculateArea.appendText(message("Source") + " -> " + message("Target") + " =\n");
             calculateArea.appendText(MatrixTools.print(conversionMatrix, 20, scale));
-            calculateArea.appendText(getMessage("Target") + " -> " + getMessage("Source") + " =\n");
+            calculateArea.appendText(message("Target") + " -> " + message("Source") + " =\n");
             calculateArea.appendText(MatrixTools.print(conversionMatrixInverse, 20, scale));
 
-            calculateArea.appendText("\n----------------" + getMessage("CalculationProcedure") + "----------------\n");
-            calculateArea.appendText(getMessage("ReferTo") + "： \n");
+            calculateArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
+            calculateArea.appendText(message("ReferTo") + "： \n");
             calculateArea.appendText("            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n");
             calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html \n");
             calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");

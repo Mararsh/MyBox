@@ -1,6 +1,5 @@
 package mara.mybox.tools;
 
-import mara.mybox.fxml.FxmlImageManufacture;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,16 +12,16 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javax.imageio.ImageIO;
 import mara.mybox.data.PdfInformation;
+import mara.mybox.data.WeiboSnapParameters;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageBinary;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageAttributes;
-import mara.mybox.image.ImageInformation;
-import mara.mybox.data.WeiboSnapParameters;
 import static mara.mybox.value.AppVaribles.logger;
-
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -72,6 +71,53 @@ public class PdfTools {
 
     public static int inch2pixels(float inch) {
         return Math.round(inch * 72f);
+    }
+
+    public static boolean isPDF(String filename) {
+        String suffix = FileTools.getFileSuffix(filename);
+        if (suffix == null) {
+            return false;
+        }
+        return "PDF".equals(suffix.toUpperCase());
+    }
+
+    public static boolean isPDF(File file) {
+        return isPDF(file.getAbsolutePath());
+    }
+
+    public static PDDocument createPDF(File file) {
+        return createPDF(file, AppVaribles.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
+    }
+
+    public static PDDocument createPDF(File file, String author) {
+        PDDocument targetDoc = null;
+        try {
+            PDDocument document = new PDDocument(AppVaribles.pdfMemUsage);
+            PDDocumentInformation info = new PDDocumentInformation();
+            info.setCreationDate(Calendar.getInstance());
+            info.setModificationDate(Calendar.getInstance());
+            info.setProducer("MyBox v" + CommonValues.AppVersion);
+            info.setAuthor(author);
+            document.setDocumentInformation(info);
+            document.save(file);
+            targetDoc = document;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        return targetDoc;
+    }
+
+    public static boolean createPdfFile(File file, String author) {
+        try {
+            PDDocument targetDoc = createPDF(file, author);
+            if (targetDoc != null) {
+                targetDoc.close();
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
     }
 
     public static boolean writePage(PDDocument document, PDFont font,
@@ -196,6 +242,7 @@ public class PdfTools {
                     content.endText();
 
                     content.close();
+                    document.close();
                 }
 
                 PDPage page = document.getPage(0);
@@ -272,6 +319,7 @@ public class PdfTools {
                 document.getDocumentCatalog().setOpenAction(action);
 
                 document.save(targetFile);
+                document.close();
                 return true;
             }
 
@@ -319,6 +367,7 @@ public class PdfTools {
                 document.getDocumentCatalog().setOpenAction(action);
 
                 document.save(targetFile);
+                document.close();
                 return true;
             }
 
@@ -487,6 +536,7 @@ public class PdfTools {
                     }
                 }
                 document.save(targetFile);
+                document.close();
             }
             return true;
         } catch (Exception e) {
@@ -501,6 +551,7 @@ public class PdfTools {
             try (PDDocument doc = PDDocument.load(file, null, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
+                doc.close();
                 return image;
             }
         } catch (Exception e) {
@@ -514,6 +565,7 @@ public class PdfTools {
             try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, scale, imageType);
+                doc.close();
                 return image;
             }
         } catch (Exception e) {
@@ -527,6 +579,7 @@ public class PdfTools {
             try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
+                doc.close();
                 return image;
             }
         } catch (Exception e) {
@@ -540,6 +593,7 @@ public class PdfTools {
             if (file == null || info == null) {
                 return false;
             }
+
             try (PDDocument doc = PDDocument.load(file, ownerPassword, AppVaribles.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
@@ -548,12 +602,12 @@ public class PdfTools {
                 docInfo.setCreator(info.getCreator());
                 docInfo.setProducer(info.getProducer());
                 Calendar c = Calendar.getInstance();
-                if (info.getCreateTime() != null) {
-                    c.setTime(info.getCreateTime());
+                if (info.getCreateTime() > 0) {
+                    c.setTimeInMillis​(info.getCreateTime());
                     docInfo.setCreationDate(c);
                 }
-                if (info.getModifyTime() != null) {
-                    c.setTime(info.getModifyTime());
+                if (info.getModifyTime() > 0) {
+                    c.setTimeInMillis​(info.getModifyTime());
                     docInfo.setModificationDate(c);
                 }
                 docInfo.setKeywords(info.getKeywords());
@@ -561,10 +615,12 @@ public class PdfTools {
                 if (info.getVersion() >= 0) {
                     doc.setVersion(info.getVersion());
                 }
-                StandardProtectionPolicy policy
-                        = new StandardProtectionPolicy(info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
+
+                StandardProtectionPolicy policy = new StandardProtectionPolicy(
+                        info.getOwnerPassword(), info.getUserPassword(), info.getAccess());
                 doc.protect(policy);
                 doc.save(file);
+                doc.close();
             }
             return true;
         } catch (Exception e) {

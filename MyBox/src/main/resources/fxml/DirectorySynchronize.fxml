@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -39,7 +37,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%SourcePath" />
                                                 <TextField fx:id="sourcePathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath"  onMouseEntered="#popSourcePath" >
+                                                <Button fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath" onMouseEntered="#popSourcePath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -54,7 +52,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TargetPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -137,6 +135,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <CheckBox fx:id="copyAttrCheck" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" />
                                                 <CheckBox fx:id="continueCheck" mnemonicParsing="false" selected="true" text="%ContinueWhenError" />
+                                    <CheckBox fx:id="continueCheck1" layoutX="208.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%DeleteSourcePathAfterComplete" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -153,10 +152,10 @@ License:    Apache License Version 2.0
                                         <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
                                         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
                                                 <Label text="%MaxLines" />
                                                 <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

@@ -19,7 +19,8 @@ import mara.mybox.color.Illuminant;
 import mara.mybox.controller.base.BaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -233,7 +234,7 @@ public class RGBColorSpaceController extends BaseController {
         whiteYInput.setText("");
         whiteZInput.setText("");
         RadioButton selected = (RadioButton) valueGroup.getSelectedToggle();
-        if (getMessage("NormalizedValuesCC").equals(selected.getText())) {
+        if (message("NormalizedValuesCC").equals(selected.getText())) {
             valueType = ValueType.Normalized;
             redXLabel.setText("x");
             redYLabel.setText("y");
@@ -251,7 +252,7 @@ public class RGBColorSpaceController extends BaseController {
             greenZInput.setDisable(true);
             blueZInput.setDisable(true);
             whiteZInput.setDisable(true);
-        } else if (getMessage("Tristimulus").equals(selected.getText())) {
+        } else if (message("Tristimulus").equals(selected.getText())) {
             valueType = ValueType.Tristimulus;
             redXLabel.setText("X'");
             redYLabel.setText("Y'");
@@ -296,11 +297,11 @@ public class RGBColorSpaceController extends BaseController {
     public void checkPrimaries() {
         try {
             RadioButton selected = (RadioButton) pGroup.getSelectedToggle();
-            if (getMessage("ColorSpace").equals(selected.getText())) {
+            if (message("ColorSpace").equals(selected.getText())) {
                 primariesBox.setDisable(true);
                 whiteVBox.setDisable(true);
                 checkColorSpace();
-            } else if (getMessage("InputPrimaries").equals(selected.getText())) {
+            } else if (message("InputPrimaries").equals(selected.getText())) {
                 colorSpaceName = null;
                 primariesBox.setDisable(false);
                 whiteVBox.setDisable(false);
@@ -394,10 +395,10 @@ public class RGBColorSpaceController extends BaseController {
         }
         try {
             RadioButton selected = (RadioButton) wGroup.getSelectedToggle();
-            if (getMessage("StandardIlluminant").equals(selected.getText())) {
+            if (message("StandardIlluminant").equals(selected.getText())) {
                 whiteHBox.setDisable(true);
                 checkIlluminant();
-            } else if (getMessage("InputWhitePoint").equals(selected.getText())) {
+            } else if (message("InputWhitePoint").equals(selected.getText())) {
                 currentWhiteName = null;
                 whiteHBox.setDisable(false);
                 checkWhiteInputs();
@@ -473,7 +474,7 @@ public class RGBColorSpaceController extends BaseController {
                     if (v > 1.0) {
                         xInput.setStyle(badStyle);
                         if (commentsLabel != null) {
-                            commentsLabel.setText(getMessage("NormalizeError"));
+                            commentsLabel.setText(message("NormalizeError"));
                             commentsLabel.setStyle(badStyle);
                         }
                         return null;
@@ -497,7 +498,7 @@ public class RGBColorSpaceController extends BaseController {
                     if (v > 1.0) {
                         yInput.setStyle(badStyle);
                         if (commentsLabel != null) {
-                            commentsLabel.setText(getMessage("NormalizeError"));
+                            commentsLabel.setText(message("NormalizeError"));
                             commentsLabel.setStyle(badStyle);
                         }
                         return null;

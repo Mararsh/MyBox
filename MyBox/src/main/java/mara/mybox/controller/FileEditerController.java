@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
@@ -36,22 +35,22 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.CommonValues;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Filter_Type;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -116,13 +115,13 @@ public abstract class FileEditerController extends BaseController {
     protected TabPane tabPane;
 
     public FileEditerController() {
-        baseTitle = AppVaribles.getMessage("FileEditer");
+        baseTitle = AppVaribles.message("FileEditer");
 //        setTextType();
 //        logger.debug(editType);
     }
 
     public FileEditerController(Edit_Type editType) {
-        baseTitle = AppVaribles.getMessage("FileEditer");
+        baseTitle = AppVaribles.message("FileEditer");
         if (editType == Edit_Type.Text) {
             setTextType();
         } else if (editType == Edit_Type.Bytes) {
@@ -144,7 +143,8 @@ public abstract class FileEditerController extends BaseController {
         DisplayKey = "TextEditerDisplayHex";
         PageSizeKey = "TextPageSize";
 
-        fileExtensionFilter = CommonValues.TextExtensionFilter;
+        sourceExtensionFilter = CommonValues.TextExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
 
     }
 
@@ -167,7 +167,8 @@ public abstract class FileEditerController extends BaseController {
         LineBreakValueKey = "LineBreakValueKey";
         BytesCharsetKey = "BytesCharsetKey";
 
-        fileExtensionFilter = CommonValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonValues.AllExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -196,7 +197,7 @@ public abstract class FileEditerController extends BaseController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
         if (okButton != null) {
-            FxmlControl.setTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+            FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
         }
 
     }
@@ -406,11 +407,11 @@ public abstract class FileEditerController extends BaseController {
     protected void checkSaveAsType() {
         try {
             RadioButton selected = (RadioButton) saveAsGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("LoadAfterSaveAs").equals(selected.getText())) {
+            if (AppVaribles.message("LoadAfterSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.Load;
-            } else if (AppVaribles.getMessage("OpenAfterSaveAs").equals(selected.getText())) {
+            } else if (AppVaribles.message("OpenAfterSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.Open;
-            } else if (AppVaribles.getMessage("JustSaveAs").equals(selected.getText())) {
+            } else if (AppVaribles.message("JustSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.None;
             }
         } catch (Exception e) {
@@ -439,7 +440,7 @@ public abstract class FileEditerController extends BaseController {
             isSettingValues = false;
             checkDisplay();
 
-            Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
+            Tooltip tips = new Tooltip(AppVaribles.message("EncodeComments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(currentBox, tips);
 
@@ -481,11 +482,11 @@ public abstract class FileEditerController extends BaseController {
     protected void initFilterTab() {
         try {
 
-            Tooltip tips = new Tooltip(AppVaribles.getMessage("SeparateByCommaBlanksInvolved"));
+            Tooltip tips = new Tooltip(AppVaribles.message("SeparateByCommaBlanksInvolved"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(filterInput, tips);
 
-            tips = new Tooltip(AppVaribles.getMessage("FilterTypesComments"));
+            tips = new Tooltip(AppVaribles.message("FilterTypesComments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(filterTypesBox, tips);
 
@@ -573,13 +574,13 @@ public abstract class FileEditerController extends BaseController {
 
     protected void checkFilterType() {
         RadioButton selected = (RadioButton) filterGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("IncludeOne").equals(selected.getText())) {
+        if (AppVaribles.message("IncludeOne").equals(selected.getText())) {
             filterType = Filter_Type.IncludeOne;
-        } else if (AppVaribles.getMessage("IncludeAll").equals(selected.getText())) {
+        } else if (AppVaribles.message("IncludeAll").equals(selected.getText())) {
             filterType = Filter_Type.IncludeAll;
-        } else if (AppVaribles.getMessage("NotIncludeAll").equals(selected.getText())) {
+        } else if (AppVaribles.message("NotIncludeAll").equals(selected.getText())) {
             filterType = Filter_Type.NotIncludeAll;
-        } else if (AppVaribles.getMessage("NotIncludeAny").equals(selected.getText())) {
+        } else if (AppVaribles.message("NotIncludeAny").equals(selected.getText())) {
             filterType = Filter_Type.NotIncludeAny;
         }
     }
@@ -597,7 +598,7 @@ public abstract class FileEditerController extends BaseController {
         boolean invalid = f.isEmpty() || sourceFile == null || mainArea.getText().isEmpty();
         if (!invalid) {
             if (f.length() >= sourceInformation.getPageSize()) {
-                popError(AppVaribles.getMessage("FindStringLimitation"));
+                popError(AppVaribles.message("FindStringLimitation"));
                 invalid = true;
             } else {
                 filterStrings = StringTools.splitByComma(filterInput.getText());
@@ -652,7 +653,7 @@ public abstract class FileEditerController extends BaseController {
             return;
         }
         RadioButton selected = (RadioButton) findGroup.getSelectedToggle();
-        findWhole = AppVaribles.getMessage("WholeFile").equals(selected.getText());
+        findWhole = AppVaribles.message("WholeFile").equals(selected.getText());
         checkFindInput();
     }
 
@@ -759,7 +760,7 @@ public abstract class FileEditerController extends BaseController {
                         if (sourceInformation != null && sourceInformation.getCurrentPage() > 1) {
                             start += (sourceInformation.getCurrentPage() - 1) * sourceInformation.getPageSize();
                         }
-                        selectionLabel.setText(AppVaribles.getMessage("Selection") + ": " + start + "-" + (start + len));
+                        selectionLabel.setText(AppVaribles.message("Selection") + ": " + start + "-" + (start + len));
 
                     }
                 }
@@ -917,7 +918,7 @@ public abstract class FileEditerController extends BaseController {
             return;
         }
         AppVaribles.setUserConfigInt(PageSizeKey, (int) pageSize);
-        popInformation(AppVaribles.getMessage("Saved"), 3000);
+        popInformation(AppVaribles.message("Saved"), 3000);
         sourceInformation.setPageSize(pageSize);
         sourceInformation.setCurrentPage(1);
         if (sourceInformation.getLineBreak() == Line_Break.Width) {
@@ -992,7 +993,7 @@ public abstract class FileEditerController extends BaseController {
                                 replaceButton.setDisable(false);
                                 replaceAllButton.setDisable(false);
                             } else {
-                                popInformation(AppVaribles.getMessage("NotFound"));
+                                popInformation(AppVaribles.message("NotFound"));
                                 findPreviousButton.setDisable(true);
                                 findNextButton.setDisable(true);
                                 findLastButton.setDisable(true);
@@ -1236,7 +1237,7 @@ public abstract class FileEditerController extends BaseController {
                                 replaceButton.setDisable(false);
                                 replaceAllButton.setDisable(false);
                             } else {
-                                popInformation(AppVaribles.getMessage("NotFound"));
+                                popInformation(AppVaribles.message("NotFound"));
                                 findPreviousButton.setDisable(true);
                                 findNextButton.setDisable(true);
                                 findFirstButton.setDisable(true);
@@ -1297,12 +1298,12 @@ public abstract class FileEditerController extends BaseController {
                         @Override
                         public void run() {
                             if (count > 0) {
-                                popInformation(MessageFormat.format(AppVaribles.getMessage("CountNumber"), count));
+                                popInformation(MessageFormat.format(AppVaribles.message("CountNumber"), count));
                                 findFirstButton.setDisable(false);
                                 replaceButton.setDisable(false);
                                 replaceAllButton.setDisable(false);
                             } else {
-                                popInformation(AppVaribles.getMessage("NotFound"));
+                                popInformation(AppVaribles.message("NotFound"));
                                 findFirstButton.setDisable(true);
                                 findPreviousButton.setDisable(true);
                                 findNextButton.setDisable(true);
@@ -1396,10 +1397,10 @@ public abstract class FileEditerController extends BaseController {
             }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureReplaceAll"));
+            alert.setContentText(AppVaribles.message("SureReplaceAll"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonCancel) {
@@ -1444,9 +1445,9 @@ public abstract class FileEditerController extends BaseController {
                                     isSettingValues = false;
                                     updateInterface(true);
                                 }
-                                popInformation(MessageFormat.format(AppVaribles.getMessage("ReplaceAllOk"), num));
+                                popInformation(MessageFormat.format(AppVaribles.message("ReplaceAllOk"), num));
                             } else {
-                                popInformation(AppVaribles.getMessage("NotFound"));
+                                popInformation(AppVaribles.message("NotFound"));
                                 findPreviousButton.setDisable(true);
                                 findNextButton.setDisable(true);
                                 findLastButton.setDisable(true);
@@ -1641,7 +1642,7 @@ public abstract class FileEditerController extends BaseController {
                                         sourceInformation.setCurrentLine(lineLocation);
                                         updateInterface(false);
                                     } else {
-                                        popInformation(AppVaribles.getMessage("failed"));
+                                        popInformation(AppVaribles.message("failed"));
                                     }
                                 }
                             });
@@ -1725,7 +1726,7 @@ public abstract class FileEditerController extends BaseController {
         }
 
         initPage(file);
-        bottomLabel.setText(AppVaribles.getMessage("CheckingEncoding"));
+        bottomLabel.setText(AppVaribles.message("CheckingEncoding"));
         task = new Task<Void>() {
             private boolean ok;
 
@@ -1753,7 +1754,7 @@ public abstract class FileEditerController extends BaseController {
                     public void run() {
                         bottomLabel.setText("");
                         if (!ok || sourceInformation == null) {
-                            popError(AppVaribles.getMessage("Failed"));
+                            popError(AppVaribles.message("Failed"));
                             return;
                         }
                         isSettingValues = true;
@@ -1780,7 +1781,7 @@ public abstract class FileEditerController extends BaseController {
                             }
                             if (sourceInformation.isWithBom()) {
                                 currentBox.setDisable(true);
-                                bomLabel.setText(AppVaribles.getMessage("WithBom"));
+                                bomLabel.setText(AppVaribles.message("WithBom"));
                                 if (targetBomCheck != null) {
                                     targetBomCheck.setSelected(true);
                                 }
@@ -1814,7 +1815,7 @@ public abstract class FileEditerController extends BaseController {
         }
         if (lineBreak == Line_Break.Value && lineBreakValue == null
                 || lineBreak == Line_Break.Width && lineBreakWidth <= 0) {
-            popError(AppVaribles.getMessage("WrongLineBreak"));
+            popError(AppVaribles.message("WrongLineBreak"));
             tabPane.getSelectionModel().select(lbTab);
             return;
         }
@@ -1862,7 +1863,7 @@ public abstract class FileEditerController extends BaseController {
         if (sourceInformation == null || sourceFile == null) {
             return;
         }
-        bottomLabel.setText(AppVaribles.getMessage("ReadingFile"));
+        bottomLabel.setText(AppVaribles.message("ReadingFile"));
         checkFindType();
         task = new Task<Void>() {
             private String text;
@@ -1893,7 +1894,7 @@ public abstract class FileEditerController extends BaseController {
                                     loadTotalNumbers();
                                 }
                             } else {
-                                popInformation(AppVaribles.getMessage("failed"));
+                                popInformation(AppVaribles.message("failed"));
                             }
                         }
                     });
@@ -1930,7 +1931,7 @@ public abstract class FileEditerController extends BaseController {
         }
         if (!formatMainArea()) {
             if (editLabel != null) {
-                editLabel.setText(AppVaribles.getMessage("InvalidData"));
+                editLabel.setText(AppVaribles.message("InvalidData"));
             }
             mainArea.setStyle(badStyle);
             return;
@@ -1946,12 +1947,12 @@ public abstract class FileEditerController extends BaseController {
             if (sourceInformation.getLineBreak().equals(Line_Break.CRLF)) {
                 objectsNumber += linesNumber - 1;
             }
-            objectName = AppVaribles.getMessage("Characters");
-            objectNumberName = AppVaribles.getMessage("CharactersNumber");
+            objectName = AppVaribles.message("Characters");
+            objectNumberName = AppVaribles.message("CharactersNumber");
         } else if (editType == Edit_Type.Bytes) {
             objectsNumber = text.length() / 3;
-            objectName = AppVaribles.getMessage("Bytes");
-            objectNumberName = AppVaribles.getMessage("BytesNumber");
+            objectName = AppVaribles.message("Bytes");
+            objectNumberName = AppVaribles.message("BytesNumber");
         }
         saveButton.setDisable(false);
         if (saveAsBox != null) {
@@ -1964,7 +1965,7 @@ public abstract class FileEditerController extends BaseController {
             sourceInformation.setObjectsNumber(objectsNumber);
             sourceInformation.setLinesNumber(linesNumber);
             bottomLabel.setText(objectNumberName + ": " + sourceInformation.getObjectsNumber() + "  "
-                    + AppVaribles.getMessage("LinesNumber") + ": " + sourceInformation.getLinesNumber());
+                    + AppVaribles.message("LinesNumber") + ": " + sourceInformation.getLinesNumber());
         } else {
             if (!sourceInformation.isTotalNumberRead()) {
                 pageBar.setDisable(true);
@@ -1975,7 +1976,7 @@ public abstract class FileEditerController extends BaseController {
                 setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
                 bottomLabel.setText(objectName + ": "
                         + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + " "
-                        + AppVaribles.getMessage("CountingTotalNumber"));
+                        + AppVaribles.message("CountingTotalNumber"));
 
                 locateObjectButton.setDisable(true);
                 locateLineButton.setDisable(true);
@@ -2017,7 +2018,7 @@ public abstract class FileEditerController extends BaseController {
                     bottomLabel.setText(objectName + ": "
                             + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + "/"
                             + sourceInformation.getObjectsNumber() + " "
-                            + AppVaribles.getMessage("Lines") + ": "
+                            + AppVaribles.message("Lines") + ": "
                             + sourceInformation.getCurrentPageLineStart() + "-" + sourceInformation.getCurrentPageLineEnd() + "/"
                             + sourceInformation.getLinesNumber());
                 } else {
@@ -2031,7 +2032,7 @@ public abstract class FileEditerController extends BaseController {
                     bottomLabel.setText(objectName + ": "
                             + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + charsTo + "/"
                             + charsTotal + " "
-                            + AppVaribles.getMessage("Lines") + ": "
+                            + AppVaribles.message("Lines") + ": "
                             + sourceInformation.getCurrentPageLineStart() + "-" + linesTo + "/"
                             + linesTotal);
                 }
@@ -2101,13 +2102,8 @@ public abstract class FileEditerController extends BaseController {
     }
 
     protected void saveNew() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+                null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -2133,11 +2129,11 @@ public abstract class FileEditerController extends BaseController {
                     @Override
                     public void run() {
                         if (ok) {
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                             charsetByUser = false;
                             openFile(file);
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -2153,11 +2149,11 @@ public abstract class FileEditerController extends BaseController {
         if (confirmCheck.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
+            alert.setContentText(AppVaribles.message("SureOverrideFile"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
-            ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(AppVaribles.message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -2189,10 +2185,10 @@ public abstract class FileEditerController extends BaseController {
                     @Override
                     public void run() {
                         if (ok) {
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                             openFile(sourceFile);
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                         updateInterface(false);
                     }
@@ -2209,16 +2205,12 @@ public abstract class FileEditerController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
+        String name = null;
         if (sourceFile != null) {
-            fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            name = FileTools.getFilePrefix(sourceFile.getName());
         }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+                name, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -2252,9 +2244,9 @@ public abstract class FileEditerController extends BaseController {
                                 FileEditerController controller = openNewStage();
                                 controller.openFile(file);
                             }
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -2305,11 +2297,11 @@ public abstract class FileEditerController extends BaseController {
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("NeedSaveBeforeAction"));
+            alert.setContentText(AppVaribles.message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
-            ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVaribles.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();

@@ -16,14 +16,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
+import mara.mybox.controller.base.ImagesListController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.image.file.ImageGifFile;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -31,7 +32,7 @@ import static mara.mybox.value.AppVaribles.logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageGifEditerController extends ImageSourcesController {
+public class ImageGifEditerController extends ImagesListController {
 
     protected int currentIndex, interval, width, height;
     private boolean keepSize;
@@ -46,7 +47,7 @@ public class ImageGifEditerController extends ImageSourcesController {
     private CheckBox loopCheck;
 
     public ImageGifEditerController() {
-        baseTitle = AppVaribles.getMessage("ImageGifEditer");
+        baseTitle = AppVaribles.message("ImageGifEditer");
 
         SourceFileType = VisitHistory.FileType.Gif;
         SourcePathType = VisitHistory.FileType.Gif;
@@ -55,7 +56,8 @@ public class ImageGifEditerController extends ImageSourcesController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        fileExtensionFilter = CommonValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonValues.GifExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ImageGifEditerController extends ImageSourcesController {
         try {
 
             optionsBox.setDisable(true);
-            sourcesBox.setDisable(true);
+            tableBox.setDisable(true);
 
             interval = 500;
             List<String> values = Arrays.asList("500", "300", "1000", "2000", "3000", "5000", "10000");
@@ -76,9 +78,6 @@ public class ImageGifEditerController extends ImageSourcesController {
                         if (v > 0) {
                             interval = v;
                             FxmlControl.setEditorNormal(intervalCBox);
-                            if (!isSettingValues && targetFile != null) {
-                                setImageChanged(true);
-                            }
                         } else {
                             FxmlControl.setEditorBadStyle(intervalCBox);
                         }
@@ -131,11 +130,11 @@ public class ImageGifEditerController extends ImageSourcesController {
 
     private void checkSizeType() {
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (getMessage("KeepImagesSize").equals(selected.getText())) {
+        if (message("KeepImagesSize").equals(selected.getText())) {
             keepSize = true;
             widthInput.setStyle(null);
             heightInput.setStyle(null);
-        } else if (getMessage("AllSetAs").equals(selected.getText())) {
+        } else if (message("AllSetAs").equals(selected.getText())) {
             keepSize = false;
             checkSize();
         }
@@ -189,8 +188,10 @@ public class ImageGifEditerController extends ImageSourcesController {
                         @Override
                         public void run() {
                             if (ret.isEmpty()) {
-                                popInformation(AppVaribles.getMessage("Successful"));
-                                if (viewCheck.isSelected()) {
+                                popInformation(AppVaribles.message("Successful"));
+                                if (outFile.equals(sourceFile)) {
+                                    setImageChanged(false);
+                                } else if (viewCheck.isSelected()) {
                                     try {
                                         final ImageGifViewerController controller
                                                 = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
@@ -200,7 +201,7 @@ public class ImageGifEditerController extends ImageSourcesController {
                                     }
                                 }
                             } else {
-                                popError(AppVaribles.getMessage(ret));
+                                popError(AppVaribles.message(ret));
                             }
                         }
                     });

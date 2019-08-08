@@ -1,27 +1,20 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.io.File;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -105,7 +98,7 @@ public class ImageManufactureRefController extends ImageManufactureController {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
@@ -134,67 +127,38 @@ public class ImageManufactureRefController extends ImageManufactureController {
 
     @FXML
     public void popRefFile(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
-        if (his == null || his.isEmpty()) {
-            return;
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    referenceSelected(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        if (his != null) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            dmenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(dmenu);
-            for (VisitHistory h : his) {
-                final String pathname = h.getResourceValue();
-                MenuItem menu = new MenuItem(pathname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
-                        selectReference();
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        if ( AppVaribles.fileRecentNumber <= 0 ) return;   new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentSourceFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectReference();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                referenceSelected(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML

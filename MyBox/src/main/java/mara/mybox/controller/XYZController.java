@@ -12,7 +12,8 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.color.CIEData;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -90,13 +91,13 @@ public class XYZController extends BaseController {
         }
 
         RadioButton selected = (RadioButton) valueGroup.getSelectedToggle();
-        if (getMessage("NormalizedValuesCC").equals(selected.getText())) {
+        if (message("NormalizedValuesCC").equals(selected.getText())) {
             valueType = ValueType.Normalized;
             xLabel.setText("x");
             yLabel.setText("y");
             zLabel.setText("z");
             zInput.setDisable(true);
-        } else if (getMessage("Tristimulus").equals(selected.getText())) {
+        } else if (message("Tristimulus").equals(selected.getText())) {
             valueType = ValueType.Tristimulus;
             xLabel.setText("X'");
             yLabel.setText("Y'");
@@ -135,7 +136,7 @@ public class XYZController extends BaseController {
                     if (v > 1.0) {
                         xInput.setStyle(badStyle);
                         if (commentsLabel != null) {
-                            commentsLabel.setText(getMessage("NormalizeError"));
+                            commentsLabel.setText(message("NormalizeError"));
                             commentsLabel.setStyle(badStyle);
                         }
                         return;
@@ -159,7 +160,7 @@ public class XYZController extends BaseController {
                     if (v > 1.0) {
                         yInput.setStyle(badStyle);
                         if (commentsLabel != null) {
-                            commentsLabel.setText(getMessage("NormalizeError"));
+                            commentsLabel.setText(message("NormalizeError"));
                             commentsLabel.setStyle(badStyle);
                         }
                         return;

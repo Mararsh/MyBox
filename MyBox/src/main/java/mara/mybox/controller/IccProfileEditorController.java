@@ -13,8 +13,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,16 +20,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -39,26 +35,26 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import mara.mybox.color.IccHeader;
+import mara.mybox.color.IccProfile;
+import mara.mybox.color.IccTag;
+import mara.mybox.color.IccTagType;
+import mara.mybox.color.IccTags;
+import mara.mybox.color.IccXML;
 import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.color.IccTagType;
-import mara.mybox.color.IccHeader;
-import mara.mybox.color.IccProfile;
-import mara.mybox.color.IccTag;
-import mara.mybox.color.IccTags;
-import mara.mybox.color.IccXML;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.tools.ByteTools;
 import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.Indent;
 
@@ -70,7 +66,8 @@ import static mara.mybox.value.CommonValues.Indent;
  */
 public class IccProfileEditorController extends BaseController {
 
-    protected String embedICC;
+    protected SourceType sourceType;
+    protected String embedICCName, externalDataName;
     protected boolean isIccFile, inputsValid;
     protected IccProfile profile;
     private IccHeader header;
@@ -85,7 +82,8 @@ public class IccProfileEditorController extends BaseController {
             xInput, yInput, zInput, profileIdInput, spectralPCSInput, spectralPCSRangeInput, bispectralPCSRangeInput,
             mcsInput, subClassInput, subclassVersionInput,
             xOutput, yOutput, zOutput,
-            tagDisplay, tagNameDisplay, tagTypeDisplay, tagOffsetDisplay, tagSizeDisplay;
+            tagDisplay, tagNameDisplay, tagTypeDisplay, tagOffsetDisplay, tagSizeDisplay,
+            maxDecodeInput;
     @FXML
     protected CheckBox saveConfirmCheck, embedCheck, independentCheck, subsetCheck,
             transparentcyCheck, matteCheck, negativeCheck, bwCheck, paperCheck, texturedCheck,
@@ -114,12 +112,12 @@ public class IccProfileEditorController extends BaseController {
     @FXML
     protected Button refreshHeaderButton, refreshXmlButton, exportXmlButton;
 
-    private enum SourceType {
-        Embed, Internal_File, External_File
+    protected enum SourceType {
+        Embed, Internal_File, External_File, External_Data
     };
 
     public IccProfileEditorController() {
-        baseTitle = AppVaribles.getMessage("IccProfileEditor");
+        baseTitle = AppVaribles.message("IccProfileEditor");
 
         TipsLabelKey = "IccProfileTips";
 
@@ -132,7 +130,8 @@ public class IccProfileEditorController extends BaseController {
 
         defaultPathKey = SystemTools.IccProfilePath();
 
-        fileExtensionFilter = CommonValues.IccProfileExtensionFilter;
+        sourceExtensionFilter = CommonValues.IccProfileExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -140,12 +139,11 @@ public class IccProfileEditorController extends BaseController {
         try {
             super.initializeNext();
             sourceFile = null;
-            embedICC = null;
+            embedICCName = null;
 
             initToolbar();
             initHeaderControls();
             initTagsTable();
-            initDataTable();
             initOptions();
 
         } catch (Exception e) {
@@ -171,7 +169,7 @@ public class IccProfileEditorController extends BaseController {
                     iccChanged();
                 }
             });
-            embedBox.getSelectionModel().select(0);
+//            embedBox.getSelectionModel().select(0);
 
             saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -221,12 +219,6 @@ public class IccProfileEditorController extends BaseController {
             profileVersionInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float v = Float.parseFloat(newValue);
-                        profileVersionInput.setStyle(null);
-                    } catch (Exception e) {
-                        profileVersionInput.setStyle(badStyle);
-                    }
                     if (isSettingValues) {
                         return;
                     }
@@ -237,7 +229,7 @@ public class IccProfileEditorController extends BaseController {
 
             List<String> classList = new ArrayList();
             for (String[] item : IccHeader.ProfileDeviceClasses) {
-                classList.add(item[0] + Indent + getMessage(item[1]));
+                classList.add(item[0] + Indent + message(item[1]));
             }
             deviceClassBox.getItems().addAll(classList);
             deviceClassBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -475,7 +467,7 @@ public class IccProfileEditorController extends BaseController {
 
             List<String> intents = new ArrayList();
             for (String item : IccHeader.RenderingIntents) {
-                intents.add(getMessage(item));
+                intents.add(message(item));
             }
             intentBox.getItems().addAll(intents);
             intentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -562,11 +554,11 @@ public class IccProfileEditorController extends BaseController {
     }
 
     protected void initTagsTable() {
-        tagColumn.setCellValueFactory(new PropertyValueFactory<IccTag, String>("tag"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<IccTag, String>("name"));
-        typeColumn.setCellValueFactory(new PropertyValueFactory<IccTag, String>("type"));
-        offsetColumn.setCellValueFactory(new PropertyValueFactory<IccTag, Integer>("offset"));
-        sizeColumn.setCellValueFactory(new PropertyValueFactory<IccTag, Integer>("size"));
+        tagColumn.setCellValueFactory(new PropertyValueFactory<>("tag"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        offsetColumn.setCellValueFactory(new PropertyValueFactory<>("offset"));
+        sizeColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
 
         tagsTableView.setItems(tagsTable);
         tagsTableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
@@ -578,11 +570,16 @@ public class IccProfileEditorController extends BaseController {
         });
     }
 
-    protected void initDataTable() {
-
-    }
-
     protected void initOptions() {
+        maxDecodeInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String oldValue, String newValue) {
+                checkMaxDecode();
+            }
+        });
+        maxDecodeInput.setText(AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500) + "");
+        FxmlControl.setTooltip(maxDecodeInput, new Tooltip(message("MaxDecodeComments")));
+
         lutNormalizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -590,6 +587,26 @@ public class IccProfileEditorController extends BaseController {
             }
         });
         lutNormalizeCheck.setSelected(AppVaribles.getUserConfigBoolean("LutNormalize", true));
+    }
+
+    private void checkMaxDecode() {
+        try {
+            String s = maxDecodeInput.getText().trim();
+            if (s.isEmpty()) {
+                xInput.setStyle(null);
+                AppVaribles.setUserConfigInt("ICCMaxDecodeNumber", Integer.MAX_VALUE);
+                return;
+            }
+            int v = Integer.parseInt(s);
+            if (v > 0) {
+                AppVaribles.setUserConfigInt("ICCMaxDecodeNumber", v);
+                xInput.setStyle(null);
+            } else {
+                xInput.setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            xInput.setStyle(badStyle);
+        }
     }
 
     @Override
@@ -602,16 +619,29 @@ public class IccProfileEditorController extends BaseController {
     }
 
     private String getCurrentName() {
-        if (isIccFile) {
-            if (sourceFile != null) {
-                return sourceFile.getAbsolutePath();
-            }
-        } else {
-            if (embedICC != null) {
-                return getMessage("JavaEmbeddedColorModel") + ": " + embedICC;
+        if (null != sourceType) {
+            switch (sourceType) {
+                case Internal_File:
+                case External_File:
+                    if (sourceFile != null) {
+                        return sourceFile.getAbsolutePath();
+                    }
+                    break;
+                case Embed:
+                    if (embedICCName != null) {
+                        return message("JavaEmbeddedColorModel") + ": " + embedICCName;
+                    }
+                    break;
+                case External_Data:
+                    if (externalDataName != null) {
+                        return externalDataName;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
-        return null;
+        return "";
     }
 
     @Override
@@ -620,7 +650,8 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
         recordFileOpened(file);
-        openProfile(SourceType.External_File, file.getAbsolutePath());
+        sourceType = SourceType.External_File;
+        openProfile(file.getAbsolutePath());
     }
 
     private void iccChanged() {
@@ -638,24 +669,42 @@ public class IccProfileEditorController extends BaseController {
             case "PYCC":
             case "GRAY":
             case "LINEAR_RGB":
-                openProfile(SourceType.Embed, name);
+                sourceType = SourceType.Embed;
+                openProfile(name);
                 break;
             default:
-                openProfile(SourceType.Internal_File, name);
+                sourceType = SourceType.Internal_File;
+                openProfile(name);
         }
 
     }
 
-    private void openProfile(final SourceType type, final String name) {
+    public void externalData(String name, byte[] data) {
+        try {
+            if (data == null) {
+                return;
+            }
+            sourceType = SourceType.External_Data;
+            sourceFile = null;
+            externalDataName = name;
+            embedBox.getSelectionModel().clearSelection();
+            profile = new IccProfile(data);
+            displayProfileData();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private void openProfile(final String name) {
         try {
             if (name == null || name.trim().isEmpty()) {
                 return;
             }
             final String inputName;
-            if (type == SourceType.Embed) {
-                inputName = getMessage("JavaEmbeddedColorModel") + ": " + name;
+            if (sourceType == SourceType.Embed) {
+                inputName = message("JavaEmbeddedColorModel") + ": " + name;
             } else {
-                inputName = getMessage("File") + ": " + name;
+                inputName = message("File") + ": " + name;
             }
             if (task != null && task.isRunning()) {
                 task.cancel();
@@ -665,28 +714,21 @@ public class IccProfileEditorController extends BaseController {
                 private String error;
                 private File file;
                 private IccProfile p;
-                private byte[] data;
 
                 @Override
                 protected Void call() throws Exception {
                     try {
-                        data = null;
-                        switch (type) {
+                        switch (sourceType) {
                             case Embed:
                                 p = new IccProfile(name);
-                                data = p.getData();
                                 break;
                             case Internal_File:
                                 file = FxmlControl.getUserFile("/data/ICC/" + name, name);
                                 p = new IccProfile(file);
-                                data = FileTools.readBytes(file);
-                                p.setData(data);
                                 break;
                             case External_File:
                                 file = new File(name);
                                 p = new IccProfile(file);
-                                data = FileTools.readBytes(file);
-                                p.setData(data);
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -702,43 +744,27 @@ public class IccProfileEditorController extends BaseController {
                         @Override
                         public void run() {
                             if (ok) {
-                                String displayName;
-                                isIccFile = type != SourceType.Embed;
+                                isIccFile = sourceType != SourceType.Embed;
                                 if (isIccFile) {
                                     sourceFile = file;
                                     isSettingValues = true;
-                                    embedICC = null;
+                                    embedICCName = null;
                                     isSettingValues = false;
-                                    displayName = AppVaribles.getMessage("File") + ": " + name;
                                 } else {
-                                    embedICC = name;
+                                    embedICCName = name;
                                     sourceFile = null;
-                                    displayName = AppVaribles.getMessage("JavaEmbeddedColorModel") + ": " + name;
                                 }
-                                if (type == SourceType.External_File) {
+                                if (sourceType == SourceType.External_File) {
                                     embedBox.getSelectionModel().clearSelection();
                                 }
                                 profile = p;
-                                profile.setNormalizeLut(lutNormalizeCheck.isSelected());
-                                header = profile.getHeader();
-                                tags = profile.getTags();
-                                bottomLabel.setStyle(null);
-                                bottomLabel.setText(displayName);
-                                if (myStage != null) {
-                                    myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
-                                }
-                                resetMarkLabel(headerBox);
-                                inputsValid = true;
-                                loadProfileData();
-                                if (!profile.isIsValid()) {
-                                    popError(AppVaribles.getMessage("IccInvalid"), 6000);
-                                }
+                                displayProfileData();
                             } else {
                                 if (error == null) {
                                     if (p != null && p.getError() != null) {
                                         error = p.getError();
                                     } else {
-                                        error = AppVaribles.getMessage("Invalid");
+                                        error = AppVaribles.message("Invalid");
                                     }
                                 }
                                 popError(inputName + " " + error);
@@ -748,7 +774,7 @@ public class IccProfileEditorController extends BaseController {
 
                 }
             };
-            openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + getMessage("Loading..."));
+            openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
@@ -757,34 +783,61 @@ public class IccProfileEditorController extends BaseController {
         }
     }
 
-    private void loadProfileData() {
-        if (header == null) {
+    private void displayProfileData() {
+        if (profile == null || !profile.isIsValid()) {
+            popError(AppVaribles.message("IccInvalid"), 3000);
             return;
         }
-
-        LoadingController contoller = openHandlingStage(Modality.WINDOW_MODAL, getMessage("Loading..."));
-        isSettingValues = true;
-        try {
-
-            displaySummary();
-
-            initHeaderInputs();
-
-            makeTagsInputs();
-
-            displayXML();
-
-            displayTagsTable();
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-
+        profile.setNormalizeLut(lutNormalizeCheck.isSelected());
+        bottomLabel.setStyle(null);
+        bottomLabel.setText(getCurrentName());
+        if (myStage != null) {
+            myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
         }
-        isSettingValues = false;
+        resetMarkLabel(headerBox);
+        inputsValid = true;
 
-        contoller.closeStage();
+        if (task != null && task.isRunning()) {
+            task.cancel();
+        }
+        task = new Task<Void>() {
+            private boolean ok;
+            private String xml;
 
-//        displayColorSpace();
+            @Override
+            protected Void call() throws Exception {
+                header = profile.getHeader();
+                header.readFields();
+                tags = profile.getTags();
+                tags.readTags();
+                xml = IccXML.iccXML(header, tags);
+                ok = true;
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ok) {
+                            displaySummary();
+                            initHeaderInputs();
+                            makeTagsInputs();
+                            displayTagsTable();
+                            displayXML(xml);
+                        } else {
+                            popError(AppVaribles.message("IccInvalid"), 3000);
+                        }
+                    }
+                });
+            }
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL, message("Loading..."));
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void displaySummary() {
@@ -792,12 +845,13 @@ public class IccProfileEditorController extends BaseController {
         if (header == null) {
             return;
         }
+
         try {
             LinkedHashMap<String, IccTag> fields = header.getFields();
-            String s = getMessage("ProfileSize") + ": " + header.value("ProfileSize");
+            String s = message("ProfileSize") + ": " + header.value("ProfileSize");
             List<IccTag> tagsList = tags.getTags();
             if (tagsList != null) {
-                s += "   " + getMessage("TagsNumber") + ": " + tagsList.size();
+                s += "   " + message("TagsNumber") + ": " + tagsList.size();
             }
             String name = getCurrentName();
             bottomLabel.setText(name + "   " + s);
@@ -819,33 +873,33 @@ public class IccProfileEditorController extends BaseController {
                     case "PCCIlluminantZ":
                         continue;
                     case "ProfileFlagEmbedded":
-                        s += getMessage("ProfileFlags") + ": ";
-                        s += ((boolean) header.value("ProfileFlagEmbedded") ? getMessage("NotEmbedded") : getMessage("NotEmbedded")) + "  ";
-                        s += ((boolean) header.value("ProfileFlagIndependently") ? getMessage("Independent") : getMessage("NotIndependent")) + "  ";
-                        s += ((boolean) header.value("ProfileFlagMCSSubset") ? getMessage("MCSSubset") : getMessage("MCSNotSubset"));
+                        s += message("ProfileFlags") + ": ";
+                        s += ((boolean) header.value("ProfileFlagEmbedded") ? message("NotEmbedded") : message("NotEmbedded")) + "  ";
+                        s += ((boolean) header.value("ProfileFlagIndependently") ? message("Independent") : message("NotIndependent")) + "  ";
+                        s += ((boolean) header.value("ProfileFlagMCSSubset") ? message("MCSSubset") : message("MCSNotSubset"));
                         s += " (" + header.hex(44, 4) + ")\n";
                         break;
                     case "DeviceAttributeTransparency":
-                        s += getMessage("DeviceAttributes") + ": ";
-                        s += ((boolean) header.value("DeviceAttributeTransparency") ? getMessage("Transparency") : getMessage("Reflective")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeMatte") ? getMessage("Matte") : getMessage("Glossy")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeNegative") ? getMessage("Negative") : getMessage("Positive")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeBlackOrWhite") ? getMessage("BlackOrWhite") : getMessage("Colorful")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributePaperBased") ? getMessage("PaperBased") : getMessage("NonPaperBased")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeTextured") ? getMessage("Textured") : getMessage("NonTextured")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeIsotropic") ? getMessage("Isotropic") : getMessage("NonIsotropic")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeSelfLuminous") ? getMessage("SelfLuminous") : getMessage("NonSelfLuminous"));
+                        s += message("DeviceAttributes") + ": ";
+                        s += ((boolean) header.value("DeviceAttributeTransparency") ? message("Transparency") : message("Reflective")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeMatte") ? message("Matte") : message("Glossy")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeNegative") ? message("Negative") : message("Positive")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeBlackOrWhite") ? message("BlackOrWhite") : message("Colorful")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributePaperBased") ? message("PaperBased") : message("NonPaperBased")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeTextured") ? message("Textured") : message("NonTextured")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeIsotropic") ? message("Isotropic") : message("NonIsotropic")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeSelfLuminous") ? message("SelfLuminous") : message("NonSelfLuminous"));
                         s += " (" + header.hex(56, 8) + ")\n";
                         break;
                     case "PCCIlluminantX":
-                        s += getMessage("ConnectionSpaceIlluminant") + ": ";
+                        s += message("ConnectionSpaceIlluminant") + ": ";
                         s += header.value("PCCIlluminantX") + "  ";
                         s += header.value("PCCIlluminantY") + "  ";
                         s += header.value("PCCIlluminantZ");
                         s += " (" + header.hex(68, 12) + ")\n";
                         break;
                     default:
-                        s += getMessage(field.getTag()) + ": " + field.getValue();
+                        s += message(field.getTag()) + ": " + field.getValue();
                         if (field.getType() != IccTag.TagType.Bytes) {
                             s += " (" + bytesToHexFormat(field.getBytes()) + ")";
                         }
@@ -855,7 +909,7 @@ public class IccProfileEditorController extends BaseController {
 
             }
 
-            s += "\n\n" + getMessage("HeaderBytes") + ": \n" + ByteTools.bytesToHexFormat(header.getHeader());
+            s += "\n\n" + message("HeaderBytes") + ": \n" + ByteTools.bytesToHexFormat(header.getHeader());
             summaryArea.setText(s);
 
         } catch (Exception e) {
@@ -870,6 +924,7 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
         try {
+            isSettingValues = true;
             cmmTypeBox.getSelectionModel().select((String) header.value("CMMType"));
             profileVersionInput.setText(header.value("ProfileVersion") + "");
             deviceClassBox.getSelectionModel().select((String) header.value("ProfileDeviceClass"));
@@ -903,6 +958,7 @@ public class IccProfileEditorController extends BaseController {
             mcsInput.setText((String) header.value("MCS"));
             subClassInput.setText((String) header.value("ProfileDeviceSubclass"));
             subclassVersionInput.setText(header.value("ProfileSubclassVersion") + "");
+            isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
 
@@ -923,25 +979,13 @@ public class IccProfileEditorController extends BaseController {
         }
     }
 
-    private void displayXML() {
-        if (header == null) {
-            return;
-        }
-        try {
-            String xml = IccXML.iccXML(header, tags);
-            if (xml != null) {
-                xmlArea.setText(xml);
-            } else {
-                xmlArea.clear();
-                popError(getMessage("InvalidData"));
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
+    private void displayXML(String xml) {
+        if (xml != null) {
+            xmlArea.setText(xml);
+        } else {
             xmlArea.clear();
-            popError(getMessage("InvalidData"));
-
+            popError(message("InvalidData"));
         }
-
     }
 
     private void makeTagsInputs() {
@@ -962,7 +1006,7 @@ public class IccProfileEditorController extends BaseController {
                 VBox.setVgrow(tagBox, Priority.NEVER);
                 HBox.setHgrow(tagBox, Priority.ALWAYS);
 
-                Label label = new Label(getMessage(tag.getName()));
+                Label label = new Label(message(tag.getName()));
                 label.setPrefWidth(Region.USE_COMPUTED_SIZE);
                 label.wrapTextProperty().setValue(true);
                 tagBox.getChildren().add(label);
@@ -996,7 +1040,7 @@ public class IccProfileEditorController extends BaseController {
                         break;
 
                     case LUT: {
-                        Label label2 = new Label(getMessage("NotSupportEditCurrently"));
+                        Label label2 = new Label(message("NotSupportEditCurrently"));
                         label.setPrefWidth(Region.USE_COMPUTED_SIZE);
                         label.wrapTextProperty().setValue(true);
                         tagBox.getChildren().add(label2);
@@ -1274,7 +1318,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(illuminantBox, Priority.NEVER);
             illuminantBox.setSpacing(5);
             illuminantBox.setAlignment(Pos.CENTER_LEFT);
-            Label illuminantLabel = new Label(getMessage("Illuminant"));
+            Label illuminantLabel = new Label(message("Illuminant"));
             illuminantLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             illuminantLabel.wrapTextProperty().setValue(true);
             final TextField illuminantInput = new TextField();
@@ -1305,7 +1349,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(surroundBox, Priority.NEVER);
             surroundBox.setSpacing(5);
             surroundBox.setAlignment(Pos.CENTER_LEFT);
-            Label surroundLabel = new Label(getMessage("Surround"));
+            Label surroundLabel = new Label(message("Surround"));
             surroundLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             surroundLabel.wrapTextProperty().setValue(true);
             final TextField surroundInput = new TextField();
@@ -1336,7 +1380,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(typeBox, Priority.NEVER);
             typeBox.setSpacing(5);
             typeBox.setAlignment(Pos.CENTER_LEFT);
-            Label typeLabel = new Label(getMessage("IlluminantType"));
+            Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> typeListbox = new ComboBox();
@@ -1385,7 +1429,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(observerBox, Priority.NEVER);
             observerBox.setSpacing(5);
             observerBox.setAlignment(Pos.CENTER_LEFT);
-            Label observerLabel = new Label(getMessage("StandardObserver"));
+            Label observerLabel = new Label(message("StandardObserver"));
             observerLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             observerLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> observerListbox = new ComboBox();
@@ -1415,7 +1459,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(tristimulusBox, Priority.NEVER);
             tristimulusBox.setSpacing(5);
             tristimulusBox.setAlignment(Pos.CENTER_LEFT);
-            Label tristimulusLabel = new Label(getMessage("Tristimulus"));
+            Label tristimulusLabel = new Label(message("Tristimulus"));
             tristimulusLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             tristimulusLabel.wrapTextProperty().setValue(true);
             final TextField tristimulusInput = new TextField();
@@ -1446,7 +1490,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(geometryBox, Priority.NEVER);
             geometryBox.setSpacing(5);
             geometryBox.setAlignment(Pos.CENTER_LEFT);
-            Label geometryLabel = new Label(getMessage("Geometry"));
+            Label geometryLabel = new Label(message("Geometry"));
             geometryLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             geometryLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> geometryListbox = new ComboBox();
@@ -1476,7 +1520,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(flareBox, Priority.NEVER);
             flareBox.setSpacing(5);
             flareBox.setAlignment(Pos.CENTER_LEFT);
-            Label flareLabel = new Label(getMessage("Flare"));
+            Label flareLabel = new Label(message("Flare"));
             flareLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             flareLabel.wrapTextProperty().setValue(true);
             final TextField flareInput = new TextField();
@@ -1506,7 +1550,7 @@ public class IccProfileEditorController extends BaseController {
             VBox.setVgrow(typeBox, Priority.NEVER);
             typeBox.setSpacing(5);
             typeBox.setAlignment(Pos.CENTER_LEFT);
-            Label typeLabel = new Label(getMessage("IlluminantType"));
+            Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> typeListbox = new ComboBox();
@@ -1651,8 +1695,8 @@ public class IccProfileEditorController extends BaseController {
                     @Override
                     public void run() {
                         if (tag.getType() == null) {
-                            tagTypeDisplay.setText(AppVaribles.getMessage("NotDecoded"));
-                            tagDataDisplay.setText(AppVaribles.getMessage("NotDecoded"));
+                            tagTypeDisplay.setText(AppVaribles.message("NotDecoded"));
+                            tagDataDisplay.setText(AppVaribles.message("NotDecoded"));
                         } else {
                             tagTypeDisplay.setText(tag.getType() + "");
                             if (display != null) {
@@ -1686,53 +1730,6 @@ public class IccProfileEditorController extends BaseController {
     }
 
     @FXML
-    public void calculateXYZ() {
-
-//        String colorSpace = (String) profile.getHeaderValues().get("ColorSpaceType");
-//        float[] xyz = null;
-//        switch (colorSpace) {
-//            case "RGB ": {
-//                try {
-//                    float[] vs = new float[3];
-////                    vs[0] = (int) inputs.get("Red") / 255f;
-////                    vs[1] = (int) inputs.get("Green") / 255f;
-////                    vs[2] = (int) inputs.get("Blue") / 255f;
-//                    xyz = profile.calculateXYZ(vs);
-//                } catch (Exception e) {
-//                    popError(e.toString());
-//                    return;
-//                }
-//                break;
-//            }
-//            case "CMYK": {
-//                makeInput(csInputBox, getMessage("Cyan"), "", "Cyan");
-//                makeInput(csInputBox, getMessage("Magenta"), "", "Magenta");
-//                makeInput(csInputBox, getMessage("Yellow"), "", "Yellow");
-//                makeInput(csInputBox, getMessage("Black"), "", "Black");
-//                break;
-//            }
-//
-//        }
-//        if (xyz == null) {
-//            return;
-//        }
-//        xOutput.setText(xyz[0] + "");
-//        yOutput.setText(xyz[1] + "");
-//        zOutput.setText(xyz[2] + "");
-//        for (String key : inputs.keySet()) {
-//
-//            if (key.equals("Red") || key.equals("Green") || key.equals("Blue") || key.equals("Gray")) {
-//                try {
-//                    int v = (int) inputs.get(key);
-//                } catch (Exception e) {
-//
-//                }
-//            }
-//
-//        }
-    }
-
-    @FXML
     public void nowCreateTime() {
         createTimeInput.setText(DateTools.datetimeToString(new Date()));
     }
@@ -1742,11 +1739,12 @@ public class IccProfileEditorController extends BaseController {
     public void recoverAction() {
         if (isIccFile) {
             if (sourceFile != null) {
-                openProfile(SourceType.External_File, sourceFile.getAbsolutePath());
+
+                openProfile(sourceFile.getAbsolutePath());
             }
         } else {
-            if (embedICC != null) {
-                openProfile(SourceType.Embed, embedICC);
+            if (embedICCName != null) {
+                openProfile(embedICCName);
             }
         }
     }
@@ -1770,7 +1768,7 @@ public class IccProfileEditorController extends BaseController {
         inputsValid = true;
         validateInputs(thisPane);
         if (!inputsValid) {
-            popError(getMessage("InvalidData"));
+            popError(message("InvalidData"));
         }
 
 //        saveButton.setDisable(!inputsValid);
@@ -1804,7 +1802,7 @@ public class IccProfileEditorController extends BaseController {
 
         final byte[] newHeaderData = encodeHeaderUpdate();
         if (encodeHeaderUpdate() == null) {
-            popError(getMessage("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
 
@@ -1826,10 +1824,10 @@ public class IccProfileEditorController extends BaseController {
                     @Override
                     public void run() {
                         if (ok) {
-                            loadProfileData();
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            displayProfileData();
+                            popInformation(AppVaribles.message("Successful"));
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -1844,55 +1842,39 @@ public class IccProfileEditorController extends BaseController {
     }
 
     @FXML
-    public void popXmlPath(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Xml);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void popXmlPath(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    exportXmlAction();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+                return VisitHistory.getRecentFile(VisitHistory.FileType.Xml, fileNumber);
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
+            }
 
+            @Override
+            public void handleSelect() {
+                exportXmlAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
@@ -1901,18 +1883,14 @@ public class IccProfileEditorController extends BaseController {
 //            return;
 //        }
 
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
+        String name = null;
         if (isIccFile) {
-            fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            name = FileTools.getFilePrefix(sourceFile.getName());
         } else {
-            fileChooser.setInitialFileName(embedICC);
+            name = embedICCName;
         }
-        fileChooser.getExtensionFilters().addAll(CommonValues.XmlExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                name, CommonValues.XmlExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -1938,9 +1916,9 @@ public class IccProfileEditorController extends BaseController {
                             if (openExportCheck.isSelected()) {
                                 browseURI(file.toURI());
                             }
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -1959,7 +1937,7 @@ public class IccProfileEditorController extends BaseController {
                 || xInput.getStyle().equals(badStyle)
                 || yInput.getStyle().equals(badStyle)
                 || zInput.getStyle().equals(badStyle)) {
-            popError(getMessage("InvalidData"));
+            popError(message("InvalidData"));
             return null;
         }
         try {
@@ -2040,7 +2018,7 @@ public class IccProfileEditorController extends BaseController {
         }
         final byte[] newHeaderData = encodeHeaderUpdate();
         if (encodeHeaderUpdate() == null) {
-            popError(getMessage("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
 
@@ -2063,10 +2041,11 @@ public class IccProfileEditorController extends BaseController {
                     public void run() {
                         if (ok) {
                             sourceFile = file;
-                            openProfile(SourceType.External_File, file.getAbsolutePath());
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            sourceType = SourceType.External_File;
+                            openProfile(file.getAbsolutePath());
+                            popInformation(AppVaribles.message("Successful"));
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -2102,18 +2081,14 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
 
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
+        String name = null;
         if (isIccFile) {
-            fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+            name = FileTools.getFilePrefix(sourceFile.getName());
         } else {
-            fileChooser.setInitialFileName(embedICC);
+            name = embedICCName;
         }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                name, targetExtensionFilter, true);
         if (file == null) {
             return;
         }

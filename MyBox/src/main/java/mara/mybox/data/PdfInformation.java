@@ -1,12 +1,10 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVaribles;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Date;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -22,24 +20,24 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfInformation {
+public class PdfInformation extends FileInformation {
 
-    private File file;
-    private String userPassword, ownerPassword, title, subject, author, creator, producer, keywords;
-    private float version;
-    private int numberOfPages;
-    private Date createTime, modifyTime;
-    private String firstPageSize, firstPageSize2;
-    private PDDocument doc;
-    private PDDocumentOutline outline;
-    private AccessPermission access;
-    private boolean infoLoaded;
+    protected String userPassword, ownerPassword, title, subject, author, creator, producer, keywords;
+    protected float version;
+    protected int numberOfPages, fromPage, toPage;
+    protected String firstPageSize, firstPageSize2;
+    protected PDDocument doc;
+    protected PDDocumentOutline outline;
+    protected AccessPermission access;
+    protected boolean infoLoaded;
 
     public PdfInformation() {
     }
 
     public PdfInformation(File file) {
-        this.file = file;
+        super(file);
+        fromPage = 1;
+        toPage = -1;
         doc = null;
     }
 
@@ -75,10 +73,10 @@ public class PdfInformation {
 
             PDDocumentInformation docInfo = doc.getDocumentInformation();
             if (docInfo.getCreationDate() != null) {
-                createTime = docInfo.getCreationDate().getTime();
+                createTime = docInfo.getCreationDate().getTimeInMillis();
             }
             if (docInfo.getModificationDate() != null) {
-                modifyTime = docInfo.getModificationDate().getTime();
+                modifyTime = docInfo.getModificationDate().getTimeInMillis();
             }
             creator = docInfo.getCreator();
             producer = docInfo.getProducer();
@@ -160,14 +158,6 @@ public class PdfInformation {
     /*
         get/set
      */
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -222,22 +212,6 @@ public class PdfInformation {
 
     public void setProducer(String producer) {
         this.producer = producer;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
     }
 
     public String getFirstPageSize() {
@@ -310,6 +284,22 @@ public class PdfInformation {
 
     public void setOwnerPassword(String ownerPassword) {
         this.ownerPassword = ownerPassword;
+    }
+
+    public int getFromPage() {
+        return fromPage;
+    }
+
+    public void setFromPage(int fromPage) {
+        this.fromPage = fromPage;
+    }
+
+    public int getToPage() {
+        return toPage;
+    }
+
+    public void setToPage(int toPage) {
+        this.toPage = toPage;
     }
 
 }

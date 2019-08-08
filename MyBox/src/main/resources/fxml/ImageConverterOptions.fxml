@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageConverterOptionsController">
+    <children>
+        <HBox fx:id="attrBox1" alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="%FileFormat" />
+                <ComboBox fx:id="formatSelector" prefWidth="100.0" />
+                <Label fx:id="formatCommentsLabel" />
+
+                <Label text="%ColorSpace" />
+                <ComboBox fx:id="colorSpaceSelector" prefHeight="30.0" prefWidth="300.0" />
+                <HBox fx:id="profileBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <TextField fx:id="profileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="iccSelectButton" mnemonicParsing="false" onAction="#selectIccAction" onMouseEntered="#popIccFile">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOpen.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <CheckBox fx:id="embedProfileCheck" mnemonicParsing="false" text="%EmbedIccProfile" />
+            </children>
+        </HBox>
+        <HBox fx:id="attrBox2" alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <HBox fx:id="alphaBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <Label text="%AlphaChannel" />
+                        <ComboBox fx:id="alphaSelector" prefWidth="150.0" />
+                    </children>
+                </HBox>
+            <HBox fx:id="dpiBox" alignment="CENTER_LEFT" layoutX="280.0" layoutY="10.0" spacing="5.0">
+               <children>
+                  <Label text="%Density" />
+                  <ComboBox fx:id="dpiSelector" editable="true" prefWidth="120.0" />
+                  <Label text="dpi" />
+               </children>
+            </HBox>
+                <HBox fx:id="compressBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+
+                        <Label text="%CompressionType">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin></Label>
+                        <ComboBox fx:id="compressionSelector" prefWidth="150.0" />
+
+
+                        <Label text="%Quality" />
+                        <ComboBox fx:id="qualitySelector" editable="true" prefWidth="80.0" />
+                        <Label text="\%" />
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+        <HBox fx:id="binBox" alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+
+                <Label text="%BinaryAlgorithm" />
+                <RadioButton mnemonicParsing="false" selected="true" text="%OTSU">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="binaryGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%Default" toggleGroup="$binaryGroup" />
+                <RadioButton mnemonicParsing="false" text="%Threshold" toggleGroup="$binaryGroup" />
+                <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
+                <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/iconTips.png" />
+                    </image>
+                </ImageView>
+                <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

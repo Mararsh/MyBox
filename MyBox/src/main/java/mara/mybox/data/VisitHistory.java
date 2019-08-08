@@ -318,6 +318,9 @@ public class VisitHistory {
         }
     }
 
+    /*
+        get/set
+     */
     public int getResourceType() {
         return resourceType;
     }

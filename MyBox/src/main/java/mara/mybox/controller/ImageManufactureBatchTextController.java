@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -22,13 +21,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.fxml.FxmlImageManufacture;
-import static mara.mybox.fxml.FxmlControl.badStyle;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -68,7 +68,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchTextController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchText");
+        baseTitle = AppVaribles.message("ImageManufactureBatchText");
 
         ImageTextShadowKey = "ImageTextShadowKey";
         ImageFontFamilyKey = "ImageFontFamilyKey";
@@ -77,7 +77,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -174,7 +174,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             });
             waterShadowBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageTextShadowKey, "0"));
 
-            List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
+            List<String> styles = Arrays.asList(message("Regular"), message("Bold"), message("Italic"), message("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
             waterStyleBox.getSelectionModel().select(0);
 
@@ -243,30 +243,30 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
         marginInput.setStyle(null);
 
         RadioButton selected = (RadioButton) positionGroup.getSelectedToggle();
-        if (getMessage("RightBottom").equals(selected.getText())) {
+        if (message("RightBottom").equals(selected.getText())) {
             positionType = PositionType.RightBottom;
             marginInput.setDisable(false);
             checkMargin();
 
-        } else if (getMessage("RightTop").equals(selected.getText())) {
+        } else if (message("RightTop").equals(selected.getText())) {
             positionType = PositionType.RightTop;
             marginInput.setDisable(false);
             checkMargin();
 
-        } else if (getMessage("LeftBottom").equals(selected.getText())) {
+        } else if (message("LeftBottom").equals(selected.getText())) {
             positionType = PositionType.LeftBottom;
             marginInput.setDisable(false);
             checkMargin();
 
-        } else if (getMessage("LeftTop").equals(selected.getText())) {
+        } else if (message("LeftTop").equals(selected.getText())) {
             positionType = PositionType.LeftTop;
             marginInput.setDisable(false);
             checkMargin();
 
-        } else if (getMessage("Center").equals(selected.getText())) {
+        } else if (message("Center").equals(selected.getText())) {
             positionType = PositionType.Center;
 
-        } else if (getMessage("Custom").equals(selected.getText())) {
+        } else if (message("Custom").equals(selected.getText())) {
             positionType = PositionType.Custom;
             waterXInput.setDisable(false);
             waterYInput.setDisable(false);
@@ -317,22 +317,24 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     @Override
-    public void makeMoreParameters() {
-        super.makeMoreParameters();
+    public boolean makeMoreParameters() {
+        if (!super.makeMoreParameters()) {
+            return false;
+        }
 
-        String fontFamily = (String) waterFamilyBox.getSelectionModel().getSelectedItem();
-        String fontStyle = (String) waterStyleBox.getSelectionModel().getSelectedItem();
+        String fontFamily = waterFamilyBox.getSelectionModel().getSelectedItem();
+        String fontStyle = waterStyleBox.getSelectionModel().getSelectedItem();
 
         Font FxFont;
-        if (AppVaribles.getMessage("Bold").equals(fontStyle)) {
+        if (AppVaribles.message("Bold").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, waterSize);
 
-        } else if (AppVaribles.getMessage("Italic").equals(fontStyle)) {
+        } else if (AppVaribles.message("Italic").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, waterSize);
 
-        } else if (AppVaribles.getMessage("Bold Italic").equals(fontStyle)) {
+        } else if (AppVaribles.message("Bold Italic").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, waterSize);
 
@@ -348,7 +350,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
         text.setFont(FxFont);
         textWidth = (int) Math.round(text.getLayoutBounds().getWidth());
         textHeight = (int) Math.round(text.getLayoutBounds().getHeight());
-
+        return true;
     }
 
     @Override

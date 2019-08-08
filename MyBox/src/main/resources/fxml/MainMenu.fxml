@@ -24,6 +24,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#refresh" text="%RefreshWindow" />
                                 <MenuItem mnemonicParsing="false" onAction="#resetWindows" text="%ResetWindows" />
+                                <MenuItem mnemonicParsing="false" onAction="#fullScreen" text="%FullScreen" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem fx:id="closeOtherMenu" mnemonicParsing="false" onAction="#closeOtherWindows" text="%CloseOtherWindows" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -33,23 +34,18 @@ License:    Apache License Version 2.0
                         <Menu fx:id="pdfMenu" mnemonicParsing="false" text="%PdfTools">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfView" text="%PdfView" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPDFAttributes" text="%PDFAttributes" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPDFAttributesBatch" text="%PDFAttributesBatch" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImages" text="%PdfConvertImages" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfConvertImagesBatch" text="%PdfConvertImagesBatch" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImages" text="%PdfExtractImages" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfExtractImagesBatch" text="%PdfExtractImagesBatch" />
-                                <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTexts" text="%PdfExtractTexts" />
                                 <MenuItem mnemonicParsing="false" onAction="#openPdfExtractTextsBatch" text="%PdfExtractTextsBatch" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
-                                <MenuItem mnemonicParsing="false" onAction="#openSplitPdf" text="%SplitPdf" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImages" text="%PdfCompressImages" />
                                 <MenuItem mnemonicParsing="false" onAction="#openCompressPdfImagesBatch" text="%PdfCompressImagesBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openPdfSplitBatch" text="%PdfSplitBatch" />
+                                <MenuItem mnemonicParsing="false" onAction="#openMergePdf" text="%MergePdf" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
                             </items>
                         </Menu>
                         <Menu fx:id="imageMenu" mnemonicParsing="false" text="%ImageTools">
@@ -88,6 +84,8 @@ License:    Apache License Version 2.0
                                     </items>
                                 </Menu>
                                 <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <Menu mnemonicParsing="false" text="%MultipleFramesImageFile">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImageFramesViewer" text="%ImageFramesViewer" />
@@ -99,7 +97,7 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%MergeImages">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesBlend" text="%ImagesBlend" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImageCombine" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openImagesCombine" text="%ImagesCombine" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImagesCombinePdf" text="%ImagesCombinePdf" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                     </items>
@@ -111,9 +109,6 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
                                     </items>
                                 </Menu>
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageConverter" text="%ImageConverter" />
-                                <MenuItem mnemonicParsing="false" onAction="#openImageConverterBatch" text="%ImageConverterBatch" />
                                 <!--                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageStatistic" text="%ImageStatistic" />-->
                                 <SeparatorMenuItem mnemonicParsing="false" />
@@ -154,6 +149,12 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu mnemonicParsing="false" text="%DesktopTools">
                             <items>
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
+                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesDelete" text="%FilesDelete" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#openRecordImages" text="%RecordImagesInSystemClipBoard" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openTextEncodingBatch" text="%TextEncodingBatch" />
@@ -161,13 +162,8 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openBytesEditer" text="%BytesEditer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openFileCut" text="%FileCut" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFileMerge" text="%FileMerge" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFilesMerge" text="%FilesMerge" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFilesRename" text="%FilesRename" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFilesArrangement" text="%FilesArrangement" />
-                                <MenuItem mnemonicParsing="false" onAction="#openDirectorySynchronize" text="%DirectorySynchronize" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
-                                <MenuItem mnemonicParsing="false" onAction="#openRecordImages" text="%RecordImagesInSystemClipBoard" />
                                 <MenuItem mnemonicParsing="false" onAction="#openAlarmClock" text="%AlarmClock" />
                             </items>
                         </Menu>
@@ -261,14 +257,13 @@ License:    Apache License Version 2.0
                         <Menu fx:id="recentMenu" mnemonicParsing="false" text="%RecentAccessed" />
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#developerGuide" text="%DeveloperGuide" />
-                                <MenuItem mnemonicParsing="false" onAction="#developerGuideExternal" text="%DeveloperGuideInExternal" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#userGuideOverview" text="%UserGuideOverview" />
                                 <MenuItem mnemonicParsing="false" onAction="#userGuidePdfTools" text="%UserGuidePdfTools" />
                                 <MenuItem mnemonicParsing="false" onAction="#userGuideImageTools" text="%UserGuideImageTools" />
                                 <MenuItem mnemonicParsing="false" onAction="#userGuideDesktopTools" text="%UserGuideDesktopTools" />
                                 <MenuItem mnemonicParsing="false" onAction="#userGuideNetworkTools" text="%UserGuideNetworkTools" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#developerGuide" text="%DeveloperGuide" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                             </items>

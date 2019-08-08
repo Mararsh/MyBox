@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                         </ToolBar>
                         <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                 <CheckBox fx:id="viewCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ViewAfterSave" />
                                 <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
                                     <graphic>

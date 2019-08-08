@@ -24,7 +24,6 @@ import static mara.mybox.color.IccTagType.u16Fixed16Number;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.color.IccTagType.XYZNumber;
 import static mara.mybox.color.IccTagType.multiLocalizedUnicode;
-import static mara.mybox.color.IccTagType.multiLocalizedUnicode;
 
 /**
  * @Author Mara
@@ -257,7 +256,7 @@ public class IccTag {
 
     public static String tagDisplay(TagType type, Object value) {
         if (type == null || value == null) {
-            return null;
+            return "";
         }
         String display;
         try {

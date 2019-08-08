@@ -1,33 +1,40 @@
 package mara.mybox.image.file;
 
-import mara.mybox.image.ImageValue;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageMetadata;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReader;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
-import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
-import com.github.jaiimageio.plugins.tiff.TIFFField;
-import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
-import com.github.jaiimageio.plugins.tiff.TIFFTag;
+//import com.github.jaiimageio.impl.plugins.tiff.IIOMetadata;
+//import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReader;
+//import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
+//import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
+//import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
+//import com.github.jaiimageio.plugins.tiff.BaselineTIFFTagSet;
+//import com.github.jaiimageio.plugins.tiff.TIFFField;
+//import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
+//import com.github.jaiimageio.plugins.tiff.TIFFTag;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.tiff.BaselineTIFFTagSet;
+import javax.imageio.plugins.tiff.TIFFField;
+import javax.imageio.plugins.tiff.TIFFTag;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.image.ImageManufacture;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.image.ImageManufacture;
 import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.FxmlImageManufacture;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @Author Mara
@@ -36,18 +43,15 @@ import org.w3c.dom.Node;
  * @Description
  * @License Apache License Version 2.0
  */
+// https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html#image
 public class ImageTiffFile {
 
-    public static String[] getTiffCompressionTypes() {
-        return new TIFFImageWriteParam(null).getCompressionTypes();
-    }
-
-    public static TIFFImageMetadata getTiffIIOMetadata(File file) {
+    public static IIOMetadata getTiffIIOMetadata(File file) {
         try {
-            TIFFImageReader reader = new TIFFImageReader(new TIFFImageReaderSpi());
+            ImageReader reader = ImageIO.getImageReadersByFormatName("tif").next();
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
-                TIFFImageMetadata metadata = (TIFFImageMetadata) reader.getImageMetadata(0);
+                IIOMetadata metadata = reader.getImageMetadata(0);
                 reader.dispose();
                 return metadata;
             }
@@ -57,116 +61,14 @@ public class ImageTiffFile {
         }
     }
 
-    // Ignore list values, which can be anaylse if need in future.
-    public static Map<String, String> explainTiffMetaData(String metaDataXml) {
-        try {
-            Map<String, String> metaData = new HashMap();
-            String[] lines = metaDataXml.split(System.getProperty("line.separator"));
-            String name = null, data;
-            for (String line : lines) {
-                data = checkAttribute(line, " name");
-                if (data != null) {
-                    name = data;
-                    continue;
-                }
-                data = checkAttribute(line, " description");
-                if (data != null) {
-                    if (name != null) {
-                        metaData.put(name, data);
-                    }
-                    continue;
-                }
-                data = checkAttribute(line, " value");
-                if (data != null) {
-                    if (name != null) {
-                        metaData.put(name, data);
-                    }
-                }
-            }
-            return metaData;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    private static String checkAttribute(String line, String attribute) {
-        if (line == null || line.isEmpty() || attribute == null || attribute.isEmpty()) {
-            return null;
-        }
-        try {
-            String key = attribute + "=\"";
-            int pos1 = line.indexOf(key);
-            if (pos1 < 0) {
-                return null;
-            }
-            String v = line.substring(pos1 + key.length());
-            int pos2 = v.indexOf("\"");
-            if (pos2 < 0) {
-                return null;
-            }
-            return v.substring(0, pos2);
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return null;
-        }
-    }
-
-    private static int getRationalValue(String v) {
-        int pos = v.indexOf("/");
-        String vv = v;
-        if (pos > 0) {
-            vv = v.substring(0, pos);
-        }
-        return Integer.valueOf(vv);
-    }
-
-    public static void explainTiffMetaData(String metaDataXml, ImageInformation info) {
-        try {
-            Map<String, String> metaData = explainTiffMetaData(metaDataXml);
-            if (metaData.containsKey("ImageWidth")) {
-                info.setWidth(Integer.valueOf(metaData.get("ImageWidth")));
-            }
-            if (metaData.containsKey("ImageLength")) {
-                info.setHeight(Integer.valueOf(metaData.get("ImageLength")));
-            }
-            if (metaData.containsKey("Compression")) {
-                info.setCompressionType(metaData.get("Compression"));
-            }
-//            if (metaData.containsKey("PhotometricInterpretation")) {
-//                info.setColorSpace(metaData.get("PhotometricInterpretation"));
-//            }
-            if (metaData.containsKey("ResolutionUnit")) {
-                int unit = Integer.valueOf(metaData.get("ResolutionUnit"));
-                int x = 0, y = 0;
-                if (metaData.containsKey("XResolution")) {
-                    x = getRationalValue(metaData.get("XResolution"));
-                }
-                if (metaData.containsKey("YResolution")) {
-                    y = getRationalValue(metaData.get("YResolution"));
-                }
-                if (BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER == unit) {
-                    info.setXDpi(ImageValue.dpcm2dpi(x));
-                    info.setYDpi(ImageValue.dpcm2dpi(y));
-                } else {
-                    info.setXDpi(x);
-                    info.setYDpi(y);
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
-
-    public static TIFFImageWriter getWriter() {
-        TIFFImageWriterSpi tiffspi = new TIFFImageWriterSpi();
-        TIFFImageWriter writer = new TIFFImageWriter(tiffspi);
+    public static ImageWriter getWriter() {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("tif").next();
         return writer;
     }
 
-    public static TIFFImageWriteParam getPara(ImageAttributes attributes, TIFFImageWriter writer) {
+    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
         try {
-            TIFFImageWriteParam param = (TIFFImageWriteParam) writer.getDefaultWriteParam();
+            ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 if (attributes != null && attributes.getCompressionType() != null) {
@@ -185,13 +87,13 @@ public class ImageTiffFile {
         }
     }
 
-    public static TIFFImageMetadata getMeta(ImageAttributes attributes, BufferedImage image,
-            TIFFImageWriter writer, TIFFImageWriteParam param) {
+    public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
+            ImageWriter writer, ImageWriteParam param) {
         try {
-            TIFFImageMetadata metaData;
-            if (attributes != null && attributes.getColorSpace() != null) {
+            IIOMetadata metaData;
+            if (attributes != null && attributes.getColorType() != null) {
                 ImageTypeSpecifier imageTypeSpecifier;
-                switch (attributes.getColorSpace()) {
+                switch (attributes.getColorType()) {
                     case ARGB:
                         imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
                         break;
@@ -208,42 +110,66 @@ public class ImageTiffFile {
                         imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB);
                         break;
                 }
-                metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(imageTypeSpecifier, param);
+                metaData = writer.getDefaultImageMetadata(imageTypeSpecifier, param);
             } else if (image != null) {
-                metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
             } else {
-                metaData = (TIFFImageMetadata) writer.getDefaultImageMetadata(
+                metaData = writer.getDefaultImageMetadata(
                         ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB), param);
             }
 
-            if (!metaData.isReadOnly() && attributes != null && attributes.getDensity() > 0) {
+            if (metaData == null || metaData.isReadOnly() || attributes == null) {
+                return metaData;
+            }
+            if (attributes.getDensity() > 0) {
+                String nativeName = metaData.getNativeMetadataFormatName();  // javax_imageio_tiff_image_1.0
+                Node nativeTree = metaData.getAsTree(nativeName);
                 long[] xRes = new long[]{attributes.getDensity(), 1};
                 long[] yRes = new long[]{attributes.getDensity(), 1};
-                Node node = metaData.getAsTree(metaData.getNativeMetadataFormatName());
                 TIFFField fieldXRes = new TIFFField(
                         BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_X_RESOLUTION),
                         TIFFTag.TIFF_RATIONAL, 1, new long[][]{xRes});
                 TIFFField fieldYRes = new TIFFField(
                         BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_Y_RESOLUTION),
                         TIFFTag.TIFF_RATIONAL, 1, new long[][]{yRes});
-                node.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
-                node.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
+                nativeTree.getFirstChild().appendChild(fieldXRes.getAsNativeNode());
+                nativeTree.getFirstChild().appendChild(fieldYRes.getAsNativeNode());
                 char[] fieldUnit = new char[]{BaselineTIFFTagSet.RESOLUTION_UNIT_INCH};
                 TIFFField fieldResUnit = new TIFFField(
                         BaselineTIFFTagSet.getInstance().getTag(BaselineTIFFTagSet.TAG_RESOLUTION_UNIT),
                         TIFFTag.TIFF_SHORT, 1, fieldUnit);
-                node.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
-                metaData.mergeTree(metaData.getNativeMetadataFormatName(), node);
+                nativeTree.getFirstChild().appendChild(fieldResUnit.getAsNativeNode());
+                metaData.mergeTree(nativeName, nativeTree);
             }
 
             return metaData;
+
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
     }
 
-    // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/tiff_metadata.html#image
+    public static Node findNode(Node nativeTree, String name) {
+        try {
+            NodeList nodes = nativeTree.getFirstChild().getChildNodes();
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                NamedNodeMap attrs = node.getAttributes();
+                for (int j = 0; j < attrs.getLength(); j++) {
+                    Node attr = attrs.item(j);
+                    if ("name".equals(attr.getNodeName()) && name.equals(attr.getNodeValue())) {
+                        return node;
+                    }
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
     public static boolean writeTiffImage(BufferedImage image, ImageAttributes attributes, File file) {
         try {
             try {
@@ -254,11 +180,11 @@ public class ImageTiffFile {
                 return false;
             }
 
-            TIFFImageWriter writer = getWriter();
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
-                TIFFImageWriteParam param = getPara(attributes, writer);
-                TIFFImageMetadata metaData = getMeta(attributes, image, writer, param);
+                ImageWriteParam param = getPara(attributes, writer);
+                IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
                 writer.write(null, new IIOImage(image, null, metaData), param);
                 out.flush();
                 writer.dispose();
@@ -283,14 +209,14 @@ public class ImageTiffFile {
             } catch (Exception e) {
                 return false;
             }
-            TIFFImageWriter writer = getWriter();
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
-                TIFFImageWriteParam param = getPara(attributes, writer);
+                ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 for (BufferedImage bufferedImage : images) {
-                    bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                    TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                    bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                    IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                     writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                 }
                 writer.endWriteSequence();
@@ -318,16 +244,16 @@ public class ImageTiffFile {
             } catch (Exception e) {
                 return e.toString();
             }
-            TIFFImageWriter writer = getWriter();
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
-                TIFFImageWriteParam param = getPara(attributes, writer);
+                ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 for (ImageInformation info : imagesInfo) {
                     BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(info);
                     if (bufferedImage != null) {
-                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                        TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                        bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                        IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                         writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -357,10 +283,10 @@ public class ImageTiffFile {
                 return false;
             }
 
-            TIFFImageWriter writer = getWriter();
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(outFile)) {
                 writer.setOutput(out);
-                TIFFImageWriteParam param = getPara(attributes, writer);
+                ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 for (String file : files) {
                     ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(file);
@@ -374,8 +300,8 @@ public class ImageTiffFile {
                             if (bufferedImage == null) {
                                 continue;
                             }
-                            bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                            TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                            bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                            IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                             writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                         }
                     } else {
@@ -384,8 +310,8 @@ public class ImageTiffFile {
                             continue;
                         }
                         for (BufferedImage bufferedImage : images) {
-                            bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                            TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                            bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                            IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                             writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                         }
                     }
@@ -418,10 +344,10 @@ public class ImageTiffFile {
             } catch (Exception e) {
                 return false;
             }
-            TIFFImageWriter writer = getWriter();
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(targetFile)) {
                 writer.setOutput(out);
-                TIFFImageWriteParam param = getPara(attributes, writer);
+                ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
@@ -440,8 +366,8 @@ public class ImageTiffFile {
                         } else {
                             bufferedImage = ImageFileReaders.readRectangle(sourceFormat, sourceFile, x1, y1, x2, y2);
                         }
-                        bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                        TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                        bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                        IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                         writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
                     }
                 }
@@ -455,6 +381,85 @@ public class ImageTiffFile {
             logger.error(e.toString());
             return false;
         }
+    }
+
+    // Ignore list values, which can be anaylse if need in future.
+    public static void explainTiffMetaData(IIOMetadata iioMetaData, ImageInformation info) {
+        try {
+            String nativeName = iioMetaData.getNativeMetadataFormatName();  // javax_imageio_tiff_image_1.0
+            Node nativeTree = iioMetaData.getAsTree(nativeName);
+            NodeList nodes = nativeTree.getFirstChild().getChildNodes();
+            BaselineTIFFTagSet tagsSet = BaselineTIFFTagSet.getInstance();
+            int unit = -1, x = -1, y = -1;
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                TIFFField field = TIFFField.createFromMetadataNode(tagsSet, node);
+                String name = field.getTag().getName();
+                if ("ICC Profile".equals(name)) {
+                    info.setIccProfile(field.getAsBytes());
+                    info.setNativeAttribute(name, "skip...");
+                } else {
+                    String des = null;
+                    try {
+                        des = node.getFirstChild().getFirstChild().getAttributes().item(1).getNodeValue();
+                    } catch (Exception e) {
+                    }
+                    List<String> values = new ArrayList();
+                    for (int j = 0; j < field.getCount(); j++) {
+                        values.add(field.getValueAsString(j));
+                    }
+                    if (values.isEmpty()) {
+                        continue;
+                    } else if (values.size() == 1) {
+                        if (des != null) {
+                            info.setNativeAttribute(name, des + "(" + values.get(0) + ")");
+                        } else {
+                            info.setNativeAttribute(name, values.get(0));
+                        }
+                    } else {
+                        info.setNativeAttribute(name, values);
+                    }
+                    switch (name) {
+                        case "ImageWidth":
+                            info.setWidth(Integer.valueOf(values.get(0)));
+                            break;
+                        case "ImageLength":
+                            info.setHeight(Integer.valueOf(values.get(0)));
+                            break;
+                        case "ResolutionUnit":
+                            unit = Integer.valueOf(values.get(0));
+                            break;
+                        case "XResolution":
+                            x = getRationalValue(values.get(0));
+                            break;
+                        case "YResolution":
+                            y = getRationalValue(values.get(0));
+                            break;
+                    }
+                }
+            }
+
+            if (x > 0 && y > 0) {
+                if (BaselineTIFFTagSet.RESOLUTION_UNIT_CENTIMETER == unit) {
+                    info.setXDpi(ImageConvert.dpcm2dpi(x));
+                    info.setYDpi(ImageConvert.dpcm2dpi(y));
+                } else if (BaselineTIFFTagSet.RESOLUTION_UNIT_INCH == unit) {
+                    info.setXDpi(x);
+                    info.setYDpi(y);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    private static int getRationalValue(String v) {
+        int pos = v.indexOf('/');
+        String vv = v;
+        if (pos > 0) {
+            vv = v.substring(0, pos);
+        }
+        return Integer.valueOf(vv);
     }
 
 }

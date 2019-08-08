@@ -12,8 +12,8 @@ import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -107,8 +107,8 @@ public class IccHeader {
                     new IccTag("CMMType", 4, subBytes(header, 4, 4), TagType.Text,
                             deviceManufacturerDisplay(subBytes(header, 4, 4)), DeviceManufacturers(), true));
             fields.put("ProfileVersion",
-                    new IccTag("ProfileVersion", 8, subBytes(header, 8, 2), TagType.Double,
-                            Float.parseFloat((int) (header[8]) + "." + (int) (header[9]))));
+                    new IccTag("ProfileVersion", 8, subBytes(header, 8, 2), TagType.Text,
+                            profileVersion(subBytes(header, 8, 2))));
             fields.put("ProfileDeviceClass",
                     new IccTag("ProfileDeviceClass", 12, subBytes(header, 12, 4), TagType.Text,
                             profileDeviceClassDisplay(subBytes(header, 12, 4)), ProfileDeviceClasses(), false));
@@ -219,6 +219,13 @@ public class IccHeader {
     /*
         Decode values of Header Fields
      */
+    public static String profileVersion(byte[] value) {
+        int major = (int) value[0];
+        int minor = (value[1] & 0xff) >>> 4;
+        int bug = value[1] & 0x0f;
+        return major + "." + minor + "." + bug + ".0";
+    }
+
     public static boolean[] profileFlags(byte value) {
         boolean[] values = new boolean[3];
         values[0] = (value & 0x01) == 0x01;
@@ -288,7 +295,7 @@ public class IccHeader {
     public static String profileDeviceClassDisplay(String value) {
         for (String[] item : ProfileDeviceClasses) {
             if (item[0].equals(value)) {
-                return item[0] + Indent + getMessage(item[1]);
+                return item[0] + Indent + message(item[1]);
             }
         }
         return value;
@@ -311,13 +318,13 @@ public class IccHeader {
         int intv = bytesToInt(value);
         switch (intv) {
             case 0:
-                return getMessage("Perceptual");
+                return message("Perceptual");
             case 1:
-                return getMessage("MediaRelativeColorimetric");
+                return message("MediaRelativeColorimetric");
             case 2:
-                return getMessage("Saturation");
+                return message("Saturation");
             case 3:
-                return getMessage("ICCAbsoluteColorimetric");
+                return message("ICCAbsoluteColorimetric");
             default:
                 return bytesToHex(value);
         }
@@ -329,18 +336,17 @@ public class IccHeader {
     public static byte[] profileVersion(String value) {
         byte[] bytes = new byte[4];
         try {
-            int pos = value.indexOf(".");
-            if (pos >= 0) {
-                int major = Integer.parseInt(value.substring(0, pos));
-                byte[] mbytes = intToBytes(major);
-                bytes[0] = mbytes[3];
-                int minor = Integer.parseInt(value.substring(pos + 1));
-                mbytes = intToBytes(minor);
-                bytes[1] = mbytes[3];
-            } else {
-                int major = Integer.parseInt(value);
-                byte[] mbytes = intToBytes(major);
-                bytes[0] = mbytes[3];
+            String[] values = value.split(".");
+            if (values.length > 0) {
+                bytes[0] = ByteTools.intSmallByte(Integer.parseInt(values[0]));
+                if (values.length > 1) {
+                    Byte b = ByteTools.intSmallByte(Integer.parseInt(values[1]));
+                    bytes[1] = (byte) (b << 4);
+                    if (values.length > 2) {
+                        b = ByteTools.intSmallByte(Integer.parseInt(values[2]));
+                        bytes[1] = (byte) (bytes[1] & b);
+                    }
+                }
             }
         } catch (Exception e) {
         }
@@ -394,16 +400,16 @@ public class IccHeader {
     public static byte[] RenderingIntent(String value) {
         byte[] bytes = new byte[4];
         if ("Perceptual".equals(value)
-                || getMessage("Perceptual").equals(value)) {
+                || message("Perceptual").equals(value)) {
             bytes[3] = 0;
         } else if ("MediaRelativeColorimetric".equals(value)
-                || getMessage("MediaRelativeColorimetric").equals(value)) {
+                || message("MediaRelativeColorimetric").equals(value)) {
             bytes[3] = 1;
         } else if ("Saturation".equals(value)
-                || getMessage("Saturation").equals(value)) {
+                || message("Saturation").equals(value)) {
             bytes[3] = 2;
         } else if ("ICCAbsoluteColorimetric".equals(value)
-                || getMessage("ICCAbsoluteColorimetric").equals(value)) {
+                || message("ICCAbsoluteColorimetric").equals(value)) {
             bytes[3] = 3;
         }
         return bytes;
@@ -415,7 +421,7 @@ public class IccHeader {
     public static List<String> ProfileDeviceClasses() {
         List<String> types = new ArrayList();
         for (String[] item : ProfileDeviceClasses) {
-            types.add(item[0] + Indent + getMessage(item[1]));
+            types.add(item[0] + Indent + message(item[1]));
         }
         return types;
     }

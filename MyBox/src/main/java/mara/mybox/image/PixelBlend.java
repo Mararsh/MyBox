@@ -80,86 +80,86 @@ public abstract class PixelBlend {
     }
 
     public static List<String> allBlendModes() {
-        return Arrays.asList(AppVaribles.getMessage("NormalMode"),
-                AppVaribles.getMessage("DissolveMode"), AppVaribles.getMessage("MultiplyMode"), AppVaribles.getMessage("ScreenMode"),
-                AppVaribles.getMessage("OverlayMode"), AppVaribles.getMessage("HardLightMode"), AppVaribles.getMessage("SoftLightMode"),
-                AppVaribles.getMessage("ColorDodgeMode"), AppVaribles.getMessage("LinearDodgeMode"), AppVaribles.getMessage("DivideMode"),
-                AppVaribles.getMessage("ColorBurnMode"), AppVaribles.getMessage("LinearBurnMode"), AppVaribles.getMessage("VividLightMode"),
-                AppVaribles.getMessage("LinearLightMode"), AppVaribles.getMessage("SubtractMode"), AppVaribles.getMessage("DifferenceMode"),
-                AppVaribles.getMessage("ExclusionMode"), AppVaribles.getMessage("DarkenMode"), AppVaribles.getMessage("LightenMode"),
-                AppVaribles.getMessage("HueMode"), AppVaribles.getMessage("SaturationMode"), AppVaribles.getMessage("ColorMode"),
-                AppVaribles.getMessage("LuminosityMode"));
+        return Arrays.asList(AppVaribles.message("NormalMode"),
+                AppVaribles.message("DissolveMode"), AppVaribles.message("MultiplyMode"), AppVaribles.message("ScreenMode"),
+                AppVaribles.message("OverlayMode"), AppVaribles.message("HardLightMode"), AppVaribles.message("SoftLightMode"),
+                AppVaribles.message("ColorDodgeMode"), AppVaribles.message("LinearDodgeMode"), AppVaribles.message("DivideMode"),
+                AppVaribles.message("ColorBurnMode"), AppVaribles.message("LinearBurnMode"), AppVaribles.message("VividLightMode"),
+                AppVaribles.message("LinearLightMode"), AppVaribles.message("SubtractMode"), AppVaribles.message("DifferenceMode"),
+                AppVaribles.message("ExclusionMode"), AppVaribles.message("DarkenMode"), AppVaribles.message("LightenMode"),
+                AppVaribles.message("HueMode"), AppVaribles.message("SaturationMode"), AppVaribles.message("ColorMode"),
+                AppVaribles.message("LuminosityMode"));
     }
 
     public static ImagesBlendMode getBlendModeByName(String mode) {
 
-        if (AppVaribles.getMessage("NormalMode").equals(mode)) {
+        if (AppVaribles.message("NormalMode").equals(mode)) {
             return ImagesBlendMode.NORMAL;
 
-        } else if (AppVaribles.getMessage("DissolveMode").equals(mode)) {
+        } else if (AppVaribles.message("DissolveMode").equals(mode)) {
             return ImagesBlendMode.DISSOLVE;
 
-        } else if (AppVaribles.getMessage("MultiplyMode").equals(mode)) {
+        } else if (AppVaribles.message("MultiplyMode").equals(mode)) {
             return ImagesBlendMode.MULTIPLY;
 
-        } else if (AppVaribles.getMessage("ScreenMode").equals(mode)) {
+        } else if (AppVaribles.message("ScreenMode").equals(mode)) {
             return ImagesBlendMode.SCREEN;
 
-        } else if (AppVaribles.getMessage("OverlayMode").equals(mode)) {
+        } else if (AppVaribles.message("OverlayMode").equals(mode)) {
             return ImagesBlendMode.OVERLAY;
 
-        } else if (AppVaribles.getMessage("HardLightMode").equals(mode)) {
+        } else if (AppVaribles.message("HardLightMode").equals(mode)) {
             return ImagesBlendMode.HARD_LIGHT;
 
-        } else if (AppVaribles.getMessage("SoftLightMode").equals(mode)) {
+        } else if (AppVaribles.message("SoftLightMode").equals(mode)) {
             return ImagesBlendMode.SOFT_LIGHT;
 
-        } else if (AppVaribles.getMessage("ColorDodgeMode").equals(mode)) {
+        } else if (AppVaribles.message("ColorDodgeMode").equals(mode)) {
             return ImagesBlendMode.COLOR_DODGE;
 
-        } else if (AppVaribles.getMessage("LinearDodgeMode").equals(mode)) {
+        } else if (AppVaribles.message("LinearDodgeMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_DODGE;
 
-        } else if (AppVaribles.getMessage("DivideMode").equals(mode)) {
+        } else if (AppVaribles.message("DivideMode").equals(mode)) {
             return ImagesBlendMode.DIVIDE;
 
-        } else if (AppVaribles.getMessage("ColorBurnMode").equals(mode)) {
+        } else if (AppVaribles.message("ColorBurnMode").equals(mode)) {
             return ImagesBlendMode.COLOR_BURN;
 
-        } else if (AppVaribles.getMessage("LinearBurnMode").equals(mode)) {
+        } else if (AppVaribles.message("LinearBurnMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_BURN;
 
-        } else if (AppVaribles.getMessage("VividLightMode").equals(mode)) {
+        } else if (AppVaribles.message("VividLightMode").equals(mode)) {
             return ImagesBlendMode.VIVID_LIGHT;
 
-        } else if (AppVaribles.getMessage("LinearLightMode").equals(mode)) {
+        } else if (AppVaribles.message("LinearLightMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_LIGHT;
 
-        } else if (AppVaribles.getMessage("SubtractMode").equals(mode)) {
+        } else if (AppVaribles.message("SubtractMode").equals(mode)) {
             return ImagesBlendMode.SUBTRACT;
 
-        } else if (AppVaribles.getMessage("DifferenceMode").equals(mode)) {
+        } else if (AppVaribles.message("DifferenceMode").equals(mode)) {
             return ImagesBlendMode.DIFFERENCE;
 
-        } else if (AppVaribles.getMessage("ExclusionMode").equals(mode)) {
+        } else if (AppVaribles.message("ExclusionMode").equals(mode)) {
             return ImagesBlendMode.EXCLUSION;
 
-        } else if (AppVaribles.getMessage("DarkenMode").equals(mode)) {
+        } else if (AppVaribles.message("DarkenMode").equals(mode)) {
             return ImagesBlendMode.DARKEN;
 
-        } else if (AppVaribles.getMessage("LightenMode").equals(mode)) {
+        } else if (AppVaribles.message("LightenMode").equals(mode)) {
             return ImagesBlendMode.LIGHTEN;
 
-        } else if (AppVaribles.getMessage("HueMode").equals(mode)) {
+        } else if (AppVaribles.message("HueMode").equals(mode)) {
             return ImagesBlendMode.HUE;
 
-        } else if (AppVaribles.getMessage("SaturationMode").equals(mode)) {
+        } else if (AppVaribles.message("SaturationMode").equals(mode)) {
             return ImagesBlendMode.SATURATION;
 
-        } else if (AppVaribles.getMessage("ColorMode").equals(mode)) {
+        } else if (AppVaribles.message("ColorMode").equals(mode)) {
             return ImagesBlendMode.COLOR;
 
-        } else if (AppVaribles.getMessage("LuminosityMode").equals(mode)) {
+        } else if (AppVaribles.message("LuminosityMode").equals(mode)) {
             return ImagesBlendMode.LUMINOSITY;
 
         } else {

@@ -34,16 +34,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import mara.mybox.data.DoubleRectangle;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
@@ -89,14 +90,12 @@ public class PdfViewController extends ImageViewerController {
     protected TreeView outlineTree;
 
     public PdfViewController() {
-        baseTitle = AppVaribles.getMessage("PdfView");
+        baseTitle = AppVaribles.message("PdfView");
 
         SourceFileType = VisitHistory.FileType.PDF;
         SourcePathType = VisitHistory.FileType.PDF;
-        TargetFileType = VisitHistory.FileType.PDF;
-        TargetPathType = VisitHistory.FileType.PDF;
-        AddFileType = VisitHistory.FileType.PDF;
-        AddPathType = VisitHistory.FileType.PDF;
+        TargetFileType = VisitHistory.FileType.Image;
+        TargetPathType = VisitHistory.FileType.Image;
 
         sourcePathKey = "PdfSourcePath";
         TipsLabelKey = "PdfViewTips";
@@ -105,7 +104,8 @@ public class PdfViewController extends ImageViewerController {
         ImageRulerYKey = "PdfViewRulerYKey";
         ImagePopCooridnateKey = "PdfViewPopCooridnateKey";
 
-        fileExtensionFilter = CommonValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonValues.PdfExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class PdfViewController extends ImageViewerController {
                     loadPage();
                 }
             });
-            FxmlControl.setTooltip(transCheck, new Tooltip(AppVaribles.getMessage("OnlyForTexts")));
+            FxmlControl.setTooltip(transCheck, new Tooltip(AppVaribles.message("OnlyForTexts")));
 
             sizeBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
             sizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -342,10 +342,10 @@ public class PdfViewController extends ImageViewerController {
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        FxmlControl.setTooltip(nextButton, new Tooltip(getMessage("NextPage") + "\nENTER / PAGE DOWN"));
-        FxmlControl.setTooltip(previousButton, new Tooltip(getMessage("PreviousPage") + "\nPAGE UP"));
-        FxmlControl.setTooltip(firstButton, new Tooltip(getMessage("FirstPage") + "\nCTRL+HOME"));
-        FxmlControl.setTooltip(lastButton, new Tooltip(getMessage("LastPage") + "\nCTRL+END"));
+        FxmlControl.setTooltip(nextButton, new Tooltip(message("NextPage") + "\nENTER / PAGE DOWN"));
+        FxmlControl.setTooltip(previousButton, new Tooltip(message("PreviousPage") + "\nPAGE UP"));
+        FxmlControl.setTooltip(firstButton, new Tooltip(message("FirstPage") + "\nCTRL+HOME"));
+        FxmlControl.setTooltip(lastButton, new Tooltip(message("LastPage") + "\nCTRL+END"));
     }
 
     private void setSize(int percent) {
@@ -413,6 +413,7 @@ public class PdfViewController extends ImageViewerController {
                         pdfInformation.setUserPassword(inPassword);
                         pdfInformation.readInfo(doc);
                         infoLoaded.set(true);
+                        doc.close();
                         ok = true;
                     }
                 } catch (InvalidPasswordException e) {
@@ -424,7 +425,7 @@ public class PdfViewController extends ImageViewerController {
                         @Override
                         public void run() {
                             TextInputDialog dialog = new TextInputDialog();
-                            dialog.setContentText(AppVaribles.getMessage("Password"));
+                            dialog.setContentText(AppVaribles.message("Password"));
                             Optional<String> result = dialog.showAndWait();
                             if (result.isPresent()) {
                                 loadInformation(result.get());
@@ -502,9 +503,10 @@ public class PdfViewController extends ImageViewerController {
                             imageView.setPreserveRatio(true);
                             imageView.setImage(image);
                             if (percent == 0) {
-                                sizeBox.getSelectionModel().select("100");
+                                paneSize();
+                            } else {
+                                setSize(percent);
                             }
-                            setSize(percent);
                             refinePane();
                             setMaskStroke();
                             checkSelect();
@@ -550,7 +552,7 @@ public class PdfViewController extends ImageViewerController {
                         public void run() {
                             try {
                                 PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                                TreeItem outlineRoot = new TreeItem<>(AppVaribles.getMessage("PDFOutline"));
+                                TreeItem outlineRoot = new TreeItem<>(AppVaribles.message("PDFOutline"));
                                 outlineRoot.setExpanded(true);
                                 outlineTree.setRoot(outlineRoot);
                                 if (outline != null) {
@@ -653,6 +655,7 @@ public class PdfViewController extends ImageViewerController {
                             Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
                             images.put(i, thumb);
                         }
+                        doc.close();
                     }
                     ok = true;
                 } catch (Exception e) {
@@ -836,6 +839,15 @@ public class PdfViewController extends ImageViewerController {
     @Override
     public void saveAction() {
         saveAsAction();
+    }
+
+    @Override
+    public String saveAsPrefix() {
+        if (sourceFile != null) {
+            return FileTools.getFilePrefix(sourceFile.getName()) + "_p" + (currentPage + 1);
+        } else {
+            return "";
+        }
     }
 
     @Override

@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_RIGHT" spacing="10.0">
             <children>
                 <Button mnemonicParsing="false" onAction="#manageAction" text="%ManageAlarms" />
-                <Button defaultButton="true" mnemonicParsing="false" onAction="#knowAction" text="%GotIt" />
+                <Button mnemonicParsing="false" onAction="#knowAction" text="%GotIt" />
             </children>
         </HBox>
     </children>

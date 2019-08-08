@@ -2,82 +2,160 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.util.Callback;
 import mara.mybox.controller.base.TableController;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.TableImageCell;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
- * @CreateDate 2018-11-28
+ * @CreateDate 2019-4-28
  * @Description
  * @License Apache License Version 2.0
  */
 public class ImagesTableController extends TableController<ImageInformation> {
 
     public boolean isOpenning;
-    public SimpleBooleanProperty changed, hasSampled;
+    public SimpleBooleanProperty hasSampled;
     public Image image;
 
-    public ImagesTableController() {
+    @FXML
+    public TableColumn<ImageInformation, String> colorSpaceColumn, pixelsColumn;
+    @FXML
+    public TableColumn<ImageInformation, Image> imageColumn;
+    @FXML
+    public TableColumn<ImageInformation, Integer> indexColumn;
+    @FXML
+    public CheckBox tableThumbCheck;
 
-        fileExtensionFilter = CommonValues.ImageExtensionFilter;
+    public ImagesTableController() {
+        SourceFileType = VisitHistory.FileType.Image;
+        SourcePathType = VisitHistory.FileType.Image;
+        TargetPathType = VisitHistory.FileType.Image;
+        TargetFileType = VisitHistory.FileType.Image;
+        AddFileType = VisitHistory.FileType.Image;
+        AddPathType = VisitHistory.FileType.Image;
+
+        targetPathKey = "ImageTargetPath";
+        sourcePathKey = "ImageSourcePath";
+        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext() {
+    public void initTable() {
+        super.initTable();
+        hasSampled = new SimpleBooleanProperty(false);
+
+        if (tableThumbCheck != null && imageColumn != null) {
+            tableThumbCheck.selectedProperty().addListener(new ChangeListener() {
+                @Override
+                public void changed(ObservableValue ov, Object t, Object t1) {
+                    if (tableThumbCheck.isSelected()) {
+                        if (!tableView.getColumns().contains(imageColumn)) {
+                            tableView.getColumns().add(0, imageColumn);
+                        }
+                    } else {
+                        if (tableView.getColumns().contains(imageColumn)) {
+                            tableView.getColumns().remove(imageColumn);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void initColumns() {
         try {
-            initTable();
-            changed = new SimpleBooleanProperty(false);
-            hasSampled = new SimpleBooleanProperty(false);
+            super.initColumns();
+
+            if (imageColumn != null) {
+                imageColumn.setCellValueFactory(new PropertyValueFactory<>("image"));
+                imageColumn.setCellFactory(new TableImageCell());
+            }
+
+            if (pixelsColumn != null) {
+                pixelsColumn.setCellValueFactory(new PropertyValueFactory<>("pixelsString"));
+                pixelsColumn.setCellFactory(new Callback<TableColumn<ImageInformation, String>, TableCell<ImageInformation, String>>() {
+                    @Override
+                    public TableCell<ImageInformation, String> call(TableColumn<ImageInformation, String> param) {
+                        TableCell<ImageInformation, String> cell = new TableCell<ImageInformation, String>() {
+                            final Text text = new Text();
+
+                            @Override
+                            public void updateItem(final String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (item != null) {
+                                    text.setText(item);
+                                    ImageInformation info = tableData.get(getIndex());
+                                    if (info.isIsSampled()) {
+                                        text.setFill(Color.RED);
+                                    }
+                                    setGraphic(text);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                });
+            }
+
+            if (colorSpaceColumn != null) {
+                colorSpaceColumn.setCellValueFactory(new PropertyValueFactory<>("colorSpace"));
+            }
+
+            if (indexColumn != null) {
+                indexColumn.setCellValueFactory(new PropertyValueFactory<>("index"));
+            }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
     }
 
     @Override
-    public void dataChanged() {
-        if (!isSettingValues) {
-            setImageChanged(true);
-        }
-    }
-
-    public void setImageChanged(boolean c) {
-        changed.setValue(c);
-        if (changed.getValue()) {
-            if (targetFile != null) {
-                getMyStage().setTitle(getBaseTitle() + "  " + targetFile.getAbsolutePath() + " *");
+    public void tableChanged() {
+        super.tableChanged();
+        if (tableLabel != null) {
+            long pixels = 0;
+            for (ImageInformation m : tableData) {
+                pixels += m.getWidth() * m.getHeight();
             }
-        } else {
-            if (targetFile != null) {
-                getMyStage().setTitle(getBaseTitle() + "  " + targetFile.getAbsolutePath());
-            }
+            tableLabel.setText(MessageFormat.format(message("TotalFilesNumberSize"),
+                    totalFilesNumber, FileTools.showFileSize(totalFilesSize)) + "  "
+                    + message("TotalPixels") + ": " + StringTools.formatData(pixels) + "    "
+                    + message("DoubleClickToView"));
         }
-        long pixels = 0;
-        for (ImageInformation m : tableData) {
-
-            pixels += m.getWidth() * m.getHeight();
-        }
-        tableLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
-
         hasSampled.set(hasSampled());
-
     }
 
     public boolean hasSampled() {
@@ -90,6 +168,12 @@ public class ImagesTableController extends TableController<ImageInformation> {
     }
 
     @Override
+    protected ImageInformation create(File file) {
+        ImageInformation d = new ImageInformation(file);
+        return d;
+    }
+
+    @Override
     public void addFiles(final int index, final List<File> files) {
         if (files == null || files.isEmpty()) {
             return;
@@ -97,14 +181,14 @@ public class ImagesTableController extends TableController<ImageInformation> {
         recordFileAdded(files.get(0));
         task = new Task<Void>() {
             private List<ImageInformation> infos;
-            private String ret;
+            private String error;
             private boolean hasSampled;
             private boolean ok;
 
             @Override
             public Void call() throws Exception {
                 infos = new ArrayList<>();
-                ret = "";
+                error = null;
                 hasSampled = false;
                 for (File file : files) {
                     if (task == null || task.isCancelled()) {
@@ -130,7 +214,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
                         List<BufferedImage> bufferImages
                                 = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
                         if (bufferImages == null || bufferImages.isEmpty()) {
-                            ret = "FailedReadFile";
+                            error = "FailedReadFile";
                             break;
                         }
                         for (int i = 0; i < bufferImages.size(); i++) {
@@ -159,23 +243,19 @@ public class ImagesTableController extends TableController<ImageInformation> {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (ret.isEmpty()) {
-                                isSettingValues = true;
+                            if (error == null) {
                                 if (index < 0 || index >= tableData.size()) {
                                     tableData.addAll(infos);
                                 } else {
                                     tableData.addAll(index, infos);
                                 }
                                 tableView.refresh();
-                                isSettingValues = false;
-                                setImageChanged(!isOpenning);
                                 isOpenning = false;
                                 if (hasSampled) {
-                                    bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
-                                    alertWarning(AppVaribles.getMessage("ImageSampled"));
+                                    alertWarning(AppVaribles.message("ImageSampled"));
                                 }
                             } else {
-                                popError(AppVaribles.getMessage(ret));
+                                popError(AppVaribles.message(error));
                             }
 
                         }
@@ -190,12 +270,6 @@ public class ImagesTableController extends TableController<ImageInformation> {
         thread.start();
     }
 
-    @Override
-    public ImageInformation getData(File directory) {
-        ImageInformation d = new ImageInformation(directory);
-        return d;
-    }
-
     @FXML
     @Override
     public void viewFileAction() {
@@ -204,7 +278,7 @@ public class ImagesTableController extends TableController<ImageInformation> {
             if (info == null) {
                 return;
             }
-            final ImageViewerController controller = FxmlStage.openImageViewer( null);
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
             if (controller != null) {
                 controller.loadImage(info);
             }
@@ -218,18 +292,18 @@ public class ImagesTableController extends TableController<ImageInformation> {
     public void infoAction() {
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
-            return;
+            info = tableData.get(0);
         }
-        FxmlStage.openImageInformation( null, info);
+        FxmlStage.openImageInformation(null, info);
     }
 
     @FXML
     public void metaAction() {
         ImageInformation info = tableView.getSelectionModel().getSelectedItem();
         if (info == null) {
-            return;
+            info = tableData.get(0);
         }
-        FxmlStage.openImageMetaData( null, info);
+        FxmlStage.openImageMetaData(null, info);
     }
 
 }

@@ -282,7 +282,7 @@ License:    Apache License Version 2.0
                                                                         </HBox>
                                                                     </children>
                                                                 </HBox>
-                                                                <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
+                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -323,7 +323,7 @@ License:    Apache License Version 2.0
                                                                         </HBox>
                                                                     </children>
                                                                 </HBox>
-                                                                <Button fx:id="okButton1" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
+                                                                <Button fx:id="okButton1" mnemonicParsing="false" onAction="#okAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

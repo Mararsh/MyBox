@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.file.ImageFileReaders;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -259,8 +259,7 @@ public class ImageBinary extends PixelsOperation {
     public static int calculateThreshold(Image image) {
         try {
             BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
-            BufferedImage grey = byteBinary(bm);
-            return OTSU(bm);
+            return calculateThreshold(bm);
         } catch (Exception e) {
             logger.error(e.toString());
             return -1;

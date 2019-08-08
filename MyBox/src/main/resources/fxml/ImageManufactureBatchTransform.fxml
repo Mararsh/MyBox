@@ -142,9 +142,9 @@ License:    Apache License Version 2.0
                                                         <ToggleGroup fx:id="targetExistGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
-                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%Rename"  selected="true" toggleGroup="$targetExistGroup" />
-                                                <Label text="%Suffix" />
-                                                <TextField fx:id="targetSuffixInput"  prefWidth="70.0" text="-m" />
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" text="%TargetNameAppend"  selected="true" toggleGroup="$targetExistGroup" />
+                                              
+                                                <TextField fx:id="targetAppendInput"  prefWidth="70.0" text="-m" />
                                                 <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                             </children>
                                         </HBox>

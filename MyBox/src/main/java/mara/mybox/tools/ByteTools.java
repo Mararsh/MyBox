@@ -1,9 +1,15 @@
 package mara.mybox.tools;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -37,9 +43,19 @@ public class ByteTools {
         };
     }
 
+    public static byte intSmallByte(int a) {
+        byte[] bytes = intToBytes(a);
+        return bytes[3];
+    }
+
+    public static byte intBigByte(int a) {
+        byte[] bytes = intToBytes(a);
+        return bytes[0];
+    }
+
     public static byte[] unsignedShortToBytes(int s) {
         return new byte[]{
-            (byte) ((s >> 8) & 0xFF),
+            (byte) ((s >>> 8) & 0xFF),
             (byte) (s & 0xFF)
         };
     }
@@ -170,7 +186,7 @@ public class ByteTools {
         try {
             return (byte) Integer.parseInt(inHex, 16);
         } catch (Exception e) {
-            return new Byte("63"); // "?"
+            return Byte.valueOf("63");// "?"
         }
     }
 
@@ -437,5 +453,62 @@ public class ByteTools {
         }
     }
 
+    public static byte[] deflate(Object object) {
+        return deflate(toBytes(object));
+    }
+
+    public static byte[] deflate(byte[] bytes) {
+        try {
+            ByteArrayOutputStream a = new ByteArrayOutputStream();
+            try (DeflaterOutputStream out = new DeflaterOutputStream(a)) {
+                out.write(bytes);
+                out.flush();
+            }
+            return a.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static byte[] inflate(Object object) {
+        return inflate(toBytes(object));
+    }
+
+    public static byte[] inflate(byte[] bytes) {
+        try {
+            ByteArrayOutputStream a = new ByteArrayOutputStream();
+            try (InflaterOutputStream out = new InflaterOutputStream(a)) {
+                out.write(bytes);
+                out.flush();
+            }
+            return a.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static byte[] toBytes(Object object) {
+        try {
+            ByteArrayOutputStream a = new ByteArrayOutputStream();
+            try (ObjectOutputStream out = new ObjectOutputStream(a)) {
+                out.writeObject(object);
+                out.flush();
+            }
+            return a.toByteArray();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Object toObject(byte[] bytes) {
+        try {
+            ByteArrayInputStream a = new ByteArrayInputStream(bytes);
+            try (ObjectInputStream in = new ObjectInputStream(a)) {
+                return in.readObject();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 }

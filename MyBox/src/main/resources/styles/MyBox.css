@@ -3,9 +3,8 @@
  * @License Apache License Version 2.0
  */
 .root{
-    -fx-font-size: 15px;
+    -fx-font-size: 1.1em;
 }
-
 
 /*
 https://old.icons8.com/
@@ -15,8 +14,6 @@ Hue increase 171 -> Orange
 Saturation increase 50% -> Blue
 Red increase 151 -> pink
 */
-
-
 
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
@@ -120,5 +117,34 @@ Red increase 151 -> pink
 
 
 
+/*.table-view .column-header .label .editable{
+    -fx-text-fill: #2e598a;
+}*/
+
+/*.table-view .column-header,
+.table-view .column-header .filler,
+.table-view .column-header-background .filler {
+    -fx-background-color: red;
+}
+
+设置表格头靠左、字体大小，字体颜色
+.table-view .column-header .label{
+    -fx-alignment: center-left;
+    -fx-font-family: "Arial";
+    -fx-text-fill: rgba(68,68,68,0.96);
+    -fx-font-size: 12;
+}
+
+设置表格头高度
+.table-view > .column-header-background{
+    -fx-pref-height: 40;
+}
+
+设置每一列内容居中，每一行高度
+.table-row-cell{
+    -fx-cell-size: 45px;
+    -fx-alignment: center;
+}
+*/
 
 

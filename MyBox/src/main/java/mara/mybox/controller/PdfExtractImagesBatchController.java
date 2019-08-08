@@ -1,11 +1,17 @@
 package mara.mybox.controller;
 
-import javafx.beans.binding.Bindings;
-import javafx.fxml.FXML;
-import javafx.scene.control.ScrollPane;
-import static mara.mybox.value.AppVaribles.logger;
+import java.io.File;
+import java.util.Iterator;
+import mara.mybox.controller.base.PdfBatchController;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.image.file.ImageJpeg2000File;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.fxml.FxmlControl.badStyle;
+import static mara.mybox.value.AppVaribles.logger;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  * @Author Mara
@@ -13,37 +19,52 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfExtractImagesBatchController extends PdfExtractImagesController {
-
-    @FXML
-    private ScrollPane scrollPane;
+public class PdfExtractImagesBatchController extends PdfBatchController {
 
     public PdfExtractImagesBatchController() {
-        baseTitle = AppVaribles.getMessage("PdfExtractImagesBatch");
-
+        baseTitle = AppVaribles.message("PdfExtractImagesBatch");
+        browseTargets = true;
     }
 
     @Override
-    public void initializeNext2() {
+    public int handleCurrentPage() {
+        int index = 0;
         try {
-
-            appendPageNumber.setSelected(AppVaribles.getUserConfigBoolean("pei_appendPageNumber"));
-            appendIndex.setSelected(AppVaribles.getUserConfigBoolean("pei_appendIndex"));
-
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(tableView.getItems())
-                            .or(Bindings.isEmpty(targetPathInput.textProperty()))
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-            );
+            PDPage page = doc.getPage(currentParameters.currentPage - 1);
+            PDResources pdResources = page.getResources();
+            Iterable<COSName> iterable = pdResources.getXObjectNames();
+            if (iterable != null) {
+                Iterator<COSName> pageIterator = iterable.iterator();
+                while (pageIterator.hasNext()) {
+                    if (task.isCancelled()) {
+                        break;
+                    }
+                    COSName cosName = pageIterator.next();
+                    if (!pdResources.isImageXObject(cosName)) {
+                        continue;
+                    }
+                    PDImageXObject pdxObject = (PDImageXObject) pdResources.getXObject(cosName);
+                    String namePrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName())
+                            + "_page" + currentParameters.currentPage + "_index" + index;
+                    String suffix = pdxObject.getSuffix();
+                    if (ImageJpeg2000File.isJpeg2000(suffix)) {
+                        suffix = "jpg";
+                    }
+                    File tFile = makeTargetFile(namePrefix, "." + suffix, currentParameters.currentTargetPath);
+                    ImageFileWriters.writeImageFile(pdxObject.getImage(), suffix, tFile.getAbsolutePath());
+                    actualParameters.finalTargetName = tFile.getAbsolutePath();
+                    targetFiles.add(tFile);
+                    if (isPreview) {
+                        break;
+                    }
+                    index++;
+                }
+            }
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
-    }
-
-    @Override
-    public void makeMoreParameters() {
-        makeBatchParameters();
+        return index;
     }
 
 }

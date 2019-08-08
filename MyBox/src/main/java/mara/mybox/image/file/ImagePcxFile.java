@@ -2,18 +2,18 @@ package mara.mybox.image.file;
 
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageReader;
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi;
-import com.github.jaiimageio.impl.plugins.pcx.PCXMetadata;
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageWriter;
 import com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi;
+import com.github.jaiimageio.impl.plugins.pcx.PCXMetadata;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
 import static mara.mybox.value.AppVaribles.logger;
-
 
 /**
  * @Author Mara
@@ -24,12 +24,14 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 public class ImagePcxFile {
 
-    
+    public static ImageWriter getWriter() {
+        PCXImageWriter writer = new PCXImageWriter(new PCXImageWriterSpi());
+        return writer;
+    }
 
     public static boolean writePcxImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
-            logger.debug("writePcxImageFile");
             try {
                 if (file.exists()) {
                     file.delete();
@@ -38,8 +40,7 @@ public class ImagePcxFile {
                 return false;
             }
 
-            PCXImageWriter writer = new PCXImageWriter(new PCXImageWriterSpi());
-
+            ImageWriter writer = getWriter();
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, null), null);

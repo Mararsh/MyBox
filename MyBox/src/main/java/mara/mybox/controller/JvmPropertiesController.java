@@ -27,7 +27,7 @@ public class JvmPropertiesController extends BaseController {
             label20, label21, label22;
 
     public JvmPropertiesController() {
-        baseTitle = AppVaribles.getMessage("JvmProperties");
+        baseTitle = AppVaribles.message("JvmProperties");
 
     }
 

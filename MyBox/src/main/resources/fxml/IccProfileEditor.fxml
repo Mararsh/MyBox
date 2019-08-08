@@ -390,6 +390,12 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                     <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Label text="%MaxDecodeNumber" />
+                                                                <TextField fx:id="maxDecodeInput" prefWidth="100.0" />
+                                                            </children>
+                                                        </HBox>
                                                         <CheckBox fx:id="lutNormalizeCheck" mnemonicParsing="false" text="%LutNormalize" />
                                                         <CheckBox fx:id="openExportCheck" mnemonicParsing="false" text="%OpenAfterExport" />
                                                     </children>
@@ -494,7 +500,8 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <ToolBar VBox.vgrow="NEVER">
                                                             <items>
-                                                                <Label maxWidth="1.7976931348623157E308" text="%IccXMLComments" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                                <Label maxWidth="1.7976931348623157E308" text="%IccXMLComments" wrapText="true" HBox.hgrow="ALWAYS"
+                                                                       styleClass="blue-label" stylesheets="@../styles/MyBox.css"                                                                />
                                                                 <Button fx:id="refreshXmlButton" mnemonicParsing="false" onAction="#refreshAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

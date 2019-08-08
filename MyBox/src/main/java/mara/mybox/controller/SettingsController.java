@@ -31,11 +31,12 @@ import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
 import mara.mybox.db.TableVisitHistory;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -68,7 +69,7 @@ public class SettingsController extends BaseController {
     private Button setImageHisButton, setFileRecentButton;
 
     public SettingsController() {
-        baseTitle = AppVaribles.getMessage("Settings");
+        baseTitle = AppVaribles.message("Settings");
 
     }
 
@@ -221,10 +222,10 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
+            Tooltip tips = new Tooltip(message("PdfMemComments"));
             tips.setFont(new Font(16));
 
-            tips = new Tooltip(getMessage("ImageHisComments"));
+            tips = new Tooltip(message("ImageHisComments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(imageHisBox, tips);
 
@@ -284,12 +285,11 @@ public class SettingsController extends BaseController {
             });
             tempDirInput.setText(AppVaribles.getUserConfigPath(CommonValues.userTempPathKey).getAbsolutePath());
 
-            styleBox.getItems().addAll(Arrays.asList(
-                    getMessage("DefaultStyle"), getMessage("caspianStyle"),
-                    getMessage("WhiteOnBlackStyle"), getMessage("PinkOnBlackStyle"),
-                    getMessage("YellowOnBlackStyle"), getMessage("GreenOnBlackStyle"),
-                    getMessage("WhiteOnBlueStyle"), getMessage("WhiteOnGreenStyle"),
-                    getMessage("WhiteOnVioletredStyle")));
+            styleBox.getItems().addAll(Arrays.asList(message("DefaultStyle"), message("caspianStyle"),
+                    message("WhiteOnBlackStyle"), message("PinkOnBlackStyle"),
+                    message("YellowOnBlackStyle"), message("GreenOnBlackStyle"),
+                    message("WhiteOnBlueStyle"), message("WhiteOnGreenStyle"),
+                    message("WhiteOnVioletredStyle")));
             styleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -299,10 +299,9 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            controlsColorBox.getItems().addAll(Arrays.asList(
-                    getMessage("DefaultColor"), getMessage("Pink"),
-                    getMessage("Red"), getMessage("LightBlue"), getMessage("Blue"),
-                    getMessage("Orange")
+            controlsColorBox.getItems().addAll(Arrays.asList(message("DefaultColor"), message("Pink"),
+                    message("Red"), message("LightBlue"), message("Blue"),
+                    message("Orange")
             ));
             controlsColorBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -388,31 +387,31 @@ public class SettingsController extends BaseController {
             String style = AppVaribles.getUserConfigValue("InterfaceStyle", CommonValues.DefaultStyle);
             switch (style) {
                 case CommonValues.DefaultStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("DefaultStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("DefaultStyle"));
                     break;
                 case CommonValues.caspianStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("caspianStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("caspianStyle"));
                     break;
                 case CommonValues.WhiteOnBlackStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("WhiteOnBlackStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("WhiteOnBlackStyle"));
                     break;
                 case CommonValues.PinkOnBlackStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("PinkOnBlackStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("PinkOnBlackStyle"));
                     break;
                 case CommonValues.YellowOnBlackStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("YellowOnBlackStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("YellowOnBlackStyle"));
                     break;
                 case CommonValues.GreenOnBlackStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("GreenOnBlackStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("GreenOnBlackStyle"));
                     break;
                 case CommonValues.WhiteOnBlueStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("WhiteOnBlueStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("WhiteOnBlueStyle"));
                     break;
                 case CommonValues.WhiteOnGreenStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("WhiteOnGreenStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("WhiteOnGreenStyle"));
                     break;
                 case CommonValues.WhiteOnPurpleStyle:
-                    styleBox.getSelectionModel().select(AppVaribles.getMessage("WhiteOnVioletredStyle"));
+                    styleBox.getSelectionModel().select(AppVaribles.message("WhiteOnVioletredStyle"));
                     break;
                 default:
                     break;
@@ -420,25 +419,25 @@ public class SettingsController extends BaseController {
 
             switch (AppVaribles.ControlColor) {
                 case Default:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("DefaultColor"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("DefaultColor"));
                     break;
                 case Red:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Red"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("Red"));
                     break;
                 case Pink:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Pink"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("Pink"));
                     break;
                 case Blue:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Blue"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("Blue"));
                     break;
                 case LightBlue:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("LightBlue"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("LightBlue"));
                     break;
                 case Orange:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("Orange"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("Orange"));
                     break;
                 default:
-                    controlsColorBox.getSelectionModel().select(AppVaribles.getMessage("DefaultColor"));
+                    controlsColorBox.getSelectionModel().select(AppVaribles.message("DefaultColor"));
                     break;
             }
 
@@ -482,23 +481,23 @@ public class SettingsController extends BaseController {
 
     protected void checkStyle(String s) {
         try {
-            if (getMessage("DefaultStyle").equals(s)) {
+            if (message("DefaultStyle").equals(s)) {
                 setStyle(CommonValues.DefaultStyle);
-            } else if (getMessage("caspianStyle").equals(s)) {
+            } else if (message("caspianStyle").equals(s)) {
                 setStyle(CommonValues.caspianStyle);
-            } else if (getMessage("WhiteOnBlackStyle").equals(s)) {
+            } else if (message("WhiteOnBlackStyle").equals(s)) {
                 setStyle(CommonValues.WhiteOnBlackStyle);
-            } else if (getMessage("PinkOnBlackStyle").equals(s)) {
+            } else if (message("PinkOnBlackStyle").equals(s)) {
                 setStyle(CommonValues.PinkOnBlackStyle);
-            } else if (getMessage("YellowOnBlackStyle").equals(s)) {
+            } else if (message("YellowOnBlackStyle").equals(s)) {
                 setStyle(CommonValues.YellowOnBlackStyle);
-            } else if (getMessage("GreenOnBlackStyle").equals(s)) {
+            } else if (message("GreenOnBlackStyle").equals(s)) {
                 setStyle(CommonValues.GreenOnBlackStyle);
-            } else if (getMessage("WhiteOnBlueStyle").equals(s)) {
+            } else if (message("WhiteOnBlueStyle").equals(s)) {
                 setStyle(CommonValues.WhiteOnBlueStyle);
-            } else if (getMessage("WhiteOnGreenStyle").equals(s)) {
+            } else if (message("WhiteOnGreenStyle").equals(s)) {
                 setStyle(CommonValues.WhiteOnGreenStyle);
-            } else if (getMessage("WhiteOnVioletredStyle").equals(s)) {
+            } else if (message("WhiteOnVioletredStyle").equals(s)) {
                 setStyle(CommonValues.WhiteOnPurpleStyle);
             }
         } catch (Exception e) {
@@ -512,15 +511,15 @@ public class SettingsController extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            if (getMessage("DefaultColor").equals(s)) {
+            if (message("DefaultColor").equals(s)) {
                 ControlStyle.setConfigColorStyle("default");
-            } else if (getMessage("Pink").equals(s)) {
+            } else if (message("Pink").equals(s)) {
                 ControlStyle.setConfigColorStyle("Pink");
-            } else if (getMessage("Red").equals(s)) {
+            } else if (message("Red").equals(s)) {
                 ControlStyle.setConfigColorStyle("Red");
-            } else if (getMessage("Blue").equals(s)) {
+            } else if (message("Blue").equals(s)) {
                 ControlStyle.setConfigColorStyle("Blue");
-            } else if (getMessage("Orange").equals(s)) {
+            } else if (message("Orange").equals(s)) {
                 ControlStyle.setConfigColorStyle("Orange");
             } else {
                 return;
@@ -619,7 +618,7 @@ public class SettingsController extends BaseController {
     protected void clearImageHistories(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.setContentText(AppVaribles.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
@@ -632,7 +631,7 @@ public class SettingsController extends BaseController {
             ImageManufactureController p = (ImageManufactureController) parentController;
             p.updateHisBox();
         }
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
@@ -644,7 +643,7 @@ public class SettingsController extends BaseController {
                 ImageManufactureController p = (ImageManufactureController) parentController;
                 p.updateHisBox();
             }
-            popInformation(AppVaribles.getMessage("Successful"));
+            popInformation(AppVaribles.message("Successful"));
         } catch (Exception e) {
 
         }
@@ -659,28 +658,28 @@ public class SettingsController extends BaseController {
             ImageManufactureController p = (ImageManufactureController) parentController;
             p.updateHisBox();
         }
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
     protected void setFileRecentAction(ActionEvent event) {
         AppVaribles.setUserConfigInt("FileRecentNumber", recentFileNumber);
         AppVaribles.fileRecentNumber = recentFileNumber;
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.setContentText(AppVaribles.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             return;
         }
         new TableVisitHistory().clear();
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
@@ -688,7 +687,7 @@ public class SettingsController extends BaseController {
         fileRecentInput.setText("0");
         AppVaribles.setUserConfigInt("FileRecentNumber", 0);
         AppVaribles.fileRecentNumber = 0;
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
@@ -704,7 +703,7 @@ public class SettingsController extends BaseController {
                 return;
             }
             if (CommonValues.AppDataPaths.contains(directory)) {
-                alertError(AppVaribles.getMessage("DirectoryReserved"));
+                alertError(AppVaribles.message("DirectoryReserved"));
                 return;
             }
             recordFileWritten(directory);

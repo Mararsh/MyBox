@@ -41,21 +41,51 @@
 <p class="p3">Download</p>
 <p class="paragraph">Packages of each version have been uploaded at Release directory now. You can find them by clicking 
 <a href="https://github.com/Mararsh/MyBox/releases" target=_Blank> "releases"</a> tab in main page of this project. </p>
-<p class="paragraph">EXE package <a href="https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-exe.zip"> MyBox-5.2-exe.zip</a> is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)</p>
-<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 8/9/10 is installed: <a href="https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-jar.zip"> MyBox-5.2-jar.zip</a></p>
+
+<p class="paragraph">Following are latest release:</p>
+<table border="1">
+	<tr style="text-align:center"><td><b>Platform</b></td><td><b>Link</b></td><td><b>Requirements</b></td></tr>
+	<tr>
+		<td>win</td>
+		<td><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip">MyBox-5.3-exe.zip</a> </td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>win</td>
+		<td><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip">MyBox-5.3-jar-win.zip</a> </td>
+		<td>Java 12 or higher</td>
+	</tr>
+	<tr>
+		<td>linux</td>
+		<td><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip">MyBox-5.3-jar-linux.zip</a> </td>
+		<td>Java 12 or higher</td>
+	</tr>
+	<tr>
+		<td>max</td>
+		<td><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip">MyBox-5.3-jar-mac.zip</a> </td>
+		<td>Java 12 or higher</td>
+	</tr>
+	<tr>
+		<td>win/linux/mac</td>
+		<td><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip">MyBox-5.3-jar-cross-platform.zip</a> </td>
+		<td>Java 12 or higher</td>
+	</tr>
+</table>
+
+<p class="paragraph">EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)</p>
+<p class="paragraph">Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 12 or higher(Oracle jdk or open jdk) is installed.</p>
+<p class="paragraph">Each platform has its jar, and there is cross-platform jar whose size is larger. </p>
 
 <p class="p3">Launch</p>
 <p class="paragraph">Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.</p>
 
-<p class="paragraph">Run following command to launch this program with Jar package:</p>
-<pre><code>                   java   -jar   MyBox-5.2.jar</code></pre>
+<p class="paragraph">Run following command to launch this program with Jar package: (Please upgrade to Java 12 or higher)</p>
+<pre><code>                   java   -jar   MyBox-5.3.jar</code></pre>
 <p class="paragraph">A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
-<pre><code>                   java   -jar   MyBox-5.2.jar  /tmp/a1.jpg</code></pre>
+<pre><code>                   java   -jar   MyBox-5.3.jar  /tmp/a1.jpg</code></pre>
 
 <p class="p3">Limitation</p>
 <p class="paragraph">MyBox.exe can not be lanuched under path including non-English characters.</p>
-<p class="paragraph">Java 11 has changed a lot, so MyBox may not work on Java env higher than 10. 
-This is the last version based on Java 8 and later versions will be based on Java 12.</p>
 <p class="paragraph">The embedded Derby is in single-application mode, so only one instance of MyBox can read/write db. 
 That is, multiple instances of MyBox can run at same time but only the first one can save and visit configuration data while others can do most things except for accessing user's data.</p>
 
@@ -74,19 +104,20 @@ That is, multiple instances of MyBox can run at same time but only the first one
 
 
 
-<p class="p1" >User Guides</p>
+<p class="p1" >Documents</p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf</a></p>
 <p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf</a></p>
+<p class="link"><a href="https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf" target=_Blank>https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf</a></p>
 
 
 <p class="p1" >Current Version</p>
-<p class="paragraph">Current version is 5.2. Its features are mentioned below in summary.</p>
+<p class="paragraph">Current version is 5.3. Its features are mentioned below in summary.</p>
 <p class="p2" >Cross-platform</p>
-<p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 8/9/10.</p>
-<p class="paragraph">This is the last version based on Java 8 and later versions will be based on Java 12.</p>
+<p class="paragraph">MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.</p>
+<p class="paragraph">Previous versions are based on Java 8.</p>
 
 <p class="p2" >Internationalized</p>
 <p class="paragraph">All codes of MyBox are internationalized. User can switch language in time.</p>
@@ -109,6 +140,29 @@ author, etc. Support Chinese and tool can locate system font files. User can inp
 <li>Maximum main memory of PDF handling can be set.</li>
 </ol>
 <p class="p2" >Image Tools</p>
+<p class="p3" >View Image</p>
+<ol>
+<li>"Load Width". Read image file with "Original Size" or with defined width.</li>
+<li>"Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else
+these operations are against whole image.</li>
+<li>Rotation can be saved.</li>
+<li>Recover, Rename, Delete.</li>
+<li>Select whether display Corodinate, X/Y Rulers, Data.</li>
+<li>Statistic and visualization of image data, including average, variance, skewness, median, mode,
+minimum, maximum of occurance of each color channel, and their histograms.</li>
+<li>Image attributes and image meta. ICC profile embedded in image can be decoded.</li>
+<li>Navigation of images under same directory.</li>
+</ol>
+<p class="p3" >Browse Images</p>
+<ol>
+<li>Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.</li>
+<li>Rotation can be saved.</li>
+<li>Grid Mode. Files number, columns number, and load width can be set.</li>
+<li>Thumbnails List Mode.</li>
+<li>Files List Mode.</li>
+<li>Rename and Delete.</li>
+</ol>
+
 <p class="p3" >Image Manufacture</p>
 <ol>
 <li>Size. By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping
@@ -146,6 +200,17 @@ histories can be saved automatically and set back. Number of updated histories c
 <li>Handle existed image, or create new image.</li>
 <li>Copy(CTRL+c), paste(CTRL+v), pop, and reference.</li>
 </ol>
+<p class="p3" >Image Conversion</p>
+<ol>
+<li>Formats of image file: png, jpg, bmp, tif, gif, wbmp, pnm, pcx, raw.</li>
+<li>Color spaces: sRGB, Linear sRGB, ECI RGB, Adobe RGB, Apple RGB, Color Match RGB, ECI CMYK, Adobe CMYK(several), Gray, Binary</li>
+<li>Color space based on external ICC profile.</li>
+<li>Option to embed ICC profile.</li>
+<li>Options to handle transparent channel, including keep, delete, premultiply and delete, premultiply and keep.</li>
+<li>Options of compression types and quality.</li>
+<li>For binary, algorithms can be choiced: OTSU, default or threshold. And option of dithering.</li>
+<li>Conversion in batch.</li>
+</ol>
 <p class="p3" >Multiple frames image file</p>
 <ol>
 <li>View/Extract images in multiple frames file.</li>
@@ -177,34 +242,12 @@ frames Tiff file, or PDF file.</li>
 writing-while-reading, so they are suitable for big images. Sampled image is displayed while original
 image is handled.</li>
 </ol>
-<p class="p3" >View Image</p>
-<ol>
-<li>"Load Width". Read image file with "Original Size" or with defined width.</li>
-<li>"Select Mode". When in this mode, Crop, Copy, and Save As are against the selected area. Or else
-these operations are against whole image.</li>
-<li>Rotation can be saved.</li>
-<li>Recover, Rename, Delete.</li>
-<li>Select whether display Corodinate, X/Y Rulers, Data.</li>
-<li>Statistic and visualization of image data, including average, variance, skewness, median, mode,
-minimum, maximum of occurance of each color channel, and their histograms.</li>
-<li>Image attributes and image meta.</li>
-<li>Navigation of images under same directory.</li>
-</ol>
-<p class="p3" >Browse Images</p>
-<ol>
-<li>Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.</li>
-<li>Rotation can be saved.</li>
-<li>Grid Mode. Files number, columns number, and load width can be set.</li>
-<li>Thumbnails List Mode.</li>
-<li>Files List Mode.</li>
-<li>Rename and Delete.</li>
-</ol>
+
 <p class="p3" >Others</p>
 <ol>
 <li>Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.</br>
 	Adobe YCCK/CMYK jpg file can be decoded.</li>
 <li>Manufacture images in batch.</li>
-<li>Convert images into other formats, with options like color space, size, compression, quality, etc.</li>
 <li>Color palette.</li>
 <li>Pixels calculator</li>
 <li>Convolution Kernels Manager</li>
@@ -409,12 +452,21 @@ recent visited files/directories.</li>
 <li>Open/Close monitor bar of Memory.</li>
 <li>Open/Close monitor bar of CPU.</li>
 <li>Display JVM attributes.</li>
-<li>Refresh/Reset windows.</li>
+<li>Refresh/Reset/Full-screen windows.</li>
 <li>Close other windows.</li>
 <li>Recent visited tools.</li>
 </ol>
 
 <p class="p1" >Development Logs</p>
+<p class="paragraph">2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.</br>
+Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.</br> 
+Improve image conversion: more color spaces, external ICC profile as color space, whether embed ICC, handle transparent channel.</br>
+Improve image matedata decoding: fetch embedded ICC in image.</br>
+Improve codes: reduce duplicated codes by anonymous classes and embedded fxml; adjust classes inheritance; build project for different platforms.</br> 
+Fix issues: Algorithm for "Image Manufacture-Color-Opacity-premultiply" is incorrect; Fail to save image when file extension is missed on Linux; 
+Links do not work on Linux; Version of ICC profile is decoded/encodes incorrectly; Interface may be froozen when ICC holds too much data; 
+Not-decoded data in ICC prevents generation of XML.</p>
+
 <p class="paragraph">2019-6-30 v5.2 Improve image decoding. Adobe YCCK/CMYK jpg file can be viewed. 
 Attributes and meta data of all images in multi-frames image file are read and displayed.</BR>
 PDF file can be viewed with bookmarks(Table of contents) and thumbnails. 

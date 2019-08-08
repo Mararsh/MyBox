@@ -15,11 +15,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.data.FileInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -43,7 +42,7 @@ public class FileCutController extends FilesBatchController {
     }
 
     public FileCutController() {
-        baseTitle = AppVaribles.getMessage("FileCut");
+        baseTitle = AppVaribles.message("FileCut");
 
     }
 
@@ -79,7 +78,7 @@ public class FileCutController extends FilesBatchController {
             }
         });
 
-        FxmlControl.setTooltip(listInput, new Tooltip(getMessage("StartEndByteComments")));
+        FxmlControl.setTooltip(listInput, new Tooltip(message("StartEndByteComments")));
 
     }
 
@@ -92,17 +91,17 @@ public class FileCutController extends FilesBatchController {
         listInput.setStyle(null);
 
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("SplitByFilesNumber").equals(selected.getText())) {
+        if (AppVaribles.message("SplitByFilesNumber").equals(selected.getText())) {
             splitType = FileSplitType.FilesNumber;
             filesNumberInput.setDisable(false);
             checkFilesNumber();
 
-        } else if (AppVaribles.getMessage("SplitByBytesNumber").equals(selected.getText())) {
+        } else if (AppVaribles.message("SplitByBytesNumber").equals(selected.getText())) {
             splitType = FileSplitType.BytesNumber;
             bytesNumberInput.setDisable(false);
             checkBytesNumber();
 
-        } else if (AppVaribles.getMessage("CutByStartEndByteList").equals(selected.getText())) {
+        } else if (AppVaribles.message("CutByStartEndByteList").equals(selected.getText())) {
             splitType = FileSplitType.StartEndList;
             listInput.setDisable(false);
             checkStartEndList();
@@ -184,33 +183,30 @@ public class FileCutController extends FilesBatchController {
     }
 
     @Override
-    public void makeMoreParameters() {
-        makeBatchParameters();
-    }
-
-    @Override
-    public String handleCurrentFile(FileInformation d) {
-        File file = d.getFile();
-        currentParameters.sourceFile = file;
-        String filename = file.getName();
-        String targetName = currentParameters.targetPath + File.separator + filename;
+    public String handleFile(File srcFile, File targetPath) {
+        File target = makeTargetFile(srcFile, targetPath);
+        if (target == null) {
+            return AppVaribles.message("Skip");
+        }
+        String targetName = target.getAbsolutePath();
         List<File> files = null;
         switch (splitType) {
             case FilesNumber:
-                files = FileTools.splitFileByFilesNumber(file, targetName, filesNumber);
+                files = FileTools.splitFileByFilesNumber(srcFile, targetName, filesNumber);
                 break;
             case BytesNumber:
-                files = FileTools.splitFileByBytesNumber(file, targetName, bytesNumber);
+                files = FileTools.splitFileByBytesNumber(srcFile, targetName, bytesNumber);
                 break;
             case StartEndList:
-                files = FileTools.splitFileByStartEndList(file, targetName, startEndList);
+                files = FileTools.splitFileByStartEndList(srcFile, targetName, startEndList);
                 break;
         }
-        if (files == null) {
-            return AppVaribles.getMessage("Failed");
+        if (files == null || files.isEmpty()) {
+            return AppVaribles.message("Failed");
         } else {
+            currentParameters.finalTargetName = files.get(0).getAbsolutePath();
             targetFiles.addAll(files);
-            return MessageFormat.format(AppVaribles.getMessage("FilesGenerated"), files.size());
+            return MessageFormat.format(AppVaribles.message("FilesGenerated"), files.size());
         }
     }
 

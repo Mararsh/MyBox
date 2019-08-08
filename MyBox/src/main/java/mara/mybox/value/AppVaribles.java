@@ -1,8 +1,6 @@
 package mara.mybox.value;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,14 +9,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import javafx.scene.control.Tooltip;
-import javafx.stage.Stage;
-import javafx.util.Duration;
 import mara.mybox.controller.AlarmClockController;
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.fxml.ControlStyle;
 import mara.mybox.db.TableSystemConf;
 import mara.mybox.db.TableUserConf;
+import mara.mybox.fxml.ControlStyle;
 import static mara.mybox.value.CommonValues.BundleEnUS;
 import static mara.mybox.value.CommonValues.BundleEsES;
 import static mara.mybox.value.CommonValues.BundleFrFR;
@@ -26,7 +20,6 @@ import static mara.mybox.value.CommonValues.BundleRuRU;
 import static mara.mybox.value.CommonValues.BundleZhCN;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.apache.pdfbox.io.MemoryUsageSetting;
 
 /**
@@ -37,7 +30,7 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
  */
 public class AppVaribles {
 
-    public static final Logger logger = LogManager.getLogger();
+    public static final Logger logger = LogManager.getLogger(AppVaribles.class);
     public static ResourceBundle currentBundle;
     public static Map<String, String> userConfigValues;
     public static Map<String, String> systemConfigValues;
@@ -46,10 +39,8 @@ public class AppVaribles {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber;
-    public static Map<Stage, BaseController> openedStages;
     public static boolean openStageInNewWindow, restoreStagesSize, controlDisplayText;
     public static ControlStyle.ColorStyle ControlColor;
-    public static Class env;
 
     public AppVaribles() {
 
@@ -59,8 +50,6 @@ public class AppVaribles {
         try {
             userConfigValues = new HashMap();
             systemConfigValues = new HashMap();
-            env = userConfigValues.getClass();
-            openedStages = new HashMap();
             getBundle();
             getPdfMem();
             openStageInNewWindow = AppVaribles.getUserConfigBoolean("OpenStageInNewWindow", false);
@@ -69,28 +58,10 @@ public class AppVaribles {
             fileRecentNumber = AppVaribles.getUserConfigInt("FileRecentNumber", 15);
             ControlColor = ControlStyle.getConfigColorStyle();
             controlDisplayText = AppVaribles.getUserConfigBoolean("ControlDisplayText", false);
-            setTipTime();
         } catch (Exception e) {
             logger.error(e.toString());
         }
 
-    }
-
-    // https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay?noredirect=1
-    // https://www.jianshu.com/p/5ecec2c4d224
-    public static void setTipTime() {
-        try {
-            Tooltip tooltip = new Tooltip();
-            Class tipClass = tooltip.getClass();
-            Field f = tipClass.getDeclaredField("BEHAVIOR");
-            f.setAccessible(true);
-            Class TooltipBehavior = Class.forName("javafx.scene.control.Tooltip$TooltipBehavior");
-            Constructor constructor = TooltipBehavior.getDeclaredConstructor(Duration.class, Duration.class, Duration.class, boolean.class);
-            constructor.setAccessible(true);
-            f.set(TooltipBehavior, constructor.newInstance(new Duration(10), new Duration(360000), new Duration(10), false));
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
     }
 
     public static void clear() {
@@ -124,7 +95,7 @@ public class AppVaribles {
         return AppVaribles.currentBundle;
     }
 
-    public static String getMessage(String thestr) {
+    public static String message(String thestr) {
         try {
             return currentBundle.getString(thestr);
         } catch (Exception e) {
@@ -132,7 +103,7 @@ public class AppVaribles {
         }
     }
 
-    public static String getMessage(String language, String thestr) {
+    public static String message(String language, String thestr) {
         try {
             if (thestr.trim().isEmpty()) {
                 return thestr;
@@ -468,20 +439,6 @@ public class AppVaribles {
         } else {
             return false;
         }
-    }
-
-    public static void stageOpened(Stage stage, BaseController controller) {
-//        logger.debug(stage.getTitle() + " " + AppVaribles.openedStages.size());
-        openedStages.put(stage, controller);
-    }
-
-    public static void stageClosed(Stage stage) {
-//        logger.debug(stage.getTitle() + " " + AppVaribles.openedStages.size());
-        openedStages.remove(stage);
-    }
-
-    public static boolean stageRecorded(Stage stage) {
-        return openedStages.containsKey(stage);
     }
 
 }

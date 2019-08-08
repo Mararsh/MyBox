@@ -82,4 +82,8 @@ public class StringTools {
         return df.format(data);
     }
 
+    public static String leftAlgin(String name, String value, int nameLength) {
+        return String.format("%-" + nameLength + "s:" + value, name);
+    }
+
 }

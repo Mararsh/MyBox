@@ -17,13 +17,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -50,12 +50,12 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private CheckBox excludeCheck;
 
     public ImageManufactureBatchReplaceColorController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchReplaceColor");
+        baseTitle = AppVaribles.message("ImageManufactureBatchReplaceColor");
 
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -117,7 +117,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
 
     private void checkColorType() {
         RadioButton selected = (RadioButton) replaceScopeGroup.getSelectedToggle();
-        isColor = getMessage("Color").equals(selected.getText());
+        isColor = message("Color").equals(selected.getText());
         if (isColor) {
             FxmlControl.setTooltip(distanceInput, new Tooltip("0 ~ 255"));
         } else {
@@ -130,7 +130,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
         try {
             distance = Integer.valueOf(distanceInput.getText());
             if (oldColorPicker.getValue() == newColorPicker.getValue() && distance == 0) {
-                popError(getMessage("OriginalNewSameColor"));
+                popError(message("OriginalNewSameColor"));
                 distanceInput.setStyle(badStyle);
                 return;
             }

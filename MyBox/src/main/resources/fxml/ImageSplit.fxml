@@ -46,7 +46,7 @@ License:    Apache License Version 2.0
                         </ToolBar>
                         <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="saveImagesButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                                <Button fx:id="saveImagesButton" mnemonicParsing="false" onAction="#saveAsImagesAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                                 <Button fx:id="saveTiffButton" mnemonicParsing="false" onAction="#saveAsTiffAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

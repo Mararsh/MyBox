@@ -17,12 +17,11 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.controller.BytesEditerController;
 import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.ImageInformationController;
-import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
@@ -30,14 +29,15 @@ import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageInformation;
+import mara.mybox.controller.base.BaseController;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import static mara.mybox.value.AppVaribles.env;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -54,31 +54,22 @@ public class FxmlStage {
             if (stage == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(env.getResource(newFxml), AppVaribles.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVaribles.currentBundle);
             Pane pane = fxmlLoader.load();
-            pane.getStylesheets().add(env.getResource(AppVaribles.getStyle()).toExternalForm());
+            pane.getStylesheets().add(FxmlStage.class.getResource(AppVaribles.getStyle()).toExternalForm());
             Scene scene = new Scene(pane);
 
             final BaseController controller = (BaseController) fxmlLoader.getController();
-            controller.myStage = stage;
-            controller.myScene = scene;
-            controller.loadFxml = newFxml;
+            controller.setMyStage(stage);
+            controller.setMyScene(scene);
+            controller.setLoadFxml(newFxml);
 
-            if (controller.getBaseTitle() == null) {
-                stage.setTitle(AppVaribles.getMessage("AppTitle"));
-            } else {
-                stage.setTitle(controller.getBaseTitle());
-            }
+//            stage.setUserData(controller);
+            stage.getIcons().add(CommonValues.AppIcon);
             stage.setTitle(controller.getBaseTitle());
             if (stageStyle != null) {
                 stage.initStyle(stageStyle);
             }
-            if (controller.mainMenuController != null && !newFxml.equals(CommonValues.LoadingFxml)) {
-                VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
-            }
-
-            stage.getIcons().add(CommonValues.AppIcon);
-
             stage.setOnShown(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
@@ -96,15 +87,13 @@ public class FxmlStage {
                 }
             });
 
-            Scene s = stage.getScene();
-            s = null;
             stage.setScene(scene);
             stage.show();
-            stage.requestFocus();
-
-            AppVaribles.stageOpened(stage, controller);
-
             controller.afterSceneLoaded();
+
+            if (controller.getMainMenuController() != null && !newFxml.equals(CommonValues.LoadingFxml)) {
+                VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
+            }
 
             Platform.setImplicitExit(AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty());
 
@@ -148,15 +137,22 @@ public class FxmlStage {
         return openStage(myStage, newFxml, false, Modality.NONE);
     }
 
+    public static BaseController openStage(String newFxml) {
+        return openStage(null, newFxml, false, Modality.NONE);
+    }
+
     public static BaseController openScene(Stage stage, String newFxml, StageStyle stageStyle) {
         try {
-            if (stage == null) {
-                stage = new Stage();
-                stage.initModality(Modality.NONE);
-                stage.initStyle(StageStyle.DECORATED);
-                stage.initOwner(null);
+            Stage newStage = new Stage();  // new stage should be opened instead of keeping old stage, to clean resources
+            newStage.initModality(Modality.NONE);
+            newStage.initStyle(StageStyle.DECORATED);
+            newStage.initOwner(null);
+            BaseController controller = initScene(newStage, newFxml, stageStyle);
+
+            if (stage != null) {
+                closeStage(stage);
             }
-            return initScene(stage, newFxml, stageStyle);
+            return controller;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -168,21 +164,23 @@ public class FxmlStage {
     }
 
     public static void closeStage(Stage stage) {
-
-        AppVaribles.stageClosed(stage);
-        stage.close();
-        if (AppVaribles.openedStages.isEmpty()) {
-            FxmlStage.appExit();
+        try {
+            stage.close();
+            if (Window.getWindows().isEmpty()) {
+                appExit();
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
     }
 
     public static void appExit() {
         try {
-            final List<BaseController> controllers = new ArrayList();
-            controllers.addAll(AppVaribles.openedStages.values());
-            for (BaseController controller : controllers) {
-                if (controller != null && !controller.closeStage()) {
-                    return;
+            if (Window.getWindows() != null) {
+                List<Window> windows = new ArrayList();
+                windows.addAll(Window.getWindows());
+                for (Window window : windows) {
+                    window.hide();
                 }
             }
             if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
@@ -235,17 +233,21 @@ public class FxmlStage {
         }
     }
 
-    public static HtmlEditorController openHtmlEditor(Stage stage, File file) {
+    public static HtmlEditorController openHtmlEditor(Stage stage, String link) {
         try {
             final HtmlEditorController controller
                     = (HtmlEditorController) openScene(stage, CommonValues.HtmlEditorFxml);
             controller.switchBroswerTab();
-            controller.loadHtml(file);
+            controller.loadLink(link);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
+    }
+
+    public static HtmlEditorController openHtmlEditor(Stage stage, File file) {
+        return openHtmlEditor(stage, file.toURI().toString());
     }
 
     public static ImageManufactureController openImageManufacture(Stage stage, File file) {
@@ -435,6 +437,10 @@ public class FxmlStage {
         if (filename == null) {
             return controller;
         }
+        if (filename.startsWith("http") || filename.startsWith("ftp")) {
+            return openHtmlEditor(null, filename);
+        }
+
         File file = new File(filename);
         if (!file.exists()) {
             return controller;
@@ -445,6 +451,7 @@ public class FxmlStage {
         }
 
         String suffix = FileTools.getFileSuffix(file.getAbsolutePath()).toLowerCase();
+
         if (CommonValues.SupportedImages.contains(suffix)) {
             controller = openImageViewer(stage, file);
 

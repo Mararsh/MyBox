@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -24,13 +23,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.DoublePoint;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -116,7 +116,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
     protected void initTextTab() {
         try {
 
-            FxmlControl.setTooltip(textTipsView, new Tooltip(getMessage("TextComments")));
+            FxmlControl.setTooltip(textTipsView, new Tooltip(message("TextComments")));
 
             fontFamily = AppVaribles.getUserConfigValue(ImageFontFamilyKey, "Arial");
             fontWeight = FontWeight.NORMAL;
@@ -148,21 +148,21 @@ public class ImageManufactureTextController extends ImageManufactureController {
                 }
             });
 
-            List<String> styles = Arrays.asList(getMessage("Regular"), getMessage("Bold"), getMessage("Italic"), getMessage("Bold Italic"));
+            List<String> styles = Arrays.asList(message("Regular"), message("Bold"), message("Italic"), message("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
             waterStyleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (AppVaribles.getMessage("Bold").equals(newValue)) {
+                    if (AppVaribles.message("Bold").equals(newValue)) {
                         fontWeight = FontWeight.BOLD;
                         fontPosture = FontPosture.REGULAR;
 
-                    } else if (AppVaribles.getMessage("Italic").equals(newValue)) {
+                    } else if (AppVaribles.message("Italic").equals(newValue)) {
                         font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, fontSize);
                         fontWeight = FontWeight.NORMAL;
                         fontPosture = FontPosture.ITALIC;
 
-                    } else if (AppVaribles.getMessage("Bold Italic").equals(newValue)) {
+                    } else if (AppVaribles.message("Bold Italic").equals(newValue)) {
                         fontWeight = FontWeight.BOLD;
                         fontPosture = FontPosture.ITALIC;
 
@@ -310,6 +310,7 @@ public class ImageManufactureTextController extends ImageManufactureController {
             colorPicker.setValue(color);
 
         } else {
+
             imageView.setCursor(Cursor.HAND);
             waterX = (int) Math.round(p.getX());
             waterY = (int) Math.round(p.getY());

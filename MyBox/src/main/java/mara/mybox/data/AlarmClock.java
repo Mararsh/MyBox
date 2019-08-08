@@ -162,9 +162,9 @@ public final class AlarmClock {
         alarm.setPeriod(getPeriod(alarm));
         calculateNextTime(alarm);
         if (!alarm.isIsActive()) {
-            alarm.setStatus(AppVaribles.getMessage("Inactive"));
+            alarm.setStatus(AppVaribles.message("Inactive"));
         } else {
-            alarm.setStatus(AppVaribles.getMessage("Active"));
+            alarm.setStatus(AppVaribles.message("Active"));
         }
         if (alarm.getLastTime() > 0) {
             alarm.setLast(DateTools.datetimeToString(alarm.getLastTime()));
@@ -183,21 +183,21 @@ public final class AlarmClock {
 
         switch (alarm.getAlarmType()) {
             case AlarmType.NotRepeat:
-                return AppVaribles.getMessage("NotRepeat");
+                return AppVaribles.message("NotRepeat");
             case AlarmType.EveryDay:
-                return AppVaribles.getMessage("EveryDay");
+                return AppVaribles.message("EveryDay");
             case AlarmType.Weekend:
-                return AppVaribles.getMessage("Weekend");
+                return AppVaribles.message("Weekend");
             case AlarmType.WorkingDays:
-                return AppVaribles.getMessage("WorkingDays");
+                return AppVaribles.message("WorkingDays");
             case AlarmType.EverySomeHours:
-                return AppVaribles.getMessage("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.getMessage("Hours");
+                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Hours");
             case AlarmType.EverySomeMinutes:
-                return AppVaribles.getMessage("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.getMessage("Minutes");
+                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Minutes");
             case AlarmType.EverySomeDays:
-                return AppVaribles.getMessage("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.getMessage("Days");
+                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Days");
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.getMessage("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.getMessage("Seconds");
+                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Seconds");
         }
         return null;
     }
@@ -206,18 +206,18 @@ public final class AlarmClock {
 
         switch (type) {
             case AlarmType.NotRepeat:
-                return AppVaribles.getMessage("NotRepeat");
+                return AppVaribles.message("NotRepeat");
             case AlarmType.EveryDay:
-                return AppVaribles.getMessage("EveryDay");
+                return AppVaribles.message("EveryDay");
             case AlarmType.Weekend:
-                return AppVaribles.getMessage("Weekend");
+                return AppVaribles.message("Weekend");
             case AlarmType.WorkingDays:
-                return AppVaribles.getMessage("WorkingDays");
+                return AppVaribles.message("WorkingDays");
             case AlarmType.EverySomeHours:
             case AlarmType.EverySomeMinutes:
             case AlarmType.EverySomeDays:
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.getMessage("Every");
+                return AppVaribles.message("Every");
         }
         return null;
     }
@@ -226,13 +226,13 @@ public final class AlarmClock {
 
         switch (type) {
             case AlarmType.EverySomeHours:
-                return AppVaribles.getMessage("Hours");
+                return AppVaribles.message("Hours");
             case AlarmType.EverySomeMinutes:
-                return AppVaribles.getMessage("Minutes");
+                return AppVaribles.message("Minutes");
             case AlarmType.EverySomeDays:
-                return AppVaribles.getMessage("Days");
+                return AppVaribles.message("Days");
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.getMessage("Seconds");
+                return AppVaribles.message("Seconds");
         }
         return null;
     }

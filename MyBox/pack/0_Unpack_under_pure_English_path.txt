@@ -1,0 +1,3 @@
+Unpack/copy the package under a pure English path. 
+Mybox.exe can not start if path includes non-English characters.
+

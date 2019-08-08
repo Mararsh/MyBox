@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,15 +20,16 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -103,10 +103,10 @@ public class ImageManufactureColorController extends ImageManufactureController 
 
     protected void initColorTab() {
         try {
-            List<String> objects = Arrays.asList(getMessage("Brightness"), getMessage("Hue"), getMessage("Saturation"),
-                    getMessage("Red"), getMessage("Green"), getMessage("Blue"),
-                    getMessage("Cyan"), getMessage("Yellow"), getMessage("Magenta"),
-                    getMessage("RGB"), getMessage("Opacity"), getMessage("Color"));
+            List<String> objects = Arrays.asList(message("Brightness"), message("Hue"), message("Saturation"),
+                    message("Red"), message("Green"), message("Blue"),
+                    message("Cyan"), message("Yellow"), message("Magenta"),
+                    message("RGB"), message("Opacity"), message("Color"));
             objectBox.getItems().addAll(objects);
             objectBox.setVisibleRowCount(objects.size());
             objectBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -186,56 +186,56 @@ public class ImageManufactureColorController extends ImageManufactureController 
             pickColorButton.setSelected(false);
 
             String selected = objectBox.getSelectionModel().getSelectedItem();
-            if (getMessage("Brightness").equals(selected)) {
+            if (message("Brightness").equals(selected)) {
                 colorOperationType = OperationType.Brightness;
                 makeValuesBox(100, 1);
                 colorUnit.setText("%");
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Saturation").equals(selected)) {
+            } else if (message("Saturation").equals(selected)) {
                 colorOperationType = OperationType.Saturation;
                 makeValuesBox(100, 1);
                 colorUnit.setText("%");
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Hue").equals(selected)) {
+            } else if (message("Hue").equals(selected)) {
                 colorOperationType = OperationType.Hue;
                 makeValuesBox(360, 1);
-                colorUnit.setText(getMessage("Degree"));
+                colorUnit.setText(message("Degree"));
                 setBox.getChildren().addAll(valuesBox, colorUnit, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Red").equals(selected)) {
+            } else if (message("Red").equals(selected)) {
                 colorOperationType = OperationType.Red;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Green").equals(selected)) {
+            } else if (message("Green").equals(selected)) {
                 colorOperationType = OperationType.Green;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Blue").equals(selected)) {
+            } else if (message("Blue").equals(selected)) {
                 colorOperationType = OperationType.Blue;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Yellow").equals(selected)) {
+            } else if (message("Yellow").equals(selected)) {
                 colorOperationType = OperationType.Yellow;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Cyan").equals(selected)) {
+            } else if (message("Cyan").equals(selected)) {
                 colorOperationType = OperationType.Cyan;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("Magenta").equals(selected)) {
+            } else if (message("Magenta").equals(selected)) {
                 colorOperationType = OperationType.Magenta;
                 makeValuesBox(255, 1);
                 setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton, filterButton, invertButton);
-            } else if (getMessage("RGB").equals(selected)) {
+            } else if (message("RGB").equals(selected)) {
                 colorOperationType = OperationType.RGB;
                 makeValuesBox(255, 1);
-                setBox.getChildren().addAll(valuesBox, setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Opacity").equals(selected)) {
+                setBox.getChildren().addAll(valuesBox, increaseButton, decreaseButton, invertButton);
+            } else if (message("Opacity").equals(selected)) {
                 colorOperationType = OperationType.Opacity;
                 makeValuesBox(100, 0);
                 colorUnit.setText("%");
                 setBox.getChildren().addAll(preAlphaTipsView, preAlphaCheck, valuesBox, colorUnit,
                         setButton, increaseButton, decreaseButton);
-            } else if (getMessage("Color").equals(selected)) {
+            } else if (message("Color").equals(selected)) {
                 colorOperationType = OperationType.Color;
                 setBox.getChildren().addAll(colorPicker, pickColorButton, setButton);
             }

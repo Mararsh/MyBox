@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.fxml.FxmlStage;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -60,20 +58,22 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.db.TableBrowserUrls;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
-import mara.mybox.tools.FileTools;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.NetworkTools;
 import static mara.mybox.tools.NetworkTools.checkWeiboPassport;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -125,7 +125,7 @@ public class HtmlEditorController extends BaseController {
     protected TextField bottomText;
 
     public HtmlEditorController() {
-        baseTitle = AppVaribles.getMessage("HtmlEditor");
+        baseTitle = AppVaribles.message("HtmlEditor");
 
         SourceFileType = VisitHistory.FileType.Html;
         SourcePathType = VisitHistory.FileType.Html;
@@ -141,11 +141,12 @@ public class HtmlEditorController extends BaseController {
         HtmlPdfPathKey = "HtmlPdfPathKey";
         WeiBoPassportChecked = "WeiBoPassportChecked";
 
-        fileExtensionFilter = new ArrayList() {
+        sourceExtensionFilter = new ArrayList() {
             {
                 add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             }
         };
+        targetExtensionFilter = sourceExtensionFilter;
 
     }
 
@@ -182,7 +183,7 @@ public class HtmlEditorController extends BaseController {
                         isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
                         if (isFrameSet) {
 //                            popError(AppVaribles.getMessage("NotSupportFrameSet"));
-                            htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
+                            htmlEdior.setHtmlText("<p>" + AppVaribles.message("NotSupportFrameSet") + "</p>");
                         } else {
                             htmlEdior.setHtmlText(contents);
                         }
@@ -275,7 +276,7 @@ public class HtmlEditorController extends BaseController {
             fileChanged.set(true);
         }
         lastHtmlLen = len;
-        bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
+        bottomText.setText(AppVaribles.message("Total") + ": " + len);
     }
 
     protected void initCodeEdtior() {
@@ -288,7 +289,7 @@ public class HtmlEditorController extends BaseController {
                     }
                     int len = codesArea.getText().length();
                     lastCodesLen = len;
-                    bottomText.setText(AppVaribles.getMessage("Total") + ": " + len);
+                    bottomText.setText(AppVaribles.message("Total") + ": " + len);
                 }
             });
 
@@ -390,15 +391,15 @@ public class HtmlEditorController extends BaseController {
                         switch (newState) {
                             case READY:
                                 bottomText.setText("");
-                                loadButton.setText(getMessage("Load"));
+                                loadButton.setText(message("Load"));
                                 break;
                             case SCHEDULED:
                                 bottomText.setText("");
-                                loadButton.setText(getMessage("Stop"));
+                                loadButton.setText(message("Stop"));
                                 break;
                             case RUNNING:
-                                bottomText.setText(AppVaribles.getMessage("Loading..."));
-                                loadButton.setText(getMessage("Stop"));
+                                bottomText.setText(AppVaribles.message("Loading..."));
+                                loadButton.setText(message("Stop"));
                                 break;
                             case SUCCEEDED:
 //                            logger.debug((String) webEngine.executeScript("document.cookie;"));
@@ -465,13 +466,13 @@ public class HtmlEditorController extends BaseController {
 
                                         fontSize = 14;
                                     }
-                                    bottomText.setText(AppVaribles.getMessage("Loaded"));
+                                    bottomText.setText(AppVaribles.message("Loaded"));
                                     if (loadingController != null) {
 
                                         loadingController.closeStage();
                                         loadingController = null;
                                     }
-                                    loadButton.setText(getMessage("Load"));
+                                    loadButton.setText(message("Load"));
                                     snapBar.setDisable(false);
 
                                 }
@@ -481,7 +482,7 @@ public class HtmlEditorController extends BaseController {
                                         isFrameSet = contents.toUpperCase().contains("</FRAMESET>");
                                         if (isFrameSet) {
 //                                        popError(AppVaribles.getMessage("NotSupportFrameSet"));
-                                            htmlEdior.setHtmlText("<p>" + AppVaribles.getMessage("NotSupportFrameSet") + "</p>");
+                                            htmlEdior.setHtmlText("<p>" + AppVaribles.message("NotSupportFrameSet") + "</p>");
                                         } else {
                                             htmlEdior.setHtmlText(contents);
                                         }
@@ -494,16 +495,16 @@ public class HtmlEditorController extends BaseController {
 
                                 break;
                             case CANCELLED:
-                                bottomText.setText(getMessage("Canceled"));
-                                loadButton.setText(getMessage("Load"));
+                                bottomText.setText(message("Canceled"));
+                                loadButton.setText(message("Load"));
                                 if (loadingController != null) {
                                     loadingController.closeStage();
                                     loadingController = null;
                                 }
                                 break;
                             case FAILED:
-                                bottomText.setText(getMessage("Failed"));
-                                loadButton.setText(getMessage("Load"));
+                                bottomText.setText(message("Failed"));
+                                loadButton.setText(message("Load"));
                                 if (loadingController != null) {
                                     loadingController.closeStage();
                                     loadingController = null;
@@ -511,7 +512,7 @@ public class HtmlEditorController extends BaseController {
                                 break;
                             default:
                                 bottomText.setText("");
-                                loadButton.setText(getMessage("Load"));
+                                loadButton.setText(message("Load"));
                                 break;
                         }
 
@@ -572,7 +573,7 @@ public class HtmlEditorController extends BaseController {
 
     private void checkOneImage() {
         RadioButton selected = (RadioButton) snapGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("OneImage").equals(selected.getText())) {
+        if (AppVaribles.message("OneImage").equals(selected.getText())) {
             isOneImage = true;
             windowSizeCheck.setDisable(true);
         } else {
@@ -584,20 +585,25 @@ public class HtmlEditorController extends BaseController {
     @Override
     public void sourceFileChanged(final File file) {
         sourceFile = file;
-        loadHtml(file);
+        loadLink(file);
     }
 
-    public void loadHtml(File file) {
+    public void loadLink(String link) {
         isFrameSet = false;
         loadSynchronously = true;
-        webEngine.load(file.toURI().toString());
+        webEngine.load(link);
+        urlBox.getEditor().setText(link);
+    }
+
+    public void loadLink(File file) {
+        loadLink(file.toURI().toString());
     }
 
     @FXML
     private void loadAction(ActionEvent event) {
         isFrameSet = false;
 
-        if (loadButton.getText().equals(getMessage("Stop"))) {
+        if (loadButton.getText().equals(message("Stop"))) {
             webEngine.getLoadWorker().cancel();
             return;
         }
@@ -607,16 +613,16 @@ public class HtmlEditorController extends BaseController {
             loadingController.closeStage();
             loadingController = null;
         }
-        loadingController = openHandlingStage(Modality.NONE, AppVaribles.getMessage("Loading..."));
-        bottomText.setText(AppVaribles.getMessage("Loading..."));
+        loadingController = openHandlingStage(Modality.NONE, AppVaribles.message("Loading..."));
+        bottomText.setText(AppVaribles.message("Loading..."));
         try {
             final String urlString = url.toString().toLowerCase();
 //            logger.debug(urlString);
 
             if (urlString.contains("weibo.com/") && !checkWeiboPassport()) {
                 isLoadingWeiboPassport = true;
-                bottomText.setText(AppVaribles.getMessage("LoadingWeiboCertificate"));
-                loadingController.setInfo(AppVaribles.getMessage("LoadingWeiboCertificate"));
+                bottomText.setText(AppVaribles.message("LoadingWeiboCertificate"));
+                loadingController.setInfo(AppVaribles.message("LoadingWeiboCertificate"));
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -669,13 +675,8 @@ public class HtmlEditorController extends BaseController {
         try {
             isSettingValues = true;
             if (sourceFile == null) {
-                final FileChooser fileChooser = new FileChooser();
-                File path = AppVaribles.getUserConfigPath(sourcePathKey);
-                if (path.exists()) {
-                    fileChooser.setInitialDirectory(path);
-                }
-                fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-                final File file = fileChooser.showSaveDialog(getMyStage());
+                final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+                        null, targetExtensionFilter, true);
                 if (file == null) {
                     return;
                 }
@@ -707,23 +708,19 @@ public class HtmlEditorController extends BaseController {
     public void saveAsAction() {
         try {
             isSettingValues = true;
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
+            String name = null;
             if (sourceFile != null) {
-                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+                name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+                    name, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }
             recordFileOpened(file);
             sourceFile = file;
             String contents;
-            if (AppVaribles.getMessage("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
+            if (AppVaribles.message("Editor").equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
                 contents = htmlEdior.getHtmlText();
             } else {
                 contents = codesArea.getText();
@@ -762,19 +759,14 @@ public class HtmlEditorController extends BaseController {
 
     @FXML
     private void snapshot(ActionEvent event) {
-        final FileChooser fileChooser = new FileChooser();
-        File path;
+        File file;
         if (isOneImage) {
-            path = AppVaribles.getUserConfigPath(HtmlImagePathKey);
-            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
+            file = chooseSaveFile(AppVaribles.getUserConfigPath(HtmlImagePathKey),
+                    null, CommonValues.ImageExtensionFilter, true);
         } else {
-            path = AppVaribles.getUserConfigPath(HtmlPdfPathKey);
-            fileChooser.getExtensionFilters().addAll(CommonValues.PdfExtensionFilter);
+            file = chooseSaveFile(AppVaribles.getUserConfigPath(HtmlPdfPathKey),
+                    null, CommonValues.PdfExtensionFilter, true);
         }
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        final File file = fileChooser.showSaveDialog(getMyStage());
         if (file == null) {
             return;
         }
@@ -850,9 +842,9 @@ public class HtmlEditorController extends BaseController {
                         public void run() {
                             try {
                                 newHeight = (Integer) webEngine.executeScript("document.body.scrollHeight");
-                                loadingController.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + newHeight);
+                                loadingController.setInfo(AppVaribles.message("CurrentPageHeight") + ": " + newHeight);
                                 if (newHeight == lastHeight) {
-                                    loadingController.setInfo(AppVaribles.getMessage("ExpandingPage"));
+                                    loadingController.setInfo(AppVaribles.message("ExpandingPage"));
                                     startSnap();
                                 } else {
                                     webEngine.executeScript("window.scrollTo(0," + newHeight + ");");
@@ -886,7 +878,7 @@ public class HtmlEditorController extends BaseController {
             snapCount = 0;
             webEngine.executeScript("window.scrollTo(0,0 );");
             final int scrollDelay = 300;
-            bottomText.setText(AppVaribles.getMessage("SnapingImage..."));
+            bottomText.setText(AppVaribles.message("SnapingImage..."));
             final SnapshotParameters parameters = new SnapshotParameters();
             parameters.setFill(Color.TRANSPARENT);
             if (timer != null) {
@@ -914,10 +906,10 @@ public class HtmlEditorController extends BaseController {
                                     }
                                     images.add(snapshot);
                                     snapHeight += snapStep;
-                                    loadingController.setInfo(AppVaribles.getMessage("CurrentPageHeight") + ": " + snapHeight);
+                                    loadingController.setInfo(AppVaribles.message("CurrentPageHeight") + ": " + snapHeight);
                                     if (totalHeight <= snapHeight) { // last snap
 
-                                        loadingController.setInfo(AppVaribles.getMessage("WritingFile"));
+                                        loadingController.setInfo(AppVaribles.message("WritingFile"));
                                         boolean success = true;
                                         if (isOneImage) {
                                             Image finalImage = FxmlImageManufacture.combineSingleColumn(images);
@@ -934,7 +926,7 @@ public class HtmlEditorController extends BaseController {
                                         if (success && targetFile.exists()) {
                                             view(targetFile);
                                         } else {
-                                            popError(AppVaribles.getMessage("Failed"));
+                                            popError(AppVaribles.message("Failed"));
                                         }
 
                                         webEngine.executeScript("window.scrollTo(0,0 );");
@@ -953,7 +945,7 @@ public class HtmlEditorController extends BaseController {
                                 } catch (Exception e) {
                                     logger.error(e.toString());
                                     webEngine.executeScript("window.scrollTo(0,0 );");
-                                    popError(AppVaribles.getMessage("Failed"));
+                                    popError(AppVaribles.message("Failed"));
                                     if (loadingController != null) {
                                         loadingController.closeStage();
                                         loadingController = null;
@@ -1014,7 +1006,7 @@ public class HtmlEditorController extends BaseController {
             urlBox.setValue("https://weibo.com");
             isSettingValues = false;
             webEngine.load("https://weibo.com");
-            popInformation(getMessage("WeiboAfterLogin"), -1);
+            popInformation(message("WeiboAfterLogin"), -1);
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -1048,11 +1040,11 @@ public class HtmlEditorController extends BaseController {
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("FileChanged"));
+            alert.setContentText(AppVaribles.message("FileChanged"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
-            ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVaribles.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();

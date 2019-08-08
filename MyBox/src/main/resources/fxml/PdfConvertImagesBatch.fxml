@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfConvertImagesBatchController">
+<BorderPane fx:id="thisPane" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PdfConvertImagesBatchController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -30,38 +30,32 @@ License:    Apache License Version 2.0
                 <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourcePDF" VBox.vgrow="ALWAYS">
-                            <VBox.margin>
-                                <Insets />
-                            </VBox.margin>
                             <content>
-                                <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                        <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
                                     </content>
                                 </ScrollPane>
                             </content>
                         </TitledPane>
-                        <TitledPane text="%TargetImages" VBox.vgrow="NEVER">
-                            <VBox.margin>
-                                <Insets />
-                            </VBox.margin>
+                        <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TargetImages" VBox.vgrow="NEVER">
                             <content>
-                                <fx:include fx:id="pdfConvertAttributes" source="PdfConvertAttributes.fxml" />
+                                <fx:include fx:id="options" source="ImageConverterOptions.fxml" />
                             </content>
                         </TitledPane>
-                        <TitledPane text="%TargetFiles" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TargetFiles" VBox.vgrow="NEVER">
                             <content>
-                                <VBox maxWidth="1.7976931348623157E308">
+                                <VBox maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Label text="%FilesPath">
+                                                <Label text="%FilesPath" HBox.hgrow="NEVER">
                                                     <HBox.margin>
                                                         <Insets />
                                                     </HBox.margin>
                                                 </Label>
-                                                <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
+                                                <TextField fx:id="targetPathInput" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath" HBox.hgrow="NEVER">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -70,8 +64,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectory" />
-                                                <Button fx:id="previewButton" disable="true" mnemonicParsing="false" onAction="#previewAction">
+                                                <Button fx:id="previewButton" mnemonicParsing="false" onAction="#previewAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -81,57 +74,42 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                             </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" />
-                                            </VBox.margin>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
-                                            </VBox.margin>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label text="%FileName">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
                                                 </Label>
-                                                <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
+                                                <CheckBox fx:id="appendColorCheck" mnemonicParsing="false" selected="true" text="%AppendImageColor" />
+                                                <CheckBox fx:id="appendCompressionCheck" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
+                                                <CheckBox fx:id="appendQualityCheck" mnemonicParsing="false" selected="true" text="%AppendQuality">
                                                 </CheckBox>
-                                                <CheckBox fx:id="appendColor" mnemonicParsing="false" selected="true" text="%AppendImageColor" />
+                                                <CheckBox fx:id="appendDensityCheck" layoutX="532.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%AppendDensity" />
                                             </children>
                                             <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
+                                                <Insets />
                                             </VBox.margin>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
-                                                <Label text="%FileName" visible="false">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <CheckBox fx:id="appendDensity" mnemonicParsing="false" selected="true" text="%AppendDensity">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </CheckBox>
-                                                <CheckBox fx:id="appendCompressionType" mnemonicParsing="false" selected="true" text="%AppendCompressionType" />
-                                                <CheckBox fx:id="appendQuality" mnemonicParsing="false" selected="true" text="%AppendQuality" />
+                                                <Label text="%ExistedFiles" />
+                                                <RadioButton fx:id="targetReplaceRadio" mnemonicParsing="false" text="%Replace">
+                                                    <toggleGroup>
+                                                        <ToggleGroup fx:id="targetExistGroup" />
+                                                    </toggleGroup> 
+                                                </RadioButton>
+                                                <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+
+                                                <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
+                                                <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
+                                                <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                                                <CheckBox fx:id="targetSubdirCheck" mnemonicParsing="false" selected="true" text="%CreateSubdirectoryForEachPDF" />
                                             </children>
-                                            <VBox.margin>
-                                                <Insets left="10.0" right="10.0" top="5.0" />
-                                            </VBox.margin>
                                         </HBox>
                                     </children>
                                 </VBox>
                             </content>
                             <VBox.margin>
-                                <Insets />
+                                <Insets top="5.0" />
                             </VBox.margin>
                         </TitledPane>
                     </children>

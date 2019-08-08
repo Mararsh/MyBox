@@ -23,7 +23,7 @@ import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -55,11 +55,11 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchMarginsController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchMargins");
+        baseTitle = AppVaribles.message("ImageManufactureBatchMargins");
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -134,25 +134,25 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
         setBox.getChildren().clear();
 
         RadioButton selected = (RadioButton) opGroup.getSelectedToggle();
-        if (getMessage("AddMargins").equals(selected.getText())) {
+        if (message("AddMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.AddMargins;
             setBox.getChildren().addAll(colorBox, widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
-        } else if (getMessage("CutMarginsByWidth").equals(selected.getText())) {
+        } else if (message("CutMarginsByWidth").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.CutMarginsByWidth;
             setBox.getChildren().addAll(widthBox);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
-        } else if (getMessage("CutMarginsByColor").equals(selected.getText())) {
+        } else if (message("CutMarginsByColor").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.CutMarginsByColor;
             setBox.getChildren().addAll(colorBox, distanceBox);
             marginWidthBox.getEditor().setStyle(null);
             checkColor();
 
-        } else if (getMessage("BlurMargins").equals(selected.getText())) {
+        } else if (message("BlurMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.BlurMargins;
             setBox.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck, alphaWhiteCheck);
             checkMarginWidth();

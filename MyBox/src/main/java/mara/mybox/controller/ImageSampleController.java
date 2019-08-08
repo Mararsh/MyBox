@@ -18,17 +18,16 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
-import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -54,7 +53,7 @@ public class ImageSampleController extends ImageViewerController {
     private Label sampleLabel;
 
     public ImageSampleController() {
-        baseTitle = AppVaribles.getMessage("ImageSample");
+        baseTitle = AppVaribles.message("ImageSample");
         handleLoadedSize = false;
 
     }
@@ -136,12 +135,11 @@ public class ImageSampleController extends ImageViewerController {
 
     private void updateLabel() {
         if (sampleWidth < 1 || sampleHeight < 1) {
-            sampleLabel.setText(getMessage("InvalidParameters"));
+            sampleLabel.setText(message("InvalidParameters"));
         } else {
-            sampleLabel.setText(
-                    getMessage("ImageSize") + ": "
+            sampleLabel.setText(message("ImageSize") + ": "
                     + imageInformation.getWidth() + "x" + imageInformation.getHeight()
-                    + "  " + getMessage("SamplingSize") + ": "
+                    + "  " + message("SamplingSize") + ": "
                     + (int) Math.round(maskRectangleData.getWidth() / sampleWidth)
                     + "x" + (int) Math.round(maskRectangleData.getHeight() / sampleHeight));
         }
@@ -190,7 +188,7 @@ public class ImageSampleController extends ImageViewerController {
     protected void loadSampledImage() {
 
         if (sampledTips != null) {
-            final String msg = getSmapledInfo() + "\n\n" + AppVaribles.getMessage("ImagePartComments");
+            final String msg = getSmapledInfo() + "\n\n" + AppVaribles.message("ImagePartComments");
             sampledTips.setOnMouseMoved(null);
             sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
                 @Override
@@ -208,13 +206,8 @@ public class ImageSampleController extends ImageViewerController {
         if (image == null || sampleWidth < 1 || sampleHeight < 1) {
             return;
         }
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -247,7 +240,7 @@ public class ImageSampleController extends ImageViewerController {
                     @Override
                     public void run() {
                         if (ok && file.exists()) {
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                             if (viewCheck.isSelected()) {
                                 try {
                                     final ImageViewerController controller
@@ -258,7 +251,7 @@ public class ImageSampleController extends ImageViewerController {
                                 }
                             }
                         } else {
-                            popError(AppVaribles.getMessage("Failed"));
+                            popError(AppVaribles.message("Failed"));
                         }
                     }
                 });

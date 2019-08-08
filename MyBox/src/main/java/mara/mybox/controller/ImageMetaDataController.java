@@ -8,10 +8,10 @@ package mara.mybox.controller;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import mara.mybox.controller.base.BaseController;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.value.AppVaribles;
@@ -31,28 +31,28 @@ public class ImageMetaDataController extends BaseController {
     private TextArea metaDataInput;
 
     public ImageMetaDataController() {
-        baseTitle = AppVaribles.getMessage("ImageMetaData");
+        baseTitle = AppVaribles.message("ImageMetaData");
 
     }
 
     public void loadImageFileMeta(ImageInformation info) {
         try {
-            if (info == null || info.getFilename() == null) {
+            if (info == null || info.getFileName() == null) {
                 return;
             }
-            fileInput.setText(info.getFilename());
+            fileInput.setText(info.getFileName());
             ImageFileInformation finfo = info.getImageFileInformation();
             metaDataInput.setText("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            metaDataInput.appendText("<ImageMetadata file=\"" + finfo.getFileName() + "\">\n");
-            int count = 1;
+            metaDataInput.appendText("<ImageMetadata file=\"" + finfo.getFileName() + "\"  numberOfImages=\""
+                    + finfo.getNumberOfImages() + "\">\n");
+            int index = 1;
             for (ImageInformation imageInfo : finfo.getImagesInformation()) {
-                metaDataInput.appendText("    <Image index=\"" + count + "\">\n");
+                metaDataInput.appendText("    <Image index=\"" + index + "\">\n");
                 metaDataInput.appendText(imageInfo.getMetaDataXml());
                 metaDataInput.appendText("    </Image>\n");
-                count++;
+                index++;
             }
             metaDataInput.appendText("</ImageMetadata>\n");
-            myStage.setAlwaysOnTop(true);
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -60,6 +60,7 @@ public class ImageMetaDataController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            myStage.toFront();
                             metaDataInput.home();
                             metaDataInput.requestFocus();
                         }

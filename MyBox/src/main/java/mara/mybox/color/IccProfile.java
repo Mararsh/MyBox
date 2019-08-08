@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import static mara.mybox.color.IccXML.iccXML;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.AppVaribles.logger;
 
@@ -76,6 +75,21 @@ public class IccProfile {
         }
     }
 
+    public IccProfile(byte[] data) {
+        try {
+            if (data == null) {
+                return;
+            }
+            this.data = data;
+            predefinedColorSpaceType = -1;
+            isValid = true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            error = e.toString();
+            isValid = false;
+        }
+    }
+
     private void init() {
         try {
             if (profile == null) {
@@ -86,7 +100,7 @@ public class IccProfile {
             } else {
                 colorSpace = ColorSpace.getInstance(predefinedColorSpaceType);
             }
-            isValid = true;
+            isValid = colorSpace != null;
         } catch (Exception e) {
             logger.error(e.toString());
             error = e.toString();
@@ -97,7 +111,7 @@ public class IccProfile {
     public byte[] readData() {
         if (data == null) {
             if (file != null) {
-                data = FileTools.readBytes(file, 0, (int) file.length());
+                data = FileTools.readBytes(file);
             } else if (profile != null) {
                 data = profile.getData();
             }
@@ -279,7 +293,7 @@ public class IccProfile {
 
     public IccHeader getHeader() {
         if (header == null) {
-            header = new IccHeader(data);
+            header = new IccHeader(getData());
         }
         return header;
     }
@@ -290,7 +304,7 @@ public class IccProfile {
 
     public IccTags getTags() {
         if (tags == null) {
-            tags = new IccTags(data, normalizeLut);
+            tags = new IccTags(getData(), normalizeLut);
         }
         return tags;
     }

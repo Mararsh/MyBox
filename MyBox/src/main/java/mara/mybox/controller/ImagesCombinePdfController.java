@@ -19,22 +19,20 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.controller.base.ImagesListController;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.ImageInformation;
+import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -45,7 +43,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImagesCombinePdfController extends ImageSourcesController {
+public class ImagesCombinePdfController extends ImagesListController {
 
     private final String ImageCombineMarginsKey, AuthorKey;
     protected int marginSize, pageWidth, pageHeight, jpegQuality, threshold;
@@ -61,22 +59,20 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     @FXML
     protected TextField customWidthInput, customHeightInput, authorInput, thresholdInput, headerInput;
     @FXML
-    protected HBox sizeBox;
-    @FXML
-    protected ToolBar targetBar;
+    protected HBox sizeBox, targetBox;
 
     public ImagesCombinePdfController() {
-        baseTitle = AppVaribles.getMessage("ImagesCombinePdf");
+        baseTitle = AppVaribles.message("ImagesCombinePdf");
 
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         AuthorKey = "AuthorKey";
-        fileExtensionFilter = CommonValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
+        targetExtensionFilter = CommonValues.PdfExtensionFilter;
     }
 
     @Override
     public void initializeNext() {
         try {
-            initTable();
             initOptionsSection();
             initTargetSection();
         } catch (Exception e) {
@@ -96,8 +92,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         });
         checkPageSize();
 
-        standardSizeBox.getItems().addAll(Arrays.asList(
-                "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
+        standardSizeBox.getItems().addAll(Arrays.asList("A4-" + message("Horizontal") + " (16k)  29.7cm x 21.0cm",
                 "A4 (16k)  21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
@@ -238,7 +233,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
 
     private void initTargetSection() {
 
-        targetBar.disableProperty().bind(
+        targetBox.disableProperty().bind(
                 Bindings.isEmpty(tableData)
                         .or(customWidthInput.styleProperty().isEqualTo(badStyle))
                         .or(customHeightInput.styleProperty().isEqualTo(badStyle))
@@ -246,7 +241,6 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                         .or(thresholdInput.styleProperty().isEqualTo(badStyle))
         );
 
-        FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
     }
 
     private void checkPageSize() {
@@ -259,14 +253,14 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         isImageSize = false;
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("ImagesSize").equals(selected.getText())) {
+        if (AppVaribles.message("ImagesSize").equals(selected.getText())) {
             isImageSize = true;
-        } else if (AppVaribles.getMessage("StandardSize").equals(selected.getText())) {
+        } else if (AppVaribles.message("StandardSize").equals(selected.getText())) {
             standardSizeBox.setDisable(false);
             standardDpiBox.setDisable(false);
             checkStandardValues();
 
-        } else if (AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        } else if (AppVaribles.message("Custom").equals(selected.getText())) {
             customWidthInput.setDisable(false);
             customHeightInput.setDisable(false);
             checkCustomValues();
@@ -287,7 +281,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         } catch (Exception e) {
         }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        if (s.startsWith("A4-" + getMessage("Horizontal"))) {
+        if (s.startsWith("A4-" + message("Horizontal"))) {
             pageWidth = calculateCmPixels(29.7f, dpi);
             pageHeight = calculateCmPixels(21.0f, dpi);
         } else {
@@ -354,7 +348,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     private void checkCustomValues() {
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (!AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        if (!AppVaribles.message("Custom").equals(selected.getText())) {
             return;
         }
         try {
@@ -391,12 +385,12 @@ public class ImagesCombinePdfController extends ImageSourcesController {
         thresholdInput.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
+        if (AppVaribles.message("PNG").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Original;
-        } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
+        } else if (AppVaribles.message("CCITT4").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
-        } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -440,22 +434,22 @@ public class ImagesCombinePdfController extends ImageSourcesController {
     @FXML
     @Override
     public void saveAction() {
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        selectTargetFileFromPath(path);
+        saveAsAction();
     }
 
+    @FXML
     @Override
-    public void selectTargetFileFromPath(File path) {
+    public void saveAsAction() {
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        if (hasSampled()) {
+        if (tableController.hasSampled()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureSampled"));
+            alert.setContentText(AppVaribles.message("SureSampled"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -464,23 +458,19 @@ public class ImagesCombinePdfController extends ImageSourcesController {
             }
         }
 
-        final FileChooser fileChooser = new FileChooser();
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath("PdfTargetPath"),
+                null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
-        AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+        AppVaribles.setUserConfigValue("PdfTargetPath", file.getParent());
         task = new Task<Void>() {
             private boolean ok;
 
             @Override
             protected Void call() throws Exception {
                 try {
-                    try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+                    try ( PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                         PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
@@ -504,6 +494,7 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                             }
                         }
                         document.save(file);
+                        document.close();
                     }
                     ok = true;
 
@@ -522,12 +513,12 @@ public class ImagesCombinePdfController extends ImageSourcesController {
                     public void run() {
                         try {
                             if (ok && file.exists()) {
-                                popInformation(AppVaribles.getMessage("Successful"));
+                                popInformation(AppVaribles.message("Successful"));
                                 if (viewCheck.isSelected()) {
                                     view(file);
                                 }
                             } else {
-                                popError(AppVaribles.getMessage("ImageCombinePdfFail"));
+                                popError(AppVaribles.message("ImageCombinePdfFail"));
                             }
                         } catch (Exception e) {
                             logger.error(e.toString());

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import javafx.application.Platform;
@@ -23,17 +22,18 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.DoubleRectangle;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.FxmlImageManufacture;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -125,9 +125,8 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 }
             });
 
-            ratioBox.getItems().addAll(Arrays.asList(
-                    getMessage("BaseOnWidth"), getMessage("BaseOnHeight"),
-                    getMessage("BaseOnLarger"), getMessage("BaseOnSmaller")));
+            ratioBox.getItems().addAll(Arrays.asList(message("BaseOnWidth"), message("BaseOnHeight"),
+                    message("BaseOnLarger"), message("BaseOnSmaller")));
             ratioBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -164,14 +163,14 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                 public void handle(ActionEvent event) {
                     try {
                         final PixelsCalculationController controller
-                                = (PixelsCalculationController) FxmlStage.openStage( myStage,
+                                = (PixelsCalculationController) FxmlStage.openStage(myStage,
                                         CommonValues.PixelsCalculatorFxml,
                                         true, Modality.WINDOW_MODAL, null);
 
                         attributes.setKeepRatio(keepRatioCheck.isSelected());
                         controller.setSource(attributes, widthInput, heightInput);
                         noRatio = true;
-                        controller.myStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                        controller.getMyStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
                             @Override
                             public void handle(WindowEvent event) {
                                 noRatio = false;
@@ -242,20 +241,20 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             promptLabel.setText("");
 
             RadioButton selected = (RadioButton) pixelsGroup.getSelectedToggle();
-            if (getMessage("AdjustByDragging").equals(selected.getText())) {
+            if (message("AdjustByDragging").equals(selected.getText())) {
                 sizeType = SizeType.Dragging;
                 scaleBox.setDisable(false);
                 setBox.getChildren().addAll(okButton, keepRatioCheck);
                 keepRatioCheck.setSelected(true);
                 okButton.setVisible(false);
                 initMaskRectangleLine(true);
-                promptLabel.setText(getMessage("DragSizeComments"));
+                promptLabel.setText(message("DragSizeComments"));
 
             } else {
 
                 initMaskRectangleLine(false);
 
-                if (getMessage("Pixels").equals(selected.getText())) {
+                if (message("Pixels").equals(selected.getText())) {
                     sizeType = SizeType.Pixels;
                     setBox.getChildren().addAll(keepRatioCheck, ratioBox, label1, widthInput, label2, heightInput,
                             originalButton, calculatorButton, okButton);
@@ -264,7 +263,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
                     checkPixelsWidth();
                     checkPixelsHeight();
 
-                } else if (getMessage("ZoomScale").equals(selected.getText())) {
+                } else if (message("ZoomScale").equals(selected.getText())) {
                     sizeType = SizeType.Scale;
                     scaleBox.setDisable(false);
                     setBox.getChildren().addAll(scaleBox, okButton);
@@ -355,15 +354,15 @@ public class ImageManufactureSizeController extends ImageManufactureController {
         try {
             widthInput.setDisable(false);
             heightInput.setDisable(false);
-            if (getMessage("BaseOnWidth").equals(s)) {
+            if (message("BaseOnWidth").equals(s)) {
                 attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnWidth);
                 heightInput.setDisable(true);
-            } else if (getMessage("BaseOnHeight").equals(s)) {
+            } else if (message("BaseOnHeight").equals(s)) {
                 attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnHeight);
                 widthInput.setDisable(true);
-            } else if (getMessage("BaseOnLarger").equals(s)) {
+            } else if (message("BaseOnLarger").equals(s)) {
                 attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnLarger);
-            } else if (getMessage("BaseOnSmaller").equals(s)) {
+            } else if (message("BaseOnSmaller").equals(s)) {
                 attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.BaseOnSmaller);
             } else {
                 attributes.setRatioAdjustion(ImageManufacture.KeepRatioType.None);
@@ -533,7 +532,7 @@ public class ImageManufactureSizeController extends ImageManufactureController {
             resetMaskControls();
         }
         setImageChanged(true);
-        info = MessageFormat.format(AppVaribles.getMessage("ImageSizeChanged"),
+        info = MessageFormat.format(AppVaribles.message("ImageSizeChanged"),
                 info, (int) Math.round(newImage.getWidth()) + "x"
                 + (int) Math.round(newImage.getHeight()));
         popInformation(info, 3000);

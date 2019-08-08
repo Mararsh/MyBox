@@ -26,23 +26,21 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageManufacture;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.controller.base.ImagesListController;
+import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine;
 import mara.mybox.image.ImageCombine.ArrayType;
 import mara.mybox.image.ImageCombine.CombineSizeType;
-import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.fxml.FxmlImageManufacture;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.tools.StringTools;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -50,12 +48,11 @@ import mara.mybox.tools.StringTools;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImagesCombineController extends ImageSourcesController {
+public class ImagesCombineController extends ImagesListController {
 
     protected String ImageCombineArrayTypeKey, ImageCombineCombineSizeTypeKey, ImageCombineColumnsKey,
             ImageCombineIntervalKey, ImageCombineMarginsKey, ImageCombineEachWidthKey, ImageCombineEachHeightKey,
             ImageCombineTotalWidthKey, ImageCombineTotalHeightKey, ImageCombineBgColorKey;
-
     private ImageCombine imageCombine;
 
     @FXML
@@ -83,7 +80,7 @@ public class ImagesCombineController extends ImageSourcesController {
     protected CheckBox openCheck;
 
     public ImagesCombineController() {
-        baseTitle = AppVaribles.getMessage("ImagesCombine");
+        baseTitle = AppVaribles.message("ImagesCombine");
 
         ImageCombineArrayTypeKey = "ImageCombineArrayTypeKey";
         ImageCombineCombineSizeTypeKey = "ImageCombineCombineSizeTypeKey";
@@ -95,7 +92,8 @@ public class ImagesCombineController extends ImageSourcesController {
         ImageCombineIntervalKey = "ImageCombineIntervalKey";
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         ImageCombineBgColorKey = "ImageCombineBgColorKey";
-        fileExtensionFilter = CommonValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -103,7 +101,6 @@ public class ImagesCombineController extends ImageSourcesController {
         try {
             imageCombine = new ImageCombine();
 
-            initTable();
             initArraySection();
             initSizeSection();
             initTargetSection();
@@ -149,15 +146,13 @@ public class ImagesCombineController extends ImageSourcesController {
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
                             AppVaribles.setUserConfigValue(ImageCombineIntervalKey, intervalValue + "");
-                            combineImages();
                             FxmlControl.setEditorNormal(intervalBox);
+                            combineImages();
                         } else {
-                            imageCombine.setIntervalValue(-1);
                             FxmlControl.setEditorBadStyle(intervalBox);
                         }
 
                     } catch (Exception e) {
-                        imageCombine.setIntervalValue(-1);
                         FxmlControl.setEditorBadStyle(intervalBox);
                     }
                 }
@@ -174,15 +169,13 @@ public class ImagesCombineController extends ImageSourcesController {
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
                             AppVaribles.setUserConfigValue(ImageCombineMarginsKey, MarginsValue + "");
-                            combineImages();
                             FxmlControl.setEditorNormal(MarginsBox);
+                            combineImages();
                         } else {
-                            imageCombine.setMarginsValue(-1);
                             FxmlControl.setEditorBadStyle(MarginsBox);
                         }
 
                     } catch (Exception e) {
-                        imageCombine.setMarginsValue(-1);
                         FxmlControl.setEditorBadStyle(MarginsBox);
                     }
                 }
@@ -205,15 +198,15 @@ public class ImagesCombineController extends ImageSourcesController {
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
                     RadioButton selected = (RadioButton) arrayGroup.getSelectedToggle();
-                    if (AppVaribles.getMessage("SingleColumn").equals(selected.getText())) {
+                    if (AppVaribles.message("SingleColumn").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.SingleColumn);
                         columnsBox.setDisable(true);
                         AppVaribles.setUserConfigValue(ImageCombineArrayTypeKey, "SingleColumn");
-                    } else if (AppVaribles.getMessage("SingleRow").equals(selected.getText())) {
+                    } else if (AppVaribles.message("SingleRow").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.SingleRow);
                         columnsBox.setDisable(true);
                         AppVaribles.setUserConfigValue(ImageCombineArrayTypeKey, "SingleRow");
-                    } else if (AppVaribles.getMessage("ColumnsNumber").equals(selected.getText())) {
+                    } else if (AppVaribles.message("ColumnsNumber").equals(selected.getText())) {
                         imageCombine.setArrayType(ArrayType.ColumnsNumber);
                         columnsBox.setDisable(false);
                         AppVaribles.setUserConfigValue(ImageCombineArrayTypeKey, "ColumnsNumber");
@@ -290,34 +283,34 @@ public class ImagesCombineController extends ImageSourcesController {
                     eachHeightInput.setDisable(true);
                     eachHeightInput.setStyle(null);
                     RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-                    if (AppVaribles.getMessage("KeepSize").equals(selected.getText())) {
+                    if (AppVaribles.message("KeepSize").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.KeepSize);
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "KeepSize");
                         combineImages();
-                    } else if (AppVaribles.getMessage("AlignAsBigger").equals(selected.getText())) {
+                    } else if (AppVaribles.message("AlignAsBigger").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsBigger);
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "AlignAsBigger");
                         combineImages();
-                    } else if (AppVaribles.getMessage("AlignAsSmaller").equals(selected.getText())) {
+                    } else if (AppVaribles.message("AlignAsSmaller").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.AlignAsSmaller);
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "AlignAsSmaller");
                         combineImages();
-                    } else if (AppVaribles.getMessage("EachWidth").equals(selected.getText())) {
+                    } else if (AppVaribles.message("EachWidth").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.EachWidth);
                         eachWidthInput.setDisable(false);
                         checkEachWidthValue();
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "EachWidth");
-                    } else if (AppVaribles.getMessage("EachHeight").equals(selected.getText())) {
+                    } else if (AppVaribles.message("EachHeight").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.EachHeight);
                         eachHeightInput.setDisable(false);
                         checkEachHeightValue();
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "EachHeight");
-                    } else if (AppVaribles.getMessage("TotalWidth").equals(selected.getText())) {
+                    } else if (AppVaribles.message("TotalWidth").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.TotalWidth);
                         totalWidthInput.setDisable(false);
                         checkTotalWidthValue();
                         AppVaribles.setUserConfigValue(ImageCombineCombineSizeTypeKey, "TotalWidth");
-                    } else if (AppVaribles.getMessage("TotalHeight").equals(selected.getText())) {
+                    } else if (AppVaribles.message("TotalHeight").equals(selected.getText())) {
                         imageCombine.setSizeType(CombineSizeType.TotalHeight);
                         totalHeightInput.setDisable(false);
                         checkTotalHeightValue();
@@ -427,12 +420,12 @@ public class ImagesCombineController extends ImageSourcesController {
         }
     }
 
-    private void initTargetSection() {
+    public void initTargetSection() {
         try {
 
             imageBar.disableProperty().bind(
                     Bindings.isEmpty(tableData)
-                            .or(hasSampled)
+                            .or(tableController.hasSampled)
             );
 
         } catch (Exception e) {
@@ -441,18 +434,9 @@ public class ImagesCombineController extends ImageSourcesController {
     }
 
     @Override
-    public void setImageChanged(boolean c) {
-        changed.setValue(c);
-        long pixels = 0;
-        for (ImageInformation m : tableData) {
-            pixels += m.getWidth() * m.getHeight();
-        }
-        sourcesLabel.setText(getMessage("TotalImages") + ":" + tableData.size() + "  "
-                + getMessage("TotalPixels") + ":" + StringTools.formatData(pixels));
-        if (hasSampled()) {
-            hasSampled.set(true);
-        } else {
-            hasSampled.set(false);
+    public void dataChanged() {
+        super.dataChanged();
+        if (!tableController.hasSampled()) {
             combineImages();
         }
     }
@@ -488,7 +472,6 @@ public class ImagesCombineController extends ImageSourcesController {
             imageLabel.setText("");
             return;
         }
-
         if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
             image = ImageManufacture.combineSingleColumn(imageCombine, tableData, false, true);
         } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
@@ -501,11 +484,12 @@ public class ImagesCombineController extends ImageSourcesController {
         if (image == null) {
             return;
         }
+
         xZoomStep = (int) image.getWidth() / 10;
         yZoomStep = (int) image.getHeight() / 10;
         imageView.setImage(image);
         fitSize();
-        imageLabel.setText(AppVaribles.getMessage("CombinedSize") + ": "
+        imageLabel.setText(AppVaribles.message("CombinedSize") + ": "
                 + (int) image.getWidth() + "x" + (int) image.getHeight());
     }
 
@@ -538,17 +522,12 @@ public class ImagesCombineController extends ImageSourcesController {
 
     @FXML
     @Override
-    public void saveAction() {
+    public void saveAsAction() {
         if (image == null) {
             return;
         }
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -575,12 +554,10 @@ public class ImagesCombineController extends ImageSourcesController {
                     @Override
                     public void run() {
                         if (ok) {
-                            popInformation(AppVaribles.getMessage("Successful"));
-                            if (openCheck.isSelected()) {
-                                openImageViewer(filename);
-                            }
+                            popInformation(AppVaribles.message("Successful"));
+                            openImageViewer(targetFile);
                         } else {
-                            popError(AppVaribles.getMessage("Failed"));
+                            popError(AppVaribles.message("Failed"));
                         }
                     }
                 });
@@ -591,6 +568,12 @@ public class ImagesCombineController extends ImageSourcesController {
         thread.setDaemon(true);
         thread.start();
 
+    }
+
+    @FXML
+    @Override
+    public void saveAction() {
+        saveAsAction();
     }
 
 }

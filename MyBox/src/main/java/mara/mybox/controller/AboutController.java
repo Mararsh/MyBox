@@ -22,7 +22,7 @@ public class AboutController extends BaseController {
     private Hyperlink userGuideLink;
 
     public AboutController() {
-        baseTitle = AppVaribles.getMessage("About");
+        baseTitle = AppVaribles.message("About");
     }
 
     @Override

@@ -12,7 +12,8 @@ import mara.mybox.color.Illuminant;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -72,12 +73,12 @@ public class WhitePointController extends XYZController {
                 standardRadio.setDisable(false);
             }
             RadioButton selected = (RadioButton) sourceGroup.getSelectedToggle();
-            if (getMessage("StandardIlluminant").equals(selected.getText())) {
+            if (message("StandardIlluminant").equals(selected.getText())) {
                 xInput.setDisable(true);
                 yInput.setDisable(true);
                 zInput.setDisable(true);
                 checkSourceIlluminant();
-            } else if (getMessage("Input").equals(selected.getText())) {
+            } else if (message("Input").equals(selected.getText())) {
                 xInput.setDisable(false);
                 yInput.setDisable(valueType == ValueType.Relative);
                 zInput.setDisable(valueType == ValueType.Normalized);

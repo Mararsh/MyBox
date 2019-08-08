@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -23,115 +25,20 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="3.0">
+        <VBox fx:id="mainPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                     <content>
-                        <VBox fx:id="sourcesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                        <VBox fx:id="tableBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                             <children>
-                                <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                    <items>
-                                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconAddFile.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconInsertFile.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconUp.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconDown.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconDeleteFile.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconClear.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconView.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconMeta.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconInfo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
-                                    </items>
-                                </ToolBar>
-                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="imageColumn" editable="false" prefWidth="150.0" text="%SourceImage" />
-                                        <TableColumn fx:id="pixelsColumn" prefWidth="150.0" text="%Pixels" />
-                                        <TableColumn fx:id="colorSpaceColumn" prefWidth="100.0" text="%Color" />
-                                        <TableColumn fx:id="fileColumn" prefWidth="600.0" text="%File" />
-                                        <TableColumn fx:id="indexColumn" prefWidth="100.0" text="%Index" />
-                                    </columns>
-                                </TableView>
-                                <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />
+                                <fx:include fx:id="table" source="ImagesTable.fxml" />
                             </children>
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Options" VBox.vgrow="NEVER">
+                <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
                     <content>
-                        <VBox fx:id="optionsBox" spacing="5.0">
+                        <VBox fx:id="optionsBox" minHeight="-Infinity" spacing="5.0">
                             <children>
                                 <HBox fx:id="sizeBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>
@@ -150,7 +57,7 @@ License:    Apache License Version 2.0
                                         <ComboBox fx:id="standardDpiBox" disable="true" prefWidth="200.0" />
                                     </children>
                                     <VBox.margin>
-                                        <Insets top="5.0" />
+                                        <Insets />
                                     </VBox.margin>
                                 </HBox>
                                 <HBox fx:id="sizeBox2" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -202,12 +109,36 @@ License:    Apache License Version 2.0
                                         <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
                                         <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                         <Label text="%EmptyForDefault" />
+                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                         <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/iconTips.png" />
                                             </image>
                                         </ImageView>
-                                        <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                    <children>
+                                        <Label text="%PageHeader">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </Label>
+                                        <TextField fx:id="headerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Label text="%FontFile">
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </Label>
+                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="300.0" />
+                                        <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                            </image>
+                                            <HBox.margin>
+                                                <Insets />
+                                            </HBox.margin>
+                                        </ImageView>
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -218,11 +149,6 @@ License:    Apache License Version 2.0
                                             </HBox.margin>
                                         </Label>
                                         <ComboBox fx:id="MarginsBox" editable="true" prefWidth="100.0" />
-                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber">
-                                            <HBox.margin>
-                                                <Insets left="40.0" />
-                                            </HBox.margin>
-                                        </CheckBox>
                                         <Label text="%Author">
                                             <padding>
                                                 <Insets left="10.0" />
@@ -231,55 +157,28 @@ License:    Apache License Version 2.0
                                                 <Insets left="20.0" />
                                             </HBox.margin>
                                         </Label>
-                                        <TextField fx:id="authorInput" prefWidth="220.0">
+                                        <TextField fx:id="authorInput" prefWidth="300.0">
                                             <HBox.margin>
                                                 <Insets />
                                             </HBox.margin>
                                         </TextField>
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label text="%PageHeader">
+                                        <CheckBox fx:id="pageNumberCheck" mnemonicParsing="false" selected="true" text="%AddPageNumber">
                                             <HBox.margin>
-                                                <Insets />
+                                                <Insets left="40.0" />
                                             </HBox.margin>
-                                        </Label>
-                                        <TextField fx:id="headerInput" prefWidth="350.0" />
-                                        <ImageView fx:id="fontTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconTips.png" />
-                                            </image>
-                                            <HBox.margin>
-                                                <Insets left="10.0" />
-                                            </HBox.margin>
-                                        </ImageView>
-                                        <Label text="%FontFile">
-                                            <HBox.margin>
-                                                <Insets />
-                                            </HBox.margin>
-                                        </Label>
-                                        <ComboBox fx:id="fontBox" editable="true" prefWidth="200.0" />
+                                        </CheckBox>
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
                     </content>
                 </TitledPane>
-                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="targetBar" HBox.hgrow="NEVER">
-                            <items>
-                                <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
-                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popTargetFile" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
-                            </items>
-                        </ToolBar>
-                    </children>
+                <HBox fx:id="targetBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" text="  " visible="false" HBox.hgrow="ALWAYS" />
+                          <CheckBox fx:id="viewCheck" mnemonicParsing="false" selected="true" text="%ViewAfterSave" />
+                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+               </children>
                 </HBox>
             </children>
             <BorderPane.margin>

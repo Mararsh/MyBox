@@ -126,7 +126,7 @@ public class FxmlImageManufacture {
 
     public static Image clearAlpha(Image image) {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.image.ImageManufacture.clearAlpha(source);
+        BufferedImage target = mara.mybox.image.ImageManufacture.removeAlpha(source);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

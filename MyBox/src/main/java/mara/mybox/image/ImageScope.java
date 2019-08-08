@@ -15,8 +15,9 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -1665,19 +1666,19 @@ public class ImageScope {
         if (null != scopeType) {
             switch (scopeType) {
                 case All:
-                    s = getMessage("WholeImage");
+                    s = message("WholeImage");
                     break;
                 case Matting:
                     String pointsString = "";
                     if (points.isEmpty()) {
-                        pointsString += getMessage("None");
+                        pointsString += message("None");
                     } else {
                         for (IntPoint p : points) {
                             pointsString += "(" + p.getX() + "," + p.getY() + ") ";
                         }
                     }
-                    s = getMessage("Points") + ":" + pointsString;
-                    s += " " + getMessage("ColorDistance") + ":" + colorDistance;
+                    s = message("Points") + ":" + pointsString;
+                    s += " " + message("ColorDistance") + ":" + colorDistance;
                     break;
                 case Color:
                     s = getScopeColorText();
@@ -1693,7 +1694,7 @@ public class ImageScope {
         String s = "";
         String colorString = "";
         if (colors.isEmpty()) {
-            colorString += getMessage("None") + " ";
+            colorString += message("None") + " ";
         } else {
             for (Color c : colors) {
                 colorString += c.toString() + " ";
@@ -1701,31 +1702,31 @@ public class ImageScope {
         }
         switch (colorScopeType) {
             case AllColor:
-                s += " " + getMessage("AllColors");
+                s += " " + message("AllColors");
                 break;
             case Color:
             case Red:
             case Green:
             case Blue:
-                s += " " + getMessage("SelectedColors") + ":" + colorString;
-                s += getMessage("ColorDistance") + ":" + colorDistance;
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("ColorDistance") + ":" + colorDistance;
                 if (colorExcluded) {
-                    s += " " + getMessage("Excluded");
+                    s += " " + message("Excluded");
                 }
                 break;
             case Brightness:
             case Saturation:
-                s += " " + getMessage("SelectedColors") + ":" + colorString;
-                s += getMessage("ColorDistance") + ":" + (int) (hsbDistance * 100);
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("ColorDistance") + ":" + (int) (hsbDistance * 100);
                 if (colorExcluded) {
-                    s += " " + getMessage("Excluded");
+                    s += " " + message("Excluded");
                 }
                 break;
             case Hue:
-                s += " " + getMessage("SelectedColors") + ":" + colorString;
-                s += getMessage("HueDistance") + ":" + (int) (hsbDistance * 360);
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("HueDistance") + ":" + (int) (hsbDistance * 360);
                 if (colorExcluded) {
-                    s += " " + getMessage("Excluded");
+                    s += " " + message("Excluded");
                 }
                 break;
             default:

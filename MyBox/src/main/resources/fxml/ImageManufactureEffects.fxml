@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.shape.*?>
@@ -223,14 +221,10 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
                                                     <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                        <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Button mnemonicParsing="false" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar HBox.hgrow="NEVER">
-                                                            <items>
-                                                                <HBox fx:id="setBox" alignment="CENTER_LEFT" spacing="5.0" >
+                                                                <Label maxWidth="1.7976931348623157E308" text=" " visible="false"  HBox.hgrow="ALWAYS"/>
+                                                                <HBox fx:id="setBox" alignment="CENTER_LEFT" spacing="5.0">
                                                                     <children>
                                                                         <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -239,7 +233,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </children>
                                                                 </HBox>
-                                                                <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
+                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

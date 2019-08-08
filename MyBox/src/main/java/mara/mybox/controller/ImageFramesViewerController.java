@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -12,17 +13,18 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.controller.base.ImagesListController;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.data.VisitHistory;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -30,13 +32,13 @@ import static mara.mybox.value.AppVaribles.getMessage;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageFramesViewerController extends ImageSourcesController {
+public class ImageFramesViewerController extends ImagesListController {
 
     @FXML
     protected Button extractButton, editButton;
 
     public ImageFramesViewerController() {
-        baseTitle = AppVaribles.getMessage("ImageFramesViewer");
+        baseTitle = AppVaribles.message("ImageFramesViewer");
         SourceFileType = VisitHistory.FileType.MultipleFrames;
         SourcePathType = VisitHistory.FileType.MultipleFrames;
         TargetFileType = VisitHistory.FileType.MultipleFrames;
@@ -44,38 +46,27 @@ public class ImageFramesViewerController extends ImageSourcesController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        fileExtensionFilter = new ArrayList() {
+        sourceExtensionFilter = new ArrayList() {
             {
                 add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
                 add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
                 add(new FileChooser.ExtensionFilter("gif", "*.gif"));
             }
         };
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
     public void initializeNext() {
         try {
-            initTable();
-            sourcesBox.setDisable(true);
+            tableBox.setDisable(true);
             editButton.setDisable(true);
+
+            extractButton.disableProperty().bind(Bindings.isEmpty(tableData)
+                    .or(Bindings.isEmpty(tableView.getSelectionModel().getSelectedItems()))
+            );
         } catch (Exception e) {
             logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void checkTableSelected() {
-        int selected = tableView.getSelectionModel().getSelectedIndex();
-        boolean none = (selected < 0);
-//        infoButton.setDisable(none);
-//        metaButton.setDisable(none);
-        viewButton.setDisable(none);
-        extractButton.setDisable(none);
-        if (none) {
-            bottomLabel.setText("");
-        } else {
-            bottomLabel.setText(getMessage("DoubleClickToView"));
         }
     }
 
@@ -84,7 +75,7 @@ public class ImageFramesViewerController extends ImageSourcesController {
         tableData.clear();
         sourceFile = file;
         getMyStage().setTitle(getBaseTitle() + "  " + sourceFile.getAbsolutePath());
-        sourcesBox.setDisable(false);
+        tableBox.setDisable(false);
         editButton.setDisable(false);
         recordFileOpened(file);
 
@@ -137,16 +128,13 @@ public class ImageFramesViewerController extends ImageSourcesController {
                         public void run() {
                             if (ret.isEmpty()) {
                                 if (hasSampled) {
-                                    alertWarning(AppVaribles.getMessage("ImageSampled"));
-                                    bottomLabel.setText(AppVaribles.getMessage("ImageSampled"));
+                                    alertWarning(AppVaribles.message("ImageSampled"));
+                                    bottomLabel.setText(AppVaribles.message("ImageSampled"));
                                 }
-                                isSettingValues = true;
                                 tableData.addAll(infos);
                                 tableView.refresh();
-                                isSettingValues = false;
-                                setImageChanged(true);
                             } else {
-                                popError(AppVaribles.getMessage(ret));
+                                popError(AppVaribles.message(ret));
                             }
 
                         }
@@ -158,34 +146,6 @@ public class ImageFramesViewerController extends ImageSourcesController {
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();
-    }
-
-    @FXML
-    @Override
-    public void infoAction() {
-        showImageInformation(imageInformation);
-    }
-
-    @FXML
-    @Override
-    public void popMetaData() {
-        showImageMetaData(imageInformation);
-    }
-
-    @FXML
-    protected void selectAll() {
-        isSettingValues = true;
-        tableView.getSelectionModel().selectAll();
-        isSettingValues = false;
-        checkTableSelected();
-    }
-
-    @FXML
-    protected void unselectAll() {
-        isSettingValues = true;
-        tableView.getSelectionModel().clearSelection();
-        isSettingValues = false;
-        checkTableSelected();
     }
 
     @FXML
@@ -208,6 +168,12 @@ public class ImageFramesViewerController extends ImageSourcesController {
     }
 
     @FXML
+    @Override
+    public void saveAsAction() {
+        extractAction();
+    }
+
+    @FXML
     protected void extractAction() {
         try {
             if (sourceFile == null || tableData.isEmpty()) {
@@ -219,18 +185,14 @@ public class ImageFramesViewerController extends ImageSourcesController {
                 return;
             }
 
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
-            fileChooser.setTitle(getMessage("FilePrefixInput"));
-            final File targetFile = fileChooser.showSaveDialog(getMyStage());
-            if (targetFile == null) {
+            final File tFile = chooseSaveFile(message("FilePrefixInput"),
+                    AppVaribles.getUserConfigPath(targetPathKey),
+                    FileTools.getFilePrefix(sourceFile.getName()),
+                    CommonValues.ImageExtensionFilter, true);
+            if (tFile == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
+            AppVaribles.setUserConfigValue(targetPathKey, tFile.getParent());
 
             task = new Task<Void>() {
                 private List<String> filenames;
@@ -238,8 +200,8 @@ public class ImageFramesViewerController extends ImageSourcesController {
 
                 @Override
                 protected Void call() throws Exception {
-                    String format = FileTools.getFileSuffix(targetFile.getAbsolutePath()).toLowerCase();
-                    String filePrefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+                    String format = FileTools.getFileSuffix(tFile.getAbsolutePath()).toLowerCase();
+                    String filePrefix = FileTools.getFilePrefix(tFile.getAbsolutePath());
                     String filename;
                     int digit = (selectedImages.size() + "").length();
                     filenames = new ArrayList<>();

@@ -6,12 +6,11 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -25,7 +24,7 @@ public class FileFilterController extends FileEditerController {
     private TextField filterConditionsLabel;
 
     public FileFilterController() {
-        baseTitle = AppVaribles.getMessage("FileFilter");
+        baseTitle = AppVaribles.message("FileFilter");
 
         setTextType();
     }
@@ -61,7 +60,7 @@ public class FileFilterController extends FileEditerController {
         String conditions = " (" + sourceInformation.filterTypeName() + ":"
                 + Arrays.asList(sourceInformation.getFilterStrings()) + ") ";
         if (!initConditions.isEmpty()) {
-            filterConditions = initConditions + AppVaribles.getMessage("And") + conditions;
+            filterConditions = initConditions + AppVaribles.message("And") + conditions;
         } else {
             filterConditions = conditions;
         }
@@ -84,13 +83,13 @@ public class FileFilterController extends FileEditerController {
                     public void run() {
                         if (file != null) {
                             if (file.length() == 0) {
-                                popInformation(AppVaribles.getMessage("NoData"));
+                                popInformation(AppVaribles.message("NoData"));
                             } else {
                                 openTextFile(file);
                                 saveButton.setDisable(true);
                             }
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -106,13 +105,8 @@ public class FileFilterController extends FileEditerController {
     @FXML
     @Override
     public void saveAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(sourcePathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+                null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -142,11 +136,11 @@ public class FileFilterController extends FileEditerController {
                         if (ok) {
                             FileEditerController controller = openNewStage();
                             controller.openFile(file);
-                            popInformation(AppVaribles.getMessage("Successful"));
+                            popInformation(AppVaribles.message("Successful"));
                             FxmlStage.closeStage(getMyStage());
 //                            sourceInformation.getFile().delete();
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });

@@ -17,12 +17,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -47,12 +47,12 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     protected CheckBox preAlphaCheck, alphaWhiteCheck;
 
     public ImageManufactureBatchShadowController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchShadow");
+        baseTitle = AppVaribles.message("ImageManufactureBatchShadow");
 
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -125,12 +125,12 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
         perBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) shadowGroup.getSelectedToggle();
-        if (getMessage("WidthPercentage").equals(selected.getText())) {
+        if (message("WidthPercentage").equals(selected.getText())) {
             isPercent = true;
             perBox.setDisable(false);
             checkPercent();
 
-        } else if (getMessage("Custom").equals(selected.getText())) {
+        } else if (message("Custom").equals(selected.getText())) {
             isPercent = false;
             shadowBox.setDisable(false);
             checkShadow();

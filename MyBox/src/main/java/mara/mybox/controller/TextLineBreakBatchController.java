@@ -7,10 +7,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -24,7 +24,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
     protected ToggleGroup lbGroup;
 
     public TextLineBreakBatchController() {
-        baseTitle = AppVaribles.getMessage("TextLineBreakBatch");
+        baseTitle = AppVaribles.message("TextLineBreakBatch");
 
     }
 
@@ -44,41 +44,47 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
 
     protected void checkLineBreak() {
         RadioButton selected = (RadioButton) lbGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("LF").equals(selected.getText())) {
+        if (AppVaribles.message("LF").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.LF);
-        } else if (AppVaribles.getMessage("CR").equals(selected.getText())) {
+        } else if (AppVaribles.message("CR").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.CR);
-        } else if (AppVaribles.getMessage("CRLF").equals(selected.getText())) {
+        } else if (AppVaribles.message("CRLF").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.CRLF);
         }
         targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
     }
 
     @Override
-    protected String handleFile(File srcFile, File targetFile) {
+    public String handleFile(File srcFile, File targetPath) {
         try {
+            File target = makeTargetFile(srcFile, targetPath);
+            if (target == null) {
+                return AppVaribles.message("Skip");
+            }
             sourceInformation.setFile(srcFile);
+            logger.debug(srcFile);
             sourceInformation.setLineBreak(TextTools.checkLineBreak(srcFile));
             sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
             if (autoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
-                    return AppVaribles.getMessage("Failed");
+                    return AppVaribles.message("Failed");
                 }
 
             }
-            targetInformation.setFile(targetFile);
+            targetInformation.setFile(target);
+            logger.debug(target);
             targetInformation.setCharset(sourceInformation.getCharset());
             if (TextTools.convertLineBreak(sourceInformation, targetInformation)) {
-                actualParameters.finalTargetName = targetFile.getAbsolutePath();
-                targetFiles.add(targetFile);
-                return AppVaribles.getMessage("Successful");
+                actualParameters.finalTargetName = target.getAbsolutePath();
+                targetFiles.add(target);
+                return AppVaribles.message("Successful");
             } else {
-                return AppVaribles.getMessage("Failed");
+                return AppVaribles.message("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.getMessage("Failed");
+            return AppVaribles.message("Failed");
         }
     }
 

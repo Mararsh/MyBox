@@ -22,8 +22,9 @@ import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -51,7 +52,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             bradfordColumn, xyzColumn, vonCloumn;
 
     public ChromaticAdaptationMatrixController() {
-        baseTitle = AppVaribles.getMessage("ChromaticAdaptationMatrix");
+        baseTitle = AppVaribles.message("ChromaticAdaptationMatrix");
         exportName = "ChromaticAdaptationMatrices";
     }
 
@@ -149,8 +150,8 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
         Map<String, Object> run = ChromaticAdaptation.matrixDemo(
                 swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale);
         calculateArea.setText(MatrixTools.print((double[][]) run.get("matrix"), 0, scale));
-        calculateArea.appendText("\n\n----------------" + getMessage("CalculationProcedure") + "----------------\n");
-        calculateArea.appendText(getMessage("ReferTo") + "： \n");
+        calculateArea.appendText("\n\n----------------" + message("CalculationProcedure") + "----------------\n");
+        calculateArea.appendText(message("ReferTo") + "： \n");
         calculateArea.appendText("            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n");
         calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
         calculateArea.appendText((String) run.get("procedure"));

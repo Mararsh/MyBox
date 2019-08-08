@@ -1,7 +1,7 @@
 package mara.mybox.image;
 
 import java.awt.Color;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -36,10 +36,10 @@ public class ImageColor {
 
     @Override
     public String toString() {
-        return getMessage("Red") + ": " + red
-                + getMessage("Green") + ": " + green
-                + getMessage("Blue") + ": " + blue
-                + getMessage("Alpha") + ": " + alpha;
+        return message("Red") + ": " + red
+                + message("Green") + ": " + green
+                + message("Blue") + ": " + blue
+                + message("Alpha") + ": " + alpha;
     }
 
     /*
@@ -153,7 +153,7 @@ public class ImageColor {
         int redDiff = color1.getRed() - color2.getRed();
         int greenDiff = color1.getGreen() - color2.getGreen();
         int blueDiff = color1.getBlue() - color2.getBlue();
-        int v = (int) Math.round(2 * redDiff * redDiff + 4 * greenDiff * greenDiff + 3 * blueDiff * blueDiff);
+        int v = Math.round(2 * redDiff * redDiff + 4 * greenDiff * greenDiff + 3 * blueDiff * blueDiff);
         return v;
     }
 
@@ -272,6 +272,30 @@ public class ImageColor {
         return new Color(
                 (int) (color.getRed() * 255), (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255), (int) (color.getOpacity() * 255));
+    }
+
+    // https://www.cnblogs.com/xiaonanxia/p/9448444.html
+    public static Color blendAlpha(Color color, float opocity, Color bgColor, boolean keepAlpha) {
+        int red = (int) (color.getRed() * opocity + bgColor.getRed() * (1 - opocity));
+        int green = (int) (color.getGreen() * opocity + bgColor.getGreen() * (1 - opocity));
+        int blue = (int) (color.getBlue() * opocity + bgColor.getBlue() * (1 - opocity));
+        if (keepAlpha) {
+            return new Color(red, green, blue, Math.round(opocity * 255));
+        } else {
+            return new Color(red, green, blue);
+        }
+    }
+
+    public static Color blendAlpha(Color color, int opocity, Color bgColor, boolean keepAlpha) {
+        return blendAlpha(color, opocity / 255f, bgColor, keepAlpha);
+    }
+
+    public static Color blendAlpha(Color color, float opocity, Color bgColor) {
+        return blendAlpha(color, opocity, bgColor, false);
+    }
+
+    public static Color blendAlpha(Color color, int opocity, Color bgColor) {
+        return blendAlpha(color, opocity, bgColor, false);
     }
 
     // https://en.wikipedia.org/wiki/YCbCr

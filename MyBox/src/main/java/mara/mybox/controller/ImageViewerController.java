@@ -1,8 +1,7 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import com.sun.javafx.charts.Legend;
-import mara.mybox.fxml.FxmlStage;
+import com.sun.javafx.charts.Legend.LegendItem;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -31,7 +30,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
@@ -50,27 +48,28 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.controller.base.ImageMaskBaseController;
+import mara.mybox.controller.base.ImageManufactureController;
+import mara.mybox.controller.base.ImageMaskController;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.image.ImageFileInformation;
 import mara.mybox.data.IntStatistic;
 import mara.mybox.fxml.FxmlColor;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.fxml.IntStatisticColorCell;
+import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageStatistic;
 import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -78,9 +77,9 @@ import static mara.mybox.value.AppVaribles.logger;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageViewerController extends ImageMaskBaseController {
+public class ImageViewerController extends ImageMaskController {
 
-    final protected String ImageConfirmDeleteKey, OpenAfterSaveKey, ModifyImageKey,
+    final protected String ImageConfirmDeleteKey, ImageOpenSaveKey, ModifyImageKey,
             ImageDataGreyShowKey,
             ImageDataRedShowKey, ImageDataGreenShowKey, ImageDataBlueShowKey, ImageDataAlphaShowKey,
             ImageDataHueShowKey, ImageDataBrightnessShowKey, ImageDataSaturationShowKey;
@@ -123,10 +122,10 @@ public class ImageViewerController extends ImageMaskBaseController {
     protected ComboBox<String> loadWidthBox, sortBox;
 
     public ImageViewerController() {
-        baseTitle = AppVaribles.getMessage("ImageViewer");
+        baseTitle = AppVaribles.message("ImageViewer");
 
         ImageConfirmDeleteKey = "ImageConfirmDeleteKey";
-        OpenAfterSaveKey = "ImageOpenAfterSaveKey";
+        ImageOpenSaveKey = "ImageOpenSaveKey";
         ModifyImageKey = "ModifyImageKey";
         TipsLabelKey = "ImageViewerTips";
         ImageDataShowKey = "ImageDataShowKey";
@@ -188,18 +187,18 @@ public class ImageViewerController extends ImageMaskBaseController {
         }
 
         if (manufactureButton != null) {
-            FxmlControl.setTooltip(manufactureButton, new Tooltip(getMessage("Manufacture")));
+            FxmlControl.setTooltip(manufactureButton, new Tooltip(message("Manufacture")));
         }
         if (splitButton != null) {
-            FxmlControl.setTooltip(splitButton, new Tooltip(getMessage("Split")));
+            FxmlControl.setTooltip(splitButton, new Tooltip(message("Split")));
         }
 
         if (sampleButton != null) {
-            FxmlControl.setTooltip(sampleButton, new Tooltip(getMessage("Sample")));
+            FxmlControl.setTooltip(sampleButton, new Tooltip(message("Sample")));
         }
 
         if (browseButton != null) {
-            FxmlControl.setTooltip(browseButton, new Tooltip(getMessage("Browse")));
+            FxmlControl.setTooltip(browseButton, new Tooltip(message("Browse")));
         }
 
         if (selectCheck != null) {
@@ -224,6 +223,16 @@ public class ImageViewerController extends ImageMaskBaseController {
                 }
             });
             deleteConfirmCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageConfirmDeleteKey, true));
+        }
+
+        if (openSaveCheck != null) {
+            openSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    AppVaribles.setUserConfigValue(ImageOpenSaveKey, openSaveCheck.isSelected());
+                }
+            });
+            openSaveCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageOpenSaveKey, true));
         }
 
         if (rulerXCheck != null) {
@@ -290,14 +299,14 @@ public class ImageViewerController extends ImageMaskBaseController {
 
         loadWidth = defaultLoadWidth;
         if (loadWidthBox != null) {
-            List<String> values = Arrays.asList(AppVaribles.getMessage("OrignalSize"),
+            List<String> values = Arrays.asList(AppVaribles.message("OrignalSize"),
                     "512", "1024", "256", "128", "2048", "100", "80", "4096");
             loadWidthBox.getItems().addAll(values);
             loadWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
 //                    logger.debug(oldValue + " " + newValue + " " + (String) loadWidthBox.getSelectionModel().getSelectedItem());
-                    if (AppVaribles.getMessage("OrignalSize").equals(newValue)) {
+                    if (AppVaribles.message("OrignalSize").equals(newValue)) {
                         loadWidth = -1;
                     } else {
                         try {
@@ -326,7 +335,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                 loadWidthBox.getSelectionModel().select(v + "");
             }
             isSettingValues = false;
-            FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVaribles.getMessage("ImageLoadWidthCommnets")));
+            FxmlControl.setTooltip(loadWidthBox, new Tooltip(AppVaribles.message("ImageLoadWidthCommnets")));
         }
 
     }
@@ -438,44 +447,44 @@ public class ImageViewerController extends ImageMaskBaseController {
             loadDataBox();
 
             dataTable.setItems(statisticList);
-            colorColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, String>("name"));
+            colorColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
             colorColumn.setCellFactory(new Callback<TableColumn<IntStatistic, String>, TableCell<IntStatistic, String>>() {
                 @Override
                 public TableCell<IntStatistic, String> call(TableColumn<IntStatistic, String> param) {
                     return new NameCell();
                 }
             });
-            meanColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("mean"));
+            meanColumn.setCellValueFactory(new PropertyValueFactory<>("mean"));
             meanColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                     return new IntStatisticColorCell();
                 }
             });
-            varianceColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("variance"));
-            skewnessColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("skewness"));
-            medianColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("median"));
+            varianceColumn.setCellValueFactory(new PropertyValueFactory<>("variance"));
+            skewnessColumn.setCellValueFactory(new PropertyValueFactory<>("skewness"));
+            medianColumn.setCellValueFactory(new PropertyValueFactory<>("median"));
             medianColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                     return new IntStatisticColorCell();
                 }
             });
-            modeColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("mode"));
+            modeColumn.setCellValueFactory(new PropertyValueFactory<>("mode"));
             modeColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                     return new IntStatisticColorCell();
                 }
             });
-            maximumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("maximum"));
+            maximumColumn.setCellValueFactory(new PropertyValueFactory<>("maximum"));
             maximumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                     return new IntStatisticColorCell();
                 }
             });
-            minimumColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("minimum"));
+            minimumColumn.setCellValueFactory(new PropertyValueFactory<>("minimum"));
             minimumColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
                 @Override
                 public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
@@ -484,15 +493,15 @@ public class ImageViewerController extends ImageMaskBaseController {
             });
 
             colorTable = new HashMap<>();
-            colorTable.put(AppVaribles.getMessage("Red"), Color.RED);
-            colorTable.put(AppVaribles.getMessage("Green"), Color.GREEN);
-            colorTable.put(AppVaribles.getMessage("Blue"), Color.BLUE);
-            colorTable.put(AppVaribles.getMessage("Alpha"), Color.CORNFLOWERBLUE);
-            colorTable.put(AppVaribles.getMessage("Hue"), Color.MEDIUMVIOLETRED);
-            colorTable.put(AppVaribles.getMessage("Brightness"), Color.GOLD);
-            colorTable.put(AppVaribles.getMessage("Saturation"), Color.MEDIUMAQUAMARINE);
-            colorTable.put(AppVaribles.getMessage("Gray"), Color.GRAY);
-            colorTable.put(AppVaribles.getMessage("Grey"), Color.GREY);
+            colorTable.put(AppVaribles.message("Red"), Color.RED);
+            colorTable.put(AppVaribles.message("Green"), Color.GREEN);
+            colorTable.put(AppVaribles.message("Blue"), Color.BLUE);
+            colorTable.put(AppVaribles.message("Alpha"), Color.CORNFLOWERBLUE);
+            colorTable.put(AppVaribles.message("Hue"), Color.MEDIUMVIOLETRED);
+            colorTable.put(AppVaribles.message("Brightness"), Color.GOLD);
+            colorTable.put(AppVaribles.message("Saturation"), Color.MEDIUMAQUAMARINE);
+            colorTable.put(AppVaribles.message("Gray"), Color.GRAY);
+            colorTable.put(AppVaribles.message("Grey"), Color.GREY);
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -507,7 +516,7 @@ public class ImageViewerController extends ImageMaskBaseController {
         protected void updateItem(final String item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !empty) {
-                text.setText(AppVaribles.getMessage(item));
+                text.setText(AppVaribles.message(item));
                 setGraphic(text);
             }
         }
@@ -607,14 +616,14 @@ public class ImageViewerController extends ImageMaskBaseController {
         histogramChart.getData().clear();
         List<IntStatistic> statistic = (List<IntStatistic>) imageData.get("statistic");
         statisticList.addAll(statistic);
-        showHistogram(AppVaribles.getMessage("Grey"), greyHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Red"), redHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Green"), greenHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Blue"), blueHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Hue"), hueHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Brightness"), brightnessHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Saturation"), saturationHistCheck.isSelected());
-        showHistogram(AppVaribles.getMessage("Alpha"), alphaHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Grey"), greyHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Red"), redHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Green"), greenHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Blue"), blueHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Hue"), hueHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Brightness"), brightnessHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Saturation"), saturationHistCheck.isSelected());
+        showHistogram(AppVaribles.message("Alpha"), alphaHistCheck.isSelected());
         adjustSplitPane();
     }
 
@@ -639,19 +648,19 @@ public class ImageViewerController extends ImageMaskBaseController {
         }
 
         int[] histogram;
-        if (AppVaribles.getMessage("Red").equals(colorName)) {
+        if (AppVaribles.message("Red").equals(colorName)) {
             histogram = (int[]) imageData.get("redHistogram");
-        } else if (AppVaribles.getMessage("Green").equals(colorName)) {
+        } else if (AppVaribles.message("Green").equals(colorName)) {
             histogram = (int[]) imageData.get("greenHistogram");
-        } else if (AppVaribles.getMessage("Blue").equals(colorName)) {
+        } else if (AppVaribles.message("Blue").equals(colorName)) {
             histogram = (int[]) imageData.get("blueHistogram");
-        } else if (AppVaribles.getMessage("Alpha").equals(colorName)) {
+        } else if (AppVaribles.message("Alpha").equals(colorName)) {
             histogram = (int[]) imageData.get("alphaHistogram");
-        } else if (AppVaribles.getMessage("Hue").equals(colorName)) {
+        } else if (AppVaribles.message("Hue").equals(colorName)) {
             histogram = (int[]) imageData.get("hueHistogram");
-        } else if (AppVaribles.getMessage("Brightness").equals(colorName)) {
+        } else if (AppVaribles.message("Brightness").equals(colorName)) {
             histogram = (int[]) imageData.get("brightnessHistogram");
-        } else if (AppVaribles.getMessage("Saturation").equals(colorName)) {
+        } else if (AppVaribles.message("Saturation").equals(colorName)) {
             histogram = (int[]) imageData.get("saturationHistogram");
         } else {
             histogram = (int[]) imageData.get("greyHistogram");
@@ -678,7 +687,10 @@ public class ImageViewerController extends ImageMaskBaseController {
                 || histogramChart == null || histogramChart.getData() == null) {
             return;
         }
-        for (Object s : histogramChart.getData()) {
+
+        List<Object> data = new ArrayList();
+        data.addAll(histogramChart.getData());
+        for (Object s : data) {
             XYChart.Series xy = (XYChart.Series) s;
             if (color.equals(xy.getName())) {
                 histogramChart.getData().remove(s);
@@ -693,13 +705,15 @@ public class ImageViewerController extends ImageMaskBaseController {
         if (histogramChart == null) {
             return;
         }
-        for (Node n : histogramChart.getChildrenUnmodifiable()) {
-            if (n instanceof Legend) {
-                for (Legend.LegendItem legendItem : ((Legend) n).getItems()) {
-                    String colorString = FxmlColor.rgb2Hex(colorTable.get(legendItem.getText()));
-                    legendItem.getSymbol().setStyle("-fx-background-color: " + colorString);
-                }
+        try {
+            Legend legend = (Legend) histogramChart.lookup(".chart-legend");
+            List<LegendItem> legendItems = legend.getItems();
+            for (LegendItem item : legendItems) {
+                String colorString = FxmlColor.rgb2Hex(colorTable.get(item.getText()));
+                item.getSymbol().setStyle("-fx-background-color: " + colorString);
             }
+        } catch (Exception e) {
+
         }
     }
 
@@ -727,19 +741,19 @@ public class ImageViewerController extends ImageMaskBaseController {
         String name = checked.getText();
         boolean v = checked.isSelected();
         showHistogram(name, v);
-        if (AppVaribles.getMessage("Red").equals(name)) {
+        if (AppVaribles.message("Red").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataRedShowKey, v);
-        } else if (AppVaribles.getMessage("Green").equals(name)) {
+        } else if (AppVaribles.message("Green").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataGreenShowKey, v);
-        } else if (AppVaribles.getMessage("Blue").equals(name)) {
+        } else if (AppVaribles.message("Blue").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataBlueShowKey, v);
-        } else if (AppVaribles.getMessage("Alpha").equals(name)) {
+        } else if (AppVaribles.message("Alpha").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataAlphaShowKey, v);
-        } else if (AppVaribles.getMessage("Hue").equals(name)) {
+        } else if (AppVaribles.message("Hue").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataHueShowKey, v);
-        } else if (AppVaribles.getMessage("Brightness").equals(name)) {
+        } else if (AppVaribles.message("Brightness").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataBrightnessShowKey, v);
-        } else if (AppVaribles.getMessage("Saturation").equals(name)) {
+        } else if (AppVaribles.message("Saturation").equals(name)) {
             AppVaribles.setUserConfigValue(ImageDataSaturationShowKey, v);
         } else {
             AppVaribles.setUserConfigValue(ImageDataGreyShowKey, v);
@@ -767,40 +781,40 @@ public class ImageViewerController extends ImageMaskBaseController {
 
     protected void initNavBar() {
         if (sortBox != null) {
-            List<String> svalues = Arrays.asList(AppVaribles.getMessage("ModifyTimeDesc"),
-                    AppVaribles.getMessage("ModifyTimeAsc"),
-                    AppVaribles.getMessage("SizeDesc"),
-                    AppVaribles.getMessage("SizeAsc"),
-                    AppVaribles.getMessage("NameDesc"),
-                    AppVaribles.getMessage("NameAsc"),
-                    AppVaribles.getMessage("FormatDesc"),
-                    AppVaribles.getMessage("FormatAsc"),
-                    AppVaribles.getMessage("CreateTimeDesc"),
-                    AppVaribles.getMessage("CreateTimeAsc")
+            List<String> svalues = Arrays.asList(AppVaribles.message("ModifyTimeDesc"),
+                    AppVaribles.message("ModifyTimeAsc"),
+                    AppVaribles.message("SizeDesc"),
+                    AppVaribles.message("SizeAsc"),
+                    AppVaribles.message("NameDesc"),
+                    AppVaribles.message("NameAsc"),
+                    AppVaribles.message("FormatDesc"),
+                    AppVaribles.message("FormatAsc"),
+                    AppVaribles.message("CreateTimeDesc"),
+                    AppVaribles.message("CreateTimeAsc")
             );
             sortBox.getItems().addAll(svalues);
             sortBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (AppVaribles.getMessage("ModifyTimeDesc").equals(newValue)) {
+                    if (AppVaribles.message("ModifyTimeDesc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.ModifyTimeDesc;
-                    } else if (AppVaribles.getMessage("ModifyTimeAsc").equals(newValue)) {
+                    } else if (AppVaribles.message("ModifyTimeAsc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.ModifyTimeAsc;
-                    } else if (AppVaribles.getMessage("SizeDesc").equals(newValue)) {
+                    } else if (AppVaribles.message("SizeDesc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.SizeDesc;
-                    } else if (AppVaribles.getMessage("SizeAsc").equals(newValue)) {
+                    } else if (AppVaribles.message("SizeAsc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.SizeAsc;
-                    } else if (AppVaribles.getMessage("NameDesc").equals(newValue)) {
+                    } else if (AppVaribles.message("NameDesc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.NameDesc;
-                    } else if (AppVaribles.getMessage("NameAsc").equals(newValue)) {
+                    } else if (AppVaribles.message("NameAsc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.NameAsc;
-                    } else if (AppVaribles.getMessage("FormatDesc").equals(newValue)) {
+                    } else if (AppVaribles.message("FormatDesc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.FormatDesc;
-                    } else if (AppVaribles.getMessage("FormatAsc").equals(newValue)) {
+                    } else if (AppVaribles.message("FormatAsc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.FormatAsc;
-                    } else if (AppVaribles.getMessage("CreateTimeDesc").equals(newValue)) {
+                    } else if (AppVaribles.message("CreateTimeDesc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.CreateTimeDesc;
-                    } else if (AppVaribles.getMessage("CreateTimeAsc").equals(newValue)) {
+                    } else if (AppVaribles.message("CreateTimeAsc").equals(newValue)) {
                         sortMode = FileTools.FileSortMode.CreateTimeAsc;
                     } else {
                         sortMode = FileTools.FileSortMode.ModifyTimeDesc;
@@ -903,7 +917,7 @@ public class ImageViewerController extends ImageMaskBaseController {
             if (loadWidthBox != null) {
                 isSettingValues = true;
                 if (loadWidth == -1) {
-                    loadWidthBox.getSelectionModel().select(AppVaribles.getMessage("OrignalSize"));
+                    loadWidthBox.getSelectionModel().select(AppVaribles.message("OrignalSize"));
                 } else {
                     loadWidthBox.getSelectionModel().select(loadWidth + "");
                 }
@@ -917,7 +931,7 @@ public class ImageViewerController extends ImageMaskBaseController {
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
-            alertInformation(AppVaribles.getMessage("NotSupported"));
+            alertInformation(AppVaribles.message("NotSupported"));
         }
     }
 
@@ -927,7 +941,7 @@ public class ImageViewerController extends ImageMaskBaseController {
             return "";
         }
         int sampledSize = (int) (image.getWidth() * image.getHeight() * imageInformation.getColorChannels() / (1014 * 1024));
-        String msg = MessageFormat.format(getMessage("ImageTooLarge"),
+        String msg = MessageFormat.format(message("ImageTooLarge"),
                 imageInformation.getWidth(), imageInformation.getHeight(), imageInformation.getColorChannels(),
                 sizes.get("pixelsSize"), sizes.get("requiredMem"), sizes.get("availableMem"),
                 (int) image.getWidth(), (int) image.getHeight(), sampledSize);
@@ -957,27 +971,27 @@ public class ImageViewerController extends ImageMaskBaseController {
 
         VBox box = new VBox();
         Label label = new Label(msg);
-        Hyperlink helpLink = new Hyperlink(getMessage("Help"));
-        helpLink.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                developerGuide(event);
-            }
-        });
+//        Hyperlink helpLink = new Hyperlink(message("Help"));
+//        helpLink.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                developerGuide(event);
+//            }
+//        });
         box.getChildren().add(label);
-        box.getChildren().add(helpLink);
+//        box.getChildren().add(helpLink);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(getMyStage().getTitle());
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         alert.getDialogPane().setContent(box);
         alert.setContentText(msg);
 
-        ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
-        ButtonType buttonSplit = new ButtonType(AppVaribles.getMessage("ImageSplit"));
-        ButtonType buttonSample = new ButtonType(AppVaribles.getMessage("ImageSubsample"));
-        ButtonType buttonView = new ButtonType(AppVaribles.getMessage("ImageViewer"));
-        ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("SaveSampledImage"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        ButtonType buttonClose = new ButtonType(AppVaribles.message("Close"));
+        ButtonType buttonSplit = new ButtonType(AppVaribles.message("ImageSplit"));
+        ButtonType buttonSample = new ButtonType(AppVaribles.message("ImageSubsample"));
+        ButtonType buttonView = new ButtonType(AppVaribles.message("ImageViewer"));
+        ButtonType buttonSave = new ButtonType(AppVaribles.message("SaveSampledImage"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
         switch (myFxml) {
             case CommonValues.ImageViewerFxml:
                 alert.getButtonTypes().setAll(buttonClose, buttonSample, buttonSplit, buttonSave, buttonCancel);
@@ -1033,70 +1047,74 @@ public class ImageViewerController extends ImageMaskBaseController {
 
     @Override
     public void setImageChanged(boolean imageChanged) {
-        this.imageChanged = imageChanged;
+        try {
+            this.imageChanged = imageChanged;
+            updateLabelTitle();
 
-        if (saveButton != null && !saveButton.disableProperty().isBound()) {
-
-            if (imageInformation != null
-                    && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                saveButton.setDisable(true);
-            } else {
-                saveButton.setDisable(!imageChanged);
+            if (saveButton != null && !saveButton.disableProperty().isBound()) {
+                if (imageInformation != null
+                        && imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                    saveButton.setDisable(true);
+                } else {
+                    saveButton.setDisable(!imageChanged);
+                }
             }
-        }
 
-        if (imageChanged) {
-            resetMaskControls();
-        }
+            if (imageChanged) {
+                resetMaskControls();
+            }
 
-        updateLabelTitle();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     @Override
     public void updateLabelTitle() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        if (bottomLabel != null) {
-            String bottom = "";
-            if (imageInformation != null) {
-                bottom += AppVaribles.getMessage("Format") + ":" + imageInformation.getImageFormat() + "  ";
-                bottom += AppVaribles.getMessage("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
-            }
-            bottom += AppVaribles.getMessage("LoadedSize") + ":"
-                    + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
-                    + AppVaribles.getMessage("DisplayedSize") + ":"
-                    + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
-
-            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-                bottom += "  " + getMessage("SelectedSize") + ": "
-                        + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
-            }
+        try {
             if (sourceFile != null) {
-                bottom += "  " + AppVaribles.getMessage("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
-                        + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
+                String title = getBaseTitle() + " " + sourceFile.getAbsolutePath();
+                if (imageInformation != null) {
+                    if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
+                        title += " - " + message("Image") + " " + imageInformation.getIndex();
+                    }
+                    if (imageInformation.isIsSampled()) {
+                        title += " - " + message("Sampled");
+                    }
+                }
+                if (imageChanged) {
+                    title += "  " + "*";
+                }
+                getMyStage().setTitle(title);
             }
 
-            bottomLabel.setText(bottom);
-        }
-        String title = getBaseTitle();
-        if (sourceFile != null) {
-            title += " " + sourceFile.getAbsolutePath();
-            if (imageInformation != null) {
-                if (imageInformation.getImageFileInformation().getNumberOfImages() > 1) {
-                    title += " - " + getMessage("Image") + " " + imageInformation.getIndex();
-                }
-                if (imageInformation.isIsSampled()) {
-                    title += " - " + getMessage("Sampled");
+            if (imageView != null && imageView.getImage() != null) {
+                if (bottomLabel != null) {
+                    String bottom = "";
+                    if (imageInformation != null) {
+                        bottom += AppVaribles.message("Format") + ":" + imageInformation.getImageFormat() + "  ";
+                        bottom += AppVaribles.message("Pixels") + ":" + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  ";
+                    }
+                    bottom += AppVaribles.message("LoadedSize") + ":"
+                            + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight() + "  "
+                            + AppVaribles.message("DisplayedSize") + ":"
+                            + (int) imageView.getFitWidth() + "x" + (int) imageView.getFitHeight();
+
+                    if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+                        bottom += "  " + message("SelectedSize") + ": "
+                                + (int) maskRectangleData.getWidth() + "x" + (int) maskRectangleData.getHeight();
+                    }
+                    if (sourceFile != null) {
+                        bottom += "  " + AppVaribles.message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "  "
+                                + AppVaribles.message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified()) + "  ";
+                    }
+                    bottomLabel.setText(bottom);
                 }
             }
-        }
-        if (imageChanged) {
-            title += "  " + "*";
-        }
 
-        getMyStage().setTitle(title);
-
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
     }
 
     @FXML
@@ -1423,7 +1441,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                         ClipboardContent cc = new ClipboardContent();
                         cc.putImage(areaImage);
                         Clipboard.getSystemClipboard().setContent(cc);
-                        popInformation(AppVaribles.getMessage("ImageSelectionInClipBoard"));
+                        popInformation(AppVaribles.message("ImageSelectionInClipBoard"));
                     }
                 });
             }
@@ -1449,11 +1467,11 @@ public class ImageViewerController extends ImageMaskBaseController {
             if (imageInformation != null && imageInformation.isIsSampled()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(getMessage("SureSaveSampled"));
+                alert.setContentText(message("SureSaveSampled"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
-                ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+                ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
                 alert.getButtonTypes().setAll(buttonSure, buttonCancel);
 
                 Optional<ButtonType> result = alert.showAndWait();
@@ -1490,10 +1508,10 @@ public class ImageViewerController extends ImageMaskBaseController {
                         public void run() {
                             if (ok) {
                                 image = imageView.getImage();
-                                popInformation(AppVaribles.getMessage("Saved"));
+                                popInformation(AppVaribles.message("Saved"));
                                 setImageChanged(false);
                             } else {
-                                popInformation(AppVaribles.getMessage("Failed"));
+                                popInformation(AppVaribles.message("Failed"));
                             }
                         }
                     });
@@ -1510,6 +1528,14 @@ public class ImageViewerController extends ImageMaskBaseController {
 
     }
 
+    public String saveAsPrefix() {
+        if (sourceFile != null) {
+            return FileTools.getFilePrefix(sourceFile.getName());
+        } else {
+            return "";
+        }
+    }
+
     @FXML
     @Override
     public void saveAsAction() {
@@ -1517,16 +1543,8 @@ public class ImageViewerController extends ImageMaskBaseController {
             return;
         }
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            if (sourceFile != null) {
-                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
-            }
-            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                    saveAsPrefix(), CommonValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -1560,15 +1578,15 @@ public class ImageViewerController extends ImageMaskBaseController {
                         @Override
                         public void run() {
                             if (ok) {
-                                popInformation(AppVaribles.getMessage("Saved"));
+                                popInformation(AppVaribles.message("Saved"));
                                 if (sourceFile == null) {
                                     loadImage(file);
                                 }
                                 if (openSaveCheck != null && openSaveCheck.isSelected()) {
-                                    openImageViewer(file.getAbsolutePath());
+                                    openImageViewer(file);
                                 }
                             } else {
-                                popInformation(AppVaribles.getMessage("Failed"));
+                                popInformation(AppVaribles.message("Failed"));
                             }
                         }
                     });
@@ -1609,10 +1627,10 @@ public class ImageViewerController extends ImageMaskBaseController {
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureDelete"));
+            alert.setContentText(AppVaribles.message("SureDelete"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonCancel) {
@@ -1620,10 +1638,10 @@ public class ImageViewerController extends ImageMaskBaseController {
             }
         }
         if (sfile.delete()) {
-            popInformation(AppVaribles.getMessage("Successful"));
+            popInformation(AppVaribles.message("Successful"));
             return true;
         } else {
-            popError(AppVaribles.getMessage("Failed"));
+            popError(AppVaribles.message("Failed"));
             return false;
         }
     }
@@ -1643,22 +1661,22 @@ public class ImageViewerController extends ImageMaskBaseController {
                     finfo.setFile(file);
                     finfo.setFileName(file.getAbsolutePath());
                 }
-                imageInformation.setFilename(file.getAbsolutePath());
+                imageInformation.setFileName(file.getAbsolutePath());
             }
             if (imageInformation != null && imageInformation.isIsSampled()) {
                 if (imageInformation.getIndex() > 0) {
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " - " + getMessage("Image") + " " + imageInformation.getIndex()
-                            + " " + getMessage("Sampled"));
+                            + " - " + message("Image") + " " + imageInformation.getIndex()
+                            + " " + message("Sampled"));
                 } else {
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " " + getMessage("Sampled"));
+                            + " " + message("Sampled"));
                 }
 
             } else {
                 if (imageInformation != null && imageInformation.getIndex() > 0) {
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath()
-                            + " - " + getMessage("Image") + " " + imageInformation.getIndex());
+                            + " - " + message("Image") + " " + imageInformation.getIndex());
                 } else {
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                 }
@@ -1677,13 +1695,8 @@ public class ImageViewerController extends ImageMaskBaseController {
             return null;
         }
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                    null, CommonValues.ImageExtensionFilter, true);
             if (file == null) {
                 return null;
             }
@@ -1691,15 +1704,15 @@ public class ImageViewerController extends ImageMaskBaseController {
 
             if (file.exists()) {
                 if (!file.delete()) {
-                    popError(AppVaribles.getMessage("Failed"));
+                    popError(AppVaribles.message("Failed"));
                 }
             }
 
             if (sfile.renameTo(file)) {
-                popInformation(AppVaribles.getMessage("Successful"));
+                popInformation(AppVaribles.message("Successful"));
                 return file;
             } else {
-                popError(AppVaribles.getMessage("Failed"));
+                popError(AppVaribles.message("Failed"));
                 return null;
             }
 
@@ -1730,8 +1743,7 @@ public class ImageViewerController extends ImageMaskBaseController {
                 }
             } else {
                 final ImageManufactureController controller
-                        = (ImageManufactureController) FxmlStage.openScene(null,
-                                CommonValues.ImageManufactureFileFxml);
+                        = (ImageManufactureController) FxmlStage.openStage(CommonValues.ImageManufactureFileFxml);
                 controller.loadImage(sourceFile, image, imageInformation);
                 controller.loadData(imageData);
             }
@@ -1743,14 +1755,14 @@ public class ImageViewerController extends ImageMaskBaseController {
     @FXML
     public void sampleAction() {
         ImageSampleController controller
-                = (ImageSampleController) loadScene(CommonValues.ImageSampleFxml);
+                = (ImageSampleController) FxmlStage.openStage(CommonValues.ImageSampleFxml);
         controller.loadImage(sourceFile, image, imageInformation);
     }
 
     @FXML
     public void splitAction() {
         ImageSplitController controller
-                = (ImageSplitController) loadScene(CommonValues.ImageSplitFxml);
+                = (ImageSplitController) FxmlStage.openStage(CommonValues.ImageSplitFxml);
         controller.loadImage(sourceFile, image, imageInformation);
     }
 

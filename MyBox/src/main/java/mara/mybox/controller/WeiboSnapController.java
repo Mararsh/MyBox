@@ -19,7 +19,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.value.CommonValues;
 import mara.mybox.data.WeiboSnapParameters;
 import mara.mybox.tools.DateTools;
@@ -27,6 +26,8 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -68,7 +69,7 @@ public class WeiboSnapController extends BaseController {
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
     public WeiboSnapController() {
-        baseTitle = AppVaribles.getMessage("WeiboSnap");
+        baseTitle = AppVaribles.message("WeiboSnap");
 
         targetPathKey = "WeiboTargetPathKey";
 
@@ -143,7 +144,7 @@ public class WeiboSnapController extends BaseController {
         });
         addressInput.setText(AppVaribles.getUserConfigValue(WeiboLastAddressKey, "https://www.weibo.com/wow"));
 
-        FxmlControl.setTooltip(startMonthInput, new Tooltip(AppVaribles.getMessage("WeiboEarlestMonth")));
+        FxmlControl.setTooltip(startMonthInput, new Tooltip(AppVaribles.message("WeiboEarlestMonth")));
         startMonthInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -281,7 +282,7 @@ public class WeiboSnapController extends BaseController {
                     if (zoomScale > 0) {
                         AppVaribles.setUserConfigValue(WeiboZoomKey, zoomScale + "");
                         if (zoomScale > 2) {
-                            popInformation(AppVaribles.getMessage("TooLargerScale"));
+                            popInformation(AppVaribles.message("TooLargerScale"));
                         }
                         FxmlControl.setEditorNormal(zoomBox);
                     } else {
@@ -298,13 +299,13 @@ public class WeiboSnapController extends BaseController {
         zoomBox.getSelectionModel().select(0);
 
         widthBox.getItems().addAll(Arrays.asList("700", "900", "1000", "800", "1200", "1400", "1800",
-                AppVaribles.getMessage("ScreenWidth")));
+                AppVaribles.message("ScreenWidth")));
         widthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    if (newValue.equals(AppVaribles.getMessage("ScreenWidth"))) {
+                    if (newValue.equals(AppVaribles.message("ScreenWidth"))) {
                         webWidth = -1;
                         FxmlControl.setEditorNormal(widthBox);
                         return;
@@ -362,13 +363,13 @@ public class WeiboSnapController extends BaseController {
         ditherCheck.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
+        if (AppVaribles.message("PNG").equals(selected.getText())) {
             format = PdfImageFormat.Original;
-        } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
+        } else if (AppVaribles.message("CCITT4").equals(selected.getText())) {
             format = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
             ditherCheck.setDisable(false);
-        } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
             format = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -420,8 +421,7 @@ public class WeiboSnapController extends BaseController {
         });
         checkPageSize();
 
-        standardSizeBox.getItems().addAll(Arrays.asList(
-                "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
+        standardSizeBox.getItems().addAll(Arrays.asList("A4-" + message("Horizontal") + " (16k)  29.7cm x 21.0cm",
                 "A4 (16k) 21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
@@ -546,14 +546,14 @@ public class WeiboSnapController extends BaseController {
         isImageSize = false;
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("ImagesSize").equals(selected.getText())) {
+        if (AppVaribles.message("ImagesSize").equals(selected.getText())) {
             isImageSize = true;
-        } else if (AppVaribles.getMessage("StandardSize").equals(selected.getText())) {
+        } else if (AppVaribles.message("StandardSize").equals(selected.getText())) {
             standardSizeBox.setDisable(false);
             standardDpiBox.setDisable(false);
             checkStandardValues();
 
-        } else if (AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        } else if (AppVaribles.message("Custom").equals(selected.getText())) {
             customWidthInput.setDisable(false);
             customHeightInput.setDisable(false);
             checkCustomValues();
@@ -574,7 +574,7 @@ public class WeiboSnapController extends BaseController {
         } catch (Exception e) {
         }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        if (s.startsWith("A4-" + getMessage("Horizontal"))) {
+        if (s.startsWith("A4-" + message("Horizontal"))) {
             pageWidth = calculateCmPixels(29.7f, dpi);
             pageHeight = calculateCmPixels(21.0f, dpi);
         } else {
@@ -642,7 +642,7 @@ public class WeiboSnapController extends BaseController {
     private void checkCustomValues() {
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (!AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        if (!AppVaribles.message("Custom").equals(selected.getText())) {
             return;
         }
         try {
@@ -675,7 +675,7 @@ public class WeiboSnapController extends BaseController {
 
     private void checkTargetFiles() {
         if (!pdfCheck.isSelected() && !htmlCheck.isSelected() && !pixCheck.isSelected()) {
-            popError(AppVaribles.getMessage("NothingSave"));
+            popError(AppVaribles.message("NothingSave"));
             pdfCheck.setStyle(badStyle);
         } else {
             pdfCheck.setStyle(null);
@@ -759,7 +759,7 @@ public class WeiboSnapController extends BaseController {
         });
         checkCategory();
 
-        FxmlControl.setTooltip(keepPageCheck, new Tooltip(AppVaribles.getMessage("MergePDFComments")));
+        FxmlControl.setTooltip(keepPageCheck, new Tooltip(AppVaribles.message("MergePDFComments")));
 
         startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                 .or(targetPathInput.styleProperty().isEqualTo(badStyle))
@@ -778,13 +778,13 @@ public class WeiboSnapController extends BaseController {
 
     private void checkCategory() {
         RadioButton selected = (RadioButton) categoryGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("InMonthsPaths").equals(selected.getText())) {
+        if (AppVaribles.message("InMonthsPaths").equals(selected.getText())) {
             categoryType = WeiboSnapParameters.FileCategoryType.InMonthsPaths;
 
-        } else if (AppVaribles.getMessage("InYearsPaths").equals(selected.getText())) {
+        } else if (AppVaribles.message("InYearsPaths").equals(selected.getText())) {
             categoryType = WeiboSnapParameters.FileCategoryType.InYearsPaths;
 
-        } else if (AppVaribles.getMessage("InOnePath").equals(selected.getText())) {
+        } else if (AppVaribles.message("InOnePath").equals(selected.getText())) {
             categoryType = WeiboSnapParameters.FileCategoryType.InOnePath;
         }
     }
@@ -832,7 +832,7 @@ public class WeiboSnapController extends BaseController {
     public void startAction() {
         makeParameters();
         if (parameters == null) {
-            popError(AppVaribles.getMessage("ParametersError"));
+            popError(AppVaribles.message("ParametersError"));
             return;
         }
         startSnap();
@@ -842,7 +842,7 @@ public class WeiboSnapController extends BaseController {
     protected void exampleAction(ActionEvent event) {
         makeParameters();
         if (parameters == null) {
-            popError(AppVaribles.getMessage("ParametersError"));
+            popError(AppVaribles.message("ParametersError"));
             return;
         }
         parameters.setWebAddress("https://weibo.com/wow");
@@ -927,7 +927,7 @@ public class WeiboSnapController extends BaseController {
     protected void startSnap() {
         try {
             if (parameters == null) {
-                popError(AppVaribles.getMessage("ParametersError"));
+                popError(AppVaribles.message("ParametersError"));
                 return;
             }
 

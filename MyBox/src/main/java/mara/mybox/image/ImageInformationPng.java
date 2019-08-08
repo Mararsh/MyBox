@@ -15,7 +15,7 @@ import mara.mybox.color.CIEData;
 public class ImageInformationPng extends ImageInformation {
 
     protected String colorType, compressionMethod, unitSpecifier, filterMethod, interlaceMethod,
-            profileName, profileCompressionMethod, renderingIntent;
+            renderingIntent;
     protected int pixelsPerUnitXAxis = -1, pixelsPerUnitYAxis = -1, bKGD_Grayscale = -1, bKGD_Palette = -1,
             sBIT_Grayscale = -1, sBIT_GrayAlpha_gray = -1, sBIT_GrayAlpha_alpha = -1,
             sBIT_RGB_red = -1, sBIT_RGB_green = -1, sBIT_RGB_blue = -1,
@@ -152,22 +152,6 @@ public class ImageInformationPng extends ImageInformation {
 
     public void setGreen(CIEData green) {
         this.green = green;
-    }
-
-    public String getProfileName() {
-        return profileName;
-    }
-
-    public void setProfileName(String profileName) {
-        this.profileName = profileName;
-    }
-
-    public String getProfileCompressionMethod() {
-        return profileCompressionMethod;
-    }
-
-    public void setProfileCompressionMethod(String profileCompressionMethod) {
-        this.profileCompressionMethod = profileCompressionMethod;
     }
 
     public String getRenderingIntent() {

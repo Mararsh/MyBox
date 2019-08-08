@@ -15,7 +15,9 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import javafx.embed.swing.SwingFXUtils;
@@ -25,13 +27,13 @@ import mara.mybox.data.DoublePenLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageCombine.CombineSizeType;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageCombine.CombineSizeType;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.TRANSPARENT;
 
 /**
@@ -86,46 +88,51 @@ public class ImageManufacture {
         }
     }
 
+    // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4836466
     public static BufferedImage checkAlpha(BufferedImage source, String targetFormat) {
-        if (targetFormat != null && CommonValues.NoAlphaImages.contains(targetFormat.toLowerCase())) {
-            return ImageManufacture.clearAlpha(source);
-        } else {
+        if (targetFormat == null) {
             return source;
         }
+        BufferedImage checked = source;
+        if (CommonValues.NoAlphaImages.contains(targetFormat.toLowerCase())) {
+            checked = ImageManufacture.removeAlpha(source);
+        }
+        return checked;
     }
 
-    public static BufferedImage clearAlpha(BufferedImage source) {
+    public static BufferedImage removeAlpha(BufferedImage source) {
         if (!hasAlpha(source)) {
             return source;
         }
         if (AppVaribles.isAlphaAsWhite()) {
-            return ImageManufacture.replaceAlphaAsWhite(source);
+            return ImageManufacture.removeAlpha(source, Color.WHITE);
         } else {
-            return ImageManufacture.replaceAlphaAsBlack(source);
+            return ImageManufacture.removeAlpha(source, Color.BLACK);
         }
     }
 
-    public static BufferedImage removeAlpha(BufferedImage source) {
-        return replaceAlphaAsBlack(source);
-    }
-
-    public static BufferedImage replaceAlphaAsBlack(BufferedImage source) {
+    public static BufferedImage removeAlpha(BufferedImage source, Color color) {
         try {
             int width = source.getWidth();
             int height = source.getHeight();
             int imageType = BufferedImage.TYPE_INT_RGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
-            int black = Color.BLACK.getRGB();
+            int colorPixel = color.getRGB();
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     int pixel = source.getRGB(i, j);
                     if (pixel == 0) {
-                        target.setRGB(i, j, black);
+                        target.setRGB(i, j, colorPixel);
                     } else {
                         target.setRGB(i, j, new Color(pixel, false).getRGB());
                     }
                 }
             }
+//            Graphics2D g2d = target.createGraphics();
+//            g2d.setColor(color);
+//            g2d.fillRect(0, 0, width, height);
+//            g2d.drawImage(source, 0, 0, null);
+//            g2d.dispose();
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -133,24 +140,23 @@ public class ImageManufacture {
         }
     }
 
-    public static BufferedImage replaceAlphaAsWhite(BufferedImage source) {
+    // https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage#
+    public static BufferedImage clone(BufferedImage source) {
+        if (source == null) {
+            return null;
+        }
         try {
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = BufferedImage.TYPE_INT_RGB;
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            int white = new Color(255, 255, 255).getRGB();
-            for (int j = 0; j < height; j++) {
-                for (int i = 0; i < width; i++) {
-                    int pixel = source.getRGB(i, j);
-                    if (pixel == 0) {
-                        target.setRGB(i, j, white);
-                    } else {
-                        target.setRGB(i, j, new Color(pixel, false).getRGB());
-                    }
+            ColorModel cm = source.getColorModel();
+            Hashtable<String, Object> properties = null;
+            String[] keys = source.getPropertyNames();
+            if (keys != null) {
+                properties = new Hashtable<>();
+                for (String key : keys) {
+                    properties.put(key, source.getProperty(key));
                 }
             }
-            return target;
+            return new BufferedImage(cm, source.copyData(null), cm.isAlphaPremultiplied(), properties)
+                    .getSubimage(0, 0, source.getWidth(), source.getHeight());
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -342,9 +348,9 @@ public class ImageManufacture {
             int ah = h, aw = w;
             if (keepRatio) {
                 if (w * 1.0f / h > picture.getWidth() * 1.0f / picture.getHeight()) {
-                    ah = (int) (picture.getHeight() * w / picture.getWidth());
+                    ah = picture.getHeight() * w / picture.getWidth();
                 } else {
-                    aw = (int) (picture.getWidth() * h / picture.getHeight());
+                    aw = picture.getWidth() * h / picture.getHeight();
                 }
             }
             int imageType = source.getType();
@@ -485,7 +491,7 @@ public class ImageManufacture {
                     if (opocity == 1.0f) {
                         newColor = shadowColor;
                     } else {
-                        newColor = blendAlpha(shadowColor, opocity, bgColor);
+                        newColor = ImageColor.blendAlpha(shadowColor, opocity, bgColor);
                     }
                     shadowImage.setRGB(i, j, newColor.getRGB());
                 }
@@ -517,88 +523,80 @@ public class ImageManufacture {
             }
             int width = source.getWidth();
             int height = source.getHeight();
-            int top = 0, bottom = height - 1, left = 0, right = width - 1;
+            int top, bottom, left, right;
             int cutValue = cutColor.getRGB();
             if (cutTop) {
+                top = -1;
+                toploop:
                 for (int j = 0; j < height; j++) {
-                    boolean hasValue = false;
                     for (int i = 0; i < width; i++) {
                         if (source.getRGB(i, j) != cutValue) {
-                            hasValue = true;
-                            break;
+                            top = j;
+                            break toploop;
                         }
                     }
-                    if (hasValue) {
-                        top = j;
-                        break;
-                    }
                 }
-            }
-//            logger.debug("top: " + top);
-            if (top < 0) {
-                return null;
+                if (top < 0) {
+                    return null;
+                }
+            } else {
+                top = 0;
             }
             if (cutBottom) {
+                bottom = - 1;
+                bottomploop:
                 for (int j = height - 1; j >= 0; j--) {
-                    boolean hasValue = false;
                     for (int i = 0; i < width; i++) {
                         if (source.getRGB(i, j) != cutValue) {
-                            hasValue = true;
-                            break;
+                            bottom = j;
+                            break bottomploop;
                         }
                     }
-                    if (hasValue) {
-                        bottom = j;
-                        break;
-                    }
                 }
-            }
-//            logger.debug("bottom: " + bottom);
-            if (bottom < 0) {
-                return null;
+                if (bottom < 0) {
+                    return null;
+                }
+            } else {
+                bottom = height - 1;
             }
             if (cutLeft) {
+                left = -1;
+                leftloop:
                 for (int i = 0; i < width; i++) {
-                    boolean hasValue = false;
                     for (int j = 0; j < height; j++) {
                         if (source.getRGB(i, j) != cutValue) {
-                            hasValue = true;
-                            break;
+                            left = i;
+                            break leftloop;
                         }
                     }
-                    if (hasValue) {
-                        left = i;
-                        break;
-                    }
                 }
-            }
-//            logger.debug("left: " + left);
-            if (left < 0) {
-                return null;
+                if (left < 0) {
+                    return null;
+                }
+            } else {
+                left = 0;
             }
             if (cutRight) {
+                right = - 1;
+                rightloop:
                 for (int i = width - 1; i >= 0; i--) {
-                    boolean hasValue = false;
                     for (int j = 0; j < height; j++) {
                         if (source.getRGB(i, j) != cutValue) {
-                            hasValue = true;
-                            break;
+                            right = i;
+                            break rightloop;
                         }
                     }
-                    if (hasValue) {
-                        right = i;
-                        break;
-                    }
                 }
+                if (right < 0) {
+                    return null;
+                }
+            } else {
+                right = width - 1;
             }
-//            logger.debug("right: " + right);
-            if (right < 0) {
-                return null;
-            }
-
-            int w = right + 1 - left;
-            int h = bottom + 1 - top;
-            BufferedImage target = source.getSubimage(left, top, w, h);
+//            int w = right + 1 - left;
+//            int h = bottom + 1 - top;
+//            BufferedImage target = source.getSubimage(left, top, w, h); // This way works on Java8 but messes on Java 12
+            BufferedImage target = cropOutside(source, left, top, right, bottom);
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -771,7 +769,7 @@ public class ImageManufacture {
                     if (opocity == 1.0f) {
                         target.setRGB(i, j, pixel);
                     } else {
-                        Color color = blendAlpha(new Color(pixel), opocity, bgColor);
+                        Color color = ImageColor.blendAlpha(new Color(pixel), opocity, bgColor);
                         target.setRGB(i, j, color.getRGB());
                     }
                 }
@@ -781,14 +779,6 @@ public class ImageManufacture {
             logger.error(e.toString());
             return null;
         }
-    }
-
-    // https://www.cnblogs.com/xiaonanxia/p/9448444.html
-    public static Color blendAlpha(Color color, float opocity, Color bgColor) {
-        int red = (int) (color.getRed() * opocity + bgColor.getRed() * (1 - opocity));
-        int green = (int) (color.getGreen() * opocity + bgColor.getGreen() * (1 - opocity));
-        int blue = (int) (color.getBlue() * opocity + bgColor.getBlue() * (1 - opocity));
-        return new Color(red, green, blue);
     }
 
     public static BufferedImage rotateImage(BufferedImage source, int angle) {
@@ -809,22 +799,10 @@ public class ImageManufacture {
                 break;
             case 90:
             case 270:
-                if (width > height) {
-                    newWidth = width;
-                    newHeight = width;
-                } else {
-                    newWidth = height;
-                    newHeight = height;
-                }
+                newWidth = newHeight = Math.max(width, height);
                 break;
             default:
-                if (width > height) {
-                    newWidth = 2 * width;
-                    newHeight = 2 * width;
-                } else {
-                    newWidth = 2 * height;
-                    newHeight = 2 * height;
-                }
+                newWidth = newHeight = 2 * Math.max(width, height);
                 isSkew = true;
                 break;
         }
@@ -842,8 +820,6 @@ public class ImageManufacture {
             g.drawImage(source, width / 2, height / 2, null);
         }
         g.dispose();
-//        logger.debug("Rotated: " + newWidth + ", " + newHeight);
-
         target = ImageManufacture.cutMargins(target, bgColor, true, true, true, true);
         return target;
     }
@@ -1318,7 +1294,7 @@ public class ImageManufacture {
                 }
                 g.setStroke(stroke);
                 if (arcWidth > 0) {
-                    int a = Math.max(0, Math.min(height - 1, (int) Math.round(arcWidth)));
+                    int a = Math.max(0, Math.min(height - 1, Math.round(arcWidth)));
                     g.drawRoundRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, a, a);
                 } else {
                     g.drawRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
@@ -1327,7 +1303,7 @@ public class ImageManufacture {
             if (isFill) {
                 g.setColor(fillColor);
                 if (arcWidth > 0) {
-                    int a = Math.max(0, Math.min(height - 1, (int) Math.round(arcWidth)));
+                    int a = Math.max(0, Math.min(height - 1, Math.round(arcWidth)));
                     g.fillRoundRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, a, a);
                 } else {
                     g.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
@@ -1716,6 +1692,65 @@ public class ImageManufacture {
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
+        }
+    }
+
+    public static BufferedImage premultipliedAlpha(BufferedImage source, boolean removeAlpha) {
+        try {
+            if (source == null || !hasAlpha(source)
+                    || (source.isAlphaPremultiplied() && !removeAlpha)) {
+                return source;
+            }
+            int sourceWidth = source.getWidth();
+            int sourceHeight = source.getHeight();
+            int imageType;
+            if (removeAlpha) {
+                imageType = BufferedImage.TYPE_INT_RGB;
+            } else {
+                imageType = BufferedImage.TYPE_INT_ARGB_PRE;
+            }
+            BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, imageType);
+            Color sourceColor, newColor, bkColor;
+            if (AppVaribles.isAlphaAsWhite()) {
+                bkColor = Color.WHITE;
+            } else {
+                bkColor = Color.BLACK;
+            }
+            int bkPixel = bkColor.getRGB();
+            for (int j = 0; j < sourceHeight; j++) {
+                for (int i = 0; i < sourceWidth; i++) {
+                    int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        target.setRGB(i, j, bkPixel);
+                        continue;
+                    }
+                    sourceColor = new Color(pixel, true);
+                    newColor = ImageColor.blendAlpha(sourceColor, sourceColor.getAlpha(), bkColor, !removeAlpha);
+                    target.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage premultipliedAlpha2(BufferedImage source, boolean removeAlpha) {
+        try {
+            if (source == null || !hasAlpha(source)
+                    || (source.isAlphaPremultiplied() && !removeAlpha)) {
+                return source;
+            }
+            BufferedImage target = clone(source);
+            target.coerceData(true);
+            if (removeAlpha) {
+                target = removeAlpha(target);
+            }
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
         }
     }
 

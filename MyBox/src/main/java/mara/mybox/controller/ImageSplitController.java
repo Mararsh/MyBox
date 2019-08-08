@@ -1,8 +1,5 @@
 package mara.mybox.controller;
 
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageMetadata;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
-import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -46,27 +43,31 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.image.ImageManufacture;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageConvert;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageAttributes;
-import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.image.file.ImageTiffFile.getMeta;
+import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageTiffFile.getPara;
 import static mara.mybox.image.file.ImageTiffFile.getWriter;
+import static mara.mybox.image.file.ImageTiffFile.getWriterMeta;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -120,7 +121,7 @@ public class ImageSplitController extends ImageViewerController {
     private Label rowsLabel, colsLabel, commentLabel, promptLabel;
 
     public ImageSplitController() {
-        baseTitle = AppVaribles.getMessage("ImageSplit");
+        baseTitle = AppVaribles.message("ImageSplit");
         handleLoadedSize = false;
     }
 
@@ -145,7 +146,7 @@ public class ImageSplitController extends ImageViewerController {
         checkPdfFormat();
         checkJpegQuality();
         checkPdfThreshold();
-        FxmlControl.setTooltip(okButton, new Tooltip(getMessage("OK") + "\nF1 / CTRL+g"));
+        FxmlControl.setTooltip(okButton, new Tooltip(message("OK") + "\nF1 / CTRL+g"));
 
     }
 
@@ -245,33 +246,33 @@ public class ImageSplitController extends ImageViewerController {
             }
         }
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("Customize").equals(selected.getText())) {
+        if (AppVaribles.message("Customize").equals(selected.getText())) {
             splitMethod = SplitMethod.Customize;
             optionsBox1.getChildren().add(commentLabel);
             optionsBox2.getChildren().add(customBox);
-            commentLabel.setText(AppVaribles.getMessage("SplitCustomComments"));
+            commentLabel.setText(AppVaribles.message("SplitCustomComments"));
             checkCustomValues();
-        } else if (AppVaribles.getMessage("ByNumber").equals(selected.getText())) {
+        } else if (AppVaribles.message("ByNumber").equals(selected.getText())) {
             splitMethod = SplitMethod.ByNumber;
             optionsBox1.getChildren().add(predefinedBox);
             optionsBox2.getChildren().add(byBox);
-            rowsLabel.setText(getMessage("RowsNumber"));
-            colsLabel.setText(getMessage("ColumnsNumber"));
+            rowsLabel.setText(message("RowsNumber"));
+            colsLabel.setText(message("ColumnsNumber"));
             isSettingValues = true;
             rowsInput.setText("3");
             colsInput.setText("3");
             isSettingValues = false;
             checkNumberValues();
-        } else if (AppVaribles.getMessage("BySize").equals(selected.getText())) {
+        } else if (AppVaribles.message("BySize").equals(selected.getText())) {
             splitMethod = SplitMethod.BySize;
             optionsBox1.getChildren().add(commentLabel);
             optionsBox2.getChildren().add(byBox);
-            commentLabel.setText(AppVaribles.getMessage("SplitSizeComments"));
-            rowsLabel.setText(getMessage("Width"));
-            colsLabel.setText(getMessage("Height"));
+            commentLabel.setText(AppVaribles.message("SplitSizeComments"));
+            rowsLabel.setText(message("Width"));
+            colsLabel.setText(message("Height"));
             isSettingValues = true;
-            rowsInput.setText((int) (imageInformation.getWidth() / 3) + "");
-            colsInput.setText((int) (imageInformation.getHeight() / 3) + "");
+            rowsInput.setText(imageInformation.getWidth() / 3 + "");
+            colsInput.setText(imageInformation.getHeight() / 3 + "");
             isSettingValues = false;
             checkSizeValues();
         }
@@ -353,10 +354,10 @@ public class ImageSplitController extends ImageViewerController {
         boolean isValidRows = true, isValidcols = true;
         rows = new ArrayList();
         rows.add(0);
-        rows.add((int) imageInformation.getHeight() - 1);
+        rows.add(imageInformation.getHeight() - 1);
         cols = new ArrayList();
         cols.add(0);
-        cols.add((int) imageInformation.getWidth() - 1);
+        cols.add(imageInformation.getWidth() - 1);
         customizedRowsInput.setStyle(null);
         customizedColsInput.setStyle(null);
 
@@ -407,7 +408,7 @@ public class ImageSplitController extends ImageViewerController {
         } else {
 //            imageView.setImage(image);
 //            bottomLabel.setText("");
-            popInformation(getMessage("SplitCustomComments"));
+            popInformation(message("SplitCustomComments"));
         }
     }
 
@@ -460,17 +461,17 @@ public class ImageSplitController extends ImageViewerController {
             tiffThresholdInput.setStyle(null);
             RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
             String s = selected.getText();
-            if (getMessage("Colorful").equals(s)) {
-                attributes.setColorSpace(ImageType.RGB);
-            } else if (getMessage("ColorAlpha").equals(s)) {
-                attributes.setColorSpace(ImageType.ARGB);
-            } else if (getMessage("ShadesOfGray").equals(s)) {
-                attributes.setColorSpace(ImageType.GRAY);
-            } else if (getMessage("BlackOrWhite").equals(s)) {
-                attributes.setColorSpace(ImageType.BINARY);
+            if (message("Colorful").equals(s)) {
+                attributes.setColorType(ImageType.RGB);
+            } else if (message("ColorAlpha").equals(s)) {
+                attributes.setColorType(ImageType.ARGB);
+            } else if (message("ShadesOfGray").equals(s)) {
+                attributes.setColorType(ImageType.GRAY);
+            } else if (message("BlackOrWhite").equals(s)) {
+                attributes.setColorType(ImageType.BINARY);
                 checkBinary();
             } else {
-                attributes.setColorSpace(ImageType.RGB);
+                attributes.setColorType(ImageType.RGB);
             }
             setCompressionTypes();
         } catch (Exception e) {
@@ -483,7 +484,7 @@ public class ImageSplitController extends ImageViewerController {
             compressionBox.getChildren().clear();
             compressionGroup = new ToggleGroup();
             String[] compressionTypes
-                    = ImageValue.getCompressionTypes("tif", attributes.getColorSpace());
+                    = ImageValue.getCompressionTypes("tif", attributes.getColorType());
             for (String ctype : compressionTypes) {
                 if (ctype.equals("ZLib")) { // This type looks not work for mutiple frames tiff file
                     continue;
@@ -522,10 +523,10 @@ public class ImageSplitController extends ImageViewerController {
             tiffThresholdInput.setStyle(null);
             RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
             String s = selected.getText();
-            if (getMessage("Threshold").equals(s)) {
+            if (message("Threshold").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
                 checkTiffThreshold();
-            } else if (getMessage("OTSU").equals(s)) {
+            } else if (message("OTSU").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
             } else {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
@@ -563,8 +564,7 @@ public class ImageSplitController extends ImageViewerController {
             }
         });
 
-        standardSizeBox.getItems().addAll(Arrays.asList(
-                "A4-" + getMessage("Horizontal") + " (16k)  29.7cm x 21.0cm",
+        standardSizeBox.getItems().addAll(Arrays.asList("A4-" + message("Horizontal") + " (16k)  29.7cm x 21.0cm",
                 "A4 (16k)  21.0cm x 29.7cm",
                 "A5 (32k)  14.8cm x 21.0cm",
                 "A6 (64k)  10.5cm x 14.8cm",
@@ -718,14 +718,14 @@ public class ImageSplitController extends ImageViewerController {
         isImageSize = false;
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("ImagesSize").equals(selected.getText())) {
+        if (AppVaribles.message("ImagesSize").equals(selected.getText())) {
             isImageSize = true;
-        } else if (AppVaribles.getMessage("StandardSize").equals(selected.getText())) {
+        } else if (AppVaribles.message("StandardSize").equals(selected.getText())) {
             standardSizeBox.setDisable(false);
             standardDpiBox.setDisable(false);
             checkStandardValues();
 
-        } else if (AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        } else if (AppVaribles.message("Custom").equals(selected.getText())) {
             customWidthInput.setDisable(false);
             customHeightInput.setDisable(false);
             checkPdfCustomValues();
@@ -746,7 +746,7 @@ public class ImageSplitController extends ImageViewerController {
         } catch (Exception e) {
         }
         String s = standardSizeBox.getSelectionModel().getSelectedItem();
-        if (s.startsWith("A4-" + getMessage("Horizontal"))) {
+        if (s.startsWith("A4-" + message("Horizontal"))) {
             pageWidth = calculateCmPixels(29.7f, dpi);
             pageHeight = calculateCmPixels(21.0f, dpi);
         } else {
@@ -813,7 +813,7 @@ public class ImageSplitController extends ImageViewerController {
     private void checkPdfCustomValues() {
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (!AppVaribles.getMessage("Custom").equals(selected.getText())) {
+        if (!AppVaribles.message("Custom").equals(selected.getText())) {
             return;
         }
         try {
@@ -850,12 +850,12 @@ public class ImageSplitController extends ImageViewerController {
         pdfThresholdInput.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("PNG").equals(selected.getText())) {
+        if (AppVaribles.message("PNG").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Original;
-        } else if (AppVaribles.getMessage("CCITT4").equals(selected.getText())) {
+        } else if (AppVaribles.message("CCITT4").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Tiff;
             pdfThresholdInput.setDisable(false);
-        } else if (AppVaribles.getMessage("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -923,9 +923,9 @@ public class ImageSplitController extends ImageViewerController {
             isSettingValues = false;
             checkSplitMethod();
 
-            String info = getMessage("ImageSize") + ": "
+            String info = message("ImageSize") + ": "
                     + imageInformation.getWidth() + "x" + imageInformation.getHeight() + "  "
-                    + AppVaribles.getMessage("LoadedSize") + ":"
+                    + AppVaribles.message("LoadedSize") + ":"
                     + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight();
             promptLabel.setText(info);
 
@@ -938,7 +938,7 @@ public class ImageSplitController extends ImageViewerController {
     @Override
     protected void loadSampledImage() {
         if (sampledTips != null) {
-            final String msg = getSmapledInfo() + "\n\n" + AppVaribles.getMessage("ImagePartComments");
+            final String msg = getSmapledInfo() + "\n\n" + AppVaribles.message("ImagePartComments");
             sampledTips.setOnMouseMoved(null);
             sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
                 @Override
@@ -1087,7 +1087,7 @@ public class ImageSplitController extends ImageViewerController {
             return;
         }
 //        imageView.setCursor(Cursor.OPEN_HAND);
-        bottomLabel.setText(getMessage("SplitCustomComments"));
+        bottomLabel.setText(message("SplitCustomComments"));
 
         if (event.getButton() == MouseButton.PRIMARY) {
 
@@ -1192,15 +1192,15 @@ public class ImageSplitController extends ImageViewerController {
 
             }
 
-            String comments = AppVaribles.getMessage("SplittedNumber") + ": "
+            String comments = AppVaribles.message("SplittedNumber") + ": "
                     + (cols.size() - 1) * (rows.size() - 1);
             if (splitMethod == SplitMethod.ByNumber) {
-                comments += "  " + AppVaribles.getMessage("EachSplittedImageActualSize") + ": "
-                        + (int) (imageInformation.getWidth() / (cols.size() - 1))
-                        + " x " + (int) (imageInformation.getHeight() / (rows.size() - 1));
+                comments += "  " + AppVaribles.message("EachSplittedImageActualSize") + ": "
+                        + imageInformation.getWidth() / (cols.size() - 1)
+                        + " x " + imageInformation.getHeight() / (rows.size() - 1);
 
             } else {
-                comments += "  " + AppVaribles.getMessage("EachSplittedImageActualSizeComments");
+                comments += "  " + AppVaribles.message("EachSplittedImageActualSizeComments");
             }
             bottomLabel.setText(comments);
             splitValid.set(true);
@@ -1226,11 +1226,11 @@ public class ImageSplitController extends ImageViewerController {
         if (imageInformation.isIsSampled()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureSampled"));
+            alert.setContentText(AppVaribles.message("SureSampled"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -1238,21 +1238,14 @@ public class ImageSplitController extends ImageViewerController {
                 return null;
             }
         }
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.getExtensionFilters().addAll(ext);
-        if (diagTitle != null) {
-            fileChooser.setTitle(diagTitle);
-        }
-        final File targetFile = fileChooser.showSaveDialog(getMyStage());
-        if (targetFile == null) {
+
+        final File tFile = chooseSaveFile(diagTitle,
+                AppVaribles.getUserConfigPath(targetPathKey), null, ext, true);
+        if (tFile == null) {
             return null;
         }
-        AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
-        return targetFile;
+        AppVaribles.setUserConfigValue(targetPathKey, tFile.getParent());
+        return tFile;
     }
 
     @FXML
@@ -1262,9 +1255,9 @@ public class ImageSplitController extends ImageViewerController {
                 || cols == null || cols.isEmpty()) {
             return;
         }
-        final File targetFile
-                = validationBeforeSave(CommonValues.ImageExtensionFilter, getMessage("FilePrefixInput"));
-        if (targetFile == null) {
+        final File tFile
+                = validationBeforeSave(CommonValues.ImageExtensionFilter, message("FilePrefixInput"));
+        if (tFile == null) {
             return;
         }
         if (imageTask != null) {
@@ -1278,9 +1271,9 @@ public class ImageSplitController extends ImageViewerController {
             @Override
             protected Void call() throws Exception {
                 int x1, y1, x2, y2;
-                final String targetFormat = FileTools.getFileSuffix(targetFile.getAbsolutePath()).toLowerCase();
+                final String targetFormat = FileTools.getFileSuffix(tFile.getAbsolutePath()).toLowerCase();
                 final String sourceFormat = imageInformation.getImageFormat();
-                final String filePrefix = FileTools.getFilePrefix(targetFile.getAbsolutePath());
+                final String filePrefix = FileTools.getFilePrefix(tFile.getAbsolutePath());
                 final String filename = sourceFile.getAbsolutePath();
                 BufferedImage wholeSource = null;
                 if (!imageInformation.isIsSampled()) {
@@ -1329,7 +1322,7 @@ public class ImageSplitController extends ImageViewerController {
                         if (imageTask == null || !imageTask.isRunning() || imageController == null) {
                             return;
                         }
-                        imageController.setInfo(MessageFormat.format(AppVaribles.getMessage("NumberFileGenerated"),
+                        imageController.setInfo(MessageFormat.format(AppVaribles.message("NumberFileGenerated"),
                                 number + "/" + total, "\"" + fileName + "\""));
                         imageController.setProgress(number * 1f / total);
                     }
@@ -1364,13 +1357,13 @@ public class ImageSplitController extends ImageViewerController {
                 || cols == null || cols.isEmpty()) {
             return;
         }
-        final File targetFile = validationBeforeSave(CommonValues.PdfExtensionFilter, null);
-        if (targetFile == null) {
+        final File tFile = validationBeforeSave(CommonValues.PdfExtensionFilter, null);
+        if (tFile == null) {
             return;
         }
         try {
-            if (targetFile.exists()) {
-                targetFile.delete();
+            if (tFile.exists()) {
+                tFile.delete();
             }
         } catch (Exception e) {
             return;
@@ -1391,7 +1384,7 @@ public class ImageSplitController extends ImageViewerController {
                 final String sourceFormat = imageInformation.getImageFormat();
                 final String sourcefile = sourceFile.getAbsolutePath();
                 attributes.setIsDithering(isDithering);
-                try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+                try ( PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
                     PDFont font = PdfTools.getFont(document, fontName);
                     PDDocumentInformation info = new PDDocumentInformation();
                     info.setCreationDate(Calendar.getInstance());
@@ -1435,7 +1428,8 @@ public class ImageSplitController extends ImageViewerController {
                             updateLabel(total, (i + 1) * (j + 1));
                         }
                     }
-                    document.save(targetFile);
+                    document.save(tFile);
+                    document.close();
                 }
 
                 ok = true;
@@ -1450,7 +1444,7 @@ public class ImageSplitController extends ImageViewerController {
                         if (pdfTask == null || !pdfTask.isRunning() || pdfController == null) {
                             return;
                         }
-                        pdfController.setInfo(MessageFormat.format(AppVaribles.getMessage("NumberPageWritten"),
+                        pdfController.setInfo(MessageFormat.format(AppVaribles.message("NumberPageWritten"),
                                 number + "/" + total));
                         pdfController.setProgress(number * 1f / total);
                     }
@@ -1464,12 +1458,12 @@ public class ImageSplitController extends ImageViewerController {
                     @Override
                     public void run() {
                         try {
-                            if (ok && targetFile.exists()) {
-                                popInformation(AppVaribles.getMessage("Successful"));
-                                FxmlStage.openPdfViewer( null, targetFile);
+                            if (ok && tFile.exists()) {
+                                popInformation(AppVaribles.message("Successful"));
+                                FxmlStage.openPdfViewer(null, tFile);
 //                               browseURI(targetFile.toURI());
                             } else {
-                                popError(AppVaribles.getMessage("Failed"));
+                                popError(AppVaribles.message("Failed"));
                             }
                         } catch (Exception e) {
                             logger.error(e.toString());
@@ -1487,13 +1481,13 @@ public class ImageSplitController extends ImageViewerController {
 
     @FXML
     private void saveAsTiffAction(ActionEvent event) {
-        final File targetFile = validationBeforeSave(CommonValues.TiffExtensionFilter, null);
-        if (targetFile == null) {
+        final File tFile = validationBeforeSave(CommonValues.TiffExtensionFilter, null);
+        if (tFile == null) {
             return;
         }
         try {
-            if (targetFile.exists()) {
-                targetFile.delete();
+            if (tFile.exists()) {
+                tFile.delete();
             }
         } catch (Exception e) {
             return;
@@ -1511,10 +1505,10 @@ public class ImageSplitController extends ImageViewerController {
                 final String filename = sourceFile.getAbsolutePath();
                 attributes.setIsDithering(tiffDitherCheck.isSelected());
                 try {
-                    TIFFImageWriter writer = getWriter();
-                    try (ImageOutputStream out = ImageIO.createImageOutputStream(targetFile)) {
+                    ImageWriter writer = getWriter();
+                    try ( ImageOutputStream out = ImageIO.createImageOutputStream(tFile)) {
                         writer.setOutput(out);
-                        TIFFImageWriteParam param = getPara(attributes, writer);
+                        ImageWriteParam param = getPara(attributes, writer);
                         writer.prepareWriteSequence(null);
                         int x1, y1, x2, y2;
                         BufferedImage wholeSource = null;
@@ -1543,8 +1537,8 @@ public class ImageSplitController extends ImageViewerController {
                                 if (tiffTask == null || tiffTask.isCancelled()) {
                                     return null;
                                 }
-                                bufferedImage = ImageFileWriters.convertColor(bufferedImage, attributes);
-                                TIFFImageMetadata metaData = getMeta(attributes, bufferedImage, writer, param);
+                                bufferedImage = ImageConvert.convertColorType(bufferedImage, attributes);
+                                IIOMetadata metaData = getWriterMeta(attributes, bufferedImage, writer, param);
                                 if (tiffTask == null || tiffTask.isCancelled()) {
                                     return null;
                                 }
@@ -1571,7 +1565,7 @@ public class ImageSplitController extends ImageViewerController {
                         if (tiffTask == null || !tiffTask.isRunning() || tiffController == null) {
                             return;
                         }
-                        tiffController.setInfo(MessageFormat.format(AppVaribles.getMessage("NumberImageWritten"),
+                        tiffController.setInfo(MessageFormat.format(AppVaribles.message("NumberImageWritten"),
                                 number + "/" + total));
                         tiffController.setProgress(number * 1f / total);
                     }
@@ -1585,13 +1579,13 @@ public class ImageSplitController extends ImageViewerController {
                     @Override
                     public void run() {
                         try {
-                            if (ok && targetFile.exists()) {
-                                popInformation(AppVaribles.getMessage("Successful"));
+                            if (ok && tFile.exists()) {
+                                popInformation(AppVaribles.message("Successful"));
                                 final ImageFramesViewerController controller
                                         = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-                                controller.selectSourceFile(targetFile);
+                                controller.selectSourceFile(tFile);
                             } else {
-                                popError(AppVaribles.getMessage("Failed"));
+                                popError(AppVaribles.message("Failed"));
                             }
                         } catch (Exception e) {
                             logger.error(e.toString());
@@ -1606,6 +1600,23 @@ public class ImageSplitController extends ImageViewerController {
         thread.setDaemon(true);
         thread.start();
 
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (imageTask != null && imageTask.isRunning()) {
+            imageTask.cancel();
+            imageTask = null;
+        }
+        if (pdfTask != null && pdfTask.isRunning()) {
+            pdfTask.cancel();
+            pdfTask = null;
+        }
+        if (tiffTask != null && tiffTask.isRunning()) {
+            tiffTask.cancel();
+            tiffTask = null;
+        }
+        return true;
     }
 
 }

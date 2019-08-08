@@ -21,16 +21,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageGifFile;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageFileInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -52,12 +52,10 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     protected Label promptLabel, commentsLabel;
     @FXML
-    protected ComboBox<String> targetTypeBox;
-    @FXML
     protected TextField fromInput, toInput;
 
     public ImageGifViewerController() {
-        baseTitle = AppVaribles.getMessage("ImageGifViewer");
+        baseTitle = AppVaribles.message("ImageGifViewer");
 
         SourceFileType = VisitHistory.FileType.Gif;
         SourcePathType = VisitHistory.FileType.Gif;
@@ -70,7 +68,8 @@ public class ImageGifViewerController extends ImageViewerController {
         needNotRulers = true;
         needNotCoordinates = true;
 
-        fileExtensionFilter = CommonValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonValues.GifExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -79,35 +78,6 @@ public class ImageGifViewerController extends ImageViewerController {
             operation3Box.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
             );
-            operation4Box.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
-
-            targetTypeBox.getItems().addAll(CommonValues.SupportedImages);
-            targetTypeBox.getSelectionModel().select(0);
-
-            targetPathInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        final File file = new File(newValue);
-                        if (!file.exists() || !file.isDirectory()) {
-                            targetPathInput.setStyle(badStyle);
-                            targetPath = null;
-                            return;
-                        }
-                        targetPathInput.setStyle(null);
-                        if (!isSettingValues) {
-                            AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
-                        }
-                        targetPath = file;
-                    } catch (Exception e) {
-                        targetPathInput.setStyle(badStyle);
-                        targetPath = null;
-                    }
-                }
-            });
 
             fromInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -146,9 +116,7 @@ public class ImageGifViewerController extends ImageViewerController {
             });
 
             extractButton.disableProperty().bind(
-                    Bindings.isEmpty(targetPathInput.textProperty())
-                            .or(targetPathInput.styleProperty().isEqualTo(badStyle))
-                            .or(Bindings.isEmpty(fromInput.textProperty()))
+                    Bindings.isEmpty(fromInput.textProperty())
                             .or(fromInput.styleProperty().isEqualTo(badStyle))
                             .or(Bindings.isEmpty(toInput.textProperty()))
                             .or(toInput.styleProperty().isEqualTo(badStyle))
@@ -246,8 +214,6 @@ public class ImageGifViewerController extends ImageViewerController {
                             public void run() {
                                 afterImageLoaded();
                                 isSettingValues = true;
-                                targetPathInput.setText(sourceFile.getParent());
-                                targetPrefixInput.setText(FileTools.getFilePrefix(sourceFile.getName()));
                                 fromInput.setText("0");
                                 toInput.setText((totalNumber - 1) + "");
                                 isSettingValues = false;
@@ -288,18 +254,20 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     public void pauseAction() {
         try {
-            if (pauseButton.getText().equals(AppVaribles.getMessage("Pause"))) {
+            if (pauseButton.getText().equals(AppVaribles.message("Pause"))) {
+                logger.debug("here");
                 if (timer != null) {
+                    logger.debug("here");
                     timer.cancel();
                 }
                 previousButton.setDisable(false);
                 nextButton.setDisable(false);
-                pauseButton.setText(AppVaribles.getMessage("Continue"));
-            } else if (pauseButton.getText().equals(AppVaribles.getMessage("Continue"))) {
+                pauseButton.setText(AppVaribles.message("Continue"));
+            } else if (pauseButton.getText().equals(AppVaribles.message("Continue"))) {
                 showGifImage(currentIndex);
                 previousButton.setDisable(true);
                 nextButton.setDisable(true);
-                pauseButton.setText(AppVaribles.getMessage("Pause"));
+                pauseButton.setText(AppVaribles.message("Pause"));
             }
 
         } catch (Exception e) {
@@ -328,22 +296,33 @@ public class ImageGifViewerController extends ImageViewerController {
     }
 
     @FXML
+    @Override
+    public void saveAsAction() {
+        extractAction();
+    }
+
+    @FXML
     public void extractAction() {
         try {
             if (sourceFile == null || images.length == 0
                     || totalNumber <= 0 || fromIndex > toIndex) {
                 return;
             }
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                    FileTools.getFilePrefix(sourceFile.getName()),
+                    CommonValues.ImageExtensionFilter, true);
+            if (file == null) {
+                return;
+            }
+            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+
             task = new Task<Void>() {
                 private List<String> filenames;
                 private boolean ok;
 
                 @Override
                 protected Void call() throws Exception {
-                    String fileName = targetPath.getAbsolutePath() + "/"
-                            + targetPrefixInput.getText()
-                            + "." + targetTypeBox.getSelectionModel().getSelectedItem();
-                    filenames = ImageGifFile.extractGifImages(sourceFile, new File(fileName), fromIndex, toIndex);
+                    filenames = ImageGifFile.extractGifImages(sourceFile, file, fromIndex, toIndex);
 
                     ok = true;
                     return null;
@@ -423,7 +402,7 @@ public class ImageGifViewerController extends ImageViewerController {
             setCurrentFrame();
             previousButton.setDisable(false);
             nextButton.setDisable(false);
-            pauseButton.setText(AppVaribles.getMessage("Continue"));
+            pauseButton.setText(AppVaribles.message("Continue"));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -437,9 +416,9 @@ public class ImageGifViewerController extends ImageViewerController {
         }
         imageView.setImage(images[currentIndex]);
         refinePane();
-        promptLabel.setText(AppVaribles.getMessage("TotalFrames") + ": " + images.length + "  "
-                + AppVaribles.getMessage("CurrentFrame") + ": " + currentIndex + "  "
-                + AppVaribles.getMessage("Size") + ": " + (int) images[currentIndex].getWidth()
+        promptLabel.setText(AppVaribles.message("TotalFrames") + ": " + images.length + "  "
+                + AppVaribles.message("CurrentFrame") + ": " + currentIndex + "  "
+                + AppVaribles.message("Size") + ": " + (int) images[currentIndex].getWidth()
                 + "*" + (int) images[currentIndex].getHeight());
         currentIndex++;
     }

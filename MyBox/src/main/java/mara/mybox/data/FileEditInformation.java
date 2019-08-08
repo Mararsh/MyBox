@@ -309,13 +309,13 @@ public abstract class FileEditInformation extends FileInformation {
     public String filterTypeName() {
         switch (filterType) {
             case IncludeOne:
-                return AppVaribles.getMessage("IncludeOne");
+                return AppVaribles.message("IncludeOne");
             case IncludeAll:
-                return AppVaribles.getMessage("IncludeAll");
+                return AppVaribles.message("IncludeAll");
             case NotIncludeAny:
-                return AppVaribles.getMessage("NotIncludeAny");
+                return AppVaribles.message("NotIncludeAny");
             case NotIncludeAll:
-                return AppVaribles.getMessage("NotIncludeAll");
+                return AppVaribles.message("NotIncludeAll");
             default:
                 return "";
         }

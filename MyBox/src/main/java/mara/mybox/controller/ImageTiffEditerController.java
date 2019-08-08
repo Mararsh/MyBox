@@ -13,15 +13,16 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.controller.base.ImagesListController;
+import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageTiffFile;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageAttributes;
-import mara.mybox.data.VisitHistory;
-import static mara.mybox.value.AppVaribles.getMessage;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.pdfbox.rendering.ImageType;
  * @Description
  * @License Apache License Version 2.0
  */
-public class ImageTiffEditerController extends ImageSourcesController {
+public class ImageTiffEditerController extends ImagesListController {
 
     @FXML
     private HBox compressionBox, binaryBox;
@@ -40,7 +41,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
     private TextField thresholdInput;
 
     public ImageTiffEditerController() {
-        baseTitle = AppVaribles.getMessage("ImageTiffEditer");
+        baseTitle = AppVaribles.message("ImageTiffEditer");
 
         SourceFileType = VisitHistory.FileType.Tif;
         SourcePathType = VisitHistory.FileType.Tif;
@@ -49,7 +50,8 @@ public class ImageTiffEditerController extends ImageSourcesController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        fileExtensionFilter = CommonValues.TiffExtensionFilter;
+        sourceExtensionFilter = CommonValues.TiffExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
             attributes = new ImageAttributes();
             attributes.setImageFormat("tif");
             optionsBox.setDisable(true);
-            sourcesBox.setDisable(true);
+            tableBox.setDisable(true);
 
             colorGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -113,17 +115,17 @@ public class ImageTiffEditerController extends ImageSourcesController {
             thresholdInput.setStyle(null);
             RadioButton selected = (RadioButton) colorGroup.getSelectedToggle();
             String s = selected.getText();
-            if (getMessage("Colorful").equals(s)) {
-                attributes.setColorSpace(ImageType.RGB);
-            } else if (getMessage("ColorAlpha").equals(s)) {
-                attributes.setColorSpace(ImageType.ARGB);
-            } else if (getMessage("ShadesOfGray").equals(s)) {
-                attributes.setColorSpace(ImageType.GRAY);
-            } else if (getMessage("BlackOrWhite").equals(s)) {
-                attributes.setColorSpace(ImageType.BINARY);
+            if (message("Colorful").equals(s)) {
+                attributes.setColorType(ImageType.RGB);
+            } else if (message("ColorAlpha").equals(s)) {
+                attributes.setColorType(ImageType.ARGB);
+            } else if (message("ShadesOfGray").equals(s)) {
+                attributes.setColorType(ImageType.GRAY);
+            } else if (message("BlackOrWhite").equals(s)) {
+                attributes.setColorType(ImageType.BINARY);
                 checkBinary();
             } else {
-                attributes.setColorSpace(ImageType.RGB);
+                attributes.setColorType(ImageType.RGB);
             }
             setCompressionTypes();
         } catch (Exception e) {
@@ -136,7 +138,7 @@ public class ImageTiffEditerController extends ImageSourcesController {
             compressionBox.getChildren().clear();
             compressionGroup = new ToggleGroup();
             String[] compressionTypes
-                    = ImageValue.getCompressionTypes("tif", attributes.getColorSpace());
+                    = ImageValue.getCompressionTypes("tif", attributes.getColorType());
             for (String ctype : compressionTypes) {
                 if (ctype.equals("ZLib")) { // This type looks not work for mutiple frames tiff file
                     continue;
@@ -175,10 +177,10 @@ public class ImageTiffEditerController extends ImageSourcesController {
             thresholdInput.setStyle(null);
             RadioButton selected = (RadioButton) binaryGroup.getSelectedToggle();
             String s = selected.getText();
-            if (getMessage("Threshold").equals(s)) {
+            if (message("Threshold").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_THRESHOLD);
                 checkThreshold();
-            } else if (getMessage("OTSU").equals(s)) {
+            } else if (message("OTSU").equals(s)) {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.BINARY_OTSU);
             } else {
                 attributes.setBinaryConversion(ImageAttributes.BinaryConversion.DEFAULT);
@@ -227,8 +229,10 @@ public class ImageTiffEditerController extends ImageSourcesController {
                         @Override
                         public void run() {
                             if (ret.isEmpty()) {
-                                popInformation(AppVaribles.getMessage("Successful"));
-                                if (viewCheck.isSelected()) {
+                                popInformation(AppVaribles.message("Successful"));
+                                if (outFile.equals(sourceFile)) {
+                                    setImageChanged(false);
+                                } else if (viewCheck.isSelected()) {
                                     try {
                                         final ImageFramesViewerController controller
                                                 = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
@@ -237,9 +241,9 @@ public class ImageTiffEditerController extends ImageSourcesController {
                                         logger.error(e.toString());
                                     }
                                 }
-                                setImageChanged(false);
+
                             } else {
-                                popError(AppVaribles.getMessage(ret));
+                                popError(AppVaribles.message(ret));
                             }
                         }
                     });

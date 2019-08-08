@@ -1,13 +1,11 @@
 package mara.mybox.image.file;
 
 import java.awt.color.ColorSpace;
-import mara.mybox.image.ImageValue;
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.WritableRaster;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,16 +17,18 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageInformation;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.image.ImageValue;
 import static mara.mybox.value.AppVaribles.logger;
-
+import static mara.mybox.value.AppVaribles.message;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * @Author Mara
@@ -47,6 +47,7 @@ public class ImageJpgFile {
             int index, int xscale, int yscale) {
         BufferedImage bufferedImage = null;
         try {
+            logger.debug("here");
             if (imageInfo.getColorChannels() != 4) {
                 return null;
             }
@@ -54,7 +55,7 @@ public class ImageJpgFile {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 ImageReader reader = null;
                 while (readers.hasNext()) {
-                    reader = (ImageReader) readers.next();
+                    reader = readers.next();
                     if (reader.canReadRaster()) {
                         break;
                     }
@@ -64,19 +65,19 @@ public class ImageJpgFile {
                     ImageReadParam param = reader.getDefaultReadParam();
                     param.setSourceSubsampling(xscale, yscale, 0, 0);
                     WritableRaster srcRaster = (WritableRaster) reader.readRaster(index, param);
-                    boolean isAdobe = imageInfo.getBooleanAttribute("Adobe");
+                    boolean isAdobe = (boolean) imageInfo.getNativeAttribute("Adobe");
                     if ("YCCK".equals(imageInfo.getColorSpace())) {
                         ImageConvert.ycck2cmyk(srcRaster, isAdobe);
                     } else if (isAdobe) {
-                        ImageConvert.invert(srcRaster);
+                        ImageConvert.invertPixelValue(srcRaster);
                     }
                     bufferedImage = new BufferedImage(srcRaster.getWidth(), srcRaster.getHeight(), BufferedImage.TYPE_INT_RGB);
                     WritableRaster rgbRaster = bufferedImage.getRaster();
                     ColorSpace cmykCS;
                     if (isAdobe) {
-                        cmykCS = ImageConvert.adobeCmykColorSpace();
+                        cmykCS = ImageValue.adobeCmykColorSpace();
                     } else {
-                        cmykCS = ImageConvert.eciCmykColorSpace();
+                        cmykCS = ImageValue.eciCmykColorSpace();
                     }
                     ColorSpace rgbCS = bufferedImage.getColorModel().getColorSpace();
                     ColorConvertOp cmykToRgb = new ColorConvertOp(cmykCS, rgbCS, null);
@@ -90,17 +91,13 @@ public class ImageJpgFile {
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html#image
-    public static boolean writeJPEGImageFile(BufferedImage image,
-            ImageAttributes attributes, File file) {
+    public static ImageWriter getWriter() {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+        return writer;
+    }
+
+    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
             ImageWriteParam param = writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -113,24 +110,68 @@ public class ImageJpgFile {
                     param.setCompressionQuality(1.0f);
                 }
             }
-//            logger.debug(param.getCompressionQuality());
+            return param;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
 
-            IIOMetadata metaData;
+    public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
+            ImageWriter writer, ImageWriteParam param) {
+        try {
+            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            if (metaData == null || metaData.isReadOnly() || attributes == null) {
+                return metaData;
+            }
+            String nativeFormat = metaData.getNativeMetadataFormatName();// "javax_imageio_jpeg_image_1.0"
+            Element nativeTree = (Element) metaData.getAsTree(nativeFormat);
+            Element app0JFIF;
+            NodeList app0JFIFNode = nativeTree.getElementsByTagName("app0JFIF");
+            if (app0JFIFNode != null && app0JFIFNode.getLength() > 0) {
+                app0JFIF = (Element) app0JFIFNode.item(0);
+            } else {
+                app0JFIF = new IIOMetadataNode("app0JFIF");
+                nativeTree.appendChild(app0JFIF);
+            }
+            if (attributes.getDensity() > 0) {
+                app0JFIF.setAttribute("Xdensity", attributes.getDensity() + "");
+                app0JFIF.setAttribute("Ydensity", attributes.getDensity() + "");
+                app0JFIF.setAttribute("resUnits", "1"); // density is dots per inch
+
+            }
+            if (attributes.isEmbedProfile() && attributes.getProfile() != null) {
+                IIOMetadataNode app2ICC;
+                NodeList app2ICCNode = nativeTree.getElementsByTagName("app2ICC");
+                if (app2ICCNode != null && app2ICCNode.getLength() > 0) {
+                    app2ICC = (IIOMetadataNode) app2ICCNode.item(0);
+                } else {
+                    app2ICC = new IIOMetadataNode("app2ICC");
+                    app0JFIF.appendChild(app2ICC);
+                }
+                app2ICC.setUserObject(attributes.getProfile());
+            }
+            metaData.mergeTree(nativeFormat, nativeTree);
+            return metaData;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean writeJPEGImageFile(BufferedImage image,
+            ImageAttributes attributes, File file) {
+        try {
             try {
-                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-                if (attributes != null && attributes.getDensity() > 0) {
-                    String format = metaData.getNativeMetadataFormatName(); // "javax_imageio_jpeg_image_1.0"
-                    Element tree = (Element) metaData.getAsTree(format);
-                    Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
-                    jfif.setAttribute("Xdensity", attributes.getDensity() + "");
-                    jfif.setAttribute("Ydensity", attributes.getDensity() + "");
-                    jfif.setAttribute("resUnits", "1"); // density is dots per inch
-                    metaData.mergeTree(format, tree);
+                if (file.exists()) {
+                    file.delete();
                 }
             } catch (Exception e) {
-                logger.error(e.toString());
-                metaData = null;
+                return false;
             }
+            ImageWriter writer = getWriter();
+            ImageWriteParam param = getPara(attributes, writer);
+            IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);
@@ -145,100 +186,145 @@ public class ImageJpgFile {
         }
     }
 
-    public static void explainJpegMetaData(Map<String, Map<String, List<Map<String, String>>>> metaData,
+    public static void explainJpegMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData,
             ImageInformation info) {
         try {
             if (!metaData.containsKey("javax_imageio_jpeg_image_1.0")) {
                 return;
             }
-//            logger.debug("explainPngMetaData");
-            Map<String, List<Map<String, String>>> javax_imageio_jpeg = metaData.get("javax_imageio_jpeg_image_1.0");
+            Map<String, List<Map<String, Object>>> javax_imageio_jpeg = metaData.get("javax_imageio_jpeg_image_1.0");
             if (javax_imageio_jpeg.containsKey("app0JFIF")) {
-                Map<String, String> app0JFIF = javax_imageio_jpeg.get("app0JFIF").get(0);
+                Map<String, Object> app0JFIF = javax_imageio_jpeg.get("app0JFIF").get(0);
                 if (app0JFIF.containsKey("majorVersion")) {
-                    info.setAttribute("majorVersion", Integer.valueOf(app0JFIF.get("majorVersion")));
+                    info.setNativeAttribute("majorVersion", Integer.valueOf((String) app0JFIF.get("majorVersion")));
                 }
                 if (app0JFIF.containsKey("minorVersion")) {
-                    info.setAttribute("minorVersion", Integer.valueOf(app0JFIF.get("minorVersion")));
+                    info.setNativeAttribute("minorVersion", Integer.valueOf((String) app0JFIF.get("minorVersion")));
                 }
                 if (app0JFIF.containsKey("resUnits")) {
-                    int u = Integer.valueOf(app0JFIF.get("resUnits"));
+                    int u = Integer.valueOf((String) app0JFIF.get("resUnits"));
+                    info.setNativeAttribute("resUnits", u);
                     switch (u) {
                         case 1:
-                            info.setAttribute("resUnits", getMessage("DotsPerInch"));
+                            info.setNativeAttribute("resUnits", message("DotsPerInch"));
                             break;
                         case 2:
-                            info.setAttribute("resUnits", getMessage("DotsPerCentimeter"));
+                            info.setNativeAttribute("resUnits", message("DotsPerCentimeter"));
                             break;
-//                        case 0:
-//                        default:
-//                            info.setAttribute("resUnits", getMessage("None"));
+                        case 0:
+                            info.setNativeAttribute("resUnits", message("None"));
                     }
-                    boolean isDpi = u == 1;
                     if (app0JFIF.containsKey("Xdensity")) {
-                        int v = Integer.valueOf(app0JFIF.get("Xdensity"));
-                        info.setAttribute("Xdensity", v);
-                        if (!isDpi) {
-                            info.setXDpi(ImageValue.dpi2dpcm(v));  // density value should be dpi
-                        } else {
+                        int v = Integer.valueOf((String) app0JFIF.get("Xdensity"));
+                        info.setNativeAttribute("Xdensity", v);
+                        if (u == 2) {
+                            info.setXDpi(ImageConvert.dpi2dpcm(v));  // density value should be dpi
+                        } else if (u == 1) {
                             info.setXDpi(v);
                         }
                     }
                     if (app0JFIF.containsKey("Ydensity")) {
-                        int v = Integer.valueOf(app0JFIF.get("Ydensity"));
-                        info.setAttribute("Ydensity", v);
-                        if (!isDpi) {
-                            info.setYDpi(ImageValue.dpi2dpcm(v));  // density value should be dpi
-                        } else {
+                        int v = Integer.valueOf((String) app0JFIF.get("Ydensity"));
+                        info.setNativeAttribute("Ydensity", v);
+                        if (u == 2) {
+                            info.setYDpi(ImageConvert.dpi2dpcm(v));  // density value should be dpi
+                        } else if (u == 1) {
                             info.setYDpi(v);
                         }
                     }
                 }
                 if (app0JFIF.containsKey("thumbWidth")) {
-                    info.setAttribute("thumbWidth", Integer.valueOf(app0JFIF.get("thumbWidth")));
+                    info.setNativeAttribute("thumbWidth", Integer.valueOf((String) app0JFIF.get("thumbWidth")));
                 }
                 if (app0JFIF.containsKey("thumbHeight")) {
-                    info.setAttribute("thumbHeight", Integer.valueOf(app0JFIF.get("thumbHeight")));
+                    info.setNativeAttribute("thumbHeight", Integer.valueOf((String) app0JFIF.get("thumbHeight")));
                 }
             }
             if (javax_imageio_jpeg.containsKey("app0JFXX")) {
-                Map<String, String> app0JFXX = javax_imageio_jpeg.get("app0JFXX").get(0);
+                Map<String, Object> app0JFXX = javax_imageio_jpeg.get("app0JFXX").get(0);
                 if (app0JFXX.containsKey("extensionCode")) {
-                    info.setAttribute("extensionCode", app0JFXX.get("extensionCode"));
+                    info.setNativeAttribute("extensionCode", app0JFXX.get("extensionCode"));
                 }
             }
 
             if (javax_imageio_jpeg.containsKey("JFIFthumbPalette")) {
-                Map<String, String> JFIFthumbPalette = javax_imageio_jpeg.get("JFIFthumbPalette").get(0);
+                Map<String, Object> JFIFthumbPalette = javax_imageio_jpeg.get("JFIFthumbPalette").get(0);
                 if (JFIFthumbPalette.containsKey("thumbWidth")) {
-                    info.setAttribute("thumbWidth", JFIFthumbPalette.get("thumbWidth"));
+                    info.setNativeAttribute("thumbWidth", JFIFthumbPalette.get("thumbWidth"));
                 }
                 if (JFIFthumbPalette.containsKey("thumbHeight")) {
-                    info.setAttribute("thumbHeight", JFIFthumbPalette.get("thumbHeight"));
+                    info.setNativeAttribute("thumbHeight", JFIFthumbPalette.get("thumbHeight"));
                 }
             }
 
             if (javax_imageio_jpeg.containsKey("JFIFthumbRGB")) {
-                Map<String, String> JFIFthumbRGB = javax_imageio_jpeg.get("JFIFthumbRGB").get(0);
+                Map<String, Object> JFIFthumbRGB = javax_imageio_jpeg.get("JFIFthumbRGB").get(0);
                 if (JFIFthumbRGB.containsKey("thumbWidth")) {
-                    info.setAttribute("thumbWidth", JFIFthumbRGB.get("thumbWidth"));
+                    info.setNativeAttribute("thumbWidth", JFIFthumbRGB.get("thumbWidth"));
                 }
                 if (JFIFthumbRGB.containsKey("thumbHeight")) {
-                    info.setAttribute("thumbHeight", JFIFthumbRGB.get("thumbHeight"));
+                    info.setNativeAttribute("thumbHeight", JFIFthumbRGB.get("thumbHeight"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("app2ICC")) {
+                Map<String, Object> app2ICC = javax_imageio_jpeg.get("app2ICC").get(0);
+                ICC_Profile p = (ICC_Profile) app2ICC.get("UserObject");
+                info.setIccProfile(p.getData());
+            }
+
+            if (javax_imageio_jpeg.containsKey("dqtable")) {
+                Map<String, Object> dqtable = javax_imageio_jpeg.get("dqtable").get(0);
+                if (dqtable.containsKey("elementPrecision")) {
+                    info.setNativeAttribute("dqtableElementPrecision", dqtable.get("elementPrecision"));
+                }
+                if (dqtable.containsKey("qtableId")) {
+                    info.setNativeAttribute("qtableId", dqtable.get("qtableId"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("dhtable")) {
+                Map<String, Object> dhtable = javax_imageio_jpeg.get("dhtable").get(0);
+                if (dhtable.containsKey("class")) {
+                    info.setNativeAttribute("dhtableClass", dhtable.get("class"));
+                }
+                if (dhtable.containsKey("htableId")) {
+                    info.setNativeAttribute("htableId", dhtable.get("htableId"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("dri")) {
+                Map<String, Object> dri = javax_imageio_jpeg.get("dri").get(0);
+                if (dri.containsKey("interval")) {
+                    info.setNativeAttribute("driInterval", dri.get("interval"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("com")) {
+                Map<String, Object> com = javax_imageio_jpeg.get("com").get(0);
+                if (com.containsKey("comment")) {
+                    info.setNativeAttribute("comment", com.get("comment"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("unknown")) {
+                Map<String, Object> unknown = javax_imageio_jpeg.get("unknown").get(0);
+                if (unknown.containsKey("MarkerTag")) {
+                    info.setNativeAttribute("unknownMarkerTag", unknown.get("MarkerTag"));
                 }
             }
 
             if (javax_imageio_jpeg.containsKey("app14Adobe")) {
-                info.setAttribute("Adobe", true);
-                Map<String, String> app14Adobe = javax_imageio_jpeg.get("app14Adobe").get(0);
+                info.setNativeAttribute("Adobe", true);
+                Map<String, Object> app14Adobe = javax_imageio_jpeg.get("app14Adobe").get(0);
                 if (app14Adobe.containsKey("version")) {
-                    info.setAttribute("AdobeVersion", app14Adobe.get("version"));
+                    info.setNativeAttribute("AdobeVersion", app14Adobe.get("version"));
                 }
                 if (app14Adobe.containsKey("flags0")) {
-                    info.setAttribute("AdobeFlags0", app14Adobe.get("flags0"));
+                    info.setNativeAttribute("AdobeFlags0", app14Adobe.get("flags0"));
                 }
                 if (app14Adobe.containsKey("flags1")) {
-                    info.setAttribute("AdobeFlags1", app14Adobe.get("flags1"));
+                    info.setNativeAttribute("AdobeFlags1", app14Adobe.get("flags1"));
                 }
                 /*
                     https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/jpeg_metadata.html#image
@@ -247,75 +333,80 @@ public class ImageJpgFile {
                     0 - Unknown. 3-channel images are assumed to be RGB, 4-channel images are assumed to be CMYK.
                  */
                 if (app14Adobe.containsKey("transform")) {
-                    info.setAttribute("AdobeTransform", app14Adobe.get("transform"));
+                    info.setNativeAttribute("AdobeTransform", app14Adobe.get("transform"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("sof")) {
+                Map<String, Object> sof = javax_imageio_jpeg.get("sof").get(0);
+                if (sof.containsKey("process")) {
+                    info.setNativeAttribute("FrameProcess", sof.get("process"));
+                }
+                if (sof.containsKey("samplePrecision")) {
+                    info.setNativeAttribute("FrameSamplePrecision", sof.get("samplePrecision"));
+                }
+                if (sof.containsKey("numLines")) {
+                    info.setNativeAttribute("FrameNumLines", sof.get("numLines"));
+                }
+                if (sof.containsKey("samplesPerLine")) {
+                    info.setNativeAttribute("FrameSamplesPerLine", sof.get("samplesPerLine"));
+                }
+                if (sof.containsKey("numFrameComponents")) {
+                    info.setNativeAttribute("FrameNumFrameComponents", sof.get("numFrameComponents"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("componentSpec")) {
+                Map<String, Object> componentSpec = javax_imageio_jpeg.get("componentSpec").get(0);
+                if (componentSpec.containsKey("componentId")) {
+                    info.setNativeAttribute("FrameComponentId", componentSpec.get("componentId"));
+                }
+                if (componentSpec.containsKey("HsamplingFactor")) {
+                    info.setNativeAttribute("FrameHsamplingFactor", componentSpec.get("HsamplingFactor"));
+                }
+                if (componentSpec.containsKey("VsamplingFactor")) {
+                    info.setNativeAttribute("FrameVsamplingFactor", componentSpec.get("VsamplingFactor"));
+                }
+                if (componentSpec.containsKey("QtableSelector")) {
+                    info.setNativeAttribute("FrameQtableSelector", componentSpec.get("QtableSelector"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("sos")) {
+                Map<String, Object> sos = javax_imageio_jpeg.get("sos").get(0);
+                if (sos.containsKey("numScanComponents")) {
+                    info.setNativeAttribute("NumScanComponents", sos.get("numScanComponents"));
+                }
+                if (sos.containsKey("startSpectralSelection")) {
+                    info.setNativeAttribute("ScanStartSpectralSelection", sos.get("startSpectralSelection"));
+                }
+                if (sos.containsKey("endSpectralSelection")) {
+                    info.setNativeAttribute("ScanEndSpectralSelection", sos.get("endSpectralSelection"));
+                }
+                if (sos.containsKey("approxHigh")) {
+                    info.setNativeAttribute("ScanApproxHigh", sos.get("approxHigh"));
+                }
+                if (sos.containsKey("approxLow")) {
+                    info.setNativeAttribute("ScanApproxLow", sos.get("approxLow"));
+                }
+            }
+
+            if (javax_imageio_jpeg.containsKey("scanComponentSpec")) {
+                Map<String, Object> scanComponentSpec = javax_imageio_jpeg.get("scanComponentSpec").get(0);
+                if (scanComponentSpec.containsKey("componentSelector")) {
+                    info.setNativeAttribute("ScanComponentSelector", scanComponentSpec.get("componentSelector"));
+                }
+                if (scanComponentSpec.containsKey("dcHuffTable")) {
+                    info.setNativeAttribute("ScanDcHuffTable", scanComponentSpec.get("dcHuffTable"));
+                }
+                if (scanComponentSpec.containsKey("acHuffTable")) {
+                    info.setNativeAttribute("ScanAcHuffTable", scanComponentSpec.get("acHuffTable"));
                 }
 
             }
-
-//            if (javax_imageio_jpeg.containsKey("sof")) {
-//                Map<String, String> sof = javax_imageio_jpeg.get("sof").get(0);
-//                if (sof.containsKey("numLines")) {
-//                    info.setHeight(Integer.valueOf(sof.get("numLines")));
-//                }
-//                if (sof.containsKey("samplesPerLine")) {
-//                    info.setWidth(Integer.valueOf(sof.get("samplesPerLine")));
-//                }
-//                if (sof.containsKey("samplePrecision")) {
-//                    info.setBitDepth(sof.get("samplePrecision"));
-//                }
-//            }
         } catch (Exception e) {
 
         }
-    }
-
-    public static void rgbToCmyk(InputStream inputStream, String fileName, String... newFileName) throws IOException {
-//        BufferedImage rgbImage = ImageIO.read(inputStream);
-//        BufferedImage cmykImage = null;
-//        ColorSpace cpace = new ICC_ColorSpace(ICC_Profile.getInstance(TestImageBinary.class.getClassLoader().getResourceAsStream("ISOcoated_v2_300_eci.icc")));
-//        ColorConvertOp op = new ColorConvertOp(rgbImage.getColorModel().getColorSpace(), cpace, null);
-//        cmykImage = op.filter(rgbImage, null);
-//        if (newFileName.length > 0 && newFileName[0] != null) {
-//            String targetFileName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + "tif";
-//            JAI.create("filestore", cmykImage, targetFileName, "TIFF");
-//            cmykImage.flush();
-//            base64StringToImage(targetFileName, newFileName[0]);//转成对应格式
-//            File file = new File(fileName);
-//            if (file.exists()) {
-//                file.delete();
-//            }
-//        } else {
-//            String targetFileName = fileName.substring(0, fileName.lastIndexOf(".") + 1) + "tif";
-//            JAI.create("filestore", cmykImage, targetFileName, "TIFF");
-//        }
-    }
-
-    public static void rgbToCmyk(String fileName, String... format) throws IOException {
-//        BufferedImage rgbImage = ImageIO.read(new File(fileName));
-//        BufferedImage cmykImage = null;
-//        ColorSpace cpace = new ICC_ColorSpace(ICC_Profile.getInstance(TestImageBinary.class.getClassLoader().getResourceAsStream("common/ISOcoated_v2_300_eci.icc")));
-//        ColorConvertOp op = new ColorConvertOp(rgbImage.getColorModel().getColorSpace(), cpace, null);
-//        cmykImage = op.filter(rgbImage, null);
-//        String newFileName = null;
-//        newFileName = fileName.substring(0, fileName.lastIndexOf("."));
-//        if (format.length > 0) {
-//            JAI.create("filestore", cmykImage, newFileName + format[0], format[0]);
-//        } else {
-//            JAI.create("filestore", cmykImage, newFileName + "tif", "TIFF");
-//        }
-    }
-
-    static void base64StringToImage(String sourceFileName, String newFileName) {
-//        try {
-//            String base64String = getImageBinary(sourceFileName);
-//            byte[] bytes1 = decoder.decodeBuffer(base64String);
-//            ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes1);
-//            BufferedImage bi1 = ImageIO.read(inputStream);
-//            File w2 = new File(newFileName);//可以是jpg,png,gif格式
-//            ImageIO.write(bi1, getFileType(sourceFileName), w2);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
 }

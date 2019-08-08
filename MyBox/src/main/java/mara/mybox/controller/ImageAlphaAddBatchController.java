@@ -1,34 +1,28 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -58,14 +52,15 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     private ComboBox<String> opacityBox;
 
     public ImageAlphaAddBatchController() {
-        baseTitle = AppVaribles.getMessage("ImageAlphaAdd");
+        baseTitle = AppVaribles.message("ImageAlphaAdd");
 
-        fileExtensionFilter = CommonValues.AlphaImageExtensionFilter;
+        sourceExtensionFilter = CommonValues.AlphaImageExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
 
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -151,9 +146,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
 
     private void checkOpacityAdd() {
         String selected = ((RadioButton) alphaAddGroup.getSelectedToggle()).getText();
-        if (getMessage("Plus").equals(selected)) {
+        if (message("Plus").equals(selected)) {
             blendMode = AlphaBlendMode.Plus;
-        } else if (getMessage("Keep").equals(selected)) {
+        } else if (message("Keep").equals(selected)) {
             blendMode = AlphaBlendMode.KeepOriginal;
         } else {
             blendMode = AlphaBlendMode.Set;
@@ -162,83 +157,55 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
 
     @FXML
     public void popAlphaFile(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his;
-        his = VisitHistory.getRecentAlphaImages(fileNumber);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectSourceFile(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        if (his != null) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            dmenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(dmenu);
-            for (VisitHistory h : his) {
-                final String pathname = h.getResourceValue();
-                MenuItem menu = new MenuItem(pathname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
-                        selectSourceFile(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+                return VisitHistory.getRecentAlphaImages(fileNumber);
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectSourceFile();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @Override
-    public void makeMoreParameters() {
-        super.makeMoreParameters();
+    public boolean makeMoreParameters() {
+        if (!super.makeMoreParameters()) {
+            return false;
+        }
         if (!useOpacityValue) {
             alphaImage = ImageFileReaders.readImage(sourceFile);
         }
+        return true;
     }
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
         try {
             if (source.getColorModel().hasAlpha() && blendMode == AlphaBlendMode.KeepOriginal) {
-                errorString = getMessage("NeedNotHandle");
+                errorString = message("NeedNotHandle");
                 return null;
             }
             BufferedImage target;

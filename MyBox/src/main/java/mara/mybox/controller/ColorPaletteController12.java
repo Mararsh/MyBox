@@ -45,7 +45,7 @@ public class ColorPaletteController12 extends BaseController {
 
     // http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
     public ColorPaletteController12() {
-        baseTitle = AppVaribles.getMessage("ColorPalette");
+        baseTitle = AppVaribles.message("ColorPalette");
     }
 
     @Override

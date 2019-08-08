@@ -8,9 +8,10 @@ import javafx.scene.control.TextArea;
 import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.color.ColorConversion.SpaceType;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -28,7 +29,7 @@ public class ColorConversionController extends ChromaticityBaseController {
     protected TextArea calculateArea;
 
     public ColorConversionController() {
-        baseTitle = AppVaribles.getMessage("ColorConversion");
+        baseTitle = AppVaribles.message("ColorConversion");
     }
 
     @Override
@@ -63,19 +64,19 @@ public class ColorConversionController extends ChromaticityBaseController {
         if (calculateButton.isDisabled()) {
             return;
         }
-        calculateArea.setText(getMessage("SourceColor") + "\n");
+        calculateArea.setText(message("SourceColor") + "\n");
         calculateArea.appendText("-------------------------------------------------\n");
-        calculateArea.appendText(getMessage("ColorSpace") + ": " + sourceController.spaceName + "\n");
-        calculateArea.appendText(getMessage("ReferenceWhite") + ": " + sourceController.white + "\n");
-        calculateArea.appendText(getMessage("GammaCorrection") + ": " + sourceController.gamma + "\n");
+        calculateArea.appendText(message("ColorSpace") + ": " + sourceController.spaceName + "\n");
+        calculateArea.appendText(message("ReferenceWhite") + ": " + sourceController.white + "\n");
+        calculateArea.appendText(message("GammaCorrection") + ": " + sourceController.gamma + "\n");
         if (sourceController.spaceType == SpaceType.RGB) {
-            calculateArea.appendText(getMessage("ColorValues") + ": "
-                    + getMessage("Red") + " = " + sourceController.d1 + " (" + (int) Math.round(sourceController.d1 * 255) + ")   "
-                    + getMessage("Green") + " = " + sourceController.d2 + " (" + (int) Math.round(sourceController.d2 * 255) + ")   "
-                    + getMessage("Blue") + " = " + sourceController.d3 + " (" + (int) Math.round(sourceController.d3 * 255) + ")   "
+            calculateArea.appendText(message("ColorValues") + ": "
+                    + message("Red") + " = " + sourceController.d1 + " (" + (int) Math.round(sourceController.d1 * 255) + ")   "
+                    + message("Green") + " = " + sourceController.d2 + " (" + (int) Math.round(sourceController.d2 * 255) + ")   "
+                    + message("Blue") + " = " + sourceController.d3 + " (" + (int) Math.round(sourceController.d3 * 255) + ")   "
                     + "\n\n");
 
-            calculateArea.appendText(getMessage("ConvertedValues") + " - " + getMessage("DefaultWhite") + "\n");
+            calculateArea.appendText(message("ConvertedValues") + " - " + message("DefaultWhite") + "\n");
             calculateArea.appendText("-------------------------------------------------\n");
 
         }

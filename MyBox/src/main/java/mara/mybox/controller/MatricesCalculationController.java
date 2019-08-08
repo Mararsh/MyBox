@@ -16,7 +16,7 @@ import mara.mybox.controller.base.BaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -43,15 +43,15 @@ public class MatricesCalculationController extends BaseController {
     private SplitPane dataPane;
 
     public MatricesCalculationController() {
-        baseTitle = AppVaribles.getMessage("MatricesCalculation");
+        baseTitle = AppVaribles.message("MatricesCalculation");
 
     }
 
     @Override
     public void initializeNext() {
-        matrixAController.parentController = this;
-        matrixBController.parentController = this;
-        matrixResultController.parentController = this;
+        matrixAController.setParentController(this);
+        matrixBController.setParentController(this);
+        matrixResultController.setParentController(this);
 
         if (mainBox.getChildren().contains(cpBox)) {
             mainBox.getChildren().remove(cpBox);
@@ -80,7 +80,7 @@ public class MatricesCalculationController extends BaseController {
                         matrixResultController.scale = scale;
                         scaleInput.setStyle(null);
                         AppVaribles.setUserConfigInt("MatrixDecimalScale", scale);
-                        popInformation(getMessage("Successful"), 1000);
+                        popInformation(message("Successful"), 1000);
                     }
                 } catch (Exception e) {
                     scaleInput.setStyle(badStyle);
@@ -105,9 +105,9 @@ public class MatricesCalculationController extends BaseController {
 
     private void checkCalculationType() {
         RadioButton selected = (RadioButton) calTypeGroup.getSelectedToggle();
-        if (getMessage("UnaryCalculation").equals(selected.getText())) {
+        if (message("UnaryCalculation").equals(selected.getText())) {
             dataPane.getItems().removeAll(bpBox, cpBox);
-        } else if (getMessage("BinaryCalculation").equals(selected.getText())) {
+        } else if (message("BinaryCalculation").equals(selected.getText())) {
             dataPane.getItems().addAll(bpBox, cpBox);
             refreshStyle(dataPane);
             dataPane.setDividerPositions(0.333f, 0.666f);
@@ -131,16 +131,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.vertivalMerge(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("VerticalMerge") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("VerticalMerge") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":"
-                + getMessage("VerticalMerge") + "  " + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":"
+                + message("VerticalMerge") + "  " + message("Cost") + ":" + cost + " ms");
     }
 
     @FXML
@@ -148,16 +148,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.horizontalMerge(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("HorizontalMerge") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("HorizontalMerge") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":"
-                + getMessage("HorizontalMerge") + "  " + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":"
+                + message("HorizontalMerge") + "  " + message("Cost") + ":" + cost + " ms");
     }
 
     @FXML
@@ -165,16 +165,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.add(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("Plus") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("Plus") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":" + getMessage("Plus") + "  "
-                + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Plus") + "  "
+                + message("Cost") + ":" + cost + " ms");
     }
 
     @FXML
@@ -182,16 +182,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.subtract(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("Minus") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("Minus") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":" + getMessage("Minus") + "  "
-                + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Minus") + "  "
+                + message("Cost") + ":" + cost + " ms");
 
     }
 
@@ -200,16 +200,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.multiply(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("Multiply") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("Multiply") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":" + getMessage("Multiply") + "  "
-                + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Multiply") + "  "
+                + message("Cost") + ":" + cost + " ms");
     }
 
     @FXML
@@ -217,16 +217,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.hadamardProduct(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("HadamardProduct") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("HadamardProduct") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":" + getMessage("HadamardProduct") + "  "
-                + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("HadamardProduct") + "  "
+                + message("Cost") + ":" + cost + " ms");
     }
 
     @FXML
@@ -234,16 +234,16 @@ public class MatricesCalculationController extends BaseController {
         long startTime = new Date().getTime();
         double[][] result = MatrixTools.kroneckerProduct(matrixAController.matrix, matrixBController.matrix);
         if (result == null) {
-            popError(getMessage("InvalidData"));
-            matrixResultController.bottomLabel.setText(getMessage("Failed") + ":"
-                    + getMessage("KroneckerProduct") + "  " + getMessage("InvalidData"));
+            popError(message("InvalidData"));
+            matrixResultController.getBottomLabel().setText(message("Failed") + ":"
+                    + message("KroneckerProduct") + "  " + message("InvalidData"));
             return;
         }
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.bottomLabel.setText(AppVaribles.getMessage("Successful") + ":" + getMessage("KroneckerProduct") + "  "
-                + getMessage("Cost") + ":" + cost + " ms");
+        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("KroneckerProduct") + "  "
+                + message("Cost") + ":" + cost + " ms");
     }
 
 }

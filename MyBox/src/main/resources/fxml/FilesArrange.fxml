@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -22,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesArrangeController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesArrangeController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -39,7 +37,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%SourcePath" />
                                                 <TextField fx:id="sourcePathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath"   onMouseEntered="#popSourcePath"  >
+                                                <Button fx:id="selectSourcePathButton" mnemonicParsing="false" onAction="#selectSourcePath" onMouseEntered="#popSourcePath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -54,7 +52,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TargetPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -69,15 +67,24 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%ArrangeConditions" VBox.vgrow="NEVER">
+                        <TitledPane text="%ArrangeConditions" VBox.vgrow="NEVER">
                             <VBox.margin>
                                 <Insets top="5.0" />
                             </VBox.margin>
                             <content>
-                                <VBox fx:id="conditionsBox" spacing="20.0">
+                                <VBox fx:id="conditionsBox" spacing="15.0">
                                     <children>
-                                        <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                              <HBox>
+                                 <children>
+                                                <CheckBox fx:id="handleSubdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                                              <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%FileArrangeComments">
+                                       <HBox.margin>
+                                          <Insets left="30.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
                                                 <Label text="%SourceFiles" />
                                                 <RadioButton fx:id="copyRadio" mnemonicParsing="false" selected="true" text="%Copy">
@@ -86,11 +93,11 @@ License:    Apache License Version 2.0
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="moveRadio" mnemonicParsing="false" text="%Move" toggleGroup="$filesGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%ExistedFiles" />
+                                                <Label text="%ExistedFiles">
+                                                    <HBox.margin>
+                                                        <Insets left="80.0" />
+                                                    </HBox.margin>
+                                                </Label>
                                                 <RadioButton fx:id="replaceModifiedRadio" mnemonicParsing="false" selected="true" text="%ReplaceModified">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="replaceGroup" />
@@ -101,20 +108,24 @@ License:    Apache License Version 2.0
                                                 <RadioButton fx:id="notCopyRadio" mnemonicParsing="false" text="%NotCopy" toggleGroup="$replaceGroup" />
                                             </children>
                                         </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                                <Label text="%By" />
+                                                <Label text="%By">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </Label>
                                                 <RadioButton fx:id="modifiyTimeRadio" mnemonicParsing="false" selected="true" text="%ModifyTime">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="byGroup" />
                                                     </toggleGroup>
                                                 </RadioButton>
                                                 <RadioButton fx:id="createTimeRadio" mnemonicParsing="false" text="%CreateTime" toggleGroup="$byGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%Category" />
+                                                <Label text="%Category">
+                                                    <HBox.margin>
+                                                        <Insets left="80.0" />
+                                                    </HBox.margin>
+                                                </Label>
                                                 <RadioButton fx:id="monthRadio" mnemonicParsing="false" selected="true" text="%Month">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="dirGroup" />
@@ -122,11 +133,6 @@ License:    Apache License Version 2.0
                                                 </RadioButton>
                                                 <RadioButton fx:id="dayRadio" mnemonicParsing="false" text="%Day" toggleGroup="$dirGroup" />
                                                 <RadioButton fx:id="yearRadio" mnemonicParsing="false" text="%Year" toggleGroup="$dirGroup" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <Label text="%FileArrangeComments" />
                                             </children>
                                         </HBox>
                                     </children>
@@ -143,10 +149,10 @@ License:    Apache License Version 2.0
                                         <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="150.0" wrapText="true" VBox.vgrow="ALWAYS" />
                                         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
                                                 <Label text="%MaxLines" />
                                                 <TextField fx:id="maxLinesinput" prefWidth="80.0" text="5000" />
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction" >
+                                                <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

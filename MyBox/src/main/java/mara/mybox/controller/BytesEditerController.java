@@ -8,7 +8,6 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
@@ -16,13 +15,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.stage.Modality;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation.Line_Break;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -40,7 +39,7 @@ public class BytesEditerController extends FileEditerController {
     private RadioButton bytesNumberRadio, byteRadio;
 
     public BytesEditerController() {
-        baseTitle = AppVaribles.getMessage("BytesEditer");
+        baseTitle = AppVaribles.message("BytesEditer");
 
         TipsLabelKey = "BytesEditerTips";
 
@@ -61,7 +60,7 @@ public class BytesEditerController extends FileEditerController {
 
     protected void initCharInputTab() {
         List<String> symbolList = Arrays.asList(
-                "LF", "CR", AppVaribles.getMessage("Space"), "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "-",
+                "LF", "CR", AppVaribles.message("Space"), "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "-",
                 ",", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "]", "\\", "^", "_", "`",
                 "{", "}", "|", "~");
         symbolBox.getItems().addAll(symbolList);
@@ -69,7 +68,7 @@ public class BytesEditerController extends FileEditerController {
             @Override
             public void changed(ObservableValue ov, String oldValue, String newValue) {
                 String s = newValue;
-                if (newValue.equals(AppVaribles.getMessage("Space"))) {
+                if (newValue.equals(AppVaribles.message("Space"))) {
                     s = " ";
                 } else if (newValue.equals("LF")) {
                     s = "\n";
@@ -171,15 +170,15 @@ public class BytesEditerController extends FileEditerController {
         try {
             isSettingValues = true;
             RadioButton selected = (RadioButton) lineBreakGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("BytesNumber").equals(selected.getText())) {
+            if (AppVaribles.message("BytesNumber").equals(selected.getText())) {
                 lineBreak = Line_Break.Width;
-            } else if (AppVaribles.getMessage("BytesHex").equals(selected.getText())) {
+            } else if (AppVaribles.message("BytesHex").equals(selected.getText())) {
                 lineBreak = Line_Break.Value;
-            } else if (AppVaribles.getMessage("LFHex").equals(selected.getText())) {
+            } else if (AppVaribles.message("LFHex").equals(selected.getText())) {
                 lineBreak = Line_Break.LF;
                 lineBreakValue = "0A ";
                 sourceInformation.setLineBreakValue("0A ");
-            } else if (AppVaribles.getMessage("CRHex").equals(selected.getText())) {
+            } else if (AppVaribles.message("CRHex").equals(selected.getText())) {
                 lineBreak = Line_Break.CR;
                 lineBreakValue = "0D ";
                 sourceInformation.setLineBreakValue("0D ");
@@ -283,7 +282,7 @@ public class BytesEditerController extends FileEditerController {
             return false;
         } else {
             if (v.length() >= pageSize * 3) {
-                popError(AppVaribles.getMessage("FindStringLimitation"));
+                popError(AppVaribles.message("FindStringLimitation"));
                 findInput.setStyle(badStyle);
                 return false;
             }
@@ -312,7 +311,7 @@ public class BytesEditerController extends FileEditerController {
             return false;
         } else {
             if (v.length() >= pageSize * 3) {
-                popError(AppVaribles.getMessage("FindStringLimitation"));
+                popError(AppVaribles.message("FindStringLimitation"));
                 replaceInput.setStyle(badStyle);
                 return false;
             }
@@ -434,8 +433,8 @@ public class BytesEditerController extends FileEditerController {
 
     @FXML
     @Override
-    public void selectSourceFile(ActionEvent event) {
-        super.selectSourceFile(event);
+    public void selectSourceFile() {
+        super.selectSourceFile();
         tabPane.getSelectionModel().select(inputTab);
     }
 
@@ -471,7 +470,7 @@ public class BytesEditerController extends FileEditerController {
                 return false;
             }
             if (v.length() >= pageSize * 3) {
-                popError(AppVaribles.getMessage("FindStringLimitation"));
+                popError(AppVaribles.message("FindStringLimitation"));
                 filterInput.setStyle(badStyle);
                 return false;
             }

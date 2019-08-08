@@ -11,7 +11,8 @@ import javafx.scene.paint.Color;
 import static mara.mybox.fxml.FxmlColor.rgb2AlphaHex;
 import static mara.mybox.fxml.FxmlColor.rgb2Hex;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -31,7 +32,7 @@ public class ColorPaletteController extends BaseController {
     private TextField rgbValue, hsbValue, hexValue;
 
     public ColorPaletteController() {
-        baseTitle = AppVaribles.getMessage("ColorPalette");
+        baseTitle = AppVaribles.message("ColorPalette");
     }
 
     @Override
@@ -48,13 +49,13 @@ public class ColorPaletteController extends BaseController {
     @FXML
     private void colorAction() {
         Color color = colorPicker.getValue();
-        rgbValue.setText(getMessage("Opacity") + ": " + Math.round(color.getOpacity() * 100) + "%    "
-                + getMessage("Red") + ": " + Math.round(color.getRed() * 255) + "    "
-                + getMessage("Green") + ": " + Math.round(color.getGreen() * 255) + "    "
-                + getMessage("Blue") + ": " + Math.round(color.getBlue() * 255));
-        hsbValue.setText(getMessage("Hue") + ": " + Math.round(color.getHue()) + "    "
-                + getMessage("Saturation") + ": " + Math.round(color.getSaturation() * 100) + "%    "
-                + getMessage("Brightness") + ": " + Math.round(color.getBrightness() * 100) + "%");
+        rgbValue.setText(message("Opacity") + ": " + Math.round(color.getOpacity() * 100) + "%    "
+                + message("Red") + ": " + Math.round(color.getRed() * 255) + "    "
+                + message("Green") + ": " + Math.round(color.getGreen() * 255) + "    "
+                + message("Blue") + ": " + Math.round(color.getBlue() * 255));
+        hsbValue.setText(message("Hue") + ": " + Math.round(color.getHue()) + "    "
+                + message("Saturation") + ": " + Math.round(color.getSaturation() * 100) + "%    "
+                + message("Brightness") + ": " + Math.round(color.getBrightness() * 100) + "%");
         hexValue.setText("ARGB: " + rgb2AlphaHex(color) + "    RGB: " + rgb2Hex(color));
     }
 

@@ -9,8 +9,8 @@ import static mara.mybox.color.ChromaticAdaptation.matrix;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -106,16 +106,16 @@ public class RGBColorSpace extends CIEData {
     public static String allTexts() {
         StringBuilder s = new StringBuilder();
         String sp = "\t";
-        s.append(getMessage("ColorSpace")).append(sp).append(getMessage("Illuminant")).append(sp).
-                append(getMessage("AdaptationAlgorithm")).append(sp).append(getMessage("PrimaryColor")).append(sp).
-                append(getMessage("NormalizedX")).append(sp).append(getMessage("NormalizedY")).append(sp).append(getMessage("NormalizedZ")).append(sp).
-                append(getMessage("RelativeX")).append(sp).append(getMessage("RelativeY")).append(sp).append(getMessage("RelativeZ")).append(sp).
-                append(getMessage("TristimulusX")).append(sp).append(getMessage("TristimulusY")).append(sp).append(getMessage("TristimulusZ")).append("\n");
+        s.append(message("ColorSpace")).append(sp).append(message("Illuminant")).append(sp).
+                append(message("AdaptationAlgorithm")).append(sp).append(message("PrimaryColor")).append(sp).
+                append(message("NormalizedX")).append(sp).append(message("NormalizedY")).append(sp).append(message("NormalizedZ")).append(sp).
+                append(message("RelativeX")).append(sp).append(message("RelativeY")).append(sp).append(message("RelativeZ")).append(sp).
+                append(message("TristimulusX")).append(sp).append(message("TristimulusY")).append(sp).append(message("TristimulusZ")).append("\n");
 
         List<RGBColorSpace> data = all(8);
         for (RGBColorSpace d : data) {
             s.append(d.colorSpaceName).append(sp).append(d.illuminantName).append(sp).append(d.adaptAlgorithm).append(sp).
-                    append(getMessage(d.colorName)).append(sp).
+                    append(message(d.colorName)).append(sp).
                     append(d.getNormalizedX()).append(sp).
                     append(d.getNormalizedY()).append(sp).
                     append(d.getNormalizedZ()).append(sp).
@@ -399,7 +399,7 @@ public class RGBColorSpace extends CIEData {
             if (MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     adapt = new HashMap();
-                    adapt.put("procedure", getMessage("NeedNotAdaptChromatic"));
+                    adapt.put("procedure", message("NeedNotAdaptChromatic"));
                     adapt.put("matrix", MatrixTools.identityDouble(3));
                     adapt.put("adaptedPrimaries", primaries);
                     return adapt;
@@ -433,9 +433,9 @@ public class RGBColorSpace extends CIEData {
             }
             if (isDemo) {
                 String s = "";
-                s += "\n************* " + getMessage("Step") + " - " + getMessage("ChromaticAdaptationMatrix") + " *************\n\n";
+                s += "\naaaaaaaaaaaaa " + message("Step") + " - " + message("ChromaticAdaptationMatrix") + " aaaaaaaaaaaaa\n\n";
                 s += adaptString + "\n";
-                s += "\n************* " + getMessage("Step") + " - " + getMessage("ChromaticAdaptation") + " *************\n";
+                s += "\naaaaaaaaaaaaa " + message("Step") + " - " + message("ChromaticAdaptation") + " aaaaaaaaaaaaa\n";
                 s += "\nsourceRed = \n";
                 s += MatrixTools.print(sourceRed, 20, scale);
                 s += "\nadaptedRed = M * sourceRed  = \n";

@@ -1,11 +1,10 @@
 package mara.mybox.controller.base;
 
 import java.awt.Desktop;
-import mara.mybox.fxml.FxmlStage;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +32,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -47,21 +46,24 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import mara.mybox.controller.HtmlEditorController;
+import mara.mybox.controller.ImageViewerController;
+import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.MainMenuController;
 import mara.mybox.controller.OperationController;
-import mara.mybox.fxml.ControlStyle;
+import mara.mybox.data.VisitHistory;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.tools.FileTools;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.data.VisitHistory;
-import static mara.mybox.value.AppVaribles.env;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
@@ -72,53 +74,56 @@ import static mara.mybox.value.CommonValues.AppDataRoot;
  */
 public class BaseController implements Initializable {
 
-    public String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey, SaveAsOptionsKey;
-    public int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
+    protected String TipsLabelKey, LastPathKey, targetPathKey, sourcePathKey, defaultPathKey, SaveAsOptionsKey;
+    protected int SourceFileType, SourcePathType, TargetFileType, TargetPathType, AddFileType, AddPathType,
             operationType;
-    public List<FileChooser.ExtensionFilter> fileExtensionFilter;
-    public String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
-    public Stage myStage;
-    public Scene myScene;
-    public Alert loadingAlert;
-    public Task<Void> task, backgroundTask;
-    public BaseController parentController, myController;
-    public Timer popupTimer, timer;
-    public Popup popup;
-    public ContextMenu popMenu;
+    protected List<FileChooser.ExtensionFilter> sourceExtensionFilter, targetExtensionFilter;
+    protected String myFxml, parentFxml, currentStatus, baseTitle, baseName, loadFxml;
+    protected Stage myStage;
+    protected Scene myScene;
+    protected Alert loadingAlert;
+    protected Task<Void> task, backgroundTask;
+    protected BaseController parentController, myController;
+    protected Timer popupTimer, timer;
+    protected Popup popup;
+    protected ContextMenu popMenu;
+    protected MaximizedListener maximizedListener;
+    protected FullscreenListener fullscreenListener;
 
-    public boolean isSettingValues;
-    public File sourceFile, targetPath, targetFile;
-    public SaveAsType saveAsType;
+    protected boolean isSettingValues;
+    protected File sourceFile, sourcePath, targetPath, targetFile;
+    protected SaveAsType saveAsType;
 
-    public enum SaveAsType {
+    protected enum SaveAsType {
         Load, Open, None
     }
 
     @FXML
-    public Pane thisPane, mainMenu, operationBar;
+    protected Pane thisPane, mainMenu, operationBar;
     @FXML
-    public MainMenuController mainMenuController;
+    protected MainMenuController mainMenuController;
     @FXML
-    public TextField sourceFileInput, sourcePathInput, targetPathInput, targetPrefixInput, targetFileInput, statusLabel;
+    protected TextField sourceFileInput, sourcePathInput,
+            targetPathInput, targetPrefixInput, targetFileInput, statusLabel;
     @FXML
-    public OperationController operationBarController;
+    protected OperationController operationBarController;
     @FXML
-    public Button selectSourceButton, createButton, copyButton, pasteButton,
+    protected Button selectSourceButton, createButton, copyButton, pasteButton,
             deleteButton, saveButton, infoButton, metaButton, selectAllButton,
             okButton, startButton, firstButton, lastButton, previousButton, nextButton, goButton, previewButton,
             cropButton, saveAsButton, recoverButton, renameButton, tipsButton, viewButton, popButton, refButton,
             undoButton, redoButton, transparentButton, whiteButton, blackButton;
     @FXML
-    public VBox paraBox;
+    protected VBox paraBox;
     @FXML
-    public Label bottomLabel, tipsLabel;
+    protected Label bottomLabel, tipsLabel;
     @FXML
-    public ImageView tipsView, linksView;
+    protected ImageView tipsView, linksView;
     @FXML
     protected ChoiceBox saveAsOptionsBox;
 
     public BaseController() {
-        baseTitle = AppVaribles.getMessage("AppTitle");
+        baseTitle = AppVaribles.message("AppTitle");
 
         SourceFileType = 0;
         SourcePathType = 0;
@@ -134,16 +139,16 @@ public class BaseController implements Initializable {
         defaultPathKey = null;
         SaveAsOptionsKey = "SaveAsOptionsKey";
 
-        fileExtensionFilter = CommonValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonValues.AllExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-//
-            myFxml = FxmlControl.getFxmlPath(url.getPath());
+            baseName = FxmlControl.getFxmlName(url.getPath());
+            myFxml = "/fxml/" + baseName + ".fxml";
             myController = this;
-            baseName = FileTools.getFilePrefix(myFxml);
             if (mainMenuController != null) {
                 mainMenuController.parentFxml = myFxml;
                 mainMenuController.parentController = this;
@@ -175,73 +180,110 @@ public class BaseController implements Initializable {
     }
 
     public void afterSceneLoaded() {
-        getMyScene();
-        getMyStage();
+        try {
+            getMyScene();
+            getMyStage();
 
-        final String prefix;
-        if (baseName.contains("ImageManufacture") && !baseName.contains("ImageManufactureBatch")) {
-            prefix = "Interface_" + "ImageManufacture";
-        } else {
-            prefix = "Interface_" + baseName;
-        }
+            final String prefix;
+            if (baseName.startsWith("ImageManufacture") && !baseName.startsWith("ImageManufactureBatch")) {
+                prefix = "Interface_" + "ImageManufacture";
+            } else {
+                prefix = "Interface_" + baseName;
+            }
 
-        if (AppVaribles.restoreStagesSize) {
+            if (AppVaribles.restoreStagesSize) {
 
-            final int minSize = 400;
+                final int minSize = 400;
 
-            myStage.setFullScreen(AppVaribles.getUserConfigBoolean(prefix + "FullScreen", false));
-            FxmlControl.setMaximized(myStage, AppVaribles.getUserConfigBoolean(prefix + "Maximized", false));
+                if (AppVaribles.getUserConfigBoolean(prefix + "FullScreen", false)) {
+                    myStage.setFullScreen(true);
 
-            if (!myStage.isFullScreen() && !myStage.isMaximized()) {
-                myStage.sizeToScene();
-                int v = AppVaribles.getUserConfigInt(prefix + "StageWidth", -1);
-                if (v > 0) {
-                    if (v < Math.min(minSize, myStage.getWidth())) {
-                        v = 400;
+                } else if (AppVaribles.getUserConfigBoolean(prefix + "Maximized", false)) {
+                    FxmlControl.setMaximized(myStage, AppVaribles.getUserConfigBoolean(prefix + "Maximized", false));
+
+                } else {
+
+                    int v = AppVaribles.getUserConfigInt(prefix + "StageWidth", -1);
+                    if (v > 0) {
+                        if (v < Math.min(minSize, myStage.getWidth())) {
+                            v = 400;
+                        }
+                        myStage.setWidth(v);
                     }
-                    myStage.setWidth(v);
-                }
-                v = AppVaribles.getUserConfigInt(prefix + "StageHeight", -1);
-                if (v > 0) {
-                    if (v < Math.min(minSize, myStage.getHeight())) {
-                        v = 400;
+                    v = AppVaribles.getUserConfigInt(prefix + "StageHeight", -1);
+                    if (v > 0) {
+                        if (v < Math.min(minSize, myStage.getHeight())) {
+                            v = 400;
+                        }
+                        myStage.setHeight(v);
                     }
-                    myStage.setHeight(v);
+                    myStage.centerOnScreen();
                 }
+
+                fullscreenListener = new FullscreenListener(prefix);
+                myStage.fullScreenProperty().addListener(fullscreenListener);
+                maximizedListener = new MaximizedListener(prefix);
+                myStage.maximizedProperty().addListener(maximizedListener);
+
+                myScene.widthProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                        if (!myStage.isMaximized() && !myStage.isFullScreen() && myStage.getWidth() > minSize) {
+                            AppVaribles.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
+                        }
+                    }
+                });
+                myScene.heightProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                        if (!myStage.isMaximized() && !myStage.isFullScreen() && myStage.getHeight() > minSize) {
+                            AppVaribles.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
+                        }
+                    }
+                });
+
+            } else {
+//                myStage.sizeToScene();
                 myStage.centerOnScreen();
             }
 
-            myScene.widthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    AppVaribles.setUserConfigValue(prefix + "FullScreen", myStage.isFullScreen());
-                    AppVaribles.setUserConfigValue(prefix + "Maximized", myStage.isMaximized());
-//                AppVaribles.setUserConfigValue(baseName + "Iconified", myStage.isIconified());
-                    if (!myStage.isFullScreen() && !myStage.isMaximized() && myStage.getWidth() > minSize) {
-                        AppVaribles.setUserConfigInt(prefix + "StageWidth", (int) myStage.getWidth());
-                    }
-                }
-            });
-            myScene.heightProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-                    AppVaribles.setUserConfigValue(prefix + "FullScreen", myStage.isFullScreen());
-                    AppVaribles.setUserConfigValue(prefix + "Maximized", myStage.isMaximized());
-//                AppVaribles.setUserConfigValue(baseName + "Iconified", myStage.isIconified());
-                    if (!myStage.isFullScreen() && !myStage.isMaximized() && myStage.getHeight() > minSize) {
-                        AppVaribles.setUserConfigInt(prefix + "StageHeight", (int) myStage.getHeight());
-                    }
-                }
-            });
+            Parent root = myScene.getRoot();
+            root.requestFocus();
+            refreshStyle(root);
 
+            myStage.toFront();
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public class FullscreenListener implements ChangeListener<Boolean> {
+
+        private final String prefix;
+
+        public FullscreenListener(String prefix) {
+            this.prefix = prefix;
         }
 
-        Parent root = myScene.getRoot();
-        root.requestFocus();
-        refreshStyle(root);
+        @Override
+        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            AppVaribles.setUserConfigValue(prefix + "FullScreen", myStage.isFullScreen());
+        }
+    }
 
-        myStage.requestFocus();
+    public class MaximizedListener implements ChangeListener<Boolean> {
 
+        private final String prefix;
+
+        public MaximizedListener(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+            AppVaribles.setUserConfigValue(prefix + "Maximized", myStage.isMaximized());
+        }
     }
 
     public void refreshStyle(Parent node) {
@@ -266,7 +308,8 @@ public class BaseController implements Initializable {
         try {
 
             if (mainMenuController != null) {
-                mainMenuController.fileExtensionFilter = fileExtensionFilter;
+                mainMenuController.sourceExtensionFilter = sourceExtensionFilter;
+                mainMenuController.targetExtensionFilter = targetExtensionFilter;
                 mainMenuController.sourcePathKey = sourcePathKey;
                 mainMenuController.sourcePathKey = sourcePathKey;
                 mainMenuController.SourceFileType = SourceFileType;
@@ -293,13 +336,7 @@ public class BaseController implements Initializable {
                     @Override
                     public void changed(ObservableValue<? extends String> observable,
                             String oldValue, String newValue) {
-                        final File file = new File(newValue);
-                        if (!file.exists() || !file.isDirectory()) {
-                            sourcePathInput.setStyle(badStyle);
-                            return;
-                        }
-                        sourcePathInput.setStyle(null);
-                        recordFileOpened(file);
+                        checkSourcetPathInput();
                     }
                 });
                 File sfile = AppVaribles.getUserConfigPath(sourcePathKey);
@@ -346,11 +383,11 @@ public class BaseController implements Initializable {
             }
 
             if (tipsLabel != null && TipsLabelKey != null) {
-                FxmlControl.setTooltip(tipsLabel, new Tooltip(getMessage(TipsLabelKey)));
+                FxmlControl.setTooltip(tipsLabel, new Tooltip(message(TipsLabelKey)));
             }
 
             if (tipsView != null && TipsLabelKey != null) {
-                FxmlControl.setTooltip(tipsView, new Tooltip(getMessage(TipsLabelKey)));
+                FxmlControl.setTooltip(tipsView, new Tooltip(message(TipsLabelKey)));
             }
 
             try {
@@ -371,8 +408,8 @@ public class BaseController implements Initializable {
             }
 
             if (saveAsOptionsBox != null) {
-                List<String> optionsList = Arrays.asList(getMessage("LoadAfterSaveAs"),
-                        getMessage("OpenAfterSaveAs"), getMessage("JustSaveAs"));
+                List<String> optionsList = Arrays.asList(message("LoadAfterSaveAs"),
+                        message("OpenAfterSaveAs"), message("JustSaveAs"));
                 saveAsOptionsBox.getItems().addAll(optionsList);
                 saveAsOptionsBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                     @Override
@@ -419,6 +456,20 @@ public class BaseController implements Initializable {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void checkSourcetPathInput() {
+        try {
+            final File file = new File(sourcePathInput.getText());
+            if (!file.exists() || !file.isDirectory()) {
+                sourcePathInput.setStyle(badStyle);
+                return;
+            }
+            sourcePath = file;
+            sourcePathInput.setStyle(null);
+            recordFileOpened(file);
+        } catch (Exception e) {
         }
     }
 
@@ -582,7 +633,9 @@ public class BaseController implements Initializable {
                         }
                         break;
                     case F1:
-                        if (okButton != null && !okButton.isDisabled()) {
+                        if (startButton != null && !startButton.isDisabled()) {
+                            startAction();
+                        } else if (okButton != null && !okButton.isDisabled()) {
                             okAction();
                         }
                         break;
@@ -603,15 +656,14 @@ public class BaseController implements Initializable {
     }
 
     public void initializeNext() {
-//
+
     }
 
     public void setInterfaceStyle(Scene scene, String style) {
         try {
             if (scene != null && style != null) {
                 scene.getStylesheets().clear();
-                scene.getStylesheets().add(env.getResource(style).toExternalForm());
-//                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+                scene.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
             }
         } catch (Exception e) {
 //            logger.error(e.toString());
@@ -622,8 +674,7 @@ public class BaseController implements Initializable {
         try {
             if (thisPane != null && style != null) {
                 thisPane.getStylesheets().clear();
-                thisPane.getStylesheets().add(env.getResource(style).toExternalForm());
-//                thisPane.getStylesheets().add(getClass().getResource(CommonValues.MyBoxStyle).toExternalForm());
+                thisPane.getStylesheets().add(BaseController.class.getResource(style).toExternalForm());
             }
         } catch (Exception e) {
 //            logger.error(e.toString());
@@ -660,7 +711,7 @@ public class BaseController implements Initializable {
                 c.parentController = p;
                 p.refresh();
             }
-            c.getMyStage().requestFocus();
+            c.getMyStage().toFront();
             return c;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -668,8 +719,7 @@ public class BaseController implements Initializable {
         }
     }
 
-    @FXML
-    public ContextMenu getRecentMenu(boolean addClose) {
+    public ContextMenu getRecentMenu() {
         final ContextMenu recentMenu = new ContextMenu();
         List<VisitHistory> his = VisitHistory.getRecentMenu();
         if (his == null || his.isEmpty()) {
@@ -679,7 +729,7 @@ public class BaseController implements Initializable {
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             final String fxml = h.getDataMore();
-            MenuItem menu = new MenuItem(getMessage(fname));
+            MenuItem menu = new MenuItem(message(fname));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -694,7 +744,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void selectSourceFile(ActionEvent event) {
+    public void selectSourceFile() {
         try {
             if (!checkBeforeNextAction()) {
                 return;
@@ -704,7 +754,7 @@ public class BaseController implements Initializable {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             File file = fileChooser.showOpenDialog(myStage);
             if (file == null || !file.exists()) {
                 return;
@@ -717,10 +767,13 @@ public class BaseController implements Initializable {
     }
 
     public void selectSourceFile(File file) {
+        if (file == null || !file.exists()) {
+            selectSourceFile();
+            return;
+        }
         if (!checkBeforeNextAction()) {
             return;
         }
-
         selectSourceFileDo(file);
     }
 
@@ -835,7 +888,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void selectTargetPath(ActionEvent event) {
+    public void selectTargetPath() {
         if (targetPathInput == null) {
             return;
         }
@@ -867,19 +920,18 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void selectTargetFile(ActionEvent event) {
+    public void selectTargetFile() {
         File path = AppVaribles.getUserConfigPath(targetPathKey);
         selectTargetFileFromPath(path);
     }
 
     public void selectTargetFileFromPath(File path) {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
+            String name = null;
+            if (sourceFile != null) {
+                name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(path, name, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -906,7 +958,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void selectSourcePath(ActionEvent event) {
+    public void selectSourcePath() {
         try {
             DirectoryChooser chooser = new DirectoryChooser();
             File path = AppVaribles.getUserConfigPath(sourcePathKey);
@@ -935,7 +987,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void addFilesAction(ActionEvent event) {
+    public void addFilesAction() {
 
     }
 
@@ -944,7 +996,7 @@ public class BaseController implements Initializable {
     }
 
     @FXML
-    public void insertFilesAction(ActionEvent event) {
+    public void insertFilesAction() {
 
     }
 
@@ -952,7 +1004,17 @@ public class BaseController implements Initializable {
 
     }
 
+    @FXML
+    public void addDirectoryAction() {
+
+    }
+
     public void addDirectory(File directory) {
+
+    }
+
+    @FXML
+    public void insertDirectoryAction() {
 
     }
 
@@ -967,578 +1029,364 @@ public class BaseController implements Initializable {
 
     @FXML
     public void popSourceFile(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his;
-        if (operationType == VisitHistory.OperationType.Alpha) {
-            his = VisitHistory.getRecentAlphaImages(fileNumber);
-        } else {
-            his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
-        }
-        if (his != null && !his.isEmpty()) {
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (VisitHistory h : his) {
-                final String fname = h.getResourceValue();
-                MenuItem menu = new MenuItem(fname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        selectSourceFile(new File(fname));
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (!paths.isEmpty()) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (String path : paths) {
-                MenuItem menu = new MenuItem(path);
-                final String p = path;
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, p);
-                        selectSourceFile(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        if (popMenu.getItems().isEmpty()) {
-            popMenu = null;
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentSourceFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectSourceFile();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    selectSourceFile();
+                    return;
+                }
+                selectSourceFile(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popFileAdd(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        if (AddFileType <= 0) {
-            AddFileType = SourceFileType;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his;
-        if (operationType == VisitHistory.OperationType.Alpha) {
-            his = VisitHistory.getRecentAlphaImages(fileNumber);
-        } else {
-            his = VisitHistory.getRecentFile(AddFileType, fileNumber);
-        }
-
-        if (his != null && !his.isEmpty()) {
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (VisitHistory h : his) {
-                final String fname = h.getResourceValue();
-                MenuItem menu = new MenuItem(fname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        addFile(new File(fname));
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (!paths.isEmpty()) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (String path : paths) {
-                MenuItem menu = new MenuItem(path);
-                final String p = path;
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, p);
-                        addFilesAction(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        if (popMenu.getItems().isEmpty()) {
-            popMenu = null;
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentAddFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                if (controller.getAddPathType() <= 0) {
+                    controller.setAddPathType(controller.getSourcePathType());
+                }
+                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+            }
 
+            @Override
+            public void handleSelect() {
+                addFilesAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    selectSourceFile();
+                    return;
+                }
+                addFile(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popFileInsert(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-
-        if (AddFileType <= 0) {
-            AddFileType = SourceFileType;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his;
-        if (operationType == VisitHistory.OperationType.Alpha) {
-            his = VisitHistory.getRecentAlphaImages(fileNumber);
-        } else {
-            his = VisitHistory.getRecentFile(AddFileType, fileNumber);
-        }
-
-        if (his != null && !his.isEmpty()) {
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (VisitHistory h : his) {
-                final String fname = h.getResourceValue();
-                MenuItem menu = new MenuItem(fname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        insertFile(new File(fname));
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (!paths.isEmpty()) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            imenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(imenu);
-            for (String path : paths) {
-                MenuItem menu = new MenuItem(path);
-                final String p = path;
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, p);
-                        insertFilesAction(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        if (popMenu.getItems().isEmpty()) {
-            popMenu = null;
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentAddFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                if (controller.getAddPathType() <= 0) {
+                    controller.setAddPathType(controller.getSourcePathType());
+                }
+                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+            }
 
+            @Override
+            public void handleSelect() {
+                insertFilesAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    selectSourceFile();
+                    return;
+                }
+                insertFile(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popDirectoryAdd(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        if (AddPathType <= 0) {
-            AddPathType = SourcePathType;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(AddPathType);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    addDirectory(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                if (controller.getAddPathType() <= 0) {
+                    controller.setAddPathType(controller.getSourcePathType());
+                }
+                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+            }
 
+            @Override
+            public void handleSelect() {
+                addDirectoryAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                addDirectory(file);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popDirectoryInsert(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        if (AddPathType <= 0) {
-            AddPathType = SourcePathType;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(AddPathType);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    insertDirectory(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                if (controller.getAddPathType() <= 0) {
+                    controller.setAddPathType(controller.getSourcePathType());
+                }
+                return VisitHistory.getRecentPath(controller.getAddPathType(), pathNumber);
+            }
 
+            @Override
+            public void handleSelect() {
+                insertDirectoryAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                insertDirectory(file);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popSourcePath(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(SourcePathType);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (paths.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (String path : paths) {
-            MenuItem menu = new MenuItem(path);
-            final File p = new File(path);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectSourcePath(p);
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePaths();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectSourcePath();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                selectSourcePath(file);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popTargetPath(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(TargetPathType);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (paths.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (String path : paths) {
-            MenuItem menu = new MenuItem(path);
-            final File p = new File(path);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectTargetPath(p);
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentTargetPaths();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectTargetPath();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                selectTargetPath(file);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popTargetFile(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(TargetPathType);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-        if (paths.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final File p = new File(path);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectTargetFileFromPath(p);
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentTargetPaths();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectTargetFile();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                selectTargetFileFromPath(file);
+            }
+
+        }.pop();
     }
 
     @FXML
     public void popSaveAs(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(TargetPathType);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (defaultPathKey != null
-                && !paths.contains(defaultPathKey)) {
-            paths.add(defaultPathKey);
-        }
-
-        if (paths.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    saveAsAction();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentTargetPaths();
+            }
 
+            @Override
+            public void handleSelect() {
+                saveAsAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
@@ -1630,7 +1478,7 @@ public class BaseController implements Initializable {
     public void clearSettings(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClear"));
+        alert.setContentText(AppVaribles.message("SureClear"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
@@ -1639,7 +1487,7 @@ public class BaseController implements Initializable {
         DerbyBase.clearData();
         cleanAppPath();
         AppVaribles.initAppVaribles();
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     public void cleanAppPath() {
@@ -1650,7 +1498,7 @@ public class BaseController implements Initializable {
                 for (File f : files) {
                     if (f.isFile()) {
                         f.delete();
-                    } else if (!CommonValues.AppDataPaths.contains(f)) {
+                    } else if (f.isDirectory() && !CommonValues.AppDataPaths.contains(f)) {
                         FileTools.deleteDir(f);
                     }
                 }
@@ -1692,28 +1540,25 @@ public class BaseController implements Initializable {
     }
 
     public boolean browseURI(URI uri) {
-        try {
-            if (Desktop.isDesktopSupported()) {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    try {
-                        desktop.browse(uri);
-                        return true;
-                    } catch (Exception ioe) {
-                        view(uri.toString());
-                    }
+        if (uri == null) {
+            return false;
+        }
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                try {
+                    desktop.browse(uri);
+                    return true;
+                } catch (Exception ioe) {
                 }
             } else {
-                view(uri.toString());
+                popError(message("DesktopNotSupportBrowse"), 6000);
             }
-
-        } catch (Exception e) {
-            if (uri != null) {
-                view(uri.toString());
-            }
+        } else {
+            popError(message("DesktopNotSupportBrowse"), 6000);
         }
-        popError(getMessage("DesktopNotSupportBrowse"));
-        return false;
+        view(uri.toString());
+        return true;
     }
 
     @FXML
@@ -1726,80 +1571,12 @@ public class BaseController implements Initializable {
         }
     }
 
-    @FXML
-    public void developerGuide(ActionEvent event) {
-        try {
-            File help = checkHelps();
-            if (help != null) {
-                HtmlEditorController controller
-                        = (HtmlEditorController) openStage(CommonValues.HtmlEditorFxml);
-                controller.switchBroswerTab();
-                controller.loadHtml(help);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public File checkHelps() {
-        try {
-            String lang = AppVaribles.getLanguage();
-            String latest = AppVaribles.getSystemConfigValue("HelpsVersion", "");
-            boolean updated = latest.equals(CommonValues.AppVersion);
-            if (!updated) {
-                logger.debug("Updating Helps " + CommonValues.AppVersion);
-                clearHelps();
-                AppVaribles.setSystemConfigValue("HelpsVersion", CommonValues.AppVersion);
-            }
-            FxmlControl.getUserFile("/docs/mybox.css", "mybox.css", !updated);
-            File mybox_help = FxmlControl.getUserFile("/docs/mybox_help_" + lang + ".html", "mybox_help_" + lang + ".html", !updated);
-            FxmlControl.getUserFile("/docs/mybox_help_nav_" + lang + ".html", "mybox_help_nav_" + lang + ".html", !updated);
-            FxmlControl.getUserFile("/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", !updated);
-            return mybox_help;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
-    }
-
-    public void clearHelps() {
-        try {
-            File file = new File(AppDataRoot);
-            if (file.exists()) {
-                File[] files = file.listFiles();
-                for (File f : files) {
-                    if (f.getAbsolutePath().endsWith(".html")) {
-                        f.delete();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void showHelpJVM() {
-        try {
-            checkHelps();
-            String lang = AppVaribles.getLanguage();
-            File jvm_help = FxmlControl.getUserFile("/docs/mybox_help_main_" + lang + ".html", "mybox_help_main_" + lang + ".html", false);
-            if (jvm_help != null) {
-                URI uri = jvm_help.toURI();
-                browseURI(new URI(uri.getScheme(), uri.getHost(), uri.getPath(), "#Memory"));
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
-    }
-
     public BaseController loadScene(String newFxml) {
         try {
             if (!leavingScene()) {
                 return null;
             }
-            return FxmlStage.openScene(getMyStage(), newFxml);
+            return FxmlStage.openScene(myStage, newFxml);
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -1834,6 +1611,13 @@ public class BaseController implements Initializable {
                 mainMenuController.stopCpuMonitorTimer();
             }
 
+            if (maximizedListener != null) {
+                myStage.maximizedProperty().removeListener(maximizedListener);
+            }
+            if (fullscreenListener != null) {
+                myStage.fullScreenProperty().removeListener(fullscreenListener);
+            }
+
             hidePopup();
             if (timer != null) {
                 timer.cancel();
@@ -1842,7 +1626,7 @@ public class BaseController implements Initializable {
             if (task != null && task.isRunning()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(myStage.getTitle());
-                alert.setContentText(AppVaribles.getMessage("TaskRunning"));
+                alert.setContentText(AppVaribles.message("TaskRunning"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK && task != null) {
@@ -1871,6 +1655,63 @@ public class BaseController implements Initializable {
         return true;
     }
 
+    public File chooseSaveFile(File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters) {
+        return chooseSaveFile(null, defaultPath, defaultName, filters, true);
+    }
+
+    public File chooseSaveFile(File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
+        return chooseSaveFile(null, defaultPath, defaultName, filters, mustHaveExtension);
+    }
+
+    public File chooseSaveFile(String title, File defaultPath, String defaultName,
+            List<FileChooser.ExtensionFilter> filters, boolean mustHaveExtension) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            if (title != null) {
+                fileChooser.setTitle(title);
+            }
+            if (defaultPath != null && defaultPath.exists()) {
+                fileChooser.setInitialDirectory(defaultPath);
+            }
+            if (defaultName != null) {
+                fileChooser.setInitialFileName(defaultName);
+            }
+            if (filters != null) {
+                fileChooser.getExtensionFilters().addAll(filters);
+            }
+
+            File file = fileChooser.showSaveDialog(getMyStage());
+            if (file == null) {
+                return null;
+            }
+            String s = FileTools.getFileSuffix(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
+            // https://stackoverflow.com/questions/20637865/javafx-2-2-get-selected-file-extension
+            // This is a pretty annoying thing in JavaFX - they will automatically append the extension on Windows, but not on Linux or Mac.
+            if (mustHaveExtension && FileTools.getFileSuffix(file.getName()).isEmpty()) {
+                String suffix = null;
+                if (filters != null) {
+                    try {
+                        suffix = FileTools.getFileSuffix(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
+                    } catch (Exception e) {
+                        suffix = FileTools.getFileSuffix(filters.get(0).getExtensions().get(0));
+                    }
+                }
+                if (suffix == null) {
+                    popError(message("NoFileExtension"), 3000);
+                    return null;
+                }
+                file = new File(file.getAbsolutePath() + "." + suffix);
+            }
+            return file;
+
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
     public void alertError(String information) {
         FxmlStage.alertError(myStage, information);
     }
@@ -1883,11 +1724,16 @@ public class BaseController implements Initializable {
         FxmlStage.alertInformation(myStage, information);
     }
 
-    public void popInformation(String text) {
-        popInformation(text, AppVaribles.getCommentsDelay());
+    public Popup getPopup() {
+        if (popup != null) {
+            popup.hide();
+        }
+        popup = new Popup();
+        popup.setAutoHide(true);
+        return popup;
     }
 
-    public void popInformation(String text, int delay) {
+    public void popText(String text, int delay, String color) {
         try {
             if (popup != null) {
                 popup.hide();
@@ -1895,16 +1741,14 @@ public class BaseController implements Initializable {
             popup = getPopup();
             Label popupLabel = new Label(text);
             popupLabel.setStyle("-fx-background-color:black;"
-                    + " -fx-text-fill: white;"
+                    + " -fx-text-fill: " + color + ";"
                     + " -fx-font-size: 1em;"
                     + " -fx-padding: 10px;"
                     + " -fx-background-radius: 6;");
             popup.setAutoFix(true);
             popup.getContent().add(popupLabel);
 
-            if (delay <= 0) {
-                popup.setAutoHide(true);
-            } else {
+            if (delay > 0) {
                 if (popupTimer != null) {
                     popupTimer.cancel();
                 }
@@ -1915,21 +1759,24 @@ public class BaseController implements Initializable {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                if (popup != null) {
-                                    popup.hide();
-                                }
-                                popupTimer.cancel();
+                                hidePopup();
                             }
                         });
                     }
                 }, delay);
             }
-
             popup.show(myStage);
-
         } catch (Exception e) {
 
         }
+    }
+
+    public void popInformation(String text) {
+        popInformation(text, AppVaribles.getCommentsDelay());
+    }
+
+    public void popInformation(String text, int delay) {
+        popText(text, delay, "white");
     }
 
     public void popError(String text) {
@@ -1937,42 +1784,15 @@ public class BaseController implements Initializable {
     }
 
     public void popError(String text, int delay) {
-        try {
-            popup = getPopup();
-            Label popupLabel = new Label(text);
-            popupLabel.setStyle("-fx-background-color:white;"
-                    + " -fx-text-fill: red;"
-                    + " -fx-font-size: 1em;"
-                    + " -fx-padding: 10px;"
-                    + " -fx-background-radius: 6;");
-            popup.setAutoFix(true);
-            popup.getContent().add(popupLabel);
+        popText(text, delay, "red");
+    }
 
-            if (delay <= 0) {
-                popup.setAutoHide(true);
-            } else {
-                popupTimer = getPopupTimer();
-                popupTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (popup != null) {
-                                    popup.hide();
-                                }
-                                popupTimer.cancel();
-                            }
-                        });
-                    }
-                }, delay);
-            }
+    public void popWarn(String text) {
+        popError(text, AppVaribles.getCommentsDelay());
+    }
 
-            popup.show(myStage);
-        } catch (Exception e) {
-
-        }
-
+    public void popWarn(String text, int delay) {
+        popText(text, delay, "orange");
     }
 
     public void hidePopup() {
@@ -1982,6 +1802,8 @@ public class BaseController implements Initializable {
         if (popupTimer != null) {
             popupTimer.cancel();
         }
+        popup = null;
+        popupTimer = null;
     }
 
     public Stage getMyStage() {
@@ -2003,7 +1825,7 @@ public class BaseController implements Initializable {
     public LoadingController openHandlingStage(Modality block, String info) {
         try {
             final LoadingController controller
-                    = (LoadingController) FxmlStage.openLoadingStage(myStage, block, info);
+                    = FxmlStage.openLoadingStage(myStage, block, info);
             return controller;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -2018,7 +1840,7 @@ public class BaseController implements Initializable {
     public LoadingController openHandlingStage(final Task<?> task, Modality block, String info) {
         try {
             final LoadingController controller
-                    = (LoadingController) FxmlStage.openLoadingStage(myStage, block, info);
+                    = FxmlStage.openLoadingStage(myStage, block, info);
 
             controller.init(task);
             controller.parentController = myController;
@@ -2032,14 +1854,14 @@ public class BaseController implements Initializable {
             task.setOnCancelled(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    popInformation(AppVaribles.getMessage("Canceled"));
+                    popInformation(AppVaribles.message("Canceled"));
                     controller.closeStage();
                 }
             });
             task.setOnFailed(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    popError(AppVaribles.getMessage("Error"));
+                    popError(AppVaribles.message("Error"));
                     controller.closeStage();
                 }
             });
@@ -2059,7 +1881,7 @@ public class BaseController implements Initializable {
         if (baseTitle == null && myStage != null) {
             baseTitle = myStage.getTitle();
             if (baseTitle == null) {
-                baseTitle = AppVaribles.getMessage("AppTitle");
+                baseTitle = AppVaribles.message("AppTitle");
             }
         }
         return baseTitle;
@@ -2072,15 +1894,6 @@ public class BaseController implements Initializable {
         }
         popupTimer = new Timer();
         return popupTimer;
-    }
-
-    public Popup getPopup() {
-        if (popup != null) {
-            popup.hide();
-        }
-        popup = new Popup();
-        popup.setAutoHide(true);
-        return popup;
     }
 
     public Scene getMyScene() {
@@ -2104,6 +1917,811 @@ public class BaseController implements Initializable {
 
     public void drawMaskRulerY() {
 
+    }
+
+    public void multipleFilesGenerated(final List<String> fileNames) {
+        try {
+            if (fileNames == null || fileNames.isEmpty()) {
+                return;
+            }
+            String path = new File(fileNames.get(0)).getParent();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(getMyStage().getTitle());
+            String info = MessageFormat.format(AppVaribles.message("GeneratedFilesResult"),
+                    fileNames.size(), "\"" + path + "\"");
+            int num = fileNames.size();
+            if (num > 10) {
+                num = 10;
+            }
+            for (int i = 0; i < num; i++) {
+                info += "\n    " + fileNames.get(i);
+            }
+            if (fileNames.size() > num) {
+                info += "\n    ......";
+            }
+            alert.setContentText(info);
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonOpen = new ButtonType(AppVaribles.message("OpenTargetPath"));
+            ButtonType buttonBrowse = new ButtonType(AppVaribles.message("Browse"));
+            ButtonType buttonBrowseNew = new ButtonType(AppVaribles.message("BrowseInNew"));
+            ButtonType buttonClose = new ButtonType(AppVaribles.message("Close"));
+            alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonOpen) {
+                browseURI(new File(path).toURI());
+                recordFileOpened(path);
+            } else if (result.get() == buttonBrowse) {
+                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getMyStage());
+                if (controller != null && sourceFile != null) {
+                    controller.loadFiles(fileNames);
+                }
+            } else if (result.get() == buttonBrowseNew) {
+                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
+                if (controller != null && sourceFile != null) {
+                    controller.loadFiles(fileNames);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    public void dataChanged() {
+
+    }
+
+    /*
+        Static methods
+     */
+    public static void openImageViewer(File file) {
+        FxmlStage.openImageViewer(null, file);
+    }
+
+    public static void openImageViewer(String file) {
+        FxmlStage.openImageViewer(null, new File(file));
+    }
+
+    public static void openImageViewer(Image image) {
+        try {
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
+            if (controller != null) {
+                controller.loadImage(image);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void openImageViewer(ImageInformation info) {
+        try {
+            final ImageViewerController controller = FxmlStage.openImageViewer(null);
+            if (controller != null) {
+                controller.loadImage(info);
+            }
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    public static void openImageManufacture(String filename) {
+        FxmlStage.openImageManufacture(null, new File(filename));
+    }
+
+    public static void showImageInformation(ImageInformation info) {
+        if (info == null) {
+            return;
+        }
+        FxmlStage.openImageInformation(null, info);
+    }
+
+    public static void showImageMetaData(ImageInformation info) {
+        if (info == null) {
+            return;
+        }
+        FxmlStage.openImageMetaData(null, info);
+    }
+
+    public static void showImageStatistic(ImageInformation info) {
+        if (info == null) {
+            return;
+        }
+        FxmlStage.openImageStatistic(null, info);
+    }
+
+    public static void showImageStatistic(Image image) {
+        if (image == null) {
+            return;
+        }
+        FxmlStage.openImageStatistic(null, image);
+    }
+
+    /*
+        get/set
+     */
+    public String getTipsLabelKey() {
+        return TipsLabelKey;
+    }
+
+    public void setTipsLabelKey(String TipsLabelKey) {
+        this.TipsLabelKey = TipsLabelKey;
+    }
+
+    public String getLastPathKey() {
+        return LastPathKey;
+    }
+
+    public void setLastPathKey(String LastPathKey) {
+        this.LastPathKey = LastPathKey;
+    }
+
+    public String getTargetPathKey() {
+        return targetPathKey;
+    }
+
+    public void setTargetPathKey(String targetPathKey) {
+        this.targetPathKey = targetPathKey;
+    }
+
+    public String getSourcePathKey() {
+        return sourcePathKey;
+    }
+
+    public void setSourcePathKey(String sourcePathKey) {
+        this.sourcePathKey = sourcePathKey;
+    }
+
+    public String getDefaultPathKey() {
+        return defaultPathKey;
+    }
+
+    public void setDefaultPathKey(String defaultPathKey) {
+        this.defaultPathKey = defaultPathKey;
+    }
+
+    public String getSaveAsOptionsKey() {
+        return SaveAsOptionsKey;
+    }
+
+    public void setSaveAsOptionsKey(String SaveAsOptionsKey) {
+        this.SaveAsOptionsKey = SaveAsOptionsKey;
+    }
+
+    public int getSourceFileType() {
+        return SourceFileType;
+    }
+
+    public void setSourceFileType(int SourceFileType) {
+        this.SourceFileType = SourceFileType;
+    }
+
+    public int getSourcePathType() {
+        return SourcePathType;
+    }
+
+    public void setSourcePathType(int SourcePathType) {
+        this.SourcePathType = SourcePathType;
+    }
+
+    public int getTargetFileType() {
+        return TargetFileType;
+    }
+
+    public void setTargetFileType(int TargetFileType) {
+        this.TargetFileType = TargetFileType;
+    }
+
+    public int getTargetPathType() {
+        return TargetPathType;
+    }
+
+    public void setTargetPathType(int TargetPathType) {
+        this.TargetPathType = TargetPathType;
+    }
+
+    public int getAddFileType() {
+        return AddFileType;
+    }
+
+    public void setAddFileType(int AddFileType) {
+        this.AddFileType = AddFileType;
+    }
+
+    public int getAddPathType() {
+        return AddPathType;
+    }
+
+    public void setAddPathType(int AddPathType) {
+        this.AddPathType = AddPathType;
+    }
+
+    public int getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(int operationType) {
+        this.operationType = operationType;
+    }
+
+    public List<FileChooser.ExtensionFilter> getFileExtensionFilter() {
+        return sourceExtensionFilter;
+    }
+
+    public void setFileExtensionFilter(List<FileChooser.ExtensionFilter> fileExtensionFilter) {
+        this.sourceExtensionFilter = fileExtensionFilter;
+    }
+
+    public String getMyFxml() {
+        return myFxml;
+    }
+
+    public void setMyFxml(String myFxml) {
+        this.myFxml = myFxml;
+    }
+
+    public String getParentFxml() {
+        return parentFxml;
+    }
+
+    public void setParentFxml(String parentFxml) {
+        this.parentFxml = parentFxml;
+    }
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
+    public String getBaseName() {
+        return baseName;
+    }
+
+    public void setBaseName(String baseName) {
+        this.baseName = baseName;
+    }
+
+    public String getLoadFxml() {
+        return loadFxml;
+    }
+
+    public void setLoadFxml(String loadFxml) {
+        this.loadFxml = loadFxml;
+    }
+
+    public Alert getLoadingAlert() {
+        return loadingAlert;
+    }
+
+    public void setLoadingAlert(Alert loadingAlert) {
+        this.loadingAlert = loadingAlert;
+    }
+
+    public Task<Void> getTask() {
+        return task;
+    }
+
+    public void setTask(Task<Void> task) {
+        this.task = task;
+    }
+
+    public Task<Void> getBackgroundTask() {
+        return backgroundTask;
+    }
+
+    public void setBackgroundTask(Task<Void> backgroundTask) {
+        this.backgroundTask = backgroundTask;
+    }
+
+    public BaseController getParentController() {
+        return parentController;
+    }
+
+    public void setParentController(BaseController parentController) {
+        this.parentController = parentController;
+    }
+
+    public BaseController getMyController() {
+        return myController;
+    }
+
+    public void setMyController(BaseController myController) {
+        this.myController = myController;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+
+    public ContextMenu getPopMenu() {
+        return popMenu;
+    }
+
+    public void setPopMenu(ContextMenu popMenu) {
+        this.popMenu = popMenu;
+    }
+
+    public boolean isIsSettingValues() {
+        return isSettingValues;
+    }
+
+    public void setIsSettingValues(boolean isSettingValues) {
+        this.isSettingValues = isSettingValues;
+    }
+
+    public File getSourceFile() {
+        return sourceFile;
+    }
+
+    public void setSourceFile(File sourceFile) {
+        this.sourceFile = sourceFile;
+    }
+
+    public File getTargetPath() {
+        return targetPath;
+    }
+
+    public void setTargetPath(File targetPath) {
+        this.targetPath = targetPath;
+    }
+
+    public File getTargetFile() {
+        return targetFile;
+    }
+
+    public void setTargetFile(File targetFile) {
+        this.targetFile = targetFile;
+    }
+
+    public SaveAsType getSaveAsType() {
+        return saveAsType;
+    }
+
+    public void setSaveAsType(SaveAsType saveAsType) {
+        this.saveAsType = saveAsType;
+    }
+
+    public Pane getThisPane() {
+        return thisPane;
+    }
+
+    public void setThisPane(Pane thisPane) {
+        this.thisPane = thisPane;
+    }
+
+    public Pane getMainMenu() {
+        return mainMenu;
+    }
+
+    public void setMainMenu(Pane mainMenu) {
+        this.mainMenu = mainMenu;
+    }
+
+    public Pane getOperationBar() {
+        return operationBar;
+    }
+
+    public void setOperationBar(Pane operationBar) {
+        this.operationBar = operationBar;
+    }
+
+    public MainMenuController getMainMenuController() {
+        return mainMenuController;
+    }
+
+    public void setMainMenuController(MainMenuController mainMenuController) {
+        this.mainMenuController = mainMenuController;
+    }
+
+    public TextField getSourceFileInput() {
+        return sourceFileInput;
+    }
+
+    public void setSourceFileInput(TextField sourceFileInput) {
+        this.sourceFileInput = sourceFileInput;
+    }
+
+    public TextField getSourcePathInput() {
+        return sourcePathInput;
+    }
+
+    public void setSourcePathInput(TextField sourcePathInput) {
+        this.sourcePathInput = sourcePathInput;
+    }
+
+    public TextField getTargetPathInput() {
+        return targetPathInput;
+    }
+
+    public void setTargetPathInput(TextField targetPathInput) {
+        this.targetPathInput = targetPathInput;
+    }
+
+    public TextField getTargetPrefixInput() {
+        return targetPrefixInput;
+    }
+
+    public void setTargetPrefixInput(TextField targetPrefixInput) {
+        this.targetPrefixInput = targetPrefixInput;
+    }
+
+    public TextField getTargetFileInput() {
+        return targetFileInput;
+    }
+
+    public void setTargetFileInput(TextField targetFileInput) {
+        this.targetFileInput = targetFileInput;
+    }
+
+    public TextField getStatusLabel() {
+        return statusLabel;
+    }
+
+    public void setStatusLabel(TextField statusLabel) {
+        this.statusLabel = statusLabel;
+    }
+
+    public OperationController getOperationBarController() {
+        return operationBarController;
+    }
+
+    public void setOperationBarController(OperationController operationBarController) {
+        this.operationBarController = operationBarController;
+    }
+
+    public Button getSelectSourceButton() {
+        return selectSourceButton;
+    }
+
+    public void setSelectSourceButton(Button selectSourceButton) {
+        this.selectSourceButton = selectSourceButton;
+    }
+
+    public Button getCreateButton() {
+        return createButton;
+    }
+
+    public void setCreateButton(Button createButton) {
+        this.createButton = createButton;
+    }
+
+    public Button getCopyButton() {
+        return copyButton;
+    }
+
+    public void setCopyButton(Button copyButton) {
+        this.copyButton = copyButton;
+    }
+
+    public Button getPasteButton() {
+        return pasteButton;
+    }
+
+    public void setPasteButton(Button pasteButton) {
+        this.pasteButton = pasteButton;
+    }
+
+    public Button getDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(Button deleteButton) {
+        this.deleteButton = deleteButton;
+    }
+
+    public Button getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(Button saveButton) {
+        this.saveButton = saveButton;
+    }
+
+    public Button getInfoButton() {
+        return infoButton;
+    }
+
+    public void setInfoButton(Button infoButton) {
+        this.infoButton = infoButton;
+    }
+
+    public Button getMetaButton() {
+        return metaButton;
+    }
+
+    public void setMetaButton(Button metaButton) {
+        this.metaButton = metaButton;
+    }
+
+    public Button getSelectAllButton() {
+        return selectAllButton;
+    }
+
+    public void setSelectAllButton(Button selectAllButton) {
+        this.selectAllButton = selectAllButton;
+    }
+
+    public Button getOkButton() {
+        return okButton;
+    }
+
+    public void setOkButton(Button okButton) {
+        this.okButton = okButton;
+    }
+
+    public Button getStartButton() {
+        return startButton;
+    }
+
+    public void setStartButton(Button startButton) {
+        this.startButton = startButton;
+    }
+
+    public Button getFirstButton() {
+        return firstButton;
+    }
+
+    public void setFirstButton(Button firstButton) {
+        this.firstButton = firstButton;
+    }
+
+    public Button getLastButton() {
+        return lastButton;
+    }
+
+    public void setLastButton(Button lastButton) {
+        this.lastButton = lastButton;
+    }
+
+    public Button getPreviousButton() {
+        return previousButton;
+    }
+
+    public void setPreviousButton(Button previousButton) {
+        this.previousButton = previousButton;
+    }
+
+    public Button getNextButton() {
+        return nextButton;
+    }
+
+    public void setNextButton(Button nextButton) {
+        this.nextButton = nextButton;
+    }
+
+    public Button getGoButton() {
+        return goButton;
+    }
+
+    public void setGoButton(Button goButton) {
+        this.goButton = goButton;
+    }
+
+    public Button getPreviewButton() {
+        return previewButton;
+    }
+
+    public void setPreviewButton(Button previewButton) {
+        this.previewButton = previewButton;
+    }
+
+    public Button getCropButton() {
+        return cropButton;
+    }
+
+    public void setCropButton(Button cropButton) {
+        this.cropButton = cropButton;
+    }
+
+    public Button getSaveAsButton() {
+        return saveAsButton;
+    }
+
+    public void setSaveAsButton(Button saveAsButton) {
+        this.saveAsButton = saveAsButton;
+    }
+
+    public Button getRecoverButton() {
+        return recoverButton;
+    }
+
+    public void setRecoverButton(Button recoverButton) {
+        this.recoverButton = recoverButton;
+    }
+
+    public Button getRenameButton() {
+        return renameButton;
+    }
+
+    public void setRenameButton(Button renameButton) {
+        this.renameButton = renameButton;
+    }
+
+    public Button getTipsButton() {
+        return tipsButton;
+    }
+
+    public void setTipsButton(Button tipsButton) {
+        this.tipsButton = tipsButton;
+    }
+
+    public Button getViewButton() {
+        return viewButton;
+    }
+
+    public void setViewButton(Button viewButton) {
+        this.viewButton = viewButton;
+    }
+
+    public Button getPopButton() {
+        return popButton;
+    }
+
+    public void setPopButton(Button popButton) {
+        this.popButton = popButton;
+    }
+
+    public Button getRefButton() {
+        return refButton;
+    }
+
+    public void setRefButton(Button refButton) {
+        this.refButton = refButton;
+    }
+
+    public Button getUndoButton() {
+        return undoButton;
+    }
+
+    public void setUndoButton(Button undoButton) {
+        this.undoButton = undoButton;
+    }
+
+    public Button getRedoButton() {
+        return redoButton;
+    }
+
+    public void setRedoButton(Button redoButton) {
+        this.redoButton = redoButton;
+    }
+
+    public Button getTransparentButton() {
+        return transparentButton;
+    }
+
+    public void setTransparentButton(Button transparentButton) {
+        this.transparentButton = transparentButton;
+    }
+
+    public Button getWhiteButton() {
+        return whiteButton;
+    }
+
+    public void setWhiteButton(Button whiteButton) {
+        this.whiteButton = whiteButton;
+    }
+
+    public Button getBlackButton() {
+        return blackButton;
+    }
+
+    public void setBlackButton(Button blackButton) {
+        this.blackButton = blackButton;
+    }
+
+    public VBox getParaBox() {
+        return paraBox;
+    }
+
+    public void setParaBox(VBox paraBox) {
+        this.paraBox = paraBox;
+    }
+
+    public Label getBottomLabel() {
+        return bottomLabel;
+    }
+
+    public void setBottomLabel(Label bottomLabel) {
+        this.bottomLabel = bottomLabel;
+    }
+
+    public Label getTipsLabel() {
+        return tipsLabel;
+    }
+
+    public void setTipsLabel(Label tipsLabel) {
+        this.tipsLabel = tipsLabel;
+    }
+
+    public ImageView getTipsView() {
+        return tipsView;
+    }
+
+    public void setTipsView(ImageView tipsView) {
+        this.tipsView = tipsView;
+    }
+
+    public ImageView getLinksView() {
+        return linksView;
+    }
+
+    public void setLinksView(ImageView linksView) {
+        this.linksView = linksView;
+    }
+
+    public ChoiceBox getSaveAsOptionsBox() {
+        return saveAsOptionsBox;
+    }
+
+    public void setSaveAsOptionsBox(ChoiceBox saveAsOptionsBox) {
+        this.saveAsOptionsBox = saveAsOptionsBox;
+    }
+
+    public void setBaseTitle(String baseTitle) {
+        this.baseTitle = baseTitle;
+    }
+
+    public void setMyStage(Stage myStage) {
+        this.myStage = myStage;
+    }
+
+    public void setMyScene(Scene myScene) {
+        this.myScene = myScene;
+    }
+
+    public void setPopupTimer(Timer popupTimer) {
+        this.popupTimer = popupTimer;
+    }
+
+    public void setPopup(Popup popup) {
+        this.popup = popup;
+    }
+
+    public File getSourcePath() {
+        return sourcePath;
+    }
+
+    public void setSourcePath(File sourcePath) {
+        this.sourcePath = sourcePath;
+    }
+
+    public List<FileChooser.ExtensionFilter> getSourceExtensionFilter() {
+        return sourceExtensionFilter;
+    }
+
+    public void setSourceExtensionFilter(List<FileChooser.ExtensionFilter> sourceExtensionFilter) {
+        this.sourceExtensionFilter = sourceExtensionFilter;
+    }
+
+    public List<FileChooser.ExtensionFilter> getTargetExtensionFilter() {
+        return targetExtensionFilter;
+    }
+
+    public void setTargetExtensionFilter(List<FileChooser.ExtensionFilter> targetExtensionFilter) {
+        this.targetExtensionFilter = targetExtensionFilter;
+    }
+
+    public MaximizedListener getMaximizedListener() {
+        return maximizedListener;
+    }
+
+    public void setMaximizedListener(MaximizedListener maximizedListener) {
+        this.maximizedListener = maximizedListener;
+    }
+
+    public FullscreenListener getFullscreenListener() {
+        return fullscreenListener;
+    }
+
+    public void setFullscreenListener(FullscreenListener fullscreenListener) {
+        this.fullscreenListener = fullscreenListener;
     }
 
 }

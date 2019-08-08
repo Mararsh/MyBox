@@ -48,17 +48,17 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.tools.FileTools;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -111,7 +111,7 @@ public class ImagesBrowserController extends ImageViewerController {
     private Button filesListButton, thumbsListButton;
 
     public ImagesBrowserController() {
-        baseTitle = AppVaribles.getMessage("ImagesBrowser");
+        baseTitle = AppVaribles.message("ImagesBrowser");
 
         TipsLabelKey = "ImagesBrowserTips";
         defaultLoadWidth = 512;
@@ -126,8 +126,8 @@ public class ImagesBrowserController extends ImageViewerController {
             displayMode = DisplayMode.ImagesGrid;
 
             List<String> cvalues = Arrays.asList("3", "4", "6",
-                    AppVaribles.getMessage("ThumbnailsList"),
-                    AppVaribles.getMessage("FilesList"),
+                    AppVaribles.message("ThumbnailsList"),
+                    AppVaribles.message("FilesList"),
                     "2", "5", "7", "8", "9", "10",
                     "16", "25", "20", "12", "15");
             colsnumBox.getItems().addAll(cvalues);
@@ -138,9 +138,9 @@ public class ImagesBrowserController extends ImageViewerController {
                         if (isSettingValues) {
                             return;
                         }
-                        if (AppVaribles.getMessage("ThumbnailsList").equals(newValue)) {
+                        if (AppVaribles.message("ThumbnailsList").equals(newValue)) {
                             displayMode = DisplayMode.ThumbnailsList;
-                        } else if (AppVaribles.getMessage("FilesList").equals(newValue)) {
+                        } else if (AppVaribles.message("FilesList").equals(newValue)) {
                             displayMode = DisplayMode.FilesList;
                         } else {
                             if (displayMode != DisplayMode.ImagesGrid) {
@@ -198,9 +198,9 @@ public class ImagesBrowserController extends ImageViewerController {
                     Bindings.isEmpty(imageFileList)
             );
 
-            FxmlControl.setTooltip(filesListButton, new Tooltip(getMessage("FilesList")));
+            FxmlControl.setTooltip(filesListButton, new Tooltip(message("FilesList")));
 
-            FxmlControl.setTooltip(thumbsListButton, new Tooltip(getMessage("ThumbnailsList")));
+            FxmlControl.setTooltip(thumbsListButton, new Tooltip(message("ThumbnailsList")));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -573,7 +573,7 @@ public class ImagesBrowserController extends ImageViewerController {
             ImageInformation info = selectedImages.get(0);
             if (info != null) {
                 File file = info.getImageFileInformation().getFile();
-                FxmlStage.openImageViewer( null, file);
+                FxmlStage.openImageViewer(null, file);
             }
         } catch (Exception e) {
             logger.error(e.toString());
@@ -598,7 +598,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     int index = selectedIndexes.get(0);
                     imageFileList.set(index, newFile);
                     makeImagesNevigator(false);
-                    popInformation(MessageFormat.format(AppVaribles.getMessage("FileRenamed"), oname, nname));
+                    popInformation(MessageFormat.format(AppVaribles.message("FileRenamed"), oname, nname));
                 }
             }
         } catch (Exception e) {
@@ -616,10 +616,10 @@ public class ImagesBrowserController extends ImageViewerController {
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(AppVaribles.getMessage("SureDelete"));
+                alert.setContentText(AppVaribles.message("SureDelete"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-                ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+                ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+                ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
                 alert.getButtonTypes().setAll(buttonSure, buttonCancel);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == buttonCancel) {
@@ -634,7 +634,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     count++;
                 }
             }
-            popInformation(MessageFormat.format(AppVaribles.getMessage("FilesDeleted"), count));
+            popInformation(MessageFormat.format(AppVaribles.message("FilesDeleted"), count));
             makeImagesNevigator(true);
 
         } catch (Exception e) {
@@ -781,15 +781,15 @@ public class ImagesBrowserController extends ImageViewerController {
 
             String title = file.getName();
             if (imageInfo.isIsMultipleFrames()) {
-                title += " " + AppVaribles.getMessage("MultipleFrames");
+                title += " " + AppVaribles.message("MultipleFrames");
                 titleInput.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
             }
             if (imageInfo.isIsSampled()) {
-                title += " " + AppVaribles.getMessage("Sampled");
+                title += " " + AppVaribles.message("Sampled");
                 titleInput.setStyle("-fx-text-box-border: red;   -fx-text-fill: red;");
             }
             if (imageInfo.isIsScaled()) {
-                title += " " + AppVaribles.getMessage("Scaled");
+                title += " " + AppVaribles.message("Scaled");
             }
             titleInput.setText(title);
 
@@ -804,7 +804,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         selectedImages.add(imageInfo);
                         vbox.setStyle("-fx-background-color:dodgerblue;-fx-text-fill:white;");
                     }
-                    Integer o = new Integer(index);
+                    Integer o = Integer.valueOf(index);
                     if (selectedIndexes.contains(o)) {
                         selectedIndexes.remove(o);
                     } else {
@@ -816,33 +816,33 @@ public class ImagesBrowserController extends ImageViewerController {
                     renameButton.setDisable(selectedImages.size() > 1);
 
                     if (event.getClickCount() > 1) {
-                        FxmlStage.openImageViewer( null, file);
+                        FxmlStage.openImageViewer(null, file);
                     }
                 }
             });
             vbox.setOnMouseEntered(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    String str1 = imageInfo.getFilename() + " "
-                            + AppVaribles.getMessage("Format") + ":" + imageInfo.getImageFormat() + "  "
-                            + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + " "
-                            + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(file.length()) + "  "
-                            + AppVaribles.getMessage("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "  "
-                            + AppVaribles.getMessage("LoadedSize") + ":"
+                    String str1 = imageInfo.getFileName() + " "
+                            + AppVaribles.message("Format") + ":" + imageInfo.getImageFormat() + "  "
+                            + AppVaribles.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + " "
+                            + AppVaribles.message("Size") + ":" + FileTools.showFileSize(file.length()) + "  "
+                            + AppVaribles.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "  "
+                            + AppVaribles.message("LoadedSize") + ":"
                             + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "  "
-                            + AppVaribles.getMessage("DisplayedSize") + ":"
+                            + AppVaribles.message("DisplayedSize") + ":"
                             + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
                     bottomLabel.setText(str1);
-                    String str2 = imageInfo.getFilename() + "\n"
-                            + AppVaribles.getMessage("Format") + ":" + imageInfo.getImageFormat() + "\n"
-                            + AppVaribles.getMessage("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + "\n"
-                            + AppVaribles.getMessage("Size") + ":" + FileTools.showFileSize(file.length()) + "\n"
-                            + AppVaribles.getMessage("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "\n"
-                            + AppVaribles.getMessage("LoadedSize") + ":"
+                    String str2 = imageInfo.getFileName() + "\n"
+                            + AppVaribles.message("Format") + ":" + imageInfo.getImageFormat() + "\n"
+                            + AppVaribles.message("ModifyTime") + ":" + DateTools.datetimeToString(file.lastModified()) + "\n"
+                            + AppVaribles.message("Size") + ":" + FileTools.showFileSize(file.length()) + "\n"
+                            + AppVaribles.message("Pixels") + ":" + imageInfo.getWidth() + "x" + imageInfo.getHeight() + "\n"
+                            + AppVaribles.message("LoadedSize") + ":"
                             + (int) iView.getImage().getWidth() + "x" + (int) iView.getImage().getHeight() + "\n"
-                            + AppVaribles.getMessage("DisplayedSize") + ":"
+                            + AppVaribles.message("DisplayedSize") + ":"
                             + (int) iView.getFitWidth() + "x" + (int) iView.getFitHeight();
-                    popInformation(str2, 2000);
+                    popInformation(str2, 1000);
                     if (popup != null && popup.isShowing()) {
                         Region region = (Region) event.getSource();
                         FxmlControl.locateCenter(region, popup);
@@ -881,29 +881,29 @@ public class ImagesBrowserController extends ImageViewerController {
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.setTableMenuButtonVisible(true);
 
-            fileColumn = new TableColumn<>(AppVaribles.getMessage("File"));
+            fileColumn = new TableColumn<>(AppVaribles.message("File"));
             fileColumn.setPrefWidth(220);
-            formatColumn = new TableColumn<>(AppVaribles.getMessage("Format"));
+            formatColumn = new TableColumn<>(AppVaribles.message("Format"));
             formatColumn.setPrefWidth(60);
-            csColumn = new TableColumn<>(AppVaribles.getMessage("Color"));
+            csColumn = new TableColumn<>(AppVaribles.message("Color"));
             csColumn.setPrefWidth(120);
-            indexColumn = new TableColumn<>(AppVaribles.getMessage("Index"));
-            pixelsColumn = new TableColumn<>(AppVaribles.getMessage("Pixels"));
+            indexColumn = new TableColumn<>(AppVaribles.message("Index"));
+            pixelsColumn = new TableColumn<>(AppVaribles.message("Pixels"));
             pixelsColumn.setPrefWidth(140);
-            fileSizeColumn = new TableColumn<>(AppVaribles.getMessage("Size"));
+            fileSizeColumn = new TableColumn<>(AppVaribles.message("Size"));
             fileSizeColumn.setPrefWidth(140);
-            isMutipleFramesColumn = new TableColumn<>(AppVaribles.getMessage("MultipleFrames"));
-            modifiedTimeColumn = new TableColumn<>(AppVaribles.getMessage("ModifiedTime"));
+            isMutipleFramesColumn = new TableColumn<>(AppVaribles.message("MultipleFrames"));
+            modifiedTimeColumn = new TableColumn<>(AppVaribles.message("ModifiedTime"));
             modifiedTimeColumn.setPrefWidth(200);
-            createTimeColumn = new TableColumn<>(AppVaribles.getMessage("CreateTime"));
+            createTimeColumn = new TableColumn<>(AppVaribles.message("CreateTime"));
             createTimeColumn.setPrefWidth(200);
 
-            fileColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("filename"));
-            formatColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("imageFormat"));
-            csColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("colorSpace"));
-            indexColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Integer>("index"));
-            pixelsColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("pixelsString"));
-            fileSizeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Long>("fileSize"));
+            fileColumn.setCellValueFactory(new PropertyValueFactory<>("fileName"));
+            formatColumn.setCellValueFactory(new PropertyValueFactory<>("imageFormat"));
+            csColumn.setCellValueFactory(new PropertyValueFactory<>("colorSpace"));
+            indexColumn.setCellValueFactory(new PropertyValueFactory<>("index"));
+            pixelsColumn.setCellValueFactory(new PropertyValueFactory<>("pixelsString"));
+            fileSizeColumn.setCellValueFactory(new PropertyValueFactory<>("fileSize"));
             fileSizeColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Long>, TableCell<ImageInformation, Long>>() {
                 @Override
                 public TableCell<ImageInformation, Long> call(TableColumn<ImageInformation, Long> param) {
@@ -922,7 +922,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     return cell;
                 }
             });
-            isMutipleFramesColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Boolean>("isMultipleFrames"));
+            isMutipleFramesColumn.setCellValueFactory(new PropertyValueFactory<>("isMultipleFrames"));
             isMutipleFramesColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Boolean>, TableCell<ImageInformation, Boolean>>() {
                 @Override
                 public TableCell<ImageInformation, Boolean> call(TableColumn<ImageInformation, Boolean> param) {
@@ -933,7 +933,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         protected void updateItem(final Boolean item, boolean empty) {
                             super.updateItem(item, empty);
                             if (item != null) {
-                                text.setText(AppVaribles.getMessage(item.toString()));
+                                text.setText(AppVaribles.message(item.toString()));
                                 if (item) {
                                     text.setFill(Color.RED);
                                 } else {
@@ -946,7 +946,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     return cell;
                 }
             });
-            modifiedTimeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Long>("modifyTime"));
+            modifiedTimeColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
             modifiedTimeColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Long>, TableCell<ImageInformation, Long>>() {
                 @Override
                 public TableCell<ImageInformation, Long> call(TableColumn<ImageInformation, Long> param) {
@@ -965,7 +965,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     return cell;
                 }
             });
-            createTimeColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Long>("createTime"));
+            createTimeColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
             createTimeColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Long>, TableCell<ImageInformation, Long>>() {
                 @Override
                 public TableCell<ImageInformation, Long> call(TableColumn<ImageInformation, Long> param) {
@@ -986,13 +986,13 @@ public class ImagesBrowserController extends ImageViewerController {
             });
 
             if (displayMode == DisplayMode.ThumbnailsList) {
-                imageColumn = new TableColumn<>(AppVaribles.getMessage("Image"));
-                loadColumn = new TableColumn<>(AppVaribles.getMessage("LoadedSize"));
+                imageColumn = new TableColumn<>(AppVaribles.message("Image"));
+                loadColumn = new TableColumn<>(AppVaribles.message("LoadedSize"));
                 loadColumn.setPrefWidth(140);
-                isSampledColumn = new TableColumn<>(AppVaribles.getMessage("Sampled"));
-                isScaledColumn = new TableColumn<>(AppVaribles.getMessage("Scaled"));
+                isSampledColumn = new TableColumn<>(AppVaribles.message("Sampled"));
+                isScaledColumn = new TableColumn<>(AppVaribles.message("Scaled"));
 
-                imageColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Image>("image"));
+                imageColumn.setCellValueFactory(new PropertyValueFactory<>("image"));
                 imageColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Image>, TableCell<ImageInformation, Image>>() {
                     @Override
                     public TableCell<ImageInformation, Image> call(TableColumn<ImageInformation, Image> param) {
@@ -1020,7 +1020,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                 });
 
-                isSampledColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Boolean>("isSampled"));
+                isSampledColumn.setCellValueFactory(new PropertyValueFactory<>("isSampled"));
                 isSampledColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Boolean>, TableCell<ImageInformation, Boolean>>() {
                     @Override
                     public TableCell<ImageInformation, Boolean> call(TableColumn<ImageInformation, Boolean> param) {
@@ -1031,7 +1031,7 @@ public class ImagesBrowserController extends ImageViewerController {
                             protected void updateItem(final Boolean item, boolean empty) {
                                 super.updateItem(item, empty);
                                 if (item != null) {
-                                    text.setText(AppVaribles.getMessage(item.toString()));
+                                    text.setText(AppVaribles.message(item.toString()));
                                     if (item) {
                                         text.setFill(Color.RED);
                                     }
@@ -1042,7 +1042,7 @@ public class ImagesBrowserController extends ImageViewerController {
                         return cell;
                     }
                 });
-                isScaledColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, Boolean>("isScaled"));
+                isScaledColumn.setCellValueFactory(new PropertyValueFactory<>("isScaled"));
                 isScaledColumn.setCellFactory(new Callback<TableColumn<ImageInformation, Boolean>, TableCell<ImageInformation, Boolean>>() {
                     @Override
                     public TableCell<ImageInformation, Boolean> call(TableColumn<ImageInformation, Boolean> param) {
@@ -1051,14 +1051,14 @@ public class ImagesBrowserController extends ImageViewerController {
                             protected void updateItem(final Boolean item, boolean empty) {
                                 super.updateItem(item, empty);
                                 if (item != null) {
-                                    setText(AppVaribles.getMessage(item.toString()));
+                                    setText(AppVaribles.message(item.toString()));
                                 }
                             }
                         };
                         return cell;
                     }
                 });
-                loadColumn.setCellValueFactory(new PropertyValueFactory<ImageInformation, String>("loadSizeString"));
+                loadColumn.setCellValueFactory(new PropertyValueFactory<>("loadSizeString"));
 
                 tableView.getColumns().addAll(imageColumn, fileColumn, formatColumn, csColumn, pixelsColumn, fileSizeColumn, loadColumn,
                         isMutipleFramesColumn, indexColumn, isSampledColumn, isScaledColumn, modifiedTimeColumn, createTimeColumn);
@@ -1089,7 +1089,7 @@ public class ImagesBrowserController extends ImageViewerController {
                     }
                     File file = info.getImageFileInformation().getFile();
                     if (event.getClickCount() > 1) {
-                        FxmlStage.openImageViewer( null, file);
+                        FxmlStage.openImageViewer(null, file);
                     }
                 }
             });
@@ -1147,7 +1147,7 @@ public class ImagesBrowserController extends ImageViewerController {
     private void loadImageInfos() {
         Map<String, ImageInformation> oldList = new HashMap();
         for (ImageInformation info : tableData) {
-            oldList.put(info.getFilename(), info);
+            oldList.put(info.getFileName(), info);
         }
         tableData.clear();
         ImageInformation imageInfo;
@@ -1329,7 +1329,7 @@ public class ImagesBrowserController extends ImageViewerController {
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             List<File> files = fileChooser.showOpenMultipleDialog(getMyStage());
             if (files == null || files.isEmpty()) {
                 return;
@@ -1370,7 +1370,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 }
                 filesNumber = imageFileList.size();
                 colsNum = (int) Math.sqrt(filesNumber);
-                colsNum = Math.max(colsNum, (int) (filesNumber / colsNum));
+                colsNum = Math.max(colsNum, filesNumber / colsNum);
             }
             loadImages();
 
@@ -1415,7 +1415,7 @@ public class ImagesBrowserController extends ImageViewerController {
                 if (!imageFileList.isEmpty()) {
                     filesNumber = imageFileList.size();
                     colsNum = (int) Math.sqrt(filesNumber);
-                    colsNum = Math.max(colsNum, (int) (filesNumber / colsNum));
+                    colsNum = Math.max(colsNum, filesNumber / colsNum);
                 }
             }
             loadImages();
@@ -1500,12 +1500,12 @@ public class ImagesBrowserController extends ImageViewerController {
 
     @FXML
     protected void filesListAction(ActionEvent event) {
-        colsnumBox.getSelectionModel().select(AppVaribles.getMessage("FilesList"));
+        colsnumBox.getSelectionModel().select(AppVaribles.message("FilesList"));
     }
 
     @FXML
     protected void thumbsListAction(ActionEvent event) {
-        colsnumBox.getSelectionModel().select(AppVaribles.getMessage("ThumbnailsList"));
+        colsnumBox.getSelectionModel().select(AppVaribles.message("ThumbnailsList"));
     }
 
 }

@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
-import mara.mybox.controller.base.BaseController;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,23 +22,25 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import mara.mybox.controller.base.BaseController;
+import mara.mybox.controller.base.ImageManufactureBatchController;
+import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.image.ImageManufacture;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
-import mara.mybox.image.ImageConvolution;
-import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageContrast;
+import mara.mybox.image.ImageConvolution;
 import mara.mybox.image.ImageGray;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.OperationType;
-import mara.mybox.value.CommonValues;
-import mara.mybox.data.ConvolutionKernel;
-import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -75,7 +75,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     protected ImageView effectTipsView, ditherTipsView;
 
     public ImageManufactureBatchEffectsController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchEffects");
+        baseTitle = AppVaribles.message("ImageManufactureBatchEffects");
 
     }
 
@@ -139,51 +139,51 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
             RadioButton selected = (RadioButton) effectsGroup.getSelectedToggle();
             String selectedString = selected.getText();
-            if (getMessage("Blur").equals(selectedString)) {
+            if (message("Blur").equals(selectedString)) {
                 effectType = OperationType.Blur;
                 makeBlurBox();
 
-            } else if (getMessage("Sharpen").equals(selectedString)) {
+            } else if (message("Sharpen").equals(selectedString)) {
                 effectType = OperationType.Sharpen;
                 bindStart();
 
-            } else if (getMessage("Clarity").equals(selectedString)) {
+            } else if (message("Clarity").equals(selectedString)) {
                 effectType = OperationType.Clarity;
                 bindStart();
 
-            } else if (getMessage("EdgeDetection").equals(selectedString)) {
+            } else if (message("EdgeDetection").equals(selectedString)) {
                 effectType = OperationType.EdgeDetect;
                 bindStart();
 
-            } else if (getMessage("Emboss").equals(selectedString)) {
+            } else if (message("Emboss").equals(selectedString)) {
                 effectType = OperationType.Emboss;
                 makeEmbossBox();
 
-            } else if (getMessage("Posterizing").equals(selectedString)) {
+            } else if (message("Posterizing").equals(selectedString)) {
                 effectType = OperationType.Quantization;
                 makePosterizingBox();
 
-            } else if (getMessage("Thresholding").equals(selectedString)) {
+            } else if (message("Thresholding").equals(selectedString)) {
                 effectType = OperationType.Thresholding;
                 makeThresholdingBox();
 
-            } else if (getMessage("Gray").equals(selectedString)) {
+            } else if (message("Gray").equals(selectedString)) {
                 effectType = OperationType.Gray;
                 bindStart();
 
-            } else if (getMessage("BlackOrWhite").equals(selectedString)) {
+            } else if (message("BlackOrWhite").equals(selectedString)) {
                 effectType = OperationType.BlackOrWhite;
                 makeBlackWhiteBox();
 
-            } else if (getMessage("Sepia").equals(selectedString)) {
+            } else if (message("Sepia").equals(selectedString)) {
                 effectType = OperationType.Sepia;
                 makeSepiaBox();
 
-            } else if (getMessage("Contrast").equals(selectedString)) {
+            } else if (message("Contrast").equals(selectedString)) {
                 effectType = OperationType.Contrast;
                 makeContrastBox();
 
-            } else if (getMessage("Convolution").equals(selectedString)) {
+            } else if (message("Convolution").equals(selectedString)) {
                 effectType = OperationType.Convolution;
                 makeConvolutionBox();
 
@@ -205,7 +205,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void makeBlurBox() {
         try {
             intPara1 = 10;
-            intLabel = new Label(getMessage("Radius"));
+            intLabel = new Label(message("Radius"));
             intBox = new ComboBox();
             intBox.setEditable(true);
             intBox.setPrefWidth(80);
@@ -227,13 +227,13 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intBox.getItems().addAll(Arrays.asList("10", "5", "3", "2", "1", "8", "15", "20", "30"));
             intBox.getSelectionModel().select(0);
-            stringLabel = new Label(getMessage("Algorithm"));
+            stringLabel = new Label(message("Algorithm"));
             stringBox = new ComboBox();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        if (getMessage("AverageBlur").equals(newValue)) {
+                        if (message("AverageBlur").equals(newValue)) {
                             kernel = ConvolutionKernel.makeAverageBlur(intPara1);
                         } else {
                             kernel = ConvolutionKernel.makeGaussKernel(intPara1);
@@ -244,8 +244,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     }
                 }
             });
-            stringBox.getItems().addAll(Arrays.asList(getMessage("AverageBlur"), getMessage("GaussianBlur")));
-            stringBox.getSelectionModel().select(getMessage("AverageBlur"));
+            stringBox.getItems().addAll(Arrays.asList(message("AverageBlur"), message("GaussianBlur")));
+            stringBox.getSelectionModel().select(message("AverageBlur"));
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox);
             startButton.disableProperty().bind(
                     intBox.getEditor().styleProperty().isEqualTo(badStyle)
@@ -262,7 +262,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void makeEmbossBox() {
         try {
             intPara1 = ImageManufacture.Direction.Top;
-            stringLabel = new Label(getMessage("Direction"));
+            stringLabel = new Label(message("Direction"));
             stringBox = new ComboBox();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -270,34 +270,34 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     if (newValue == null || newValue.trim().isEmpty()) {
                         return;
                     }
-                    if (getMessage("Top").equals(newValue)) {
+                    if (message("Top").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.Top;
-                    } else if (getMessage("Bottom").equals(newValue)) {
+                    } else if (message("Bottom").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.Bottom;
-                    } else if (getMessage("Left").equals(newValue)) {
+                    } else if (message("Left").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.Top;
-                    } else if (getMessage("Right").equals(newValue)) {
+                    } else if (message("Right").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.Right;
-                    } else if (getMessage("LeftTop").equals(newValue)) {
+                    } else if (message("LeftTop").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.LeftTop;
-                    } else if (getMessage("RightBottom").equals(newValue)) {
+                    } else if (message("RightBottom").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.RightBottom;
-                    } else if (getMessage("LeftBottom").equals(newValue)) {
+                    } else if (message("LeftBottom").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.LeftBottom;
-                    } else if (getMessage("RightTop").equals(newValue)) {
+                    } else if (message("RightTop").equals(newValue)) {
                         intPara1 = ImageManufacture.Direction.RightTop;
                     } else {
                         intPara1 = ImageManufacture.Direction.Top;
                     }
                 }
             });
-            stringBox.getItems().addAll(Arrays.asList(getMessage("Top"), getMessage("Bottom"),
-                    getMessage("Left"), getMessage("Right"),
-                    getMessage("LeftTop"), getMessage("RightBottom"),
-                    getMessage("LeftBottom"), getMessage("RightTop")));
-            stringBox.getSelectionModel().select(getMessage("Top"));
+            stringBox.getItems().addAll(Arrays.asList(message("Top"), message("Bottom"),
+                    message("Left"), message("Right"),
+                    message("LeftTop"), message("RightBottom"),
+                    message("LeftBottom"), message("RightTop")));
+            stringBox.getSelectionModel().select(message("Top"));
             intPara2 = 3;
-            intLabel = new Label(getMessage("Radius"));
+            intLabel = new Label(message("Radius"));
             intBox = new ComboBox();
             intBox.setEditable(false);
             intBox.setPrefWidth(80);
@@ -319,7 +319,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             intBox.getItems().addAll(Arrays.asList("3", "5"));
             intBox.getSelectionModel().select(0);
-            valueCheck = new CheckBox(getMessage("Gray"));
+            valueCheck = new CheckBox(message("Gray"));
             valueCheck.setSelected(true);
             setBox.getChildren().addAll(stringLabel, stringBox, intLabel, intBox, valueCheck);
             startButton.disableProperty().bind(
@@ -336,26 +336,26 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makePosterizingBox() {
         try {
-            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("QuantizationComments")));
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(message("QuantizationComments")));
 
             quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
-            stringLabel = new Label(getMessage("Algorithm"));
+            stringLabel = new Label(message("Algorithm"));
             stringBox = new ComboBox();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (getMessage("RGBUniformQuantization").equals(newValue)) {
+                    if (message("RGBUniformQuantization").equals(newValue)) {
                         quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
-                    } else if (getMessage("HSBUniformQuantization").equals(newValue)) {
+                    } else if (message("HSBUniformQuantization").equals(newValue)) {
                         quantizationAlgorithm = QuantizationAlgorithm.HSB_Uniform;
                     }
                 }
             });
-            stringBox.getItems().addAll(Arrays.asList(getMessage("RGBUniformQuantization"),
-                    getMessage("HSBUniformQuantization")));
-            stringBox.getSelectionModel().select(getMessage("RGBUniformQuantization"));
+            stringBox.getItems().addAll(Arrays.asList(message("RGBUniformQuantization"),
+                    message("HSBUniformQuantization")));
+            stringBox.getSelectionModel().select(message("RGBUniformQuantization"));
             intPara1 = 64;
-            intLabel = new Label(getMessage("ColorsNumber"));
+            intLabel = new Label(message("ColorsNumber"));
             intBox = new ComboBox();
             intBox.setEditable(false);
             intBox.setPrefWidth(120);
@@ -378,7 +378,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getItems().addAll(Arrays.asList(
                     "64", "512", "8", "4096", "216", "343", "27", "125", "1000", "729", "1728", "8000"));
             intBox.getSelectionModel().select(0);
-            valueCheck = new CheckBox(getMessage("Dithering"));
+            valueCheck = new CheckBox(message("Dithering"));
             valueCheck.setSelected(true);
 
             setBox.getChildren().addAll(effectTipsView, stringLabel, stringBox, intLabel, intBox, ditherTipsView, valueCheck);
@@ -397,10 +397,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeThresholdingBox() {
         try {
-            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("ThresholdingComments")));
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(message("ThresholdingComments")));
 
             intPara1 = 128;
-            intLabel = new Label(getMessage("Threshold"));
+            intLabel = new Label(message("Threshold"));
             intInput = new TextField();
             intInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -426,7 +426,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             FxmlControl.setTooltip(intInput, new Tooltip("0~255"));
 
             intPara2 = 0;
-            Label smallValueLabel = new Label(getMessage("SmallValue"));
+            Label smallValueLabel = new Label(message("SmallValue"));
             final TextField thresholdingMinInput = new TextField();
             thresholdingMinInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -452,7 +452,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             FxmlControl.setTooltip(thresholdingMinInput, new Tooltip("0~255"));
 
             intPara3 = 255;
-            Label bigValueLabel = new Label(getMessage("BigValue"));
+            Label bigValueLabel = new Label(message("BigValue"));
             final TextField thresholdingMaxInput = new TextField();
             thresholdingMaxInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -496,7 +496,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeBlackWhiteBox() {
         try {
-            FxmlControl.setTooltip(effectTipsView, new Tooltip(getMessage("BWThresholdComments")));
+            FxmlControl.setTooltip(effectTipsView, new Tooltip(message("BWThresholdComments")));
 
             intPara2 = 128;
             intInput = new TextField();
@@ -523,13 +523,13 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
             intPara1 = 1;
             radioGroup = new ToggleGroup();
-            radio1 = new RadioButton(getMessage("OTSU"));
+            radio1 = new RadioButton(message("OTSU"));
             radio1.setToggleGroup(radioGroup);
             radio1.setUserData(1);
-            radio2 = new RadioButton(getMessage("Default"));
+            radio2 = new RadioButton(message("Default"));
             radio2.setToggleGroup(radioGroup);
             radio2.setUserData(2);
-            radio3 = new RadioButton(getMessage("Threshold"));
+            radio3 = new RadioButton(message("Threshold"));
             radio3.setToggleGroup(radioGroup);
             radio3.setUserData(3);
             radioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -546,7 +546,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             });
             radio1.setSelected(true);
 
-            valueCheck = new CheckBox(getMessage("Dithering"));
+            valueCheck = new CheckBox(message("Dithering"));
             valueCheck.setSelected(true);
 
             setBox.getChildren().addAll(effectTipsView, radio1, radio2, radio3, intInput, ditherTipsView, valueCheck);
@@ -562,7 +562,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void makeSepiaBox() {
         try {
             intPara1 = 80;
-            intLabel = new Label(getMessage("Intensity"));
+            intLabel = new Label(message("Intensity"));
             intInput = new TextField();
             intInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -602,7 +602,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
     private void makeConvolutionBox() {
         try {
-            stringLabel = new Label(getMessage("ConvolutionKernel"));
+            stringLabel = new Label(message("ConvolutionKernel"));
             stringBox = new ComboBox();
             kernel = null;
             if (kernels == null) {
@@ -622,14 +622,14 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     FxmlControl.setEditorNormal(stringBox);
                 }
             });
-            FxmlControl.setTooltip(stringBox, new Tooltip(getMessage("CTRL+k")));
-            setButton = new Button(getMessage("ManageDot"));
+            FxmlControl.setTooltip(stringBox, new Tooltip(message("CTRL+k")));
+            setButton = new Button(message("ManageDot"));
             setButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     BaseController c = openStage(CommonValues.ConvolutionKernelManagerFxml);
-                    c.parentController = myController;
-                    c.parentFxml = myFxml;
+                    c.setParentController(myController);
+                    c.setParentFxml(myFxml);
                 }
             });
             setBox.getChildren().addAll(stringLabel, stringBox, setButton);
@@ -648,13 +648,12 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void makeContrastBox() {
         try {
             contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
-            stringLabel = new Label(getMessage("Algorithm"));
+            stringLabel = new Label(message("Algorithm"));
             stringBox = new ComboBox();
-            stringBox.getItems().addAll(Arrays.asList(
-                    getMessage("HSBHistogramEqualization"),
-                    getMessage("GrayHistogramEqualization"),
-                    getMessage("GrayHistogramStretching"),
-                    getMessage("GrayHistogramShifting")
+            stringBox.getItems().addAll(Arrays.asList(message("HSBHistogramEqualization"),
+                    message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"),
+                    message("GrayHistogramShifting")
             //                    getMessage("LumaHistogramEqualization"),
             //                    getMessage("AdaptiveHistogramEqualization")
             ));
@@ -670,10 +669,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         }
                     }
                     startButton.disableProperty().unbind();
-                    if (getMessage("GrayHistogramStretching").equals(newValue)) {
+                    if (message("GrayHistogramStretching").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching;
                         intPara1 = 100;
-                        intLabel = new Label(getMessage("LeftThreshold"));
+                        intLabel = new Label(message("LeftThreshold"));
                         intInput = new TextField();
                         intInput.textProperty().addListener(new ChangeListener<String>() {
                             @Override
@@ -696,7 +695,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                         intInput.setText("100");
 
                         intPara2 = 100;
-                        intLabel2 = new Label(getMessage("RightThreshold"));
+                        intLabel2 = new Label(message("RightThreshold"));
                         intInput2 = new TextField();
                         intInput2.textProperty().addListener(new ChangeListener<String>() {
                             @Override
@@ -727,10 +726,10 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                                         .or(Bindings.isEmpty(tableView.getItems()))
                                         .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                         );
-                    } else if (getMessage("GrayHistogramShifting").equals(newValue)) {
+                    } else if (message("GrayHistogramShifting").equals(newValue)) {
                         contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting;
                         intPara1 = 80;
-                        intLabel = new Label(getMessage("Offset"));
+                        intLabel = new Label(message("Offset"));
                         intInput = new TextField();
                         intInput.textProperty().addListener(new ChangeListener<String>() {
                             @Override
@@ -763,13 +762,13 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                                         .or(stringBox.getEditor().styleProperty().isEqualTo(badStyle))
                         );
                     } else {
-                        if (getMessage("GrayHistogramEqualization").equals(newValue)) {
+                        if (message("GrayHistogramEqualization").equals(newValue)) {
                             contrastAlgorithm = ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization;
-                        } else if (getMessage("LumaHistogramEqualization").equals(newValue)) {
+                        } else if (message("LumaHistogramEqualization").equals(newValue)) {
                             contrastAlgorithm = ImageContrast.ContrastAlgorithm.Luma_Histogram_Equalization;
-                        } else if (getMessage("HSBHistogramEqualization").equals(newValue)) {
+                        } else if (message("HSBHistogramEqualization").equals(newValue)) {
                             contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
-                        } else if (getMessage("AdaptiveHistogramEqualization").equals(newValue)) {
+                        } else if (message("AdaptiveHistogramEqualization").equals(newValue)) {
                             contrastAlgorithm = ImageContrast.ContrastAlgorithm.Adaptive_Histogram_Equalization;
                         }
                         startButton.disableProperty().bind(

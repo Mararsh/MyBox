@@ -6,25 +6,29 @@
 
 ## 下载
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的releases页签）。
+以下是最新版本的链接：
+平台 | 链接 | 运行需要 
+- | - | - 
+win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 无
+win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | Java 12或更高版本
+linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | Java 12或更高版本
+mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | Java 12或更高版本
+win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | Java 12或更高版本
 
-可以下载exe包，在Windows上无需java环境、无需安装、解包可用：(请解包到纯英文目录下)
-[MyBox-5.2-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-exe.zip) 。
+可以下载exe包，在Windows上无需java环境、无需安装、解包可用(请解包到纯英文目录下) 。
 
-在已安装JRE或者JDK（Java8/9/10）的环境下，可以下载jar包 
-[MyBox-5.2-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.2/MyBox-5.2-jar.zip) 
+在已安装JRE或者JDK 12或更高版本（Oracle java或Open jdk均可）的环境下，可以下载jar包。每个平台有自己的包，也可用跨平台的包（较大）。
 
 ## 运行
 在Windows上双击“MyBox.exe”即可运行MyBox。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
 
-在Linux和Mac上缺省有Java环境，因此只提供jar包而未制作平台安装包。执行以下命令来启动程序：
-<PRE><CODE>     java   -jar   MyBox-5.2.jar</CODE></PRE>
+在Linux和Mac上缺省有Java环境（请升级至Java 12或更高版本），因此只提供jar包而未制作平台安装包。执行以下命令来启动程序：
+<PRE><CODE>     java   -jar   MyBox-5.3.jar</CODE></PRE>
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：
-<PRE><CODE>     java   -jar   MyBox-5.2.jar   /tmp/a1.jpg</CODE></PRE>
+<PRE><CODE>     java   -jar   MyBox-5.3.jar   /tmp/a1.jpg</CODE></PRE>
 
 ## 限制
 在包含非英文字符的路径下无法启动MyBox.exe。请解包到纯英文目录下。Jar包的运行不受此限制。
-
-Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以运行。这是MyBox基于Java8的最后一个版本，下一版本（5.3）将迁移Java12上。
 
 由于目前版本中内嵌的Derby数据库是单应用模式，因此只有首先运行的MyBox实例可读写数据库。
 即：可以同时运行多个Mybox实例，但只有第一启动的实例可以保存和读取配置数据，其它实例可以执行除读写配置数据的大部分功能。
@@ -42,24 +46,26 @@ Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以�
 [在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html](https://mararsh.github.io/MyBox/mybox_help_zh.html)
 
 
-# 用户手册
-[综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf)
+# 文档
+[用户手册-综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf)
 
-[图像工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf)
+[用户手册-图像工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf)
 
-[PDF工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf)
+[用户手册-PDF工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf)
 
-[桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf)
+[用户手册-桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf)
 
-[网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf)
+[用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf)
+
+[开发者指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf)
 
 
 # 当前版本
-当前是版本5.2，已实现的特点概述如下。
+当前是版本5.3，已实现的特点概述如下。
 ## 跨平台
-纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 8/9/10的平台。
+纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 12的平台。
 
-这是MyBox基于Java8的最后一个版本，下一版本（5.3）将迁移Java12上。
+MyBox v5.3以前的版本均基于Java 8。
 ## 国际化
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
 ## PDF工具
@@ -86,7 +92,7 @@ Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以�
 4. 删除、重命名、恢复。
 5. 可选显示：坐标、横标尺、纵标尺、数据。
 6. 统计显示图像的数据：各颜色通道的均值/方差/斜率/中值/众数/最大/最小，以及直方图。直方图的颜色通道可多选。
-7. 查看图像的元数据和属性。
+7. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 8. 同目录下图像文件导览，多种文件排序方式。
 ### 浏览图像
 1. 同屏显示多图，分别或者同步旋转和缩放。
@@ -117,6 +123,15 @@ Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以�
 17. 选择是否显示对照图。可以选择其它图片为对照图。
 18. 处理已有图片，或新建图片。
 19. 复制（CTRL+c）/粘贴（CTRL+v）/弹出/参考。
+### 图片转换
+1. 可选图像文件的格式，包括：png,jpg,bmp,tif,gif,wbmp,pnm,pcx，raw。
+2. 可选颜色空间，包括：sRGB、Linear sRGB、ECI RGB、Adobe RGB、Apple RGB、Color Match RGB、ECI CMYK、Adobe CMYK(多种)、灰色、黑白色。
+3. 可选外部ICC特性文件作为转换的依据。
+4. 对于jpg/png格式可选是否嵌入ICC特性文件，对于Tif格式必选嵌入。
+5. 可选对透明通道（如果有）的处理：保留、删除、预乘并保留、预乘并删除。
+6. 可选压缩类型和质量。
+7. 对于黑白色，可选二值化算法：OTSU、缺省、或输入预置，可选是否抖动处理。
+8. 批量转换。
 ### 多帧图像文件
 1. 查看、提取多帧图像文件
 2. 创建、编辑多帧tiff文件
@@ -140,10 +155,9 @@ Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以�
 ### 其它
 1. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。
 2. 图像的批量处理。
-3. 将图片转换为其它格式，包含色彩、长宽、压缩、质量等选项。
-4. 调色盘
-5. 像素计算器
-6. 卷积核管理器
+3. 调色盘
+4. 像素计算器
+5. 卷积核管理器
 
 ## 数据工具
 
@@ -275,12 +289,20 @@ Java 11变化了很多，因此不能保证MyBox在高于Java 10的平台可以�
 1. 开/关内存监视条
 2. 开/关CPU监视条
 3. 显示JVM属性
-4. 刷新/重置窗口
+4. 刷新/重置/全屏窗口
 5. 关闭其它窗口
 6. 最近访问的工具
 
 # 开发日志
 ```
+2019-8-8 版本5.3 迁移至： netbeans 11 + Java 12。
+优化批量处理界面：可添加目录、展开目录、过滤文件名、选择如何处理重名文件。
+优化图像转换：可选择更多的颜色空间并支持引用外部ICC特性文件、可选图像嵌入ICC特性文件、可选对透明通道的处理。
+优化图像元数据的解码：可读取图像中嵌入的ICC特性文件。
+优化代码：利用匿名类和嵌入fxml尽可能减少重复代码；整理类继承的关系；使项目配置文件支持多平台构建。
+修正问题：”图像处理-颜色-透明度“的预乘透明算法用错了；在linux上另存图像时未自动添加扩展名而导致保存失败；
+linux上无法打开链接；ICC特性文件版本解码/编码错误、数据太多时界面会僵住、未解码的数据会导致xml无法生成。
+
 2019-6-30 版本5.2 图像解码：可读Adobe YCCK/CMYK的jpg图像；读取和显示多帧图像文件中所有图像的属性和元数据。
 PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如作者、版本、用户密码、用户权限、所有者密码等。
 编辑矩阵数据：适应带格式的输入数据；自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵；

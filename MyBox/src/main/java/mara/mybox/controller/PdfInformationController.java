@@ -46,7 +46,7 @@ public class PdfInformationController extends BaseController {
     private TextField firstPageSize, firstPageSize2;
 
     public PdfInformationController() {
-        baseTitle = AppVaribles.getMessage("PdfInformation");
+        baseTitle = AppVaribles.message("PdfInformation");
 
     }
 

@@ -32,9 +32,10 @@ import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.IntStatistic;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -97,7 +98,7 @@ public class ImageStatisticController extends ImageViewerController {
     private ToolBar colorBar;
 
     public ImageStatisticController() {
-        baseTitle = AppVaribles.getMessage("ImageStatistic");
+        baseTitle = AppVaribles.message("ImageStatistic");
 
         ImageStatisticHueStages = "ImageStatisticHueStages";
         ImageStatisticSaturationStages = "ImageStatisticSaturationStages";
@@ -168,10 +169,9 @@ public class ImageStatisticController extends ImageViewerController {
         colorSummaryNumberColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("number"));
         colorSummaryPercentageColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Float>("percentage"));
 
-        List<String> aList = Arrays.asList(
-                getMessage("RGBUniformQuantization"), getMessage("HSBUniformQuantization"));
+        List<String> aList = Arrays.asList(message("RGBUniformQuantization"), message("HSBUniformQuantization"));
         algorithmBox.getItems().addAll(aList);
-        algorithmBox.getSelectionModel().select(getMessage("RGBUniformQuantization"));
+        algorithmBox.getSelectionModel().select(message("RGBUniformQuantization"));
 
         List<String> paletteList = Arrays.asList(
                 "512", "64", "8", "4096", "216", "343", "27", "125", "1000", "729", "1728", "8000");
@@ -271,7 +271,7 @@ public class ImageStatisticController extends ImageViewerController {
         protected void updateItem(final String item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null && !empty) {
-                text.setText(AppVaribles.getMessage(item));
+                text.setText(AppVaribles.message(item));
                 setGraphic(text);
             }
         }
@@ -288,7 +288,7 @@ public class ImageStatisticController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
-            alertInformation(AppVaribles.getMessage("NotSupported"));
+            alertInformation(AppVaribles.message("NotSupported"));
         }
     }
 

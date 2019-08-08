@@ -2,37 +2,29 @@ package mara.mybox.controller.base;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javafx.application.Platform;
-import javafx.scene.image.Image;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import mara.mybox.controller.ImageViewerController;
-import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.image.ImageFileInformation;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.image.ImageAttributes;
-import mara.mybox.image.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageAttributes;
+import mara.mybox.image.ImageFileInformation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -42,26 +34,26 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 public abstract class ImageBaseController extends BaseController {
 
-    public ImageInformation imageInformation;
-    public Image image;
-    public ImageAttributes attributes;
-    public Map<String, Object> imageData;
-    public boolean careFrames;
-    public int loadWidth, defaultLoadWidth, frameIndex;
-    public LoadingController loadingController;
-    public Task loadTask;
+    protected ImageInformation imageInformation;
+    protected Image image;
+    protected ImageAttributes attributes;
+    protected Map<String, Object> imageData;
+    protected boolean careFrames;
+    protected int loadWidth, defaultLoadWidth, frameIndex;
+    protected LoadingController loadingController;
+    protected Task loadTask;
 
-    public boolean imageChanged, isCroppped;
-    public double mouseX, mouseY;
+    protected boolean imageChanged, isCroppped;
+    protected double mouseX, mouseY;
 
     @FXML
-    public ScrollPane scrollPane;
+    protected ScrollPane scrollPane;
     @FXML
-    public ImageView imageView;
+    protected ImageView imageView;
     @FXML
-    public Label sampledTips;
+    protected Label sampledTips;
     @FXML
-    public Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
+    protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
 
     public ImageBaseController() {
@@ -77,7 +69,8 @@ public abstract class ImageBaseController extends BaseController {
 
         SaveAsOptionsKey = "ImageSaveAsKey";
 
-        fileExtensionFilter = CommonValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
         careFrames = true;
         loadWidth = -1;
         defaultLoadWidth = -1;
@@ -169,7 +162,9 @@ public abstract class ImageBaseController extends BaseController {
 
     public void loadImage(final File file, final boolean onlyInformation,
             final int inLoadWidth, final int inFrameIndex, final boolean inCareFrames) {
-
+        if (file == null) {
+            return;
+        }
         final String fileName = file.getPath();
         loadTask = new Task<Void>() {
             private boolean ok, multiplied;
@@ -206,7 +201,7 @@ public abstract class ImageBaseController extends BaseController {
                                     return;
                                 }
                                 imageInfo = imageFileInformation.getImageInformation();
-                                loadingController.setInfo(MessageFormat.format(AppVaribles.getMessage("ImageLargeSampling"),
+                                loadingController.setInfo(MessageFormat.format(AppVaribles.message("ImageLargeSampling"),
                                         imageInfo.getWidth() + "x" + imageInfo.getHeight()));
                             }
                         });
@@ -296,7 +291,7 @@ public abstract class ImageBaseController extends BaseController {
     }
 
     public void loadImage(ImageInformation imageInformation) {
-        this.sourceFile = new File(imageInformation.getFilename());
+        this.sourceFile = new File(imageInformation.getFileName());
         this.imageInformation = imageInformation;
         this.image = imageInformation.getImage();
         imageData = null;
@@ -342,113 +337,6 @@ public abstract class ImageBaseController extends BaseController {
 
     }
 
-    public void openImageManufacture(String filename) {
-        FxmlStage.openImageManufacture(null, new File(filename));
-    }
-
-    public void openImageViewer(Image image) {
-        try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null) {
-                controller.loadImage(image);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void openImageViewer(ImageInformation info) {
-        try {
-            final ImageViewerController controller = FxmlStage.openImageViewer(null);
-            if (controller != null) {
-                controller.loadImage(info);
-            }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    public void openImageViewer(String file) {
-        FxmlStage.openImageViewer(null, new File(file));
-    }
-
-    public void showImageInformation(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageInformation(null, info);
-    }
-
-    public void showImageMetaData(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageMetaData(null, info);
-    }
-
-    public void showImageStatistic(ImageInformation info) {
-        if (info == null) {
-            return;
-        }
-        FxmlStage.openImageStatistic(null, info);
-    }
-
-    public void showImageStatistic(Image image) {
-        if (image == null) {
-            return;
-        }
-        FxmlStage.openImageStatistic(null, image);
-    }
-
-    public void multipleFilesGenerated(final List<String> fileNames) {
-        try {
-            if (fileNames == null || fileNames.isEmpty()) {
-                return;
-            }
-            String path = new File(fileNames.get(0)).getParent();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(getMyStage().getTitle());
-            String info = MessageFormat.format(AppVaribles.getMessage("GeneratedFilesResult"),
-                    fileNames.size(), "\"" + path + "\"");
-            int num = fileNames.size();
-            if (num > 10) {
-                num = 10;
-            }
-            for (int i = 0; i < num; i++) {
-                info += "\n    " + fileNames.get(i);
-            }
-            if (fileNames.size() > num) {
-                info += "\n    ......";
-            }
-            alert.setContentText(info);
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonOpen = new ButtonType(AppVaribles.getMessage("OpenTargetPath"));
-            ButtonType buttonBrowse = new ButtonType(AppVaribles.getMessage("Browse"));
-            ButtonType buttonBrowseNew = new ButtonType(AppVaribles.getMessage("BrowseInNew"));
-            ButtonType buttonClose = new ButtonType(AppVaribles.getMessage("Close"));
-            alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == buttonOpen) {
-                browseURI(new File(path).toURI());
-                recordFileOpened(path);
-            } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(getMyStage());
-                if (controller != null && sourceFile != null) {
-                    controller.loadFiles(fileNames);
-                }
-            } else if (result.get() == buttonBrowseNew) {
-                final ImagesBrowserController controller = FxmlStage.openImagesBrowser(null);
-                if (controller != null && sourceFile != null) {
-                    controller.loadFiles(fileNames);
-                }
-            }
-
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
     @FXML
     public void imageClicked(MouseEvent event) {
 //        logger.debug("imageClicked");
@@ -481,6 +369,202 @@ public abstract class ImageBaseController extends BaseController {
         }
 
         return c;
+    }
+
+    /*
+        get/set
+     */
+    public ImageInformation getImageInformation() {
+        return imageInformation;
+    }
+
+    public void setImageInformation(ImageInformation imageInformation) {
+        this.imageInformation = imageInformation;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public ImageAttributes getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(ImageAttributes attributes) {
+        this.attributes = attributes;
+    }
+
+    public Map<String, Object> getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(Map<String, Object> imageData) {
+        this.imageData = imageData;
+    }
+
+    public boolean isCareFrames() {
+        return careFrames;
+    }
+
+    public void setCareFrames(boolean careFrames) {
+        this.careFrames = careFrames;
+    }
+
+    public int getLoadWidth() {
+        return loadWidth;
+    }
+
+    public void setLoadWidth(int loadWidth) {
+        this.loadWidth = loadWidth;
+    }
+
+    public int getDefaultLoadWidth() {
+        return defaultLoadWidth;
+    }
+
+    public void setDefaultLoadWidth(int defaultLoadWidth) {
+        this.defaultLoadWidth = defaultLoadWidth;
+    }
+
+    public int getFrameIndex() {
+        return frameIndex;
+    }
+
+    public void setFrameIndex(int frameIndex) {
+        this.frameIndex = frameIndex;
+    }
+
+    public LoadingController getLoadingController() {
+        return loadingController;
+    }
+
+    public void setLoadingController(LoadingController loadingController) {
+        this.loadingController = loadingController;
+    }
+
+    public Task getLoadTask() {
+        return loadTask;
+    }
+
+    public void setLoadTask(Task loadTask) {
+        this.loadTask = loadTask;
+    }
+
+    public boolean isIsCroppped() {
+        return isCroppped;
+    }
+
+    public void setIsCroppped(boolean isCroppped) {
+        this.isCroppped = isCroppped;
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
+    }
+
+    public ScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setScrollPane(ScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
+    }
+
+    public Label getSampledTips() {
+        return sampledTips;
+    }
+
+    public void setSampledTips(Label sampledTips) {
+        this.sampledTips = sampledTips;
+    }
+
+    public Button getImageSizeButton() {
+        return imageSizeButton;
+    }
+
+    public void setImageSizeButton(Button imageSizeButton) {
+        this.imageSizeButton = imageSizeButton;
+    }
+
+    public Button getPaneSizeButton() {
+        return paneSizeButton;
+    }
+
+    public void setPaneSizeButton(Button paneSizeButton) {
+        this.paneSizeButton = paneSizeButton;
+    }
+
+    public Button getZoomInButton() {
+        return zoomInButton;
+    }
+
+    public void setZoomInButton(Button zoomInButton) {
+        this.zoomInButton = zoomInButton;
+    }
+
+    public Button getZoomOutButton() {
+        return zoomOutButton;
+    }
+
+    public void setZoomOutButton(Button zoomOutButton) {
+        this.zoomOutButton = zoomOutButton;
+    }
+
+    public Button getRotateLeftButton() {
+        return rotateLeftButton;
+    }
+
+    public void setRotateLeftButton(Button rotateLeftButton) {
+        this.rotateLeftButton = rotateLeftButton;
+    }
+
+    public Button getRotateRightButton() {
+        return rotateRightButton;
+    }
+
+    public void setRotateRightButton(Button rotateRightButton) {
+        this.rotateRightButton = rotateRightButton;
+    }
+
+    public Button getTurnOverButton() {
+        return turnOverButton;
+    }
+
+    public void setTurnOverButton(Button turnOverButton) {
+        this.turnOverButton = turnOverButton;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (loadTask != null && loadTask.isRunning()) {
+            loadTask.cancel();
+            loadTask = null;
+        }
+        return true;
     }
 
 }

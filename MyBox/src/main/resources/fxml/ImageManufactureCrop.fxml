@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.shape.*?>
@@ -44,7 +42,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction" >
+                                <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -63,7 +61,7 @@ License:    Apache License Version 2.0
                         </ToolBar>
                         <ToolBar fx:id="hotBar" disable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
                             <items>
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -73,7 +71,7 @@ License:    Apache License Version 2.0
                                     </graphic>
                                 </Button>
 
-                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -82,7 +80,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -91,7 +89,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize" >
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -101,7 +99,7 @@ License:    Apache License Version 2.0
                                     </graphic>
                                 </Button>
                                 <ComboBox fx:id="hisBox" prefWidth="120.0" promptText="%Histories" />
-                                <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" >
+                                <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -111,7 +109,7 @@ License:    Apache License Version 2.0
                                     </graphic>
                                 </Button>
 
-                                <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" >
+                                <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -120,7 +118,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction" >
+                                <Button fx:id="recoverButton" mnemonicParsing="false" onAction="#recoverAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -129,7 +127,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction" >
+                                <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -138,7 +136,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction" >
+                                <Button fx:id="refButton" mnemonicParsing="false" onAction="#refAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -147,7 +145,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction" >
+                                <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -165,7 +163,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="saveButton"  disable="true" mnemonicParsing="false" onAction="#saveAction" >
+                                <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -190,14 +188,10 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Label fx:id="promptLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" />
-                                                                <RadioButton mnemonicParsing="false" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
-                                                            <items>
+                                                                <Label fx:id="promptLabel"  maxWidth="1.7976931348623157E308"  HBox.hgrow="ALWAYS"
+                                                                       styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " wrapText="true" />
                                                                 <ImageView fx:id="shapeTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
                                                                         <Image url="@../buttons/iconTips.png" />
@@ -220,13 +214,9 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                                     <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                        <ToolBar fx:id="cropBar" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar fx:id="cropBar">
-                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                                                                 <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="10.0">
                                                                     <children>
                                                                         <Label text="%Background" />
@@ -246,7 +236,7 @@ License:    Apache License Version 2.0
                                                                                 <Rectangle height="15.0" stroke="BLACK" strokeType="INSIDE" width="15.0" />
                                                                             </graphic>
                                                                         </Button>
-                                                                        <ToggleButton fx:id="pickColorButton" mnemonicParsing="false" >
+                                                                        <ToggleButton fx:id="pickColorButton" mnemonicParsing="false">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -262,7 +252,7 @@ License:    Apache License Version 2.0
                                                                 </HBox>
                                                                 <HBox fx:id="setBox" alignment="CENTER" spacing="5.0">
                                                                     <children>
-                                                                        <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#polygonWithdrawAction" >
+                                                                        <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#polygonWithdrawAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -271,7 +261,7 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#polygonClearAction" >
+                                                                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#polygonClearAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -286,7 +276,7 @@ License:    Apache License Version 2.0
                                                                     </padding>
                                                                 </HBox>
                                                                 <Button fx:id="cutInsideButton" mnemonicParsing="false" onAction="#cutInsideAction" text="%CutInside" />
-                                                                <Button fx:id="cutOutsideButton" defaultButton="true" mnemonicParsing="false" onAction="#cutOutsideAction" text="%CutOutside" />
+                                                                <Button fx:id="cutOutsideButton" mnemonicParsing="false" onAction="#cutOutsideAction" text="%CutOutside" />
                                                             </items>
                                                         </ToolBar>
                                                     </children>

@@ -4,13 +4,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import mara.mybox.controller.base.BaseController;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
@@ -34,7 +34,7 @@ public class LoadingController extends BaseController {
     private TextArea text;
 
     public LoadingController() {
-        baseTitle = AppVaribles.getMessage("LoadingPage");
+        baseTitle = AppVaribles.message("LoadingPage");
     }
 
     public void init(final Task<?> task) {
@@ -56,9 +56,9 @@ public class LoadingController extends BaseController {
                 timer.cancel();
             }
             final long startTime = new Date().getTime();
-            final String prefix = AppVaribles.getMessage("StartTime") + ": " + DateTools.nowString()
-                    + "   " + AppVaribles.getMessage("ElapsedTime") + ": ";
-            final String suffix = " " + AppVaribles.getMessage("Seconds");
+            final String prefix = AppVaribles.message("StartTime") + ": " + DateTools.nowString()
+                    + "   " + AppVaribles.message("ElapsedTime") + ": ";
+            final String suffix = " " + AppVaribles.message("Seconds");
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -142,6 +142,15 @@ public class LoadingController extends BaseController {
 
     public void setLoadingTask(Task<?> loadingTask) {
         this.loadingTask = loadingTask;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (loadingTask != null && loadingTask.isRunning()) {
+            loadingTask.cancel();
+            loadingTask = null;
+        }
+        return true;
     }
 
 }

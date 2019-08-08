@@ -3,7 +3,7 @@ package mara.mybox.color;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -185,7 +185,7 @@ public class Illuminant extends CIEData {
         this.observer = observer;
         this.temperature = temperature;
         if (comments != null) {
-            this.comments = getMessage(comments);
+            this.comments = message(comments);
         }
         setNormalziedXY(xy);
     }
@@ -226,10 +226,10 @@ public class Illuminant extends CIEData {
     public static String string() {
         StringBuilder s = new StringBuilder();
         String sp = "\t";
-        s.append(getMessage("Illuminant")).append(sp).append(getMessage("Observer")).append(sp).
-                append(getMessage("NormalizedX")).append(sp).append(getMessage("NormalizedY")).append(sp).append(getMessage("NormalizedZ")).append(sp).
-                append(getMessage("RelativeX")).append(sp).append(getMessage("RelativeY")).append(sp).append(getMessage("RelativeZ")).append(sp).
-                append(getMessage("ColorTemperature")).append(sp).append(getMessage("Comments")).append("\n");
+        s.append(message("Illuminant")).append(sp).append(message("Observer")).append(sp).
+                append(message("NormalizedX")).append(sp).append(message("NormalizedY")).append(sp).append(message("NormalizedZ")).append(sp).
+                append(message("RelativeX")).append(sp).append(message("RelativeY")).append(sp).append(message("RelativeZ")).append(sp).
+                append(message("ColorTemperature")).append(sp).append(message("Comments")).append("\n");
 
         List<Illuminant> data = all(8);
         for (Illuminant d : data) {

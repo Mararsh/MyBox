@@ -45,7 +45,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
 import mara.mybox.controller.ImageManufactureMarginsController;
@@ -53,27 +52,27 @@ import mara.mybox.controller.ImageViewerController;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.TableImageHistory;
 import mara.mybox.db.TableImageInit;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.FxmlControl;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.ListColorCell;
+import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageHistory;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufactureValues;
-import mara.mybox.fxml.ColorCell;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageScope;
 import mara.mybox.image.ImageScope.ColorScopeType;
 import mara.mybox.image.ImageScope.ScopeType;
-import mara.mybox.image.PixelsOperation.OperationType;
-import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
+import mara.mybox.image.PixelsOperation.OperationType;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -82,8 +81,6 @@ import static mara.mybox.value.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public abstract class ImageManufactureController extends ImageViewerController {
-
-    protected String ImageTipsKey;
 
     protected ImageManufactureValues values;
     protected boolean isSwitchingTab;
@@ -153,15 +150,13 @@ public abstract class ImageManufactureController extends ImageViewerController {
     protected Text scopeXYText;
 
     public ImageManufactureController() {
-        baseTitle = AppVaribles.getMessage("ImageManufacture");
+        baseTitle = AppVaribles.message("ImageManufacture");
 
         TipsLabelKey = "ImageManufactureTips";
         ImageSelectKey = "ImageManufactureSelectKey";
         ImageRulerXKey = "ImageManufactureRulerXKey";
         ImageRulerYKey = "ImageManufactureRulerYKey";
         ImagePopCooridnateKey = "ImageManufacturePopCooridnateKey";
-
-        ImageTipsKey = null;
     }
 
     @Override
@@ -272,12 +267,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     if (index < 0 || hisBox.getItems() == null) {
                         return;
                     }
-                    if (getMessage("SettingsDot").equals(hisBox.getItems().get(index))) {
+                    if (message("SettingsDot").equals(hisBox.getItems().get(index))) {
                         BaseController c = openStage(CommonValues.SettingsFxml);
                         c.parentController = myController;
                         c.parentFxml = myFxml;
                         return;
-                    } else if (getMessage("OpenPathDot").equals(hisBox.getItems().get(index))) {
+                    } else if (message("OpenPathDot").equals(hisBox.getItems().get(index))) {
                         try {
                             browseURI(new File(AppVaribles.getImageHisPath()).toURI());
                         } catch (Exception e) {
@@ -295,13 +290,6 @@ public abstract class ImageManufactureController extends ImageViewerController {
             int max = AppVaribles.getUserConfigInt("MaxImageHistories", 20);
             hisBox.setDisable(max <= 0);
             FxmlControl.setTooltip(hisBox, new Tooltip("CTRL+h"));
-
-            if (ImageTipsKey != null) {
-                FxmlControl.setTooltip(imageTipsLabel, new Tooltip(getMessage(ImageTipsKey)));
-            } else {
-                imageSetBox.getChildren().remove(imageTipsLabel);
-                imageTipsLabel.setVisible(false);
-            }
 
             if (showScopeCheck != null && scopeBox != null) {
                 initScopeControls();
@@ -374,6 +362,19 @@ public abstract class ImageManufactureController extends ImageViewerController {
 
             if (pickColorButton != null) {
                 pickColorButton.setSelected(false);
+                pickColorButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                        if (pickColorButton.isSelected()) {
+                            FxmlControl.setTooltip(scrollPane, new Tooltip(message("PickingColorNow")));
+                        } else {
+                            FxmlControl.removeTooltip(scrollPane);
+                        }
+                    }
+                });
+            }
+            if (imageTipsLabel != null) {
+                imageTipsLabel.setText("");
             }
 
         } catch (Exception e) {
@@ -450,10 +451,10 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            List<String> scopeList = Arrays.asList(getMessage("All"), getMessage("Matting"),
-                    getMessage("Rectangle"), getMessage("Circle"), getMessage("Ellipse"), getMessage("Polygon"),
-                    getMessage("ColorMatching"), getMessage("RectangleColor"), getMessage("CircleColor"),
-                    getMessage("EllipseColor"), getMessage("PolygonColor"));
+            List<String> scopeList = Arrays.asList(message("All"), message("Matting"),
+                    message("Rectangle"), message("Circle"), message("Ellipse"), message("Polygon"),
+                    message("ColorMatching"), message("RectangleColor"), message("CircleColor"),
+                    message("EllipseColor"), message("PolygonColor"));
             scopeListBox.getItems().addAll(scopeList);
             scopeListBox.setVisibleRowCount(scopeList.size());
             scopeListBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
@@ -475,9 +476,8 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            scopeMatchBox.getItems().addAll(Arrays.asList(
-                    getMessage("Color"), getMessage("Hue"), getMessage("Red"), getMessage("Green"),
-                    getMessage("Blue"), getMessage("Brightness"), getMessage("Saturation")
+            scopeMatchBox.getItems().addAll(Arrays.asList(message("Color"), message("Hue"), message("Red"), message("Green"),
+                    message("Blue"), message("Brightness"), message("Saturation")
             ));
             scopeMatchBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -487,7 +487,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     checkMatchType();
                 }
             });
-            scopeMatchBox.getSelectionModel().select(AppVaribles.getUserConfigValue("ImageScopeMatchType", getMessage("Color")));
+            scopeMatchBox.getSelectionModel().select(AppVaribles.getUserConfigValue("ImageScopeMatchType", message("Color")));
 
             scopeDistanceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -500,11 +500,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
                 }
             });
 
-            scopeColorsBox.setButtonCell(new ColorCell());
+            scopeColorsBox.setButtonCell(new ListColorCell());
             scopeColorsBox.setCellFactory(new Callback<ListView<Color>, ListCell<Color>>() {
                 @Override
                 public ListCell<Color> call(ListView<Color> p) {
-                    return new ColorCell();
+                    return new ListColorCell();
                 }
             });
 
@@ -543,40 +543,40 @@ public abstract class ImageManufactureController extends ImageViewerController {
             checkCoordinate();
 
             String selected = scopeListBox.getSelectionModel().getSelectedItem();
-            if (imageView.getImage() == null || AppVaribles.getMessage("All").equals(selected)) {
+            if (imageView.getImage() == null || AppVaribles.message("All").equals(selected)) {
                 scope.setScopeType(ImageScope.ScopeType.All);
                 hideScopePane();
 
             } else {
 
-                if (AppVaribles.getMessage("Matting").equals(selected)) {
+                if (AppVaribles.message("Matting").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Matting);
 
-                } else if (getMessage("Rectangle").equals(selected)) {
+                } else if (message("Rectangle").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Rectangle);
 
-                } else if (getMessage("Circle").equals(selected)) {
+                } else if (message("Circle").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Circle);
 
-                } else if (getMessage("Ellipse").equals(selected)) {
+                } else if (message("Ellipse").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Ellipse);
 
-                } else if (getMessage("Polygon").equals(selected)) {
+                } else if (message("Polygon").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Polygon);
 
-                } else if (getMessage("ColorMatching").equals(selected)) {
+                } else if (message("ColorMatching").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.Color);
 
-                } else if (getMessage("RectangleColor").equals(selected)) {
+                } else if (message("RectangleColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.RectangleColor);
 
-                } else if (getMessage("CircleColor").equals(selected)) {
+                } else if (message("CircleColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.CircleColor);
 
-                } else if (getMessage("EllipseColor").equals(selected)) {
+                } else if (message("EllipseColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.EllipseColor);
 
-                } else if (getMessage("PolygonColor").equals(selected)) {
+                } else if (message("PolygonColor").equals(selected)) {
                     scope.setScopeType(ImageScope.ScopeType.PolygonColor);
 
                 }
@@ -655,35 +655,35 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         }
                     });
                     checkMatchType();
-                    promptLabel.setText(getMessage("ClickImagesSetPoints"));
+                    promptLabel.setText(message("ClickImagesSetPoints"));
                     break;
 
                 case Rectangle:
                     initMaskRectangleLine(true);
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
-                    promptLabel.setText(getMessage("SetAreaInRightPane"));
+                    promptLabel.setText(message("SetAreaInRightPane"));
                     break;
 
                 case Circle:
                     initMaskCircleLine(true);
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
-                    promptLabel.setText(getMessage("SetAreaInRightPane"));
+                    promptLabel.setText(message("SetAreaInRightPane"));
                     break;
 
                 case Ellipse:
                     initMaskEllipseLine(true);
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
-                    promptLabel.setText(getMessage("SetAreaInRightPane"));
+                    promptLabel.setText(message("SetAreaInRightPane"));
                     break;
 
                 case Polygon:
                     initMaskPolygonLine(true);
                     areaSetBox.getChildren().addAll(polygonWithdrawButton, polygonClearButton, areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
-                    promptLabel.setText(getMessage("SetPolygonInRightPane"));
+                    promptLabel.setText(message("SetPolygonInRightPane"));
                     break;
 
                 case Color:
@@ -723,7 +723,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                         }
                     });
                     checkMatchType();
-                    promptLabel.setText(getMessage("ClickImagesSetColors"));
+                    promptLabel.setText(message("ClickImagesSetColors"));
                     break;
 
                 case RectangleColor:
@@ -768,7 +768,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
                     checkMatchType();
-                    promptLabel.setText(getMessage("SetColorsInLeftPane"));
+                    promptLabel.setText(message("SetColorsInLeftPane"));
                     break;
 
                 case CircleColor:
@@ -811,7 +811,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
                     checkMatchType();
-                    promptLabel.setText(getMessage("SetColorsInLeftPane"));
+                    promptLabel.setText(message("SetColorsInLeftPane"));
                     break;
 
                 case EllipseColor:
@@ -854,7 +854,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     areaSetBox.getChildren().add(areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
                     checkMatchType();
-                    promptLabel.setText(getMessage("SetColorsInLeftPane"));
+                    promptLabel.setText(message("SetColorsInLeftPane"));
                     break;
 
                 case PolygonColor:
@@ -897,7 +897,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     areaSetBox.getChildren().addAll(polygonWithdrawButton, polygonClearButton, areaExcludedCheck);
                     imageBox.getChildren().add(1, areaSetBox);
                     checkMatchType();
-                    promptLabel.setText(getMessage("SetColorsPolygon"));
+                    promptLabel.setText(message("SetColorsPolygon"));
                     break;
 
                 default:
@@ -944,42 +944,42 @@ public abstract class ImageManufactureController extends ImageViewerController {
                     || scope == null || scopeBox == null) {
                 return;
             }
-            String matchType = (String) scopeMatchBox.getSelectionModel().getSelectedItem();
+            String matchType = scopeMatchBox.getSelectionModel().getSelectedItem();
             int max = 255;
-            if (getMessage("Color").equals(matchType)) {
+            if (message("Color").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Color);
 
-            } else if (getMessage("Hue").equals(matchType)) {
+            } else if (message("Hue").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Hue);
                 max = 360;
 
-            } else if (getMessage("Red").equals(matchType)) {
+            } else if (message("Red").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Red);
 
-            } else if (getMessage("Green").equals(matchType)) {
+            } else if (message("Green").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Green);
 
-            } else if (getMessage("Blue").equals(matchType)) {
+            } else if (message("Blue").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Blue);
 
-            } else if (getMessage("Brightness").equals(matchType)) {
+            } else if (message("Brightness").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Brightness);
                 max = 100;
 
-            } else if (getMessage("Saturation").equals(matchType)) {
+            } else if (message("Saturation").equals(matchType)) {
                 scope.setColorScopeType(ColorScopeType.Saturation);
                 max = 100;
             }
             Tooltip tips = new Tooltip("0~" + max);
             FxmlControl.setTooltip(scopeDistanceBox, tips);
 
-            List<String> values = new ArrayList();
+            List<String> vList = new ArrayList();
             for (int i = 0; i <= max; i += 10) {
-                values.add(i + "");
+                vList.add(i + "");
             }
             isSettingValues = true;
             scopeDistanceBox.getItems().clear();
-            scopeDistanceBox.getItems().addAll(values);
+            scopeDistanceBox.getItems().addAll(vList);
             isSettingValues = false;
             scopeDistanceBox.getSelectionModel().select(max / 2 + "");
 
@@ -1404,35 +1404,35 @@ public abstract class ImageManufactureController extends ImageViewerController {
         for (ImageHistory r : his) {
             String s;
             if (r.getUpdate_type() == ImageOperationType.Load) {
-                s = AppVaribles.getMessage("Load");
+                s = AppVaribles.message("Load");
             } else if (r.getUpdate_type() == ImageOperationType.Add_Margins) {
-                s = AppVaribles.getMessage("AddMargins");
+                s = AppVaribles.message("AddMargins");
             } else if (r.getUpdate_type() == ImageOperationType.Arc) {
-                s = AppVaribles.getMessage("Arc");
+                s = AppVaribles.message("Arc");
             } else if (r.getUpdate_type() == ImageOperationType.Color) {
-                s = AppVaribles.getMessage("Color");
+                s = AppVaribles.message("Color");
             } else if (r.getUpdate_type() == ImageOperationType.Crop) {
-                s = AppVaribles.getMessage("Crop");
+                s = AppVaribles.message("Crop");
             } else if (r.getUpdate_type() == ImageOperationType.Cut_Margins) {
-                s = AppVaribles.getMessage("CutMargins");
+                s = AppVaribles.message("CutMargins");
             } else if (r.getUpdate_type() == ImageOperationType.Effects) {
-                s = AppVaribles.getMessage("Effects");
+                s = AppVaribles.message("Effects");
             } else if (r.getUpdate_type() == ImageOperationType.Convolution) {
-                s = AppVaribles.getMessage("Convolution");
+                s = AppVaribles.message("Convolution");
             } else if (r.getUpdate_type() == ImageOperationType.Shadow) {
-                s = AppVaribles.getMessage("Shadow");
+                s = AppVaribles.message("Shadow");
             } else if (r.getUpdate_type() == ImageOperationType.Size) {
-                s = AppVaribles.getMessage("Size");
+                s = AppVaribles.message("Size");
             } else if (r.getUpdate_type() == ImageOperationType.Transform) {
-                s = AppVaribles.getMessage("Transform");
+                s = AppVaribles.message("Transform");
             } else if (r.getUpdate_type() == ImageOperationType.Text) {
-                s = AppVaribles.getMessage("Text");
+                s = AppVaribles.message("Text");
             } else if (r.getUpdate_type() == ImageOperationType.Mosaic) {
-                s = AppVaribles.getMessage("Mosaic");
+                s = AppVaribles.message("Mosaic");
             } else if (r.getUpdate_type() == ImageOperationType.Picture) {
-                s = AppVaribles.getMessage("Picture");
+                s = AppVaribles.message("Picture");
             } else if (r.getUpdate_type() == ImageOperationType.Doodle) {
-                s = AppVaribles.getMessage("Doodle");
+                s = AppVaribles.message("Doodle");
             } else {
                 continue;
             }
@@ -1442,12 +1442,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
         ImageHistory init = TableImageInit.read(fname);
         if (init != null) {
-            String s = DateTools.datetimeToString(init.getOperation_time()) + " " + AppVaribles.getMessage("Load");
+            String s = DateTools.datetimeToString(init.getOperation_time()) + " " + AppVaribles.message("Load");
             hisStrings.add(s);
             imageHistories.add(init.getHistory_location());
         }
-        hisStrings.add(AppVaribles.getMessage("OpenPathDot"));
-        hisStrings.add(AppVaribles.getMessage("SettingsDot"));
+        hisStrings.add(AppVaribles.message("OpenPathDot"));
+        hisStrings.add(AppVaribles.message("SettingsDot"));
         hisBox.getItems().addAll(hisStrings);
     }
 
@@ -1721,11 +1721,11 @@ public abstract class ImageManufactureController extends ImageViewerController {
         if (values.isIsConfirmBeforeSave()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureOverrideFile"));
+            alert.setContentText(AppVaribles.message("SureOverrideFile"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
-            ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(AppVaribles.message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -1774,9 +1774,9 @@ public abstract class ImageManufactureController extends ImageViewerController {
                             values.setCurrentImage(image);
                             imageView.setImage(image);
                             setImageChanged(false);
-                            popInformation(AppVaribles.getMessage("Saved"));
+                            popInformation(AppVaribles.message("Saved"));
                         } else {
-                            popInformation(AppVaribles.getMessage("Failed"));
+                            popInformation(AppVaribles.message("Failed"));
                         }
 
                     }
@@ -1794,16 +1794,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
     @Override
     public void saveAsAction() {
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
+            String name = null;
             if (sourceFile != null) {
-                fileChooser.setInitialFileName(FileTools.getFilePrefix(sourceFile.getName()));
+                name = FileTools.getFilePrefix(sourceFile.getName());
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                    name, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -1840,7 +1836,7 @@ public abstract class ImageManufactureController extends ImageViewerController {
                                 } else if (saveAsType == SaveAsType.Open) {
                                     openImageManufacture(file.getAbsolutePath());
                                 }
-                                popInformation(AppVaribles.getMessage("Successful"));
+                                popInformation(AppVaribles.message("Successful"));
                             }
                         });
                     }
@@ -2248,12 +2244,12 @@ public abstract class ImageManufactureController extends ImageViewerController {
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVaribles.getMessage("ImageChanged"));
+        alert.setContentText(AppVaribles.message("ImageChanged"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSave = new ButtonType(AppVaribles.getMessage("Save"));
-        ButtonType buttonSaveAs = new ButtonType(AppVaribles.getMessage("SaveAs"));
-        ButtonType buttonNotSave = new ButtonType(AppVaribles.getMessage("NotSave"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
+        ButtonType buttonSaveAs = new ButtonType(AppVaribles.message("SaveAs"));
+        ButtonType buttonNotSave = new ButtonType(AppVaribles.message("NotSave"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
         alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonNotSave, buttonCancel);
 
         Optional<ButtonType> result = alert.showAndWait();

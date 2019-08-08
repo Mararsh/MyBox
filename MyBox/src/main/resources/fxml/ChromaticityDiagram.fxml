@@ -53,9 +53,11 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <Label maxWidth="1.7976931348623157E308" text="" wrapText="true" HBox.hgrow="ALWAYS" />
                                                 <Label text="%Background" />
-                                                <ComboBox fx:id="backgroundBox" prefWidth="150.0" />
+                                                <ComboBox fx:id="backgroundBox" prefWidth="120.0" />
                                                 <Label text="%DataDots" />
                                                 <ComboBox fx:id="dotTypeBox" prefWidth="120.0" />
+                                    <Label text="%FontSize" />
+                                    <ComboBox fx:id="fontSelector" editable="true" prefWidth="80.0" />
                                                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOutDiagram">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

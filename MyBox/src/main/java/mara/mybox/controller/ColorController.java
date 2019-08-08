@@ -23,8 +23,9 @@ import mara.mybox.color.ColorConversion.SpaceType;
 import mara.mybox.controller.base.BaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -204,9 +205,9 @@ public class ColorController extends BaseController {
         rangeRatio2.setText("0~255");
         rangeRatio2.setSelected(true);
 
-        vLabel1.setText(getMessage("Red"));
-        vLabel2.setText(getMessage("Green"));
-        vLabel3.setText(getMessage("Blue"));
+        vLabel1.setText(message("Red"));
+        vLabel2.setText(message("Green"));
+        vLabel3.setText(message("Blue"));
         if (paraBox3.getChildren().contains(vLabel4)) {
             vInput4.setText("0");
             vInput4.setStyle(null);

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -95,7 +93,7 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <Label text="%Sound" />
-                                                <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true" >
+                                                <RadioButton fx:id="miaoButton" mnemonicParsing="false" selected="true">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="soundGroup" />
                                                     </toggleGroup>
@@ -109,7 +107,7 @@ License:    Apache License Version 2.0
                                                 </RadioButton>
                                                 <RadioButton fx:id="wavButton" mnemonicParsing="false" text="%SystemSounds" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="wavInput" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectSoundButton" mnemonicParsing="false" onAction="#selectSound">
+                                                <Button fx:id="selectSoundButton" mnemonicParsing="false" onAction="#selectSound">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -125,7 +123,7 @@ License:    Apache License Version 2.0
                                                 <Label text="%Sound" visible="false" />
                                                 <RadioButton fx:id="mp3Button" mnemonicParsing="false" text="%LocalMusic" toggleGroup="$soundGroup" />
                                                 <TextField fx:id="mp3Input" promptText="" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectMusicButton" mnemonicParsing="false" onAction="#selectMusic">
+                                                <Button fx:id="selectMusicButton" mnemonicParsing="false" onAction="#selectMusic">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -175,7 +173,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseSound" >
+                                                <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseSound">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -194,7 +192,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="10.0">
                                             <children>
-                                                <Button fx:id="saveButton" defaultButton="true" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Add" />
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Add" />
                                             </children>
                                         </HBox>
                                     </children>

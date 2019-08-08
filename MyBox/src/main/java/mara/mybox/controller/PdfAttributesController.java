@@ -22,11 +22,10 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -54,7 +53,7 @@ public class PdfAttributesController extends BaseController {
             viewPasswordCheck;
 
     public PdfAttributesController() {
-        baseTitle = AppVaribles.getMessage("PDFAttributes");
+        baseTitle = AppVaribles.message("PDFAttributes");
 
         SourceFileType = VisitHistory.FileType.PDF;
         SourcePathType = VisitHistory.FileType.PDF;
@@ -66,7 +65,8 @@ public class PdfAttributesController extends BaseController {
         targetPathKey = "PdfTargetPath";
         sourcePathKey = "PdfSourcePath";
 
-        fileExtensionFilter = CommonValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonValues.PdfExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
 
     }
 
@@ -161,6 +161,14 @@ public class PdfAttributesController extends BaseController {
             }
         });
 
+        authorInput.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                AppVaribles.setUserConfigValue("AuthorKey", newValue);
+            }
+        });
+        authorInput.setText(AppVaribles.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
+
         saveButton.disableProperty().bind(
                 sourceFileInput.styleProperty().isEqualTo(badStyle)
                         .or(versionInput.styleProperty().isEqualTo(badStyle))
@@ -175,7 +183,7 @@ public class PdfAttributesController extends BaseController {
     @Override
     public void sourceFileChanged(final File file) {
         sourceFileInput.setStyle(badStyle);
-        if (!FileTools.isPDF(file.getAbsolutePath())) {
+        if (!PdfTools.isPDF(file.getAbsolutePath())) {
             return;
         }
         sourceFile = file;
@@ -240,6 +248,7 @@ public class PdfAttributesController extends BaseController {
                     try (PDDocument doc = PDDocument.load(sourceFile, password, AppVaribles.pdfMemUsage)) {
                         pdfInfo.setOwnerPassword(password);
                         pdfInfo.readInfo(doc);
+                        doc.close();
                         ok = true;
                     }
                 } catch (InvalidPasswordException e) {
@@ -251,8 +260,8 @@ public class PdfAttributesController extends BaseController {
                         @Override
                         public void run() {
                             TextInputDialog dialog = new TextInputDialog();
-                            dialog.setHeaderText(AppVaribles.getMessage("OwnerPasswordComments"));
-                            dialog.setContentText(AppVaribles.getMessage("OwnerPassword"));
+                            dialog.setHeaderText(AppVaribles.message("OwnerPasswordComments"));
+                            dialog.setContentText(AppVaribles.message("OwnerPassword"));
                             Optional<String> result = dialog.showAndWait();
                             if (result.isPresent()) {
                                 loadPdfInformation(result.get());
@@ -349,7 +358,7 @@ public class PdfAttributesController extends BaseController {
                 || (ownerPasswordInput.getText() != null && !ownerPasswordInput.getText().isEmpty())) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(myStage.getTitle());
-            alert.setContentText(AppVaribles.getMessage("SureSetPassword"));
+            alert.setContentText(AppVaribles.message("SureSetPassword"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK) {
@@ -364,8 +373,8 @@ public class PdfAttributesController extends BaseController {
         modify.setCreator(creatorInput.getText());
         modify.setProducer(producerInput.getText());
         modify.setKeywords(keywordInput.getText());
-        modify.setModifyTime(modifyTime);
-        modify.setCreateTime(createTime);
+        modify.setModifyTime(modifyTime.getTime());
+        modify.setCreateTime(createTime.getTime());
         modify.setVersion(version);
         modify.setUserPassword(userPasswordInput.getText());
         modify.setOwnerPassword(ownerPasswordInput.getText());
@@ -381,9 +390,9 @@ public class PdfAttributesController extends BaseController {
         modify.setAccess(acc);
         if (PdfTools.setAttributes(sourceFile, pdfInfo.getOwnerPassword(), modify)) {
             loadPdfInformation(ownerPasswordInput.getText());
-            popInformation(getMessage("Successful"));
+            popInformation(message("Successful"));
         } else {
-            popError(getMessage("Failed"));
+            popError(message("Failed"));
         }
 
     }

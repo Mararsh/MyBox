@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -36,7 +38,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="150.0">
                                             <content>
-                                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                                <fx:include fx:id="table" source="PDFsTable.fxml" HBox.hgrow="ALWAYS" />
                                             </content>
                                         </ScrollPane>
                                     </content>
@@ -67,6 +69,11 @@ License:    Apache License Version 2.0
                                                         <RadioButton mnemonicParsing="false" text="%CCITT4" toggleGroup="$formatGroup" />
                                                         <TextField fx:id="thresholdInput" prefWidth="80.0" promptText="0~255" />
                                                         <Label text="%EmptyForDefault" />
+                                                        <ImageView fx:id="ditherTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconTips.png" />
+                                                            </image>
+                                                        </ImageView>
                                                         <CheckBox fx:id="ditherCheck" mnemonicParsing="false" text="%Dithering" />
                                                     </children>
                                                 </HBox>
@@ -78,6 +85,7 @@ License:    Apache License Version 2.0
                                                                 <Insets />
                                                             </HBox.margin>
                                                         </TextField>
+                                          <CheckBox fx:id="copyAllCheck" mnemonicParsing="false" selected="true" text="%CopyAllPages" />
                                                     </children>
                                                 </HBox>
                                             </children>
@@ -92,7 +100,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%FilesPath" />
                                                         <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                        <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                        <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -111,9 +119,9 @@ License:    Apache License Version 2.0
                                                                 <ToggleGroup fx:id="targetExistGroup" />
                                                             </toggleGroup>
                                                         </RadioButton>
-                                                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%Rename" toggleGroup="$targetExistGroup" />
-                                                        <Label text="%Suffix" />
-                                                        <TextField fx:id="targetSuffixInput" prefWidth="70.0" text="-m" />
+                                                        <RadioButton fx:id="targetRenameRadio" mnemonicParsing="false" selected="true" text="%TargetNameAppend" toggleGroup="$targetExistGroup" />
+
+                                                        <TextField fx:id="targetAppendInput" prefWidth="70.0" text="-m" />
                                                         <RadioButton fx:id="targetSkipRadio" mnemonicParsing="false" text="%Skip" toggleGroup="$targetExistGroup" />
                                                     </children>
                                                 </HBox>

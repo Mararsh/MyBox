@@ -1,9 +1,8 @@
 package mara.mybox.data;
 
 import java.io.File;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -15,9 +14,8 @@ import mara.mybox.tools.FileTools;
 public class FileInformation {
 
     protected File file;
-    protected long fileSize, createTime, modifyTime;
-    protected SimpleStringProperty fileName, newName, fileSuffix, handled;
-    protected SimpleBooleanProperty isFile;
+    protected long fileSize = 0, createTime, modifyTime, filesNumber = 1;
+    protected String fileName, newName, fileSuffix, handled, fileType;
     protected final int IO_BUF_LENGTH = 4096;
 
     public FileInformation() {
@@ -33,55 +31,74 @@ public class FileInformation {
         if (file == null) {
             return;
         }
-        String filename = file.getAbsolutePath();
-        this.handled = new SimpleStringProperty("");
-        this.fileName = new SimpleStringProperty(file.getAbsolutePath());
-        this.isFile = new SimpleBooleanProperty(file.isFile());
-        this.newName = new SimpleStringProperty("");
-        if (file.isFile()) {
-            this.fileSuffix = new SimpleStringProperty(FileTools.getFileSuffix(filename));
-        } else {
-            this.fileSuffix = new SimpleStringProperty("");
+        this.handled = "";
+        this.fileName = file.getAbsolutePath();
+        this.newName = "";
+        this.fileSuffix = "";
+        if (!file.exists()) {
+            this.fileType = message("NotExist");
+            return;
         }
-        this.createTime = FileTools.getFileCreateTime(filename);
+        if (file.isFile()) {
+            this.fileSuffix = FileTools.getFileSuffix(fileName);
+            this.fileType = message("File");
+        } else if (file.isDirectory()) {
+            this.fileType = message("Directory");
+        }
+        this.createTime = FileTools.getFileCreateTime(fileName);
         this.modifyTime = file.lastModified();
         if (file.isFile()) {
+            this.filesNumber = 1;
             this.fileSize = file.length();
-        } else {
-            this.fileSize = 0;
+        } else if (file.isDirectory()) {
+            long[] size = FileTools.countDirectorySize(file);
+            this.filesNumber = size[0];
+            this.fileSize = size[1];
         }
     }
 
+
+    /*
+        get/set
+     */
     public String getFileName() {
-        return fileName.get();
+        return fileName;
     }
 
     public void setFileName(String fileName) {
-        this.fileName.set(fileName);
-    }
-
-    public boolean getIsFile() {
-        return isFile.get();
-    }
-
-    public void setIsFile(boolean isFile) {
-        this.isFile.set(isFile);
+        this.fileName = fileName;
     }
 
     public String getNewName() {
-        return newName.get();
+        return newName;
     }
 
     public void setNewName(String newName) {
-        this.newName.set(newName);
+        this.newName = newName;
+    }
+
+    public String getFileSuffix() {
+        return fileSuffix;
+    }
+
+    public void setFileSuffix(String fileSuffix) {
+        this.fileSuffix = fileSuffix;
+    }
+
+    public String getHandled() {
+        return handled;
+    }
+
+    public void setHandled(String handled) {
+        this.handled = handled;
     }
 
     public String getFileType() {
-        return fileSuffix.get();
+        return fileType;
     }
 
     public void setFileType(String fileType) {
-        this.fileSuffix.set(fileType);
+        this.fileType = fileType;
     }
 
     public long getCreateTime() {
@@ -108,20 +125,20 @@ public class FileInformation {
         this.fileSize = fileSize;
     }
 
-    public String getHandled() {
-        return handled.get();
-    }
-
-    public void setHandled(String handled) {
-        this.handled.set(handled);
-    }
-
     public File getFile() {
         return file;
     }
 
     public void setFile(File file) {
         setFileAttributes(file);
+    }
+
+    public long getFilesNumber() {
+        return filesNumber;
+    }
+
+    public void setFilesNumber(long filesNumber) {
+        this.filesNumber = filesNumber;
     }
 
 }

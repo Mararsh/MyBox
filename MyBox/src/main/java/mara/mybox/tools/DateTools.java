@@ -129,31 +129,31 @@ public class DateTools {
     public static String showTime(long v) {
         long ms = v;
         if (v < 1000) {
-            return MessageFormat.format(AppVaribles.getMessage("MillisecondsNumber"), ms);
+            return MessageFormat.format(AppVaribles.message("MillisecondsNumber"), ms);
         }
         long seconds = ms / 1000;
         ms = ms % 1000;
         if (seconds < 60) {
-            return MessageFormat.format(AppVaribles.getMessage("SecondsNumber"), seconds, ms);
+            return MessageFormat.format(AppVaribles.message("SecondsNumber"), seconds, ms);
         }
         long minutes = seconds / 60;
         seconds = seconds % 60;
         if (minutes < 60) {
-            return MessageFormat.format(AppVaribles.getMessage("MinutesNumber"), minutes, seconds, ms);
+            return MessageFormat.format(AppVaribles.message("MinutesNumber"), minutes, seconds, ms);
         }
         long hours = minutes / 60;
         minutes = minutes % 60;
         if (hours < 24) {
-            return MessageFormat.format(AppVaribles.getMessage("HoursNumber"), hours, minutes, seconds, ms);
+            return MessageFormat.format(AppVaribles.message("HoursNumber"), hours, minutes, seconds, ms);
         }
         long days = hours / 24;
         hours = hours % 24;
         if (days < 365) {
-            return MessageFormat.format(AppVaribles.getMessage("DaysNumber"), days, hours, minutes, seconds, ms);
+            return MessageFormat.format(AppVaribles.message("DaysNumber"), days, hours, minutes, seconds, ms);
         }
         long years = days / 365;
         days = days % 365;
-        return MessageFormat.format(AppVaribles.getMessage("YearsNumber"), years, days, hours, minutes, seconds, ms);
+        return MessageFormat.format(AppVaribles.message("YearsNumber"), years, days, hours, minutes, seconds, ms);
     }
 
 }

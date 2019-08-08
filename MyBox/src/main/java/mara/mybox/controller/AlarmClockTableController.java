@@ -125,7 +125,7 @@ public class AlarmClockTableController extends BaseController {
     private void clearAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.getMessage("SureClearAlarmClocks"));
+        alert.setContentText(AppVaribles.message("SureClearAlarmClocks"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
@@ -168,7 +168,7 @@ public class AlarmClockTableController extends BaseController {
         }
         for (AlarmClock alarm : selected) {
             alarm.setIsActive(true);
-            alarm.setStatus(AppVaribles.getMessage("Active"));
+            alarm.setStatus(AppVaribles.message("Active"));
             AlarmClock.calculateNextTime(alarm);
             alarm.setNext(DateTools.datetimeToString(alarm.getNextTime()));
             AlarmClock.scehduleAlarmClock(alarm);
@@ -189,7 +189,7 @@ public class AlarmClockTableController extends BaseController {
         }
         for (AlarmClock alarm : selected) {
             alarm.setIsActive(false);
-            alarm.setStatus(AppVaribles.getMessage("Inactive"));
+            alarm.setStatus(AppVaribles.message("Inactive"));
             alarm.setNextTime(-1);
             alarm.setNext("");
             AlarmClock.scehduleAlarmClock(alarm);

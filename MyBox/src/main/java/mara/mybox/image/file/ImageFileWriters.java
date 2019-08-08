@@ -1,17 +1,7 @@
 package mara.mybox.image.file;
 
-import com.github.jaiimageio.plugins.bmp.BMPImageWriteParam;
-import com.github.jaiimageio.impl.plugins.bmp.BMPImageWriter;
-import com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi;
-import com.github.jaiimageio.impl.plugins.raw.RawImageWriteParam;
-import com.github.jaiimageio.impl.plugins.raw.RawImageWriter;
-import com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriter;
-import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
-import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.Iterator;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -20,23 +10,13 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
-import mara.mybox.image.ImageBinary;
-import mara.mybox.image.ImageGray;
-import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageAttributes;
-import static mara.mybox.image.file.ImageBmpFile.writeBmpImageFile;
-import static mara.mybox.image.file.ImageJpgFile.writeJPEGImageFile;
-import static mara.mybox.image.file.ImagePcxFile.writePcxImageFile;
-import static mara.mybox.image.file.ImagePngFile.writePNGImageFile;
-import static mara.mybox.image.file.ImageRawFile.writeRawImageFile;
-
-import static mara.mybox.value.AppVaribles.logger;
-
-import static mara.mybox.image.file.ImageTiffFile.writeTiffImage;
+import mara.mybox.image.ImageBinary;
+import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
-import org.apache.pdfbox.rendering.ImageType;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -67,17 +47,30 @@ public class ImageFileWriters {
     }
 
     public static boolean writeImageFile(BufferedImage image, String format, String outFile) {
-        if (image == null || outFile == null || format == null) {
+        if (image == null || outFile == null) {
             return false;
         }
         try {
+            if (format == null || !CommonValues.SupportedImages.contains(format)) {
+                format = "png";
+//                outFile += ".png";
+            }
+            format = format.toLowerCase();
             ImageAttributes attributes = new ImageAttributes();
             attributes.setImageFormat(format);
-            switch (format.toLowerCase()) {
+            switch (format) {
                 case "jpg":
                 case "jpeg":
                     attributes.setCompressionType("JPEG");
                     break;
+                case "jpx":
+                case "jpeg2000":
+                case "jpeg 2000":
+                case "jp2":
+                case "jpm":
+                    return ImageIO.write(image, "JPEG2000", new File(outFile));
+//                    attributes.setCompressionType("JPEG2000");
+//                    break;
                 case "gif":
                     attributes.setCompressionType("LZW");
                     break;
@@ -92,8 +85,8 @@ public class ImageFileWriters {
                 case "bmp":
                     attributes.setCompressionType("BI_RGB");
                     break;
-                case "pcx":
-                    image = ImageManufacture.clearAlpha(image);  // Fail to load pcx with alpha channel.
+                case "wbmp":
+                    image = ImageBinary.byteBinary(image);
                     break;
             }
             attributes.setQuality(100);
@@ -109,13 +102,8 @@ public class ImageFileWriters {
         if (image == null || attributes == null || outFile == null) {
             return false;
         }
-        String format;
-        File file;
+        File file = new File(outFile);
         try {
-            format = attributes.getImageFormat().toLowerCase();
-            image = ImageManufacture.checkAlpha(image, format);
-
-            file = new File(outFile);
             if (file.exists()) {
                 file.delete();
             }
@@ -125,71 +113,58 @@ public class ImageFileWriters {
         }
 
         try {
-            switch (format) {
-                case "png":
-                    return writePNGImageFile(image, attributes, file);
-//                    displayMetadata(outFile);
-                case "tif":
-                case "tiff":
-                    return writeTiffImage(image, attributes, file);
-//                    displayTiffMetadata(outFile);
-//                    displayMetadata(outFile);
-                case "raw":
-                    return writeRawImageFile(image, attributes, file);
-
-                case "jpg":
-                case "jpeg":
-                    return writeJPEGImageFile(image, attributes, file);
-//                    displayMetadata(outFile);
-                case "bmp":
-                    return writeBmpImageFile(image, attributes, file);
-//                    displayBmpMetadata(outFile);
-//                    displayMetadata(outFile);
-//                case "gif":
-//                    writeGifImageFile(image, attributes, outFile);
-//                    displayMetadata(outFile);
-//                    break;
-//                case "pnm":
-//                    writePnmImageFile(image, attributes, outFile);
-////                    displayMetadata(outFile);
-//                    break;
-                case "pcx":
-                    return writePcxImageFile(image, attributes, file);
-
-                default:
-                    return writeCommonImageFile(image, attributes, file);
+            String targetFormat = attributes.getImageFormat().toLowerCase();
+            BufferedImage checked = ImageManufacture.checkAlpha(image, targetFormat);
+            ImageWriter writer = getWriter(targetFormat);
+            ImageWriteParam param = getWriterParam(attributes, writer);
+            IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, image, writer, param);
+            try ( ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+                writer.setOutput(out);
+                writer.write(metaData, new IIOImage(checked, null, metaData), param);
+                out.flush();
             }
-
+            writer.dispose();
+            return true;
         } catch (Exception e) {
             logger.error(e.toString());
             return false;
         }
+
     }
 
-    public static ImageWriter getWriter(String imageFormat) {
-        if (imageFormat == null) {
+    public static ImageWriter getWriter(String targetFormat) {
+        if (targetFormat == null) {
             return null;
         }
         try {
             ImageWriter writer;
-            switch (imageFormat.toLowerCase()) {
-                case "tif":
-                case "tiff":
-                    writer = new TIFFImageWriter(new TIFFImageWriterSpi());
-                    break;
-                case "raw":
-                    RawImageWriterSpi spi = new RawImageWriterSpi();
-                    writer = new RawImageWriter(spi);
+            switch (targetFormat.toLowerCase()) {
+                case "png":
+                    writer = ImagePngFile.getWriter();
                     break;
                 case "jpg":
                 case "jpeg":
-                    writer = ImageIO.getImageWritersByFormatName("jpg").next();
+                    writer = ImageJpgFile.getWriter();
+                    break;
+                case "jpx":
+                case "jpeg2000":
+                case "jpeg 2000":
+                case "jp2":
+                case "jpm":
+                    writer = ImageJpeg2000File.getWriter();
+                    break;
+                case "tif":
+                case "tiff":
+                    writer = ImageTiffFile.getWriter();
+                    break;
+                case "raw":
+                    writer = ImageRawFile.getWriter();
                     break;
                 case "bmp":
-                    writer = new BMPImageWriter(new BMPImageWriterSpi());
+                    writer = ImageBmpFile.getWriter();
                     break;
                 default:
-                    writer = ImageIO.getImageWritersByFormatName(imageFormat).next();
+                    return ImageIO.getImageWritersByFormatName(targetFormat).next();
             }
             return writer;
         } catch (Exception e) {
@@ -198,67 +173,75 @@ public class ImageFileWriters {
         }
     }
 
-    public static ImageWriteParam getWriterParam(String imageFormat) {
-        if (imageFormat == null) {
-            return null;
-        }
+    public static ImageWriteParam getWriterParam(ImageAttributes attributes, ImageWriter writer) {
         try {
-            ImageWriteParam writerParam;
-            switch (imageFormat.toLowerCase()) {
-                case "tif":
-                    writerParam = (TIFFImageWriteParam) new TIFFImageWriter(new TIFFImageWriterSpi()).getDefaultWriteParam();
-                    break;
-                case "raw":
-                    writerParam = (RawImageWriteParam) new RawImageWriter(new RawImageWriterSpi()).getDefaultWriteParam();
-                    break;
-                case "jpg":
-                    writerParam = (JPEGImageWriteParam) ImageIO.getImageWritersByFormatName("jpg").next().getDefaultWriteParam();
-                    break;
-                case "bmp":
-                    writerParam = (BMPImageWriteParam) new BMPImageWriter(new BMPImageWriterSpi()).getDefaultWriteParam();
-                    break;
-                default:
-                    writerParam = ImageIO.getImageWritersByFormatName(imageFormat).next().getDefaultWriteParam();
+            if (attributes != null && ImageJpeg2000File.isJpeg2000(attributes.getImageFormat())) {
+                return ImageJpeg2000File.getWriterParam(attributes);
             }
-            return writerParam;
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            if (param.canWriteCompressed()) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                if (attributes != null && attributes.getCompressionType() != null) {
+                    param.setCompressionType(attributes.getCompressionType());
+                } else {
+                    String[] compressionTypes = param.getCompressionTypes();
+                    if (compressionTypes != null) {
+                        param.setCompressionType(compressionTypes[0]);
+                    }
+                }
+                if (attributes != null && attributes.getQuality() > 0) {
+                    param.setCompressionQuality(attributes.getQuality() / 100.0f);
+                } else {
+                    param.setCompressionQuality(1.0f);
+                }
+            }
+            return param;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
         }
     }
 
-    // This standard mothod does not write density into meta data of the image.
-    // If density data need be written, then use methods defined for different image format but not this method.
-    public static boolean writeCommonImageFile(BufferedImage image,
-            ImageAttributes attributes, File file) {
+    public static IIOMetadata getWriterMetaData(String targetFormat,
+            ImageAttributes attributes, BufferedImage image, ImageWriter writer, ImageWriteParam param) {
         try {
-            String imageFormat = attributes.getImageFormat().toLowerCase();
-            ImageWriter writer = null;
-            ImageWriteParam param = null;
-            IIOMetadata metaData = null;
-            for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(imageFormat); iw.hasNext();) {
-                writer = iw.next();
-                param = writer.getDefaultWriteParam();
-                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-                if (!metaData.isReadOnly() && metaData.isStandardMetadataFormatSupported()) {
+            IIOMetadata metaData;
+            switch (targetFormat) {
+                case "png":
+                    metaData = ImagePngFile.getWriterMeta(attributes, image, writer, param);
                     break;
-                }
+                case "jpg":
+                case "jpeg":
+                    metaData = ImageJpgFile.getWriterMeta(attributes, image, writer, param);
+                    break;
+                case "tif":
+                case "tiff":
+                    metaData = ImageTiffFile.getWriterMeta(attributes, image, writer, param);
+                    break;
+                case "bmp":
+                    metaData = ImageBmpFile.getWriterMeta(attributes, image, writer, param);
+                    break;
+                default:
+                    metaData = getWriterMetaData(attributes, image, writer, param);
             }
-            if (writer == null || param == null || metaData == null) {
-                return false;
-            }
-            if (param.canWriteCompressed() && attributes.getCompressionType() != null) {
-                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionType(attributes.getCompressionType());
-                if (attributes.getQuality() > 0) {
-                    param.setCompressionQuality(attributes.getQuality() / 100.0f);
-                } else {
-                    param.setCompressionQuality(1.0f);
-                }
-            }
+            return metaData;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
 
-            if (!metaData.isReadOnly() && metaData.isStandardMetadataFormatSupported()
-                    && attributes.getDensity() > 0) {
+    public static IIOMetadata getWriterMetaData(ImageAttributes attributes,
+            BufferedImage image, ImageWriter writer, ImageWriteParam param) {
+        try {
+            IIOMetadata metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            if (metaData == null || metaData.isReadOnly() || attributes == null
+                    || !metaData.isStandardMetadataFormatSupported()) {
+                return metaData;
+            }
+            // This standard mothod does not write density into meta data of the image.
+            // If density data need be written, then use methods defined for different image format but not this method.
+            if (attributes.getDensity() > 0) {
                 try {
                     float pixelSizeMm = 25.4f / attributes.getDensity();
                     String metaFormat = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
@@ -278,59 +261,10 @@ public class ImageFileWriters {
                 }
             }
 
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
-                writer.setOutput(out);
-                writer.write(metaData, new IIOImage(image, null, metaData), param);
-                out.flush();
-            }
-            writer.dispose();
-            return true;
+            return metaData;
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
-        }
-    }
-
-    public static BufferedImage convertColor(BufferedImage bufferedImage, ImageAttributes attributes) {
-        try {
-            if (bufferedImage == null || attributes == null || attributes.getColorSpace() == null) {
-                return bufferedImage;
-            }
-            int color = bufferedImage.getType();
-            if (ImageType.BINARY == attributes.getColorSpace()) {
-                ImageBinary imageBinary;
-                if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
-                        && attributes.getThreshold() >= 0) {
-                    imageBinary = new ImageBinary(bufferedImage, attributes.getThreshold());
-                    imageBinary.setIsDithering(attributes.isIsDithering());
-                    bufferedImage = imageBinary.operate();
-                    bufferedImage = ImageBinary.byteBinary(bufferedImage);
-
-                } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
-                    imageBinary = new ImageBinary(bufferedImage, -1);
-                    imageBinary.setCalculate(true);
-                    imageBinary.setIsDithering(attributes.isIsDithering());
-                    bufferedImage = imageBinary.operate();
-                    bufferedImage = ImageBinary.byteBinary(bufferedImage);
-
-                } else if (color != BufferedImage.TYPE_BYTE_BINARY || attributes.isIsDithering()) {
-                    imageBinary = new ImageBinary(bufferedImage, -1);
-                    imageBinary.setIsDithering(attributes.isIsDithering());
-                    bufferedImage = imageBinary.operate();
-                    bufferedImage = ImageBinary.byteBinary(bufferedImage);
-
-                }
-            } else if (ImageType.GRAY == attributes.getColorSpace() && color != BufferedImage.TYPE_BYTE_GRAY) {
-                ImageGray imageGray = new ImageGray(bufferedImage);
-                bufferedImage = imageGray.operate();
-
-            } else if (ImageType.RGB == attributes.getColorSpace()) {
-                bufferedImage = ImageManufacture.clearAlpha(bufferedImage);
-            }
-            return bufferedImage;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return bufferedImage;
+            return null;
         }
     }
 

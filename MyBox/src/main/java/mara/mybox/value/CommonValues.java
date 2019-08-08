@@ -18,8 +18,8 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.2";
-    public static final String AppVersionDate = "2019-06-30";
+    public static final String AppVersion = "5.3";
+    public static final String AppVersionDate = "2019-08-08";
     public static final String AppDocVersion = "5.0";
 
     public static final String AppDataRoot = System.getProperty("user.home") + File.separator + "mybox";
@@ -56,18 +56,15 @@ public class CommonValues {
     public static final String JvmPropertiesFxml = "/fxml/JvmProperties.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
-    public static final String PdfExtractImagesFxml = "/fxml/PdfExtractImages.fxml";
+    public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
     public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
-    public static final String PdfExtractTextsFxml = "/fxml/PdfExtractTexts.fxml";
     public static final String PdfExtractTextsBatchFxml = "/fxml/PdfExtractTextsBatch.fxml";
-    public static final String PdfConvertImagesFxml = "/fxml/PdfConvertImages.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
-    public static final String PdfCompressImagesFxml = "/fxml/PdfCompressImages.fxml";
     public static final String PdfCompressImagesBatchFxml = "/fxml/PdfCompressImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
     public static final String ImagesCombinePdfFxml = "/fxml/ImagesCombinePdf.fxml";
     public static final String PdfMergeFxml = "/fxml/PdfMerge.fxml";
-    public static final String PdfSplitFxml = "/fxml/PdfSplit.fxml";
+    public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
     public static final String FileFxml = "/fxml/PdfConvertImages.fxml";
     public static final String AboutFxml = "/fxml/About.fxml";
     public static final String SettingsFxml = "/fxml/Settings.fxml";
@@ -76,7 +73,6 @@ public class CommonValues {
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
     public static final String ImageViewerIFxml = "/fxml/ImageViewerI.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
-    public static final String ImageConverterFxml = "/fxml/ImageConverter.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImageManufactureFileFxml = "/fxml/ImageManufactureFile.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
@@ -146,7 +142,8 @@ public class CommonValues {
     public static final String BytesEditerFxml = "/fxml/BytesEditer.fxml";
     public static final String FileFilterFxml = "/fxml/FileFilter.fxml";
     public static final String FileCutFxml = "/fxml/FileCut.fxml";
-    public static final String FileMergeFxml = "/fxml/FileMerge.fxml";
+    public static final String FilesMergeFxml = "/fxml/FilesMerge.fxml";
+    public static final String FilesDeleteFxml = "/fxml/FilesDelete.fxml";
     public static final String RecordImagesInSystemClipboardFxml = "/fxml/RecordImagesInSystemClipboard.fxml";
 
     public static final Locale LocaleZhCN = new Locale("zh", "CN");
@@ -173,6 +170,7 @@ public class CommonValues {
             add(new FileChooser.ExtensionFilter("*", "*.*"));
             add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
+                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
                     "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
@@ -216,6 +214,10 @@ public class CommonValues {
             add("png");
             add("jpg");
             add("jpeg");
+//            add("jpx");
+//            add("jpeg2000");
+//            add("jp2");
+//            add("jpm");
             add("bmp");
             add("tif");
             add("tiff");
@@ -229,9 +231,11 @@ public class CommonValues {
     public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
+                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
                     "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
+//            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
             add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
             add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
             add(new FileChooser.ExtensionFilter("gif", "*.gif"));
@@ -245,6 +249,10 @@ public class CommonValues {
         {
             add("jpg");
             add("jpeg");
+//            add("jpx");
+//            add("jpeg2000");
+//            add("jp2");
+//            add("jpm");
             add("bmp");
             add("pnm");
             add("gif");
@@ -256,8 +264,10 @@ public class CommonValues {
     public static List<FileChooser.ExtensionFilter> NoAlphaImageExtensionFilter = new ArrayList() {
         {
             add(new FileChooser.ExtensionFilter("images", "*.jpg", "*.jpeg", "*.bmp",
+                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
                     "*.gif", "*.pnm", "*.wbmp"));
             add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
+//            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
             add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
             add(new FileChooser.ExtensionFilter("gif", "*.gif"));
             add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
@@ -271,7 +281,23 @@ public class CommonValues {
             add("png");
             add("tif");
             add("tiff");
-//            add("pcx");
+        }
+    };
+
+    public static List<String> MultiFramesImages = new ArrayList() {
+        {
+            add("gif");
+            add("tif");
+            add("tiff");
+        }
+    };
+
+    public static List<String> CMYKImages = new ArrayList() {
+        {
+//            add("jpg");
+//            add("jpeg");
+            add("tif");
+            add("tiff");
         }
     };
 
@@ -281,7 +307,6 @@ public class CommonValues {
                     "*.tif", "*.tiff"));
             add(new FileChooser.ExtensionFilter("png", "*.png"));
             add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-//            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
         }
     };
 

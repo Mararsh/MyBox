@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -13,13 +12,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
+import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -51,11 +51,11 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchSizeController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchSize");
+        baseTitle = AppVaribles.message("ImageManufactureBatchSize");
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -240,7 +240,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     public void pixelsCalculator() {
         try {
             final PixelsCalculationController controller
-                    = (PixelsCalculationController) FxmlStage.openStage( myStage,
+                    = (PixelsCalculationController) FxmlStage.openStage(myStage,
                             CommonValues.PixelsCalculatorFxml,
                             true, Modality.WINDOW_MODAL, null);
 

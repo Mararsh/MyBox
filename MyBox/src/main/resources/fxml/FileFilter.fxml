@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <TextField fx:id="filterInput" prefWidth="300.0" promptText="%SeparateByCommaBlanksInvolved" />
                                 <CheckBox fx:id="filterLineNumberCheck" mnemonicParsing="false" selected="true" text="%LineNumber" />
-                                <Button fx:id="filterButton" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
+                                <Button fx:id="filterButton" disable="true" mnemonicParsing="false" onAction="#filterAction" text="%Filter" />
                             </items>
                         </ToolBar>
                     </children>

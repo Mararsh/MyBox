@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -222,13 +220,9 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <HBox>
                                                     <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
+                                                        <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Button mnemonicParsing="false" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar>
-                                                            <items>
+                                                                <Label maxWidth="1.7976931348623157E308" text=" " visible="false"  HBox.hgrow="ALWAYS"/>
                                                                 <HBox fx:id="setBox" alignment="CENTER" spacing="5.0">
                                                                     <children>
                                                                         <ColorPicker fx:id="colorPicker" />

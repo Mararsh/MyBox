@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
         </GridPane>
         <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
-                <Button fx:id="closeButton" defaultButton="true" mnemonicParsing="false" onAction="#close">
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#close">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

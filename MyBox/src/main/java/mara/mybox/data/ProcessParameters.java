@@ -12,14 +12,13 @@ import java.util.Date;
  */
 public class ProcessParameters {
 
-    public File sourceFile;
+    public File currentSourceFile, currentTargetPath;
     public int startIndex, currentIndex, currentTotalHandled;
-    public String status, targetPath, targetPrefix, targetRootPath, finalTargetName;
+    public String status, targetPath, targetRootPath, finalTargetName;
     public Date startTime, endTime;
-    public boolean createSubDir, isBatch;
-    public boolean fill, aSize, aColor, aCompression, aQuality, aDensity;
+    public boolean targetSubDir, isBatch;
     public int fromPage, toPage, startPage, acumFrom, acumStart, acumDigit;
     public String password;
-    public int currentPage, currentNameNumber;
+    public int currentPage;
 
 }

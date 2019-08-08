@@ -8,8 +8,22 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.IOException;
-import static mara.mybox.value.AppVaribles.env;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
+import static mara.mybox.image.file.ImageFileReaders.readBrokenImage;
+import mara.mybox.image.file.ImageFileWriters;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
+import org.apache.pdfbox.rendering.ImageType;
 
 /**
  * @Author Mara
@@ -20,69 +34,206 @@ import static mara.mybox.value.AppVaribles.env;
  */
 public class ImageConvert {
 
-    public ImageConvert() {
-
+    // dpi(dot per inch) convert to dpm(dot per millimeter)
+    public static int dpi2dpmm(int dpi) {
+        return Math.round(dpi / 25.4f);
     }
 
-    public static void convertInvertedColors(WritableRaster raster) {
-        int height = raster.getHeight();
-        int width = raster.getWidth();
-        int stride = width * 4;
-        int[] pixelRow = new int[stride];
-        for (int h = 0; h < height; h++) {
-            raster.getPixels(0, h, width, 1, pixelRow);
-            for (int x = 0; x < stride; x++) {
-                pixelRow[x] = 255 - pixelRow[x];
-            }
-            raster.setPixels(0, h, width, 1, pixelRow);
+    // dpi(dot per inch) convert to  ppm(dot per meter)
+    public static int dpi2dpm(int dpi) {
+        return Math.round(1000 * dpi / 25.4f);
+    }
+
+    // ppm(dot Per Meter)  convert to  dpi(dot per inch)
+    public static int dpm2dpi(int dpm) {
+        return Math.round(dpm * 25.4f / 1000f);
+    }
+
+    // dpi(dot per inch) convert to dpm(dot per centimeter)
+    public static int dpi2dpcm(int dpi) {
+        return Math.round(dpi / 2.54f);
+    }
+
+    // dpm(dot per centimeter) convert to  dpi(dot per inch)
+    public static int dpcm2dpi(int dpcm) {
+        return Math.round(dpcm * 2.54f);
+    }
+
+    public static int inch2cm(float inch) {
+        return Math.round(inch / 2.54f);
+    }
+
+    // "pixel size in millimeters" convert to  dpi(dot per inch)
+    public static int pixelSizeMm2dpi(float psmm) { //
+        if (psmm == 0) {
+            return 0;
         }
+        return Math.round(25.4f / psmm);
     }
 
-    // https://stackoverflow.com/questions/8118712/java-cmyk-to-rgb-with-profile-output-is-too-dark/12132556#12132556
-    public static ICC_Profile cmykProfile(String file) {
+    //  dpi(dot per inch) convert to  "pixel size in millimeters"
+    public static float dpi2pixelSizeMm(int dpi) { //
+        if (dpi == 0) {
+            return 0;
+        }
+        return 25.4f / dpi;
+    }
+
+    public static BufferedImage convertColorSpace(BufferedImage srcImage, ImageAttributes attributes) {
         try {
-            ICC_Profile cmykProfile = ICC_Profile.getInstance(env.getResourceAsStream(file));
-            if (cmykProfile.getProfileClass() != ICC_Profile.CLASS_DISPLAY) {
-                byte[] profileData = cmykProfile.getData(); // Need to clone entire profile, due to a JDK 7 bug
-                if (profileData[ICC_Profile.icHdrRenderingIntent] == ICC_Profile.icPerceptual) {
-                    intToBigEndian(ICC_Profile.icSigDisplayClass, profileData, ICC_Profile.icHdrDeviceClass); // Header is first
-                    cmykProfile = ICC_Profile.getInstance(profileData);
+            BufferedImage tmpImage = srcImage;
+            if (null != attributes.getAlpha()) {
+                switch (attributes.getAlpha()) {
+                    case PremultipliedAndKeep:
+                        tmpImage = ImageManufacture.premultipliedAlpha(srcImage, false);
+                        break;
+                    case PremultipliedAndRemove:
+                        tmpImage = ImageManufacture.premultipliedAlpha(srcImage, true);
+                        break;
+                    case Remove:
+                        tmpImage = ImageManufacture.removeAlpha(srcImage);
+                        break;
                 }
             }
-            return cmykProfile;
-        } catch (Exception ex) {
+
+            ICC_Profile targetProfile = attributes.getProfile();
+            if (targetProfile == null) {
+                String csName = attributes.getColorSpaceName();
+                if ("BlackOrWhite".equals(csName) || message("BlackOrWhite").equals(csName)) {
+                    return convertBinary(tmpImage, attributes);
+                } else {
+                    if (message("Gray").equals(csName)) {
+                        csName = "Gray";
+                    }
+                    targetProfile = ImageValue.internalProfileByName(csName);
+                    attributes.setProfile(targetProfile);
+                    attributes.setProfileName(csName);
+                }
+            }
+
+            ICC_ColorSpace targetColorSpace = new ICC_ColorSpace(targetProfile);
+            ColorConvertOp c = new ColorConvertOp(targetColorSpace, null);
+            BufferedImage targetImage = c.filter(tmpImage, null);
+            return targetImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
             return null;
         }
     }
 
-    public static ICC_Profile eciCmykProfile() {
-        return cmykProfile("/data/ICC/ECI_CMYK.icc");
-    }
-
-    static void intToBigEndian(int value, byte[] array, int index) {
-        array[index] = (byte) (value >> 24);
-        array[index + 1] = (byte) (value >> 16);
-        array[index + 2] = (byte) (value >> 8);
-        array[index + 3] = (byte) (value);
-    }
-
-    public static ICC_ColorSpace eciCmykColorSpace() {
+    public static BufferedImage convertColorType(BufferedImage bufferedImage, ImageAttributes attributes) {
         try {
-            return new ICC_ColorSpace(eciCmykProfile());
-        } catch (Exception ex) {
-            return null;
+            if (bufferedImage == null || attributes == null || attributes.getColorType() == null) {
+                return bufferedImage;
+            }
+            int color = bufferedImage.getType();
+            if (ImageType.BINARY == attributes.getColorType()) {
+                return convertBinary(bufferedImage, attributes);
+
+            } else if (ImageType.GRAY == attributes.getColorType() && color != BufferedImage.TYPE_BYTE_GRAY) {
+                ImageGray imageGray = new ImageGray(bufferedImage);
+                bufferedImage = imageGray.operate();
+
+            } else if (ImageType.RGB == attributes.getColorType()) {
+                bufferedImage = ImageManufacture.removeAlpha(bufferedImage);
+            }
+            return bufferedImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return bufferedImage;
         }
     }
 
-    public static ICC_Profile adobeCmykProfile() {
-        return cmykProfile("/data/ICC/AdobeCMYK_UncoatedFOGRA29.icc");
+    public static BufferedImage convertBinary(BufferedImage bufferedImage, ImageAttributes attributes) {
+        try {
+            if (bufferedImage == null || attributes == null) {
+                return bufferedImage;
+            }
+            int color = bufferedImage.getType();
+            ImageBinary imageBinary;
+            if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_THRESHOLD
+                    && attributes.getThreshold() >= 0) {
+                imageBinary = new ImageBinary(bufferedImage, attributes.getThreshold());
+            } else if (attributes.getBinaryConversion() == ImageAttributes.BinaryConversion.BINARY_OTSU) {
+                imageBinary = new ImageBinary(bufferedImage, -1);
+                imageBinary.setCalculate(true);
+            } else if (color != BufferedImage.TYPE_BYTE_BINARY || attributes.isIsDithering()) {
+                imageBinary = new ImageBinary(bufferedImage, -1);
+            } else {
+                return bufferedImage;
+            }
+            imageBinary.setIsDithering(attributes.isIsDithering());
+            bufferedImage = imageBinary.operate();
+            bufferedImage = ImageBinary.byteBinary(bufferedImage);
+            return bufferedImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return bufferedImage;
+        }
     }
 
-    public static ICC_ColorSpace adobeCmykColorSpace() {
+    public static boolean convertColorSpace(File srcFile, ImageAttributes attributes, File targetFile) {
         try {
-            return new ICC_ColorSpace(adobeCmykProfile());
-        } catch (Exception ex) {
-            return null;
+            if (srcFile == null || targetFile == null || attributes == null) {
+                return false;
+            }
+            try {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+            } catch (Exception e) {
+                return false;
+            }
+            String targetFormat = attributes.getImageFormat();
+            boolean supportMultiFrames = CommonValues.MultiFramesImages.contains(targetFormat);
+            ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
+            ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
+            try (ImageInputStream in = ImageIO.createImageInputStream(srcFile);
+                    ImageOutputStream out = ImageIO.createImageOutputStream(targetFile)) {
+                ImageReader reader = ImageIO.getImageReaders(in).next();
+                reader.setInput(in, false);
+                writer.setOutput(out);
+                int num;
+                if (supportMultiFrames) {
+                    num = reader.getNumImages(true);
+                    writer.prepareWriteSequence(null);
+                } else {
+                    num = 1;
+                }
+                BufferedImage bufferedImage;
+                for (int i = 0; i < num; i++) {
+                    try {
+                        bufferedImage = reader.read(i);
+                    } catch (Exception e) {
+                        bufferedImage = readBrokenImage(e, srcFile, i, 1, 1);
+                    }
+                    if (bufferedImage == null) {
+                        continue;
+                    }
+                    bufferedImage = ImageConvert.convertColorSpace(bufferedImage, attributes);
+                    if (bufferedImage == null) {
+                        continue;
+                    }
+                    IIOMetadata metaData
+                            = ImageFileWriters.getWriterMetaData(targetFormat, attributes, bufferedImage, writer, param);
+                    if (supportMultiFrames) {
+                        writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
+                    } else {
+                        writer.write(metaData, new IIOImage(bufferedImage, null, metaData), param);
+                    }
+                }
+                if (supportMultiFrames) {
+                    writer.endWriteSequence();
+                }
+                out.flush();
+                writer.dispose();
+                reader.dispose();
+            }
+            return true;
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
         }
     }
 
@@ -103,7 +254,7 @@ public class ImageConvert {
                 Cr = pixels[i + 2];
                 K = pixels[i + 3];
 
-                c = Math.min(255, Math.max(0, 255 - (Y + 1.402 * Cr - 179.456)));;
+                c = Math.min(255, Math.max(0, 255 - (Y + 1.402 * Cr - 179.456)));
                 m = Math.min(255, Math.max(0, 255 - (Y - 0.34414 * Cb - 0.71414 * Cr + 135.45984)));
                 y = Math.min(255, Math.max(0, 255 - (Y + 1.7718d * Cb - 226.816)));
                 k = K;
@@ -124,7 +275,7 @@ public class ImageConvert {
         }
     }
 
-    public static void invert(WritableRaster raster) {
+    public static void invertPixelValue(WritableRaster raster) {
         int height = raster.getHeight();
         int width = raster.getWidth();
         int stride = width * 4;
@@ -160,7 +311,7 @@ public class ImageConvert {
 
     public static BufferedImage rgb2cmyk(ICC_Profile cmykProfile, BufferedImage inImage) throws IOException {
         if (cmykProfile == null) {
-            cmykProfile = ICC_Profile.getInstance(env.getResourceAsStream("/data/ICC/ECI_CMYK.icc"));
+            cmykProfile = ImageValue.eciCmykProfile();
         }
         ICC_ColorSpace cmykCS = new ICC_ColorSpace(cmykProfile);
         ColorConvertOp rgb2cmyk = new ColorConvertOp(cmykCS, null);
@@ -169,7 +320,7 @@ public class ImageConvert {
 
     public static BufferedImage cmyk2rgb(Raster cmykRaster, ICC_Profile cmykProfile) throws IOException {
         if (cmykProfile == null) {
-            cmykProfile = ICC_Profile.getInstance(env.getResourceAsStream("/data/ICC/ECI_CMYK.icc"));
+            cmykProfile = ImageValue.eciCmykProfile();
         }
         ICC_ColorSpace cmykCS = new ICC_ColorSpace(cmykProfile);
         BufferedImage rgbImage = new BufferedImage(cmykRaster.getWidth(), cmykRaster.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -183,7 +334,7 @@ public class ImageConvert {
     // https://bugs.openjdk.java.net/browse/JDK-8041125
     public static BufferedImage cmyk2rgb(final byte[] buffer, final int w, final int h) throws IOException {
 
-        final ColorSpace CMYK = ImageConvert.adobeCmykColorSpace();
+        final ColorSpace CMYK = ImageValue.adobeCmykColorSpace();
 
         final int pixelCount = w * h * 4;
         int C, M, Y, K, lastC = -1, lastM = -1, lastY = -1, lastK = -1;

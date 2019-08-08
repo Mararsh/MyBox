@@ -11,13 +11,12 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
 import static mara.mybox.value.AppVaribles.logger;
-
-import org.w3c.dom.Element;
 
 /**
  * @Author Mara
@@ -28,7 +27,42 @@ import org.w3c.dom.Element;
  */
 public class ImagePnmFile {
 
-    
+    public static ImageWriter getWriter() {
+        PNMImageWriter writer = new PNMImageWriter(new PNMImageWriterSpi());
+        return writer;
+    }
+
+    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
+        try {
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            if (param.canWriteCompressed()) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                if (attributes != null && attributes.getCompressionType() != null) {
+                    param.setCompressionType(attributes.getCompressionType());
+                }
+                if (attributes != null && attributes.getQuality() > 0) {
+                    param.setCompressionQuality(attributes.getQuality() / 100.0f);
+                } else {
+                    param.setCompressionQuality(1.0f);
+                }
+            }
+            return param;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
+            ImageWriter writer, ImageWriteParam param) {
+        try {
+            PNMMetadata metaData = (PNMMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+            return metaData;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
 
     public static boolean writePnmImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {
@@ -42,37 +76,9 @@ public class ImagePnmFile {
                 return false;
             }
 
-            PNMImageWriter writer = new PNMImageWriter(new PNMImageWriterSpi());
-            ImageWriteParam param = writer.getDefaultWriteParam();
-            if (param.canWriteCompressed()) {
-                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                if (attributes != null && attributes.getCompressionType() != null) {
-                    param.setCompressionType(attributes.getCompressionType());
-                }
-                if (attributes != null && attributes.getQuality() > 0) {
-                    param.setCompressionQuality(attributes.getQuality() / 100.0f);
-                } else {
-                    param.setCompressionQuality(1.0f);
-                }
-            }
-
-            PNMMetadata metaData;
-            try {
-                metaData = (PNMMetadata) writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
-                if (attributes.getDensity() > 0) {
-                    float pixelSizeMm = 25.4f / attributes.getDensity();
-                    String format = IIOMetadataFormatImpl.standardMetadataFormatName; // "javax_imageio_1.0"
-                    Element tree = (Element) metaData.getAsTree(format);
-                    Element HorizontalPixelSize = (Element) tree.getElementsByTagName("HorizontalPixelSize").item(0);
-                    HorizontalPixelSize.setAttribute("value", pixelSizeMm + "");
-                    Element VerticalPixelSize = (Element) tree.getElementsByTagName("VerticalPixelSize").item(0);
-                    VerticalPixelSize.setAttribute("value", pixelSizeMm + "");
-                    metaData.mergeTree(format, tree);
-                }
-            } catch (Exception e) {
-                logger.error(e.toString());
-                metaData = null;
-            }
+            ImageWriter writer = getWriter();
+            ImageWriteParam param = getPara(attributes, writer);
+            IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);

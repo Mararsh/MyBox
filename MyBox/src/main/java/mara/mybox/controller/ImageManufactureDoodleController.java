@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -13,21 +12,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -39,29 +33,30 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.util.Callback;
+import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.DoublePenLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.ImageCell;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.ListImageCell;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.ImageScope.ScopeType;
 import mara.mybox.image.PixelBlend;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -251,11 +246,11 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                     new Image("img/PdfTools.png"), new Image("img/language.png"), new Image("img/position.png")
             );
             pixBox.getItems().addAll(prePixList);
-            pixBox.setButtonCell(new ImageCell());
+            pixBox.setButtonCell(new ListImageCell());
             pixBox.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
                 @Override
                 public ListCell<Image> call(ListView<Image> param) {
-                    return new ImageCell();
+                    return new ListImageCell();
                 }
             });
             pixBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
@@ -309,8 +304,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 }
             });
 
-            List<String> shapesList = Arrays.asList(
-                    getMessage("Rectangle"), getMessage("Circle"), getMessage("Ellipse"), getMessage("Polygon")
+            List<String> shapesList = Arrays.asList(message("Rectangle"), message("Circle"), message("Ellipse"), message("Polygon")
             );
             shapesBox.getItems().addAll(shapesList);
             shapesBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -433,7 +427,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             pickFillColorButton.setSelected(false);
 
             RadioButton selected = (RadioButton) doodleGroup.getSelectedToggle();
-            if (getMessage("Picture").equals(selected.getText())) {
+            if (message("Picture").equals(selected.getText())) {
                 opType = DoodleType.Picture;
                 setBox1.getChildren().addAll(fitLabel, pixBox, pixSelectButton, pasteButton, picView);
                 setBox2.getChildren().addAll(blendLabel, blendBox, opacityLabel, opacityBox, keepRatioCheck);
@@ -451,9 +445,9 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                     isSettingValues = false;
                 }
                 drawMaskPicture();
-                promptLabel.setText(getMessage("DoodlePictureTips"));
+                promptLabel.setText(message("DoodlePictureTips"));
 
-            } else if (getMessage("Shape").equals(selected.getText())) {
+            } else if (message("Shape").equals(selected.getText())) {
                 opType = DoodleType.Shape;
                 setBox1.getChildren().addAll(fitLabel, shapeTipsView, shapeLabel, shapesBox,
                         strokeWidthLabel, strokeWidthBox, strokeColorLabel, colorPicker, pickColorButton);
@@ -463,19 +457,19 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 isSettingValues = false;
                 checkShapeType();
 
-            } else if (getMessage("Pen").equals(selected.getText())) {
+            } else if (message("Pen").equals(selected.getText())) {
                 opType = DoodleType.Pen;
                 setBox1.getChildren().addAll(strokeWidthLabel, strokeWidthBox, strokeColorLabel, colorPicker,
                         pickColorButton);
                 setBox2.getChildren().addAll(dottedCheck, withdrawButton);
-                promptLabel.setText(getMessage("DoodlePenTips"));
+                promptLabel.setText(message("DoodlePenTips"));
 
-            } else if (getMessage("Aline").equals(selected.getText())) {
+            } else if (message("Aline").equals(selected.getText())) {
                 opType = DoodleType.Line;
                 setBox1.getChildren().addAll(strokeWidthLabel, strokeWidthBox, strokeColorLabel, colorPicker,
                         pickColorButton);
                 setBox2.getChildren().addAll(dottedCheck, withdrawButton);
-                promptLabel.setText(getMessage("DoodleLineTips"));
+                promptLabel.setText(message("DoodleLineTips"));
             }
 
         } catch (Exception e) {
@@ -494,32 +488,32 @@ public class ImageManufactureDoodleController extends ImageManufactureController
         initMaskControls(false);
 
         String selected = shapesBox.getSelectionModel().getSelectedItem();
-        if (getMessage("Rectangle").equals(selected)) {
+        if (message("Rectangle").equals(selected)) {
             shapeType = ScopeType.Rectangle;
             initMaskRectangleLine(true);
             maskRectangleLine.setOpacity(0);
             setBox2.getChildren().add(0, arcLabel);
             setBox2.getChildren().add(1, arcBox);
-            promptLabel.setText(getMessage("DoodleShapeTips"));
+            promptLabel.setText(message("DoodleShapeTips"));
 
-        } else if (getMessage("Circle").equals(selected)) {
+        } else if (message("Circle").equals(selected)) {
             shapeType = ScopeType.Circle;
             initMaskCircleLine(true);
             maskCircleLine.setOpacity(0);
-            promptLabel.setText(getMessage("DoodleShapeTips"));
+            promptLabel.setText(message("DoodleShapeTips"));
 
-        } else if (getMessage("Ellipse").equals(selected)) {
+        } else if (message("Ellipse").equals(selected)) {
             shapeType = ScopeType.Ellipse;
             initMaskEllipseLine(true);
             maskEllipseLine.setOpacity(0);
-            promptLabel.setText(getMessage("DoodleShapeTips"));
+            promptLabel.setText(message("DoodleShapeTips"));
 
-        } else if (getMessage("Polygon").equals(selected)) {
+        } else if (message("Polygon").equals(selected)) {
             shapeType = ScopeType.Polygon;
             initMaskPolygonLine(true);
             maskPolygonLine.setOpacity(0);
             setBox2.getChildren().add(withdrawButton);
-            promptLabel.setText(getMessage("DoodlePolygonTips"));
+            promptLabel.setText(message("DoodlePolygonTips"));
         }
         strokeWidthLabel.requestFocus();
     }
@@ -558,7 +552,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
@@ -627,7 +621,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
                 drawMaskPicture();
             }
         } else {
-            popInformation(getMessage("NoImageInClipboard"));
+            popInformation(message("NoImageInClipboard"));
         }
 
     }
@@ -640,67 +634,41 @@ public class ImageManufactureDoodleController extends ImageManufactureController
 
     @FXML
     public void popPixFile(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    pixSelected(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        if (his != null) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            dmenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(dmenu);
-            for (VisitHistory h : his) {
-                final String pathname = h.getResourceValue();
-                MenuItem menu = new MenuItem(pathname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
-                        selectPixAction();
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentSourceFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectPixAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                pixSelected(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
@@ -1169,6 +1137,7 @@ public class ImageManufactureDoodleController extends ImageManufactureController
             fillColorPicker.setValue(color);
 
         } else {
+
             super.paneClicked(event);
             if (event.getButton() != MouseButton.SECONDARY) {
                 imageView.setCursor(Cursor.OPEN_HAND);

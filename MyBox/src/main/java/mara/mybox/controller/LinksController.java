@@ -12,13 +12,13 @@ import mara.mybox.value.AppVaribles;
 public class LinksController extends BaseController {
 
     public LinksController() {
-        baseTitle = AppVaribles.getMessage("Links");
+        baseTitle = AppVaribles.message("Links");
     }
 
     @Override
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
-        myStage.setAlwaysOnTop(true);
+        myStage.toFront();
     }
 
 }

@@ -18,6 +18,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -30,15 +31,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.PopupWindow;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.tools.SoundTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
-import static mara.mybox.value.CommonValues.AppDataRoot;
-import javafx.stage.Stage;
-import static mara.mybox.value.AppVaribles.env;
+import mara.mybox.tools.SoundTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
  * @Author Mara
@@ -48,6 +49,7 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 public class FxmlControl {
 
+    public static String blueText = "-fx-text-fill: #2e598a;";
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
     public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -169,23 +171,32 @@ public class FxmlControl {
 
     public static void setTooltip(final Node node, final Tooltip tooltip) {
         tooltip.setFont(new Font(AppVaribles.sceneFontSize));
-//        tooltip.setAutoHide(true);
+        tooltip.setShowDelay(Duration.millis(10));
+        tooltip.setShowDuration(Duration.millis(360000));
+        tooltip.setHideDelay(Duration.millis(10));
         Tooltip.install(node, tooltip);
+    }
+
+    public static void removeTooltip(final Control node) {
+        Tooltip.uninstall(node, node.getTooltip());
     }
 
     public static void removeTooltip(final Node node, final Tooltip tooltip) {
         Tooltip.uninstall(node, tooltip);
     }
 
-    public static String getFxmlPath(String fullPath) {
+    public static String getFxmlName(String fullPath) {
         if (fullPath == null) {
             return null;
         }
-        int pos = fullPath.lastIndexOf("jar!");
+        String fname;
+        int pos = fullPath.lastIndexOf('/');
         if (pos < 0) {
-            return fullPath;
+            fname = fullPath;
+        } else {
+            fname = fullPath.substring(pos + 1);
         }
-        return fullPath.substring(pos + "jar!".length());
+        return fname.substring(0, fname.length() - 5);
     }
 
     public static int getInputInt(TextField input) {
@@ -241,6 +252,26 @@ public class FxmlControl {
                 }
             }
         });
+    }
+
+    public static int positiveValue(final TextField input) {
+        return positiveValue(input, Integer.MAX_VALUE);
+    }
+
+    public static int positiveValue(final TextField input, final int max) {
+        try {
+            int v = Integer.parseInt(input.getText());
+            if (v > 0 && v <= max) {
+                input.setStyle(null);
+                return v;
+            } else {
+                input.setStyle(badStyle);
+                return -1;
+            }
+        } catch (Exception e) {
+            input.setStyle(badStyle);
+            return -1;
+        }
     }
 
     public static void setFloatValidation(final TextField input) {
@@ -322,62 +353,70 @@ public class FxmlControl {
         if (resourceFile == null || userFile == null) {
             return null;
         }
-        File file = new File(AppDataRoot + "/" + userFile);
-        if (file.exists()) {
-            if (deleteExisted) {
-                file.delete();
-            } else {
-                return file;
-            }
-        }
-
-        URL url = env.getResource(resourceFile);
-        if (url.toString().startsWith("jar:")) {
-            try {
-                try (InputStream input = env.getResourceAsStream(resourceFile);
-                        OutputStream out = new FileOutputStream(file)) {
-                    int read;
-                    byte[] bytes = new byte[1024];
-                    while ((read = input.read(bytes)) != -1) {
-                        out.write(bytes, 0, read);
-                    }
+        try {
+            File file = new File(AppDataRoot + "/" + userFile);
+            if (file.exists()) {
+                if (deleteExisted) {
+                    file.delete();
+                } else {
+                    return file;
                 }
-            } catch (Exception e) {
-                logger.error(e.toString());
             }
-        } else {
-            //this will probably work in your IDE, but not from a JAR
-            file = new File(env.getResource(resourceFile).getFile());
+
+            URL url = FxmlControl.class.getResource(resourceFile);
+            if (url.toString().startsWith("jar:")) {
+                try {
+                    try ( InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);  OutputStream out = new FileOutputStream(file)) {
+                        int read;
+                        byte[] bytes = new byte[1024];
+                        while ((read = input.read(bytes)) != -1) {
+                            out.write(bytes, 0, read);
+                        }
+                    }
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            } else {
+                //this will probably work in your IDE, but not from a JAR
+                file = new File(FxmlControl.class.getResource(resourceFile).getFile());
+            }
+            return file;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
-        return file;
     }
 
     public static File getResourceFile(String resourceFile) {
         if (resourceFile == null) {
             return null;
         }
-
-        File file = null;
-        URL url = env.getResource(resourceFile);
-        if (url.toString().startsWith("jar:")) {
-            try {
-                InputStream input = env.getResourceAsStream(resourceFile);
-                file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
-                OutputStream out = new FileOutputStream(file);
-                int read;
-                byte[] bytes = new byte[1024];
-                while ((read = input.read(bytes)) != -1) {
-                    out.write(bytes, 0, read);
+        try {
+            File file = null;
+            URL url = FxmlControl.class.getResource(resourceFile);
+            if (url.toString().startsWith("jar:")) {
+                try {
+                    InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
+                    file = File.createTempFile("MyBox", "." + getFileSuffix(resourceFile));
+                    OutputStream out = new FileOutputStream(file);
+                    int read;
+                    byte[] bytes = new byte[1024];
+                    while ((read = input.read(bytes)) != -1) {
+                        out.write(bytes, 0, read);
+                    }
+                    file.deleteOnExit();
+                } catch (Exception e) {
+                    logger.error(e.toString());
                 }
-                file.deleteOnExit();
-            } catch (Exception e) {
-                logger.error(e.toString());
+            } else {
+                //this will probably work in your IDE, but not from a JAR
+                file = new File(FxmlControl.class.getResource(resourceFile).getFile());
             }
-        } else {
-            //this will probably work in your IDE, but not from a JAR
-            file = new File(env.getResource(resourceFile).getFile());
+            return file;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
         }
-        return file;
     }
 
     public static void setEditorStyle(final ComboBox box, final String style) {

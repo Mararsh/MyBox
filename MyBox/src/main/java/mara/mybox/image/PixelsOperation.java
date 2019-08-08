@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Queue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.IntPoint;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -23,7 +24,7 @@ public class PixelsOperation {
     protected boolean isDithering, boolPara;
     protected int intPara1, intPara2, intPara3;
     protected float floatPara1, floatPara2;
-    protected Color colorPara1, colorPara2;
+    protected Color colorPara1, colorPara2, bkColor;
     protected ImageScope scope;
     protected OperationType operationType;
     protected ColorActionType colorActionType;
@@ -43,7 +44,11 @@ public class PixelsOperation {
     }
 
     public PixelsOperation() {
-
+        if (AppVaribles.isAlphaAsWhite()) {
+            this.bkColor = Color.WHITE;
+        } else {
+            this.bkColor = Color.BLACK;
+        }
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -227,9 +232,9 @@ public class PixelsOperation {
                         return new DecreaseRGB(image, scope);
                     case Invert:
                         return new InvertRGB(image, scope);
-                    case Set:
-                    default:
-                        return new SetRGB(image, scope);
+//                    case Set:
+//                    default:
+//                        return new SetRGB(image, scope);
                 }
             default:
                 return new PixelsOperation(image, scope, operationType);
@@ -486,6 +491,11 @@ public class PixelsOperation {
 
     }
 
+    // SubClass should implement this
+    protected Color operateColor(Color color) {
+        return color;
+    }
+
     public static class ShowScope extends PixelsOperation {
 
         public ShowScope(BufferedImage image, ImageScope scope) {
@@ -622,10 +632,7 @@ public class PixelsOperation {
         protected Color operateColor(Color color) {
             int opacity = Math.min(Math.max(intPara1, 0), 255);
             float f = opacity / 255.0f;
-            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
-            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
-            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
-            return new Color(red, green, blue, opacity);
+            return ImageColor.blendAlpha(color, f, bkColor);
         }
     }
 
@@ -642,10 +649,7 @@ public class PixelsOperation {
         protected Color operateColor(Color color) {
             int opacity = Math.min(Math.max(color.getAlpha() + intPara1, 0), 255);
             float f = opacity / 255.0f;
-            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
-            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
-            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
-            return new Color(red, green, blue, opacity);
+            return ImageColor.blendAlpha(color, f, bkColor);
         }
     }
 
@@ -662,10 +666,7 @@ public class PixelsOperation {
         protected Color operateColor(Color color) {
             int opacity = Math.min(Math.max(color.getAlpha() - intPara1, 0), 255);
             float f = opacity / 255.0f;
-            int red = Math.min(Math.max((int) (color.getRed() * f), 0), 255);
-            int green = Math.min(Math.max((int) (color.getGreen() * f), 0), 255);
-            int blue = Math.min(Math.max((int) (color.getBlue() * f), 0), 255);
-            return new Color(red, green, blue, opacity);
+            return ImageColor.blendAlpha(color, f, bkColor);
         }
     }
 
@@ -1399,11 +1400,9 @@ public class PixelsOperation {
         }
     }
 
-    // SubClass should implement this
-    protected Color operateColor(Color color) {
-        return color;
-    }
-
+    /*
+        get/set
+     */
     public BufferedImage getImage() {
         return image;
     }

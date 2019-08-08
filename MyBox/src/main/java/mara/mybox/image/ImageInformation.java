@@ -22,17 +22,18 @@ public class ImageInformation extends ImageFileInformation {
 
     protected ImageFileInformation imageFileInformation;
     protected int index = -1, width, height;
-    protected String colorSpace, pixelsString, loadSizeString, fileSizeString;
+    protected String colorSpace, pixelsString, loadSizeString, fileSizeString, profileName, profileCompressionMethod;
     protected boolean isMultipleFrames, isSampled, isScaled;
     protected List<ImageTypeSpecifier> imageTypes;
     protected ImageTypeSpecifier rawImageType;
-    protected LinkedHashMap<String, Object> attributes;
-    protected Map<String, Map<String, List<Map<String, String>>>> metaData;
+    protected LinkedHashMap<String, Object> standardAttributes, nativeAttributes;
+    protected Map<String, Map<String, List<Map<String, Object>>>> metaData;
     protected String metaDataXml;
     protected Image image;
     protected BufferedImage bufferedImage;
     protected List<BufferedImage> thumbnails;
     protected Map<String, Long> sizes;
+    protected byte[] iccProfile;
 
     public ImageInformation() {
         init();
@@ -40,8 +41,7 @@ public class ImageInformation extends ImageFileInformation {
 
     public ImageInformation(File file) {
         super(file);
-        filename = file.getAbsolutePath();
-        imageFormat = FileTools.getFileSuffix(filename);
+        imageFormat = FileTools.getFileSuffix(fileName);
         if (imageFormat != null) {
             imageFormat = imageFormat.toLowerCase();
         }
@@ -59,7 +59,8 @@ public class ImageInformation extends ImageFileInformation {
     }
 
     private void init() {
-        attributes = new LinkedHashMap();
+        standardAttributes = new LinkedHashMap();
+        nativeAttributes = new LinkedHashMap();
         index = 0;
     }
 
@@ -199,26 +200,23 @@ public class ImageInformation extends ImageFileInformation {
         this.bufferedImage = bufferedImage;
     }
 
-    public Map<String, Map<String, List<Map<String, String>>>> getMetaData() {
+    public Map<String, Map<String, List<Map<String, Object>>>> getMetaData() {
         return metaData;
     }
 
-    public void setMetaData(Map<String, Map<String, List<Map<String, String>>>> metaData) {
+    public void setMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData) {
         this.metaData = metaData;
     }
 
     public String getPixelsString() {
         if (imageFileInformation != null && imageFileInformation.getImageInformation() != null) {
-            pixelsString = (int) imageFileInformation.getImageInformation().getWidth() + "x"
-                    + (int) imageFileInformation.getImageInformation().getHeight();
+            pixelsString = imageFileInformation.getImageInformation().getWidth() + "x"
+                    + imageFileInformation.getImageInformation().getHeight();
         } else if (image != null) {
             pixelsString = (int) image.getWidth() + "x"
                     + (int) image.getHeight();
         } else {
             pixelsString = "";
-        }
-        if (isIsSampled()) {
-            pixelsString += " *";
         }
         return pixelsString;
     }
@@ -302,239 +300,259 @@ public class ImageInformation extends ImageFileInformation {
         this.imageTypes = imageTypes;
     }
 
-    public LinkedHashMap<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(LinkedHashMap<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
     /*
         attributes
      */
-    public Object getAttribute(String key) {
+    public LinkedHashMap<String, Object> getStandardAttributes() {
+        return standardAttributes;
+    }
+
+    public void setStandardAttributes(LinkedHashMap<String, Object> attributes) {
+        this.standardAttributes = attributes;
+    }
+
+    public Object getStandardAttribute(String key) {
         try {
-            return attributes.get(key);
+            return standardAttributes.get(key);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public String getStringAttribute(String key) {
+    public String getStandardStringAttribute(String key) {
         try {
-            return (String) attributes.get(key);
+            return (String) standardAttributes.get(key);
         } catch (Exception e) {
             return null;
         }
     }
 
-    public int getIntAttribute(String key) {
+    public int getStandardIntAttribute(String key) {
         try {
-            return (int) attributes.get(key);
+            return (int) standardAttributes.get(key);
         } catch (Exception e) {
             return -1;
         }
     }
 
-    public float getFloatAttribute(String key) {
+    public float getStandardFloatAttribute(String key) {
         try {
-            return (float) attributes.get(key);
+            return (float) standardAttributes.get(key);
         } catch (Exception e) {
             return -1;
         }
     }
 
-    public boolean getBooleanAttribute(String key) {
+    public boolean getStandardBooleanAttribute(String key) {
         try {
-            return (boolean) attributes.get(key);
+            return (boolean) standardAttributes.get(key);
         } catch (Exception e) {
             return false;
         }
     }
 
-    public void setAttribute(String key, Object value) {
-        attributes.put(key, value);
+    public void setStandardAttribute(String key, Object value) {
+        standardAttributes.put(key, value);
+    }
+
+    public LinkedHashMap<String, Object> getNativeAttributes() {
+        return nativeAttributes;
+    }
+
+    public void setNativeAttributes(LinkedHashMap<String, Object> nativeAttributes) {
+        this.nativeAttributes = nativeAttributes;
+    }
+
+    public void setNativeAttribute(String key, Object value) {
+        nativeAttributes.put(key, value);
+    }
+
+    public Object getNativeAttribute(String key) {
+        try {
+            return nativeAttributes.get(key);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getColorSpace() {
         try {
-            return (String) attributes.get("ColorSpace");
+            return (String) standardAttributes.get("ColorSpace");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setColorSpace(String colorSpace) {
-        attributes.put("ColorSpace", colorSpace);
+        standardAttributes.put("ColorSpace", colorSpace);
     }
 
     public String getImageRotation() {
         try {
-            return (String) attributes.get("ImageRotation");
+            return (String) standardAttributes.get("ImageRotation");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setImageRotation(String imageRotation) {
-        attributes.put("ImageRotation", imageRotation);
+        standardAttributes.put("ImageRotation", imageRotation);
     }
 
     public int getXDpi() {
         try {
-            return (int) attributes.get("xDpi");
+            return (int) standardAttributes.get("xDpi");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setXDpi(int xDpi) {
-        attributes.put("xDpi", xDpi);
+        standardAttributes.put("xDpi", xDpi);
     }
 
     public int getYDpi() {
         try {
-            return (int) attributes.get("yDpi");
+            return (int) standardAttributes.get("yDpi");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setYDpi(int yDpi) {
-        attributes.put("yDpi", yDpi);
+        standardAttributes.put("yDpi", yDpi);
     }
 
     public int getColorChannels() {
         try {
-            return (int) attributes.get("ColorChannels");
+            return (int) standardAttributes.get("ColorChannels");
         } catch (Exception e) {
             return 0;
         }
     }
 
     public void setColorChannels(int colorChannels) {
-        attributes.put("ColorChannels", colorChannels);
+        standardAttributes.put("ColorChannels", colorChannels);
     }
 
     public int getBitDepth() {
         try {
-            return (int) attributes.get("BitDepth");
+            return (int) standardAttributes.get("BitDepth");
         } catch (Exception e) {
             return 0;
         }
     }
 
     public void setBitDepth(int bitDepth) {
-        attributes.put("BitDepth", bitDepth);
+        standardAttributes.put("BitDepth", bitDepth);
     }
 
     public String getAlpha() {
         try {
-            return (String) attributes.get("Alpha");
+            return (String) standardAttributes.get("Alpha");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setAlpha(String alpha) {
-        attributes.put("Alpha", alpha);
+        standardAttributes.put("Alpha", alpha);
     }
 
     public boolean isIsLossless() {
         try {
-            return (Boolean) attributes.get("IsLossless");
+            return (Boolean) standardAttributes.get("IsLossless");
         } catch (Exception e) {
             return false;
         }
     }
 
     public void setIsLossless(boolean isLossless) {
-        attributes.put("IsLossless", isLossless);
+        standardAttributes.put("IsLossless", isLossless);
     }
 
     public float getPixelAspectRatio() {
         try {
-            return (float) attributes.get("PixelAspectRatio");
+            return (float) standardAttributes.get("PixelAspectRatio");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setPixelAspectRatio(float pixelAspectRatio) {
-        attributes.put("PixelAspectRatio", pixelAspectRatio);
+        standardAttributes.put("PixelAspectRatio", pixelAspectRatio);
     }
 
     public boolean isHasThumbnails() {
         try {
-            return (Boolean) attributes.get("HasThumbnails");
+            return (Boolean) standardAttributes.get("HasThumbnails");
         } catch (Exception e) {
             return false;
         }
     }
 
     public void setHasThumbnails(boolean hasThumbnails) {
-        attributes.put("HasThumbnails", hasThumbnails);
+        standardAttributes.put("HasThumbnails", hasThumbnails);
     }
 
     public String getCompressionType() {
         try {
-            return (String) attributes.get("CompressionType");
+            return (String) standardAttributes.get("CompressionType");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setCompressionType(String compressionType) {
-        attributes.put("CompressionType", compressionType);
+        standardAttributes.put("CompressionType", compressionType);
     }
 
     public int getTileWidth() {
         try {
-            return (int) attributes.get("TileWidth");
+            return (int) standardAttributes.get("TileWidth");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setTileWidth(int TileWidth) {
-        attributes.put("TileWidth", TileWidth);
+        standardAttributes.put("TileWidth", TileWidth);
     }
 
     public int getTileHeight() {
         try {
-            return (int) attributes.get("TileHeight");
+            return (int) standardAttributes.get("TileHeight");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setTileHeight(int TileHeight) {
-        attributes.put("TileHeight", TileHeight);
+        standardAttributes.put("TileHeight", TileHeight);
     }
 
     public int getTileOffetX() {
         try {
-            return (int) attributes.get("TileOffetX");
+            return (int) standardAttributes.get("TileOffetX");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setTileOffetX(int TileOffetX) {
-        attributes.put("TileOffetX", TileOffetX);
+        standardAttributes.put("TileOffetX", TileOffetX);
     }
 
     public int getTileOffsetY() {
         try {
-            return (int) attributes.get("TileOffsetY");
+            return (int) standardAttributes.get("TileOffsetY");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setTileOffsetY(int TileOffsetY) {
-        attributes.put("TileOffsetY", TileOffsetY);
+        standardAttributes.put("TileOffsetY", TileOffsetY);
     }
 
     public List<BufferedImage> getThumbnails() {
@@ -542,367 +560,399 @@ public class ImageInformation extends ImageFileInformation {
     }
 
     public void setThumbnails(List<BufferedImage> Thumbnails) {
-        attributes.put("Thumbnails", Thumbnails);
+        standardAttributes.put("Thumbnails", Thumbnails);
     }
 
     public boolean isIsTiled() {
         try {
-            return (Boolean) attributes.get("IsTiled");
+            return (Boolean) standardAttributes.get("IsTiled");
         } catch (Exception e) {
             return false;
         }
     }
 
     public void setIsTiled(boolean IsTiled) {
-        attributes.put("IsTiled", IsTiled);
+        standardAttributes.put("IsTiled", IsTiled);
     }
 
     public int getNumberOfThumbnails() {
         try {
-            return (int) attributes.get("NumberOfThumbnails");
+            return (int) standardAttributes.get("NumberOfThumbnails");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setNumberOfThumbnails(int NumberOfThumbnails) {
-        attributes.put("NumberOfThumbnails", NumberOfThumbnails);
+        standardAttributes.put("NumberOfThumbnails", NumberOfThumbnails);
     }
 
     public float getGamma() {
         try {
-            return (float) attributes.get("Gamma");
+            return (float) standardAttributes.get("Gamma");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setGamma(float Gamma) {
-        attributes.put("Gamma", Gamma);
+        standardAttributes.put("Gamma", Gamma);
     }
 
     public boolean isBlackIsZero() {
         try {
-            return (Boolean) attributes.get("BlackIsZero");
+            return (Boolean) standardAttributes.get("BlackIsZero");
         } catch (Exception e) {
             return true;
         }
     }
 
     public void setBlackIsZero(boolean BlackIsZero) {
-        attributes.put("BlackIsZero", BlackIsZero);
+        standardAttributes.put("BlackIsZero", BlackIsZero);
     }
 
     public List<ImageColor> getPalette() {
         try {
-            return (List<ImageColor>) attributes.get("Palette");
+            return (List<ImageColor>) standardAttributes.get("Palette");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setPalette(List<ImageColor> Palette) {
-        attributes.put("Palette", Palette);
+        standardAttributes.put("Palette", Palette);
     }
 
     public int getBackgroundIndex() {
         try {
-            return (int) attributes.get("BackgroundIndex");
+            return (int) standardAttributes.get("BackgroundIndex");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setBackgroundIndex(int BackgroundIndex) {
-        attributes.put("BackgroundIndex", BackgroundIndex);
+        standardAttributes.put("BackgroundIndex", BackgroundIndex);
     }
 
     public ImageColor getBackgroundColor() {
         try {
-            return (ImageColor) attributes.get("BackgroundColor");
+            return (ImageColor) standardAttributes.get("BackgroundColor");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setBackgroundColor(ImageColor BackgroundColor) {
-        attributes.put("BackgroundColor", BackgroundColor);
+        standardAttributes.put("BackgroundColor", BackgroundColor);
     }
 
     public int getNumProgressiveScans() {
         try {
-            return (int) attributes.get("NumProgressiveScans");
+            return (int) standardAttributes.get("NumProgressiveScans");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setNumProgressiveScans(int NumProgressiveScans) {
-        attributes.put("NumProgressiveScans", NumProgressiveScans);
+        standardAttributes.put("NumProgressiveScans", NumProgressiveScans);
     }
 
     public float getBitRate() {
         try {
-            return (float) attributes.get("BitRate");
+            return (float) standardAttributes.get("BitRate");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setBitRate(float BitRate) {
-        attributes.put("BitRate", BitRate);
+        standardAttributes.put("BitRate", BitRate);
     }
 
     public String getPlanarConfiguration() {
         try {
-            return (String) attributes.get("PlanarConfiguration");
+            return (String) standardAttributes.get("PlanarConfiguration");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setPlanarConfiguration(String PlanarConfiguration) {
-        attributes.put("PlanarConfiguration", PlanarConfiguration);
+        standardAttributes.put("PlanarConfiguration", PlanarConfiguration);
     }
 
     public String getSampleFormat() {
         try {
-            return (String) attributes.get("SampleFormat");
+            return (String) standardAttributes.get("SampleFormat");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setSampleFormat(String SampleFormat) {
-        attributes.put("SampleFormat", SampleFormat);
+        standardAttributes.put("SampleFormat", SampleFormat);
     }
 
     public String getBitsPerSample() {
         try {
-            return (String) attributes.get("BitsPerSample");
+            return (String) standardAttributes.get("BitsPerSample");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setBitsPerSample(String BitsPerSample) {
-        attributes.put("BitsPerSample", BitsPerSample);
+        standardAttributes.put("BitsPerSample", BitsPerSample);
     }
 
     public String getSignificantBitsPerSample() {
         try {
-            return (String) attributes.get("SignificantBitsPerSample");
+            return (String) standardAttributes.get("SignificantBitsPerSample");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setSignificantBitsPerSample(String SignificantBitsPerSample) {
-        attributes.put("SignificantBitsPerSample", SignificantBitsPerSample);
+        standardAttributes.put("SignificantBitsPerSample", SignificantBitsPerSample);
     }
 
     public String getSampleMSB() {
         try {
-            return (String) attributes.get("SampleMSB");
+            return (String) standardAttributes.get("SampleMSB");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setSampleMSB(String SampleMSB) {
-        attributes.put("SampleMSB", SampleMSB);
+        standardAttributes.put("SampleMSB", SampleMSB);
     }
 
     public float getHorizontalPixelSize() {
         try {
-            return (float) attributes.get("HorizontalPixelSize");
+            return (float) standardAttributes.get("HorizontalPixelSize");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setHorizontalPixelSize(float HorizontalPixelSize) {
-        attributes.put("HorizontalPixelSize", HorizontalPixelSize);
+        standardAttributes.put("HorizontalPixelSize", HorizontalPixelSize);
     }
 
     public float getVerticalPixelSize() {
         try {
-            return (float) attributes.get("VerticalPixelSize");
+            return (float) standardAttributes.get("VerticalPixelSize");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setVerticalPixelSize(float VerticalPixelSize) {
-        attributes.put("VerticalPixelSize", VerticalPixelSize);
+        standardAttributes.put("VerticalPixelSize", VerticalPixelSize);
     }
 
     public float getHorizontalPhysicalPixelSpacing() {
         try {
-            return (float) attributes.get("HorizontalPhysicalPixelSpacing");
+            return (float) standardAttributes.get("HorizontalPhysicalPixelSpacing");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setHorizontalPhysicalPixelSpacing(float HorizontalPhysicalPixelSpacing) {
-        attributes.put("HorizontalPhysicalPixelSpacing", HorizontalPhysicalPixelSpacing);
+        standardAttributes.put("HorizontalPhysicalPixelSpacing", HorizontalPhysicalPixelSpacing);
     }
 
     public float getVerticalPhysicalPixelSpacing() {
         try {
-            return (float) attributes.get("VerticalPhysicalPixelSpacing");
+            return (float) standardAttributes.get("VerticalPhysicalPixelSpacing");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setVerticalPhysicalPixelSpacing(float VerticalPhysicalPixelSpacing) {
-        attributes.put("VerticalPhysicalPixelSpacing", VerticalPhysicalPixelSpacing);
+        standardAttributes.put("VerticalPhysicalPixelSpacing", VerticalPhysicalPixelSpacing);
     }
 
     public float getHorizontalPosition() {
         try {
-            return (float) attributes.get("HorizontalPosition");
+            return (float) standardAttributes.get("HorizontalPosition");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setHorizontalPosition(float HorizontalPosition) {
-        attributes.put("HorizontalPosition", HorizontalPosition);
+        standardAttributes.put("HorizontalPosition", HorizontalPosition);
     }
 
     public float getVerticalPosition() {
         try {
-            return (float) attributes.get("VerticalPosition");
+            return (float) standardAttributes.get("VerticalPosition");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setVerticalPosition(float VerticalPosition) {
-        attributes.put("VerticalPosition", VerticalPosition);
+        standardAttributes.put("VerticalPosition", VerticalPosition);
     }
 
     public float getHorizontalPixelOffset() {
         try {
-            return (float) attributes.get("HorizontalPixelOffset");
+            return (float) standardAttributes.get("HorizontalPixelOffset");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setHorizontalPixelOffset(float HorizontalPixelOffset) {
-        attributes.put("HorizontalPixelOffset", HorizontalPixelOffset);
+        standardAttributes.put("HorizontalPixelOffset", HorizontalPixelOffset);
     }
 
     public float getVerticalPixelOffset() {
         try {
-            return (float) attributes.get("VerticalPixelOffset");
+            return (float) standardAttributes.get("VerticalPixelOffset");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setVerticalPixelOffset(float verticalPixelOffset) {
-        attributes.put("VerticalPixelOffset", verticalPixelOffset);
+        standardAttributes.put("VerticalPixelOffset", verticalPixelOffset);
     }
 
     public float getHorizontalScreenSize() {
         try {
-            return (float) attributes.get("HorizontalScreenSize");
+            return (float) standardAttributes.get("HorizontalScreenSize");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setHorizontalScreenSize(float horizontalScreenSize) {
-        attributes.put("HorizontalScreenSize", horizontalScreenSize);
+        standardAttributes.put("HorizontalScreenSize", horizontalScreenSize);
     }
 
     public float getVerticalScreenSize() {
         try {
-            return (float) attributes.get("VerticalScreenSize");
+            return (float) standardAttributes.get("VerticalScreenSize");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setVerticalScreenSize(float verticalScreenSize) {
-        attributes.put("VerticalScreenSize", verticalScreenSize);
+        standardAttributes.put("VerticalScreenSize", verticalScreenSize);
     }
 
     public String getFormatVersion() {
         try {
-            return (String) attributes.get("FormatVersion");
+            return (String) standardAttributes.get("FormatVersion");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setFormatVersion(String formatVersion) {
-        attributes.put("FormatVersion", formatVersion);
+        standardAttributes.put("FormatVersion", formatVersion);
     }
 
     public String getSubimageInterpretation() {
         try {
-            return (String) attributes.get("SubimageInterpretation");
+            return (String) standardAttributes.get("SubimageInterpretation");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setSubimageInterpretation(String subimageInterpretation) {
-        attributes.put("SubimageInterpretation", subimageInterpretation);
+        standardAttributes.put("SubimageInterpretation", subimageInterpretation);
     }
 
     public String getImageCreationTime() {
         try {
-            return (String) attributes.get("ImageCreationTime");
+            return (String) standardAttributes.get("ImageCreationTime");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setImageCreationTime(String imageCreationTime) {
-        attributes.put("ImageCreationTime", imageCreationTime);
+        standardAttributes.put("ImageCreationTime", imageCreationTime);
     }
 
     public String getImageModificationTime() {
         try {
-            return (String) attributes.get("ImageModificationTime");
+            return (String) standardAttributes.get("ImageModificationTime");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setImageModificationTime(String imageModificationTime) {
-        attributes.put("ImageModificationTime", imageModificationTime);
+        standardAttributes.put("ImageModificationTime", imageModificationTime);
     }
 
     public int getTransparentIndex() {
         try {
-            return (int) attributes.get("TransparentIndex");
+            return (int) standardAttributes.get("TransparentIndex");
         } catch (Exception e) {
             return -1;
         }
     }
 
     public void setTransparentIndex(int transparentIndex) {
-        attributes.put("TransparentIndex", transparentIndex);
+        standardAttributes.put("TransparentIndex", transparentIndex);
     }
 
     public String getTransparentColor() {
         try {
-            return (String) attributes.get("TransparentColor");
+            return (String) standardAttributes.get("TransparentColor");
         } catch (Exception e) {
             return null;
         }
     }
 
     public void setTransparentColor(String transparentColor) {
-        attributes.put("TransparentColor", transparentColor);
+        standardAttributes.put("TransparentColor", transparentColor);
+    }
+
+    public List<ImageTypeSpecifier> getImageTypes() {
+        return imageTypes;
+    }
+
+    public void setImageTypes(List<ImageTypeSpecifier> imageTypes) {
+        this.imageTypes = imageTypes;
+    }
+
+    public byte[] getIccProfile() {
+        return iccProfile;
+    }
+
+    public void setIccProfile(byte[] iccProfile) {
+        this.iccProfile = iccProfile;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public String getProfileCompressionMethod() {
+        return profileCompressionMethod;
+    }
+
+    public void setProfileCompressionMethod(String profileCompressionMethod) {
+        this.profileCompressionMethod = profileCompressionMethod;
     }
 
 }

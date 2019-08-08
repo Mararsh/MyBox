@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -22,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRenameController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRenameController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -33,178 +31,16 @@ License:    Apache License Version 2.0
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                             <VBox.margin>
-                                <Insets top="5.0" />
+                                <Insets />
                             </VBox.margin>
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                            <items>
-                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction"   onMouseEntered="#popFileAdd"  >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconAddFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction"  onMouseEntered="#popDirectoryAdd" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconAddFolder.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction"  onMouseEntered="#popFileInsert" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconInsertFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction"  onMouseEntered="#popDirectoryInsert" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconInsertFolder.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconUp.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDown.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilesAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconClear.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDeleteFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="recoveryAllButton" disable="true" mnemonicParsing="false" onAction="#recoveryAllAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconRecover.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="recoverySelectedButton" disable="true" mnemonicParsing="false" onAction="#recoverySelectedAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconRestoreFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </items>
-                                        </ToolBar>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                        <TableColumn fx:id="handledColumn" prefWidth="220.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%OriginalFileName" />
-                                                        <TableColumn fx:id="newColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%NewFileName" />
-                                                        <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
-                                                        <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
-                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                                                    </columns>
-                                                </TableView>
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
-                                </VBox>
+                                <fx:include fx:id="table" source="FilesRenameTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </TitledPane>
-                        <TitledPane maxWidth="1.7976931348623157E308" text="%SourceFilesOptions" VBox.vgrow="NEVER">
+                        <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%TargetFiles" VBox.vgrow="NEVER">
                             <content>
                                 <VBox spacing="10.0">
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                            <children>
-                                                <CheckBox fx:id="filesNameCheck" mnemonicParsing="false" text="%OnlyFilenameInclude" />
-                                                <TextField fx:id="filesNameInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
-                                                <Label text="%SeparateBySpace" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </content>
-                            <VBox.margin>
-                                <Insets top="5.0" />
-                            </VBox.margin>
-                        </TitledPane>
-                        <TitledPane maxWidth="1.7976931348623157E308" text="%TargetFiles" VBox.vgrow="NEVER">
-                            <content>
-                                <VBox spacing="10.0">
-                                    <children>
-                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Label text="%FileNamePrefix" />
-                                                <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
-                                                <CheckBox fx:id="stringCheck" mnemonicParsing="false" selected="true" text="%IncludeString" />
-                                                <TextField fx:id="stringInput" prefWidth="200.0" />
-                                            </children>
-                                        </HBox>
-                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                            <children>
-                                                <CheckBox fx:id="accumCheck" mnemonicParsing="false" selected="true" text="%AppendAccumulatingNumber">
-                                                    <HBox.margin>
-                                                        <Insets left="20.0" />
-                                                    </HBox.margin>
-                                                </CheckBox>
-                                                <Label text="%From">
-                                                    <HBox.margin>
-                                                        <Insets />
-                                                    </HBox.margin>
-                                                </Label>
-                                                <TextField fx:id="acumFromInput" prefWidth="40.0" text="0" />
-                                                <CheckBox fx:id="fillZero" mnemonicParsing="false" selected="true" text="%FillZero" />
-                                                <Label text="%Digit" />
-                                                <TextField fx:id="digitInput" prefWidth="40.0" />
-                                                <Label text="%AccumDigitComments" />
-                                            </children>
-                                        </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <VBox.margin>
                                                 <Insets />
@@ -212,7 +48,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%Sort">
                                                     <HBox.margin>
-                                                        <Insets left="60.0" />
+                                                        <Insets />
                                                     </HBox.margin>
                                                 </Label>
                                                 <RadioButton mnemonicParsing="false" selected="true" text="%AddedSequence">
@@ -229,6 +65,34 @@ License:    Apache License Version 2.0
                                                         <Insets left="20.0" />
                                                     </HBox.margin>
                                                 </CheckBox>
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                                            <children>
+                                                <Label text="%FileNamePrefix" />
+                                                <CheckBox fx:id="originalCheck" mnemonicParsing="false" text="%IncludeOriginalFileName" />
+                                                <CheckBox fx:id="stringCheck" mnemonicParsing="false" selected="true" text="%IncludeString" />
+                                                <TextField fx:id="stringInput" HBox.hgrow="ALWAYS" />
+                                            </children>
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                            <children>
+                                    <Label text="%FileNamePrefix" visible="false" />
+                                                <CheckBox fx:id="accumCheck" mnemonicParsing="false" selected="true" text="%AppendAccumulatingNumber">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </CheckBox>
+                                                <Label text="%From">
+                                                    <HBox.margin>
+                                                        <Insets />
+                                                    </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="acumFromInput" prefWidth="40.0" text="0" />
+                                                <CheckBox fx:id="fillZeroCheck" mnemonicParsing="false" selected="true" text="%FillZero" />
+                                                <Label text="%Digit" />
+                                                <TextField fx:id="digitInput" prefWidth="40.0" />
+                                                <Label text="%AccumDigitComments" />
                                             </children>
                                         </HBox>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">

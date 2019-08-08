@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
             <children>
                 <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
                     <children>
@@ -98,12 +98,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox fx:id="operation2Box" alignment="CENTER_LEFT">
                     <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                             <items>
                                 <Label text="dpi" />
                                 <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
@@ -268,15 +263,11 @@ License:    Apache License Version 2.0
                       </ScrollPane>
                </items>
             </SplitPane>
-                <HBox fx:id="pageNavBox" alignment="CENTER_LEFT" disable="true" VBox.vgrow="NEVER">
+                <HBox fx:id="pageNavBox" alignment="CENTER_LEFT" disable="true" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar fx:id="rangeBar" HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar HBox.hgrow="NEVER">
-                            <items>
+                  <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                     <items>
+                        <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />
@@ -316,7 +307,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="nextButton" defaultButton="true" mnemonicParsing="false" onAction="#nextAction">
+                                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -325,8 +316,8 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                            </items>
-                        </ToolBar>
+                     </items>
+                  </ToolBar>
                     </children>
                 </HBox>
             </children>

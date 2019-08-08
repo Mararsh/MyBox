@@ -14,8 +14,8 @@ import static mara.mybox.color.ColorBase.array;
 import static mara.mybox.color.ColorBase.arrayDouble;
 import static mara.mybox.color.ColorBase.clipRGB;
 import static mara.mybox.tools.DoubleTools.scale;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -328,13 +328,13 @@ public class CIEData {
 
     public String cie1931Observer2Degree1nmString(ColorSpace cs) {
         List<CIEData> data = cie1931Observer2Degree1nmData(cs);
-        String title = getMessage("CIE1931Observer2DegreeAndSRGB");
+        String title = message("CIE1931Observer2DegreeAndSRGB");
         return cieString(data, cs, title);
     }
 
     public String cie1964Observer10Degree1nmString(ColorSpace cs) {
         List<CIEData> data = cie1964Observer10Degree1nmData(cs);
-        String title = getMessage("CIE1964Observer10DegreeAndSRGB");
+        String title = message("CIE1964Observer10DegreeAndSRGB");
         return cieString(data, cs, title);
     }
 
@@ -358,13 +358,13 @@ public class CIEData {
 
     public String cie1931Observer2Degree5nmString(ColorSpace cs) {
         List<CIEData> data = cie1931Observer2Degree5nmData(cs);
-        String title = getMessage("CIE1931Observer2DegreeAndSRGB");
+        String title = message("CIE1931Observer2DegreeAndSRGB");
         return cieString(data, cs, title);
     }
 
     public String cie1964Observer10Degree5nmString(ColorSpace cs) {
         List<CIEData> data = cie1964Observer10Degree5nmData(cs);
-        String title = getMessage("CIE1964Observer10DegreeAndSRGB");
+        String title = message("CIE1964Observer10DegreeAndSRGB");
         return cieString(data, cs, title);
     }
 
@@ -553,19 +553,19 @@ public class CIEData {
             if (title != null) {
                 s.append(title).append("\n\n");
             }
-            s.append(getMessage("WaveLength")).append(sp).
-                    append(getMessage("TristimulusX")).append(sp).append(getMessage("TristimulusY")).append(sp).append(getMessage("TristimulusZ")).append(sp).
-                    append(getMessage("NormalizedX")).append(sp).append(getMessage("NormalizedY")).append(sp).append(getMessage("NormalizedZ")).append(sp).
-                    append(getMessage("RelativeX")).append(sp).append(getMessage("RelativeY")).append(sp).append(getMessage("RelativeZ")).append(sp);
+            s.append(message("WaveLength")).append(sp).
+                    append(message("TristimulusX")).append(sp).append(message("TristimulusY")).append(sp).append(message("TristimulusZ")).append(sp).
+                    append(message("NormalizedX")).append(sp).append(message("NormalizedY")).append(sp).append(message("NormalizedZ")).append(sp).
+                    append(message("RelativeX")).append(sp).append(message("RelativeY")).append(sp).append(message("RelativeZ")).append(sp);
             int num = 0;
             if (cs != null) {
                 num = cs.getNumComponents();
                 for (int i = 0; i < num; i++) {
-                    s.append(getMessage(cs.getName(i))).append(sp);
+                    s.append(message(cs.getName(i))).append(sp);
                 }
                 if (cs.getType() == ColorSpace.TYPE_RGB) {
                     for (int i = 0; i < num; i++) {
-                        s.append(getMessage(cs.getName(i))).append("-").append(getMessage("Integer")).append(sp);
+                        s.append(message(cs.getName(i))).append("-").append(message("Integer")).append(sp);
                     }
                 }
             }

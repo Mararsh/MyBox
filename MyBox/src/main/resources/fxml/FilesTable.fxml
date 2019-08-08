@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
@@ -12,15 +11,24 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesBatchController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesTableController">
     <children>
-        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+        <ToolBar maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="NEVER">
             <items>
                 <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconAddFile.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" onMouseEntered="#popDirectoryAdd">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconAddFolder.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -34,16 +42,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewFileAction">
+                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" onMouseEntered="#popDirectoryInsert">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconView.png" />
+                                <Image url="@../buttons/iconInsertFolder.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
+                <Button fx:id="upFilesButton" mnemonicParsing="false" onAction="#upFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -52,11 +60,38 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
+                <Button fx:id="downFilesButton" mnemonicParsing="false" onAction="#downFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconDown.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="viewFileButton" mnemonicParsing="false" onAction="#viewFileAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconView.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectAll.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="unselectAllFilesButton" mnemonicParsing="false" onAction="#unselectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectNone.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -70,7 +105,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilesAction">
+                <Button fx:id="clearFilesButton" mnemonicParsing="false" onAction="#clearFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -79,21 +114,28 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
+                <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false" text="%ExpandDirectories" />
             </items>
         </ToolBar>
-        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-            <content>
-                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                    <columns>
-                        <TableColumn fx:id="handledColumn" prefWidth="174.0" text="%Handled" />
-                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%FileName" />
-                        <TableColumn fx:id="sizeColumn" prefWidth="160.0" text="%Size" />
-                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                        <TableColumn fx:id="typeColumn" minWidth="0.0" prefWidth="100.0" text="%Type" />
-                    </columns>
-                </TableView>
-            </content>
-        </ScrollPane>
+        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="handledColumn" editable="false" prefWidth="220.0" text="%Handled" />
+                <TableColumn fx:id="fileColumn" editable="false" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%File" />
+                <TableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
+                <TableColumn fx:id="numberColumn" editable="false" prefWidth="120.0" text="%FilesNumber" />
+                <TableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
+                <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
+                <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
+            </columns>
+        </TableView>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label text="%FileNameFilters" />
+                <ComboBox fx:id="nameFiltersSelector" prefHeight="30.0" prefWidth="200.0" /> 
+                <TextField fx:id="tableFiltersInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+        <Label fx:id="tableLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER" />
     </children>
 </VBox>

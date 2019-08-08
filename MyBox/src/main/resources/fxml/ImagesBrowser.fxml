@@ -84,12 +84,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox fx:id="opBox" alignment="CENTER" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button mnemonicParsing="false" prefWidth="1.0" visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
+                        <ToolBar fx:id="opBar" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                             <items>
                                 <HBox fx:id="opPane" alignment="CENTER" spacing="5.0">
                                     <children>
@@ -104,7 +99,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="paneSizeButton" defaultButton="true" mnemonicParsing="false" onAction="#paneSize">
+                                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -131,7 +126,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="moveRightButton" mnemonicParsing="false" onAction="#moveRight" >
+                                                <Button fx:id="moveRightButton" mnemonicParsing="false" onAction="#moveRight">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -140,7 +135,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUp" >
+                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUp">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -158,7 +153,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="moveLeftButton" mnemonicParsing="false" onAction="#moveLeft" >
+                                                <Button fx:id="moveLeftButton" mnemonicParsing="false" onAction="#moveLeft">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -238,7 +233,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconDeleteFile.png" />
+                                                <Image url="@../buttons/iconRename.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -247,7 +242,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconRename.png" />
+                                                <Image url="@../buttons/iconDeleteFile.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

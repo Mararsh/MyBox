@@ -12,9 +12,10 @@ import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.shortToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVaribles.getMessage;
-import static mara.mybox.value.CommonValues.Indent;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.CommonValues.Indent;
 
 /**
  * @Author Mara
@@ -24,8 +25,8 @@ import static mara.mybox.value.AppVaribles.logger;
  * @License Apache License Version 2.0
  */
 public class IccTagType {
-    // All in Big-Endian
 
+    // All in Big-Endian
     public static String[][] IlluminantTypes = {
         {"0", "Unknown"},
         {"1", "D50"},
@@ -226,12 +227,13 @@ public class IccTagType {
             return null;
         }
         String signature = new String(subBytes(bytes, 0, 4));
-        if ("desc".equals(signature)) {
-            return textDescription(bytes);
-        } else if ("mluc".equals(signature)) {
-            return multiLocalizedUnicodes(bytes);
-        } else {
-            return null;
+        switch (signature) {
+            case "desc":
+                return textDescription(bytes);
+            case "mluc":
+                return multiLocalizedUnicodes(bytes);
+            default:
+                return null;
         }
     }
 
@@ -438,6 +440,7 @@ public class IccTagType {
             double e9 = IccTagType.s15Fixed16Number(subBytes(bytes, 44, 4));
             values.put("e9", e9);
             int offset = 48;
+            int maxItems = AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500);
             List<List<Double>> InputTables = new ArrayList();
             for (int n = 0; n < 256; n++) {
                 List<Double> InputTable = new ArrayList();
@@ -450,6 +453,10 @@ public class IccTagType {
                     }
                 }
                 InputTables.add(InputTable);
+                if (InputTables.size() >= maxItems) {
+                    values.put("InputTablesTruncated", true);
+                    break;
+                }
             }
             values.put("InputTables", InputTables);
             List<List<Double>> CLUTTables = new ArrayList();
@@ -465,6 +472,10 @@ public class IccTagType {
                     }
                 }
                 CLUTTables.add(GridPoint);
+                if (CLUTTables.size() >= maxItems) {
+                    values.put("CLUTTablesTruncated", true);
+                    break;
+                }
             }
             values.put("CLUTTables", CLUTTables);
             List<List<Double>> OutputTables = new ArrayList();
@@ -479,6 +490,10 @@ public class IccTagType {
                     }
                 }
                 OutputTables.add(OutputTable);
+                if (OutputTables.size() >= maxItems) {
+                    values.put("OutputTablesTruncated", true);
+                    break;
+                }
             }
             values.put("OutputTables", OutputTables);
 
@@ -525,6 +540,7 @@ public class IccTagType {
             values.put("OutputTablesNumber", OutputTablesNumber);
 
             int offset = 52;
+            int maxItems = AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500);
             List<List<Double>> InputTables = new ArrayList();
             for (int n = 0; n < InputTablesNumber; n++) {
                 List<Double> InputTable = new ArrayList();
@@ -538,6 +554,10 @@ public class IccTagType {
                     offset += 2;
                 }
                 InputTables.add(InputTable);
+                if (InputTables.size() >= maxItems) {
+                    values.put("InputTablesTruncated", true);
+                    break;
+                }
             }
             values.put("InputTables", InputTables);
             List<List<Double>> CLUTTables = new ArrayList();
@@ -554,6 +574,10 @@ public class IccTagType {
                     offset += 2;
                 }
                 CLUTTables.add(GridPoint);
+                if (CLUTTables.size() >= maxItems) {
+                    values.put("CLUTTablesTruncated", true);
+                    break;
+                }
             }
             values.put("CLUTTables", CLUTTables);
             List<List<Double>> OutputTables = new ArrayList();
@@ -569,6 +593,10 @@ public class IccTagType {
                     offset += 2;
                 }
                 OutputTables.add(OutputTable);
+                if (OutputTables.size() >= maxItems) {
+                    values.put("OutputTablesTruncated", true);
+                    break;
+                }
             }
             values.put("OutputTables", OutputTables);
 
@@ -666,9 +694,9 @@ public class IccTagType {
                 d = "19" + d;
             }
             if (d.length() != 19
-                    || d.indexOf("-") != 4 || d.indexOf("-", 5) != 7
-                    || d.indexOf(" ") != 10
-                    || d.indexOf(":") != 13 || d.indexOf(":", 14) != 16) {
+                    || d.indexOf('-') != 4 || d.indexOf('-', 5) != 7
+                    || d.indexOf(' ') != 10
+                    || d.indexOf(':') != 13 || d.indexOf(':', 14) != 16) {
                 return null;
             }
             byte[] bytes = new byte[12];
@@ -1042,19 +1070,19 @@ public class IccTagType {
 
     public static String textDescriptionFullDisplay(Map<String, Object> values) {
         String s = "";
-        s += getMessage("AsciiLength") + ": " + values.get("AsciiLength") + "\n";
+        s += message("AsciiLength") + ": " + values.get("AsciiLength") + "\n";
         s += values.get("Ascii") + "\n\n";
 
         try {
             if (values.get("UnicodeCode") != null) {
-                s += getMessage("UnicodeCode") + ": " + values.get("UnicodeCode") + "  ";
-                s += getMessage("UnicodeLength") + ": " + values.get("UnicodeLength") + "\n";
+                s += message("UnicodeCode") + ": " + values.get("UnicodeCode") + "  ";
+                s += message("UnicodeLength") + ": " + values.get("UnicodeLength") + "\n";
                 s += values.get("Unicode") + "\n\n";
             }
 
             if (values.get("ScriptCodeCode") != null) {
-                s += getMessage("ScriptCodeCode") + ": " + values.get("ScriptCodeCode") + "  ";
-                s += getMessage("ScriptCodeLength") + ": " + values.get("ScriptCodeLength") + "\n";
+                s += message("ScriptCodeCode") + ": " + values.get("ScriptCodeCode") + "  ";
+                s += message("ScriptCodeLength") + ": " + values.get("ScriptCodeLength") + "\n";
                 s += values.get("ScriptCode");
             }
         } catch (Exception e) {
@@ -1102,13 +1130,13 @@ public class IccTagType {
     public static String viewingConditionsDisplay(Map<String, Object> values) {
         String s = "";
         double[] illuminant = (double[]) values.get("illuminant");
-        s += getMessage("Illuminant") + ": "
+        s += message("Illuminant") + ": "
                 + illuminant[0] + Indent + illuminant[1] + Indent + illuminant[2] + "\n";
         double[] surround = (double[]) values.get("surround");
-        s += getMessage("Surround") + ": "
+        s += message("Surround") + ": "
                 + surround[0] + Indent + surround[1] + Indent + surround[2] + "\n";
         String type = (String) values.get("illuminantType");
-        s += getMessage("Type") + ": " + type;
+        s += message("Type") + ": " + type;
         return s;
     }
 
@@ -1120,16 +1148,16 @@ public class IccTagType {
     public static String measurementDisplay(Map<String, Object> values) {
         String s = "";
         String observer = (String) values.get("observer");
-        s += getMessage("Observer") + ": " + observer + "\n";
+        s += message("Observer") + ": " + observer + "\n";
         double[] tristimulus = (double[]) values.get("tristimulus");
-        s += getMessage("Tristimulus") + ": "
+        s += message("Tristimulus") + ": "
                 + tristimulus[0] + Indent + tristimulus[1] + Indent + tristimulus[2] + "\n";
         String geometry = (String) values.get("geometry");
-        s += getMessage("Geometry") + ": " + geometry + "\n";
+        s += message("Geometry") + ": " + geometry + "\n";
         double flare = (double) values.get("flare");
-        s += getMessage("Flare") + ": " + flare + "\n";
+        s += message("Flare") + ": " + flare + "\n";
         String type = (String) values.get("illuminantType");
-        s += getMessage("Type") + ": " + type;
+        s += message("Type") + ": " + type;
         return s;
     }
 
@@ -1156,55 +1184,68 @@ public class IccTagType {
 
     public static String lutDisplay(Map<String, Object> values) {
         String s = "";
-        s += getMessage("InputChannelsNumber") + ": " + values.get("InputChannelsNumber") + "  ";
-        s += getMessage("OutputChannelsNumber") + ": " + values.get("OutputChannelsNumber") + "  ";
-        String type = (String) values.get("type");
-        s += getMessage("Type") + ": " + type + "\n";
-        if (type.equals("lut8") || type.equals("lut16")) {
-            s += getMessage("GridPointsNumber") + ": " + values.get("GridPointsNumber") + "\n";
-            s += getMessage("Matrix") + ": \n";
-            s += Indent + values.get("e1") + Indent + values.get("e2") + Indent + values.get("e3") + "\n";
-            s += Indent + values.get("e4") + Indent + values.get("e5") + Indent + values.get("e6") + "\n";
-            s += Indent + values.get("e7") + Indent + values.get("e8") + Indent + values.get("e9") + "\n";
-
-            if (type.equals("lut16")) {
-                s += getMessage("InputTablesNumber") + ": " + values.get("InputTablesNumber") + "   ";
-                s += getMessage("OutputTablesNumber") + ": " + values.get("OutputTablesNumber") + "\n";
-            }
-            s += getMessage("InputTables") + ": " + "\n";
-            List<List<Object>> InputTables = (List<List<Object>>) values.get("InputTables");
-            for (List<Object> input : InputTables) {
-                s += Indent;
-                for (Object v : input) {
-                    s += v + Indent;
-                }
-                s += "\n";
-            }
-            s += getMessage("CLUTTables") + ": " + "\n";
-            List<List<Object>> CLUTTables = (List<List<Object>>) values.get("CLUTTables");
-            for (List<Object> GridPoint : CLUTTables) {
-                s += Indent;
-                for (Object v : GridPoint) {
-                    s += v + Indent;
-                }
-                s += "\n";
-            }
-            s += getMessage("OutputTables") + ": " + "\n";
-            List<List<Object>> OutputTables = (List<List<Object>>) values.get("OutputTables");
-            for (List<Object> output : OutputTables) {
-                s += Indent;
-                for (Object v : output) {
-                    s += v + Indent;
-                }
-                s += "\n";
-            }
+        s += message("InputChannelsNumber") + ": " + values.get("InputChannelsNumber") + "  ";
+        s += message("OutputChannelsNumber") + ": " + values.get("OutputChannelsNumber") + "  ";
+        if (values.get("type") == null) {
+            s += message("Type") + ": " + message("NotDecoded") + "\n";
         } else {
-            s += "OffsetBCurve:" + values.get("OffsetBCurve") + "\n";
-            s += "OffsetMatrix:" + values.get("OffsetMatrix") + "\n";
-            s += "OffsetMCurve:" + values.get("OffsetMCurve") + "\n";
-            s += "OffsetCLUT:" + values.get("OffsetCLUT") + "\n";
-            s += "OffsetACurve:" + values.get("OffsetACurve") + "\n";
+            String type = (String) values.get("type");
+            s += message("Type") + ": " + type + "\n";
+            if (type.equals("lut8") || type.equals("lut16")) {
+                s += message("GridPointsNumber") + ": " + values.get("GridPointsNumber") + "\n";
+                s += message("Matrix") + ": \n";
+                s += Indent + values.get("e1") + Indent + values.get("e2") + Indent + values.get("e3") + "\n";
+                s += Indent + values.get("e4") + Indent + values.get("e5") + Indent + values.get("e6") + "\n";
+                s += Indent + values.get("e7") + Indent + values.get("e8") + Indent + values.get("e9") + "\n";
 
+                if (type.equals("lut16")) {
+                    s += message("InputTablesNumber") + ": " + values.get("InputTablesNumber") + "   ";
+                    s += message("OutputTablesNumber") + ": " + values.get("OutputTablesNumber") + "\n";
+                }
+                s += message("InputTables") + ": " + "\n";
+                List<List<Object>> InputTables = (List<List<Object>>) values.get("InputTables");
+                for (List<Object> input : InputTables) {
+                    s += Indent;
+                    for (Object v : input) {
+                        s += v + Indent;
+                    }
+                    s += "\n";
+                }
+                if (values.get("InputTablesTruncated") != null) {
+                    s += Indent + "-----" + message("Truncated") + "-----" + "\n";
+                }
+                s += message("CLUTTables") + ": " + "\n";
+                List<List<Object>> CLUTTables = (List<List<Object>>) values.get("CLUTTables");
+                for (List<Object> GridPoint : CLUTTables) {
+                    s += Indent;
+                    for (Object v : GridPoint) {
+                        s += v + Indent;
+                    }
+                    s += "\n";
+                }
+                if (values.get("CLUTTablesTruncated") != null) {
+                    s += Indent + "-----" + message("Truncated") + "-----" + "\n";
+                }
+                s += message("OutputTables") + ": " + "\n";
+                List<List<Object>> OutputTables = (List<List<Object>>) values.get("OutputTables");
+                for (List<Object> output : OutputTables) {
+                    s += Indent;
+                    for (Object v : output) {
+                        s += v + Indent;
+                    }
+                    s += "\n";
+                }
+                if (values.get("OutputTablesTruncated") != null) {
+                    s += Indent + "-----" + message("Truncated") + "-----" + "\n";
+                }
+            } else {
+                s += "OffsetBCurve:" + values.get("OffsetBCurve") + "\n";
+                s += "OffsetMatrix:" + values.get("OffsetMatrix") + "\n";
+                s += "OffsetMCurve:" + values.get("OffsetMCurve") + "\n";
+                s += "OffsetCLUT:" + values.get("OffsetCLUT") + "\n";
+                s += "OffsetACurve:" + values.get("OffsetACurve") + "\n";
+
+            }
         }
 
         return s;

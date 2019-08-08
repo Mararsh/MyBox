@@ -1,39 +1,21 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.PdfBatchBaseController;
 import java.io.File;
-import java.util.Calendar;
-import javafx.application.Platform;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
-import mara.mybox.data.FileInformation;
-import mara.mybox.fxml.FxmlControl;
+import mara.mybox.controller.base.PdfBatchController;
+import mara.mybox.data.PdfInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import org.apache.pdfbox.io.MemoryUsageSetting;
+import mara.mybox.tools.PdfTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import static mara.mybox.value.AppVaribles.getUserConfigValue;
 
 /**
  * @Author Mara
@@ -41,237 +23,116 @@ import static mara.mybox.value.AppVaribles.getUserConfigValue;
  * @Description
  * @License Apache License Version 2.0
  */
-public class PdfMergeController extends PdfBatchBaseController {
+public class PdfMergeController extends PdfBatchController {
 
-    final private String AuthorKey;
+    private PDFMergerUtility mergePdf;
+    private PageExtractor extractor;
+    private PDDocument targetDoc;
 
-    @FXML
-    private Button viewTargetFileButton;
-    @FXML
-    private TextField authorInput;
     @FXML
     private CheckBox deleteCheck;
-    @FXML
-    protected HBox pdfMemBox;
-    @FXML
-    private ToggleGroup pdfMemGroup;
-    @FXML
-    private RadioButton pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio;
 
     public PdfMergeController() {
-        baseTitle = AppVaribles.getMessage("MergePdf");
-
-        AuthorKey = "AuthorKey";
+        baseTitle = AppVaribles.message("MergePdf");
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
+            super.initializeNext();
             allowPaused = false;
 
-            initTargetSection();
-            initOptionsSection();
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    @Override
-    public void initTargetSection() {
-        try {
-            targetFileInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    viewTargetFileButton.setDisable(true);
-                    try {
-                        targetFile = new File(newValue);
-                        if (!newValue.toLowerCase().endsWith(".pdf")) {
-                            targetFile = null;
-                            targetFileInput.setStyle(badStyle);
-                            return;
-                        }
-                        targetFileInput.setStyle(null);
-                        AppVaribles.setUserConfigValue(targetPathKey, targetFile.getParent());
-                    } catch (Exception e) {
-                        targetFile = null;
-                        targetFileInput.setStyle(badStyle);
-                    }
-                }
-            });
-            saveButton.disableProperty().bind(Bindings.isEmpty(tableView.getItems())
-                    .or(Bindings.isEmpty(targetFileInput.textProperty()))
-                    .or(targetFileInput.styleProperty().isEqualTo(badStyle))
+            startButton.disableProperty().unbind();
+            startButton.disableProperty().bind(
+                    Bindings.isEmpty(tableView.getItems())
+                            .or(Bindings.isEmpty(targetFileInput.textProperty()))
+                            .or(targetFileInput.styleProperty().isEqualTo(badStyle))
             );
 
-            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
-
     }
 
     @Override
-    public void initOptionsSection() {
-
-        authorInput.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setUserConfigValue(AuthorKey, newValue);
-            }
-        });
-        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
-
-        Tooltip tips = new Tooltip(getMessage("PdfMemComments"));
-        tips.setFont(new Font(16));
-
-        checkPdfMem();
-
-    }
-
-    protected void checkPdfMem() {
-        String pm = getUserConfigValue("PdfMemDefault", "1GB");
-        switch (pm) {
-            case "1GB":
-                pdfMem1GRadio.setSelected(true);
-                break;
-            case "2GB":
-                pdfMem2GRadio.setSelected(true);
-                break;
-            case "Unlimit":
-                pdfMemUnlimitRadio.setSelected(true);
-                break;
-            case "500MB":
-            default:
-                pdfMem500MRadio.setSelected(true);
+    public boolean makeMoreParameters() {
+        if (mergePdf == null) {
+            mergePdf = new PDFMergerUtility();
         }
-    }
-
-    @FXML
-    protected void PdfMem500MB(ActionEvent event) {
-        AppVaribles.setPdfMem("500MB");
-    }
-
-    @FXML
-    protected void PdfMem1GB(ActionEvent event) {
-        AppVaribles.setPdfMem("1GB");
-    }
-
-    @FXML
-    protected void PdfMem2GB(ActionEvent event) {
-        AppVaribles.setPdfMem("2GB");
-    }
-
-    @FXML
-    protected void pdfMemUnlimit(ActionEvent event) {
-        AppVaribles.setPdfMem("Unlimit");
-    }
-
-    @FXML
-    protected void viewAction(ActionEvent event) {
-        if (!targetFile.exists()) {
-            viewTargetFileButton.setDisable(true);
-            return;
+        targetDoc = PdfTools.createPDF(targetFile);
+        if (mergePdf == null || targetDoc == null) {
+            return false;
         }
-        viewTargetFileButton.setDisable(false);
-        view(targetFile);
+        return makeBatchParameters();
     }
 
-    @FXML
     @Override
-    public void saveAction() {
-        if (tableData == null || tableData.isEmpty()
-                || targetFile == null) {
-            return;
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-            private PDDocument document;
-            private String errorString;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    final MemoryUsageSetting memSettings = AppVaribles.pdfMemUsage.setTempDir(AppVaribles.getUserTempPath());
-
-                    PDFMergerUtility mergePdf = new PDFMergerUtility();
-                    for (FileInformation source : tableData) {
-                        mergePdf.addSource(source.getFile());
+    public String handleFile(File srcFile, File targetPath) {
+        int generated = 0;
+        doc = null;
+        if (PdfTools.isPDF(srcFile)) {
+            try {
+                currentParameters.currentSourceFile = srcFile;
+                PdfInformation info = tableData.get(currentParameters.currentIndex);
+                actualParameters.fromPage = info.getFromPage();
+                if (actualParameters.fromPage <= 0) {
+                    actualParameters.fromPage = 1;
+                }
+                actualParameters.toPage = info.getToPage();
+                actualParameters.password = info.getUserPassword();
+                try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+                        currentParameters.password, AppVaribles.pdfMemUsage)) {
+                    doc = pd;
+                    if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
+                        currentParameters.toPage = doc.getNumberOfPages();
                     }
-                    mergePdf.setDestinationFileName(targetFile.getAbsolutePath());
-                    mergePdf.mergeDocuments(memSettings);
-
-                    try (PDDocument doc = PDDocument.load(targetFile, memSettings)) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + CommonValues.AppVersion);
-                        info.setAuthor(authorInput.getText());
-                        doc.setDocumentInformation(info);
-                        document = doc;
-
-                        PDPage page = doc.getPage(0);
-                        PDPageXYZDestination dest = new PDPageXYZDestination();
-                        dest.setPage(page);
-                        dest.setZoom(1f);
-                        dest.setTop((int) page.getCropBox().getHeight());
-                        PDActionGoTo action = new PDActionGoTo();
-                        action.setDestination(dest);
-                        doc.getDocumentCatalog().setOpenAction(action);
-
-                        doc.save(targetFile);
+                    currentParameters.currentTargetPath = targetPath;
+                    extractor = new PageExtractor(doc, currentParameters.fromPage, currentParameters.toPage);
+                    PDDocument subDoc = extractor.extract();
+                    if (subDoc != null) {
+                        mergePdf.appendDocument(targetDoc, subDoc);
+                        subDoc.close();
+                        generated = 1;
                     }
-
-                    if (deleteCheck.isSelected()) {
-                        for (FileInformation source : tableData) {
-                            try {
-                                source.getFile().delete();
-                            } catch (Exception e) {
-                            }
-                        }
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                tableController.clearFilesAction();
-                            }
-                        });
-                    }
-
-                    ok = true;
-
-                } catch (Exception e) {
-                    errorString = e.toString();
-                    logger.error(e.toString());
+                    doc.close();
                 }
 
-                return null;
+                updateInterface("CompleteFile");
+            } catch (Exception e) {
+                logger.error(e.toString());
             }
+        }
+        return MessageFormat.format(AppVaribles.message("HandlePagesGenerateNumber"),
+                currentParameters.toPage - currentParameters.fromPage, generated);
+    }
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
+    @Override
+    public void donePost() {
+        try {
+            if (targetDoc != null) {
+                targetDoc.save(targetFile);
+                targetDoc.close();
+                currentParameters.finalTargetName = targetFile.getAbsolutePath();
+                targetFiles.add(targetFile);
+
+                if (deleteCheck.isSelected()) {
+                    List<PdfInformation> sources = new ArrayList();
+                    sources.addAll(tableData);
+                    for (int i = sources.size() - 1; i >= 0; i--) {
                         try {
-                            if (ok && targetFile.exists()) {
-                                view(targetFile);
-                                viewTargetFileButton.setDisable(false);
-                            } else {
-                                popError(errorString);
-                            }
+                            PdfInformation source = sources.get(i);
+                            source.getFile().delete();
+                            tableData.remove(i);
                         } catch (Exception e) {
-                            logger.error(e.toString());
-                            popError(e.toString());
                         }
                     }
-                });
+                }
             }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+        targetDoc = null;
+        super.donePost();
     }
 
 }

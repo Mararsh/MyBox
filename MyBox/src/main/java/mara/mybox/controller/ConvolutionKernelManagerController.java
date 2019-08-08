@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,19 +42,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.db.TableConvolutionKernel;
-import mara.mybox.db.TableFloatMatrix;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.ConvolutionKernel.Convolution_Type;
-import mara.mybox.tools.DateTools;
+import mara.mybox.db.TableConvolutionKernel;
+import mara.mybox.db.TableFloatMatrix;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -102,7 +101,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     private RadioButton zeroRadio, keepRadio;
 
     public ConvolutionKernelManagerController() {
-        baseTitle = AppVaribles.getMessage("ConvolutionKernelManager");
+        baseTitle = AppVaribles.message("ConvolutionKernelManager");
     }
 
     @Override
@@ -257,7 +256,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
             actionBox.setDisable(true);
 
-            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+            FxmlControl.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -272,17 +271,17 @@ public class ConvolutionKernelManagerController extends BaseController {
             if (selected == null) {
                 return;
             }
-            if (getMessage("Blur").equals(selected.getText())) {
+            if (message("Blur").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.BLUR;
 
-            } else if (getMessage("Sharpen").equals(selected.getText())) {
+            } else if (message("Sharpen").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.SHARPNEN;
 
-            } else if (getMessage("Emboss").equals(selected.getText())) {
+            } else if (message("Emboss").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.EMBOSS;
                 grayCheck.setDisable(false);
 
-            } else if (getMessage("EdgeDetection").equals(selected.getText())) {
+            } else if (message("EdgeDetection").equals(selected.getText())) {
                 type = ConvolutionKernel.Convolution_Type.EDGE_DETECTION;
 
             }
@@ -301,7 +300,7 @@ public class ConvolutionKernelManagerController extends BaseController {
             if (selected == null) {
                 return;
             }
-            if (!getMessage("KeepValues").equals(selected.getText())) {
+            if (!message("KeepValues").equals(selected.getText())) {
                 edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
             }
         } catch (Exception e) {
@@ -311,7 +310,7 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     private void checkSize() {
         try {
-            width = Integer.valueOf((String) widthBox.getSelectionModel().getSelectedItem());
+            width = Integer.valueOf(widthBox.getSelectionModel().getSelectedItem());
             if (width > 2 && width % 2 != 0) {
                 FxmlControl.setEditorNormal(widthBox);
             } else {
@@ -324,7 +323,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
 
         try {
-            height = Integer.valueOf((String) heightBox.getSelectionModel().getSelectedItem());
+            height = Integer.valueOf(heightBox.getSelectionModel().getSelectedItem());
             if (height > 2 && height % 2 != 0) {
                 FxmlControl.setEditorNormal(heightBox);
             } else {
@@ -446,7 +445,7 @@ public class ConvolutionKernelManagerController extends BaseController {
         desInput.setText("");
         widthBox.getSelectionModel().select("3");
         heightBox.getSelectionModel().select("3");
-        FxmlControl.setRadioSelected(typeGroup, getMessage("None"));
+        FxmlControl.setRadioSelected(typeGroup, message("None"));
         matrixValues = null;
         nameInput.setDisable(false);
         isSettingValues = false;
@@ -467,16 +466,16 @@ public class ConvolutionKernelManagerController extends BaseController {
         heightBox.getSelectionModel().select(kernel.getHeight() + "");
         type = kernel.getType();
         if (type == Convolution_Type.BLUR) {
-            FxmlControl.setRadioSelected(typeGroup, getMessage("Blur"));
+            FxmlControl.setRadioSelected(typeGroup, message("Blur"));
         } else if (type == Convolution_Type.SHARPNEN) {
-            FxmlControl.setRadioSelected(typeGroup, getMessage("Sharpen"));
+            FxmlControl.setRadioSelected(typeGroup, message("Sharpen"));
         } else if (type == Convolution_Type.EMBOSS) {
-            FxmlControl.setRadioSelected(typeGroup, getMessage("Emboss"));
+            FxmlControl.setRadioSelected(typeGroup, message("Emboss"));
             grayCheck.setDisable(false);
         } else if (type == Convolution_Type.EDGE_DETECTION) {
-            FxmlControl.setRadioSelected(typeGroup, getMessage("EdgeDetection"));
+            FxmlControl.setRadioSelected(typeGroup, message("EdgeDetection"));
         } else {
-            FxmlControl.setRadioSelected(typeGroup, getMessage("None"));
+            FxmlControl.setRadioSelected(typeGroup, message("None"));
         }
         if (kernel.getEdge() == ConvolutionKernel.Edge_Op.COPY) {
             keepRadio.fire();
@@ -509,10 +508,10 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVaribles.getMessage("SureDelete"));
+        alert.setContentText(AppVaribles.message("SureDelete"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonCancel) {
@@ -560,10 +559,10 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVaribles.getMessage("SureDelete"));
+        alert.setContentText(AppVaribles.message("SureDelete"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVaribles.getMessage("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.getMessage("Cancel"));
+        ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonCancel) {
@@ -728,8 +727,8 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         ImageManufactureEffectsController c
                 = (ImageManufactureEffectsController) openStage(CommonValues.ImageManufactureEffectsFxml);
-        c.parentController = myController;
-        c.parentFxml = myFxml;
+        c.setParentController(myController);
+        c.setParentFxml(myFxml);
         c.loadImage(new Image("img/p3.png"));
         c.setTab("effects");
         c.showRef();

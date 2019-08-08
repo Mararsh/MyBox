@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -33,95 +31,12 @@ License:    Apache License Version 2.0
                     <children>
                         <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%SourceFiles" VBox.vgrow="ALWAYS">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
-                                            <items>
-                                                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction"  onMouseEntered="#popFileAdd" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconAddFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction"  onMouseEntered="#popFileInsert" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconInsertFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="viewButton" mnemonicParsing="false" onAction="#viewFileAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconView.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconUp.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDown.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="deleteFilesButton" mnemonicParsing="false" onAction="#deleteFilesAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconDeleteFile.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilesAction" >
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconClear.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </items>
-                                        </ToolBar>
-                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true">
-                                                    <columns>
-                                                        <TableColumn fx:id="handledColumn" prefWidth="240.0" text="%Handled" />
-                                                        <TableColumn fx:id="fileColumn" maxWidth="1.7976931348623157E308" prefWidth="400.0" text="%FileName" />
-                                                        <TableColumn fx:id="sizeColumn" prefWidth="140.0" text="%Size" />
-                                                        <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                                                        <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
-                                                    </columns>
-                                                </TableView>
-                                            </content>
-                                        </ScrollPane>
-                                    </children>
-                                </VBox>
+                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </TitledPane>
-                        <TitledPane text="%Options">
+                        <TitledPane minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
                             <content>
-                                <VBox spacing="10.0">
+                                <VBox spacing="5.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                             <children>
@@ -154,7 +69,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%TargetFilesPath" />
                                                 <TextField fx:id="targetPathInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button  fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath"  onMouseEntered="#popTargetPath" >
+                                                <Button fx:id="selectTargetPathButton" mnemonicParsing="false" onAction="#selectTargetPath" onMouseEntered="#popTargetPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

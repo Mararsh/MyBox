@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -86,12 +86,12 @@ public class ChromaticAdaptation {
                         for (ChromaticAdaptationAlgorithm a : ChromaticAdaptationAlgorithm.values()) {
                             double[][] m = matrix(sourceIlluminant, sourceObserver,
                                     targetIlluminant, targetObserver, a, -1);
-                            s.append(getMessage("Source")).append(":  ").append(sourceIlluminant).append(" - ").
+                            s.append(message("Source")).append(":  ").append(sourceIlluminant).append(" - ").
                                     append(sourceObserver).append("\n");
-                            s.append(getMessage("Target")).append(":  ").append(targetIlluminant).append(" - ").
+                            s.append(message("Target")).append(":  ").append(targetIlluminant).append(" - ").
                                     append(targetObserver).append("\n");
-                            s.append(getMessage("Algorithm")).append(":  ").append(a).append("\n");
-                            s.append(getMessage("ChromaticAdaptationMatrix")).append(":  ").append("\n");
+                            s.append(message("Algorithm")).append(":  ").append(a).append("\n");
+                            s.append(message("ChromaticAdaptationMatrix")).append(":  ").append("\n");
                             s.append(MatrixTools.print(m, 20, scale)).append("\n\n");
                         }
                     }
@@ -177,7 +177,7 @@ public class ChromaticAdaptation {
                 double[] result = {x, y, z};
                 if (isDemo) {
                     Map<String, Object> ret = new HashMap();
-                    ret.put("procedure", getMessage("NeedNotAdaptChromatic"));
+                    ret.put("procedure", message("NeedNotAdaptChromatic"));
                     ret.put("matrix", MatrixTools.identityDouble(3));
                     ret.put("adaptedColor", result);
                     return ret;
@@ -200,10 +200,10 @@ public class ChromaticAdaptation {
             double[] result = MatrixTools.columnValues(adaptedColor, 0);
             if (isDemo) {
                 String s = "";
-                s += "\n************* " + getMessage("Step") + " - " + getMessage("ChromaticAdaptationMatrix") + " *************\n\n";
+                s += "\naaaaaaaaaaaaa " + message("Step") + " - " + message("ChromaticAdaptationMatrix") + " aaaaaaaaaaaaa\n\n";
                 s += adaptString + "\n";
 
-                s += "\n************* " + getMessage("Step") + " - " + getMessage("ChromaticAdaptation") + " *************\n\n";
+                s += "\naaaaaaaaaaaaa " + message("Step") + " - " + message("ChromaticAdaptation") + " aaaaaaaaaaaaa\n\n";
                 s += "SourceColor = \n";
                 s += MatrixTools.print(sourceColor, 20, scale);
 
@@ -277,7 +277,7 @@ public class ChromaticAdaptation {
             if (targetWhitePoint == null || MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     Map<String, Object> ret = new HashMap();
-                    ret.put("procedure", getMessage("NeedNotAdaptChromatic"));
+                    ret.put("procedure", message("NeedNotAdaptChromatic"));
                     ret.put("adpatMatrix", MatrixTools.identityDouble(3));
                     return ret;
                 } else {
@@ -325,7 +325,7 @@ public class ChromaticAdaptation {
                 s += "TargetWhitePoint = \n";
                 s += MatrixTools.print(targetWhitePoint, 20, scale);
 
-                s += "\n" + getMessage("Algorithm") + ": " + algorithm + "\n";
+                s += "\n" + message("Algorithm") + ": " + algorithm + "\n";
                 s += "MA = \n";
                 s += MatrixTools.print(MA, 20, scale);
                 s += "MA_Inversed =\n";

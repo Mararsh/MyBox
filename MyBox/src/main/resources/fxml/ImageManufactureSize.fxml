@@ -6,8 +6,6 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-
-
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -186,7 +184,7 @@ License:    Apache License Version 2.0
                                 <Tab fx:id="fileTab" text="%File" />
                                 <Tab fx:id="sizeTab" text="%Size">
                                     <content>
-                                        <VBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
+                                        <VBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
                                                     <children>
@@ -213,57 +211,49 @@ License:    Apache License Version 2.0
                                                         </ToolBar>
                                                     </children>
                                                 </HBox>
-                                                <HBox VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <ToolBar HBox.hgrow="ALWAYS">
-                                                            <items>
-                                                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar HBox.hgrow="NEVER">
-                                                            <items>
-                                                                <HBox fx:id="setBox" alignment="CENTER" spacing="5.0">
-                                                                    <children>
-                                                                        <ChoiceBox fx:id="ratioBox" prefWidth="200.0" />
-                                                                        <ComboBox fx:id="scaleBox" editable="true" prefWidth="100.0" />
-                                                                        <Label fx:id="label1"  text="%Width" />
-                                                                        <TextField fx:id="widthInput" prefWidth="100.0" />
-                                                                        <Label fx:id="label2"  text="%Height" />
-                                                                        <TextField fx:id="heightInput" prefWidth="100.0" />
-                                                                        <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" text="%KeepRatio" />
-                                                                        <Button fx:id="originalButton" mnemonicParsing="false" >
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconOriginalSize.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="calculatorButton" mnemonicParsing="false" >
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconCalculator.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/iconOK.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
-                                                            </items>
-                                                        </ToolBar>
-                                                    </children>
-                                                </HBox>
+                                                <ToolBar HBox.hgrow="ALWAYS" VBox.vgrow="NEVER">
+                                                    <items>
+                                                        <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
+                                                        <HBox fx:id="setBox" alignment="CENTER" spacing="5.0" HBox.hgrow="NEVER">
+                                                            <children>
+                                                                <ChoiceBox fx:id="ratioBox" prefWidth="200.0" />
+                                                                <ComboBox fx:id="scaleBox" editable="true" prefWidth="100.0" />
+                                                                <Label fx:id="label1" text="%Width" />
+                                                                <TextField fx:id="widthInput" prefWidth="100.0" />
+                                                                <Label fx:id="label2" text="%Height" />
+                                                                <TextField fx:id="heightInput" prefWidth="100.0" />
+                                                                <CheckBox fx:id="keepRatioCheck" mnemonicParsing="false" text="%KeepRatio" />
+                                                                <Button fx:id="originalButton" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconOriginalSize.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="calculatorButton" mnemonicParsing="false">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconCalculator.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </items>
+                                                </ToolBar>
                                             </children>
                                         </VBox>
                                     </content>

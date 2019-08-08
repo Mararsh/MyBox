@@ -23,8 +23,9 @@ import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -53,7 +54,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     protected Button calculateButton, exportButton;
 
     public RGBColorSpacesController() {
-        baseTitle = AppVaribles.getMessage("RGBColorSpaces");
+        baseTitle = AppVaribles.message("RGBColorSpaces");
         exportName = "RGBColorSpaces";
     }
 
@@ -211,16 +212,16 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
             double[][] adaptedPrimaries = (double[][]) adapted.get("adaptedPrimaries");
             double[][] normalized = MatrixTools.scale(CIEData.normalize(adaptedPrimaries), scale);
             double[][] relative = MatrixTools.scale(CIEData.relative(adaptedPrimaries), scale);
-            calculateArea.setText(getMessage("AdaptedPrimaries") + ": \n");
-            calculateArea.appendText(getMessage("NormalizedValuesCC") + " = \n");
+            calculateArea.setText(message("AdaptedPrimaries") + ": \n");
+            calculateArea.appendText(message("NormalizedValuesCC") + " = \n");
             calculateArea.appendText(MatrixTools.print(normalized, 20, scale));
-            calculateArea.appendText(getMessage("RelativeValues") + " = \n");
+            calculateArea.appendText(message("RelativeValues") + " = \n");
             calculateArea.appendText(MatrixTools.print(relative, 20, scale));
-            calculateArea.appendText(getMessage("Tristimulus") + " = \n");
+            calculateArea.appendText(message("Tristimulus") + " = \n");
             calculateArea.appendText(MatrixTools.print(adaptedPrimaries, 20, scale));
 
-            calculateArea.appendText("\n----------------" + getMessage("CalculationProcedure") + "----------------\n");
-            calculateArea.appendText(getMessage("ReferTo") + "： \n");
+            calculateArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
+            calculateArea.appendText(message("ReferTo") + "： \n");
             calculateArea.appendText("            http://brucelindbloom.com/index.html?WorkingSpaceInfo.html \n");
             calculateArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
             calculateArea.appendText((String) adapted.get("procedure"));

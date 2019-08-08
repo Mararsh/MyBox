@@ -6,8 +6,6 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-
-
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
@@ -200,15 +198,16 @@ License:    Apache License Version 2.0
                                     <content>
                                         <HBox alignment="CENTER_LEFT">
                                             <children>
-                                                <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER">
+                                                <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
                                                     <items>
-                                                        <ImageView fx:id="refTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconTips.png" />
-                                                            </image>
-                                                        </ImageView>
+                                                        <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS"/>
                                                         <HBox fx:id="refButtonsBox" alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
+                                                                <ImageView fx:id="refTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/iconTips.png" />
+                                                                    </image>
+                                                                </ImageView>
                                                                 <CheckBox fx:id="refSyncCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%SychronizeViewOriginal" />
                                                                 <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popRefMeta">
                                                                     <graphic>
@@ -257,11 +256,6 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                    </items>
-                                                </ToolBar>
-                                                <ToolBar prefWidth="200.0" HBox.hgrow="ALWAYS">
-                                                    <items>
-                                                        <Button mnemonicParsing="false" prefWidth="1.0" visible="false" />
                                                     </items>
                                                 </ToolBar>
                                             </children>

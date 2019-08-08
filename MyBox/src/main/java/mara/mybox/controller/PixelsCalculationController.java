@@ -26,11 +26,12 @@ import javafx.scene.layout.HBox;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -75,7 +76,7 @@ public class PixelsCalculationController extends BaseController {
     private TabPane tabPane;
 
     public PixelsCalculationController() {
-        baseTitle = AppVaribles.getMessage("PixelsCalculator");
+        baseTitle = AppVaribles.message("PixelsCalculator");
 
     }
 
@@ -107,13 +108,13 @@ public class PixelsCalculationController extends BaseController {
 
     private void recalculate() {
         String tab = tabPane.getSelectionModel().getSelectedItem().getText();
-        if (AppVaribles.getMessage("PredefinedPixelsNumber").equals(tab)) {
+        if (AppVaribles.message("PredefinedPixelsNumber").equals(tab)) {
             predefined_determineValues();
-        } else if (AppVaribles.getMessage("CalculatePixelsNumber").equals(tab)) {
+        } else if (AppVaribles.message("CalculatePixelsNumber").equals(tab)) {
             cp_calculateValues();
-        } else if (AppVaribles.getMessage("CalculateOutputSize").equals(tab)) {
+        } else if (AppVaribles.message("CalculateOutputSize").equals(tab)) {
             cs_calculateValues();
-        } else if (AppVaribles.getMessage("CalculateOutputDensity").equals(tab)) {
+        } else if (AppVaribles.message("CalculateOutputDensity").equals(tab)) {
             cd_calculateValues();
         }
     }
@@ -194,14 +195,14 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedPhotoValues() {
-        String inch = AppVaribles.getMessage("inches");
-        String cm = AppVaribles.getMessage("cm");
+        String inch = AppVaribles.message("inches");
+        String cm = AppVaribles.message("cm");
         predeinfedPhotoValues = new ArrayList();
-        predeinfedPhotoValues.add("416x277    " + AppVaribles.getMessage("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
-        predeinfedPhotoValues.add("416x605    " + AppVaribles.getMessage("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
+        predeinfedPhotoValues.add("416x277    " + AppVaribles.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
+        predeinfedPhotoValues.add("416x605    " + AppVaribles.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
-        predeinfedPhotoValues.add("208x140    " + AppVaribles.getMessage("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
-        predeinfedPhotoValues.add("208x304    " + AppVaribles.getMessage("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x140    " + AppVaribles.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x304    " + AppVaribles.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
         predeinfedPhotoValues.add("320x480       1" + inch + "x1.5" + inch + "   2.5" + cm + "x3.5" + cm + "    320dpi");
         predeinfedPhotoValues.add("480x640    1.5" + inch + "x2" + inch + "   3.5" + cm + "x4.9" + cm + "    320dpi");
@@ -319,7 +320,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceX = Integer.valueOf(newValue);
                     if (sourceY > 0) {
-                        ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
+                        ratioLabel.setText(AppVaribles.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -338,7 +339,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceY = Integer.valueOf(newValue);
                     if (sourceX > 0) {
-                        ratioLabel.setText(AppVaribles.getMessage("AspectRatio") + ": "
+                        ratioLabel.setText(AppVaribles.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -377,7 +378,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cp_sizeGroup.getSelectedToggle();
-                cp_useInch = selected.getText().equals(AppVaribles.getMessage("Inches"));
+                cp_useInch = selected.getText().equals(AppVaribles.message("Inches"));
                 if (cp_useInch) {
                     if (cp_inchX > 0) {
                         cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
@@ -570,7 +571,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cd_sizeGroup.getSelectedToggle();
-                cd_useInch = selected.getText().equals(AppVaribles.getMessage("Inches"));
+                cd_useInch = selected.getText().equals(AppVaribles.message("Inches"));
                 if (cd_useInch) {
                     if (cd_inchX > 0) {
                         cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
@@ -683,7 +684,7 @@ public class PixelsCalculationController extends BaseController {
     @FXML
     private void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
-            alertInformation(AppVaribles.getMessage("Invalid"));
+            alertInformation(AppVaribles.message("Invalid"));
             return;
         }
         if (parentXInput != null) {
@@ -717,16 +718,16 @@ public class PixelsCalculationController extends BaseController {
                     int rd = parentAttributes.getRatioAdjustion();
                     switch (rd) {
                         case KeepRatioType.BaseOnWidth:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnWidth"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnWidth"));
                             break;
                         case KeepRatioType.BaseOnHeight:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnHeight"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnHeight"));
                             break;
                         case KeepRatioType.BaseOnLarger:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnLarger"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnLarger"));
                             break;
                         case KeepRatioType.BaseOnSmaller:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.getMessage("BaseOnSamller"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnSamller"));
                             break;
                         default:
                             break;
@@ -759,13 +760,13 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
         String v = null;
-        if (selected.getText().equals(AppVaribles.getMessage("Photo"))) {
+        if (selected.getText().equals(AppVaribles.message("Photo"))) {
             v = predeinfedPhotoList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.getMessage("Display"))) {
+        } else if (selected.getText().equals(AppVaribles.message("Display"))) {
             v = predeinfedDisplayList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.getMessage("Print"))) {
+        } else if (selected.getText().equals(AppVaribles.message("Print"))) {
             v = predeinfedPrintList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.getMessage("Icon"))) {
+        } else if (selected.getText().equals(AppVaribles.message("Icon"))) {
             v = predeinfedIconList.getSelectionModel().getSelectedItem();
         }
 
@@ -779,8 +780,8 @@ public class PixelsCalculationController extends BaseController {
         }
         selectX = Integer.valueOf(vs[0]);
         selectY = Integer.valueOf(vs[1]);
-        String label = AppVaribles.getMessage("SelectedPixelsNumber") + ": " + v + "  "
-                + AppVaribles.getMessage("AspectRatio") + ": "
+        String label = AppVaribles.message("SelectedPixelsNumber") + ": " + v + "  "
+                + AppVaribles.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         useButton.setDisable(false);
@@ -803,7 +804,7 @@ public class PixelsCalculationController extends BaseController {
             } catch (Exception e) {
                 inputValue = -1;
             }
-            if (getMessage("InputValue").equals(s)) {
+            if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cp_density = inputValue;
                     AppVaribles.setUserConfigValue("density", s);
@@ -833,10 +834,10 @@ public class PixelsCalculationController extends BaseController {
             adjustLabel.setText("");
             return;
         }
-        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
                 + cp_density + "dpi" + "   "
-                + AppVaribles.getMessage("AspectRatio") + ": "
+                + AppVaribles.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -858,7 +859,7 @@ public class PixelsCalculationController extends BaseController {
             } catch (Exception e) {
                 inputValue = -1;
             }
-            if (getMessage("InputValue").equals(s)) {
+            if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cs_density = inputValue;
                     AppVaribles.setUserConfigValue("density", s);
@@ -890,10 +891,10 @@ public class PixelsCalculationController extends BaseController {
         }
         double cmX = DoubleTools.scale2(selectX * 2.54f / cs_density);
         double cmY = DoubleTools.scale2(selectY * 2.54f / cs_density);
-        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
                 + cs_density + "dpi" + "   "
-                + AppVaribles.getMessage("AspectRatio") + ": "
+                + AppVaribles.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -916,10 +917,10 @@ public class PixelsCalculationController extends BaseController {
         }
         int densityX = Math.round(cd_X / cd_inchX);
         int densityY = Math.round(cd_Y / cd_inchY);
-        String label = AppVaribles.getMessage("CalculatedPixelsNumber") + ": "
+        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
                 + densityX + "dpi x " + densityY + "dpi   "
-                + AppVaribles.getMessage("AspectRatio") + ": "
+                + AppVaribles.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -950,17 +951,17 @@ public class PixelsCalculationController extends BaseController {
 
         RadioButton selected = (RadioButton) ratioGroup.getSelectedToggle();
         String s = selected.getText();
-        if (getMessage("BaseOnWidth").equals(s)) {
+        if (message("BaseOnWidth").equals(s)) {
             finalY = Math.round(sourceY * selectX / sourceX);
-        } else if (getMessage("BaseOnHeight").equals(s)) {
+        } else if (message("BaseOnHeight").equals(s)) {
             finalX = Math.round(sourceX * selectY / sourceY);
-        } else if (getMessage("BaseOnLarger").equals(s)) {
+        } else if (message("BaseOnLarger").equals(s)) {
             if (ratioX > ratioY) {
                 finalY = Math.round(sourceY * selectX / sourceX);
             } else {
                 finalX = Math.round(sourceX * selectY / sourceY);
             }
-        } else if (getMessage("BaseOnSamller").equals(s)) {
+        } else if (message("BaseOnSamller").equals(s)) {
             if (ratioX > ratioY) {
                 finalX = Math.round(sourceX * selectY / sourceY);
             } else {
@@ -970,9 +971,9 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
 
-        String label = AppVaribles.getMessage("AdjustedPixelsNumber") + ": "
+        String label = AppVaribles.message("AdjustedPixelsNumber") + ": "
                 + finalX + "x" + finalY + "   "
-                + AppVaribles.getMessage("AspectRatio") + ": "
+                + AppVaribles.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }

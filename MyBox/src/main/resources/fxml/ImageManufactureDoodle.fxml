@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
-
 
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -180,7 +178,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="NEVER">
                     <children>
-                        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
+                        <TabPane fx:id="tabPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" nodeOrientation="RIGHT_TO_LEFT" tabClosingPolicy="UNAVAILABLE" HBox.hgrow="ALWAYS">
                             <tabs>
                                 <Tab fx:id="fileTab" text="%File" />
                                 <Tab fx:id="sizeTab" text="%Size" />
@@ -190,17 +188,14 @@ License:    Apache License Version 2.0
                                 <Tab fx:id="textTab" text="%Text" />
                                 <Tab fx:id="doodleTab" text="%Doodle">
                                     <content>
-                                        <VBox fx:id="barsBox" alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT">
+                                        <VBox fx:id="barsBox" alignment="CENTER_RIGHT" minHeight="-Infinity" nodeOrientation="LEFT_TO_RIGHT">
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT">
                                                     <children>
-                                                        <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                        <ToolBar fx:id="textBar" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
-                                                            </items>
-                                                        </ToolBar>
-                                                        <ToolBar fx:id="textBar" maxWidth="1.7976931348623157E308" HBox.hgrow="NEVER">
-                                                            <items>
+                                                                <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308"
+                                                                       styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true"  HBox.hgrow="ALWAYS"/>
                                                                 <RadioButton mnemonicParsing="false" selected="true" text="%Pen">
                                                                     <toggleGroup>
                                                                         <ToggleGroup fx:id="doodleGroup" />
@@ -268,7 +263,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <ToolBar fx:id="setBar1" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
                                                             <items>
-                                                                <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
+                                                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

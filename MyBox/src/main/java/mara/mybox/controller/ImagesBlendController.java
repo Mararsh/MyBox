@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -11,17 +10,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -29,24 +24,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.image.PixelBlend.ImagesBlendMode;
-import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
-import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.image.file.ImageFileWriters;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.tools.FileTools;
-import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.image.ImageInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
+import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
+import mara.mybox.image.ImageInformation;
 import mara.mybox.image.PixelBlend;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
+import mara.mybox.image.file.ImageFileReaders;
+import mara.mybox.image.file.ImageFileWriters;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -87,7 +81,7 @@ public class ImagesBlendController extends ImageViewerController {
     private CheckBox intersectOnlyCheck;
 
     public ImagesBlendController() {
-        baseTitle = AppVaribles.getMessage("ImagesBlend");
+        baseTitle = AppVaribles.message("ImagesBlend");
 
         ImageBlendFileTypeKey = "ImageBlendFileType";
         needNotRulers = true;
@@ -127,7 +121,7 @@ public class ImagesBlendController extends ImageViewerController {
                 }
             });
             location = ImagesRelativeLocation.Foreground_In_Background;
-            pointLabel.setText(AppVaribles.getMessage("ClickOnBackgournd"));
+            pointLabel.setText(AppVaribles.message("ClickOnBackgournd"));
 
             blendModeBox.getItems().addAll(PixelBlend.allBlendModes());
             blendModeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -199,16 +193,16 @@ public class ImagesBlendController extends ImageViewerController {
         }
         isSettingValues = true;
         RadioButton selected = (RadioButton) locationGroup.getSelectedToggle();
-        if (AppVaribles.getMessage("FinB").equals(selected.getText())) {
+        if (AppVaribles.message("FinB").equals(selected.getText())) {
             location = ImagesRelativeLocation.Foreground_In_Background;
-            pointLabel.setText(AppVaribles.getMessage("ClickOnBackgournd"));
-            bottomLabel.setText(AppVaribles.getMessage("BlendedSize") + ": "
+            pointLabel.setText(AppVaribles.message("ClickOnBackgournd"));
+            bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
                     + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
 
-        } else if (AppVaribles.getMessage("BinF").equals(selected.getText())) {
+        } else if (AppVaribles.message("BinF").equals(selected.getText())) {
             location = ImagesRelativeLocation.Background_In_Foreground;
-            pointLabel.setText(AppVaribles.getMessage("ClickOnForegournd"));
-            bottomLabel.setText(AppVaribles.getMessage("BlendedSize") + ": "
+            pointLabel.setText(AppVaribles.message("ClickOnForegournd"));
+            bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
                     + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
 
         } else {
@@ -284,14 +278,14 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void selectForegroundImage(ActionEvent event) {
+    public void selectForegroundImage() {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVaribles.getUserConfigPath(sourcePathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
@@ -303,7 +297,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
     }
 
-    private void selectForegroundImage(final File file) {
+    public void selectForegroundImage(final File file) {
         try {
             if (file == null) {
                 return;
@@ -349,7 +343,7 @@ public class ImagesBlendController extends ImageViewerController {
                                     foreView.setFitWidth(foreView.getImage().getWidth());
                                     foreView.setFitHeight(foreView.getImage().getHeight());
                                 }
-                                foreTitle.setText(AppVaribles.getMessage("ForegroundImage") + " "
+                                foreTitle.setText(AppVaribles.message("ForegroundImage") + " "
                                         + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
                                 foreLabel.setText(fileName);
                                 foreBox.setDisable(false);
@@ -371,78 +365,47 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     protected void popForeground(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedFiles"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        List<String> files = new ArrayList();
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            if (files.contains(fname)) {
-                continue;
-            }
-            files.add(fname);
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectForegroundImage(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        if (his != null) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem dmenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-            dmenu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(dmenu);
-            for (VisitHistory h : his) {
-                final String pathname = h.getResourceValue();
-                MenuItem menu = new MenuItem(pathname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
-                        selectForegroundImage(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentSourceFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectForegroundImage();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                selectForegroundImage(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
     private void openForegroundImage(ActionEvent event) {
         if (foreFile != null) {
-            openImageViewer(foreFile.getAbsolutePath());
+            openImageViewer(foreFile);
         }
     }
 
@@ -459,14 +422,14 @@ public class ImagesBlendController extends ImageViewerController {
     }
 
     @FXML
-    private void selectBackgroundImage(ActionEvent event) {
+    public void selectBackgroundImage() {
         try {
             final FileChooser fileChooser = new FileChooser();
             File path = AppVaribles.getUserConfigPath(sourcePathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(sourceExtensionFilter);
             final File file = fileChooser.showOpenDialog(getMyStage());
             if (file == null) {
                 return;
@@ -478,7 +441,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
     }
 
-    private void selectBackgroundImage(final File file) {
+    public void selectBackgroundImage(final File file) {
         try {
             if (file == null) {
                 return;
@@ -524,7 +487,7 @@ public class ImagesBlendController extends ImageViewerController {
                                     backView.setFitWidth(backView.getImage().getWidth());
                                     backView.setFitHeight(backView.getImage().getHeight());
                                 }
-                                backTitle.setText(AppVaribles.getMessage("BackgroundImage") + " "
+                                backTitle.setText(AppVaribles.message("BackgroundImage") + " "
                                         + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
                                 backLabel.setText(fileName);
                                 backBox.setDisable(false);
@@ -546,64 +509,41 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     protected void popBackground(MouseEvent event) {
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
-        List<VisitHistory> his = VisitHistory.getRecentFile(SourceFileType, fileNumber);
-        if (his == null || his.isEmpty()) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        List<String> files = new ArrayList();
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            if (files.contains(fname)) {
-                continue;
-            }
-            files.add(fname);
-            MenuItem menu = new MenuItem(fname);
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    selectBackgroundImage(new File(fname));
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
-        his = VisitHistory.getRecentPath(SourcePathType, pathNumber);
-        if (his != null) {
-            popMenu.getItems().add(new SeparatorMenuItem());
-            for (VisitHistory h : his) {
-                final String pathname = h.getResourceValue();
-                MenuItem menu = new MenuItem(pathname);
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        AppVaribles.setUserConfigValue(sourcePathKey, pathname);
-                        selectBackgroundImage(event);
-                    }
-                });
-                popMenu.getItems().add(menu);
-            }
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(getMessage("MenuClose"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return recentSourceFiles();
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return recentSourcePathsBesidesFiles();
+            }
 
+            @Override
+            public void handleSelect() {
+                selectBackgroundImage();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+                File file = new File(fname);
+                if (!file.exists()) {
+                    handleSelect();
+                    return;
+                }
+                selectBackgroundImage(file);
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleSourcePath(fname);
+            }
+
+        }.pop();
     }
 
     private void afterImagesOpened() {
@@ -618,7 +558,7 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     private void openBackgroundImage(ActionEvent event) {
         if (backFile != null) {
-            openImageViewer(backFile.getAbsolutePath());
+            openImageViewer(backFile);
         }
     }
 
@@ -637,17 +577,18 @@ public class ImagesBlendController extends ImageViewerController {
     @FXML
     @Override
     public void saveAction() {
+        saveAsAction();
+    }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
         if (image == null) {
             return;
         }
         try {
-            final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(targetPathKey);
-            if (path.exists()) {
-                fileChooser.setInitialDirectory(path);
-            }
-            fileChooser.getExtensionFilters().addAll(fileExtensionFilter);
-            final File file = fileChooser.showSaveDialog(getMyStage());
+            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                    null, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }
@@ -655,6 +596,8 @@ public class ImagesBlendController extends ImageViewerController {
             targetFile = file;
 
             task = new Task<Void>() {
+                private boolean ok;
+
                 @Override
                 protected Void call() throws Exception {
                     try {
@@ -664,11 +607,28 @@ public class ImagesBlendController extends ImageViewerController {
                         if (task == null || task.isCancelled()) {
                             return null;
                         }
-                        ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
                     } catch (Exception e) {
                         logger.error(e.toString());
                     }
                     return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                popInformation(AppVaribles.message("Saved"));
+                                openImageViewer(file);
+
+                            } else {
+                                popInformation(AppVaribles.message("Failed"));
+                            }
+                        }
+                    });
                 }
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
@@ -748,7 +708,7 @@ public class ImagesBlendController extends ImageViewerController {
             return;
         }
 
-        bottomLabel.setText(AppVaribles.getMessage("Loading..."));
+        bottomLabel.setText(AppVaribles.message("Loading..."));
 
         image = FxmlImageManufacture.blendImages(foreImage, backImage,
                 location, x, y, intersectOnlyCheck.isSelected(), blendMode, opacity);
@@ -758,7 +718,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
         imageView.setImage(image);
         fitSize();
-        bottomLabel.setText(AppVaribles.getMessage("BlendedSize") + ": "
+        bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
                 + (int) image.getWidth() + "*" + (int) image.getHeight());
     }
 

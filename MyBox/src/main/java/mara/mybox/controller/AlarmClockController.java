@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
@@ -28,15 +27,16 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.AlarmClock;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
-import mara.mybox.tools.SoundTools;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.tools.DateTools;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.tools.DateTools;
+import mara.mybox.tools.SoundTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -45,6 +45,8 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
  * @License Apache License Version 2.0
  */
 public class AlarmClockController extends BaseController {
+
+    private Task playTask;
 
     @FXML
     private ScrollPane scrollPane;
@@ -77,13 +79,14 @@ public class AlarmClockController extends BaseController {
     protected File currentSound, miao;
 
     public AlarmClockController() {
-        baseTitle = AppVaribles.getMessage("AlarmClock");
+        baseTitle = AppVaribles.message("AlarmClock");
 
         AlertClocksFileKey = "FileTargetPath";
         SystemMediaPathKey = "SystemMediaPath";
         MusicPathKey = "MusicPath";
 
-        fileExtensionFilter = CommonValues.SoundExtensionFilter;
+        sourceExtensionFilter = CommonValues.SoundExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -188,7 +191,7 @@ public class AlarmClockController extends BaseController {
                             .or(urlInput.styleProperty().isEqualTo(badStyle))
             );
 
-            FxmlControl.setTooltip(saveButton, new Tooltip("ENTER / F2 / CTRL+s"));
+            FxmlControl.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
 
             FloatControl control = SoundTools.getControl(miao);
             volumeSlider.setMax(control.getMaximum());
@@ -214,7 +217,7 @@ public class AlarmClockController extends BaseController {
         urlInput.setStyle(null);
         currentURL = null;
         currentSound = null;
-        if (getMessage("LocalMusic").equals(selected.getText())) {
+        if (message("LocalMusic").equals(selected.getText())) {
             final File file = new File(mp3Input.getText());
             if (!file.exists() || !file.isFile() || !file.getName().endsWith(".mp3")) {
                 mp3Input.setStyle(badStyle);
@@ -222,7 +225,7 @@ public class AlarmClockController extends BaseController {
                 currentSound = file;
             }
 
-        } else if (getMessage("InternetMusic").equals(selected.getText())) {
+        } else if (message("InternetMusic").equals(selected.getText())) {
             try {
                 currentURL = new URL(urlInput.getText());
                 isURL = true;
@@ -230,7 +233,7 @@ public class AlarmClockController extends BaseController {
                 urlInput.setStyle(badStyle);
             }
 
-        } else if (getMessage("SystemSounds").equals(selected.getText())) {
+        } else if (message("SystemSounds").equals(selected.getText())) {
             final File file = new File(wavInput.getText());
             if (!file.exists() || !file.isFile() || !file.getName().endsWith(".wav")) {
                 wavInput.setStyle(badStyle);
@@ -258,7 +261,7 @@ public class AlarmClockController extends BaseController {
                 volumeSlider.setValue(0);
             }
         }
-        playButton.setText(getMessage("Play"));
+        playButton.setText(message("Play"));
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -266,7 +269,7 @@ public class AlarmClockController extends BaseController {
             }
         });
         pauseButton.setDisable(true);
-        pauseButton.setText(getMessage("Pause"));
+        pauseButton.setText(message("Pause"));
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -278,23 +281,23 @@ public class AlarmClockController extends BaseController {
     protected void checkType() {
         RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
         everyInput.setStyle(null);
-        if (getMessage("WorkingDays").equals(selected.getText())) {
+        if (message("WorkingDays").equals(selected.getText())) {
             repeatType = AlarmClock.AlarmType.WorkingDays;
-        } else if (getMessage("EveryDay").equals(selected.getText())) {
+        } else if (message("EveryDay").equals(selected.getText())) {
             repeatType = AlarmClock.AlarmType.EveryDay;
-        } else if (getMessage("Weekend").equals(selected.getText())) {
+        } else if (message("Weekend").equals(selected.getText())) {
             repeatType = AlarmClock.AlarmType.Weekend;
-        } else if (getMessage("NotRepeat").equals(selected.getText())) {
+        } else if (message("NotRepeat").equals(selected.getText())) {
             repeatType = AlarmClock.AlarmType.NotRepeat;
-        } else if (getMessage("Every").equals(selected.getText())) {
+        } else if (message("Every").equals(selected.getText())) {
             RadioButton unit = (RadioButton) unitGroup.getSelectedToggle();
-            if (getMessage("Days").equals(unit.getText())) {
+            if (message("Days").equals(unit.getText())) {
                 repeatType = AlarmClock.AlarmType.EverySomeDays;
-            } else if (getMessage("Hours").equals(unit.getText())) {
+            } else if (message("Hours").equals(unit.getText())) {
                 repeatType = AlarmClock.AlarmType.EverySomeHours;
-            } else if (getMessage("Minutes").equals(unit.getText())) {
+            } else if (message("Minutes").equals(unit.getText())) {
                 repeatType = AlarmClock.AlarmType.EverySomeMinutes;
-            } else if (getMessage("Seconds").equals(unit.getText())) {
+            } else if (message("Seconds").equals(unit.getText())) {
                 repeatType = AlarmClock.AlarmType.EverySomeSeconds;
             }
             try {
@@ -310,7 +313,7 @@ public class AlarmClockController extends BaseController {
 
     protected void checkLoop() {
         RadioButton selected = (RadioButton) loopGroup.getSelectedToggle();
-        if (getMessage("Continually").equals(selected.getText())) {
+        if (message("Continually").equals(selected.getText())) {
             isContinully = true;
             loopInput.setStyle(null);
         } else {
@@ -337,7 +340,7 @@ public class AlarmClockController extends BaseController {
         if (file == null && url == null) {
             return;
         }
-        Task playTask = new Task<Void>() {
+        playTask = new Task<Void>() {
             private boolean ok;
 
             @Override
@@ -384,7 +387,7 @@ public class AlarmClockController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            playButton.setText(AppVaribles.getMessage("Stop"));
+                            playButton.setText(AppVaribles.message("Stop"));
                             playButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -392,7 +395,7 @@ public class AlarmClockController extends BaseController {
                                 }
                             });
                             pauseButton.setDisable(false);
-                            pauseButton.setText(AppVaribles.getMessage("Pause"));
+                            pauseButton.setText(AppVaribles.message("Pause"));
                             pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -412,7 +415,7 @@ public class AlarmClockController extends BaseController {
 
     @FXML
     private void closeSound() {
-        playButton.setText(AppVaribles.getMessage("Play"));
+        playButton.setText(AppVaribles.message("Play"));
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -420,7 +423,7 @@ public class AlarmClockController extends BaseController {
             }
         });
         pauseButton.setDisable(true);
-        pauseButton.setText(AppVaribles.getMessage("Pause"));
+        pauseButton.setText(AppVaribles.message("Pause"));
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -442,7 +445,7 @@ public class AlarmClockController extends BaseController {
             closeSound();
             return;
         }
-        playButton.setText(AppVaribles.getMessage("Stop"));
+        playButton.setText(AppVaribles.message("Stop"));
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -450,7 +453,7 @@ public class AlarmClockController extends BaseController {
             }
         });
         pauseButton.setDisable(false);
-        pauseButton.setText(AppVaribles.getMessage("Continue"));
+        pauseButton.setText(AppVaribles.message("Continue"));
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -467,7 +470,7 @@ public class AlarmClockController extends BaseController {
             closeSound();
             return;
         }
-        playButton.setText(AppVaribles.getMessage("Stop"));
+        playButton.setText(AppVaribles.message("Stop"));
         playButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -475,7 +478,7 @@ public class AlarmClockController extends BaseController {
             }
         });
         pauseButton.setDisable(false);
-        pauseButton.setText(AppVaribles.getMessage("Pause"));
+        pauseButton.setText(AppVaribles.message("Pause"));
         pauseButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -546,7 +549,7 @@ public class AlarmClockController extends BaseController {
         }
         if (repeatType == AlarmClock.AlarmType.NotRepeat
                 && startTime <= new Date().getTime()) {
-            alertInformation(getMessage("AlarmNeverHappen"));
+            alertInformation(message("AlarmNeverHappen"));
             return;
         }
         currentAlarm.setAlarmType(repeatType);
@@ -554,7 +557,7 @@ public class AlarmClockController extends BaseController {
         currentAlarm.setStartTime(startTime);
         currentAlarm.setIsActive(activeCheck.isSelected());
         if (miao.getAbsolutePath().equals(currentSound.getAbsolutePath())) {
-            currentAlarm.setSound(getMessage("meow"));
+            currentAlarm.setSound(message("meow"));
         } else {
             currentAlarm.setSound(currentSound.getAbsolutePath());
         }
@@ -572,7 +575,7 @@ public class AlarmClockController extends BaseController {
     protected void reset() {
         descInput.setText("");
         startInput.setText(DateTools.datetimeToString(new Date().getTime() + 300000));
-        saveButton.setText(getMessage("Add"));
+        saveButton.setText(message("Add"));
         isEdit = false;
         currentAlarm = null;
         closeSound();
@@ -593,7 +596,7 @@ public class AlarmClockController extends BaseController {
                 break;
             }
         }
-        if (AppVaribles.getMessage("Every").equals(type)) {
+        if (AppVaribles.message("Every").equals(type)) {
             String unit = AlarmClock.getTypeUnit(alarm.getAlarmType());
             ObservableList<Toggle> ubuttons = unitGroup.getToggles();
             for (Toggle button : ubuttons) {
@@ -606,7 +609,7 @@ public class AlarmClockController extends BaseController {
             everyInput.setText(alarm.getEveryValue() + "");
         }
         String sound = alarm.getSound();
-        if (getMessage("meow").equals(sound)) {
+        if (message("meow").equals(sound)) {
             miaoButton.setSelected(true);
             sound = miao.getAbsolutePath();
         } else if (sound.endsWith(".mp3")) {
@@ -630,7 +633,7 @@ public class AlarmClockController extends BaseController {
         }
         volumeSlider.setValue(alarm.getVolume());
 
-        saveButton.setText(getMessage("Save"));
+        saveButton.setText(message("Save"));
     }
 
     @Override
@@ -675,6 +678,15 @@ public class AlarmClockController extends BaseController {
 
     public void setAlertClockTableController(AlarmClockTableController alertClockTableController) {
         this.alertClockTableController = alertClockTableController;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (playTask != null && playTask.isRunning()) {
+            playTask.cancel();
+            playTask = null;
+        }
+        return true;
     }
 
 }

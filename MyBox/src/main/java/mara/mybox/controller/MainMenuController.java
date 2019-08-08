@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import com.sun.management.OperatingSystemMXBean;
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.ArrayList;
@@ -26,15 +24,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import mara.mybox.fxml.ControlStyle;
+import javafx.stage.Window;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
+import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
-import mara.mybox.value.CommonValues;
 import static mara.mybox.value.AppVaribles.getUserConfigValue;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -112,7 +112,7 @@ public class MainMenuController extends BaseController {
         for (VisitHistory h : his) {
             final String fname = h.getResourceValue();
             final String fxml = h.getDataMore();
-            MenuItem menu = new MenuItem(getMessage(fname));
+            MenuItem menu = new MenuItem(message(fname));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -206,12 +206,23 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    protected void fullScreen(ActionEvent event) {
+        parentController.getMyStage().setFullScreen(true);
+    }
+
+    @FXML
     protected void closeOtherWindows(ActionEvent event) {
-        final List<BaseController> controllers = new ArrayList();
-        controllers.addAll(AppVaribles.openedStages.values());
-        for (BaseController controller : controllers) {
-            if (controller != parentController) {
-                controller.closeStage();
+        List<Window> windows = new ArrayList();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            if (parentController != null) {
+                if (!window.equals(parentController.getMyStage())) {
+                    window.hide();
+                }
+            } else {
+                if (!window.equals(myStage)) {
+                    window.hide();
+                }
             }
         }
     }
@@ -267,8 +278,8 @@ public class MainMenuController extends BaseController {
                             long physicalTotal = osmxb.getTotalPhysicalMemorySize() / mb;
                             long physicalUse = physicalTotal - physicalFree;
                             String sysInfo = System.getProperty("os.name")
-                                    + " " + AppVaribles.getMessage("PhysicalMemory") + ":" + physicalTotal + "MB"
-                                    + " " + AppVaribles.getMessage("Used") + ":"
+                                    + " " + AppVaribles.message("PhysicalMemory") + ":" + physicalTotal + "MB"
+                                    + " " + AppVaribles.message("Used") + ":"
                                     + physicalUse + "MB (" + FloatTools.roundFloat2(physicalUse * 100.0f / physicalTotal) + "%)";
                             sysMemLabel.setText(sysInfo);
                             sysMemBar.setProgress(physicalUse * 1.0f / physicalTotal);
@@ -279,10 +290,10 @@ public class MainMenuController extends BaseController {
                             long usedMemory = totalMemory - freeMemory;
                             String myboxInfo = "MyBox"
                                     //                    + "  " + AppVaribles.getMessage("AvailableProcessors") + ":" + availableProcessors
-                                    + " " + AppVaribles.getMessage("AvaliableMemory") + ":" + maxMemory + "MB"
-                                    + " " + AppVaribles.getMessage("Required") + ":"
+                                    + " " + AppVaribles.message("AvaliableMemory") + ":" + maxMemory + "MB"
+                                    + " " + AppVaribles.message("Required") + ":"
                                     + totalMemory + "MB(" + FloatTools.roundFloat2(totalMemory * 100.0f / maxMemory) + "%)"
-                                    + " " + AppVaribles.getMessage("Used") + ":"
+                                    + " " + AppVaribles.message("Used") + ":"
                                     + usedMemory + "MB(" + FloatTools.roundFloat2(usedMemory * 100.0f / maxMemory) + "%)";
                             myboxMemLabel.setText(myboxInfo);
                             myboxMemBar.setProgress(usedMemory * 1.0f / maxMemory);
@@ -364,17 +375,17 @@ public class MainMenuController extends BaseController {
                             float load = (float) osmxb.getSystemCpuLoad();
                             long s = (long) (osmxb.getSystemLoadAverage() / 1000000000);
                             String sysInfo = System.getProperty("os.name")
-                                    + " " + AppVaribles.getMessage("SystemLoadAverage") + ":" + s + "s"
-                                    + " " + AppVaribles.getMessage("SystemCpuUsage") + ":"
+                                    + " " + AppVaribles.message("SystemLoadAverage") + ":" + s + "s"
+                                    + " " + AppVaribles.message("SystemCpuUsage") + ":"
                                     + FloatTools.roundFloat2(load * 100) + "%";
                             sysCpuLabel.setText(sysInfo);
                             sysCpuBar.setProgress(load);
 
                             load = (float) osmxb.getProcessCpuLoad();
-                            s = (long) (osmxb.getProcessCpuTime() / 1000000000);
+                            s = osmxb.getProcessCpuTime() / 1000000000;
                             String myboxInfo = "MyBox"
-                                    + " " + AppVaribles.getMessage("RecentCpuTime") + ":" + s + "s"
-                                    + " " + AppVaribles.getMessage("RecentCpuUsage") + ":"
+                                    + " " + AppVaribles.message("RecentCpuTime") + ":" + s + "s"
+                                    + " " + AppVaribles.message("RecentCpuUsage") + ":"
                                     + FloatTools.roundFloat2(load * 100) + "%";
                             myboxCpuLabel.setText(myboxInfo);
                             myboxCpuBar.setProgress(load);
@@ -611,13 +622,13 @@ public class MainMenuController extends BaseController {
     @Override
     public void clearSettings(ActionEvent event) {
         super.clearSettings(event);
-        String f = parentController.myFxml;
+        String f = parentController.getMyFxml();
         if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
             f = CommonValues.ImageManufactureFileFxml;
         }
         BaseController c = loadScene(f);
         c.getMyStage().setTitle(parentController.getMyStage().getTitle());
-        popInformation(AppVaribles.getMessage("Successful"));
+        popInformation(AppVaribles.message("Successful"));
     }
 
     @FXML
@@ -655,8 +666,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openPdfConvertImages(ActionEvent event) {
-        loadScene(CommonValues.PdfConvertImagesFxml);
+    private void openPDFAttributesBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfAttributesBatchFxml);
     }
 
     @FXML
@@ -667,16 +678,6 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImagesCombinePdf(ActionEvent event) {
         loadScene(CommonValues.ImagesCombinePdfFxml);
-    }
-
-    @FXML
-    private void openPdfExtractImages(ActionEvent event) {
-        loadScene(CommonValues.PdfExtractImagesFxml);
-    }
-
-    @FXML
-    private void openPdfExtractTexts(ActionEvent event) {
-        loadScene(CommonValues.PdfExtractTextsFxml);
     }
 
     @FXML
@@ -695,13 +696,8 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openSplitPdf(ActionEvent event) {
-        loadScene(CommonValues.PdfSplitFxml);
-    }
-
-    @FXML
-    private void openCompressPdfImages(ActionEvent event) {
-        loadScene(CommonValues.PdfCompressImagesFxml);
+    private void openPdfSplitBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfSplitBatchFxml);
     }
 
     @FXML
@@ -717,11 +713,6 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openImagesBrowser(ActionEvent event) {
         loadScene(CommonValues.ImagesBrowserFxml);
-    }
-
-    @FXML
-    private void openImageConverter(ActionEvent event) {
-        loadScene(CommonValues.ImageConverterFxml);
     }
 
     @FXML
@@ -1009,8 +1000,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    private void openFileMerge(ActionEvent event) {
-        loadScene(CommonValues.FileMergeFxml);
+    private void openFilesMerge(ActionEvent event) {
+        loadScene(CommonValues.FilesMergeFxml);
+    }
+
+    @FXML
+    private void openFilesDelete(ActionEvent event) {
+        loadScene(CommonValues.FilesDeleteFxml);
     }
 
     @FXML
@@ -1032,8 +1028,8 @@ public class MainMenuController extends BaseController {
     @FXML
     private void settingsAction(ActionEvent event) {
         BaseController c = openStage(CommonValues.SettingsFxml);
-        c.parentController = parentController;
-        c.parentFxml = parentFxml;
+        c.setParentController(parentController);
+        c.setParentFxml(parentFxml);
     }
 
     @Override
@@ -1047,14 +1043,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    public void developerGuideExternal(ActionEvent event) {
+    public void developerGuide(ActionEvent event) {
         try {
-            File help = checkHelps();
-            if (help != null) {
-                if (!browseURI(help.toURI())) {
-                    parentController.popError(getMessage("DesktopNotSupportBrowse"));
-                }
-            }
+            String link = "https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-UserGuide-1.0"
+                    + "-" + AppVaribles.getLanguage() + ".pdf";
+            browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
         }

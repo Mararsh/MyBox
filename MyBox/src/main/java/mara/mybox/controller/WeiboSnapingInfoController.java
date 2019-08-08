@@ -33,7 +33,7 @@ public class WeiboSnapingInfoController extends BaseController {
     private Button stopButton, reloadButton;
 
     public WeiboSnapingInfoController() {
-        baseTitle = AppVaribles.getMessage("WeiboSnap");
+        baseTitle = AppVaribles.message("WeiboSnap");
 
     }
 

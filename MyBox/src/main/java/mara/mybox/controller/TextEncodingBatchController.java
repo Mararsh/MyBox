@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -17,16 +14,14 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
-import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
-import mara.mybox.data.FileInformation;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -48,15 +43,19 @@ public class TextEncodingBatchController extends FilesBatchController {
     protected CheckBox targetBomCheck;
 
     public TextEncodingBatchController() {
-        baseTitle = AppVaribles.getMessage("TextEncodingBatch");
+        baseTitle = AppVaribles.message("TextEncodingBatch");
 
         sourcePathKey = "TextFilePathKey";
-        fileExtensionFilter = CommonValues.TextExtensionFilter;
+        sourceExtensionFilter = CommonValues.TextExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
+            tableController.getNameFiltersSelector().getSelectionModel().select(1);
+            tableController.getTableFiltersInput().setText(".html  .htm  .txt ");
+
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
                     .or(targetPathInput.styleProperty().isEqualTo(badStyle))
                     .or(Bindings.isEmpty(tableView.getItems()))
@@ -113,7 +112,7 @@ public class TextEncodingBatchController extends FilesBatchController {
             });
             targetBox.getSelectionModel().select(Charset.defaultCharset().name());
 
-            Tooltip tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
+            Tooltip tips = new Tooltip(AppVaribles.message("BOMcomments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(targetBomCheck, tips);
         }
@@ -121,7 +120,7 @@ public class TextEncodingBatchController extends FilesBatchController {
 
     protected void checkSource() {
         RadioButton selected = (RadioButton) sourceGroup.getSelectedToggle();
-        if (getMessage("DetermainAutomatically").equals(selected.getText())) {
+        if (message("DetermainAutomatically").equals(selected.getText())) {
             autoDetermine = true;
             sourceBox.setDisable(true);
         } else {
@@ -132,118 +131,31 @@ public class TextEncodingBatchController extends FilesBatchController {
     }
 
     @Override
-    public void makeMoreParameters() {
-        makeBatchParameters();
-    }
-
-    @Override
-    public String handleCurrentFile(FileInformation d) {
-        if (currentParameters.sourceFile == null) {
-            return AppVaribles.getMessage("NotFound");
-        }
-        String sourceName = currentParameters.sourceFile.getName();
-        String targetName = currentParameters.targetPath + File.separator + sourceName;
-        if (targetExistType == TargetExistType.Rename) {
-            while (new File(targetName).exists()) {
-                sourceName = FileTools.getFilePrefix(sourceName)
-                        + targetSuffixInput.getText().trim() + "." + FileTools.getFileSuffix(sourceName);
-                targetName = currentParameters.targetPath + File.separator + sourceName;
-            }
-            return handleFile(currentParameters.sourceFile, new File(targetName));
-        } else if (targetExistType == TargetExistType.Skip) {
-            return AppVaribles.getMessage("Skip");
-        }
-        return "";
-    }
-
-    @Override
-    public String handleCurrentDirectory(FileInformation d) {
-        File sourceDir = d.getFile();
-        File targetDir = new File(currentParameters.targetPath + File.separator + sourceDir.getName());
-        boolean skip = false;
-        if (targetExistType == TargetExistType.Rename) {
-            while (targetDir.exists()) {
-                targetDir = new File(targetDir.getAbsolutePath() + targetSuffixInput.getText().trim());
-            }
-        } else if (targetExistType == TargetExistType.Skip) {
-            if (targetDir.exists()) {
-                skip = true;
-            }
-        }
-        if (!skip) {
-            if (!targetDir.exists()) {
-                targetDir.mkdirs();
-            }
-            dirTotal = dirOk = 0;
-            handleDirectory(sourceDir, targetDir);
-            return MessageFormat.format(AppVaribles.getMessage("DirHandledSummary"), dirTotal, dirOk);
-        } else {
-            return AppVaribles.getMessage("Skip");
-        }
-    }
-
-    protected void handleDirectory(File sourcePath, File targetPath) {
-        if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
-            return;
-        }
+    public String handleFile(File srcFile, File targetPath) {
         try {
-            List<File> files = new ArrayList<>();
-            files.addAll(Arrays.asList(sourcePath.listFiles()));
-            String[] names = filesNameInput.getText().trim().split("\\s+");
-            for (File srcFile : files) {
-                if (task == null || task.isCancelled()) {
-                    return;
-                }
-                File targetFile = new File(targetPath + File.separator + srcFile.getName());
-                if (srcFile.isFile()) {
-                    dirTotal++;
-                    String originalName = srcFile.getName();
-                    if (filesNameCheck.isSelected() && names.length > 0) {
-                        boolean isValid = false;
-                        for (String name : names) {
-                            if (originalName.contains(name)) {
-                                isValid = true;
-                                break;
-                            }
-                        }
-                        if (!isValid) {
-                            continue;
-                        }
-                    }
-                    if (!AppVaribles.getMessage("Failed").equals(handleFile(srcFile, targetFile))) {
-                        dirOk++;
-                    }
-                } else if (subdirCheck.isSelected()) {
-                    targetFile.mkdirs();
-                    handleDirectory(srcFile, targetFile);
-                }
+            File target = makeTargetFile(srcFile, targetPath);
+            if (target == null) {
+                return AppVaribles.message("Skip");
             }
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-    }
-
-    protected String handleFile(File srcFile, File targetFile) {
-        try {
             sourceInformation.setFile(srcFile);
             if (autoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
-                    return AppVaribles.getMessage("Failed");
+                    return AppVaribles.message("Failed");
                 }
             }
-            targetInformation.setFile(targetFile);
+            targetInformation.setFile(target);
             targetInformation.setWithBom(targetBomCheck.isSelected());
             if (TextTools.convertCharset(sourceInformation, targetInformation)) {
-                actualParameters.finalTargetName = targetFile.getAbsolutePath();
-                targetFiles.add(targetFile);
-                return AppVaribles.getMessage("Successful");
+                actualParameters.finalTargetName = target.getAbsolutePath();
+                targetFiles.add(target);
+                return AppVaribles.message("Successful");
             } else {
-                return AppVaribles.getMessage("Failed");
+                return AppVaribles.message("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.getMessage("Failed");
+            return AppVaribles.message("Failed");
         }
     }
 

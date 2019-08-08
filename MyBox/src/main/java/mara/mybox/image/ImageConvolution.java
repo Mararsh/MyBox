@@ -205,7 +205,7 @@ public class ImageConvolution extends PixelsOperation {
         int type = convolutionKernel.getType();
         if (type == ConvolutionKernel.Convolution_Type.EDGE_DETECTION
                 || type == ConvolutionKernel.Convolution_Type.EMBOSS) {
-            clearedSource = ImageManufacture.clearAlpha(source);
+            clearedSource = ImageManufacture.removeAlpha(source);
         } else {
             clearedSource = source;
         }

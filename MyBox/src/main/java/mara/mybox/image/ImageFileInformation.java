@@ -14,7 +14,7 @@ import mara.mybox.tools.FileTools;
  */
 public class ImageFileInformation extends FileInformation {
 
-    protected String imageFormat, filename;
+    protected String imageFormat;
     protected ImageInformation imageInformation;
     protected List<ImageInformation> imagesInformation;
     protected int numberOfImages;
@@ -24,8 +24,7 @@ public class ImageFileInformation extends FileInformation {
 
     public ImageFileInformation(File file) {
         super(file);
-        filename = fileName.get();
-        imageFormat = FileTools.getFileSuffix(filename).toLowerCase();
+        imageFormat = FileTools.getFileSuffix(fileName).toLowerCase();
     }
 
     public String getImageFormat() {
@@ -42,17 +41,6 @@ public class ImageFileInformation extends FileInformation {
 
     public void setImagesInformation(List<ImageInformation> imagesInformation) {
         this.imagesInformation = imagesInformation;
-    }
-
-    public String getFilename() {
-        if (filename == null && file != null) {
-            filename = file.getAbsolutePath();
-        }
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
     }
 
     public ImageInformation getImageInformation() {

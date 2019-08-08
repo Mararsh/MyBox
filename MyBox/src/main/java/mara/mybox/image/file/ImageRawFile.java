@@ -14,6 +14,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
@@ -28,18 +29,14 @@ import static mara.mybox.value.AppVaribles.logger;
  */
 public class ImageRawFile {
 
-    public static boolean writeRawImageFile(BufferedImage image,
-            ImageAttributes attributes, File file) {
+    public static ImageWriter getWriter() {
+        RawImageWriterSpi spi = new RawImageWriterSpi();
+        RawImageWriter writer = new RawImageWriter(spi);
+        return writer;
+    }
+
+    public static ImageWriteParam getPara(ImageAttributes attributes, ImageWriter writer) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-            RawImageWriterSpi spi = new RawImageWriterSpi();
-            RawImageWriter writer = new RawImageWriter(spi);
             RawImageWriteParam param = (RawImageWriteParam) writer.getDefaultWriteParam();
             if (param.canWriteCompressed()) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
@@ -52,14 +49,37 @@ public class ImageRawFile {
                     param.setCompressionQuality(1.0f);
                 }
             }
+            return param;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
 
-            IIOMetadata metaData;
+    public static IIOMetadata getWriterMeta(ImageAttributes attributes, BufferedImage image,
+            ImageWriter writer, ImageWriteParam param) {
+        try {
+            return writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean writeRawImageFile(BufferedImage image,
+            ImageAttributes attributes, File file) {
+        try {
             try {
-                metaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), param);
+                if (file.exists()) {
+                    file.delete();
+                }
             } catch (Exception e) {
-                logger.error(e.toString());
-                metaData = null;
+                return false;
             }
+
+            ImageWriter writer = getWriter();
+            ImageWriteParam param = getPara(attributes, writer);
+            IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer.setOutput(out);

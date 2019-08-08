@@ -25,7 +25,7 @@ import mara.mybox.tools.TextTools;
 public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
-        baseTitle = AppVaribles.getMessage("TextEditer");
+        baseTitle = AppVaribles.message("TextEditer");
 
         TipsLabelKey = "TextEditerTips";
 
@@ -45,7 +45,7 @@ public class TextEditerController extends FileEditerController {
 
     protected void initCharsetTab() {
 
-        Tooltip tips = new Tooltip(AppVaribles.getMessage("EncodeComments"));
+        Tooltip tips = new Tooltip(AppVaribles.message("EncodeComments"));
         tips.setFont(new Font(16));
         FxmlControl.setTooltip(currentBox, tips);
 
@@ -79,7 +79,7 @@ public class TextEditerController extends FileEditerController {
                 }
             });
 
-            tips = new Tooltip(AppVaribles.getMessage("BOMcomments"));
+            tips = new Tooltip(AppVaribles.message("BOMcomments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(targetBomCheck, tips);
         }
@@ -104,11 +104,11 @@ public class TextEditerController extends FileEditerController {
     protected void checkLineBreakGroup() {
         try {
             RadioButton selected = (RadioButton) lineBreakGroup.getSelectedToggle();
-            if (AppVaribles.getMessage("LF").equals(selected.getText())) {
+            if (AppVaribles.message("LF").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.LF);
-            } else if (AppVaribles.getMessage("CR").equals(selected.getText())) {
+            } else if (AppVaribles.message("CR").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.CR);
-            } else if (AppVaribles.getMessage("CRLF").equals(selected.getText())) {
+            } else if (AppVaribles.message("CRLF").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.CRLF);
             }
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
@@ -120,7 +120,7 @@ public class TextEditerController extends FileEditerController {
     @Override
     protected boolean validateFindString(String string) {
         if (string.length() >= pageSize) {
-            popError(AppVaribles.getMessage("FindStringLimitation"));
+            popError(AppVaribles.message("FindStringLimitation"));
             return false;
         } else {
             return true;

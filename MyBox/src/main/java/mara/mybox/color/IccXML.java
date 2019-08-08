@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import static mara.mybox.color.IccHeader.renderingIntent;
-import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.value.AppVaribles.logger;
 import static mara.mybox.value.CommonValues.Indent;
@@ -270,6 +269,7 @@ public class IccXML {
                                     }
                                     s.append(values[i]).append("   ");
                                 }
+                                s.append("\n");
                                 break;
                             }
 
@@ -280,94 +280,117 @@ public class IccXML {
                             }
 
                             case LUT: {
-                                Map<String, Object> values = (Map<String, Object>) tag.getValue();
-                                s.append(Indent).append(Indent).append(Indent).
-                                        append("<InputChannelsNumber>").append(values.get("InputChannelsNumber")).
-                                        append("</InputChannelsNumber>\n");
-                                s.append(Indent).append(Indent).append(Indent).
-                                        append("<OutputChannelsNumber>").append(values.get("OutputChannelsNumber")).
-                                        append("</OutputChannelsNumber>\n");
-                                String type = (String) values.get("type");
-                                s.append(Indent).append(Indent).append(Indent).
-                                        append("<type>").append(type).append("</type>\n");
-                                if (type.equals("lut8") || type.equals("lut16")) {
+                                try {
+                                    Map<String, Object> values = (Map<String, Object>) tag.getValue();
                                     s.append(Indent).append(Indent).append(Indent).
-                                            append("<GridPointsNumber>").append(values.get("GridPointsNumber")).
-                                            append("</GridPointsNumber>\n");
-                                    s.append(Indent).append(Indent).append(Indent).append("<Matrix>\n");
-                                    s.append(Indent).append(Indent).append(Indent).append(Indent).
-                                            append(values.get("e1")).append(Indent).
-                                            append(values.get("e2")).append(Indent).
-                                            append(values.get("e3")).append(Indent).append("\n");
-                                    s.append(Indent).append(Indent).append(Indent).append(Indent).
-                                            append(values.get("e4")).append(Indent).
-                                            append(values.get("e5")).append(Indent).
-                                            append(values.get("e6")).append(Indent).append("\n");
-                                    s.append(Indent).append(Indent).append(Indent).append(Indent).
-                                            append(values.get("e7")).append(Indent).
-                                            append(values.get("e8")).append(Indent).
-                                            append(values.get("e9")).append(Indent).append("\n");
-                                    s.append(Indent).append(Indent).append(Indent).append("</Matrix>\n");
-                                    if (type.equals("lut16")) {
+                                            append("<InputChannelsNumber>").append(values.get("InputChannelsNumber")).
+                                            append("</InputChannelsNumber>\n");
+                                    s.append(Indent).append(Indent).append(Indent).
+                                            append("<OutputChannelsNumber>").append(values.get("OutputChannelsNumber")).
+                                            append("</OutputChannelsNumber>\n");
+                                    if (values.get("type") != null) {
+                                        String type = (String) values.get("type");
                                         s.append(Indent).append(Indent).append(Indent).
-                                                append("<InputTablesNumber>").append(values.get("InputTablesNumber")).
-                                                append("</InputTablesNumber>\n");
+                                                append("<type>").append(type).append("</type>\n");
+                                        if (type.equals("lut8") || type.equals("lut16")) {
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<GridPointsNumber>").append(values.get("GridPointsNumber")).
+                                                    append("</GridPointsNumber>\n");
+                                            s.append(Indent).append(Indent).append(Indent).append("<Matrix>\n");
+                                            s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                    append(values.get("e1")).append(Indent).
+                                                    append(values.get("e2")).append(Indent).
+                                                    append(values.get("e3")).append(Indent).append("\n");
+                                            s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                    append(values.get("e4")).append(Indent).
+                                                    append(values.get("e5")).append(Indent).
+                                                    append(values.get("e6")).append(Indent).append("\n");
+                                            s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                    append(values.get("e7")).append(Indent).
+                                                    append(values.get("e8")).append(Indent).
+                                                    append(values.get("e9")).append(Indent).append("\n");
+                                            s.append(Indent).append(Indent).append(Indent).append("</Matrix>\n");
+                                            if (type.equals("lut16")) {
+                                                s.append(Indent).append(Indent).append(Indent).
+                                                        append("<InputTablesNumber>").append(values.get("InputTablesNumber")).
+                                                        append("</InputTablesNumber>\n");
+                                                s.append(Indent).append(Indent).append(Indent).
+                                                        append("<OutputTablesNumber>").append(values.get("OutputTablesNumber")).
+                                                        append("</OutputTablesNumber>\n");
+                                            }
+                                            s.append(Indent).append(Indent).append(Indent).append("<InputTables>\n");
+                                            List<List<Double>> InputTables = (List<List<Double>>) values.get("InputTables");
+                                            for (List<Double> input : InputTables) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent);
+                                                for (Double i : input) {
+                                                    s.append(i).append(Indent);
+                                                }
+                                                s.append("\n");
+                                            }
+                                            if (values.get("InputTablesTruncated") != null) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                        append(" <!-- Truncated -->\n");
+                                            }
+                                            s.append(Indent).append(Indent).append(Indent).append("</InputTables>\n");
+                                            s.append(Indent).append(Indent).append(Indent).append("<CLUTTables>\n");
+                                            List<List<Double>> CLUTTables = (List<List<Double>>) values.get("CLUTTables");
+                                            for (List<Double> GridPoint : CLUTTables) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent);
+                                                for (Double p : GridPoint) {
+                                                    s.append(p).append(Indent);
+                                                }
+                                                s.append("\n");
+                                            }
+                                            if (values.get("CLUTTablesTruncated") != null) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                        append(" <!-- Truncated -->\n");
+                                            }
+                                            s.append(Indent).append(Indent).append(Indent).append("</CLUTTables>\n");
+                                            s.append(Indent).append(Indent).append(Indent).append("<OutputTables>\n");
+                                            List<List<Double>> OutputTables = (List<List<Double>>) values.get("OutputTables");
+                                            for (List<Double> output : OutputTables) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent);
+                                                for (Double o : output) {
+                                                    s.append(o).append(Indent);
+                                                }
+                                                s.append("\n");
+                                            }
+                                            if (values.get("OutputTablesTruncated") != null) {
+                                                s.append(Indent).append(Indent).append(Indent).append(Indent).
+                                                        append(" <!-- Truncated -->\n");
+                                            }
+                                            s.append(Indent).append(Indent).append(Indent).append("</OutputTables>\n");
+                                        } else {
+                                            logger.debug("OffsetBCurve:" + values.get("OffsetBCurve"));
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<OffsetBCurve>").append(values.get("OffsetBCurve")).append("</OffsetBCurve>\n");
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<OffsetMatrix>").append(values.get("OffsetMatrix")).append("</OffsetMatrix>\n");
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<OffsetMCurve>").append(values.get("OffsetMCurve")).append("</OffsetMCurve>\n");
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<OffsetCLUT>").append(values.get("OffsetCLUT")).append("</OffsetCLUT>\n");
+                                            s.append(Indent).append(Indent).append(Indent).
+                                                    append("<OffsetACurve>").append(values.get("OffsetACurve")).append("</OffsetACurve>\n");
+                                        }
+                                    } else {
                                         s.append(Indent).append(Indent).append(Indent).
-                                                append("<OutputTablesNumber>").append(values.get("OutputTablesNumber")).
-                                                append("</OutputTablesNumber>\n");
+                                                append(" <!-- Not Decoded -->\n");
                                     }
-                                    s.append(Indent).append(Indent).append(Indent).append("<InputTables>\n");
-                                    List<List<Double>> InputTables = (List<List<Double>>) values.get("InputTables");
-                                    for (List<Double> input : InputTables) {
-                                        s.append(Indent).append(Indent).append(Indent).append(Indent);
-                                        for (Double i : input) {
-                                            s.append(i).append(Indent);
-                                        }
-                                        s.append("\n");
-                                    }
-                                    s.append(Indent).append(Indent).append(Indent).append("</InputTables>\n");
-                                    s.append(Indent).append(Indent).append(Indent).append("<CLUTTables>\n");
-                                    List<List<Double>> CLUTTables = (List<List<Double>>) values.get("CLUTTables");
-                                    for (List<Double> GridPoint : CLUTTables) {
-                                        s.append(Indent).append(Indent).append(Indent).append(Indent);
-                                        for (Double p : GridPoint) {
-                                            s.append(p).append(Indent);
-                                        }
-                                        s.append("\n");
-                                    }
-                                    s.append(Indent).append(Indent).append(Indent).append("</CLUTTables>\n");
-                                    s.append(Indent).append(Indent).append(Indent).append("<OutputTables>\n");
-                                    List<List<Double>> OutputTables = (List<List<Double>>) values.get("OutputTables");
-                                    for (List<Double> output : OutputTables) {
-                                        s.append(Indent).append(Indent).append(Indent).append(Indent);
-                                        for (Double o : output) {
-                                            s.append(o).append(Indent);
-                                        }
-                                        s.append("\n");
-                                    }
-                                    s.append(Indent).append(Indent).append(Indent).append("</OutputTables>\n");
-                                } else {
+                                } catch (Exception e) {
                                     s.append(Indent).append(Indent).append(Indent).
-                                            append("<OffsetBCurve>").append(values.get("OffsetBCurve")).append("</OffsetBCurve>\n");
-                                    s.append(Indent).append(Indent).append(Indent).
-                                            append("<OffsetMatrix>").append(values.get("OffsetMatrix")).append("</OffsetMatrix>\n");
-                                    s.append(Indent).append(Indent).append(Indent).
-                                            append("<OffsetMCurve>").append(values.get("OffsetMCurve")).append("</OffsetMCurve>\n");
-                                    s.append(Indent).append(Indent).append(Indent).
-                                            append("<OffsetCLUT>").append(values.get("OffsetCLUT")).append("</OffsetCLUT>\n");
-                                    s.append(Indent).append(Indent).append(Indent).
-                                            append("<OffsetACurve>").append(values.get("OffsetACurve")).append("</OffsetACurve>\n");
+                                            append(" <!-- Not Decoded -->\n");
                                 }
-
                                 break;
                             }
 
                         }
+                    } else {
+                        s.append(Indent).append(Indent).append(Indent).
+                                append(" <!-- Not Decoded -->\n");
                     }
                 } else {
-                    String value = bytesToHexFormat(tag.getBytes(), 30);
-                    s.append("\"  type=\"Bytes\">\n").append(value).append("\n");
-
+                    s.append("\"  type=\"Not Decoded\">\n");
                 }
 
                 s.append(Indent).append(Indent).append("</").append(tag.getName()).append(">\n");

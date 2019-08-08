@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -10,10 +9,11 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.controller.base.ImageManufactureBatchController;
+import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.fxml.FxmlControl.badStyle;
+import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -34,12 +34,12 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     private TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
     public ImageManufactureBatchCropController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchCrop");
+        baseTitle = AppVaribles.message("ImageManufactureBatchCrop");
 
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -259,7 +259,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
                     || x1 > width - 1 || y1 > height - 1
                     || x2 > width - 1 || y2 > height - 1) {
-                errorString = AppVaribles.getMessage("BeyondSize");
+                errorString = AppVaribles.message("BeyondSize");
                 return null;
             }
             return ImageManufacture.cropOutside(source, x1, y1, x2, y2);

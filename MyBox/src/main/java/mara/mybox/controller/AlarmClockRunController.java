@@ -1,19 +1,19 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javax.sound.sampled.Clip;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.SoundTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -25,12 +25,13 @@ public class AlarmClockRunController extends BaseController {
 
     private AlarmClock alarm;
     private Clip player;
+    private Task playTask;
 
     @FXML
     private Label descLabel, soundLabel, timeLabel;
 
     public AlarmClockRunController() {
-        baseTitle = AppVaribles.getMessage("AlarmClock");
+        baseTitle = AppVaribles.message("AlarmClock");
 
     }
 
@@ -65,23 +66,23 @@ public class AlarmClockRunController extends BaseController {
         String soundString = alarm.getSound() + "   ";
         if (alarm.isIsSoundLoop()) {
             if (alarm.isIsSoundContinully()) {
-                soundString += AppVaribles.getMessage("Continually");
+                soundString += AppVaribles.message("Continually");
             } else {
-                soundString += AppVaribles.getMessage("LoopTimes") + " " + alarm.getSoundLoopTimes();
+                soundString += AppVaribles.message("LoopTimes") + " " + alarm.getSoundLoopTimes();
             }
         }
         soundLabel.setText(soundString);
         String typeString = getTypeString(alarm);
         if (alarm.getNext() != null) {
-            typeString += "     " + AppVaribles.getMessage("NextTime") + " " + alarm.getNext();
+            typeString += "     " + AppVaribles.message("NextTime") + " " + alarm.getNext();
         }
         timeLabel.setText(typeString);
-        Task playTask = new Task<Void>() {
+        playTask = new Task<Void>() {
             @Override
             protected Void call() {
                 try {
                     String sound = alarm.getSound();
-                    if (AppVaribles.getMessage("meow").equals(sound)) {
+                    if (AppVaribles.message("meow").equals(sound)) {
                         File miao = FxmlControl.getUserFile("/sound/miao4.mp3", "miao4.mp3");
                         sound = miao.getAbsolutePath();
                     }
@@ -136,6 +137,15 @@ public class AlarmClockRunController extends BaseController {
 
     public void setTimeLabel(Label timeLabel) {
         this.timeLabel = timeLabel;
+    }
+
+    @Override
+    public boolean checkBeforeNextAction() {
+        if (playTask != null && playTask.isRunning()) {
+            playTask.cancel();
+            playTask = null;
+        }
+        return true;
     }
 
 }

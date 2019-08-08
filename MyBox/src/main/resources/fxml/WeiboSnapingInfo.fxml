@@ -27,7 +27,7 @@ License:    Apache License Version 2.0
         </TextArea>
         <HBox alignment="CENTER" spacing="10.0">
             <children>
-                <Button defaultButton="true" mnemonicParsing="false" onAction="#mybox" text="MyBox" />
+                <Button mnemonicParsing="false" onAction="#mybox" text="MyBox" />
                 <Button mnemonicParsing="false" onAction="#openPath" text="%OpenPath" />
                 <Button fx:id="reloadButton" disable="true" mnemonicParsing="false" onAction="#reloadAction" text="%ReloadCurrentPage" />
                 <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopAction" text="%Stop" />

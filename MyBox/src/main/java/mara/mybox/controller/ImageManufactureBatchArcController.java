@@ -17,11 +17,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -45,14 +45,14 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     private ToggleGroup arcGroup;
 
     public ImageManufactureBatchArcController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchArc");
+        baseTitle = AppVaribles.message("ImageManufactureBatchArc");
 
         ImageArcKey = "ImageArcKey";
         ImageArcPerKey = "ImageArcPerKey";
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(Bindings.isEmpty(targetPathInput.textProperty())
@@ -115,12 +115,12 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
         perBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) arcGroup.getSelectedToggle();
-        if (getMessage("WidthPercentage").equals(selected.getText())) {
+        if (message("WidthPercentage").equals(selected.getText())) {
             isPercent = true;
             perBox.setDisable(false);
             checkPercent();
 
-        } else if (getMessage("Custom").equals(selected.getText())) {
+        } else if (message("Custom").equals(selected.getText())) {
             isPercent = false;
             arcBox.setDisable(false);
             checkArc();

@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesBatchController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImagesTableController">
     <children>
         <ToolBar maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
             <items>
@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
+                <Button fx:id="upFilesButton" mnemonicParsing="false" onAction="#upFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -51,11 +51,29 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
+                <Button fx:id="downFilesButton" mnemonicParsing="false" onAction="#downFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../buttons/iconDown.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="selectAllFilesButton" mnemonicParsing="false" onAction="#selectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectAll.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="unselectAllFilesButton" mnemonicParsing="false" onAction="#unselectAllFilesAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconSelectNone.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -69,7 +87,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearFilesAction">
+                <Button fx:id="clearFilesButton" mnemonicParsing="false" onAction="#clearFilesAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -105,22 +123,21 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
+                <CheckBox fx:id="tableThumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnail" />
             </items>
         </ToolBar>
-        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="900.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-                <TableColumn fx:id="handledColumn" prefWidth="174.0" text="%Handled" />
                 <TableColumn fx:id="imageColumn" editable="false" prefWidth="120.0" text="%SourceImage" />
-                <TableColumn fx:id="pixelsColumn" prefWidth="120.0" text="%Pixels" />
-                <TableColumn fx:id="colorSpaceColumn" prefWidth="100.0" text="%ColorSpace" />
-                <TableColumn fx:id="fileColumn" prefWidth="160.0" text="%File" />
-                <TableColumn fx:id="indexColumn" prefWidth="70.0" text="%Index" />
-                <TableColumn fx:id="sizeColumn" prefWidth="120.0" text="%Size" />
-                <TableColumn fx:id="modifyTimeColumn" prefWidth="160.0" text="%ModifyTime" />
-                <TableColumn fx:id="createTimeColumn" prefWidth="160.0" text="%CreateTime" />
+                <TableColumn fx:id="pixelsColumn" editable="false" prefWidth="120.0" text="%Pixels" />
+                <TableColumn fx:id="colorSpaceColumn" editable="false" prefWidth="100.0" text="%ColorSpace" />
+                <TableColumn fx:id="fileColumn" editable="false" prefWidth="160.0" text="%File" />
+                <TableColumn fx:id="indexColumn" editable="false" prefWidth="70.0" text="%Index" />
+                <TableColumn fx:id="sizeColumn" editable="false" prefWidth="120.0" text="%FileSize" />
+                <TableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifyTime" />
+                <TableColumn fx:id="createTimeColumn" editable="false" prefWidth="160.0" text="%CreateTime" />
             </columns>
         </TableView>
-        <Label fx:id="sourcesLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />
+        <Label fx:id="tableLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " VBox.vgrow="NEVER" />
     </children>
 </VBox>

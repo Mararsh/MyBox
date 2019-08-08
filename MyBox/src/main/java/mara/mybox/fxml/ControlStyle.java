@@ -7,8 +7,8 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -60,534 +60,543 @@ public class ControlStyle {
 
             // Buttons
             case "selectSourceButton":
-                return new ControlStyle("selectSourceButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("selectSourceButton", message("Select"), "", "iconOpen.png");
 
             case "okButton":
-                return new ControlStyle("okButton", getMessage("OK"), "ENTER / F1 / CTRL+g", "iconOK.png");
+                return new ControlStyle("okButton", message("OK"), "F1 / CTRL+g", "iconOK.png");
 
             case "createButton":
-                return new ControlStyle("createButton", getMessage("Create"), "CTRL+n", "iconAddFile.png");
+                return new ControlStyle("createButton", message("Create"), "CTRL+n", "iconAddFile.png");
 
             case "deleteButton":
-                return new ControlStyle("deleteButton", getMessage("Delete"), "CTRL+d / DELETE", "iconDelete.png");
+                return new ControlStyle("deleteButton", message("Delete"), "CTRL+d / DELETE", "iconDelete.png");
 
             case "copyButton":
-                return new ControlStyle("copyButton", getMessage("Copy"), "CTRL+c", "iconCopy.png");
+                return new ControlStyle("copyButton", message("Copy"), "CTRL+c", "iconCopy.png");
 
             case "pasteButton":
-                return new ControlStyle("pasteButton", getMessage("Paste"), "CTRL+v", "iconPaste.png");
+                return new ControlStyle("pasteButton", message("Paste"), "CTRL+v", "iconPaste.png");
 
             case "saveButton":
-                return new ControlStyle("saveButton", getMessage("Save"), "F2 / CTRL+s", "iconSave.png");
+                return new ControlStyle("saveButton", message("Save"), "F2 / CTRL+s", "iconSave.png");
 
             case "saveAsButton":
-                return new ControlStyle("saveAsButton", getMessage("SaveAs"), "", "iconSaveAs.png");
+                return new ControlStyle("saveAsButton", message("SaveAs"), "", "iconSaveAs.png");
 
             case "selectAllButton":
-                return new ControlStyle("selectAllButton", getMessage("SelectAll"), "CTRL+a", "iconSelectAll.png");
+                return new ControlStyle("selectAllButton", message("SelectAll"), "CTRL+a", "iconSelectAll.png");
 
             case "cropButton":
-                return new ControlStyle("cropButton", getMessage("Crop"), "CTRL+x", "iconCrop.png");
+                return new ControlStyle("cropButton", message("Crop"), "CTRL+x", "iconCrop.png");
 
             case "recoverButton":
-                return new ControlStyle("recoverButton", getMessage("Recover"), "CTRL+r", "iconRecover.png");
+                return new ControlStyle("recoverButton", message("Recover"), "CTRL+r", "iconRecover.png");
 
             case "renameButton":
-                return new ControlStyle("renameButton", getMessage("Rename"), "", "iconRename.png");
+                return new ControlStyle("renameButton", message("Rename"), "", "iconRename.png");
 
             case "infoButton":
-                return new ControlStyle("infoButton", getMessage("Information"), "CTRL+i", "iconInfo.png");
+                return new ControlStyle("infoButton", message("Information"), "CTRL+i", "iconInfo.png");
 
             case "metaButton":
-                return new ControlStyle("metaButton", getMessage("MetaData"), "", "iconMeta.png");
+                return new ControlStyle("metaButton", message("MetaData"), "", "iconMeta.png");
 
             case "nextButton":
-                return new ControlStyle("nextButton", getMessage("Next"), "PAGE DOWN", "iconNext.png");
+                return new ControlStyle("nextButton", message("Next"), "PAGE DOWN", "iconNext.png");
 
             case "previousButton":
-                return new ControlStyle("previousButton", getMessage("Previous"), "PAGE UP", "iconPrevious.png");
+                return new ControlStyle("previousButton", message("Previous"), "PAGE UP", "iconPrevious.png");
 
             case "firstButton":
-                return new ControlStyle("firstButton", getMessage("First"), "CTRL+HOME", "iconFirst.png");
+                return new ControlStyle("firstButton", message("First"), "CTRL+HOME", "iconFirst.png");
 
             case "lastButton":
-                return new ControlStyle("lastButton", getMessage("Last"), "CTRL+END", "iconLast.png");
+                return new ControlStyle("lastButton", message("Last"), "CTRL+END", "iconLast.png");
 
             case "goButton":
-                return new ControlStyle("goButton", getMessage("Go"), "", "iconGo.png");
+                return new ControlStyle("goButton", message("Go"), "", "iconGo.png");
 
             case "viewButton":
-                return new ControlStyle("viewButton", getMessage("View"), "", "iconView.png");
+                return new ControlStyle("viewButton", message("View"), "", "iconView.png");
 
             case "popButton":
-                return new ControlStyle("popButton", getMessage("Pop"), "CTRL+p", "iconPop.png");
+                return new ControlStyle("popButton", message("Pop"), "CTRL+p", "iconPop.png");
 
             case "refButton":
-                return new ControlStyle("refButton", getMessage("Ref"), getMessage("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
+                return new ControlStyle("refButton", message("Ref"), message("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
 
             case "ref2Button":
-                return new ControlStyle("refButton2", getMessage("Ref"), getMessage("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
+                return new ControlStyle("refButton2", message("Ref"), message("UseCurrentImageAsReference"), "CTRL+f", "iconRef.png");
 
             case "redoButton":
-                return new ControlStyle("redoButton", getMessage("Redo"), "CTRL+y", "iconRedo.png");
+                return new ControlStyle("redoButton", message("Redo"), "CTRL+y", "iconRedo.png");
 
             case "undoButton":
-                return new ControlStyle("undoButton", getMessage("Undo"), "CTRL+z", "iconUndo.png");
+                return new ControlStyle("undoButton", message("Undo"), "CTRL+z", "iconUndo.png");
 
             case "imageSizeButton":
-                return new ControlStyle("imageSizeButton", getMessage("LoadedSize"), "CTRL+1", "iconPicSmall.png");
+                return new ControlStyle("imageSizeButton", message("LoadedSize"), "CTRL+1", "iconPicSmall.png");
 
             case "paneSizeButton":
-                return new ControlStyle("paneSizeButton", getMessage("PaneSize"), "CTRL+2", "iconPicBig.png");
+                return new ControlStyle("paneSizeButton", message("PaneSize"), "CTRL+2", "iconPicBig.png");
 
             case "zoomInButton":
-                return new ControlStyle("zoomInButton", getMessage("ZoomIn"), "CTRL+3", "iconZoomIn.png");
+                return new ControlStyle("zoomInButton", message("ZoomIn"), "CTRL+3", "iconZoomIn.png");
 
             case "zoomOutButton":
-                return new ControlStyle("zoomOutButton", getMessage("ZoomOut"), "CTRL+4", "iconZoomOut.png");
+                return new ControlStyle("zoomOutButton", message("ZoomOut"), "CTRL+4", "iconZoomOut.png");
 
             case "rotateLeftButton":
-                return new ControlStyle("rotateLeftButton", getMessage("RotateLeft"), "", "iconRotateLeft.png");
+                return new ControlStyle("rotateLeftButton", message("RotateLeft"), "", "iconRotateLeft.png");
 
             case "rotateRightButton":
-                return new ControlStyle("rotateRightButton", getMessage("RotateRight"), "", "iconRotateRight.png");
+                return new ControlStyle("rotateRightButton", message("RotateRight"), "", "iconRotateRight.png");
 
             case "turnOverButton":
-                return new ControlStyle("turnOverButton", getMessage("TurnOver"), "", "iconTurnOver.png");
+                return new ControlStyle("turnOverButton", message("TurnOver"), "", "iconTurnOver.png");
 
             case "moveLeftButton":
-                return new ControlStyle("moveLeftButton", getMessage("MoveLeft"), "", "iconLeft.png");
+                return new ControlStyle("moveLeftButton", message("MoveLeft"), "", "iconLeft.png");
 
             case "moveRightButton":
-                return new ControlStyle("moveRightButton", getMessage("MoveRight"), "", "iconRight.png");
+                return new ControlStyle("moveRightButton", message("MoveRight"), "", "iconRight.png");
 
-            case "moveUpButton":
-                return new ControlStyle("moveUpButton", getMessage("MoveUp"), "", "iconUp.png");
+            case "upFilesButton":
+                return new ControlStyle("upFilesButton", message("MoveUp"), "", "iconUp.png");
 
-            case "moveDownButton":
-                return new ControlStyle("moveDownButton", getMessage("MoveDown"), "", "iconDown.png");
+            case "downFilesButton":
+                return new ControlStyle("downFilesButton", message("MoveDown"), "", "iconDown.png");
 
             case "previewButton":
-                return new ControlStyle("previewButton", getMessage("Preview"), getMessage("PreviewComments"), "", "iconPreview.png");
+                return new ControlStyle("previewButton", message("Preview"), message("PreviewComments"), "", "iconPreview.png");
 
             case "startButton":
-                return new ControlStyle("startButton", "", "ENTER", "");
+                return new ControlStyle("startButton", "", "F1", "");
 
             case "closeButton":
-                return new ControlStyle("closeButton", getMessage("Close"), "F4 / ENTER", "iconClose.png");
+                return new ControlStyle("closeButton", message("Close"), "F4", "iconClose.png");
 
             case "findNextButton":
-                return new ControlStyle("findNextButton", getMessage("Next"), "CTRL+n", "iconNext.png");
+                return new ControlStyle("findNextButton", message("Next"), "CTRL+n", "iconNext.png");
 
             case "findPreviousButton":
-                return new ControlStyle("findPreviousButton", getMessage("Previous"), "CTRL+p", "iconPrevious.png");
+                return new ControlStyle("findPreviousButton", message("Previous"), "CTRL+p", "iconPrevious.png");
 
             case "findLastButton":
-                return new ControlStyle("findLastButton", getMessage("Last"), "CTRL+l", "iconLast.png");
+                return new ControlStyle("findLastButton", message("Last"), "CTRL+l", "iconLast.png");
 
             case "findFirstButton":
-                return new ControlStyle("findFirstButton", getMessage("First"), "CTRL+f", "iconFirst.png");
+                return new ControlStyle("findFirstButton", message("First"), "CTRL+f", "iconFirst.png");
 
             case "replaceButton":
-                return new ControlStyle("replaceButton", getMessage("Replace"), "CTRL+e", "iconReplace.png");
+                return new ControlStyle("replaceButton", message("Replace"), "CTRL+e", "iconReplace.png");
 
             case "replaceAllButton":
-                return new ControlStyle("replaceAllButton", getMessage("ReplaceAll"), "", "iconReplaceAll.png");
+                return new ControlStyle("replaceAllButton", message("ReplaceAll"), "", "iconReplaceAll.png");
 
             case "clearButton":
-                return new ControlStyle("clearButton", getMessage("Clear"), "", "iconClear.png");
+                return new ControlStyle("clearButton", message("Clear"), "", "iconClear.png");
+
+            case "clearFilesButton":
+                return new ControlStyle("clearFilesButton", message("Clear"), "", "iconClear.png");
 
             case "withdrawButton":
-                return new ControlStyle("withdrawButton", getMessage("Withdraw"), "", "iconWithdraw.png");
+                return new ControlStyle("withdrawButton", message("Withdraw"), "", "iconWithdraw.png");
 
             case "scopeClearButton":
-                return new ControlStyle("scopeClearButton", getMessage("Clear"), "", "iconClear.png");
+                return new ControlStyle("scopeClearButton", message("Clear"), "", "iconClear.png");
 
             case "scopeDeleteButton":
-                return new ControlStyle("scopeDeleteButton", getMessage("Delete"), "", "iconDelete.png");
+                return new ControlStyle("scopeDeleteButton", message("Delete"), "", "iconDelete.png");
 
             case "polygonWithdrawButton":
-                return new ControlStyle("polygonWithdrawButton", getMessage("Withdraw"), "", "iconWithdraw.png");
+                return new ControlStyle("polygonWithdrawButton", message("Withdraw"), "", "iconWithdraw.png");
 
             case "polygonClearButton":
-                return new ControlStyle("polygonClearButton", getMessage("Delete"), "", "iconClear.png");
+                return new ControlStyle("polygonClearButton", message("Delete"), "", "iconClear.png");
 
             case "addFilesButton":
-                return new ControlStyle("addFilesButton", getMessage("AddFiles"), "", "iconAddFile.png");
+                return new ControlStyle("addFilesButton", message("AddFiles"), "", "iconAddFile.png");
 
             case "insertFilesButton":
-                return new ControlStyle("insertFilesButton", getMessage("InsertFiles"), "", "iconInsertFile.png");
+                return new ControlStyle("insertFilesButton", message("InsertFiles"), "", "iconInsertFile.png");
 
             case "selectSourcePathButton":
-                return new ControlStyle("selectSourcePathButton", getMessage("Select"), "", "iconFolder.png");
+                return new ControlStyle("selectSourcePathButton", message("Select"), "", "iconFolder.png");
 
             case "selectTargetPathButton":
-                return new ControlStyle("selectTargetPathButton", getMessage("Select"), "", "iconFolder.png");
+                return new ControlStyle("selectTargetPathButton", message("Select"), "", "iconFolder.png");
 
             case "selectTargetFileButton":
-                return new ControlStyle("selectTargetFileButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("selectTargetFileButton", message("Select"), "", "iconOpen.png");
 
             case "addDirectoryButton":
-                return new ControlStyle("addDirectoryButton", getMessage("AddDirectory"), "", "iconAddFolder.png");
+                return new ControlStyle("addDirectoryButton", message("AddDirectory"), "", "iconAddFolder.png");
 
             case "insertDirectoryButton":
-                return new ControlStyle("insertDirectoryButton", getMessage("InsertDirectory"), "", "iconInsertFolder.png");
+                return new ControlStyle("insertDirectoryButton", message("InsertDirectory"), "", "iconInsertFolder.png");
 
             case "deleteFileButton":
-                return new ControlStyle("deleteFileButton", getMessage("Delete"), "", "iconDeleteFile.png");
+                return new ControlStyle("deleteFileButton", message("Delete"), "", "iconDeleteFile.png");
 
             case "deleteFilesButton":
-                return new ControlStyle("deleteFilesButton", getMessage("Delete"), "", "iconDeleteFile.png");
+                return new ControlStyle("deleteFilesButton", message("Delete"), "", "iconDeleteFile.png");
+
+            case "selectAllFilesButton":
+                return new ControlStyle("selectAllFilesButton", message("SelectAll"), "CTRL+a", "iconSelectAll.png");
+
+            case "unselectAllFilesButton":
+                return new ControlStyle("unselectAllFilesButton", message("UnselectAll"), "", "iconSelectNone.png");
 
             case "openTargetButton":
-                return new ControlStyle("openTargetButton", getMessage("Open"), "", "iconOpen.png");
+                return new ControlStyle("openTargetButton", message("Open"), "", "iconOpen.png");
 
             case "viewTargetFileButton":
-                return new ControlStyle("viewTargetFileButton", getMessage("View"), "", "iconView.png");
+                return new ControlStyle("viewTargetFileButton", message("View"), "", "iconView.png");
+
+            case "viewFileButton":
+                return new ControlStyle("viewFileButton", message("View"), "", "iconView.png");
 
             case "browseButton":
-                return new ControlStyle("browseButton", getMessage("Browse"), "", "iconBrowse.png");
+                return new ControlStyle("browseButton", message("Browse"), "", "iconBrowse.png");
 
             case "selectRefButton":
-                return new ControlStyle("selectRefButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("selectRefButton", message("Select"), "", "iconOpen.png");
 
             case "mirrorHButton":
-                return new ControlStyle("mirrorHButton", getMessage("MirrorHorizontal"), "", "iconHorizontal.png");
+                return new ControlStyle("mirrorHButton", message("MirrorHorizontal"), "", "iconHorizontal.png");
 
             case "mirrorVButton":
-                return new ControlStyle("mirrorVButton", getMessage("MirrorVertical"), "", "iconVertical.png");
+                return new ControlStyle("mirrorVButton", message("MirrorVertical"), "", "iconVertical.png");
 
             case "shearButton":
-                return new ControlStyle("shearButton", getMessage("Shear"), "", "iconShear.png");
+                return new ControlStyle("shearButton", message("Shear"), "", "iconShear.png");
 
             case "saveImagesButton":
-                return new ControlStyle("saveImagesButton", getMessage("SaveAsImages"),
-                        getMessage("SaveAsImages") + "\n" + getMessage("FilePrefixInput"), "", "");
+                return new ControlStyle("saveImagesButton", message("SaveAsImages"),
+                        message("SaveAsImages") + "\n" + message("FilePrefixInput"), "", "");
 
             case "saveTiffButton":
-                return new ControlStyle("saveTiffButton", getMessage("SaveAsTiff"), "", "iconTiff.png");
+                return new ControlStyle("saveTiffButton", message("SaveAsTiff"), "", "iconTiff.png");
 
             case "savePdfButton":
-                return new ControlStyle("savePdfButton", getMessage("SaveAsPDF"), "", "iconPDF.png");
+                return new ControlStyle("savePdfButton", message("SaveAsPDF"), "", "iconPDF.png");
 
             case "clearRowsButton":
-                return new ControlStyle("clearRowsButton", getMessage("Clear"), "", "iconClear.png");
+                return new ControlStyle("clearRowsButton", message("Clear"), "", "iconClear.png");
 
             case "clearColsButton":
-                return new ControlStyle("clearColsButton", getMessage("Clear"), "", "iconClear.png");
+                return new ControlStyle("clearColsButton", message("Clear"), "", "iconClear.png");
 
             case "examplesButton":
-                return new ControlStyle("examplesButton", getMessage("Examples"), "", "iconExamples.png");
+                return new ControlStyle("examplesButton", message("Examples"), "", "iconExamples.png");
 
             case "testButton":
-                return new ControlStyle("testButton", getMessage("Test"), "", "iconRun.png");
+                return new ControlStyle("testButton", message("Test"), "", "iconRun.png");
 
             case "editButton":
-                return new ControlStyle("editButton", getMessage("Edit"), "", "iconEdit.png");
+                return new ControlStyle("editButton", message("Edit"), "", "iconEdit.png");
 
             case "openForeImageButton":
-                return new ControlStyle("openForeImageButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("openForeImageButton", message("Select"), "", "iconOpen.png");
 
             case "viewForeImageButton":
-                return new ControlStyle("viewForeImageButton", getMessage("View"), "", "iconView.png");
+                return new ControlStyle("viewForeImageButton", message("View"), "", "iconView.png");
 
             case "foreImagePaneSizeButton":
-                return new ControlStyle("foreImagePaneSizeButton", getMessage("PaneSize"), "", "iconPicBig.png");
+                return new ControlStyle("foreImagePaneSizeButton", message("PaneSize"), "", "iconPicBig.png");
 
             case "foreImageImageSizeButton":
-                return new ControlStyle("foreImageImageSizeButton", getMessage("ImageSize"), "", "iconPicSmall.png");
+                return new ControlStyle("foreImageImageSizeButton", message("ImageSize"), "", "iconPicSmall.png");
 
             case "openBackImageButton":
-                return new ControlStyle("openBackImageButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("openBackImageButton", message("Select"), "", "iconOpen.png");
 
             case "viewBackImageButton":
-                return new ControlStyle("viewBackImageButton", getMessage("View"), "", "iconView.png");
+                return new ControlStyle("viewBackImageButton", message("View"), "", "iconView.png");
 
             case "backImagePaneSizeButton":
-                return new ControlStyle("backImagePaneSizeButton", getMessage("PaneSize"), "", "iconPicBig.png");
+                return new ControlStyle("backImagePaneSizeButton", message("PaneSize"), "", "iconPicBig.png");
 
             case "backImageImageSizeButton":
-                return new ControlStyle("backImageImageSizeButton", getMessage("ImageSize"), "", "iconPicSmall.png");
+                return new ControlStyle("backImageImageSizeButton", message("ImageSize"), "", "iconPicSmall.png");
 
             case "newWindowButton":
-                return new ControlStyle("newWindowButton", getMessage("OpenInNewWindow"), "", "iconView.png");
+                return new ControlStyle("newWindowButton", message("OpenInNewWindow"), "", "iconView.png");
 
             case "strightButton":
-                return new ControlStyle("strightButton", getMessage("Straighten"), "", "iconRefresh.png");
+                return new ControlStyle("strightButton", message("Straighten"), "", "iconRefresh.png");
 
             case "activeButton":
-                return new ControlStyle("activeButton", getMessage("Active"), "", "iconActive.png");
+                return new ControlStyle("activeButton", message("Active"), "", "iconActive.png");
 
             case "inactiveButton":
-                return new ControlStyle("inactiveButton", getMessage("Inactive"), "", "iconInactive.png");
+                return new ControlStyle("inactiveButton", message("Inactive"), "", "iconInactive.png");
 
             case "thumbsListButton":
-                return new ControlStyle("thumbsListButton", getMessage("ThumbnailsList"), "", "iconThumbsList.png");
+                return new ControlStyle("thumbsListButton", message("ThumbnailsList"), "", "iconThumbsList.png");
 
             case "filesListButton":
-                return new ControlStyle("filesListButton", getMessage("FilesList"), "", "iconList.png");
+                return new ControlStyle("filesListButton", message("FilesList"), "", "iconList.png");
 
             case "snapshotButton":
-                return new ControlStyle("snapshotButton", getMessage("Snapshot"), "", "iconSnapshot.png");
+                return new ControlStyle("snapshotButton", message("Snapshot"), "", "iconSnapshot.png");
 
             case "splitButton":
-                return new ControlStyle("splitButton", getMessage("Split"), "", "iconSplit.png");
+                return new ControlStyle("splitButton", message("Split"), "", "iconSplit.png");
 
             case "sampleButton":
-                return new ControlStyle("sampleButton", getMessage("Sample"), "", "iconSample.png");
+                return new ControlStyle("sampleButton", message("Sample"), "", "iconSample.png");
 
             case "statisticButton":
-                return new ControlStyle("statisticButton", getMessage("Statistic"), "", "iconStatistic.png");
+                return new ControlStyle("statisticButton", message("Statistic"), "", "iconStatistic.png");
 
             case "manufactureButton":
-                return new ControlStyle("manufactureButton", getMessage("Manufacture"), "", "iconEdit.png");
+                return new ControlStyle("manufactureButton", message("Manufacture"), "", "iconEdit.png");
 
             case "calculatorButton":
-                return new ControlStyle("calculatorButton", getMessage("PixelsCalculator"), "", "iconCalculator.png");
+                return new ControlStyle("calculatorButton", message("PixelsCalculator"), "", "iconCalculator.png");
 
             case "filterButton":
-                return new ControlStyle("filterButton", getMessage("Filter"), "", "iconFilter.png");
+                return new ControlStyle("filterButton", message("Filter"), "", "iconFilter.png");
 
             case "locateLineButton":
-                return new ControlStyle("locateLineButton", getMessage("Go"), "", "iconGo.png");
+                return new ControlStyle("locateLineButton", message("Go"), "", "iconGo.png");
 
             case "locateObjectButton":
-                return new ControlStyle("locateObjectButton", getMessage("Go"), "", "iconGo.png");
+                return new ControlStyle("locateObjectButton", message("Go"), "", "iconGo.png");
 
             case "recoveryAllButton":
-                return new ControlStyle("recoveryAllButton", getMessage("RecoverAll"), "", "iconRecover.png");
+                return new ControlStyle("recoveryAllButton", message("RecoverAll"), "", "iconRecover.png");
 
             case "recoverySelectedButton":
-                return new ControlStyle("recoverySelectedButton", getMessage("RecoverSelected"), "", "iconRestoreFile.png");
+                return new ControlStyle("recoverySelectedButton", message("RecoverSelected"), "", "iconRestoreFile.png");
 
             case "playButton":
-                return new ControlStyle("playButton", getMessage("Play"), "", "iconPlay.png");
+                return new ControlStyle("playButton", message("Play"), "", "iconPlay.png");
 
             case "pauseButton":
-                return new ControlStyle("pauseButton", getMessage("Pause"), "", "iconPause.png");
+                return new ControlStyle("pauseButton", message("Pause"), "", "iconPause.png");
 
             case "selectSoundButton":
-                return new ControlStyle("selectSoundButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("selectSoundButton", message("Select"), "", "iconOpen.png");
 
             case "selectMusicButton":
-                return new ControlStyle("selectMusicButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("selectMusicButton", message("Select"), "", "iconOpen.png");
 
             case "pixSelectButton":
-                return new ControlStyle("pixSelectButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("pixSelectButton", message("Select"), "", "iconOpen.png");
 
             case "refreshButton":
-                return new ControlStyle("refreshButton", getMessage("Refresh"), "", "iconRecover.png");
+                return new ControlStyle("refreshButton", message("Refresh"), "", "iconRecover.png");
 
             case "loadButton":
-                return new ControlStyle("loadButton", getMessage("Load"), "", "iconGo.png");
+                return new ControlStyle("loadButton", message("Load"), "", "iconGo.png");
 
             case "setButton":
-                return new ControlStyle("setButton", getMessage("Set"), "", "iconEqual.png");
+                return new ControlStyle("setButton", message("Set"), "", "iconEqual.png");
 
             case "increaseButton":
-                return new ControlStyle("increaseButton", getMessage("Increase"), "", "iconPlus.png");
+                return new ControlStyle("increaseButton", message("Increase"), "", "iconPlus.png");
 
             case "decreaseButton":
-                return new ControlStyle("decreaseButton", getMessage("Decrease"), "", "iconMinus.png");
+                return new ControlStyle("decreaseButton", message("Decrease"), "", "iconMinus.png");
 
             case "invertButton":
-                return new ControlStyle("invertButton", getMessage("Invert"), "", "iconInvert.png");
+                return new ControlStyle("invertButton", message("Invert"), "", "iconInvert.png");
 
             case "originalButton":
-                return new ControlStyle("originalButton", getMessage("OriginalSize"), "", "iconOriginalSize.png");
+                return new ControlStyle("originalButton", message("OriginalSize"), "", "iconOriginalSize.png");
 
             case "wowButton":
-                return new ControlStyle("wowButton", getMessage("WowAsExample"), "", "iconWOW.png");
+                return new ControlStyle("wowButton", message("WowAsExample"), "", "iconWOW.png");
 
             case "suggestButton":
-                return new ControlStyle("suggestButton", getMessage("SuggestedSettings"), "", "iconIdea.png");
+                return new ControlStyle("suggestButton", message("SuggestedSettings"), "", "iconIdea.png");
 
             case "originalImageButton":
-                return new ControlStyle("originalImageButton", getMessage("OriginalImage"), "", "iconPhoto.png");
+                return new ControlStyle("originalImageButton", message("OriginalImage"), "", "iconPhoto.png");
 
             case "xmlButton":
                 return new ControlStyle("xmlButton", "XML", "", "iconXML.png");
 
             case "exportButton":
-                return new ControlStyle("exportButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("exportButton", message("Export"), "", "iconExport.png");
 
             case "importButton":
-                return new ControlStyle("importButton", getMessage("Import"), "", "iconImport.png");
+                return new ControlStyle("importButton", message("Import"), "", "iconImport.png");
 
             case "refreshHeaderButton":
-                return new ControlStyle("refreshHeaderButton", getMessage("Refresh"), "", "iconRefresh.png");
+                return new ControlStyle("refreshHeaderButton", message("Refresh"), "", "iconRefresh.png");
 
             case "refreshXmlButton":
-                return new ControlStyle("refreshXmlButton", getMessage("Refresh"), "", "iconRefresh.png");
+                return new ControlStyle("refreshXmlButton", message("Refresh"), "", "iconRefresh.png");
 
             case "refreshCieDataButton":
-                return new ControlStyle("refreshCieDataButton", getMessage("Refresh"), "", "iconRefresh.png");
+                return new ControlStyle("refreshCieDataButton", message("Refresh"), "", "iconRefresh.png");
 
             case "exportCieDataButton":
-                return new ControlStyle("exportCieDataButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("exportCieDataButton", message("Export"), "", "iconExport.png");
 
             case "exportDiagramButton":
-                return new ControlStyle("exportDiagramButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("exportDiagramButton", message("Export"), "", "iconExport.png");
 
             case "exportXmlButton":
-                return new ControlStyle("exportXmlButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("exportXmlButton", message("Export"), "", "iconExport.png");
 
             case "validateButton":
-                return new ControlStyle("validateButton", getMessage("Validate"), "", "iconView.png");
+                return new ControlStyle("validateButton", message("Validate"), "", "iconView.png");
 
             case "copyAsAButton":
-                return new ControlStyle("copyAsAButton", getMessage("CopyAsMatrixA"), "", "iconCopyA.png");
+                return new ControlStyle("copyAsAButton", message("CopyAsMatrixA"), "", "iconCopyA.png");
 
             case "copyAsBButton":
-                return new ControlStyle("copyAsAButton", getMessage("CopyAsMatrixB"), "", "iconCopyB.png");
+                return new ControlStyle("copyAsAButton", message("CopyAsMatrixB"), "", "iconCopyB.png");
 
             case "export10DegreeButton":
-                return new ControlStyle("export10DegreeButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("export10DegreeButton", message("Export"), "", "iconExport.png");
 
             case "export2DegreeButton":
-                return new ControlStyle("export2DegreeButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("export2DegreeButton", message("Export"), "", "iconExport.png");
 
             case "calculateXYZButton":
-                return new ControlStyle("calculateXYZButton", getMessage("Calculate"), "", "iconCalculator.png");
+                return new ControlStyle("calculateXYZButton", message("Calculate"), "", "iconCalculator.png");
 
             case "calculateXYButton":
-                return new ControlStyle("calculateXYButton", getMessage("Calculate"), "", "iconCalculator.png");
+                return new ControlStyle("calculateXYButton", message("Calculate"), "", "iconCalculator.png");
 
             case "calculateDisplayButton":
-                return new ControlStyle("calculateDisplayButton", getMessage("Display"), "", "iconGraph.png");
+                return new ControlStyle("calculateDisplayButton", message("Display"), "", "iconGraph.png");
 
             case "displayDataButton":
-                return new ControlStyle("displayDataButton", getMessage("Display"), "", "iconGraph.png");
+                return new ControlStyle("displayDataButton", message("Display"), "", "iconGraph.png");
 
             case "fileExportButton":
-                return new ControlStyle("fileExportButton", getMessage("Export"), "", "iconExport.png");
+                return new ControlStyle("fileExportButton", message("Export"), "", "iconExport.png");
 
             case "editOkButton":
-                return new ControlStyle("editOkButton", getMessage("OK"), "", "iconOK.png");
+                return new ControlStyle("editOkButton", message("OK"), "", "iconOK.png");
 
             case "valueOkButton":
-                return new ControlStyle("valueOkButton", getMessage("OK"), "", "iconOK.png");
+                return new ControlStyle("valueOkButton", message("OK"), "", "iconOK.png");
 
             case "plusButton":
-                return new ControlStyle("plusButton", getMessage("Plus"), "", "iconPlus.png");
+                return new ControlStyle("plusButton", message("Plus"), "", "iconPlus.png");
 
             case "minusButton":
-                return new ControlStyle("minusButton", getMessage("Minus"), "", "iconMinus.png");
+                return new ControlStyle("minusButton", message("Minus"), "", "iconMinus.png");
 
             case "multiplyButton":
-                return new ControlStyle("multiplyButton", getMessage("Multiply"), "", "iconMultiply.png");
+                return new ControlStyle("multiplyButton", message("Multiply"), "", "iconMultiply.png");
 
             case "calculateButton":
-                return new ControlStyle("calculateButton", getMessage("Calculate"), "", "iconCalculator.png");
+                return new ControlStyle("calculateButton", message("Calculate"), "", "iconCalculator.png");
 
             case "matrixPlusButton":
-                return new ControlStyle("matrixPlusButton", getMessage("A + B"), "", "iconPlus.png");
+                return new ControlStyle("matrixPlusButton", message("A + B"), "", "iconPlus.png");
 
             case "matrixMinusButton":
-                return new ControlStyle("matrixMinusButton", getMessage("A - B"), "", "iconMinus.png");
+                return new ControlStyle("matrixMinusButton", message("A - B"), "", "iconMinus.png");
 
             case "matrixMultiplyButton":
-                return new ControlStyle("matrixMultiplyButton", getMessage("AB"), "", "iconMultiply.png");
+                return new ControlStyle("matrixMultiplyButton", message("AB"), "", "iconMultiply.png");
 
             case "hadamardProductButton":
-                return new ControlStyle("hadamardProductButton", getMessage("HadamardProductComments"), "", "iconAsterisk.png");
+                return new ControlStyle("hadamardProductButton", message("HadamardProductComments"), "", "iconAsterisk.png");
 
             case "kroneckerProductButton":
-                return new ControlStyle("kroneckerProductButton", getMessage("KroneckerProductComments"), "", "iconCancel.png");
+                return new ControlStyle("kroneckerProductButton", message("KroneckerProductComments"), "", "iconCancel.png");
 
             case "verticalMergeButton":
-                return new ControlStyle("verticalMergeButton", getMessage("VerticalMergeComments"), "", "iconVerticalMerge.png");
+                return new ControlStyle("verticalMergeButton", message("VerticalMergeComments"), "", "iconVerticalMerge.png");
 
             case "horizontalMergeButton":
-                return new ControlStyle("horizontalMergeButton", getMessage("HorizontalMergeComments"), "", "iconHorizontalMerge.png");
+                return new ControlStyle("horizontalMergeButton", message("HorizontalMergeComments"), "", "iconHorizontalMerge.png");
 
             case "calculateAllButton":
-                return new ControlStyle("calculateAllButton", getMessage("Calculate"), "", "iconCalculator.png");
+                return new ControlStyle("calculateAllButton", message("Calculate"), "", "iconCalculator.png");
 
             case "iccSelectButton":
-                return new ControlStyle("iccSelectButton", getMessage("Select"), "", "iconOpen.png");
+                return new ControlStyle("iccSelectButton", message("Select"), "", "iconOpen.png");
 
             // RadioButton
             case "miaoButton":
-                return new ControlStyle("miaoButton", getMessage("Meow"), getMessage("MiaoPrompt"), "", "iconCat.png");
+                return new ControlStyle("miaoButton", message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
 
             case "pcxSelect":
-                return new ControlStyle("pcxSelect", "pcx", getMessage("PcxComments"), "", "");
+                return new ControlStyle("pcxSelect", "pcx", message("PcxComments"), "", "");
 
             // ToggleButton
             case "pickColorButton":
-                return new ControlStyle("pickColorButton", getMessage("PickColor"), getMessage("ColorPickerComments"), "", "iconPickColor.png");
+                return new ControlStyle("pickColorButton", message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
 
             case "pickFillColorButton":
-                return new ControlStyle("pickFillColorButton", getMessage("PickColor"), getMessage("ColorPickerComments"), "", "iconPickColor.png");
+                return new ControlStyle("pickFillColorButton", message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
 
             // ImageView
             case "tipsView":
                 return new ControlStyle("tipsView", "", "", "", "iconTips.png");
 
             case "linksView":
-                return new ControlStyle("linksView", "", getMessage("Links"), "", "iconLink.png");
+                return new ControlStyle("linksView", "", message("Links"), "", "iconLink.png");
 
             case "refTipsView":
-                return new ControlStyle("refTipsView", "", getMessage("ImageRefTips"), "", "iconTips.png");
+                return new ControlStyle("refTipsView", "", message("ImageRefTips"), "", "iconTips.png");
 
             case "textTipsView":
                 return new ControlStyle("textTipsView", "", "", "iconTips.png");
 
             case "preAlphaTipsView":
-                return new ControlStyle("preAlphaTipsView", "", getMessage("PremultipliedAlphaTips"), "", "iconTips.png");
+                return new ControlStyle("preAlphaTipsView", "", message("PremultipliedAlphaTips"), "", "iconTips.png");
 
             case "shapeTipsView":
-                return new ControlStyle("shapeTipsView", "", getMessage("ImageShapeTip"), "", "iconTips.png");
+                return new ControlStyle("shapeTipsView", "", message("ImageShapeTip"), "", "iconTips.png");
 
             case "scopeTipsView":
-                return new ControlStyle("scopeTipsView", "", getMessage("ImageScopeTips"), "", "iconTips.png");
+                return new ControlStyle("scopeTipsView", "", message("ImageScopeTips"), "", "iconTips.png");
 
             case "weiboTipsView":
-                return new ControlStyle("weiboTipsView", "", getMessage("WeiboAddressComments"), "", "iconTips.png");
+                return new ControlStyle("weiboTipsView", "", message("WeiboAddressComments"), "", "iconTips.png");
 
             case "thresholdingTipsView":
-                return new ControlStyle("thresholdingTipsView", "", getMessage("ThresholdingComments"), "", "iconTips.png");
+                return new ControlStyle("thresholdingTipsView", "", message("ThresholdingComments"), "", "iconTips.png");
 
             case "quantizationTipsView":
-                return new ControlStyle("quantizationTipsView", "", getMessage("QuantizationComments"), "", "iconTips.png");
+                return new ControlStyle("quantizationTipsView", "", message("QuantizationComments"), "", "iconTips.png");
 
             case "BWThresholdTipsView":
-                return new ControlStyle("BWThresholdTipsView", "", getMessage("BWThresholdComments"), "", "iconTips.png");
+                return new ControlStyle("BWThresholdTipsView", "", message("BWThresholdComments"), "", "iconTips.png");
 
             case "distanceTipsView":
-                return new ControlStyle("distanceTipsView", "", getMessage("ColorMatchComments"), "", "iconTips.png");
+                return new ControlStyle("distanceTipsView", "", message("ColorMatchComments"), "", "iconTips.png");
 
             case "weiboSnapTipsView":
-                return new ControlStyle("weiboSnapTipsView", "", getMessage("htmlSnapComments"), "", "iconTips.png");
+                return new ControlStyle("weiboSnapTipsView", "", message("htmlSnapComments"), "", "iconTips.png");
 
             case "fontTipsView":
-                return new ControlStyle("fontTipsView", "", getMessage("FontFileComments"), "", "iconTips.png");
+                return new ControlStyle("fontTipsView", "", message("FontFileComments"), "", "iconTips.png");
 
             case "pdfPageSizeTipsView":
-                return new ControlStyle("pdfPageSizeTipsView", "", getMessage("PdfPageSizeComments"), "", "iconTips.png");
-
-            case "startEndListTipsView":
-                return new ControlStyle("startEndListTipsView", "", getMessage("StartEndComments"), "", "iconTips.png");
+                return new ControlStyle("pdfPageSizeTipsView", "", message("PdfPageSizeComments"), "", "iconTips.png");
 
             case "pdfMemTipsView":
-                return new ControlStyle("pdfMemTipsView", "", getMessage("PdfMemComments"), "", "iconTips.png");
+                return new ControlStyle("pdfMemTipsView", "", message("PdfMemComments"), "", "iconTips.png");
 
             case "ditherTipsView":
-                return new ControlStyle("ditherTipsView", "", getMessage("DitherComments"), "", "iconTips.png");
+                return new ControlStyle("ditherTipsView", "", message("DitherComments"), "", "iconTips.png");
 
             case "effectTipsView":
                 return new ControlStyle("effectTipsView", "", "", "", "iconTips.png");
 
             // CheckBox
             case "miaoCheck":
-                return new ControlStyle("miaoCheck", getMessage("Meow"), getMessage("MiaoPrompt"), "", "iconCat.png");
+                return new ControlStyle("miaoCheck", message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
 
             case "pdfMemBox":
-                return new ControlStyle("pdfMemBox", "", getMessage("PdfMemComments"), "", "");
+                return new ControlStyle("pdfMemBox", "", message("PdfMemComments"), "", "");
 
             case "openCheck":
-                return new ControlStyle("openCheck", "", getMessage("OpenWhenComplete"), "", "iconOpen2.png");
+                return new ControlStyle("openCheck", "", message("OpenWhenComplete"), "", "iconOpen2.png");
 
 //            case "preAlphaCheck":
 //                return new ControlStyle("preAlphaCheck", "", "", "");
@@ -865,6 +874,9 @@ public class ControlStyle {
         }
     }
 
+    /*
+        get/set
+     */
     public String getId() {
         return id;
     }

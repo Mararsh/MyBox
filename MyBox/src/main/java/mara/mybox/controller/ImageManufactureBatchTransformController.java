@@ -15,10 +15,10 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -47,12 +47,12 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     }
 
     public ImageManufactureBatchTransformController() {
-        baseTitle = AppVaribles.getMessage("ImageManufactureBatchTransform");
+        baseTitle = AppVaribles.message("ImageManufactureBatchTransform");
 
     }
 
     @Override
-    public void initializeNext2() {
+    public void initializeNext() {
         try {
 
             startButton.disableProperty().unbind();
@@ -126,18 +126,18 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
         angleBox.getEditor().setStyle(null);
 
         RadioButton selected = (RadioButton) transformGroup.getSelectedToggle();
-        if (getMessage("Shear").equals(selected.getText())) {
+        if (message("Shear").equals(selected.getText())) {
             transformType = TransformType.Shear;
             shearBox.setDisable(false);
             checkShear();
 
-        } else if (getMessage("VerticalMirror").equals(selected.getText())) {
+        } else if (message("VerticalMirror").equals(selected.getText())) {
             transformType = TransformType.VerticalMirror;
 
-        } else if (getMessage("HorizontalMirror").equals(selected.getText())) {
+        } else if (message("HorizontalMirror").equals(selected.getText())) {
             transformType = TransformType.HorizontalMirror;
 
-        } else if (getMessage("RotateAngle").equals(selected.getText())) {
+        } else if (message("RotateAngle").equals(selected.getText())) {
             transformType = TransformType.Rotate;
             angleBox.setDisable(false);
             angleSlider.setDisable(false);

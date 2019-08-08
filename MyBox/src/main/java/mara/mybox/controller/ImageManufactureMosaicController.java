@@ -19,9 +19,10 @@ import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageScope.ScopeType;
-import static mara.mybox.value.AppVaribles.getMessage;
 import mara.mybox.fxml.FxmlImageManufacture;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -140,22 +141,22 @@ public class ImageManufactureMosaicController extends ImageManufactureController
             promptLabel.setText("");
 
             RadioButton selected = (RadioButton) shapeGroup.getSelectedToggle();
-            if (getMessage("Rectangle").equals(selected.getText())) {
+            if (message("Rectangle").equals(selected.getText())) {
                 shapeType = ScopeType.Rectangle;
                 initMaskRectangleLine(true);
 
-            } else if (getMessage("Circle").equals(selected.getText())) {
+            } else if (message("Circle").equals(selected.getText())) {
                 shapeType = ScopeType.Circle;
                 initMaskCircleLine(true);
 
-            } else if (getMessage("Ellipse").equals(selected.getText())) {
+            } else if (message("Ellipse").equals(selected.getText())) {
                 shapeType = ScopeType.Ellipse;
                 initMaskEllipseLine(true);
 
-            } else if (getMessage("Polygon").equals(selected.getText())) {
+            } else if (message("Polygon").equals(selected.getText())) {
                 shapeType = ScopeType.Polygon;
                 initMaskPolygonLine(true);
-                promptLabel.setText(getMessage("PolygonComments"));
+                promptLabel.setText(message("PolygonComments"));
 
             }
 
@@ -167,7 +168,7 @@ public class ImageManufactureMosaicController extends ImageManufactureController
     private void checkType() {
         try {
             RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
-            isMosaic = getMessage("Mosaic").equals(selected.getText());
+            isMosaic = message("Mosaic").equals(selected.getText());
 
         } catch (Exception e) {
             logger.error(e.toString());

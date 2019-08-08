@@ -1,21 +1,27 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import javafx.scene.layout.HBox;
+import mara.mybox.controller.base.BaseController;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageInformationPng;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVaribles.getMessage;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -25,32 +31,95 @@ import static mara.mybox.value.AppVaribles.getMessage;
  */
 public class ImageInformationController extends BaseController {
 
+    private ImageInformation imageInfo;
+
     @FXML
     private TextArea infoArea;
+    @FXML
+    private CheckBox consoleCheck, rawCheck;
+    @FXML
+    private HBox iccBox;
+    @FXML
+    private ComboBox<String> indexSelector;
 
     public ImageInformationController() {
-        baseTitle = AppVaribles.getMessage("ImageInformation");
+        baseTitle = message("ImageInformation");
 
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            consoleCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    AppVaribles.setUserConfigValue("ImageInformationConsoleKey", consoleCheck.isSelected());
+                    if (consoleCheck.isSelected()) {
+                        // https://stackoverflow.com/questions/36423200/textarea-javafx-color
+                        infoArea.setStyle("-fx-control-inner-background: black; -fx-text-fill: #66FF66;");
+                    } else {
+                        infoArea.setStyle("-fx-control-inner-background: white; -fx-text-fill: black; ");
+                    }
+                }
+            });
+            consoleCheck.setSelected(AppVaribles.getUserConfigBoolean("ImageInformationConsoleKey", false));
+
+            rawCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    AppVaribles.setUserConfigValue("ImageInformationRawKey", rawCheck.isSelected());
+                    loadImageFileInformation(imageInfo);
+                }
+            });
+            rawCheck.setSelected(AppVaribles.getUserConfigBoolean("ImageInformationRawKey", false));
+
+            iccBox.setVisible(false);
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
     }
 
     public void loadImageFileInformation(ImageInformation info) {
         try {
+            if (info == null) {
+                return;
+            }
+            imageInfo = info;
+            indexSelector.getItems().clear();
 
             ImageFileInformation finfo = info.getImageFileInformation();
             File file = finfo.getFile();
-            infoArea.setText(getMessage("FilesPath") + ": " + file.getParent() + "\n");
-            infoArea.appendText(getMessage("FileName") + ": " + file.getName() + "\n");
-            infoArea.appendText(getMessage("FileSize") + ": " + FileTools.showFileSize(finfo.getFileSize()) + "\n");
-            infoArea.appendText(getMessage("CreateTime") + ": " + DateTools.datetimeToString(finfo.getCreateTime()) + "\n");
-            infoArea.appendText(getMessage("ModifyTime") + ": " + DateTools.datetimeToString(finfo.getModifyTime()) + "\n");
-            infoArea.appendText(getMessage("Format") + ": " + finfo.getImageFormat() + "\n");
-            infoArea.appendText(getMessage("NumberOfImagesInFile") + ": " + finfo.getNumberOfImages() + "\n");
-            int count = 0;
-            for (ImageInformation imageInfo : finfo.getImagesInformation()) {
-                infoArea.appendText("\n----------------------- " + getMessage("Image") + " " + (++count) + " -----------------------\n");
-                loadImageInformation(imageInfo);
+            // https://stackoverflow.com/questions/3747860/style-a-jtextpane-to-have-console-like-formatting
+            // https://stackoverflow.com/questions/16279781/getting-jtextarea-to-display-fixed-width-font-without-antialiasing
+            // https://stackoverflow.com/questions/10774825/how-to-format-text-for-printing-in-java-using-printer-api/10775063?r=SearchResults#10775063
+//            infoArea.setFont(Font.font("monospaced")); // "Courier New"
+            infoArea.setText(sLine("FilesPath", file.getParent()));
+            infoArea.appendText(sLine("FileName", file.getName()));
+            infoArea.appendText(sLine("FileSize", FileTools.showFileSize(finfo.getFileSize())));
+            infoArea.appendText(sLine("CreateTime", DateTools.datetimeToString(finfo.getCreateTime())));
+            infoArea.appendText(sLine("ModifyTime", DateTools.datetimeToString(finfo.getModifyTime())));
+            infoArea.appendText(sLine("Format", finfo.getImageFormat()));
+            infoArea.appendText(sLine("NumberOfImagesInFile", finfo.getNumberOfImages() + ""));
+
+            for (int i = 0; i < finfo.getImagesInformation().size(); i++) {
+                ImageInformation iInfo = finfo.getImagesInformation().get(i);
+                infoArea.appendText("\n----------------------- " + message("Image") + " " + (i + 1) + " -----------------------\n");
+                if (iInfo.getIccProfile() != null) {
+                    indexSelector.getItems().add((i + 1) + "");
+                }
+                loadImageInformation(iInfo);
             }
-            myStage.setAlwaysOnTop(true);
+
+            if (indexSelector.getItems().isEmpty()) {
+                iccBox.setVisible(false);
+            } else {
+                iccBox.setVisible(true);
+                indexSelector.getSelectionModel().selectFirst();
+            }
+
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -58,6 +127,7 @@ public class ImageInformationController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            myStage.toFront();
                             infoArea.home();
                             infoArea.requestFocus();
                         }
@@ -72,12 +142,13 @@ public class ImageInformationController extends BaseController {
 
     public void loadImageInformation(ImageInformation imageInfo) {
         try {
-            loadImageCommonInformation(imageInfo);
+
+            loadStandardInformation(imageInfo);
             switch (imageInfo.getImageFormat()) {
                 case "png":
                     loadPngInformation(imageInfo);
                 default:
-                    loadAttributes(imageInfo);
+                    loadNativeAttributes(imageInfo);
 
             }
 
@@ -86,120 +157,129 @@ public class ImageInformationController extends BaseController {
         }
     }
 
-    public void loadImageCommonInformation(ImageInformation imageInfo) {
+    public void loadStandardInformation(ImageInformation imageInfo) {
         try {
-            infoArea.appendText(getMessage("xPixels") + ": " + imageInfo.getWidth() + "\n");
-            infoArea.appendText(getMessage("yPixels") + ": " + imageInfo.getHeight() + "\n");
+            infoArea.appendText(sLine("xPixels", imageInfo.getWidth()));
+            infoArea.appendText(sLine("yPixels", imageInfo.getHeight()));
 
+//            commonKeys.addAll(Arrays.asList("xDpi", "yDpi", "ColorSpace", "ColorChannels",
+//                    "BitDepth", "BitsPerSample", "Gamma", "BlackIsZero", "PaletteSize", "BackgroundIndex",
+//                    "BackgroundColor", "CompressionType", "IsLossless", "NumProgressiveScans",
+//                    "BitRate", "PlanarConfiguration", "SampleFormat", "SignificantBitsPerSample",
+//                    "SampleMSB", "PixelAspectRatio", "ImageRotation", "HorizontalPixelSize",
+//                    "VerticalPixelSize", "HorizontalPhysicalPixelSpacing", "VerticalPhysicalPixelSpacing",
+//                    "HorizontalPosition", "VerticalPosition", "HorizontalPixelOffset", "VerticalPixelOffset",
+//                    "HorizontalScreenSize", "VerticalScreenSize", "FormatVersion", "SubimageInterpretation",
+//                    "ImageCreationTime", "ImageModificationTime", "Alpha", "TransparentIndex", "TransparentColor"));
             if (imageInfo.getXDpi() > 0) {
-                infoArea.appendText(getMessage("xDensity") + ": " + imageInfo.getXDpi() + " dpi" + "\n");
+                infoArea.appendText(sLine("xDensity", imageInfo.getXDpi() + " dpi"));
                 float xinch = imageInfo.getWidth() / imageInfo.getXDpi();
-                infoArea.appendText(getMessage("xSize") + ": " + xinch + " " + AppVaribles.getMessage("inches")
-                        + " = " + (xinch * 2.54) + " " + AppVaribles.getMessage("centimetres") + "\n");
+                infoArea.appendText(sLine("xSize", xinch + " " + message("inches")
+                        + " = " + (xinch * 2.54) + " " + message("centimetres")));
             }
             if (imageInfo.getYDpi() > 0) {
-                infoArea.appendText(getMessage("yDensity") + ": " + imageInfo.getYDpi() + " dpi" + "\n");
+                infoArea.appendText(sLine("yDensity", imageInfo.getYDpi() + " dpi"));
                 float yinch = imageInfo.getHeight() / imageInfo.getYDpi();
-                infoArea.appendText(getMessage("ySize") + ": " + yinch + " " + AppVaribles.getMessage("inches")
-                        + " = " + (yinch * 2.54) + " " + AppVaribles.getMessage("centimetres") + "\n");
+                infoArea.appendText(sLine("ySize", yinch + " " + message("inches")
+                        + " = " + (yinch * 2.54) + " " + message("centimetres")));
             }
-            infoArea.appendText(getMessage("ColorSpace") + ": " + imageInfo.getColorSpace() + "\n");
-            infoArea.appendText(getMessage("ColorChannels") + ": " + imageInfo.getColorChannels() + "\n");
+            infoArea.appendText(sLine("ColorSpace", imageInfo.getColorSpace()));
+            infoArea.appendText(sLine("ColorChannels", imageInfo.getColorChannels()));
             if (imageInfo.getBitDepth() > 0) {
-                infoArea.appendText(getMessage("BitDepth") + ": " + imageInfo.getBitDepth() + "\n");
+                infoArea.appendText(sLine("BitDepth", imageInfo.getBitDepth()));
             }
             if (imageInfo.getBitsPerSample() != null) {
-                infoArea.appendText(getMessage("BitsPerSample") + ": " + imageInfo.getBitsPerSample() + "\n");
+                infoArea.appendText(sLine("BitsPerSample", imageInfo.getBitsPerSample()));
             }
             if (imageInfo.getGamma() > 0) {
-                infoArea.appendText(getMessage("Gamma") + ": " + imageInfo.getGamma() + "\n");
+                infoArea.appendText(sLine("Gamma", imageInfo.getGamma()));
             }
-            infoArea.appendText(getMessage("BlackIsZero") + ": " + AppVaribles.getMessage(imageInfo.isBlackIsZero() + "") + "\n");
-            if (imageInfo.getIntAttribute("PaletteSize") > 0) {
-                infoArea.appendText(getMessage("PaletteSize") + ": " + imageInfo.getIntAttribute("PaletteSize") + "\n");
+            infoArea.appendText(sLine("BlackIsZero", message(imageInfo.isBlackIsZero() + "")));
+            if (imageInfo.getStandardIntAttribute("PaletteSize") > 0) {
+                infoArea.appendText(sLine("PaletteSize", imageInfo.getStandardIntAttribute("PaletteSize")));
             }
             if (imageInfo.getBackgroundIndex() > 0) {
-                infoArea.appendText(getMessage("BackgroundIndex") + ": " + imageInfo.getBackgroundIndex() + "\n");
+                infoArea.appendText(sLine("BackgroundIndex", imageInfo.getBackgroundIndex()));
             }
             if (imageInfo.getBackgroundColor() != null) {
-                infoArea.appendText(getMessage("BackgroundColor") + ": " + imageInfo.getBackgroundColor().toString() + "\n");
+                infoArea.appendText(sLine("BackgroundColor", imageInfo.getBackgroundColor().toString()));
             }
             if (imageInfo.getCompressionType() != null) {
-                infoArea.appendText(getMessage("CompressionType") + ": " + imageInfo.getCompressionType() + "\n");
-                infoArea.appendText(getMessage("LosslessCompression") + ": " + AppVaribles.getMessage(imageInfo.isIsLossless() + "") + "\n");
+                infoArea.appendText(sLine("CompressionType", imageInfo.getCompressionType()));
+                infoArea.appendText(sLine("LosslessCompression", message(imageInfo.isIsLossless() + "")));
             }
             if (imageInfo.getNumProgressiveScans() > 0) {
-                infoArea.appendText(getMessage("NumProgressiveScans") + ": " + imageInfo.getNumProgressiveScans() + "\n");
+                infoArea.appendText(sLine("NumProgressiveScans", imageInfo.getNumProgressiveScans()));
             }
             if (imageInfo.getBitRate() > 0) {
-                infoArea.appendText(getMessage("BitRate") + ": " + imageInfo.getBitRate() + "\n");
+                infoArea.appendText(sLine("BitRate", imageInfo.getBitRate()));
             }
             if (imageInfo.getPlanarConfiguration() != null) {
-                infoArea.appendText(getMessage("PlanarConfiguration") + ": " + imageInfo.getPlanarConfiguration() + "\n");
+                infoArea.appendText(sLine("PlanarConfiguration", imageInfo.getPlanarConfiguration()));
             }
             if (imageInfo.getSampleFormat() != null) {
-                infoArea.appendText(getMessage("SampleFormat") + ": " + imageInfo.getSampleFormat() + "\n");
+                infoArea.appendText(sLine("SampleFormat", imageInfo.getSampleFormat()));
             }
             if (imageInfo.getSignificantBitsPerSample() != null) {
-                infoArea.appendText(getMessage("SignificantBitsPerSample") + ": " + imageInfo.getSignificantBitsPerSample() + "\n");
+                infoArea.appendText(sLine("SignificantBitsPerSample", imageInfo.getSignificantBitsPerSample()));
             }
             if (imageInfo.getSampleMSB() != null) {
-                infoArea.appendText(getMessage("SampleMSB") + ": " + imageInfo.getSampleMSB() + "\n");
+                infoArea.appendText(sLine("SampleMSB", imageInfo.getSampleMSB()));
             }
             if (imageInfo.getPixelAspectRatio() > 0) {
-                infoArea.appendText(getMessage("PixelAspectRatio") + ": " + imageInfo.getPixelAspectRatio() + "\n");
+                infoArea.appendText(sLine("PixelAspectRatio", imageInfo.getPixelAspectRatio()));
             }
             if (imageInfo.getImageRotation() != null) {
-                infoArea.appendText(getMessage("ImageOrientation") + ": " + imageInfo.getImageRotation() + "\n");
+                infoArea.appendText(sLine("ImageOrientation", imageInfo.getImageRotation()));
             }
             if (imageInfo.getHorizontalPixelSize() > 0) {
-                infoArea.appendText(getMessage("HorizontalPixelSize") + ": " + imageInfo.getHorizontalPixelSize() + "\n");
+                infoArea.appendText(sLine("HorizontalPixelSize", imageInfo.getHorizontalPixelSize()));
             }
             if (imageInfo.getVerticalPixelSize() > 0) {
-                infoArea.appendText(getMessage("VerticalPixelSize") + ": " + imageInfo.getVerticalPixelSize() + "\n");
+                infoArea.appendText(sLine("VerticalPixelSize", imageInfo.getVerticalPixelSize()));
             }
             if (imageInfo.getHorizontalPhysicalPixelSpacing() > 0) {
-                infoArea.appendText(getMessage("HorizontalPhysicalPixelSpacing") + ": " + imageInfo.getHorizontalPhysicalPixelSpacing() + "\n");
+                infoArea.appendText(sLine("HorizontalPhysicalPixelSpacing", imageInfo.getHorizontalPhysicalPixelSpacing()));
             }
             if (imageInfo.getVerticalPhysicalPixelSpacing() > 0) {
-                infoArea.appendText(getMessage("VerticalPhysicalPixelSpacing") + ": " + imageInfo.getVerticalPhysicalPixelSpacing() + "\n");
+                infoArea.appendText(sLine("VerticalPhysicalPixelSpacing", imageInfo.getVerticalPhysicalPixelSpacing()));
             }
             if (imageInfo.getHorizontalPosition() > 0) {
-                infoArea.appendText(getMessage("HorizontalPosition") + ": " + imageInfo.getHorizontalPosition() + "\n");
+                infoArea.appendText(sLine("HorizontalPosition", imageInfo.getHorizontalPosition()));
             }
             if (imageInfo.getVerticalPosition() > 0) {
-                infoArea.appendText(getMessage("VerticalPosition") + ": " + imageInfo.getVerticalPosition() + "\n");
+                infoArea.appendText(sLine("VerticalPosition", imageInfo.getVerticalPosition()));
             }
             if (imageInfo.getHorizontalPixelOffset() > 0) {
-                infoArea.appendText(getMessage("HorizontalPixelOffset") + ": " + imageInfo.getHorizontalPixelOffset() + "\n");
+                infoArea.appendText(sLine("HorizontalPixelOffset", imageInfo.getHorizontalPixelOffset()));
             }
             if (imageInfo.getVerticalPixelOffset() > 0) {
-                infoArea.appendText(getMessage("VerticalPixelOffset") + ": " + imageInfo.getVerticalPixelOffset() + "\n");
+                infoArea.appendText(sLine("VerticalPixelOffset", imageInfo.getVerticalPixelOffset()));
             }
             if (imageInfo.getHorizontalScreenSize() > 0) {
-                infoArea.appendText(getMessage("HorizontalScreenSize") + ": " + imageInfo.getHorizontalScreenSize() + "\n");
+                infoArea.appendText(sLine("HorizontalScreenSize", imageInfo.getHorizontalScreenSize()));
             }
             if (imageInfo.getVerticalScreenSize() > 0) {
-                infoArea.appendText(getMessage("VerticalScreenSize") + ": " + imageInfo.getVerticalScreenSize() + "\n");
+                infoArea.appendText(sLine("VerticalScreenSize", imageInfo.getVerticalScreenSize()));
             }
             if (imageInfo.getFormatVersion() != null) {
-                infoArea.appendText(getMessage("FormatVersion") + ": " + imageInfo.getFormatVersion() + "\n");
+                infoArea.appendText(sLine("FormatVersion", imageInfo.getFormatVersion()));
             }
             if (imageInfo.getSubimageInterpretation() != null) {
-                infoArea.appendText(getMessage("SubimageInterpretation") + ": " + imageInfo.getSubimageInterpretation() + "\n");
+                infoArea.appendText(sLine("SubimageInterpretation", imageInfo.getSubimageInterpretation()));
             }
             if (imageInfo.getImageCreationTime() != null) {
-                infoArea.appendText(getMessage("ImageCreationTime") + ": " + imageInfo.getImageCreationTime() + "\n");
+                infoArea.appendText(sLine("ImageCreationTime", imageInfo.getImageCreationTime()));
             }
             if (imageInfo.getImageModificationTime() != null) {
-                infoArea.appendText(getMessage("ImageModificationTime") + ": " + imageInfo.getImageModificationTime() + "\n");
+                infoArea.appendText(sLine("ImageModificationTime", imageInfo.getImageModificationTime()));
             }
-            infoArea.appendText(getMessage("AlphaChannel") + ": " + imageInfo.getAlpha() + "\n");
+            infoArea.appendText(sLine("AlphaChannel", imageInfo.getAlpha()));
             if (imageInfo.getTransparentIndex() > 0) {
-                infoArea.appendText(getMessage("TransparentIndex") + ": " + imageInfo.getTransparentIndex() + "\n");
+                infoArea.appendText(sLine("TransparentIndex", imageInfo.getTransparentIndex()));
             }
             if (imageInfo.getTransparentColor() != null) {
-                infoArea.appendText(getMessage("TransparentColor") + ": " + imageInfo.getTransparentColor() + "\n");
+                infoArea.appendText(sLine("TransparentColor", imageInfo.getTransparentColor()));
             }
 
         } catch (Exception e) {
@@ -211,95 +291,89 @@ public class ImageInformationController extends BaseController {
         try {
             ImageInformationPng pngInfo = (ImageInformationPng) imageInfo;
             if (pngInfo.getColorType() != null) {
-                infoArea.appendText(getMessage("ColorType") + ": " + pngInfo.getColorType() + "\n");
+                infoArea.appendText(sLine("ColorType", pngInfo.getColorType()));
             }
+
             if (pngInfo.getCompressionMethod() != null) {
-                infoArea.appendText(getMessage("CompressionMethod") + ": " + pngInfo.getCompressionMethod() + "\n");
+                infoArea.appendText(sLine("CompressionMethod", pngInfo.getCompressionMethod()));
             }
             if (pngInfo.getFilterMethod() != null) {
-                infoArea.appendText(getMessage("FilterMethod") + ": " + pngInfo.getFilterMethod() + "\n");
+                infoArea.appendText(sLine("FilterMethod", pngInfo.getFilterMethod()));
             }
             if (pngInfo.getInterlaceMethod() != null) {
-                infoArea.appendText(getMessage("InterlaceMethod") + ": " + pngInfo.getInterlaceMethod() + "\n");
+                infoArea.appendText(sLine("InterlaceMethod", pngInfo.getInterlaceMethod()));
             }
             if (pngInfo.getUnitSpecifier() != null) {
-                infoArea.appendText(getMessage("UnitSpecifier") + ": " + pngInfo.getUnitSpecifier() + "\n");
+                infoArea.appendText(sLine("UnitSpecifier", pngInfo.getUnitSpecifier()));
             }
             if (pngInfo.getPixelsPerUnitXAxis() > 0) {
-                infoArea.appendText(getMessage("PixelsPerUnitXAxis") + ": " + pngInfo.getPixelsPerUnitXAxis() + "\n");
+                infoArea.appendText(sLine("PixelsPerUnitXAxis", pngInfo.getPixelsPerUnitXAxis()));
             }
             if (pngInfo.getPixelsPerUnitYAxis() > 0) {
-                infoArea.appendText(getMessage("PixelsPerUnitYAxis") + ": " + pngInfo.getPixelsPerUnitYAxis() + "\n");
+                infoArea.appendText(sLine("PixelsPerUnitYAxis", pngInfo.getPixelsPerUnitYAxis()));
             }
             if (pngInfo.getPngPaletteSize() > 0) {
-                infoArea.appendText(getMessage("PngPaletteSize") + ": " + pngInfo.getPngPaletteSize() + "\n");
+                infoArea.appendText(sLine("PngPaletteSize", pngInfo.getPngPaletteSize()));
             }
             if (pngInfo.getbKGD_Grayscale() >= 0) {
-                infoArea.appendText(getMessage("BKGD_Grayscale") + ": " + pngInfo.getbKGD_Grayscale() + "\n");
+                infoArea.appendText(sLine("BKGD_Grayscale", pngInfo.getbKGD_Grayscale()));
             }
             if (pngInfo.getbKGD_RGB() != null) {
-                infoArea.appendText(getMessage("BKGD_RGB") + ": " + pngInfo.getbKGD_RGB().toString() + "\n");
+                infoArea.appendText(sLine("BKGD_RGB", pngInfo.getbKGD_RGB().toString()));
             }
             if (pngInfo.getbKGD_Palette() >= 0) {
-                infoArea.appendText(getMessage("BKGD_Palette") + ": " + pngInfo.getbKGD_Palette() + "\n");
+                infoArea.appendText(sLine("BKGD_Palette", pngInfo.getbKGD_Palette()));
             }
             if (pngInfo.getWhite() != null) {
-                infoArea.appendText(getMessage("White") + ": "
-                        + pngInfo.getWhite().getNormalizedX() + "," + pngInfo.getWhite().getNormalizedY() + "\n");
+                infoArea.appendText(sLine("White", pngInfo.getWhite().getNormalizedX() + "," + pngInfo.getWhite().getNormalizedY()));
             }
             if (pngInfo.getRed() != null) {
-                infoArea.appendText(getMessage("Red") + ": "
-                        + pngInfo.getRed().getNormalizedX() + "," + pngInfo.getRed().getNormalizedY() + "\n");
+                infoArea.appendText(sLine("Red", pngInfo.getRed().getNormalizedX() + "," + pngInfo.getRed().getNormalizedY()));
             }
             if (pngInfo.getGreen() != null) {
-                infoArea.appendText(getMessage("Green") + ": "
-                        + pngInfo.getGreen().getNormalizedX() + "," + pngInfo.getGreen().getNormalizedY() + "\n");
+                infoArea.appendText(sLine("Green", pngInfo.getGreen().getNormalizedX() + "," + pngInfo.getGreen().getNormalizedY()));
             }
             if (pngInfo.getBlue() != null) {
-                infoArea.appendText(getMessage("Blue") + ": "
-                        + pngInfo.getBlue().getNormalizedX() + "," + pngInfo.getBlue().getNormalizedY() + "\n");
+                infoArea.appendText(sLine("Blue", pngInfo.getBlue().getNormalizedX() + "," + pngInfo.getBlue().getNormalizedY()));
             }
             if (pngInfo.getProfileName() != null) {
-                infoArea.appendText(getMessage("IccProfile") + ": " + pngInfo.getProfileName() + "\n");
-            }
-            if (pngInfo.getProfileCompressionMethod() != null) {
-                infoArea.appendText(getMessage("ProfileCompressionMethod") + ": " + pngInfo.getProfileCompressionMethod() + "\n");
+                infoArea.appendText(sLine("ProfileName", pngInfo.getProfileName()));
+                infoArea.appendText(sLine("ProfileCompressionMethod", pngInfo.getProfileCompressionMethod()));
+                infoArea.appendText(sLine("IccProfile", pngInfo.getIccProfile().length));
             }
             if (pngInfo.getsBIT_Grayscale() >= 0) {
-                infoArea.appendText(getMessage("sBIT_Grayscale") + ": " + pngInfo.getsBIT_Grayscale() + "\n");
+                infoArea.appendText(sLine("sBIT_Grayscale", pngInfo.getsBIT_Grayscale()));
             }
             if (pngInfo.getsBIT_GrayAlpha_alpha() >= 0) {
-                infoArea.appendText(getMessage("sBIT_GrayAlpha") + ": "
-                        + pngInfo.getsBIT_GrayAlpha_gray() + " " + pngInfo.getsBIT_GrayAlpha_alpha() + "\n");
+                infoArea.appendText(sLine("sBIT_GrayAlpha", pngInfo.getsBIT_GrayAlpha_gray() + " " + pngInfo.getsBIT_GrayAlpha_alpha()));
             }
             if (pngInfo.getsBIT_RGB_red() >= 0) {
-                infoArea.appendText(getMessage("sBIT_RGB") + ": "
-                        + pngInfo.getsBIT_RGB_red() + " " + pngInfo.getsBIT_RGB_green() + " " + pngInfo.getsBIT_RGB_blue() + "\n");
+                infoArea.appendText(sLine("sBIT_RGB", pngInfo.getsBIT_RGB_red() + " " + pngInfo.getsBIT_RGB_green() + " " + pngInfo.getsBIT_RGB_blue()));
             }
             if (pngInfo.getsBIT_RGBAlpha_red() >= 0) {
-                infoArea.appendText(getMessage("sBIT_RGBAlpha") + ": "
-                        + pngInfo.getsBIT_RGBAlpha_red() + " " + pngInfo.getsBIT_RGBAlpha_green()
-                        + " " + pngInfo.getsBIT_RGBAlpha_blue() + " " + pngInfo.getsBIT_RGBAlpha_alpha() + "\n");
+                infoArea.appendText(sLine("sBIT_RGBAlpha",
+                        pngInfo.getsBIT_RGBAlpha_red() + " " + pngInfo.getsBIT_RGBAlpha_green()
+                        + " " + pngInfo.getsBIT_RGBAlpha_blue() + " " + pngInfo.getsBIT_RGBAlpha_alpha()));
             }
             if (pngInfo.getsBIT_Palette_red() >= 0) {
-                infoArea.appendText(getMessage("sBIT_Palette") + ": "
-                        + pngInfo.getsBIT_Palette_red() + " " + pngInfo.getsBIT_Palette_green() + " " + pngInfo.getsBIT_Palette_blue() + "\n");
+                infoArea.appendText(sLine("sBIT_Palette",
+                        +pngInfo.getsBIT_Palette_red() + " " + pngInfo.getsBIT_Palette_green() + " " + pngInfo.getsBIT_Palette_blue()));
             }
             if (pngInfo.getSuggestedPaletteSize() > 0) {
-                infoArea.appendText(getMessage("SuggestedPaletteSize") + ": " + pngInfo.getSuggestedPaletteSize() + "\n");
+                infoArea.appendText(sLine("SuggestedPaletteSize", pngInfo.getSuggestedPaletteSize()));
             }
             if (pngInfo.getRenderingIntent() != null) {
-                infoArea.appendText(getMessage("RenderingIntent") + ": " + pngInfo.getRenderingIntent() + "\n");
+                infoArea.appendText(sLine("RenderingIntent", pngInfo.getRenderingIntent()));
             }
             if (pngInfo.gettRNS_Grayscale() >= 0) {
-                infoArea.appendText(getMessage("tRNS_Grayscale") + ": " + pngInfo.gettRNS_Grayscale() + "\n");
+                infoArea.appendText(sLine("tRNS_Grayscale", pngInfo.gettRNS_Grayscale()));
             }
             if (pngInfo.gettRNS_RGB() != null) {
-                infoArea.appendText(getMessage("tRNS_RGB") + ": " + pngInfo.gettRNS_RGB().toString() + "\n");
+                infoArea.appendText(sLine("tRNS_RGB", pngInfo.gettRNS_RGB().toString()));
             }
             if (pngInfo.gettRNS_Palette_index() >= 0) {
-                infoArea.appendText(getMessage("tRNS_Palette") + ": "
-                        + pngInfo.gettRNS_Palette_index() + " " + pngInfo.gettRNS_Palette_alpha() + "\n");
+                infoArea.appendText(sLine("tRNS_Palette",
+                        +pngInfo.gettRNS_Palette_index() + " " + pngInfo.gettRNS_Palette_alpha()));
             }
 
         } catch (Exception e) {
@@ -307,12 +381,44 @@ public class ImageInformationController extends BaseController {
         }
     }
 
-    public void loadAttributes(ImageInformation imageInfo) {
+    public void loadNativeAttributes(ImageInformation imageInfo) {
         try {
-            LinkedHashMap<String, Object> attributes = imageInfo.getAttributes();
-            for (String key : attributes.keySet()) {
-                infoArea.appendText(getMessage(key) + ": " + attributes.get(key) + "\n");
+            LinkedHashMap<String, Object> attributes = imageInfo.getNativeAttributes();
+            if (attributes == null) {
+                return;
             }
+            for (String key : attributes.keySet()) {
+                infoArea.appendText(sLine(key, attributes.get(key)));
+            }
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    private String sLine(String name, Object value) {
+        if (rawCheck.isSelected()) {
+            return String.format("%-" + 35 + "s : %s", name, value) + "\n";
+        } else {
+            return String.format("%-" + 35 + "s : %s", message(name), value) + "\n";
+        }
+    }
+
+    @FXML
+    public void viewAction() {
+        try {
+            int imageIndex = Integer.parseInt(indexSelector.getSelectionModel().getSelectedItem());
+            ImageInformation iInfo = imageInfo.getImageFileInformation().getImagesInformation().get(imageIndex - 1);
+            if (iInfo.getIccProfile() == null) {
+                indexSelector.getItems().remove(indexSelector.getSelectionModel().getSelectedIndex());
+                return;
+            }
+
+            IccProfileEditorController controller
+                    = (IccProfileEditorController) openStage(CommonValues.IccProfileEditorFxml);
+            String name = message("File") + " : " + imageInfo.getFileName() + "  "
+                    + message("Image") + " " + imageIndex;
+            controller.externalData(name, iInfo.getIccProfile());
 
         } catch (Exception e) {
             logger.error(e.toString());

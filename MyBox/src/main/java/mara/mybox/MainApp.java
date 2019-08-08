@@ -7,13 +7,13 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import mara.mybox.controller.base.BaseController;
-import mara.mybox.fxml.FxmlStage;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
+import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
 import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -37,7 +37,7 @@ public class MainApp extends Application {
             if (!userPath.exists()) {
                 if (!userPath.mkdirs()) {
                     FxmlStage.alertError(stage,
-                            MessageFormat.format(AppVaribles.getMessage("UserPathFail"), CommonValues.AppDataRoot));
+                            MessageFormat.format(AppVaribles.message("UserPathFail"), CommonValues.AppDataRoot));
                     return;
                 }
             }
@@ -46,7 +46,7 @@ public class MainApp extends Application {
             }
             if (!CommonValues.AppTempPath.mkdirs()) {
                 FxmlStage.alertError(stage,
-                        MessageFormat.format(AppVaribles.getMessage("UserPathFail"), CommonValues.AppTempPath));
+                        MessageFormat.format(AppVaribles.message("UserPathFail"), CommonValues.AppTempPath));
                 return;
             }
 
@@ -59,7 +59,6 @@ public class MainApp extends Application {
             ImageValue.registrySupportedImageFormats();
             ImageIO.setUseCache(true);
             ImageIO.setCacheDirectory(CommonValues.AppTempPath);
-//            ControlStyle.loadIcons(getClass());
 
             logger.info("Loading interface...");
 //            if (getParameters().getRaw() != null && !getParameters().getRaw().isEmpty()) {

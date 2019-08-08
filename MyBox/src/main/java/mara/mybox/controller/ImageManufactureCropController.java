@@ -21,9 +21,10 @@ import javafx.stage.Modality;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageScope.ScopeType;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -112,7 +113,7 @@ public class ImageManufactureCropController extends ImageManufactureController {
                 }
             });
 
-            FxmlControl.setTooltip(cutOutsideButton, new Tooltip(getMessage("OK") + "\nENTER"));
+            FxmlControl.setTooltip(cutOutsideButton, new Tooltip(message("OK") + "\nENTER"));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -127,31 +128,31 @@ public class ImageManufactureCropController extends ImageManufactureController {
 
             initMaskControls(false);
             RadioButton selected = (RadioButton) shapeGroup.getSelectedToggle();
-            if (getMessage("Rectangle").equals(selected.getText())) {
+            if (message("Rectangle").equals(selected.getText())) {
                 cropType = ScopeType.Rectangle;
                 initMaskRectangleLine(true);
                 cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
-            } else if (getMessage("Circle").equals(selected.getText())) {
+            } else if (message("Circle").equals(selected.getText())) {
                 cropType = ScopeType.Circle;
                 initMaskCircleLine(true);
                 cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
-            } else if (getMessage("Ellipse").equals(selected.getText())) {
+            } else if (message("Ellipse").equals(selected.getText())) {
                 cropType = ScopeType.Ellipse;
                 initMaskEllipseLine(true);
                 cutOutsideButton.setDisable(false);
                 cutInsideButton.setDisable(false);
 
-            } else if (getMessage("Polygon").equals(selected.getText())) {
+            } else if (message("Polygon").equals(selected.getText())) {
                 cropType = ScopeType.Polygon;
                 setBox.getChildren().addAll(clearButton, withdrawButton);
                 initMaskPolygonLine(true);
                 cutOutsideButton.setDisable(true);
                 cutInsideButton.setDisable(true);
-                promptLabel.setText(getMessage("PolygonComments"));
+                promptLabel.setText(message("PolygonComments"));
 
             }
 

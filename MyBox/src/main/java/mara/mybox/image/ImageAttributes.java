@@ -1,5 +1,6 @@
 package mara.mybox.image;
 
+import java.awt.color.ICC_Profile;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -11,26 +12,31 @@ import org.apache.pdfbox.rendering.ImageType;
  */
 public class ImageAttributes {
 
-    public static class BinaryConversion {
-
-        public static int DEFAULT = 0;
-        public static int BINARY_OTSU = 1;
-        public static int BINARY_THRESHOLD = 9;
+    public static enum Alpha {
+        Keep, Remove, PremultipliedAndKeep, PremultipliedAndRemove
     }
 
-    private String imageFormat, compressionType;
-    private int density, threshold, quality, binaryConversion, ratioAdjustion;
-    private ImageType colorSpace;
-    private boolean keepRatio, isDithering;
+    public static enum BinaryConversion {
+        DEFAULT, BINARY_OTSU, BINARY_THRESHOLD
+    }
+    private String imageFormat, compressionType, colorSpaceName;
+    private ImageType colorType;
+    private int density, threshold, quality, ratioAdjustion;
+    private Alpha alpha;
+    private BinaryConversion binaryConversion;
+    private boolean embedProfile, keepRatio, isDithering;
     private int sourceWidth, sourceHeight, targetWidth, targetHeight;
+    private ICC_Profile profile;
+    private String profileName;
 
     public ImageAttributes() {
+        this.quality = 100;
+        this.density = 96;
     }
 
     public ImageAttributes(String imageFormat, ImageType colorSpace, int density) {
-
         this.imageFormat = imageFormat;
-        this.colorSpace = colorSpace;
+        this.colorType = colorSpace;
         this.density = density;
         this.quality = 100;
     }
@@ -75,12 +81,12 @@ public class ImageAttributes {
         this.targetHeight = targetHeight;
     }
 
-    public ImageType getColorSpace() {
-        return colorSpace;
+    public ImageType getColorType() {
+        return colorType;
     }
 
-    public void setColorSpace(ImageType colorSpace) {
-        this.colorSpace = colorSpace;
+    public void setColorType(ImageType colorType) {
+        this.colorType = colorType;
     }
 
     public int getThreshold() {
@@ -99,11 +105,11 @@ public class ImageAttributes {
         this.quality = quality;
     }
 
-    public int getBinaryConversion() {
+    public BinaryConversion getBinaryConversion() {
         return binaryConversion;
     }
 
-    public void setBinaryConversion(int binaryConversion) {
+    public void setBinaryConversion(BinaryConversion binaryConversion) {
         this.binaryConversion = binaryConversion;
     }
 
@@ -145,6 +151,46 @@ public class ImageAttributes {
 
     public void setIsDithering(boolean isDithering) {
         this.isDithering = isDithering;
+    }
+
+    public ICC_Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ICC_Profile profile) {
+        this.profile = profile;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public String getColorSpaceName() {
+        return colorSpaceName;
+    }
+
+    public void setColorSpaceName(String colorSpaceName) {
+        this.colorSpaceName = colorSpaceName;
+    }
+
+    public Alpha getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(Alpha alpha) {
+        this.alpha = alpha;
+    }
+
+    public boolean isEmbedProfile() {
+        return embedProfile;
+    }
+
+    public void setEmbedProfile(boolean embedProfile) {
+        this.embedProfile = embedProfile;
     }
 
 }

@@ -16,20 +16,20 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
+import mara.mybox.color.ColorBase;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.image.ImageColor;
+import static mara.mybox.image.ImageConvert.pixelSizeMm2dpi;
 import mara.mybox.image.ImageFileInformation;
-
+import mara.mybox.image.ImageInformation;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVaribles;
+import static mara.mybox.value.AppVaribles.logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import static mara.mybox.image.ImageValue.pixelSizeMm2dpi;
-import static mara.mybox.image.file.ImageGifFile.readBrokenGifFile;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.image.ImageInformation;
-import mara.mybox.color.ColorBase;
-import mara.mybox.image.ImageColor;
-import static mara.mybox.value.AppVaribles.logger;
 
 /**
  * @Author Mara
@@ -41,12 +41,26 @@ import static mara.mybox.value.AppVaribles.logger;
 // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
 public class ImageFileReaders {
 
+    public static ImageReader getReader(String format) {
+        if (ImageJpeg2000File.isJpeg2000(format)) {
+            return ImageJpeg2000File.getReader();
+        }
+        return ImageIO.getImageReadersByFormatName(format).next();
+    }
+
+    public static ImageReader getReader(File file) {
+        return getReader(FileTools.getFileSuffix(file));
+    }
+
     public static BufferedImage readImage(File file) {
         if (file == null) {
             return null;
         }
-        BufferedImage image = null;
+        BufferedImage image;
         try {
+//            if (ImageJpeg2000File.isJpeg2000(file)) {
+//                return ImageJpeg2000File.readImage(file);
+//            }
             image = ImageIO.read(file);
         } catch (Exception e) {
             image = readBrokenImage(e, file);
@@ -60,124 +74,11 @@ public class ImageFileReaders {
         }
         BufferedImage image;
         try {
-            image = ImageIO.read(file);
+            image = readImage(file);
         } catch (Exception e) {
             image = readBrokenImage(e, file, imageInfo);
         }
         return image;
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file) {
-        return readBrokenImage(e, file, 1);
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
-        return readBrokenImage(e, file, 0, 1, 1);
-
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, int index, int xscale, int yscale) {
-        BufferedImage image = null;
-        try {
-            ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
-            image = readBrokenImage(e, file, finfo.getImageInformation(), index, xscale, yscale);
-        } catch (Exception ex) {
-            logger.error(ex.toString());
-        }
-        return image;
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo) {
-        return readBrokenImage(e, file, imageInfo, 0, 1, 1);
-    }
-
-    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
-            int index, int xscale, int yscale) {
-        BufferedImage image = null;
-        String format = imageInfo.getImageFormat();
-        switch (format) {
-            case "gif":
-                // Read Gif with JDK api normally. When broken, use DhyanB's API.
-                // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
-                if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
-                    image = ImageGifFile.readBrokenGifFile(file.getAbsolutePath(), index, xscale, yscale);
-                }
-                break;
-            case "jpg":
-            case "jpeg":
-                if (e.toString().contains("Unsupported Image Type") && imageInfo.getColorChannels() == 4) {
-                    image = ImageJpgFile.readBrokenJpgFile(file, imageInfo, index, xscale, yscale);
-                }
-                break;
-            default:
-                logger.error(e.toString());
-        }
-        return image;
-    }
-
-    public static IIOMetadata getIIOMetadata(String format, File file) {
-        switch (format) {
-            case "png":
-                return getIIOMetadata(file);
-            case "jpg":
-            case "jpeg":
-                return getIIOMetadata(file);
-            case "bmp":
-                IIOMetadata bm = ImageBmpFile.getBmpIIOMetadata(file);
-                if (bm != null) {
-                    return bm;
-                }
-                return getIIOMetadata(file);
-            case "gif":
-                return getIIOMetadata(file);
-            //                return ImageGifTools.getGifMetadata(file);
-            case "tif":
-            case "tiff":
-                IIOMetadata tm = ImageTiffFile.getTiffIIOMetadata(file);
-                if (tm != null) {
-                    return tm;
-                }
-                return getIIOMetadata(file);
-            case "pcx":
-                IIOMetadata pm = ImagePcxFile.getPcxMetadata(file);
-                if (pm != null) {
-                    return pm;
-                }
-                return getIIOMetadata(file);
-            case "pnm":
-                IIOMetadata pnm = ImagePnmFile.getPnmMetadata(file);
-                if (pnm != null) {
-                    return pnm;
-                }
-                return getIIOMetadata(file);
-            case "wbmp":
-                IIOMetadata wm = ImageWbmpFile.getWbmpMetadata(file);
-                if (wm != null) {
-                    return wm;
-                }
-                return getIIOMetadata(file);
-            default:
-                return getIIOMetadata(file);
-        }
-    }
-
-    public static IIOMetadata getIIOMetadata(File file) {
-        try {
-            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
-                if (readers.hasNext()) {
-                    ImageReader reader = readers.next();
-                    reader.setInput(iis, false);
-                    IIOMetadata iioMetaData = reader.getImageMetadata(0);
-                    reader.dispose();
-                    return iioMetaData;
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return null;
-        }
     }
 
     public static BufferedImage readFileByHeight(String format, String filename, int height) {
@@ -185,7 +86,7 @@ public class ImageFileReaders {
         int scale = 1;
         try {
 
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 if (reader.getHeight(0) <= height) {
@@ -210,10 +111,10 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFileByWidth(String format, String filename, int width) {
-        BufferedImage bufferedImage = null;
+        BufferedImage bufferedImage;
         int scale = 1;
         try {
-            ImageReader reader = ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 if (reader.getWidth(0) <= width) {
@@ -237,15 +138,22 @@ public class ImageFileReaders {
     }
 
     public static BufferedImage readFileByScale(String format, String filename, int scale) {
-        BufferedImage bufferedImage = null;
+        BufferedImage bufferedImage;
         try {
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
+            logger.debug(reader != null);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
+                logger.debug("here");
                 reader.setInput(in, false);
+                logger.debug("here");
                 ImageReadParam param = reader.getDefaultReadParam();
+                logger.debug("here");
                 param.setSourceSubsampling(scale, scale, 0, 0);
-                bufferedImage = reader.read(0, param);
-//                logger.debug(bufferedImage.getWidth() + " " + bufferedImage.getHeight());
+                logger.debug("here");
+                bufferedImage = reader.read(0);
+//                bufferedImage = reader.read(0, param);
+                logger.debug("here");
+                logger.debug(bufferedImage.getWidth() + " " + bufferedImage.getHeight());
                 reader.dispose();
             }
         } catch (Exception e) {
@@ -265,14 +173,14 @@ public class ImageFileReaders {
     public static BufferedImage readFileBySample(String format, String filename,
             int x1, int y1, int x2, int y2,
             int sampleWidth, int sampleHeight) {
-        BufferedImage bufferedImage = null;
+        BufferedImage bufferedImage;
         try {
             if (x1 >= x2 || y1 >= y2
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
                     || sampleWidth <= 0 || sampleHeight <= 0) {
                 return null;
             }
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -291,7 +199,7 @@ public class ImageFileReaders {
     public static List<BufferedImage> readFrames(String format, String filename) {
         try {
             List<BufferedImage> images = new ArrayList<>();
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 int count = 0;
@@ -321,7 +229,7 @@ public class ImageFileReaders {
     public static List<BufferedImage> readFramesWithWidth(String format, String filename, int width) {
         try {
             List<BufferedImage> images = new ArrayList<>();
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             boolean broken = false;
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
@@ -411,7 +319,7 @@ public class ImageFileReaders {
                 }
             }
             if (bufferedImage == null) {
-                String fname = imageInfo.getFilename();
+                String fname = imageInfo.getFileName();
                 if (fname != null) {
                     if (imageInfo.getIndex() <= 0) {
                         bufferedImage = ImageFileReaders.readImage(new File(fname), imageInfo);
@@ -434,7 +342,7 @@ public class ImageFileReaders {
             if (imagesInfo == null || imagesInfo.isEmpty()) {
                 return images;
             }
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             int total = imagesInfo.size();
 
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
@@ -491,8 +399,8 @@ public class ImageFileReaders {
     public static BufferedImage readImage(String format, String filename,
             ImageInformation imageInfo) {
         try {
-            BufferedImage bufferedImage = null;
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            BufferedImage bufferedImage;
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 int scale = 1;
@@ -530,12 +438,8 @@ public class ImageFileReaders {
                         }
                     }
 
-                } catch (Exception e) {   // Read Gif with JDK api normally. When broken, use DhyanB's API.
-//                        logger.error(e.toString());
-                    if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")
-                            && format.toLowerCase().equals("gif")) {
-                        return readBrokenGifFile(filename, imageInfo);
-                    }
+                } catch (Exception e) {
+                    bufferedImage = readBrokenImage(e, new File(filename), scale);
                 }
 
                 reader.dispose();
@@ -551,7 +455,7 @@ public class ImageFileReaders {
         BufferedImage bufferedImage = null;
         try {
 
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 try {
@@ -587,8 +491,8 @@ public class ImageFileReaders {
             if (bounds == null || filename == null || format == null) {
                 return null;
             }
-            BufferedImage bufferedImage = null;
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName(format).next();
+            BufferedImage bufferedImage;
+            ImageReader reader = getReader(format);
             try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(filename))) {
                 reader.setInput(in, false);
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -608,6 +512,60 @@ public class ImageFileReaders {
         }
     }
 
+    /*
+        Broken image
+     */
+    public static BufferedImage readBrokenImage(Exception e, File file) {
+        return readBrokenImage(e, file, 1);
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, int scale) {
+        return readBrokenImage(e, file, 0, 1, 1);
+
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, int index, int xscale, int yscale) {
+        BufferedImage image = null;
+        try {
+            ImageFileInformation finfo = readImageFileMetaData(file.getAbsolutePath());
+            image = readBrokenImage(e, file, finfo.getImageInformation(), index, xscale, yscale);
+        } catch (Exception ex) {
+            logger.error(ex.toString());
+        }
+        return image;
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo) {
+        return readBrokenImage(e, file, imageInfo, 0, 1, 1);
+    }
+
+    public static BufferedImage readBrokenImage(Exception e, File file, ImageInformation imageInfo,
+            int index, int xscale, int yscale) {
+        BufferedImage image = null;
+        String format = imageInfo.getImageFormat();
+        switch (format) {
+            case "gif":
+                // Read Gif with JDK api normally. When broken, use DhyanB's API.
+                // if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException: 4096")) {
+                if (e.toString().contains("java.lang.ArrayIndexOutOfBoundsException")) {
+                    image = ImageGifFile.readBrokenGifFile(file.getAbsolutePath(), index, xscale, yscale);
+                }
+                break;
+            case "jpg":
+            case "jpeg":
+                if (e.toString().contains("Unsupported Image Type") && imageInfo.getColorChannels() == 4) {
+                    image = ImageJpgFile.readBrokenJpgFile(file, imageInfo, index, xscale, yscale);
+                }
+                break;
+            default:
+                logger.error(e.toString());
+        }
+        return image;
+    }
+
+    /*
+        Meta data
+     */
     public static ImageFileInformation readImageFileMetaData(String fileName) {
         File file = new File(fileName);
         if (!file.exists() || !file.isFile()) {
@@ -631,6 +589,10 @@ public class ImageFileReaders {
                         ImageInformation imageInfo = ImageInformation.create(format, file);
                         imageInfo.setImageFileInformation(fileInfo);
                         imageInfo.setImageFormat(format);
+                        imageInfo.setFileName(fileInfo.getFileName());
+                        imageInfo.setCreateTime(fileInfo.getCreateTime());
+                        imageInfo.setModifyTime(fileInfo.getModifyTime());
+                        imageInfo.setFileSize(fileInfo.getFileSize());
                         imageInfo.setWidth(reader.getWidth(i));
                         imageInfo.setHeight(reader.getHeight(i));
                         imageInfo.setIsMultipleFrames(num > 1);
@@ -643,19 +605,22 @@ public class ImageFileReaders {
                             while (types.hasNext()) {
                                 typesValue.add(types.next());
                             }
-                            if (!typesValue.isEmpty()) {
-                                try {
-                                    imageInfo.setRawImageType(reader.getRawImageType(i));
-                                    ColorModel cm = reader.getRawImageType(i).getColorModel();
-                                    ColorSpace cs = cm.getColorSpace();
-                                    imageInfo.setColorSpace(ColorBase.colorSpaceType(cs.getType()));
-                                    imageInfo.setColorChannels(cm.getNumComponents());
-                                    imageInfo.setBitDepth(cm.getPixelSize());
-//                                    logger.debug(" colorSpaceType:" + ColorBase.colorSpaceType(cs.getType())
-//                                            + " getNumComponents:" + cm.getNumComponents() + " getPixelSize:" + cm.getPixelSize());
-                                } catch (Exception e) {
-//                                    logger.error(e.toString());
+                            ImageTypeSpecifier imageType = reader.getRawImageType(i);
+                            ColorModel colorModel = null;
+                            if (imageType != null) {
+                                imageInfo.setRawImageType(imageType);
+                                colorModel = imageType.getColorModel();
+                            }
+                            if (colorModel == null) {
+                                if (!typesValue.isEmpty()) {
+                                    colorModel = typesValue.get(0).getColorModel();
                                 }
+                            }
+                            if (colorModel != null) {
+                                ColorSpace colorSpace = colorModel.getColorSpace();
+                                imageInfo.setColorSpace(ColorBase.colorSpaceType(colorSpace.getType()));
+                                imageInfo.setColorChannels(colorModel.getNumComponents());
+                                imageInfo.setBitDepth(colorModel.getPixelSize());
                             }
                         }
                         imageInfo.setImageTypeSpecifiers(typesValue);
@@ -675,7 +640,6 @@ public class ImageFileReaders {
                         } catch (Exception e) {
                             logger.error(e.toString());
                         }
-
                         imagesInfo.add(imageInfo);
                     }
                     fileInfo.setImagesInformation(imagesInfo);
@@ -700,10 +664,11 @@ public class ImageFileReaders {
             }
             StringBuilder metaDataXml = new StringBuilder();
             String[] formatNames = iioMetaData.getMetadataFormatNames();
-            Map<String, Map<String, List<Map<String, String>>>> metaData = new HashMap();
+            Map<String, Map<String, List<Map<String, Object>>>> metaData = new HashMap();
             for (String formatName : formatNames) {
-                Map<String, List<Map<String, String>>> formatMetaData = new HashMap();
-                readImageMetaData(formatMetaData, metaDataXml, iioMetaData.getAsTree(formatName), 2);
+                Map<String, List<Map<String, Object>>> formatMetaData = new HashMap();
+                IIOMetadataNode tree = (IIOMetadataNode) iioMetaData.getAsTree(formatName);
+                readImageMetaData(formatMetaData, metaDataXml, tree, 2);
                 metaData.put(formatName, formatMetaData);
             }
             imageInfo.setMetaData(metaData);
@@ -723,7 +688,7 @@ public class ImageFileReaders {
                     break;
                 case "tif":
                 case "tiff":
-                    ImageTiffFile.explainTiffMetaData(imageInfo.getMetaDataXml(), imageInfo);
+                    ImageTiffFile.explainTiffMetaData(iioMetaData, imageInfo);
                     break;
                 default:
 
@@ -735,89 +700,107 @@ public class ImageFileReaders {
         }
     }
 
-    public static void readImageMetaData(Map<String, List<Map<String, String>>> formatMetaData,
-            StringBuilder metaDataXml, Node node, int level) {
-        String lineSeparator = System.getProperty("line.separator");
-        for (int i = 0; i < level; i++) {
-            metaDataXml.append("    ");
-        }
-        metaDataXml.append("<").append(node.getNodeName());
-        NamedNodeMap map = node.getAttributes();
-        if (map != null && map.getLength() > 0) {
-            Map<String, String> nodeAttrs = new HashMap();
-            int length = map.getLength();
-            for (int i = 0; i < length; i++) {
-                Node attr = map.item(i);
-                nodeAttrs.put(attr.getNodeName(), attr.getNodeValue());
-                metaDataXml.append(" ").append(attr.getNodeName()).append("=\"")
-                        .append(attr.getNodeValue()).append("\"");
+    public static void readImageMetaData(Map<String, List<Map<String, Object>>> formatMetaData,
+            StringBuilder metaDataXml, IIOMetadataNode node, int level) {
+        try {
+            String lineSeparator = System.getProperty("line.separator");
+            for (int i = 0; i < level; i++) {
+                metaDataXml.append("    ");
             }
-            List<Map<String, String>> nodeAttrsList;
-            if (formatMetaData.get(node.getNodeName()) == null) {
-                nodeAttrsList = new ArrayList();
-            } else {
-                nodeAttrsList = formatMetaData.get(node.getNodeName());
+            metaDataXml.append("<").append(node.getNodeName());
+            Map<String, Object> nodeAttrs = new HashMap();
+            NamedNodeMap map = node.getAttributes();
+            boolean isTiff = "TIFFField".equals(node.getNodeName());
+            if (map != null && map.getLength() > 0) {
+                int length = map.getLength();
+                for (int i = 0; i < length; i++) {
+                    Node attr = map.item(i);
+                    String name = attr.getNodeName();
+                    String value = attr.getNodeValue();
+                    if (!isTiff) {
+                        nodeAttrs.put(name, value);
+                    }
+                    metaDataXml.append(" ").append(name).append("=\"").append(value).append("\"");
+                    if (isTiff && "ICC Profile".equals(value)) {
+                        metaDataXml.append(" value=\"skip...\"/>").append(lineSeparator);
+                        return;
+                    }
+                }
             }
-            nodeAttrsList.add(nodeAttrs);
-            formatMetaData.put(node.getNodeName(), nodeAttrsList);
+            Object userObject = node.getUserObject();
+            if (userObject != null) {
+                if (!isTiff) {
+                    nodeAttrs.put("UserObject", userObject);
+                }
+                metaDataXml.append(" ").append("UserObject=\"skip...\"");
+            }
+            if (!isTiff && !nodeAttrs.isEmpty()) {
+                List<Map<String, Object>> nodeAttrsList = formatMetaData.get(node.getNodeName());
+                if (nodeAttrsList == null) {
+                    nodeAttrsList = new ArrayList();
+                }
+                nodeAttrsList.add(nodeAttrs);
+                formatMetaData.put(node.getNodeName(), nodeAttrsList);
+            }
+            IIOMetadataNode child = (IIOMetadataNode) node.getFirstChild();
+            if (child == null) {
+                metaDataXml.append("/>").append(lineSeparator);
+                return;
+            }
+            metaDataXml.append(">").append(lineSeparator);
+            while (child != null) {
+                readImageMetaData(formatMetaData, metaDataXml, child, level + 1);
+                child = (IIOMetadataNode) child.getNextSibling();
+            }
+            for (int i = 0; i < level; i++) {
+                metaDataXml.append("    ");
+            }
+            metaDataXml.append("</").append(node.getNodeName()).append(">").append(lineSeparator);
+        } catch (Exception e) {
+            logger.error(e.toString());
         }
-
-        Node child = node.getFirstChild();
-        if (child == null) {
-            metaDataXml.append("/>").append(lineSeparator);
-            return;
-        }
-        metaDataXml.append(">").append(lineSeparator);
-        while (child != null) {
-            readImageMetaData(formatMetaData, metaDataXml, child, level + 1);
-            child = child.getNextSibling();
-        }
-        for (int i = 0; i < level; i++) {
-            metaDataXml.append("    ");
-        }
-        metaDataXml.append("</").append(node.getNodeName()).append(">").append(lineSeparator);
     }
 
     // https://docs.oracle.com/javase/10/docs/api/javax/imageio/metadata/doc-files/standard_metadata.html
-    public static void explainCommonMetaData(Map<String, Map<String, List<Map<String, String>>>> metaData,
+    public static void explainCommonMetaData(Map<String, Map<String, List<Map<String, Object>>>> metaData,
             ImageInformation imageInfo) {
         try {
             if (!metaData.containsKey("javax_imageio_1.0")) {
                 return;
             }
-            Map<String, List<Map<String, String>>> javax_imageio = metaData.get("javax_imageio_1.0");
+            Map<String, List<Map<String, Object>>> javax_imageio = metaData.get("javax_imageio_1.0");
 //            logger.debug("explainCommonMetaData");
             if (javax_imageio.containsKey("ColorSpaceType")) {
-                Map<String, String> ColorSpaceType = javax_imageio.get("ColorSpaceType").get(0);
+                Map<String, Object> ColorSpaceType = javax_imageio.get("ColorSpaceType").get(0);
                 if (ColorSpaceType.containsKey("name")) {
-                    imageInfo.setColorSpace(ColorSpaceType.get("name"));
+                    imageInfo.setColorSpace((String) ColorSpaceType.get("name"));
 //                    logger.debug(" colorSpaceType:" + ColorSpaceType.get("name"));
                 }
             }
             if (javax_imageio.containsKey("NumChannels")) {
-                Map<String, String> NumChannels = javax_imageio.get("NumChannels").get(0);
+                Map<String, Object> NumChannels = javax_imageio.get("NumChannels").get(0);
                 if (NumChannels.containsKey("value")) {
-                    imageInfo.setColorChannels(Integer.valueOf(NumChannels.get("value")));
+                    imageInfo.setColorChannels(Integer.valueOf((String) NumChannels.get("value")));
 //                    logger.debug(" NumChannels:" + NumChannels.get("value"));
                 }
             }
             if (javax_imageio.containsKey("Gamma")) {
-                Map<String, String> Gamma = javax_imageio.get("Gamma").get(0);
+                Map<String, Object> Gamma = javax_imageio.get("Gamma").get(0);
                 if (Gamma.containsKey("value")) {
-                    imageInfo.setGamma(Float.valueOf(Gamma.get("value")));
+                    imageInfo.setGamma(Float.valueOf((String) Gamma.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BlackIsZero")) {
-                Map<String, String> BlackIsZero = javax_imageio.get("BlackIsZero").get(0);
+                Map<String, Object> BlackIsZero = javax_imageio.get("BlackIsZero").get(0);
                 if (BlackIsZero.containsKey("value")) {
                     imageInfo.setBlackIsZero(BlackIsZero.get("value").equals("TRUE"));
                 }
             }
             if (javax_imageio.containsKey("PaletteEntry")) {
-                List<Map<String, String>> PaletteEntryList = javax_imageio.get("PaletteEntry");
-                imageInfo.setAttribute("PaletteSize", PaletteEntryList.size());
+                List<Map<String, Object>> PaletteEntryList = javax_imageio.get("PaletteEntry");
+                imageInfo.setStandardAttribute("PaletteSize", PaletteEntryList.size());
 //                List<ImageColor> Palette = new ArrayList();
-//                for (Map<String, String> PaletteEntry : PaletteEntryList) {
+//                for (Map<String, Object> PaletteEntry : PaletteEntryList) {
 //                    int index = Integer.valueOf(PaletteEntry.get("index"));
 //                    int red = Integer.valueOf(PaletteEntry.get("red"));
 //                    int green = Integer.valueOf(PaletteEntry.get("green"));
@@ -831,170 +814,170 @@ public class ImageFileReaders {
 //                imageInfo.setPalette(Palette);
             }
             if (javax_imageio.containsKey("BackgroundIndex")) {
-                Map<String, String> BackgroundIndex = javax_imageio.get("BackgroundIndex").get(0);
+                Map<String, Object> BackgroundIndex = javax_imageio.get("BackgroundIndex").get(0);
                 if (BackgroundIndex.containsKey("value")) {
-                    imageInfo.setBackgroundIndex(Integer.valueOf(BackgroundIndex.get("value")));
+                    imageInfo.setBackgroundIndex(Integer.valueOf((String) BackgroundIndex.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BackgroundColor")) {
-                Map<String, String> BackgroundColor = javax_imageio.get("BackgroundColor").get(0);
-                int red = Integer.valueOf(BackgroundColor.get("red"));
-                int green = Integer.valueOf(BackgroundColor.get("green"));
-                int blue = Integer.valueOf(BackgroundColor.get("blue"));
+                Map<String, Object> BackgroundColor = javax_imageio.get("BackgroundColor").get(0);
+                int red = Integer.valueOf((String) BackgroundColor.get("red"));
+                int green = Integer.valueOf((String) BackgroundColor.get("green"));
+                int blue = Integer.valueOf((String) BackgroundColor.get("blue"));
                 imageInfo.setBackgroundColor(new ImageColor(red, green, blue));
             }
             if (javax_imageio.containsKey("CompressionTypeName")) {
-                Map<String, String> CompressionTypeName = javax_imageio.get("CompressionTypeName").get(0);
+                Map<String, Object> CompressionTypeName = javax_imageio.get("CompressionTypeName").get(0);
                 if (CompressionTypeName.containsKey("value")) {
-                    imageInfo.setCompressionType(CompressionTypeName.get("value"));
+                    imageInfo.setCompressionType((String) CompressionTypeName.get("value"));
                 }
             }
             if (javax_imageio.containsKey("Lossless")) {
-                Map<String, String> Lossless = javax_imageio.get("Lossless").get(0);
+                Map<String, Object> Lossless = javax_imageio.get("Lossless").get(0);
                 if (Lossless.containsKey("value")) {
                     imageInfo.setIsLossless(Lossless.get("value").equals("TRUE"));
                 }
             }
             if (javax_imageio.containsKey("NumProgressiveScans")) {
-                Map<String, String> NumProgressiveScans = javax_imageio.get("NumProgressiveScans").get(0);
+                Map<String, Object> NumProgressiveScans = javax_imageio.get("NumProgressiveScans").get(0);
                 if (NumProgressiveScans.containsKey("value")) {
-                    imageInfo.setNumProgressiveScans(Integer.valueOf(NumProgressiveScans.get("value")));
+                    imageInfo.setNumProgressiveScans(Integer.valueOf((String) NumProgressiveScans.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BitRate")) {
-                Map<String, String> BitRate = javax_imageio.get("BitRate").get(0);
+                Map<String, Object> BitRate = javax_imageio.get("BitRate").get(0);
                 if (BitRate.containsKey("value")) {
-                    imageInfo.setBitRate(Float.valueOf(BitRate.get("value")));
+                    imageInfo.setBitRate(Float.valueOf((String) BitRate.get("value")));
                 }
             }
             if (javax_imageio.containsKey("PlanarConfiguration")) {
-                Map<String, String> PlanarConfiguration = javax_imageio.get("PlanarConfiguration").get(0);
+                Map<String, Object> PlanarConfiguration = javax_imageio.get("PlanarConfiguration").get(0);
                 if (PlanarConfiguration.containsKey("value")) {
-                    imageInfo.setPlanarConfiguration(PlanarConfiguration.get("value"));
+                    imageInfo.setPlanarConfiguration((String) PlanarConfiguration.get("value"));
                 }
             }
             if (javax_imageio.containsKey("SampleFormat")) {
-                Map<String, String> SampleFormat = javax_imageio.get("SampleFormat").get(0);
+                Map<String, Object> SampleFormat = javax_imageio.get("SampleFormat").get(0);
                 if (SampleFormat.containsKey("value")) {
-                    imageInfo.setSampleFormat(SampleFormat.get("value"));
+                    imageInfo.setSampleFormat((String) SampleFormat.get("value"));
                 }
             }
             if (javax_imageio.containsKey("BitsPerSample")) {
-                Map<String, String> BitsPerSample = javax_imageio.get("BitsPerSample").get(0);
+                Map<String, Object> BitsPerSample = javax_imageio.get("BitsPerSample").get(0);
                 if (BitsPerSample.containsKey("value")) {
-                    imageInfo.setBitsPerSample(BitsPerSample.get("value"));
+                    imageInfo.setBitsPerSample((String) BitsPerSample.get("value"));
                 }
             }
             if (javax_imageio.containsKey("SignificantBitsPerSample")) {
-                Map<String, String> SignificantBitsPerSample = javax_imageio.get("SignificantBitsPerSample").get(0);
+                Map<String, Object> SignificantBitsPerSample = javax_imageio.get("SignificantBitsPerSample").get(0);
                 if (SignificantBitsPerSample.containsKey("value")) {
-                    imageInfo.setSignificantBitsPerSample(SignificantBitsPerSample.get("value"));
+                    imageInfo.setSignificantBitsPerSample((String) SignificantBitsPerSample.get("value"));
                 }
             }
             if (javax_imageio.containsKey("SampleMSB")) {
-                Map<String, String> SampleMSB = javax_imageio.get("SampleMSB").get(0);
+                Map<String, Object> SampleMSB = javax_imageio.get("SampleMSB").get(0);
                 if (SampleMSB.containsKey("value")) {
-                    imageInfo.setSampleMSB(SampleMSB.get("value"));
+                    imageInfo.setSampleMSB((String) SampleMSB.get("value"));
                 }
             }
             if (javax_imageio.containsKey("PixelAspectRatio")) {
-                Map<String, String> PixelAspectRatio = javax_imageio.get("PixelAspectRatio").get(0);
+                Map<String, Object> PixelAspectRatio = javax_imageio.get("PixelAspectRatio").get(0);
                 if (PixelAspectRatio.containsKey("value")) {
-                    imageInfo.setPixelAspectRatio(Float.valueOf(PixelAspectRatio.get("value")));
+                    imageInfo.setPixelAspectRatio(Float.valueOf((String) PixelAspectRatio.get("value")));
                 }
             }
             if (javax_imageio.containsKey("ImageOrientation")) {
-                Map<String, String> ImageOrientation = javax_imageio.get("ImageOrientation").get(0);
+                Map<String, Object> ImageOrientation = javax_imageio.get("ImageOrientation").get(0);
                 if (ImageOrientation.containsKey("value")) {
-                    imageInfo.setImageRotation(ImageOrientation.get("value"));
+                    imageInfo.setImageRotation((String) ImageOrientation.get("value"));
                 }
             }
             if (javax_imageio.containsKey("HorizontalPixelSize")) { // The width of a pixel, in millimeters
-                Map<String, String> HorizontalPixelSize = javax_imageio.get("HorizontalPixelSize").get(0);
+                Map<String, Object> HorizontalPixelSize = javax_imageio.get("HorizontalPixelSize").get(0);
                 if (HorizontalPixelSize.containsKey("value")) {
-                    float v = Float.valueOf(HorizontalPixelSize.get("value"));
+                    float v = Float.valueOf((String) HorizontalPixelSize.get("value"));
                     imageInfo.setHorizontalPixelSize(v);
                     imageInfo.setXDpi(pixelSizeMm2dpi(v));
                 }
             }
             if (javax_imageio.containsKey("VerticalPixelSize")) { // The height of a pixel, in millimeters
-                Map<String, String> VerticalPixelSize = javax_imageio.get("VerticalPixelSize").get(0);
+                Map<String, Object> VerticalPixelSize = javax_imageio.get("VerticalPixelSize").get(0);
                 if (VerticalPixelSize.containsKey("value")) {
-                    float v = Float.valueOf(VerticalPixelSize.get("value"));
+                    float v = Float.valueOf((String) VerticalPixelSize.get("value"));
                     imageInfo.setVerticalPixelSize(v);
                     imageInfo.setYDpi(pixelSizeMm2dpi(v));
                 }
             }
             if (javax_imageio.containsKey("HorizontalPhysicalPixelSpacing")) {
-                Map<String, String> HorizontalPhysicalPixelSpacing = javax_imageio.get("HorizontalPhysicalPixelSpacing").get(0);
+                Map<String, Object> HorizontalPhysicalPixelSpacing = javax_imageio.get("HorizontalPhysicalPixelSpacing").get(0);
                 if (HorizontalPhysicalPixelSpacing.containsKey("value")) {
-                    float v = Float.valueOf(HorizontalPhysicalPixelSpacing.get("value"));
+                    float v = Float.valueOf((String) HorizontalPhysicalPixelSpacing.get("value"));
                     imageInfo.setHorizontalPhysicalPixelSpacing(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPhysicalPixelSpacing")) {
-                Map<String, String> VerticalPhysicalPixelSpacing = javax_imageio.get("VerticalPhysicalPixelSpacing").get(0);
+                Map<String, Object> VerticalPhysicalPixelSpacing = javax_imageio.get("VerticalPhysicalPixelSpacing").get(0);
                 if (VerticalPhysicalPixelSpacing.containsKey("value")) {
-                    float v = Float.valueOf(VerticalPhysicalPixelSpacing.get("value"));
+                    float v = Float.valueOf((String) VerticalPhysicalPixelSpacing.get("value"));
                     imageInfo.setVerticalPhysicalPixelSpacing(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalPosition")) {
-                Map<String, String> HorizontalPosition = javax_imageio.get("HorizontalPosition").get(0);
+                Map<String, Object> HorizontalPosition = javax_imageio.get("HorizontalPosition").get(0);
                 if (HorizontalPosition.containsKey("value")) {
-                    float v = Float.valueOf(HorizontalPosition.get("value"));
+                    float v = Float.valueOf((String) HorizontalPosition.get("value"));
                     imageInfo.setHorizontalPosition(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPosition")) {
-                Map<String, String> VerticalPosition = javax_imageio.get("VerticalPosition").get(0);
+                Map<String, Object> VerticalPosition = javax_imageio.get("VerticalPosition").get(0);
                 if (VerticalPosition.containsKey("value")) {
-                    float v = Float.valueOf(VerticalPosition.get("value"));
+                    float v = Float.valueOf((String) VerticalPosition.get("value"));
                     imageInfo.setVerticalPosition(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalPixelOffset")) {
-                Map<String, String> HorizontalPixelOffset = javax_imageio.get("HorizontalPixelOffset").get(0);
+                Map<String, Object> HorizontalPixelOffset = javax_imageio.get("HorizontalPixelOffset").get(0);
                 if (HorizontalPixelOffset.containsKey("value")) {
-                    float v = Float.valueOf(HorizontalPixelOffset.get("value"));
+                    float v = Float.valueOf((String) HorizontalPixelOffset.get("value"));
                     imageInfo.setHorizontalPixelOffset(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPixelOffset")) {
-                Map<String, String> VerticalPixelOffset = javax_imageio.get("VerticalPixelOffset").get(0);
+                Map<String, Object> VerticalPixelOffset = javax_imageio.get("VerticalPixelOffset").get(0);
                 if (VerticalPixelOffset.containsKey("value")) {
-                    float v = Float.valueOf(VerticalPixelOffset.get("value"));
+                    float v = Float.valueOf((String) VerticalPixelOffset.get("value"));
                     imageInfo.setVerticalPixelOffset(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalScreenSize")) {
-                Map<String, String> HorizontalScreenSize = javax_imageio.get("HorizontalScreenSize").get(0);
+                Map<String, Object> HorizontalScreenSize = javax_imageio.get("HorizontalScreenSize").get(0);
                 if (HorizontalScreenSize.containsKey("value")) {
-                    float v = Float.valueOf(HorizontalScreenSize.get("value"));
+                    float v = Float.valueOf((String) HorizontalScreenSize.get("value"));
                     imageInfo.setHorizontalScreenSize(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalScreenSize")) {
-                Map<String, String> VerticalScreenSize = javax_imageio.get("VerticalScreenSize").get(0);
+                Map<String, Object> VerticalScreenSize = javax_imageio.get("VerticalScreenSize").get(0);
                 if (VerticalScreenSize.containsKey("value")) {
-                    float v = Float.valueOf(VerticalScreenSize.get("value"));
+                    float v = Float.valueOf((String) VerticalScreenSize.get("value"));
                     imageInfo.setVerticalScreenSize(v);
                 }
             }
             if (javax_imageio.containsKey("FormatVersion")) {
-                Map<String, String> FormatVersion = javax_imageio.get("FormatVersion").get(0);
+                Map<String, Object> FormatVersion = javax_imageio.get("FormatVersion").get(0);
                 if (FormatVersion.containsKey("value")) {
-                    imageInfo.setFormatVersion(FormatVersion.get("value"));
+                    imageInfo.setFormatVersion((String) FormatVersion.get("value"));
                 }
             }
             if (javax_imageio.containsKey("SubimageInterpretation")) {
-                Map<String, String> SubimageInterpretation = javax_imageio.get("SubimageInterpretation").get(0);
+                Map<String, Object> SubimageInterpretation = javax_imageio.get("SubimageInterpretation").get(0);
                 if (SubimageInterpretation.containsKey("value")) {
-                    imageInfo.setSubimageInterpretation(SubimageInterpretation.get("value"));
+                    imageInfo.setSubimageInterpretation((String) SubimageInterpretation.get("value"));
                 }
             }
             if (javax_imageio.containsKey("ImageCreationTime")) {
-                Map<String, String> ImageCreationTime = javax_imageio.get("ImageCreationTime").get(0);
+                Map<String, Object> ImageCreationTime = javax_imageio.get("ImageCreationTime").get(0);
                 String t = ImageCreationTime.get("year") + "-" + ImageCreationTime.get("month") + "-"
                         + ImageCreationTime.get("day");
                 if (ImageCreationTime.containsKey("hour")) {
@@ -1015,7 +998,7 @@ public class ImageFileReaders {
                 imageInfo.setImageCreationTime(t);
             }
             if (javax_imageio.containsKey("ImageModificationTime")) {
-                Map<String, String> ImageModificationTime = javax_imageio.get("ImageModificationTime").get(0);
+                Map<String, Object> ImageModificationTime = javax_imageio.get("ImageModificationTime").get(0);
                 String t = ImageModificationTime.get("year") + "-" + ImageModificationTime.get("month") + "-"
                         + ImageModificationTime.get("day");
                 if (ImageModificationTime.containsKey("hour")) {
@@ -1036,21 +1019,21 @@ public class ImageFileReaders {
                 imageInfo.setImageModificationTime(t);
             }
             if (javax_imageio.containsKey("Alpha")) {
-                Map<String, String> Alpha = javax_imageio.get("Alpha").get(0);
+                Map<String, Object> Alpha = javax_imageio.get("Alpha").get(0);
                 if (Alpha.containsKey("value")) {
-                    imageInfo.setAlpha(Alpha.get("value"));
+                    imageInfo.setAlpha((String) Alpha.get("value"));
                 }
             }
             if (javax_imageio.containsKey("TransparentIndex")) {
-                Map<String, String> TransparentIndex = javax_imageio.get("TransparentIndex").get(0);
+                Map<String, Object> TransparentIndex = javax_imageio.get("TransparentIndex").get(0);
                 if (TransparentIndex.containsKey("value")) {
-                    imageInfo.setTransparentIndex(Integer.valueOf(TransparentIndex.get("value")));
+                    imageInfo.setTransparentIndex(Integer.valueOf((String) TransparentIndex.get("value")));
                 }
             }
             if (javax_imageio.containsKey("TransparentColor")) {
-                Map<String, String> TransparentColor = javax_imageio.get("TransparentColor").get(0);
+                Map<String, Object> TransparentColor = javax_imageio.get("TransparentColor").get(0);
                 if (TransparentColor.containsKey("value")) {
-                    imageInfo.setTransparentColor(TransparentColor.get("value"));
+                    imageInfo.setTransparentColor((String) TransparentColor.get("value"));
                 }
             }
 
@@ -1059,75 +1042,69 @@ public class ImageFileReaders {
         }
     }
 
-    // http://johnbokma.com/java/obtaining-image-metadata.html
-    public static void displayMetadata(String fileName) {
+    public static IIOMetadata getIIOMetadata(String format, File file) {
+        switch (format) {
+            case "png":
+                return getIIOMetadata(file);
+            case "jpg":
+            case "jpeg":
+                return getIIOMetadata(file);
+            case "bmp":
+                IIOMetadata bm = ImageBmpFile.getBmpIIOMetadata(file);
+                if (bm != null) {
+                    return bm;
+                }
+                return getIIOMetadata(file);
+            case "gif":
+                return getIIOMetadata(file);
+            //                return ImageGifTools.getGifMetadata(file);
+            case "tif":
+            case "tiff":
+                IIOMetadata tm = ImageTiffFile.getTiffIIOMetadata(file);
+                if (tm != null) {
+                    return tm;
+                }
+                return getIIOMetadata(file);
+            case "pcx":
+                IIOMetadata pm = ImagePcxFile.getPcxMetadata(file);
+                if (pm != null) {
+                    return pm;
+                }
+                return getIIOMetadata(file);
+            case "pnm":
+                IIOMetadata pnm = ImagePnmFile.getPnmMetadata(file);
+                if (pnm != null) {
+                    return pnm;
+                }
+                return getIIOMetadata(file);
+            case "wbmp":
+                IIOMetadata wm = ImageWbmpFile.getWbmpMetadata(file);
+                if (wm != null) {
+                    return wm;
+                }
+                return getIIOMetadata(file);
+            default:
+                return getIIOMetadata(file);
+        }
+    }
+
+    public static IIOMetadata getIIOMetadata(File file) {
         try {
-            System.out.println("\n\n" + fileName);
-            File file = new File(fileName);
             try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
                 if (readers.hasNext()) {
                     ImageReader reader = readers.next();
                     reader.setInput(iis, false);
-                    IIOMetadata metadata = reader.getImageMetadata(0);
-                    String[] names = metadata.getMetadataFormatNames();
-                    int length = names.length;
-                    for (int i = 0; i < length; i++) {
-                        System.out.println("Format name: " + names[i]);
-                        displayMetadata(metadata.getAsTree(names[i]));
-                    }
+                    IIOMetadata iioMetaData = reader.getImageMetadata(0);
                     reader.dispose();
+                    return iioMetaData;
                 }
             }
+            return null;
         } catch (Exception e) {
             logger.error(e.toString());
+            return null;
         }
-    }
-
-    public static void displayMetadata(Node root) {
-        displayMetadata(root, 0);
-    }
-
-    public static void indent(int level) {
-        for (int i = 0; i < level; i++) {
-            System.out.print("    ");
-        }
-    }
-
-    public static void displayMetadata(Node node, int level) {
-        // print open tag of element
-        indent(level);
-        System.out.print("<" + node.getNodeName());
-        NamedNodeMap map = node.getAttributes();
-        if (map != null) {
-
-            // print attribute values
-            int length = map.getLength();
-            for (int i = 0; i < length; i++) {
-                Node attr = map.item(i);
-                System.out.print(" " + attr.getNodeName()
-                        + "=\"" + attr.getNodeValue() + "\"");
-            }
-        }
-
-        Node child = node.getFirstChild();
-        if (child == null) {
-            // no children, so close element and return
-            System.out.println("/>");
-            return;
-        }
-
-        // children, so close current tag
-        System.out.println(">");
-        while (child != null) {
-            // print children recursively
-            displayMetadata(child, level + 1);
-            child = child.getNextSibling();
-        }
-
-        // print close tag of element
-        indent(level);
-        System.out.println("</" + node.getNodeName() + ">");
     }
 
 }

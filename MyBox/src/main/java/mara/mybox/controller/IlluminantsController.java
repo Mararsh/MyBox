@@ -21,8 +21,9 @@ import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -54,7 +55,7 @@ public class IlluminantsController extends ChromaticityBaseController {
     private TableColumn<Illuminant, Integer> illuminautTemperatureColumn;
 
     public IlluminantsController() {
-        baseTitle = AppVaribles.getMessage("Illuminants");
+        baseTitle = AppVaribles.message("Illuminants");
         exportName = "StandardIlluminants";
     }
 
@@ -180,13 +181,13 @@ public class IlluminantsController extends ChromaticityBaseController {
                     swp[0], swp[1], swp[2], twp[0], twp[1], twp[2], algorithm, scale, true);
             double[] adaptedColor = (double[]) run.get("adaptedColor");
             double[] mc = DoubleTools.scale(adaptedColor, scale);
-            adaptationArea.setText(getMessage("CalculatedValues") + ":    X=" + mc[0] + "    Y=" + mc[1] + "    Z=" + mc[2] + "\n");
+            adaptationArea.setText(message("CalculatedValues") + ":    X=" + mc[0] + "    Y=" + mc[1] + "    Z=" + mc[2] + "\n");
             double[] mr = DoubleTools.scale(CIEData.relative(mc), scale);
-            adaptationArea.appendText(getMessage("RelativeValues") + ":    X=" + mr[0] + "    Y=" + mr[1] + "    Z=" + mr[2] + "\n");
+            adaptationArea.appendText(message("RelativeValues") + ":    X=" + mr[0] + "    Y=" + mr[1] + "    Z=" + mr[2] + "\n");
             double[] mn = DoubleTools.scale(CIEData.normalize(mc), scale);
-            adaptationArea.appendText(getMessage("NormalizedValuesCC") + ":    x=" + mn[0] + "    y=" + mn[1] + "    z=" + mn[2] + "\n");
-            adaptationArea.appendText("\n----------------" + getMessage("CalculationProcedure") + "----------------\n");
-            adaptationArea.appendText(getMessage("ReferTo") + "： \n");
+            adaptationArea.appendText(message("NormalizedValuesCC") + ":    x=" + mn[0] + "    y=" + mn[1] + "    z=" + mn[2] + "\n");
+            adaptationArea.appendText("\n----------------" + message("CalculationProcedure") + "----------------\n");
+            adaptationArea.appendText(message("ReferTo") + "： \n");
             adaptationArea.appendText("            http://www.thefullwiki.org/Standard_illuminant#cite_note-30 \n");
             adaptationArea.appendText("            http://brucelindbloom.com/index.html?Eqn_ChromAdapt.html \n\n");
             adaptationArea.appendText((String) run.get("procedure"));

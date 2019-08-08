@@ -17,9 +17,9 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
-                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%SourceFile" HBox.hgrow="NEVER" />
                         <TextField fx:id="sourceFileInput" HBox.hgrow="ALWAYS">
@@ -50,97 +50,97 @@ License:    Apache License Version 2.0
                         <Insets bottom="20.0" />
                     </VBox.margin>
                 </HBox>
-            <TitledPane text="%Attributes">
-               <content>
-                  <VBox spacing="10.0">
-                     <children>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%Title" />
-                                    <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%Subject" />
-                                    <TextField fx:id="subjectInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%Creator" />
-                                    <TextField fx:id="creatorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%PDFProducer" />
-                                    <TextField fx:id="producerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%Keywords" />
-                                    <TextField fx:id="keywordInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%CreateTime" />
-                                    <TextField fx:id="createTimeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#nowCreateTime" text="%Now" />
-                                    <Label text="%ModifyTime" />
-                                    <TextField fx:id="modifyTimeInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#nowModifyTime" text="%Now" />
-                                </children>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                <children>
-                                    <Label prefWidth="160.0" text="%Author" />
-                                    <TextField fx:id="authorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    <Label text="%Version" />
-                                    <TextField fx:id="versionInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Label prefWidth="160.0" text="%UserPermisson" />
-                              <CheckBox fx:id="assembleCheck" mnemonicParsing="false" text="%AssemblePages" />
-                              <CheckBox fx:id="extractCheck" mnemonicParsing="false" text="%ExtractContents" />
-                              <CheckBox fx:id="modifyCheck" mnemonicParsing="false" text="%ModifyContents" />
-                              <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%FillForm" />
-                              <CheckBox fx:id="printCheck" mnemonicParsing="false" text="%Print" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Label prefWidth="160.0" text="%UserPassword" />
-                              <PasswordField fx:id="userPasswordInput" HBox.hgrow="ALWAYS" />
-                              <Label layoutX="10.0" layoutY="15.0" text="%PasswordAgain" />
-                              <PasswordField fx:id="userPasswordInput2" layoutX="175.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="333.0" spacing="5.0">
-                           <children>
-                              <Label prefWidth="160.0" text="%OwnerPassword" />
-                              <PasswordField fx:id="ownerPasswordInput" HBox.hgrow="ALWAYS" />
-                              <Label layoutX="10.0" layoutY="15.0" text="%PasswordAgain" />
-                              <PasswordField fx:id="ownerPasswordInput2" layoutX="175.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
-                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="220.0" spacing="5.0">
+                <TitledPane text="%Attributes" VBox.vgrow="NEVER">
+                    <content>
+                        <VBox spacing="10.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%Title" />
+                                        <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%Subject" />
+                                        <TextField fx:id="subjectInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%Creator" />
+                                        <TextField fx:id="creatorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%PDFProducer" />
+                                        <TextField fx:id="producerInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%Keywords" />
+                                        <TextField fx:id="keywordInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%CreateTime" />
+                                        <TextField fx:id="createTimeInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#nowCreateTime" text="%Now" />
+                                        <Label text="%ModifyTime" />
+                                        <TextField fx:id="modifyTimeInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#nowModifyTime" text="%Now" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%Author" />
+                                        <TextField fx:id="authorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <Label text="%Version" />
+                                        <TextField fx:id="versionInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%UserPermission" />
+                                        <CheckBox fx:id="assembleCheck" mnemonicParsing="false" text="%AssemblePages" />
+                                        <CheckBox fx:id="extractCheck" mnemonicParsing="false" text="%ExtractContents" />
+                                        <CheckBox fx:id="modifyCheck" mnemonicParsing="false" text="%ModifyContents" />
+                                        <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%FillForm" />
+                                        <CheckBox fx:id="printCheck" mnemonicParsing="false" text="%Print" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%UserPassword" />
+                                        <PasswordField fx:id="userPasswordInput" HBox.hgrow="ALWAYS" />
+                                        <Label layoutX="10.0" layoutY="15.0" text="%PasswordAgain" />
+                                        <PasswordField fx:id="userPasswordInput2" layoutX="175.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="333.0" spacing="5.0">
+                                    <children>
+                                        <Label prefWidth="160.0" text="%OwnerPassword" />
+                                        <PasswordField fx:id="ownerPasswordInput" HBox.hgrow="ALWAYS" />
+                                        <Label layoutX="10.0" layoutY="15.0" text="%PasswordAgain" />
+                                        <PasswordField fx:id="ownerPasswordInput2" layoutX="175.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="220.0" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label maxWidth="1.7976931348623157E308" text=" " HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#resetAction" text="%Reset" />
                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
                     </children>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
+                    <VBox.margin>
+                        <Insets top="20.0" />
+                    </VBox.margin>
                 </HBox>
             </children>
             <BorderPane.margin>

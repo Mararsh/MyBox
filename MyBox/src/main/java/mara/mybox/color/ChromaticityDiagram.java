@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.List;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 
 /**
  * @Author Mara
@@ -33,8 +33,8 @@ public class ChromaticityDiagram {
     private int startH = margins + stepH, startW = margins + stepW;
     private int endH = stepH * grid + margins;
     private int endW = stepW * grid + margins;
-    private Font dataFont = new Font(null, Font.PLAIN, 20),
-            commnetsFont = new Font(null, Font.BOLD, 28);
+    private int fontSize = 20;
+    private Font dataFont, commentsFont;
     private int dotSize = 6;
     private boolean isLine, show2Degree, show10Degree, showDataSource;
     private File dataSourceFile;
@@ -70,6 +70,11 @@ public class ChromaticityDiagram {
                 g.fillRect(0, 0, width, height);
 
             }
+            if (fontSize <= 0) {
+                fontSize = 20;
+            }
+            dataFont = new Font(null, Font.PLAIN, fontSize);
+            commentsFont = new Font(null, Font.BOLD, fontSize + 8);
             if (Color.BLACK.equals(bgColor)) {
                 textColor = Color.WHITE;
             } else {
@@ -80,19 +85,19 @@ public class ChromaticityDiagram {
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
             g.setComposite(ac);
             if (title == null) {
-                title = getMessage("ChromaticityDiagram");
+                title = message("ChromaticityDiagram");
             }
-            g.setFont(commnetsFont);
+            g.setFont(commentsFont);
             g.setColor(textColor);
             g.drawString(title, margins + 400, 50);
             g.setFont(dataFont);
-            g.drawString(getMessage("ChromaticityDiagramComments"), 20, endH + 55);
+            g.drawString(message("ChromaticityDiagramComments"), 20, endH + 55);
 
             backGround();
             outlines();
             whitePoints();
             primariesLines();
-            input();
+            calculate();
 
             g.dispose();
             return image;
@@ -152,14 +157,14 @@ public class ChromaticityDiagram {
             ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
             if (show.get(DataType.CIE2Degree)) {
                 data = cieData.cie1931Observer2Degree1nmData(cs);
-                outline(data, getMessage("CIE1931Observer2Degree"), 535, textColor);
+                outline(data, message("CIE1931Observer2Degree"), 535, textColor);
             }
             if (show.get(DataType.CIE10Degree)) {
                 data = cieData.cie1964Observer10Degree1nmData(cs);
                 if (show.get(DataType.CIE2Degree)) {
-                    outline(data, getMessage("CIE1964Observer10Degree"), 525, Color.BLUE);
+                    outline(data, message("CIE1964Observer10Degree"), 525, Color.BLUE);
                 } else {
-                    outline(data, getMessage("CIE1964Observer10Degree"), 525, textColor);
+                    outline(data, message("CIE1964Observer10Degree"), 525, textColor);
                 }
             }
             if (show.get(DataType.CIEDataSource)) {
@@ -171,9 +176,9 @@ public class ChromaticityDiagram {
                 }
                 if (data != null) {
                     if (show.get(DataType.CIE2Degree) || show.get(DataType.CIE10Degree)) {
-                        outline(data, getMessage("InputtedData"), 520, Color.RED);
+                        outline(data, message("InputtedData"), 520, Color.RED);
                     } else {
-                        outline(data, getMessage("InputtedData"), 520, textColor);
+                        outline(data, message("InputtedData"), 520, textColor);
                     }
                 }
             }
@@ -441,7 +446,7 @@ public class ChromaticityDiagram {
         }
     }
 
-    private void input() {
+    private void calculate() {
         if (!show.get(DataType.Calculate)
                 || calculateX < 0 || calculateX > 1
                 || calculateY <= 0 || calculateY > 1) {
@@ -468,7 +473,7 @@ public class ChromaticityDiagram {
 
         g.setFont(dataFont);
         g.setColor(textColor);
-        g.drawString(getMessage("InputtedData"), x + 15, y + 5);
+        g.drawString(message("CalculatedValues"), x + 15, y + 5);
 
     }
 
@@ -620,11 +625,11 @@ public class ChromaticityDiagram {
     }
 
     public Font getCommnetsFont() {
-        return commnetsFont;
+        return commentsFont;
     }
 
     public void setCommnetsFont(Font commnetsFont) {
-        this.commnetsFont = commnetsFont;
+        this.commentsFont = commnetsFont;
     }
 
     public int getDotSize() {
@@ -725,6 +730,22 @@ public class ChromaticityDiagram {
 
     public void setDataSourceTexts(String dataSourceTexts) {
         this.dataSourceTexts = dataSourceTexts;
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
+    public Font getCommentsFont() {
+        return commentsFont;
+    }
+
+    public void setCommentsFont(Font commentsFont) {
+        this.commentsFont = commentsFont;
     }
 
 }

@@ -38,7 +38,7 @@ public class DoubleEllipse implements DoubleShape {
             centerX = (focal1.getX() + focal2.getX()) / 2;
             centerY = focal1.getY();
             focalDistance = Math.abs(focal1.getX() - focal2.getX()) / 2;
-            shortAxis = (double) Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
+            shortAxis = Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
             radiusX = longAxis;
             radiusY = shortAxis;
             if (focal1.getX() >= focal2.getX()) {
@@ -54,7 +54,7 @@ public class DoubleEllipse implements DoubleShape {
             centerX = focal1.getX();
             centerY = (focal1.getY() + focal2.getY()) / 2;
             focalDistance = Math.abs(focal1.getY() - focal2.getY()) / 2;
-            shortAxis = (double) Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
+            shortAxis = Math.sqrt(longAxis * longAxis - focalDistance * focalDistance);
             radiusX = shortAxis;
             radiusY = longAxis;
             if (focal1.getY() >= focal2.getY()) {
@@ -84,7 +84,7 @@ public class DoubleEllipse implements DoubleShape {
             shortAxis = rect.getHeight() / 2;
             radiusX = longAxis;
             radiusY = shortAxis;
-            focalDistance = (double) Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
+            focalDistance = Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
             focalSmall = new DoublePoint(centerX - focalDistance, centerY);
             focalBig = new DoublePoint(centerX + focalDistance, centerY);
             sumLength = rect.getWidth();
@@ -93,7 +93,7 @@ public class DoubleEllipse implements DoubleShape {
             shortAxis = rect.getWidth() / 2;
             radiusX = shortAxis;
             radiusY = longAxis;
-            focalDistance = (double) Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
+            focalDistance = Math.sqrt(longAxis * longAxis - shortAxis * shortAxis);
             focalSmall = new DoublePoint(centerX, centerY - focalDistance);
             focalBig = new DoublePoint(centerX, centerY + focalDistance);
             sumLength = rect.getHeight();

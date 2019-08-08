@@ -16,12 +16,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.data.FileInformation;
+import mara.mybox.data.FileSynchronizeAttributes;
 import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.value.CommonValues;
-import mara.mybox.data.FileSynchronizeAttributes;
-import mara.mybox.data.FileInformation;
 import static mara.mybox.value.CommonValues.AppTempPath;
-import static mara.mybox.value.CommonValues.AppDataRoot;
 
 /**
  * @Author mara
@@ -29,6 +28,11 @@ import static mara.mybox.value.CommonValues.AppDataRoot;
  * @Description
  */
 public class FileTools {
+
+    public static enum FileSortMode {
+        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc, SizeDesc, SizeAsc,
+        NameDesc, NameAsc, FormatDesc, FormatAsc
+    }
 
     public static long getFileCreateTime(final String filename) {
         try {
@@ -43,35 +47,16 @@ public class FileTools {
         if (filename == null) {
             return null;
         }
-        int pos = filename.lastIndexOf("/");
+        int pos = filename.lastIndexOf('/');
         if (pos < 0) {
             return "";
         }
         return filename.substring(0, pos);
     }
 
-//    public static String getFileName(final String filename) {
-//        if (filename == null) {
-//            return null;
-//        }
-//        try {
-//            String fname = filename;
-//            int pos = filename.lastIndexOf("/");
-//            if (pos >= 0) {
-//                fname = fname.substring(pos + 1);
-//            }
-//            pos = filename.lastIndexOf("\\");
-//            if (pos >= 0) {
-//                fname = fname.substring(pos + 1);
-//            }
-//            return fname;
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
     public static String getFilePrefix(File file) {
         try {
-            return getFilePrefix(file.getName());
+            return FileTools.getFilePrefix(file.getName());
         } catch (Exception e) {
             return null;
         }
@@ -79,12 +64,11 @@ public class FileTools {
 
     // filename may include path or not, it is decided by caller
     public static String getFilePrefix(final String filename) {
-        //        String fname = getFileName(filename);
         if (filename == null) {
             return null;
         }
         String fname = filename;
-        int pos = fname.lastIndexOf(".");
+        int pos = fname.lastIndexOf('.');
         if (pos >= 0) {
             fname = fname.substring(0, pos);
         }
@@ -104,7 +88,7 @@ public class FileTools {
             return null;
         }
         String suffix;
-        int pos = filename.lastIndexOf(".");
+        int pos = filename.lastIndexOf('.');
         if (pos >= 0 && filename.length() > pos) {
             suffix = filename.substring(pos + 1);
         } else {
@@ -118,7 +102,7 @@ public class FileTools {
             return null;
         }
         String fname = filename;
-        int pos = filename.lastIndexOf(".");
+        int pos = filename.lastIndexOf('.');
         if (pos >= 0) {
             fname = fname.substring(0, pos) + "." + newSuffix;
         } else {
@@ -127,32 +111,16 @@ public class FileTools {
         return fname;
     }
 
-    public static String getTempFile(String filename) {
-        if (filename == null) {
-            return null;
-        }
-        String fname = filename;
-        int pos = filename.lastIndexOf(".");
-        if (pos >= 0) {
-            fname = fname.substring(0, pos) + new Date().getTime() + "." + fname.substring(pos + 1);
-        }
-        return fname;
+    public static String getTempFileName() {
+        return AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
     }
 
     public static File getTempFile() {
-        File file = new File(AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100));
+        File file = new File(getTempFileName());
         while (file.exists()) {
-            file = new File(AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100));
+            file = new File(getTempFileName());
         }
         return file;
-    }
-
-    public static boolean isPDF(String filename) {
-        String suffix = getFileSuffix(filename);
-        if (suffix == null) {
-            return false;
-        }
-        return "PDF".equals(suffix.toUpperCase());
     }
 
     public static String insertFileName(String filename, String inStr) {
@@ -162,36 +130,11 @@ public class FileTools {
         if (inStr == null) {
             return filename;
         }
-        int pos = filename.lastIndexOf(".");
+        int pos = filename.lastIndexOf('.');
         if (pos < 0) {
             return filename + inStr;
         }
         return filename.substring(0, pos) + inStr + "." + filename.substring(pos + 1);
-    }
-
-    public static File getHelpFile(String helpFile) {
-        File file = new File(AppDataRoot + "/" + helpFile);
-        if (file.exists()) {
-            return file;
-        }
-        return null;
-    }
-
-    public static String showFileSizeKB(long size) {
-        long kb = (long) (size / 1024f + 0.5);
-        if (kb == 0) {
-            kb = 1;
-        }
-        String s = kb + "";
-        String t = "";
-        int count = 0;
-        for (int i = s.length() - 1; i >= 0; i--, count++) {
-            if (count > 0 && (count % 3 == 0)) {
-                t = "," + t;
-            }
-            t = s.charAt(i) + t;
-        }
-        return t + " KB";
     }
 
     public static String showFileSize(long size) {
@@ -199,36 +142,14 @@ public class FileTools {
         if (kb < 1024) {
             return DoubleTools.scale3(kb) + " KB";
         } else {
-            double mb = size * 1.0f / (1024 * 1024);
+            double mb = kb / 1024;
             if (mb < 1024) {
                 return DoubleTools.scale3(mb) + " MB";
             } else {
-                double gb = size * 1.0f / (1024 * 1024 * 1024);
+                double gb = mb / 1024;
                 return DoubleTools.scale3(gb) + " GB";
             }
         }
-    }
-
-    public static String showFileSize2(long size) {
-        double kb = size * 1.0f / 1024;
-        String s = DoubleTools.scale3(kb) + " KB";
-        if (kb < 1024) {
-            return s;
-        }
-
-        double mb = size * 1.0f / (1024 * 1024);
-        if (mb < 1024) {
-            return s + " (" + DoubleTools.scale3(mb) + " MB)";
-        } else {
-            double gb = size * 1.0f / (1024 * 1024 * 1024);
-            return s + " (" + DoubleTools.scale3(gb) + " GB)";
-        }
-
-    }
-
-    public static enum FileSortMode {
-        ModifyTimeDesc, ModifyTimeAsc, CreateTimeDesc, CreateTimeAsc, SizeDesc, SizeAsc,
-        NameDesc, NameAsc, FormatDesc, FormatAsc
     }
 
     public static void sortFiles(List<File> files, FileSortMode sortMode) {
@@ -443,6 +364,14 @@ public class FileTools {
         return CommonValues.SupportedImages.contains(suffix);
     }
 
+    public static boolean copyFile(String sourceFile, String targetFile) {
+        return copyFile(new File(sourceFile), new File(targetFile));
+    }
+
+    public static boolean copyFile(File sourceFile, File targetFile) {
+        return copyFile(sourceFile, targetFile, false, true);
+    }
+
     public static boolean copyFile(File sourceFile, File targetFile,
             boolean isCanReplace, boolean isCopyAttrinutes) {
         try {
@@ -501,7 +430,7 @@ public class FileTools {
                     } else if (!attr.isContinueWhenError()) {
                         return false;
                     }
-                } else {
+                } else if (file.isDirectory()) {
                     if (copyWholeDirectory(file, targetFile, attr)) {
                         attr.setCopiedDirectoriesNumber(attr.getCopiedDirectoriesNumber() + 1);
                     } else if (!attr.isContinueWhenError()) {
@@ -534,6 +463,50 @@ public class FileTools {
             }
         }
         return dir.delete();
+    }
+
+    public static long[] countDirectorySize(File dir) {
+        long[] size = new long[2];
+        try {
+            if (dir == null) {
+                return size;
+            }
+            if (dir.isFile()) {
+                size[0] = 1;
+                size[1] = dir.length();
+
+            } else if (dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                size[0] = 0;
+                size[1] = 0;
+                if (files != null) {
+                    for (File file : files) {
+                        long[] fsize = countDirectorySize(file);
+                        size[0] += fsize[0];
+                        size[1] += fsize[1];
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+        return size;
+    }
+
+    public static List<File> allFiles(File file) {
+        if (file == null) {
+            return null;
+        }
+        List<File> files = new ArrayList();
+        if (file.isFile()) {
+            files.add(file);
+        } else if (file.isDirectory()) {
+            File[] dirFiles = file.listFiles();
+            for (File dirFile : dirFiles) {
+                files.addAll(allFiles(dirFile));
+            }
+        }
+        return files;
     }
 
     public static String getFontFile(String fontName) {
@@ -755,7 +728,7 @@ public class FileTools {
             return null;
         }
         try {
-            byte[] data = null;
+            byte[] data;
             try (FileInputStream inputStream = new FileInputStream(file)) {
                 data = new byte[length];
                 inputStream.skip(offset);

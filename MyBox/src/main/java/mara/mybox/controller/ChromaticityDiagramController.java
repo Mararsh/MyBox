@@ -15,18 +15,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -42,28 +37,27 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import mara.mybox.color.CIEColorSpace;
+import mara.mybox.color.CIEData;
+import mara.mybox.color.ChromaticityDiagram;
+import mara.mybox.color.ChromaticityDiagram.DataType;
+import mara.mybox.color.ColorValue;
 import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.fxml.FxmlStage;
-import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.color.ChromaticityDiagram;
-import mara.mybox.color.ChromaticityDiagram.DataType;
-import mara.mybox.color.CIEData;
-import mara.mybox.color.ColorValue;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.fxml.FxmlStage;
+import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getMessage;
 import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVaribles.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -75,14 +69,14 @@ import mara.mybox.value.CommonValues;
 public class ChromaticityDiagramController extends BaseController {
 
     private boolean isLine, inputInit = true;
-    private int dotSize;
+    private int dotSize, fontSize;
     private java.awt.Color bgColor, calculateColor;
-    private ObservableList<ColorValue> calculatedValues = FXCollections.observableArrayList();
+    private final ObservableList<ColorValue> calculatedValues = FXCollections.observableArrayList();
     private ObservableList<CIEData> degree2nm1Data, degree10nm1Data, degree2nm5Data, degree10nm5Data;
-    private double X, Y, Z, x = 0, y = 0;
+    private double X, Y = 1, Z, x = 0.4, y = 0.5;
 
     @FXML
-    private ComboBox<String> dotTypeBox, backgroundBox;
+    private ComboBox<String> dotTypeBox, backgroundBox, fontSelector;
     @FXML
     private CheckBox cdProPhotoCheck, cdColorMatchCheck, cdNTSCCheck, cdPALCheck, cdAppleCheck, cdAdobeCheck,
             cdSRGBCheck, cdECICheck, cdCIECheck, cdSMPTECCheck, degree2Check, degree10Check,
@@ -136,7 +130,7 @@ public class ChromaticityDiagramController extends BaseController {
     private ColorPicker colorPicker;
 
     public ChromaticityDiagramController() {
-        baseTitle = AppVaribles.getMessage("DrawChromaticityDiagram");
+        baseTitle = AppVaribles.message("DrawChromaticityDiagram");
 
         TipsLabelKey = "ChromaticityDiagramTips";
 
@@ -147,7 +141,8 @@ public class ChromaticityDiagramController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        fileExtensionFilter = CommonValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonValues.TxtExtensionFilter;
+        targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
@@ -176,6 +171,7 @@ public class ChromaticityDiagramController extends BaseController {
             isSettingValues = true;
             backgroundBox.getSelectionModel().select(0);
             dotTypeBox.getSelectionModel().select(0);
+            fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -184,8 +180,8 @@ public class ChromaticityDiagramController extends BaseController {
     }
 
     private void initToolBar() {
-        List<String> bgList = Arrays.asList(getMessage("Transparent"),
-                getMessage("White"), getMessage("Black")
+        List<String> bgList = Arrays.asList(message("Transparent"),
+                message("White"), message("Black")
         );
         backgroundBox.getItems().addAll(bgList);
         backgroundBox.setVisibleRowCount(bgList.size());
@@ -196,10 +192,10 @@ public class ChromaticityDiagramController extends BaseController {
             }
         });
 
-        List<String> opList = Arrays.asList(getMessage("Line4px"),
-                getMessage("Dot6px"), getMessage("Dot10px"), getMessage("Dot4px"),
-                getMessage("Dot12px"), getMessage("Line1px"), getMessage("Line2px"),
-                getMessage("Line6px"), getMessage("Line10px")
+        List<String> opList = Arrays.asList(message("Line4px"),
+                message("Dot6px"), message("Dot10px"), message("Dot4px"),
+                message("Dot12px"), message("Line1px"), message("Line2px"),
+                message("Line6px"), message("Line10px")
         );
         dotTypeBox.getItems().addAll(opList);
         dotTypeBox.setVisibleRowCount(opList.size());
@@ -207,6 +203,16 @@ public class ChromaticityDiagramController extends BaseController {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 checkDotType();
+            }
+        });
+
+        List<String> fontList = Arrays.asList("20", "24", "28", "30", "18", "16", "15", "14", "12", "10");
+        fontSelector.getItems().addAll(fontList);
+        fontSelector.setVisibleRowCount(fontList.size());
+        fontSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                checkFontSize();
             }
         });
 
@@ -391,7 +397,7 @@ public class ChromaticityDiagramController extends BaseController {
                     }
                 }
             });
-            FxmlControl.setTooltip(YInput, new Tooltip(getMessage("1-based")));
+            FxmlControl.setTooltip(YInput, new Tooltip(message("1-based")));
 
             xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -409,7 +415,6 @@ public class ChromaticityDiagramController extends BaseController {
                     }
                 }
             });
-
             yInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -472,7 +477,7 @@ public class ChromaticityDiagramController extends BaseController {
             valuesColumn.setCellValueFactory(new PropertyValueFactory<>("values"));
 
             sourceInputArea.setStyle(" -fx-text-fill: gray;");
-            sourceInputArea.setText(getMessage("ChromaticityDiagramTips"));
+            sourceInputArea.setText(message("ChromaticityDiagramTips"));
             sourceInputArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -504,79 +509,79 @@ public class ChromaticityDiagramController extends BaseController {
         if (data != null) {
             sourceDataArea.setText(data);
         } else {
-            popError(AppVaribles.getMessage("NoData"));
+            popError(AppVaribles.message("NoData"));
             sourceDataArea.clear();
         }
     }
 
     private void initCIETables() {
         wave2n1Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
-        tx2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("X"));
-        ty2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Y"));
-        tz2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Z"));
-        nx2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedX"));
-        ny2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedY"));
-        nz2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedZ"));
-        rx2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeX"));
-        ry2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeY"));
-        rz2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeZ"));
-        r2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("red"));
-        g2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("green"));
-        b2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("blue"));
-        ri2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("redi"));
-        gi2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("greeni"));
-        bi2n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("bluei"));
+        tx2n1Column.setCellValueFactory(new PropertyValueFactory<>("X"));
+        ty2n1Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
+        tz2n1Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
+        nx2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        ny2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nz2n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rx2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        ry2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rz2n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
+        r2n1Column.setCellValueFactory(new PropertyValueFactory<>("red"));
+        g2n1Column.setCellValueFactory(new PropertyValueFactory<>("green"));
+        b2n1Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
+        ri2n1Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
+        gi2n1Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
+        bi2n1Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
 
-        wave2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("waveLength"));
-        tx2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("X"));
-        ty2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Y"));
-        tz2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Z"));
-        nx2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedX"));
-        ny2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedY"));
-        nz2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedZ"));
-        rx2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeX"));
-        ry2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeY"));
-        rz2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeZ"));
-        r2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("red"));
-        g2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("green"));
-        b2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("blue"));
-        ri2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("redi"));
-        gi2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("greeni"));
-        bi2n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("bluei"));
+        wave2n5Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
+        tx2n5Column.setCellValueFactory(new PropertyValueFactory<>("X"));
+        ty2n5Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
+        tz2n5Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
+        nx2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        ny2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nz2n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rx2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        ry2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rz2n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
+        r2n5Column.setCellValueFactory(new PropertyValueFactory<>("red"));
+        g2n5Column.setCellValueFactory(new PropertyValueFactory<>("green"));
+        b2n5Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
+        ri2n5Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
+        gi2n5Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
+        bi2n5Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
 
-        wave10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("waveLength"));
-        tx10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("X"));
-        ty10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Y"));
-        tz10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Z"));
-        nx10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedX"));
-        ny10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedY"));
-        nz10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedZ"));
-        rx10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeX"));
-        ry10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeY"));
-        rz10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeZ"));
-        r10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("red"));
-        g10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("green"));
-        b10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("blue"));
-        ri10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("redi"));
-        gi10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("greeni"));
-        bi10n1Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("bluei"));
+        wave10n1Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
+        tx10n1Column.setCellValueFactory(new PropertyValueFactory<>("X"));
+        ty10n1Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
+        tz10n1Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
+        nx10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        ny10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nz10n1Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rx10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        ry10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rz10n1Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
+        r10n1Column.setCellValueFactory(new PropertyValueFactory<>("red"));
+        g10n1Column.setCellValueFactory(new PropertyValueFactory<>("green"));
+        b10n1Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
+        ri10n1Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
+        gi10n1Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
+        bi10n1Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
 
-        wave10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("waveLength"));
-        tx10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("X"));
-        ty10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Y"));
-        tz10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("Z"));
-        nx10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedX"));
-        ny10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedY"));
-        nz10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("normalizedZ"));
-        rx10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeX"));
-        ry10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeY"));
-        rz10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("relativeZ"));
-        r10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("red"));
-        g10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("green"));
-        b10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Double>("blue"));
-        ri10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("redi"));
-        gi10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("greeni"));
-        bi10n5Column.setCellValueFactory(new PropertyValueFactory<CIEData, Integer>("bluei"));
+        wave10n5Column.setCellValueFactory(new PropertyValueFactory<>("waveLength"));
+        tx10n5Column.setCellValueFactory(new PropertyValueFactory<>("X"));
+        ty10n5Column.setCellValueFactory(new PropertyValueFactory<>("Y"));
+        tz10n5Column.setCellValueFactory(new PropertyValueFactory<>("Z"));
+        nx10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        ny10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nz10n5Column.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rx10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        ry10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rz10n5Column.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
+        r10n5Column.setCellValueFactory(new PropertyValueFactory<>("red"));
+        g10n5Column.setCellValueFactory(new PropertyValueFactory<>("green"));
+        b10n5Column.setCellValueFactory(new PropertyValueFactory<>("blue"));
+        ri10n5Column.setCellValueFactory(new PropertyValueFactory<>("redi"));
+        gi10n5Column.setCellValueFactory(new PropertyValueFactory<>("greeni"));
+        bi10n5Column.setCellValueFactory(new PropertyValueFactory<>("bluei"));
 
     }
 
@@ -593,27 +598,27 @@ public class ChromaticityDiagramController extends BaseController {
         try {
             isLine = false;
             String type = dotTypeBox.getSelectionModel().getSelectedItem();
-            if (getMessage("Dot6px").equals(type)) {
+            if (message("Dot6px").equals(type)) {
                 dotSize = 6;
-            } else if (getMessage("Dot10px").equals(type)) {
+            } else if (message("Dot10px").equals(type)) {
                 dotSize = 10;
-            } else if (getMessage("Dot4px").equals(type)) {
+            } else if (message("Dot4px").equals(type)) {
                 dotSize = 4;
-            } else if (getMessage("Dot12px").equals(type)) {
+            } else if (message("Dot12px").equals(type)) {
                 dotSize = 12;
-            } else if (getMessage("Line2px").equals(type)) {
+            } else if (message("Line2px").equals(type)) {
                 isLine = true;
                 dotSize = 2;
-            } else if (getMessage("Line1px").equals(type)) {
+            } else if (message("Line1px").equals(type)) {
                 isLine = true;
                 dotSize = 1;
-            } else if (getMessage("Line4px").equals(type)) {
+            } else if (message("Line4px").equals(type)) {
                 isLine = true;
                 dotSize = 4;
-            } else if (getMessage("Line6px").equals(type)) {
+            } else if (message("Line6px").equals(type)) {
                 isLine = true;
                 dotSize = 6;
-            } else if (getMessage("Line10px").equals(type)) {
+            } else if (message("Line10px").equals(type)) {
                 isLine = true;
                 dotSize = 10;
             } else {
@@ -631,11 +636,11 @@ public class ChromaticityDiagramController extends BaseController {
     private void checkBackground() {
         try {
             String type = backgroundBox.getSelectionModel().getSelectedItem();
-            if (getMessage("Transparent").equals(type)) {
+            if (message("Transparent").equals(type)) {
                 bgColor = null;
-            } else if (getMessage("White").equals(type)) {
+            } else if (message("White").equals(type)) {
                 bgColor = java.awt.Color.WHITE;
-            } else if (getMessage("Black").equals(type)) {
+            } else if (message("Black").equals(type)) {
                 bgColor = java.awt.Color.BLACK;
             } else {
                 bgColor = null;
@@ -647,6 +652,23 @@ public class ChromaticityDiagramController extends BaseController {
             displayChromaticityDiagram();
         }
 
+    }
+
+    private void checkFontSize() {
+        try {
+            int v = Integer.parseInt(fontSelector.getValue());
+            if (v > 0) {
+                fontSize = v;
+                fontSelector.getEditor().setStyle(null);
+                if (!isSettingValues) {
+                    displayChromaticityDiagram();
+                }
+            } else {
+                fontSelector.getEditor().setStyle(badStyle);
+            }
+        } catch (Exception e) {
+            fontSelector.getEditor().setStyle(badStyle);
+        }
     }
 
     private void initCIEData() {
@@ -752,6 +774,7 @@ public class ChromaticityDiagramController extends BaseController {
                     cd.setIsLine(isLine);
                     cd.setDotSize(dotSize);
                     cd.setBgColor(bgColor);
+                    cd.setFontSize(fontSize);
                     cd.setDataSourceTexts(sourceDataArea.getText());
                     if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
                         cd.setCalculateX(x);
@@ -781,7 +804,7 @@ public class ChromaticityDiagramController extends BaseController {
                             d10n1Area.home();
                             d10n5Area.home();
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -799,11 +822,11 @@ public class ChromaticityDiagramController extends BaseController {
         try {
             tableBox.getChildren().clear();
             RadioButton selected = (RadioButton) dataGroup.getSelectedToggle();
-            if (getMessage("Calculate").equals(selected.getText())) {
+            if (message("Calculate").equals(selected.getText())) {
 
                 tableBox.getChildren().addAll(dataToolbar, calculateBox);
 
-            } else if (getMessage("Input").equals(selected.getText())) {
+            } else if (message("Input").equals(selected.getText())) {
 
                 tableBox.getChildren().addAll(dataToolbar, inputBox);
 
@@ -871,7 +894,7 @@ public class ChromaticityDiagramController extends BaseController {
                             isSettingValues = false;
                             checkInputs();
                         } else {
-                            popError(AppVaribles.getMessage("NoData"));
+                            popError(AppVaribles.message("NoData"));
                             sourceDataArea.clear();
 //                            bottomLabel.setText("");
                         }
@@ -898,263 +921,173 @@ public class ChromaticityDiagramController extends BaseController {
     }
 
     @FXML
-    public void popDiagramPath(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Image);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void popDiagramPath(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    saveAction();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Image);
+            }
 
+            @Override
+            public void handleSelect() {
+                saveAction();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
-    public void pop21Path(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Text);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void pop21Path(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    export21Action();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
 
+            @Override
+            public void handleSelect() {
+                export21Action();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
-    public void pop25Path(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Text);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void pop25Path(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    export25Action();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
 
+            @Override
+            public void handleSelect() {
+                export25Action();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
-    public void pop101Path(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Text);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void pop101Path(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    export101Action();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
 
+            @Override
+            public void handleSelect() {
+                export101Action();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
-    public void pop105Path(MouseEvent event) { //
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-            popMenu = null;
-        }
-        List<VisitHistory> his = VisitHistory.getRecentPath(VisitHistory.FileType.Text);
-        List<String> paths = new ArrayList();
-        if (his != null) {
-            for (VisitHistory h : his) {
-                String pathname = h.getResourceValue();
-                paths.add(pathname);
-            }
-        }
-        if (paths.isEmpty()) {
+    public void pop105Path(MouseEvent event) {
+        if (AppVaribles.fileRecentNumber <= 0) {
             return;
         }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        MenuItem imenu = new MenuItem(getMessage("RecentAccessedDirectories"));
-        imenu.setStyle("-fx-text-fill: #2e598a;");
-        popMenu.getItems().add(imenu);
-        MenuItem menu;
-        for (String path : paths) {
-            menu = new MenuItem(path);
-            final String p = path;
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    AppVaribles.setUserConfigValue(targetPathKey, p);
-                    export105Action();
-                }
-            });
-            popMenu.getItems().add(menu);
-        }
-
-        popMenu.getItems().add(new SeparatorMenuItem());
-        menu = new MenuItem(getMessage("MenuClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction(new EventHandler<ActionEvent>() {
+        new RecentVisitMenu(this, event) {
             @Override
-            public void handle(ActionEvent event) {
-                popMenu.hide();
-                popMenu = null;
+            public List<VisitHistory> recentFiles() {
+                return null;
             }
-        });
-        popMenu.getItems().add(menu);
 
-        FxmlControl.locateBelow((Region) event.getSource(), popMenu);
+            @Override
+            public List<VisitHistory> recentPaths() {
+                return VisitHistory.getRecentPath(VisitHistory.FileType.Text);
+            }
 
+            @Override
+            public void handleSelect() {
+                export105Action();
+            }
+
+            @Override
+            public void handleFile(String fname) {
+
+            }
+
+            @Override
+            public void handlePath(String fname) {
+                handleTargetPath(fname);
+            }
+
+        }.pop();
     }
 
     @FXML
@@ -1224,7 +1157,6 @@ public class ChromaticityDiagramController extends BaseController {
         if (x >= 0 && x <= 1 && y > 0 && y <= 1
                 && (x + y) <= 1) {
             double[] srgb = CIEColorSpace.XYZd50toSRGBd65(X, Y, Z);
-
             if (!isSettingValues) {
                 isSettingValues = true;
                 Color pColor = new Color((float) srgb[0], (float) srgb[1], (float) srgb[2], 1d);
@@ -1284,14 +1216,8 @@ public class ChromaticityDiagramController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName("ChromaticityDiagram");
-        fileChooser.getExtensionFilters().addAll(CommonValues.ImageExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                "ChromaticityDiagram", CommonValues.ImageExtensionFilter, true);
         if (file == null) {
             return;
         }
@@ -1321,7 +1247,47 @@ public class ChromaticityDiagramController extends BaseController {
                         if (ok) {
                             FxmlStage.openImageViewer(null, file);
                         } else {
-                            popInformation(AppVaribles.getMessage("failed"));
+                            popInformation(AppVaribles.message("failed"));
+                        }
+                    }
+                });
+            }
+
+        };
+        openHandlingStage(task, Modality.WINDOW_MODAL);
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    public void exportAction(String filename, TextArea textArea) {
+        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+                filename, CommonValues.TxtExtensionFilter, true);
+        if (file == null) {
+            return;
+        }
+        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
+
+        task = new Task<Void>() {
+            private boolean ok;
+
+            @Override
+            protected Void call() throws Exception {
+                ok = FileTools.writeFile(file, textArea.getText());
+                return null;
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ok) {
+                            view(file);
+                            popInformation(AppVaribles.message("Successful"));
+                        } else {
+                            popInformation(AppVaribles.message("failed"));
                         }
                     }
                 });
@@ -1336,190 +1302,22 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void export21Action() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName("CIE1931Observer2Degree1nm");
-        fileChooser.getExtensionFilters().addAll(CommonValues.TxtExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
-
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, d2n1Area.getText());
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            view(file);
-                            popInformation(AppVaribles.getMessage("Successful"));
-                        } else {
-                            popInformation(AppVaribles.getMessage("failed"));
-                        }
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        exportAction("CIE1931Observer2Degree1nm", d2n1Area);
     }
 
     @FXML
     public void export25Action() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName("CIE1931Observer2Degree5nm");
-        fileChooser.getExtensionFilters().addAll(CommonValues.TxtExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
-
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, d2n5Area.getText());
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            view(file);
-                            popInformation(AppVaribles.getMessage("Successful"));
-                        } else {
-                            popInformation(AppVaribles.getMessage("failed"));
-                        }
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        exportAction("CIE1931Observer2Degree5nm", d2n5Area);
     }
 
     @FXML
     public void export101Action() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName("CIE1964Observer10Degree1nm");
-        fileChooser.getExtensionFilters().addAll(CommonValues.TxtExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
-
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, d10n1Area.getText());
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            view(file);
-                            popInformation(AppVaribles.getMessage("Successful"));
-                        } else {
-                            popInformation(AppVaribles.getMessage("failed"));
-                        }
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        exportAction("CIE1964Observer10Degree1nm", d10n1Area);
     }
 
     @FXML
     public void export105Action() {
-        final FileChooser fileChooser = new FileChooser();
-        File path = AppVaribles.getUserConfigPath(targetPathKey);
-        if (path.exists()) {
-            fileChooser.setInitialDirectory(path);
-        }
-        fileChooser.setInitialFileName("CIE1964Observer10Degree5nm");
-        fileChooser.getExtensionFilters().addAll(CommonValues.TxtExtensionFilter);
-        final File file = fileChooser.showSaveDialog(getMyStage());
-        if (file == null) {
-            return;
-        }
-        recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
-
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, d10n5Area.getText());
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            view(file);
-                            popInformation(AppVaribles.getMessage("Successful"));
-                        } else {
-                            popInformation(AppVaribles.getMessage("failed"));
-                        }
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        exportAction("CIE1964Observer10Degree5nm", d10n5Area);
     }
 
 }
