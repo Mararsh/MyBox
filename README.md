@@ -1,4 +1,4 @@
-# [User Guide in English](https://mararsh.github.io/MyBox/english_interface.html)
+# ![](https://mararsh.github.io/MyBox/home.jpg) [README in English](https://mararsh.github.io/MyBox/english_interface.html)
 
 # MyBox：简易工具集
 
@@ -8,13 +8,13 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的releases页签）。
 以下是最新版本的链接：
 
-| 平台 | 链接 | 运行需要 |
+| 平台 | 链接 | 大小 | 运行需要 |
 | - | - | -  |
-| win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 无 |
-| win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | Java 12或更高版本 |
-| linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | Java 12或更高版本 |
-| mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | Java 12或更高版本 |
-| win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | Java 12或更高版本 |
+| win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 240MB | 无 |
+| win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | 55MB | Java 12或更高版本 |
+| linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | 59MB | Java 12或更高版本 |
+| mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | 56MB |Java 12或更高版本 |
+| win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | 111MB | Java 12或更高版本 |
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用(请解包到纯英文目录下) 。
 
@@ -58,7 +58,7 @@
 
 [用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf)
 
-[开发者指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf)
+[开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf)
 
 
 # 当前版本
@@ -301,6 +301,7 @@ MyBox v5.3以前的版本均基于Java 8。
 优化图像转换：可选择更多的颜色空间并支持引用外部ICC特性文件、可选图像嵌入ICC特性文件、可选对透明通道的处理。
 优化图像元数据的解码：可读取图像中嵌入的ICC特性文件。
 优化代码：利用匿名类和嵌入fxml尽可能减少重复代码；整理类继承的关系；使项目配置文件支持多平台构建。
+初版《开发指南》。
 修正问题：”图像处理-颜色-透明度“的预乘透明算法用错了；在linux上另存图像时未自动添加扩展名而导致保存失败；
 linux上无法打开链接；ICC特性文件版本解码/编码错误、数据太多时界面会僵住、未解码的数据会导致xml无法生成。
 
