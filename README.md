@@ -1,7 +1,6 @@
-# ![](https://mararsh.github.io/MyBox/home.jpg) [README in English](https://mararsh.github.io/MyBox/english_interface.html)
+#[ReadMe in English](docs/)
 
 # MyBox：简易工具集
-
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
 
 ## 下载
@@ -18,7 +17,8 @@
 
 可以下载exe包，在Windows上无需java环境、无需安装、解包可用(请解包到纯英文目录下) 。
 
-在已安装JRE或者JDK 12或更高版本（Oracle java或Open jdk均可）的环境下，可以下载jar包。每个平台有自己的包，也可用跨平台的包（较大）。
+在已安装JRE或者JDK 12或更高版本（Oracle java或Open jdk均可）的环境下，可以下载jar包。
+每个平台有自己的包，也可用跨平台的包（较大）。
 
 ## 运行
 在Windows上双击“MyBox.exe”即可运行MyBox。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
@@ -92,12 +92,45 @@
 * [设置](#settings)
 * [窗口](#windows)
 
+
+# 实现基础
+MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
+
+https://netbeans.org/
+
+https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html
+
+
+基于以下开源软件/开源库：
+
+JavaFx  https://docs.oracle.com/javafx/2/
+	
+PDFBox  https://pdfbox.apache.org/
+	
+jai-imageio  https://github.com/jai-imageio/jai-imageio-core
+	
+javazoom  http://www.javazoom.net/index.shtml
+	
+log4j   https://logging.apache.org/log4j/2.x/
+	
+Derby   http://db.apache.org/derby/
+
+GifDecoder   https://github.com/DhyanB/Open-Imaging/
+
+EncodingDetect  https://www.cnblogs.com/ChurchYim/p/8427373.html
+
+Free Icons  https://icons8.com/icons/set/home
+
+# 当前版本
+
 ## 跨平台<a name="cross-platform" />
 纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 12的平台。
 
 MyBox v5.3以前的版本均基于Java 8。
+
 ## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
+
 ## PDF工具<a name="pdfTools" />
 1. 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
    可选显示标签（目录）和缩略图。
@@ -540,33 +573,6 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。
 ```
 
-# 实现基础
-MyBox使用NetBeans 8.2和JavaFX Scene Builder 2.0开发：
-
-[https://netbeans.org/](https://netbeans.org/)
-
-[https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html](https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html)
-
-
-基于以下开源软件/开源库：
-
-[JavaFx  https://docs.oracle.com/javafx/2/](https://docs.oracle.com/javafx/2/)
-	
-[PDFBox  https://pdfbox.apache.org/](https://pdfbox.apache.org/)
-	
-[jai-imageio  https://github.com/jai-imageio/jai-imageio-core](https://github.com/jai-imageio/jai-imageio-core)
-	
-[javazoom  http://www.javazoom.net/index.shtml](http://www.javazoom.net/index.shtml)
-	
-[log4j   https://logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
-	
-[Derby   http://db.apache.org/derby/](http://db.apache.org/derby/)
-
-[GifDecoder   https://github.com/DhyanB/Open-Imaging/](https://github.com/DhyanB/Open-Imaging/)
-
-[EncodingDetect  https://www.cnblogs.com/ChurchYim/p/8427373.html](https://www.cnblogs.com/ChurchYim/p/8427373.html)
-
-[Free Icons  https://icons8.com/icons/set/home](https://icons8.com/icons/set/home)
 
 
 # 主界面
