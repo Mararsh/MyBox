@@ -1,4 +1,4 @@
-#![](https://mararsh.github.io/MyBox/home.jpg) [ReadMe in English](docs/)
+# [ReadMe in English](https://github.com/Mararsh/MyBox/en)
 
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
@@ -358,8 +358,8 @@ MyBox v5.3以前的版本均基于Java 8。
 
 
 # 开发日志<a name="devLog" />
-```
-2019-8-8 版本5.3 迁移至： netbeans 11 + Java 12。
+2019-8-8 版本5.3 
+迁移至： netbeans 11 + Java 12。
 优化批量处理界面：可添加目录、展开目录、过滤文件名、选择如何处理重名文件。
 优化图像转换：可选择更多的颜色空间并支持引用外部ICC特性文件、可选图像嵌入ICC特性文件、可选对透明通道的处理。
 优化图像元数据的解码：可读取图像中嵌入的ICC特性文件。
@@ -571,8 +571,6 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 感谢 “https://shuge.org/” 的帮助：书格提出tiff转换的需求。
 
 2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。
-```
-
 
 
 # 主界面

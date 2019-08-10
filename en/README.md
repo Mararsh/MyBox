@@ -1,4 +1,4 @@
-#![](https://mararsh.github.io/MyBox/home.jpg) [中文ReadMe](https://github.com/Mararsh/MyBox)
+# [中文ReadMe](https://github.com/Mararsh/MyBox)
 
 # MyBox: Set of Easy Tools
 This is GUI program based on JavaFx to provide simple and easy functions. It's free and open sources
@@ -385,7 +385,6 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 
 # Development Logs<a name="devLog" />
-```
 2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.
 Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names. 
 Improve image conversion: more color spaces, external ICC profile as color space, whether embed ICC, handle transparent channel.
@@ -575,7 +574,6 @@ This tool might fail to work when weibo would change the accessing channel of pa
 2018-06-13 v1.1  Add: image format TIFF and RAW, options of Compression Type and Quality, and Help information. Thanks helps from "https://shuge.org/" who asked the requirement of TIFF format
 
 2018-06-12 v1.0  Convert each page of PDF file to an image with options of format, density, color,  compression, and quality. And user can pause/continue the conversion.
-```
 
 
 # Main Interface
