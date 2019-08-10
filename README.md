@@ -1,4 +1,4 @@
-# [ReadMe in English](https://github.com/Mararsh/MyBox/en/)
+# [ReadMe in English](https://github.com/Mararsh/MyBox/tree/master/en)
 
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化界面程序，目标是提供简单易用的功能。免费开源。
@@ -48,17 +48,23 @@
 
 
 # 文档
-用户手册-综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf
+用户手册-综述   
+https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf
 
-用户手册-图像工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf
+用户手册-图像工具    
+https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf
 
-用户手册-PDF工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf
+用户手册-PDF工具    
+https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf
 
-用户手册-桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf
+用户手册-桌面工具  
+https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf
 
-用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf
+用户手册-网络工具   
+https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf
 
-开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf
+开发指南   
+https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf
 
 [开发日志](#devLog)
 
