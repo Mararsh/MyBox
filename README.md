@@ -36,40 +36,68 @@
 
 
 # 资源地址
-[项目主页：https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)
+项目主页：https://github.com/Mararsh/MyBox
 
-[源代码和编译好的包：https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)
+源代码和编译好的包：https://github.com/Mararsh/MyBox/releases
 
-[在线提交软件需求和问题报告：https://github.com/Mararsh/MyBox/issues](https://github.com/Mararsh/MyBox/issues)
+在线提交软件需求和问题报告：https://github.com/Mararsh/MyBox/issues
 
-[云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)
+云盘地址：https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
 
-[在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html](https://mararsh.github.io/MyBox/mybox_help_zh.html)
+在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html
+
+[开发日志](#devLog)
 
 
 # 文档
-[用户手册-综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf)
+用户手册-综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf
 
-[用户手册-图像工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf)
+用户手册-图像工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-zh.pdf
 
-[用户手册-PDF工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf)
+用户手册-PDF工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-zh.pdf
 
-[用户手册-桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf)
+用户手册-桌面工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-zh.pdf
 
-[用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf)
+用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf
 
-[开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf)
-
+开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf
 
 # 当前版本
-当前是版本5.3，已实现的特点概述如下。
-## 跨平台
+当前是版本5.3，已实现的特点概述如下:
+* [跨平台](#cross-platform)
+* [国际化](#international)
+* [PDF工具](#pdfTools)
+* [图像工具](#imageTool)
+    - [查看图像](#viewImage)
+    - [浏览图像](#browserImage)
+    - [图像处理](#imageManufacture)
+    - [图片转换](#imageConvert)
+    - [多帧图像文件](#multiFrames)
+    - [多图合一](#multipleImages)
+    - [图像局部化](#imagePart)
+    - [大图片的处理](#bigImage)
+    - [其它](#imageOthers)
+* [数据工具](#dataTool)
+    - [矩阵计算](#matrixTool)
+    - [色彩空间](#colorSpaces)
+* [桌面工具](#desktopTool)
+    - [目录管理](#directoriesArrange)
+    - [编辑文本](#editText)
+    - [编辑字节](#editBytes)
+    - [其它](#desktopOthers)
+* [网络工具](#netTool)
+    - [网页编辑器](#htmlEditor)
+    - [微博截图工具](#weiboSnap)
+* [设置](#settings)
+* [窗口](#windows)
+
+## 跨平台<a name="cross-platform" />
 纯Java实现且基于开源库，因此MyBox可运行于所有支持Java 12的平台。
 
 MyBox v5.3以前的版本均基于Java 8。
-## 国际化
+## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
-## PDF工具
+## PDF工具<a name="pdfTools" />
 1. 以图像模式查看PDF文件，可以设置dpi以调整清晰度，可以把页面剪切保存为图片。
    可选显示标签（目录）和缩略图。
 2. 将PDF文件的每页转换为一张图片，包含图像密度、色彩、格式、压缩、质量、色彩转换等选项。
@@ -84,9 +112,9 @@ MyBox v5.3以前的版本均基于Java 8。
 10. 修改PDF的属性，如：标题、作者、版本、修改时间、用户密码、所有者密码、用户权限等
 11. 可设置PDF处理的主内存使用量。
 
-## 图像工具
+## 图像工具<a name="imageTool" />
 
-### 查看图像
+### 查看图像<a name="viewImage" />
 1. 设置加载宽度：原始尺寸或指定宽度。
 2. “选择模式”：处于选择模式时，剪裁、复制、另存，都是针对选择的区域，否则是针对整个图像。
 3. 旋转可保存。
@@ -95,14 +123,14 @@ MyBox v5.3以前的版本均基于Java 8。
 6. 统计显示图像的数据：各颜色通道的均值/方差/斜率/中值/众数/最大/最小，以及直方图。直方图的颜色通道可多选。
 7. 查看图像的元数据和属性，可解码图像中嵌入的ICC特性文件。
 8. 同目录下图像文件导览，多种文件排序方式。
-### 浏览图像
+### 浏览图像<a name="browserImage" />
 1. 同屏显示多图，分别或者同步旋转和缩放。
 2. 旋转可选保存。
 3. 格栅模式：可选文件数、列数、加载宽度
 4. 文件列表模式
 5. 缩略图列表模式
 6. 重命名、删除
-### 图像处理
+### 图像处理<a name="imageManufacture" />
 1. 大小：拖动锚点调整大小、按比例收缩、或设置像素。四种保持宽高比的选项。
 2. 剪裁：按矩形、圆形、椭圆、多边形，剪切内部或外部。可设置背景色。
 3. 颜色：针对红/蓝/绿/黄/青/紫通道、饱和度、明暗、色相、不透明度，进行增加、减少、设值、过滤、取反色的操作。可选是否预乘透明。
@@ -124,7 +152,7 @@ MyBox v5.3以前的版本均基于Java 8。
 17. 选择是否显示对照图。可以选择其它图片为对照图。
 18. 处理已有图片，或新建图片。
 19. 复制（CTRL+c）/粘贴（CTRL+v）/弹出/参考。
-### 图片转换
+### 图片转换<a name="imageConvert" />
 1. 可选图像文件的格式，包括：png,jpg,bmp,tif,gif,wbmp,pnm,pcx，raw。
 2. 可选颜色空间，包括：sRGB、Linear sRGB、ECI RGB、Adobe RGB、Apple RGB、Color Match RGB、ECI CMYK、Adobe CMYK(多种)、灰色、黑白色。
 3. 可选外部ICC特性文件作为转换的依据。
@@ -133,36 +161,36 @@ MyBox v5.3以前的版本均基于Java 8。
 6. 可选压缩类型和质量。
 7. 对于黑白色，可选二值化算法：OTSU、缺省、或输入预置，可选是否抖动处理。
 8. 批量转换。
-### 多帧图像文件
+### 多帧图像文件<a name="multiFrames" />
 1. 查看、提取多帧图像文件
 2. 创建、编辑多帧tiff文件
 3. 查看/提取/创建/编辑动画Gif文件。可设置间隔、是否循环、图片尺寸
-### 多图合一
+### 多图合一<a name="multipleImages" />
 1. 图片的合并。支持排列选项、背景颜色、间隔、边沿、和尺寸选项。
 2. 图片的混合。支持选择交叉区域、多种混合模式。
 3. 将多个图片合成PDF文件
 4. 添加透明通道
-### 图像局部化
+### 图像局部化<a name="imagePart" />
 1. 图像的分割。支持按个数分割、按尺寸分割、和定制分割。可以保存为多个图像文件、多帧Tiff文件、或者PDF。
 2. 图像的降采样。可以设置采样区域、采样比例。
 3. 提取透明通道
-### 大图片的处理
+### 大图片的处理<a name="bigImage" />
 1. 评估加载整个图像所需内存,判断能否加载整个图像。
 2. 若可用内存足够载入整个图像，则读取图像所有数据做下一步处理。尽可能内存操作而避免文件读写。
 3. 若内存可能溢出，则采样读取图像数据做下一步处理。
 4. 采样比的选择：即要保证采样图像足够清晰、又要避免采样数据占用过多内存。
 5. 采样图像主要用于显示图像。已被采样的大图像，不适用于图像整体的操作和图像合并操作。
 6. 一些操作，如分割图像、降采样图像，可以局部读取图像数据、边读边写，因此适用于大图像：显示的是采样图像、而处理的是原图像。
-### 其它
+### 其它<a name="imageOthers" />
 1. 支持图像格式：png,jpg,bmp,tif,gif,wbmp,pnm,pcx。可读Adobe YCCK/CMYK的jpg图像。
 2. 图像的批量处理。
 3. 调色盘
 4. 像素计算器
 5. 卷积核管理器
 
-## 数据工具
+## 数据工具<a name="dataTool" />
 
-### 矩阵计算
+### 矩阵计算<a name="matrixTool" />
 1. 矩阵数据的编辑：
 	-  对于输入或粘贴的数据，过滤特殊字符，以适应带格式的数据。
 	-  自动把当前矩阵数据转变为行向量、列向量、或指定列数的矩阵。
@@ -172,7 +200,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	、设置小数位数、设为整型、乘以数值、除以数值、幂。
 3. 矩阵的二元计算：加、减、乘、克罗内克积、哈达马积、水平合并、垂直合并。
 	
-### 色彩空间
+### 色彩空间<a name="colorSpaces" />
 1. 绘制色度图
 	-  标准数据的轮廓线：CIE 1931 2度观察者（D50）、CIE 1964 10度观察者（D50）、CIE RGB色域、ECI RGB色域、sRGB色域、
 	   Adobe RGB色域、Apple RGB色域、PAL RGB色域、NTSC RGB色域、ColorMath ProPhoto RGB色域、SMPTE-C RGB色域。
@@ -213,13 +241,13 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  用户选择或输入源白点和目标白点，工具自动计算色度适应矩阵，并展示计算过程。
 	-  工具以表格和文本显示不同标准光源之间不同的算法的色度适应矩阵。用户可导出数据的文本。
 	
-## 桌面工具
+## 桌面工具<a name="desktopTool" />
 
-### 目录管理
+### 目录管理<a name="directoriesArrange" />
 1. 目录/文件重命名，包含文件名和排序的选项。被重命名的文件可以全部恢复或者指定恢复原来的名字。
 2. 目录同步，包含复制子目录、新文件、特定时间以后已修改文件、原文件属性，以及删除源目录不存在文件和目录，等选项。
 3. 整理文件，将文件按修改时间或者生成时间重新归类在新目录下。此功能可用于处理照片、游戏截图、和系统日志等需要按时间归档的批量文件。
-### 编辑文本
+### 编辑文本<a name="editText" />
 1. 自动检测或手动设置文件编码；改变字符集实现转码；支持BOM设置。
 2. 自动检测换行符；改变换行符。显示行号。
 3. 支持LF（Unix/Linux）、 CR（Apple）、 CRLF（Windows）。
@@ -234,7 +262,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	-  先加载显示首页，同时后端扫描文件以统计字符数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	-  对于跨页字符串，确保查找、替换、过滤的正确性。
 10. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-### 编辑字节
+### 编辑字节<a name="editBytes" />
 1. 字节被表示为两个十六进制字符。所有空格、换行、非法值将被忽略。
 2. 常用ASCII字符的输入选择框。
 3. 换行。仅用于显示、无实际影响。显示行号。可按字节数换行、或按一组字节值来换行。
@@ -248,7 +276,7 @@ MyBox v5.3以前的版本均基于Java 8。
 	- 先加载显示首页，同时后端扫描文件以统计字节数和行数；统计期间部分功能不可用；统计完毕自动刷新界面。
 	- 对于跨页字节组，确保查找、替换、过滤的正确性。若按字节数换行，则行过滤时不考虑跨页。
 9. 通用的编辑功能（复制/粘贴/剪切/删除/全选/撤销/重做/恢复）及其快捷键。
-### 其它
+### 其它<a name="desktopOthers" />
 1. 批量转换文件的字符集。
 2. 批量转换文件的换行符
 3. 切割文件。切割方式可以是：按文件数、按字节数、或按起止列表。
@@ -256,14 +284,14 @@ MyBox v5.3以前的版本均基于Java 8。
 5. 记录系统粘贴板中的图像：保存或查看粘贴板中的图像，可选无损图像或压缩类型。
 6. 闹钟，包括时间选项和音乐选项，支持铃音“喵”、wav铃音、和MP3铃音，可以在后端运行。
 
-## 网络工具
+## 网络工具<a name="netTool" />
 
-### 网页编辑器
+### 网页编辑器<a name="htmlEditor" />
 1. 以富文本方式编辑本地网页或在线网页。（不支持FrameSet）
 2. 直接编辑HTML代码。（支持FrameSet）
 3. 网页浏览器显示编辑器内容、或在线网页。支持前后导览、缩放字体、截图页面为整图或者PDF文件。
 4. 富文本页面、HTML代码、浏览器内容，这三者自动同步。
-### 微博截图工具
+### 微博截图工具<a name="weiboSnap" />
 1. 自动保存任意微博账户的任意月份的微博内容
 2. 设置起止月份。
 3. 确保页面完全加载，可以展开页面包含的评论、可以展开页面包含的所有图片。
@@ -274,7 +302,7 @@ MyBox v5.3以前的版本均基于Java 8。
 8. 可以随时中断处理。程序自动保存上次中断的月份并填入作本次的开始月份。
 9. 可以设置错误时重试次数。若超时错误则自动加倍最大延迟时间。
 
-## 设置
+## 设置<a name="settings" />
 1. 是否恢复界面上次尺寸、是否在新窗口中打开界面、是否弹出最近访问的文件/目录
 2. 语言、字体大小、皮肤、按钮颜色、是否显示注释
 3. 画笔/锚点的宽度和颜色、锚点是否实心
@@ -286,7 +314,7 @@ MyBox v5.3以前的版本均基于Java 8。
 9. 临时文件目录
 10. 清除个人设置、查看用户目录。
 
-## 窗口
+## 窗口<a name="windows" />
 1. 开/关内存监视条
 2. 开/关CPU监视条
 3. 显示JVM属性
@@ -294,7 +322,8 @@ MyBox v5.3以前的版本均基于Java 8。
 5. 关闭其它窗口
 6. 最近访问的工具
 
-# 开发日志
+
+# 开发日志<a name="devLog" />
 ```
 2019-8-8 版本5.3 迁移至： netbeans 11 + Java 12。
 优化批量处理界面：可添加目录、展开目录、过滤文件名、选择如何处理重名文件。
