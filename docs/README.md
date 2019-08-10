@@ -49,7 +49,7 @@ Submit Software Requirements and Problem Reports: https://github.com/Mararsh/MyB
 
 Cloud Storage: https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F
 
-Online Helps: https://mararsh.github.io/MyBox/mybox_help_zh.html
+Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
 
 
 # Documents
