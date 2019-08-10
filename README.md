@@ -60,7 +60,7 @@
 
 开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf
 
-开发日志 (#devLog)
+[开发日志](#devLog)
 
 
 # 当前版本
