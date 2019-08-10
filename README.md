@@ -46,8 +46,6 @@
 
 在线帮助：https://mararsh.github.io/MyBox/mybox_help_zh.html
 
-[开发日志](#devLog)
-
 
 # 文档
 用户手册-综述 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-zh.pdf
@@ -61,6 +59,9 @@
 用户手册-网络工具 https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf
 
 开发指南 https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf
+
+开发日志 (#devLog)
+
 
 # 当前版本
 当前是版本5.3，已实现的特点概述如下:
