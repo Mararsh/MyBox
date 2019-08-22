@@ -5,6 +5,9 @@
 
 ## 下载
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的releases页签）。
+
+<font color=red>已知几个bug导致以下工具失效：“修改PDF属性”、“压缩PDF”、“分割PDF”。如果需要这几个功能，建议使用版本5.2，或等待版本5.4。</font>
+
 以下是最新版本的链接：
 
 | 平台 | 链接 | 大小 | 运行需要 |
