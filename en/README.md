@@ -6,7 +6,9 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 ## Download
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
 
-![Bugs](https://mararsh.github.io/MyBox/home.jpg) Several known bugs cause following tools fail to work: "Modify PDF attributes", "Split PDF", "Compress PDF". If need these functions, please use v5.2 or wait for v5.4.
+![Bugs](https://mararsh.github.io/MyBox/home.jpg) 
+
+### Several known bugs cause following tools fail to work: "Modify PDF attributes", "Split PDF", "Compress PDF". If need these functions, please use v5.2 or wait for v5.4.
 
 Following are latest release:
 
