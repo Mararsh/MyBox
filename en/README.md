@@ -6,10 +6,6 @@ This is GUI program based on JavaFx to provide simple and easy functions. It's f
 ## Download
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory now. You can find them by clicking `releases` tab in main page of this project. 
 
-![Bugs](https://mararsh.github.io/MyBox/home.jpg) 
-
-### Several known bugs cause following tools fail to work: "Modify PDF attributes", "Split PDF", "Compress PDF". If need these functions, please use v5.2 or wait for v5.4.
-
 Following are latest release:
 
 | Platform | Link | Size | Requirements |
@@ -72,9 +68,6 @@ Developers need notice: JavaFx screen is not same as pysical screen and has diff
 ## Limitation
 MyBox.exe can not be lanuched under path including non-English characters.   
 
-The embedded Derby is in single-application mode, so only one instance of MyBox can read/write db. That is, multiple instances of MyBox can run at same time but only the first one can save and visit configuration data while others can do most things except for accessing user's data.  
-
-
 # Resource Addresses
 Project Main Page: https://github.com/Mararsh/MyBox
 
@@ -106,18 +99,18 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 
 
 It is based on following open sources softwares or libraries:      
-| Software | Role | Link |   
-| - | - | - |  
+| Software | Role | Link |     
+| - | - | - |   
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
-| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml | 
+| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml |   
 | log4j | Log manufacture | https://logging.apache.org/log4j/2.x/ |      
 | Derby | Database | http://db.apache.org/derby/ |   
 | GifDecoder | Decode broken gif | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
-| Icons8 | Icon | https://icons8.com/icons/set/home | 
+| Icons8 | Icon | https://icons8.com/icons/set/home |   
   
 # Current Version
 Current version is 5.4. Its features are mentioned below in summary:
