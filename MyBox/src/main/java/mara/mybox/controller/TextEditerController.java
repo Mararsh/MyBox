@@ -10,8 +10,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
@@ -25,7 +25,7 @@ import mara.mybox.tools.TextTools;
 public class TextEditerController extends FileEditerController {
 
     public TextEditerController() {
-        baseTitle = AppVaribles.message("TextEditer");
+        baseTitle = AppVariables.message("TextEditer");
 
         TipsLabelKey = "TextEditerTips";
 
@@ -45,7 +45,7 @@ public class TextEditerController extends FileEditerController {
 
     protected void initCharsetTab() {
 
-        Tooltip tips = new Tooltip(AppVaribles.message("EncodeComments"));
+        Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
         tips.setFont(new Font(16));
         FxmlControl.setTooltip(currentBox, tips);
 
@@ -79,7 +79,7 @@ public class TextEditerController extends FileEditerController {
                 }
             });
 
-            tips = new Tooltip(AppVaribles.message("BOMcomments"));
+            tips = new Tooltip(AppVariables.message("BOMcomments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(targetBomCheck, tips);
         }
@@ -104,11 +104,11 @@ public class TextEditerController extends FileEditerController {
     protected void checkLineBreakGroup() {
         try {
             RadioButton selected = (RadioButton) lineBreakGroup.getSelectedToggle();
-            if (AppVaribles.message("LF").equals(selected.getText())) {
+            if (AppVariables.message("LF").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.LF);
-            } else if (AppVaribles.message("CR").equals(selected.getText())) {
+            } else if (AppVariables.message("CR").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.CR);
-            } else if (AppVaribles.message("CRLF").equals(selected.getText())) {
+            } else if (AppVariables.message("CRLF").equals(selected.getText())) {
                 targetInformation.setLineBreak(FileEditInformation.Line_Break.CRLF);
             }
             targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
@@ -120,7 +120,7 @@ public class TextEditerController extends FileEditerController {
     @Override
     protected boolean validateFindString(String string) {
         if (string.length() >= pageSize) {
-            popError(AppVaribles.message("FindStringLimitation"));
+            popError(AppVariables.message("FindStringLimitation"));
             return false;
         } else {
             return true;

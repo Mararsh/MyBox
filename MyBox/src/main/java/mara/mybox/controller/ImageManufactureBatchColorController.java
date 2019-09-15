@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -14,13 +13,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.ColorActionType;
 import mara.mybox.image.PixelsOperation.OperationType;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -50,7 +49,7 @@ public class ImageManufactureBatchColorController extends ImageManufactureBatchC
     protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchColorController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchColor");
+        baseTitle = AppVariables.message("ImageManufactureBatchColor");
 
     }
 

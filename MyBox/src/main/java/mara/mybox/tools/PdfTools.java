@@ -19,8 +19,8 @@ import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -86,13 +86,13 @@ public class PdfTools {
     }
 
     public static PDDocument createPDF(File file) {
-        return createPDF(file, AppVaribles.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
+        return createPDF(file, AppVariables.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
     }
 
     public static PDDocument createPDF(File file, String author) {
         PDDocument targetDoc = null;
         try {
-            PDDocument document = new PDDocument(AppVaribles.pdfMemUsage);
+            PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
             PDDocumentInformation info = new PDDocumentInformation();
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
@@ -199,7 +199,7 @@ public class PdfTools {
 
         try {
             int count = 0;
-            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDPageContentStream content;
                 PDFont font = PDType1Font.HELVETICA;
                 PDDocumentInformation info = new PDDocumentInformation();
@@ -280,7 +280,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -337,7 +337,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -494,15 +494,8 @@ public class PdfTools {
                     || cols == null || cols.isEmpty() || targetFile == null) {
                 return false;
             }
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
-            try (PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
+            File tmpFile = FileTools.getTempFile();
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDFont font = PdfTools.getFont(document, fontName);
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
@@ -535,8 +528,16 @@ public class PdfTools {
                                 pageWidth, pageHeight, marginSize, header, attributes.isIsDithering());
                     }
                 }
-                document.save(targetFile);
+                document.save(tmpFile);
                 document.close();
+            }
+            try {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+                tmpFile.renameTo(targetFile);
+            } catch (Exception e) {
+                return false;
             }
             return true;
         } catch (Exception e) {
@@ -548,7 +549,7 @@ public class PdfTools {
 
     public static BufferedImage page2image(File file, int page) {
         try {
-            try (PDDocument doc = PDDocument.load(file, null, AppVaribles.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, null, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
                 doc.close();
@@ -562,7 +563,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             float scale, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, scale, imageType);
                 doc.close();
@@ -576,7 +577,7 @@ public class PdfTools {
     public static BufferedImage page2image(File file, String password, int page,
             int dpi, ImageType imageType) {
         try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
                 doc.close();
@@ -594,7 +595,7 @@ public class PdfTools {
                 return false;
             }
 
-            try (PDDocument doc = PDDocument.load(file, ownerPassword, AppVaribles.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, ownerPassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());
@@ -612,7 +613,7 @@ public class PdfTools {
                 }
                 docInfo.setKeywords(info.getKeywords());
                 doc.setDocumentInformation(docInfo);
-                if (info.getVersion() >= 0) {
+                if (info.getVersion() > 0) {
                     doc.setVersion(info.getVersion());
                 }
 

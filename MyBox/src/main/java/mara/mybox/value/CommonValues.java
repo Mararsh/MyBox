@@ -1,14 +1,10 @@
 package mara.mybox.value;
 
-import java.awt.Color;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
-import javafx.scene.image.Image;
-import javafx.stage.FileChooser;
 
 /**
  * @Author Mara
@@ -18,28 +14,15 @@ import javafx.stage.FileChooser;
  */
 public class CommonValues {
 
-    public static final String AppVersion = "5.3";
-    public static final String AppVersionDate = "2019-08-08";
+    public static final String AppVersion = "5.4";
+    public static final String AppVersionDate = "2019-09-15";
     public static final String AppDocVersion = "5.0";
 
-    public static final String AppDataRoot = System.getProperty("user.home") + File.separator + "mybox";
-    public static final File AppTempPath = new File(AppDataRoot + File.separator + "AppTemp");
-    public static final File AppDerbyPath = new File(AppDataRoot + File.separator + "mybox_derby");
+    public static final String OldAppDataRoot = System.getProperty("user.home");
+    public static final String DefaultDataRoot = System.getProperty("user.dir");
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
-    public static List<File> AppDataPaths = new ArrayList() {
-        {
-            add(AppTempPath);
-            add(AppDerbyPath);
-        }
-    };
 
-    public static final String UserConfigFile = AppDataRoot + File.separator + ".conf.properties";
-    public static final String AlarmClocksFile = AppDataRoot + File.separator + ".alarmClocks";
-
-    public static final String userTempPathKey = "TempDir";
-
-    public static final Image AppIcon = new Image("img/mybox.png");
     public static final String MyBoxStyle = "/styles/MyBox.css";
     public static final String DefaultStyle = "/styles/modena/modena.css";
     public static final String WhiteOnBlackStyle = "/styles/modena/whiteOnBlack.css";
@@ -53,12 +36,15 @@ public class CommonValues {
     public static final String caspianStyle = "/styles/caspian/caspian.css";
 
     public static final String MyboxFxml = "/fxml/MyBox.fxml";
-    public static final String JvmPropertiesFxml = "/fxml/JvmProperties.fxml";
+    public static final String MyBoxPropertiesFxml = "/fxml/MyBoxProperties.fxml";
+    public static final String ShortcutsFxml = "/fxml/Shortcuts.fxml";
+    public static final String PdfHtmlViewerFxml = "/fxml/PdfHtmlViewer.fxml";
     public static final String PdfViewFxml = "/fxml/PdfView.fxml";
     public static final String PdfAttributesFxml = "/fxml/PdfAttributes.fxml";
     public static final String PdfAttributesBatchFxml = "/fxml/PdfAttributesBatch.fxml";
     public static final String PdfExtractImagesBatchFxml = "/fxml/PdfExtractImagesBatch.fxml";
     public static final String PdfExtractTextsBatchFxml = "/fxml/PdfExtractTextsBatch.fxml";
+    public static final String PdfConvertHtmlsBatchFxml = "/fxml/PdfConvertHtmlsBatch.fxml";
     public static final String PdfConvertImagesBatchFxml = "/fxml/PdfConvertImagesBatch.fxml";
     public static final String PdfCompressImagesBatchFxml = "/fxml/PdfCompressImagesBatch.fxml";
     public static final String PdfInformationFxml = "/fxml/PdfInformation.fxml";
@@ -71,26 +57,25 @@ public class CommonValues {
     public static final String LoadingFxml = "/fxml/Loading.fxml";
     public static final String ImageInformationFxml = "/fxml/ImageInformation.fxml";
     public static final String ImageViewerFxml = "/fxml/ImageViewer.fxml";
-    public static final String ImageViewerIFxml = "/fxml/ImageViewerI.fxml";
+    public static final String ImageFxml = "/fxml/Image.fxml";
+    public static final String ImageDataFxml = "/fxml/ImageData.fxml";
     public static final String ImagesBrowserFxml = "/fxml/ImagesBrowser.fxml";
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
-    public static final String ImageManufactureFileFxml = "/fxml/ImageManufactureFile.fxml";
+    public static final String ImageManufactureFxml = "/fxml/ImageManufacture.fxml";
+    public static final String ImageManufactureClipboardFxml = "/fxml/ImageManufactureClipboard.fxml";
+    public static final String ImageManufacturePaletteFxml = "/fxml/ImageManufacturePalette.fxml";
     public static final String ImageManufactureSizeFxml = "/fxml/ImageManufactureSize.fxml";
+    public static final String ImageManufactureScaleFxml = "/fxml/ImageManufactureScale.fxml";
     public static final String ImageManufactureCropFxml = "/fxml/ImageManufactureCrop.fxml";
     public static final String ImageManufactureColorFxml = "/fxml/ImageManufactureColor.fxml";
     public static final String ImageManufactureEffectsFxml = "/fxml/ImageManufactureEffects.fxml";
-    public static final String ImageManufactureDoodleFxml = "/fxml/ImageManufactureDoodle.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
-    public static final String ImageManufactureMosaicFxml = "/fxml/ImageManufactureMosaic.fxml";
+    public static final String ImageManufactureRichTextFxml = "/fxml/ImageManufactureRichText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
+    public static final String ImageManufacturePenFxml = "/fxml/ImageManufacturePen.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
     public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
     public static final String ImageManufactureMarginsFxml = "/fxml/ImageManufactureMargins.fxml";
-    public static final String ImageManufactureAddMarginsFxml = "/fxml/ImageManufactureAddMargins.fxml";
-    public static final String ImageManufactureCutMarginsFxml = "/fxml/ImageManufactureCutMargins.fxml";
-    public static final String ImageManufactureViewFxml = "/fxml/ImageManufactureView.fxml";
-    public static final String ImageManufactureRefFxml = "/fxml/ImageManufactureRef.fxml";
-    public static final String ImageManufactureBrowseFxml = "/fxml/ImageManufactureBrowse.fxml";
     public static final String ImageManufactureBatchFxml = "/fxml/ImageManufactureBatch.fxml";
     public static final String ImageManufactureBatchSizeFxml = "/fxml/ImageManufactureBatchSize.fxml";
     public static final String ImageManufactureBatchCropFxml = "/fxml/ImageManufactureBatchCrop.fxml";
@@ -102,6 +87,7 @@ public class CommonValues {
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
+    public static final String ImageTextFxml = "/fxml/ImageText.fxml";
     public static final String ImagesCombineFxml = "/fxml/ImagesCombine.fxml";
     public static final String ImageMetaDataFxml = "/fxml/ImageMetaData.fxml";
     public static final String ImageSplitFxml = "/fxml/ImageSplit.fxml";
@@ -165,51 +151,7 @@ public class CommonValues {
     public static final String DatetimeFormat2 = "yyyy-MM-dd HH:mm:ss.SSS";
     public static final String DatetimeFormat3 = "yyyy-MM-dd-HH-mm-ss-SSS";
 
-    public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
-            add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
-            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
-                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("png", "*.png"));
-            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh"));
-            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
-            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
-            add(new FileChooser.ExtensionFilter("json", "*.json"));
-            add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
-            add(new FileChooser.ExtensionFilter("wav", "*.wav"));
-            add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> TiffExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("tif/tiff", "*.tif", "*.tiff"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> GifExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-        }
-    };
-
-    public static List<String> SupportedImages = new ArrayList() {
+    public static List<String> SupportedImages = new ArrayList<String>() {
         {
             add("png");
             add("jpg");
@@ -228,24 +170,7 @@ public class CommonValues {
         }
     };
 
-    public static List<FileChooser.ExtensionFilter> ImageExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("images", "*.png", "*.jpg", "*.jpeg", "*.bmp",
-                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.tif", "*.tiff", "*.gif", "*.pcx", "*.pnm", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("png", "*.png"));
-            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-//            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
-            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-        }
-    };
-
-    public static List<String> NoAlphaImages = new ArrayList() {
+    public static List<String> NoAlphaImages = new ArrayList<String>() {
         {
             add("jpg");
             add("jpeg");
@@ -261,22 +186,7 @@ public class CommonValues {
         }
     };
 
-    public static List<FileChooser.ExtensionFilter> NoAlphaImageExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("images", "*.jpg", "*.jpeg", "*.bmp",
-                    //                    "*.jpeg2000", "*.jpx", "*.jp2", "*.jpm",
-                    "*.gif", "*.pnm", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("jpg", "*.jpg", "*.jpeg"));
-//            add(new FileChooser.ExtensionFilter("jpeg2000", "*.jp2", "*.jpeg2000", "*.jpx", "*.jpm"));
-            add(new FileChooser.ExtensionFilter("bmp", "*.bmp"));
-            add(new FileChooser.ExtensionFilter("gif", "*.gif"));
-            add(new FileChooser.ExtensionFilter("pnm", "*.pnm"));
-            add(new FileChooser.ExtensionFilter("wbmp", "*.wbmp"));
-            add(new FileChooser.ExtensionFilter("pcx", "*.pcx"));
-        }
-    };
-
-    public static List<String> AlphaImages = new ArrayList() {
+    public static List<String> AlphaImages = new ArrayList<String>() {
         {
             add("png");
             add("tif");
@@ -284,15 +194,16 @@ public class CommonValues {
         }
     };
 
-    public static List<String> MultiFramesImages = new ArrayList() {
+    // PNG does not support premultiplyAlpha
+    // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8229013
+    public static List<String> PremultiplyAlphaImages = new ArrayList<String>() {
         {
-            add("gif");
             add("tif");
             add("tiff");
         }
     };
 
-    public static List<String> CMYKImages = new ArrayList() {
+    public static List<String> CMYKImages = new ArrayList<String>() {
         {
 //            add("jpg");
 //            add("jpeg");
@@ -301,60 +212,17 @@ public class CommonValues {
         }
     };
 
-    public static List<FileChooser.ExtensionFilter> AlphaImageExtensionFilter = new ArrayList() {
+    public static List<String> MultiFramesImages = new ArrayList<String>() {
         {
-            add(new FileChooser.ExtensionFilter("images", "*.png",
-                    "*.tif", "*.tiff"));
-            add(new FileChooser.ExtensionFilter("png", "*.png"));
-            add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> SoundExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("sound", "*.wav", "*.mp3"));
-            add(new FileChooser.ExtensionFilter("wav", "*.wav"));
-            add(new FileChooser.ExtensionFilter("mp3", "*.mp3"));
+            add("gif");
+            add("tif");
+            add("tiff");
         }
     };
 
     public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml", "json", "log", "js", "css",
         "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
         "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
-
-    public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh"));
-            add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
-            add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
-            add(new FileChooser.ExtensionFilter("json", "*.json"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> IccProfileExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("icc", "*.icc", "*.icm"));
-            add(new FileChooser.ExtensionFilter("icc", "*.icc"));
-            add(new FileChooser.ExtensionFilter("icm", "*.icm"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> TxtExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt"));
-            add(new FileChooser.ExtensionFilter("*", "*.*"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> XmlExtensionFilter = new ArrayList() {
-        {
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
-        }
-    };
-
-    public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public static String Indent = "    ";
 

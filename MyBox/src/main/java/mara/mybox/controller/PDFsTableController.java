@@ -17,14 +17,15 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.converter.IntegerStringConverter;
-import mara.mybox.controller.base.TableController;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import mara.mybox.value.CommonValues;
+import mara.mybox.tools.PdfTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 
 /**
  * @Author Mara
@@ -41,9 +42,9 @@ public class PDFsTableController extends TableController<PdfInformation> {
     @FXML
     protected TextField passwordInput, fromInput, toInput;
     @FXML
-    protected Button setButton;
+    protected Button pdfSetButton;
     @FXML
-    protected HBox setBox, fromToBax;
+    protected HBox setBox, fromToBax, filterBox;
     @FXML
     protected Label tableCommentsLabel, setLabel;
 
@@ -55,9 +56,9 @@ public class PDFsTableController extends TableController<PdfInformation> {
         AddFileType = VisitHistory.FileType.PDF;
         AddPathType = VisitHistory.FileType.PDF;
 
-        targetPathKey = "PdfTargetPath";
-        sourcePathKey = "PdfSourcePath";
-        sourceExtensionFilter = CommonValues.PdfExtensionFilter;
+        targetPathKey = "PdfFilePath";
+        sourcePathKey = "PdfFilePath";
+        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -98,10 +99,20 @@ public class PDFsTableController extends TableController<PdfInformation> {
         });
         FxmlControl.setTooltip(toInput, new Tooltip(message("ToPageComments")));
 
-        setButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
+        pdfSetButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(badStyle)
                 .or(toInput.styleProperty().isEqualTo(badStyle))
         );
 
+        tableSubdirCheck.setSelected(AppVariables.getUserConfigBoolean("PDFTableSubDir", true));
+        tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                AppVariables.setUserConfigValue("PDFTableSubDir", tableSubdirCheck.isSelected());
+            }
+        });
+
+        moreButton.setSelected(AppVariables.getUserConfigBoolean("PDFTableMore", true));
+        moreAction();
     }
 
     @Override
@@ -248,6 +259,32 @@ public class PDFsTableController extends TableController<PdfInformation> {
 
     }
 
+    @Override
+    protected boolean isValidFile(File file) {
+        return PdfTools.isPDF(file);
+    }
+
+    @Override
+    public void moreAction() {
+        if (moreButton.isSelected()) {
+            if (!thisPane.getChildren().contains(tableCommentsLabel)) {
+                thisPane.getChildren().add(1, tableCommentsLabel);
+            }
+            if (!thisPane.getChildren().contains(setBox)) {
+                thisPane.getChildren().add(3, setBox);
+            }
+            if (!thisPane.getChildren().contains(filterBox)) {
+                thisPane.getChildren().add(4, filterBox);
+            }
+            if (!thisPane.getChildren().contains(tableLabel)) {
+                thisPane.getChildren().add(5, tableLabel);
+            }
+        } else {
+            thisPane.getChildren().removeAll(tableCommentsLabel, setBox, filterBox, tableLabel);
+        }
+        FxmlControl.refreshStyle(thisPane);
+        AppVariables.setUserConfigValue("PDFTableMore", moreButton.isSelected());
+    }
 
     /*
         get/set
@@ -268,12 +305,20 @@ public class PDFsTableController extends TableController<PdfInformation> {
         this.ownerPasswordColumn = ownerPasswordColumn;
     }
 
-    public Button getSetButton() {
-        return setButton;
+    public Button getPdfSetButton() {
+        return pdfSetButton;
     }
 
-    public void setSetButton(Button setButton) {
-        this.setButton = setButton;
+    public void setPdfSetButton(Button pdfSetButton) {
+        this.pdfSetButton = pdfSetButton;
+    }
+
+    public HBox getFilterBox() {
+        return filterBox;
+    }
+
+    public void setFilterBox(HBox filterBox) {
+        this.filterBox = filterBox;
     }
 
     public HBox getSetBox() {

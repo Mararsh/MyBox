@@ -1,26 +1,36 @@
 package mara.mybox.tools;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
  * @CreateDate 2018-6-9 7:46:58
- * @Description
+ * @Description Read data outside database
  * @License Apache License Version 2.0
  */
 public class ConfigTools {
 
-    // Keep this method to migrate data from config file to derby db.
-    public static Map<String, String> readConfigValuesFromFile() {
+    public static final String ConfigFilePath = CommonValues.DefaultDataRoot;
+    public static final String ConfigFile = ConfigFilePath + File.separator + "MyBox.ini";
+
+    public static Map<String, String> readConfigValues() {
         try {
+            File iniFile = new File(ConfigFile);
+            if (!iniFile.exists()) {
+                return null;
+            }
             Map<String, String> values = new HashMap<>();
-            try (InputStream in = new BufferedInputStream(new FileInputStream(CommonValues.UserConfigFile))) {
+            try (InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
                 Properties conf = new Properties();
                 conf.load(in);
                 for (String key : conf.stringPropertyNames()) {
@@ -29,43 +39,61 @@ public class ConfigTools {
             }
             return values;
         } catch (Exception e) {
-//            logger.error(e.toString());
+            logger.error(e.toString());
             return null;
         }
     }
 
-//    public static String readConfigValue(String key) {
-//        try {
-//            String value = null;
-//            try (InputStream in = new BufferedInputStream(new FileInputStream(CommonValues.UserConfigFile))) {
-//                Properties conf = new Properties();
-//                conf.load(in);
-//                value = conf.getProperty(key);
-//            }
-//            return value;
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            return null;
-//        }
-//    }
-//    public static boolean writeConfigValue(String key, String value) {
-//        try {
-//            Properties conf = new Properties();
-//            try (InputStream in = new FileInputStream(CommonValues.UserConfigFile)) {
-//                conf.load(in);
-//            }
-//            try (OutputStream out = new FileOutputStream(CommonValues.UserConfigFile)) {
-//                if (value == null) {
-//                    conf.remove(key);
-//                } else {
-//                    conf.setProperty(key, value);
-//                }
-//                conf.store(out, "Update " + key);
-//            }
-//            return true;
-//        } catch (Exception e) {
-////            logger.error(e.toStsring());
-//            return false;
-//        }
-//    }
+    public static String readConfigValue(String key) {
+        try {
+            File iniFile = new File(ConfigFile);
+            if (!iniFile.exists()) {
+                return null;
+            }
+            String value;
+            try (InputStream in = new BufferedInputStream(new FileInputStream(iniFile))) {
+                Properties conf = new Properties();
+                conf.load(in);
+                value = conf.getProperty(key);
+            }
+            return value;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static boolean writeConfigValue(String key, String value) {
+        try {
+            File path = new File(ConfigFilePath);
+            if (!path.exists()) {
+                path.mkdirs();
+            } else if (!path.isDirectory()) {
+                path.delete();
+                path.mkdirs();
+            }
+            File iniFile = new File(ConfigFile);
+            if (!iniFile.exists()) {
+                if (!iniFile.createNewFile()) {
+                    return false;
+                }
+            }
+            Properties conf = new Properties();
+            try (InputStream in = new FileInputStream(iniFile)) {
+                conf.load(in);
+            }
+            try (OutputStream out = new FileOutputStream(iniFile)) {
+                if (value == null) {
+                    conf.remove(key);
+                } else {
+                    conf.setProperty(key, value);
+                }
+                conf.store(out, "Update " + key);
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return false;
+        }
+    }
 }

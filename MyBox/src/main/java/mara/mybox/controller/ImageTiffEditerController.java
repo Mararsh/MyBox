@@ -1,11 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -13,15 +11,15 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.ImagesListController;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageValue;
 import mara.mybox.image.file.ImageTiffFile;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -41,7 +39,7 @@ public class ImageTiffEditerController extends ImagesListController {
     private TextField thresholdInput;
 
     public ImageTiffEditerController() {
-        baseTitle = AppVaribles.message("ImageTiffEditer");
+        baseTitle = AppVariables.message("ImageTiffEditer");
 
         SourceFileType = VisitHistory.FileType.Tif;
         SourcePathType = VisitHistory.FileType.Tif;
@@ -50,7 +48,7 @@ public class ImageTiffEditerController extends ImagesListController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourceExtensionFilter = CommonValues.TiffExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.TiffExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -210,43 +208,29 @@ public class ImageTiffEditerController extends ImagesListController {
 
     @Override
     public void saveFileDo(final File outFile) {
-        try {
-            task = new Task<Void>() {
-                private String ret;
+
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
                 @Override
-                protected Void call() throws Exception {
-
-                    ret = ImageTiffFile.writeTiffImagesWithInfo(tableData, attributes, outFile);
-
-                    return null;
+                protected boolean handle() {
+                    error = ImageTiffFile.writeTiffImagesWithInfo(tableData, attributes, outFile);
+                    return error.isEmpty();
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ret.isEmpty()) {
-                                popInformation(AppVaribles.message("Successful"));
-                                if (outFile.equals(sourceFile)) {
-                                    setImageChanged(false);
-                                } else if (viewCheck.isSelected()) {
-                                    try {
-                                        final ImageFramesViewerController controller
-                                                = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
-                                        controller.selectSourceFile(outFile);
-                                    } catch (Exception e) {
-                                        logger.error(e.toString());
-                                    }
-                                }
-
-                            } else {
-                                popError(AppVaribles.message(ret));
-                            }
-                        }
-                    });
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    if (outFile.equals(sourceFile)) {
+                        setImageChanged(false);
+                    } else if (viewCheck.isSelected()) {
+                        final ImageFramesViewerController controller
+                                = (ImageFramesViewerController) openStage(CommonValues.ImageFramesViewerFxml);
+                        controller.selectSourceFile(outFile);
+                    }
                 }
 
             };
@@ -254,8 +238,7 @@ public class ImageTiffEditerController extends ImagesListController {
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-        } catch (Exception e) {
-            logger.error(e.toString());
+
         }
     }
 

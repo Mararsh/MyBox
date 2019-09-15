@@ -108,6 +108,10 @@ public class DoubleEllipse implements DoubleShape {
                 && rectangle != null && rectangle.isValid();
     }
 
+    public boolean same(DoubleEllipse ellipse) {
+        return rectangle.same(ellipse.getRectangle());
+    }
+
     @Override
     public DoubleEllipse cloneValues() {
         return new DoubleEllipse(rectangle);

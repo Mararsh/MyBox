@@ -3,7 +3,7 @@ package mara.mybox.image;
 import java.awt.image.BufferedImage;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.image.PixelBlend.ImagesBlendMode;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -88,7 +88,11 @@ public class ImageBlend {
                     int pixelBack = backImage.getRGB(i, j);
                     if (rect.include(i, j)) {
                         int pixelFore = foreImage.getRGB(i - x, j - y);
-                        target.setRGB(i, j, colorBlend.blend(pixelFore, pixelBack));
+                        if (pixelFore == 0) {                       // Pass transparency
+                            target.setRGB(i, j, pixelBack);
+                        } else {
+                            target.setRGB(i, j, colorBlend.blend(pixelFore, pixelBack));
+                        }
                     } else {
                         target.setRGB(i, j, pixelBack);
                     }

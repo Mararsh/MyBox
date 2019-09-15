@@ -1,6 +1,6 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -17,10 +17,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import mara.mybox.db.TableAlarmClock;
-import static mara.mybox.value.AppVaribles.executorService;
-import static mara.mybox.value.AppVaribles.scheduledTasks;
+import static mara.mybox.value.AppVariables.executorService;
+import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 
 /**
@@ -75,8 +75,8 @@ public final class AlarmClock {
     // Keep this method to migrate data from config file to derby db.
     public static List<AlarmClock> readAlarmClocksFromFile() {
         try {
-            List<AlarmClock> alarms = new ArrayList();
-            try (InputStream in = new BufferedInputStream(new FileInputStream(CommonValues.AlarmClocksFile))) {
+            List<AlarmClock> alarms = new ArrayList<>();
+            try (InputStream in = new BufferedInputStream(new FileInputStream(AppVariables.AlarmClocksFile))) {
                 Properties values = new Properties();
                 values.load(in);
                 for (Object key : values.keySet()) {
@@ -162,9 +162,9 @@ public final class AlarmClock {
         alarm.setPeriod(getPeriod(alarm));
         calculateNextTime(alarm);
         if (!alarm.isIsActive()) {
-            alarm.setStatus(AppVaribles.message("Inactive"));
+            alarm.setStatus(AppVariables.message("Inactive"));
         } else {
-            alarm.setStatus(AppVaribles.message("Active"));
+            alarm.setStatus(AppVariables.message("Active"));
         }
         if (alarm.getLastTime() > 0) {
             alarm.setLast(DateTools.datetimeToString(alarm.getLastTime()));
@@ -183,21 +183,21 @@ public final class AlarmClock {
 
         switch (alarm.getAlarmType()) {
             case AlarmType.NotRepeat:
-                return AppVaribles.message("NotRepeat");
+                return AppVariables.message("NotRepeat");
             case AlarmType.EveryDay:
-                return AppVaribles.message("EveryDay");
+                return AppVariables.message("EveryDay");
             case AlarmType.Weekend:
-                return AppVaribles.message("Weekend");
+                return AppVariables.message("Weekend");
             case AlarmType.WorkingDays:
-                return AppVaribles.message("WorkingDays");
+                return AppVariables.message("WorkingDays");
             case AlarmType.EverySomeHours:
-                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Hours");
+                return AppVariables.message("Every") + " " + alarm.getEveryValue() + " " + AppVariables.message("Hours");
             case AlarmType.EverySomeMinutes:
-                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Minutes");
+                return AppVariables.message("Every") + " " + alarm.getEveryValue() + " " + AppVariables.message("Minutes");
             case AlarmType.EverySomeDays:
-                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Days");
+                return AppVariables.message("Every") + " " + alarm.getEveryValue() + " " + AppVariables.message("Days");
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.message("Every") + " " + alarm.getEveryValue() + " " + AppVaribles.message("Seconds");
+                return AppVariables.message("Every") + " " + alarm.getEveryValue() + " " + AppVariables.message("Seconds");
         }
         return null;
     }
@@ -206,18 +206,18 @@ public final class AlarmClock {
 
         switch (type) {
             case AlarmType.NotRepeat:
-                return AppVaribles.message("NotRepeat");
+                return AppVariables.message("NotRepeat");
             case AlarmType.EveryDay:
-                return AppVaribles.message("EveryDay");
+                return AppVariables.message("EveryDay");
             case AlarmType.Weekend:
-                return AppVaribles.message("Weekend");
+                return AppVariables.message("Weekend");
             case AlarmType.WorkingDays:
-                return AppVaribles.message("WorkingDays");
+                return AppVariables.message("WorkingDays");
             case AlarmType.EverySomeHours:
             case AlarmType.EverySomeMinutes:
             case AlarmType.EverySomeDays:
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.message("Every");
+                return AppVariables.message("Every");
         }
         return null;
     }
@@ -226,13 +226,13 @@ public final class AlarmClock {
 
         switch (type) {
             case AlarmType.EverySomeHours:
-                return AppVaribles.message("Hours");
+                return AppVariables.message("Hours");
             case AlarmType.EverySomeMinutes:
-                return AppVaribles.message("Minutes");
+                return AppVariables.message("Minutes");
             case AlarmType.EverySomeDays:
-                return AppVaribles.message("Days");
+                return AppVariables.message("Days");
             case AlarmType.EverySomeSeconds:
-                return AppVaribles.message("Seconds");
+                return AppVariables.message("Seconds");
         }
         return null;
     }
@@ -257,7 +257,7 @@ public final class AlarmClock {
     }
 
     public static boolean writeAlarmClock(AlarmClock theAlarm) {
-        List<AlarmClock> alarms = new ArrayList();
+        List<AlarmClock> alarms = new ArrayList<>();
         alarms.add(theAlarm);
         return writeAlarmClocks(alarms);
     }
@@ -355,7 +355,7 @@ public final class AlarmClock {
                 newFuture = executorService.scheduleAtFixedRate(task, task.getDelay(), task.getPeriod(), TimeUnit.MILLISECONDS);
             }
             if (scheduledTasks == null) {
-                scheduledTasks = new HashMap();
+                scheduledTasks = new HashMap<>();
             }
             scheduledTasks.put(alarm.getKey(), newFuture);
         } catch (Exception e) {

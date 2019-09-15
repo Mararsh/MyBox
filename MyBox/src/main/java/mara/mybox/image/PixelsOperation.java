@@ -1,6 +1,7 @@
 package mara.mybox.image;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,14 +9,15 @@ import java.util.Queue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.data.IntPoint;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonImageValues;
 
 /**
  * @Author Mara
  * @CreateDate 2019-2-13 14:44:03
  * @Version 1.0
- * @Description
+ * @Description Pixel operations whose calculation only involves pixel itself.
+ * Pixel operations who involve other pixels need defined separatedly.
  * @License Apache License Version 2.0
  */
 public class PixelsOperation {
@@ -35,7 +37,7 @@ public class PixelsOperation {
 
     public enum OperationType {
         Blur, Sharpen, Clarity, Emboss, EdgeDetect, Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
-        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta,
+        ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
         Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope, Convolution, Contrast
     }
 
@@ -44,11 +46,8 @@ public class PixelsOperation {
     }
 
     public PixelsOperation() {
-        if (AppVaribles.isAlphaAsWhite()) {
-            this.bkColor = Color.WHITE;
-        } else {
-            this.bkColor = Color.BLACK;
-        }
+        this.bkColor = ImageColor.getAlphaColor();
+
     }
 
     public PixelsOperation(BufferedImage image, ImageScope scope, OperationType operationType) {
@@ -292,11 +291,11 @@ public class PixelsOperation {
                 thisLine[0] = new Color(image.getRGB(0, 0), true);
             }
             Color newColor;
-            int pixel;
+            int pixel, transpaernt = 0, white = Color.WHITE.getRGB();
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     pixel = image.getRGB(x, y);
-                    Color color = new Color(image.getRGB(x, y), true);
+                    Color color = new Color(pixel, true);
                     if (pixel == 0) {  // pass transparency
                         newColor = color;
 
@@ -307,11 +306,11 @@ public class PixelsOperation {
                             color = thisLine[x];
                         }
                         if (isShowScope) {
+                            newColor = color;
                             if (inScope) {
-                                newColor = color;
-                                target.setRGB(x, y, color.getRGB());
+                                target.setRGB(x, y, transpaernt);
                             } else {
-                                newColor = operatePixel(target, color, x, y);
+                                target.setRGB(x, y, white);
                             }
                         } else {
                             if (inScope) {
@@ -322,7 +321,7 @@ public class PixelsOperation {
                             }
                         }
                     }
-                    dithering(target, color, newColor, x, y);
+                    dithering(color, newColor, x, y);
                 }
                 if (isDithering) {
                     thisLine = nextLine;
@@ -345,27 +344,26 @@ public class PixelsOperation {
             if (image == null || scope == null) {
                 return image;
             }
-            List<IntPoint> points = scope.getPoints();
-            if (points == null || points.isEmpty()) {
-                return image;
-            }
+            boolean isShowScope = operationType == OperationType.ShowScope;
             int imageType = image.getType();
             if (imageType == BufferedImage.TYPE_CUSTOM) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(imageWidth, imageHeight, imageType);
             boolean excluded = scope.isColorExcluded();
-            boolean isScope = operationType == OperationType.ShowScope;
-            if (isScope) {
+            if (isShowScope) {
                 if (excluded) {
-                    target = image.getSubimage(0, 0, imageWidth, imageHeight);
+                    Graphics2D g2d = target.createGraphics();
+                    g2d.setColor(CommonImageValues.TRANSPARENT);
+                    g2d.fillRect(0, 0, imageWidth, imageHeight);
+                    g2d.dispose();
                 } else {
-                    for (int y = 0; y < imageHeight; y++) {
-                        for (int x = 0; x < imageWidth; x++) {
-                            operatePixel(target, x, y);
-                        }
-                    }
+                    Graphics2D g2d = target.createGraphics();
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(0, 0, imageWidth, imageHeight);
+                    g2d.dispose();
                 }
+
             } else {
                 if (excluded) {
                     for (int y = 0; y < imageHeight; y++) {
@@ -377,9 +375,14 @@ public class PixelsOperation {
                     target = image.getSubimage(0, 0, imageWidth, imageHeight);
                 }
             }
+            List<IntPoint> points = scope.getPoints();
+            if (points == null || points.isEmpty()) {
+                return target;
+            }
 
             boolean[][] visited = new boolean[imageHeight][imageWidth];
             Queue<IntPoint> queue = new LinkedList<>();
+            int transpaernt = 0, white = Color.WHITE.getRGB();
             for (IntPoint point : points) {
                 Color startColor = new Color(image.getRGB(point.getX(), point.getY()), true);
                 queue.add(point);
@@ -396,11 +399,11 @@ public class PixelsOperation {
                     if (scope.inColorMatch(startColor, color)) {
                         if (pixel == 0) {
                             target.setRGB(x, y, pixel);
-                        } else if (isScope) {
+                        } else if (isShowScope) {
                             if (excluded) {
-                                operatePixel(target, color, x, y);
+                                target.setRGB(x, y, white);
                             } else {
-                                target.setRGB(x, y, pixel);
+                                target.setRGB(x, y, transpaernt);
                             }
                         } else {
                             if (excluded) {
@@ -435,15 +438,14 @@ public class PixelsOperation {
     }
 
     protected Color operatePixel(BufferedImage target, Color color, int x, int y) {
-        Color newColor;
-        newColor = operateColor(color);
+        Color newColor = operateColor(color);
         target.setRGB(x, y, newColor.getRGB());
         return newColor;
     }
 
     // https://en.wikipedia.org/wiki/Dither
     // https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
-    protected void dithering(BufferedImage target, Color color, Color newColor, int x, int y) {
+    protected void dithering(Color color, Color newColor, int x, int y) {
         if (!isDithering || y != thisLineY) {
             return;
         }

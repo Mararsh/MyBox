@@ -8,7 +8,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.NumberAxis;
@@ -28,14 +27,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Callback;
-import mara.mybox.image.ImageQuantization;
-import mara.mybox.image.ImageColor;
-import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.data.IntStatistic;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.image.ImageColor;
+import mara.mybox.image.ImageQuantization;
+import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -98,7 +96,7 @@ public class ImageStatisticController extends ImageViewerController {
     private ToolBar colorBar;
 
     public ImageStatisticController() {
-        baseTitle = AppVaribles.message("ImageStatistic");
+        baseTitle = AppVariables.message("ImageStatistic");
 
         ImageStatisticHueStages = "ImageStatisticHueStages";
         ImageStatisticSaturationStages = "ImageStatisticSaturationStages";
@@ -125,7 +123,7 @@ public class ImageStatisticController extends ImageViewerController {
     private void initColorTab() {
 
         colorTable.setItems(colorList);
-        colorValueColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        colorValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
 //        colorValueColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
 //            @Override
 //            public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
@@ -133,41 +131,41 @@ public class ImageStatisticController extends ImageViewerController {
 //                return new ValueCell();
 //            }
 //        });
-        colorShowcaseColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        colorShowcaseColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         colorShowcaseColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
             @Override
             public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                 return new ShowcaseCell();
             }
         });
-        colorNumberColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("number"));
-        colorSequenceColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value2"));
-        colorPercentageColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Float>("percentage"));
+        colorNumberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+        colorSequenceColumn.setCellValueFactory(new PropertyValueFactory<>("value2"));
+        colorPercentageColumn.setCellValueFactory(new PropertyValueFactory<>("percentage"));
 
         colorSummaryTable.setItems(colorSummaryList);
-        colorSummaryValueColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        colorSummaryValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         colorSummaryValueColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
             @Override
             public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                 return new ValueCell();
             }
         });
-        colorSummaryShowcaseColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        colorSummaryShowcaseColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         colorSummaryShowcaseColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
             @Override
             public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                 return new ShowcaseCell();
             }
         });
-        colorSummaryNameColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, String>("name"));
+        colorSummaryNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         colorSummaryNameColumn.setCellFactory(new Callback<TableColumn<IntStatistic, String>, TableCell<IntStatistic, String>>() {
             @Override
             public TableCell<IntStatistic, String> call(TableColumn<IntStatistic, String> param) {
                 return new NameCell();
             }
         });
-        colorSummaryNumberColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("number"));
-        colorSummaryPercentageColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Float>("percentage"));
+        colorSummaryNumberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+        colorSummaryPercentageColumn.setCellValueFactory(new PropertyValueFactory<>("percentage"));
 
         List<String> aList = Arrays.asList(message("RGBUniformQuantization"), message("HSBUniformQuantization"));
         algorithmBox.getItems().addAll(aList);
@@ -191,29 +189,29 @@ public class ImageStatisticController extends ImageViewerController {
 
     private void initGreyTab() {
         greyTable.setItems(greyList);
-        greyValueColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        greyValueColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         greyValueColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
             @Override
             public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                 return new ValueCell();
             }
         });
-        greyShowcaseColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("value"));
+        greyShowcaseColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
         greyShowcaseColumn.setCellFactory(new Callback<TableColumn<IntStatistic, Integer>, TableCell<IntStatistic, Integer>>() {
             @Override
             public TableCell<IntStatistic, Integer> call(TableColumn<IntStatistic, Integer> param) {
                 return new ShowcaseCell();
             }
         });
-        greyNameColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, String>("name"));
+        greyNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         greyNameColumn.setCellFactory(new Callback<TableColumn<IntStatistic, String>, TableCell<IntStatistic, String>>() {
             @Override
             public TableCell<IntStatistic, String> call(TableColumn<IntStatistic, String> param) {
                 return new NameCell();
             }
         });
-        greyNumberColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Integer>("number"));
-        greyPercentageColumn.setCellValueFactory(new PropertyValueFactory<IntStatistic, Float>("percentage"));
+        greyNumberColumn.setCellValueFactory(new PropertyValueFactory<>("number"));
+        greyPercentageColumn.setCellValueFactory(new PropertyValueFactory<>("percentage"));
 
     }
 
@@ -222,7 +220,7 @@ public class ImageStatisticController extends ImageViewerController {
         @Override
         protected void updateItem(final Integer item, boolean empty) {
             super.updateItem(item, empty);
-            if (item == null || item < 0 || empty) {
+            if (empty || item == null || item < 0) {
                 setText("");
             } else {
                 if (item > 255) {
@@ -246,7 +244,7 @@ public class ImageStatisticController extends ImageViewerController {
         @Override
         protected void updateItem(final Integer item, boolean empty) {
             super.updateItem(item, empty);
-            if (item == null || item < 0 || empty) {
+            if (empty || item == null || item < 0) {
                 setGraphic(null);
             } else {
                 if (item > 255) {
@@ -270,9 +268,12 @@ public class ImageStatisticController extends ImageViewerController {
         @Override
         protected void updateItem(final String item, boolean empty) {
             super.updateItem(item, empty);
-            if (item != null && !empty) {
-                text.setText(AppVaribles.message(item));
+            if (!empty && item != null) {
+                text.setText(AppVariables.message(item));
                 setGraphic(text);
+            } else {
+                setGraphic(null);
+                setText(null);
             }
         }
     }
@@ -288,7 +289,7 @@ public class ImageStatisticController extends ImageViewerController {
         } catch (Exception e) {
             logger.error(e.toString());
             imageView.setImage(null);
-            alertInformation(AppVaribles.message("NotSupported"));
+            alertInformation(AppVariables.message("NotSupported"));
         }
     }
 
@@ -345,33 +346,35 @@ public class ImageStatisticController extends ImageViewerController {
         saturationHistogram.getData().clear();
         brightnessHistogram.getData().clear();
 
-        task = new Task<Void>() {
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                try {
+                @Override
+                protected boolean handle() {
+                    try {
 //                    ImageStatistic statistic = new ImageStatistic(SwingFXUtils.fromFXImage(image, null), quantization);
 //                    final Map<String, Object> statisticMap = statistic.statistic();
-//                    if (task.isCancelled() || statisticMap == null) {
+//                    if (isCancelled() || statisticMap == null) {
 //                        return null;
 //                    }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
 
-                } catch (Exception e) {
-                    logger.debug(e.toString());
                 }
-                ok = true;
 
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
 //                            Map<String, Object> statistic = (Map<String, Object>) statisticMap.get("colorQuantization");
 //                            colorList.addAll((List<IntStatistic>) statistic.get("data"));
 //                            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -411,16 +414,17 @@ public class ImageStatisticController extends ImageViewerController {
 //                            greyList.add(0, (IntStatistic) statistic.get("median"));
 //                            greyList.add(0, (IntStatistic) statistic.get("average"));
 //                            greyList.add(0, (IntStatistic) statistic.get("sum"));
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
 }

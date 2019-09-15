@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -16,13 +15,13 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -44,10 +43,10 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
     @FXML
     private ComboBox<String> perBox, shadowBox;
     @FXML
-    protected CheckBox preAlphaCheck, alphaWhiteCheck;
+    protected CheckBox preAlphaCheck;
 
     public ImageManufactureBatchShadowController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchShadow");
+        baseTitle = AppVariables.message("ImageManufactureBatchShadow");
 
     }
 
@@ -103,15 +102,6 @@ public class ImageManufactureBatchShadowController extends ImageManufactureBatch
             checkType();
 
             shadowColorPicker.setValue(Color.BLACK);
-
-            alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
-            alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
-                }
-            });
 
         } catch (Exception e) {
             logger.error(e.toString());

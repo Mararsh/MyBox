@@ -12,8 +12,8 @@ import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -99,7 +99,7 @@ public class IccHeader {
      */
     public static LinkedHashMap<String, IccTag> iccHeaderFields(byte[] header) {
         try {
-            LinkedHashMap<String, IccTag> fields = new LinkedHashMap();
+            LinkedHashMap<String, IccTag> fields = new LinkedHashMap<>();
             fields.put("ProfileSize",
                     new IccTag("ProfileSize", 0, subBytes(header, 0, 4), TagType.Int,
                             bytesToInt(subBytes(header, 0, 4))));
@@ -419,7 +419,7 @@ public class IccHeader {
         Data
      */
     public static List<String> ProfileDeviceClasses() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : ProfileDeviceClasses) {
             types.add(item[0] + Indent + message(item[1]));
         }
@@ -441,7 +441,7 @@ public class IccHeader {
     };
 
     public static List<String> PrimaryPlatforms() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : PrimaryPlatforms) {
             types.add(item[0] + Indent + item[1]);
         }
@@ -483,7 +483,7 @@ public class IccHeader {
     };
 
     public static List<String> DeviceManufacturers() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : DeviceManufacturers) {
             types.add(item[0] + Indent + item[1]);
         }

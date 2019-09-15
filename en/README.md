@@ -14,29 +14,61 @@ Following are latest release:
 
 | Platform | Link | Size | Requirements |
 | - | - | -  | -  |
-| win | [MyBox-5.3-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-exe.zip) | 240MB | None |
-| win | [MyBox-5.3-jar-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-win.zip)  | 55MB | Java 12 or higher |
-| linux | [MyBox-5.3-jar-linux.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-linux.zip)  | 59MB | Java 12 or higher |
-| mac | [MyBox-5.3-jar-mac.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-mac.zip)  | 56MB | Java 12 or higher |
-| win/linux/mac | [MyBox-5.3-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-5.3-jar-cross-platform.zip)  | 111MB | Java 12 or higher |
+| win | [MyBox-5.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-exe.zip) | 249MB | 无 |
+| win | [MyBox-5.4-win.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-win.zip)  | 64MB | Java 12 or higher |
+| linux | [MyBox-5.4-linux.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-linux.zip)  | 68MB | Java 12 or higher |
+| mac | [MyBox-5.4-mac.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-mac.zip)  | 64MB | Java 12 or higher |
+| win/linux/mac | [MyBox-5.4-jar-cross-platform.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-cross-platform.zip)  | 120MB | Java 12 or higher |
 
 EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)
 
 Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed. 
 Each platform has its jar, and there is cross-platform jar whose size is larger. 
 
+## Execution
 
-## Launch
+### Launch
 Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.
 
 Run following command to launch this program with Jar package: (Please upgrade to Java 12 or higher)
 
-    java   -jar   MyBox-5.3.jar
+    java   -jar   MyBox-5.4.jar
 	
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:
 
-    java   -jar   MyBox-5.3.jar  /tmp/a1.jpg
+    java   -jar   MyBox-5.4.jar  /tmp/a1.jpg
+	
+### Installation Path, Execution Path, Data Path
+The directory holding files of MyBox.exe or MyBox-xxx.jar is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".
+Example, MyBox-5.4.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
 
+### Initialize MyBox
+Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".
+MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance:
+1) Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.
+2) If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".
+3) Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:
+<PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
+4) User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.
+5) User can also change data path by Setting function of MyBox and the tool will copy old data automatically.
+
+Another example, copy "MyBox-5.4.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.
+By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
+
+### Configuration File
+Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically： 
+1） Data Path, like:
+<PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
+2) Maximum memory usage of JVM, like: 
+<PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
+3) Whether close "HiDPI", like:
+<PRE><CODE>     DisableHidpi=false </CODE></PRE>
+
+### Supporting HiDPI
+Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.
+MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.
+
+Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.  
 
 ## Limitation
 MyBox.exe can not be lanuched under path including non-English characters.
@@ -57,71 +89,69 @@ Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
 
 
 # Documents
-User Guide - Overview   
-https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf
-
-User Guide - Image Tools    
-https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf
-
-User Guide - PDF Tools    
-https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf
-
-User Guide - Desktop Tools    
-https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf
-
-User Guide - Network Tools   
-https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf
-
-Development Guide   
-https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf
-
-[Development Logs](#devLog)
+| Name | Version | Link |
+| - | - | - |  
+| User Guide - Overview |  5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf |
+| User Guide - Image Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf |
+| User Guide - PDF Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf |
+| User Guide - Desktop Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf |
+| User Guide - Network Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf |
+| Development Guide | 1.0 | https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf |
+| Shortcuts | 1.0 | https://mararsh.github.io/MyBox/mybox_shortcuts_en.html |
+| Development Logs |  | #devLog |
 
 # Implementation
-MyBox is developed with Netbeans8.2 and JavaFX Scene Builder 2.0:    
+MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:    
 https://netbeans.org/    
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
 
-It is based on following open sources softwares or libraries:    
-JavaFx  https://docs.oracle.com/javafx/2/    
-PDFBox  https://pdfbox.apache.org/    
-jai-imageio  https://github.com/jai-imageio/jai-imageio-core	    
-javazoom  http://www.javazoom.net/index.shtml	    
-log4j   https://logging.apache.org/log4j/2.x/	    
-Derby   http://db.apache.org/derby/    
-GifDecoder   https://github.com/DhyanB/Open-Imaging/    
-EncodingDetect  https://www.cnblogs.com/ChurchYim/p/8427373.html    
-Free Icons  https://icons8.com/icons/set/home    
-
+It is based on following open sources softwares or libraries:  
+| Software | Role | Link |
+| - | - | - |  
+| JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
+| jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
+| PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
+| PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
+| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml | 
+| log4j | Log manufacture | https://logging.apache.org/log4j/2.x/ |      
+| Derby | Database | http://db.apache.org/derby/ |   
+| GifDecoder | Decode broken gif | https://github.com/DhyanB/Open-Imaging/ |   
+| EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
+| Icons8 | Icon | https://icons8.com/icons/set/home | 
+  
 # Current Version
-Current version is 5.3. Its features are mentioned below in summary:
+Current version is 5.4. Its features are mentioned below in summary:
 * [Cross platforms](#cross-platform)
 * [Internationalized](#international)
 * [PDF Tools](#pdfTools)
-* [Image Tools](#imageTool)
+* [Image Tools](#imageTools)
     - [View Image](#viewImage)
     - [Browse Images](#browserImage)
     - [Manufacture Image](#imageManufacture)
+	- [Color Palette](#ColorPalette)
+    - [Image Data](#ImageData)  
     - [Convert Image](#imageConvert)
     - [Multi-frames Image](#multiFrames)
     - [Merge Images](#multipleImages)
     - [Part Image](#imagePart)
     - [Big Image](#bigImage)
     - [Others](#imageOthers)
-* [Data Tools](#dataTool)
+* [Data Tools](#dataTools)
     - [Matrcies Calculation](#matrixTool)
     - [Color Spaces](#colorSpaces)
-* [Desktop Tools](#desktopTool)
+* [File Tools](#fileTools)
     - [Arrage Directories](#directoriesArrange)
     - [Edit Text](#editText)
     - [Edit Bytes](#editBytes)
-    - [Others](#desktopOthers)
-* [Network Tools](#netTool)
+    - [Others](#fileOthers)
+* [Media Tools](#MediaTools)
+* [Network Tools](#netTools)
     - [Edit Html](#htmlEditor)
     - [Snap WeiBo](#weiboSnap)
 * [Settings](#settings)
 * [Window](#windows)
+* [Helps](#helps)
 
 ## Cross-platform<a name="cross-platform" />
 MyBox is implemented in pure Java and based on open source codes, so it can run any platform which supports Java 12.
@@ -132,21 +162,22 @@ All codes of MyBox are internationalized. User can switch language in time.
 Currently MyBox supports Chinese and English. To support a new language is just to edit a new resource file.
 
 ## PDF Tools<a name="pdfTools" />
-1. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
-   BookMarks(Table of Contents) and thumbnails can be shown.
-2. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
-3. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
+1. View PDF in html mode. Browse and edit html page by page. Bookmarks and thumbnails.
+2. Convert PDF files as html files in batch. Options: Whether one html for each page or one html for each PDF; The way to handle fonts/images: embed, save separately, or ignore.
+3. View PDF file in image mode. DPI can be set to adjust resolution. Page can be cropped as images.
+4. Convert pages of PDF as images. Options like format, density, color space, compression, quality, etc.
+5. Combine multiple images as PDF file. Options like compression, page size, margin size, header, author, etc. 
    Support Chinese and tool can locate system font files. User can input path of ttf font file.
-4. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
-5. Merge multiple PDF files.
-6. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
-7. Extract images in PDF file. Page range can be set.
-8. Extract texts in PDF file. Splitting line can be customized.
-9. Handle PDF files in batch way.
-10. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
-11. Maximum main memory of PDF handling can be set.
+6. Compress images in PDF file. JPEG quality or threshold of black-white can be set.
+7. Merge multiple PDF files.
+8. Split a PDF file into multiple PDF files, by pages number, by files number, or by start-end list.
+9. Extract images in PDF file. Page range can be set.
+10. Extract texts in PDF file. Splitting line can be customized.
+11. Modify PDF file's attributes like title, author, modify time, user password, owner password, user permissions, etc.
+12. Handle PDF files in batch way.
+13. Maximum main memory of PDF handling can be set.
 
-## Image Tools<a name="imageTool" />
+## Image Tools<a name="imageTools" />
 
 ### View Image<a name="viewImage" />
 1. "Load Width". Read image file with "Original Size" or with defined width.
@@ -154,10 +185,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 3. Rotation can be saved.
 4. Recover, Rename, Delete.
 5. Select whether display Corodinate, X/Y Rulers, Data.
-6. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
-7. Image attributes and image meta. ICC profile embedded in image can be decoded.
-8. Navigation of images under same directory.
-
+6. Image attributes and image meta. ICC profile embedded in image can be decoded.
+7. Navigation of images under same directory.
 
 ### Browse Images<a name="browserImage" />
 1. Display multiple images in same screen. Rotation and zoomming can be separated or synchronized.
@@ -167,33 +196,63 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 5. Files List Mode.
 6. Rename and Delete.
 
-
 ### Image Manufacture<a name="imageManufacture" />
-1. Size. By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio.
-2. Crop. Cut inside or outside of rectangle, circle, ellipse, or polygon. Background color can be set.
-3. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
+1. Clipboard
+	-  Clip sources: "Copy"(CTRL+c) against whole image or selected part of image, system clipboard, image files in system, example clips.
+	-  Manage clips list: Add, Delete, Clear, Set maximum number of list.
+	-  Click button "Paste"(CTRL+v) anytime while editing image, to paste the first image in clipboard onto current edited image. Or double click item in the clipboard to paste it.
+	-  Drag and move pasted clip on current edited image, to adjust clip's size and location.
+	-  Options to paste: whether keep aspect ratio, blending mode, opacity, rotation angle.
+2. Crop: Define "Scope" to set the contents to cut. Options: background color, whether put cropped part into clipboard.
+3. Scale: By dargging anchors, by setting scale, or by inputting pixel values with 4 types of keeping aspect ratio.
+4. Color. Increase, decrease, set, filter, or invert value of saturaion, brightness, hue, Red/Green/Blue/Yellow/Cyan/Magenta channel, RGB itself, or opacity. 
    Premultiplied Alpha is supported for setting opacity.
-4. Effects. Clarity, contrast, posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect, blur, sharpen. 
+5. Effect. Clarity, contrast, posterize(reduce colors), thresholding, gray, black-white, Sepia, emboss, edges detect, blur, sharpen. 
    Algorithms and parameters can be set. Convolution can be defined and referred to make more effects.
-5. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
-6. Picture. Paste embedded/outside/clipboard picture on image. Blend modes can be selected.
-7. Shape. Rectangle/circle/ellipse/polygon can be drawed on image. Options like stroke width and color,whether fill color, whether dotted.
-8. Line. Clicking and dragging multiple times to draw one line on image. Options like stroke width and color, whether dotted.
-9. Pen. Clicking and dragging one time to draw one line on image. Options like stroke width and color, whether dotted.
-10. Mosaic. Fill mosaic or frosted glass inside/outside rectangle/circle/ellipse/polygon. Density can be set.
-11. Round corner. Arc and background color can be set.
-12. Shadow. Options like background color, shadow size, whether apply Premultiplied Alpha.
-13. Transform. Shear, mirror, and rotate.
-14. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
-15. Scope. Types of All, Matting, Shapes(rectanlge/circle/ellipse/polygon), Color Matching, and Color Matching in Shapes. 
-    Color Matching can be against saturaion, brightness, hue, RGB, or Red/Green/Blue channel with distance defined. 
-	Scope can be applied for "Color" and "Effects". Scope can be determined by simply clicking image. 
-	Parameters like points set of matting and colors list of color matching can be set easily. All scope can be set as Excluded.
-16. "Undo" and "Redo" of previous operation. Original image can be recoverred at any time. 
-    Updated histories can be saved automatically and set back. Number of updated histories can be set.
-17. Select whether show reference image. Other pictures can be selected as the reference image.
-18. Handle existed image, or create new image.
-19. Copy(CTRL+c), paste(CTRL+v), pop, and reference.
+6. Rich Text: Edit texts in web page mode. Drag the texts on image to adjust its location and size. Options: background color, opacity, margions width, arc size, rotation angle.
+   Due to implementation of snapshots, results look blur. I have not found solution. 
+7. Text. Options like font family, style, size, color, opacity, shadow, angle, whether outline, whether veritical. Locating text by clicking image.
+8. Pen:
+	-  Polyline: One line by multiple drawing. Options: stroke width, color, whether dotted, opacity.
+	-  Lines: One line by one drawing. Options: stroke width, color, whether dotted, opacity.
+	-  Eraser: One line by one drawing. Always transparent. Option: stroke width.
+	-  Frosted Class: One dot by one drawing. Options: stroke width, intensity, shape(Rectangle or circle).
+	-  Mosaic: One dot by one drwaing. Options: stroke width, intensity, shape(Rectangle or circle).
+	-  Shape: Rectangle, Circle, Ellipse, Polygon. Options: stroke width, color, whether dotted, opacity, whether fill-in, color of fill-in.
+9. Transform. Shear, mirror, and rotate.
+10. Round corner. Arc and background color can be set.
+11. Shadow. Options: background color, shadow size, whether apply Premultiplied Alpha.
+12. Margins. Blur margins with option of whether apply Premultiplied Alpha; Drag anchors to adjust margins; add margins by setting width; cut margins by setting width or color.
+13. Image histories:
+	- Each modification will be recorded as image histories, Option: whether record "Load" as history.
+	- Manage histories:  Delete, Clear, Recover selected history as current editing image, Set maximum number of histories.
+	- Undo(CTRL+z) and redo(CTRL+y) previous modification. Recover to original image(CTRL+r) at any time. Either select one history to recover.
+14. Reference Image: Open other image file to compare with current image.
+15. "Scope":  Rulers to limit pixels to operate, including area rulers, color matching rulers, or rulers mixed by both types.
+	- Define area: Rectangle, Circle, Ellipse, Polygon. Can be excluded.
+	- Define colors list. Can pick colors directly from image by Color Palette.
+	- Select object for color matching, including Red/Green/Blue channel, saturaion, brightness, hue, RGB, with distance defined. Can be excluded.
+	- Matting: Match pixels around current pixel, and spread results with same matching rulers. Result is the collection of pixels matched by multiple points.
+	- Outline: Extract outline of image which has transparent background, as the scope of operation.
+	- Scope can be applied against Copy, Crop, Color, Effect, Convolution. 
+	- Scope can be defined against image history and reference image too. The part in scope can be copied into clipboard.
+	- Scopes can be saved with names. User can manage them: Add, Delete, Clear, Edit, Use selected item in scopes list.	
+16 Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
+17 Option: Whether zoom current image, image history, or reference image synchronously.
+18. Edit existed images, or create new image.
+19. Interface in style of "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
+20. Image Manufacture in batch.
+
+### Color Palette<a name="ColorPalette" />
+1. Thousands of colors can be saved. 139 named colors can be added automatically.
+2. Color is shown in a small rectangle and its name(if has), hexidecimal value, rgb value, and opacity are popped when mouse is moved upon it.
+3. Export colors to html table.
+4. Pick colors on current image, image history, or reference image.
+
+### Image Data<a name="ImageData" />
+1. Statistic and visualization of image data, including average, variance, skewness, median, mode, minimum, maximum of occurance of each color channel, and their histograms.
+2. Channels of histograms can be selected.
+3. Statistic against selected area.
 
 ### Image Conversion<a name="imageConvert" />
 1. Formats of image file: png, jpg, bmp, tif, gif, wbmp, pnm, pcx, raw.
@@ -205,23 +264,20 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 7. For binary, algorithms can be choiced: OTSU, default or threshold. And option of dithering.
 8. Conversion in batch.
 
-
-### ultiple frames image file<a name="multiFrames" />
+### Multiple frames image file<a name="multiFrames" />
 1. View/Extract images in multiple frames file.
 2. Create/Edit multiple frames Tiff/Tif file.
 3. View/Extract/Create/Edit animated Gif file. Interval, whether loop, and images' size can be set.
 
 ### Merge images<a name="multipleImages" />
-1. Blend images. Options like intersected area and blending modes.
-2. Combine images. Options like array ordering, background color, interval, margins, and size.
-3. Combine images in PDF file.
-4. Add Alpha channel.
+1. Combine images. Options like array ordering, background color, interval, margins, and size.
+2. Combine images in PDF file.
+3. Add Alpha channel.
 
 ### Part image<a name="imagePart" />
 1. Split image. By number, by size, or by customizing. Results can be saved as image files, multiple frames Tiff file, or PDF file.
 2. Subsample image. Options like sample region and sample ratio.
 3. Extract Alpha channel.
-
 
 ### Big Image<a name="bigImage" />
 1. Evaulate the required memory for whole image, and judge whether load all data in memory.
@@ -233,13 +289,11 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ### Others<a name="imageOthers" />
 1. Supported image formats include png, jpg, bmp, tif, gif, wbmp, pnm, pcx.	Adobe YCCK/CMYK jpg file can be decoded.
-2. Manufacture images in batch.
-3. Color palette.
-4. Pixels calculator
-5. Convolution Kernels Manager
+2. Pixels calculator
+3. Convolution Kernels Manager
 
 
-## Data Tools<a name="dataTool" />
+## Data Tools<a name="dataTools" />
 
 ### Matrices Calculation<a name="matrixTool" />
 1. Edit matrix data:
@@ -289,7 +343,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 	-  User select or input source white and target white, and the tool will calculate the chromatic adaptation matrix automatically and show the calculation procedure..
 	-  Table and texts are shown for chromatic adaptation matrices by different standard illuminants and different algorithms. Data texts can be exported.
 	
-## Desktop Tools<a name="desktopTool" />
+## Desktop Tools<a name="desktopTools" />
 
 ### Manage Directories<a name="directoriesArrange" />
 1. Rename Files/Directories, with options of files' name and ordering. Renamed files can be recovered as original names in all or in part.
@@ -331,15 +385,18 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 	   When break lines by bytes number, crossing pages need not concerned.
 10. General functions of editing, like copy/paste/cut/delete/selectAll/undo/redo/recover. And their shortcuts.
 
-### Others<a name="desktopOthers" />
+### Others<a name="fileOthers" />
 1. Convert files' charset in batch.
 2. Convert files' line break in batch.
 3. Split file, by files number, by bytes number, or by start-end list.
 4. Merge files.
-5. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
-6. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
 
-## Network Tools<a name="netTool" />
+## Media Tools<a name="MediaTools" />
+1. Monitor images in system clipboard and have user save/view them. Lossless or compression type can be selected.
+2. Alarm clocks, including options of time and music. Support rings of “Meow”, wav files, and mp3. Can run in background.
+
+
+## Network Tools<a name="netTools" />
 
 ### Html Editor<a name="htmlEditor" />
 1. Edit local web pages or online pages in rich text. (Not support FrameSet)
@@ -360,26 +417,43 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ## Settings<a name="settings" />
 1. Whether restore last size of each scene. Whether open new stage to display scene. Whether pop recent visited files/directories.
-2. Language, font size, interface style, color of controls' pictures, whether show comments.
+2. Language, font size, interface style, color and size of controls' pictures.
 3. Width and color of stroke and anchor. Whether anchors are solid.
 4. Whether display coordinate and rulers.
 5. Images histories number. Maximum width to display images.
-6. Whether remove alpha channel when copy. Whether replace alpha as white when alpha is not supported.
+6. Color to replace Alpha when Alpha is not supported. (Suggest as White)
 7. Maximum main memory of PDF handling.
 8. Whether close alarm clocks when exit program.
-9. Temporary path of MyBox.
+9. Base parameters including maximum JVM memory usage, whether close dpi-aware, data root path. MyBox will reboot itself automatically when user changes these parameters.
 10. Clear personal settings. Open user's directory.
 
 ## Window<a name="windows" />
 1. Open/Close monitor bar of Memory.
 2. Open/Close monitor bar of CPU.
-3. Display JVM attributes.
-4. Refresh/Reset/Full-screen windows.
-5. Close other windows.
-6. Recent visited tools.
+3. Refresh/Reset/Full-screen windows.
+4. Close other windows.
+5. Recent visited tools.
+
+## Helps<a name="helps" />
+1. MyBox shortcuts
+2. MyBox Attributes
+3. User Guides(Addresses)
+4. Development Guide(Addresses)
 
 
 # Development Logs<a name="devLog" />
+2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.
+User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.
+View PDF pages in html mode. Convert PDF files as html files.
+Refine interface of Image Manufacture as "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
+Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.
+Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.
+New scope type "Outline" for image manufacture: extract outline of image which has transparent background as scope of operation. Example outlines are provided.
+Scopes can be saved and managed.
+Uniform shortcuts whose help page is provided. 
+Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.
+Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.
+
 2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.    
 Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.     
 Improve image conversion: more color spaces, external ICC profile as color space, whether embed ICC, handle transparent channel.    
@@ -581,6 +655,10 @@ This tool might fail to work when weibo would change the accessing channel of pa
 ![About](https://mararsh.github.io/MyBox/3-en.png)
 
 ![About](https://mararsh.github.io/MyBox/4-en.png)
+
+![About](https://mararsh.github.io/MyBox/5-en.png)
+
+![About](https://mararsh.github.io/MyBox/6-en.png)
 
 
 

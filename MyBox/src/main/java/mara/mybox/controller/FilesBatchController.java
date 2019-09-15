@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BatchController;
 import mara.mybox.data.FileInformation;
 
 /**

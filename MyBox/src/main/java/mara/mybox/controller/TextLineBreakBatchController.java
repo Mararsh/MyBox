@@ -9,8 +9,8 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -24,7 +24,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
     protected ToggleGroup lbGroup;
 
     public TextLineBreakBatchController() {
-        baseTitle = AppVaribles.message("TextLineBreakBatch");
+        baseTitle = AppVariables.message("TextLineBreakBatch");
 
     }
 
@@ -44,11 +44,11 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
 
     protected void checkLineBreak() {
         RadioButton selected = (RadioButton) lbGroup.getSelectedToggle();
-        if (AppVaribles.message("LF").equals(selected.getText())) {
+        if (AppVariables.message("LF").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.LF);
-        } else if (AppVaribles.message("CR").equals(selected.getText())) {
+        } else if (AppVariables.message("CR").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.CR);
-        } else if (AppVaribles.message("CRLF").equals(selected.getText())) {
+        } else if (AppVariables.message("CRLF").equals(selected.getText())) {
             targetInformation.setLineBreak(Line_Break.CRLF);
         }
         targetInformation.setLineBreakValue(TextTools.lineBreakValue(targetInformation.getLineBreak()));
@@ -59,7 +59,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return AppVaribles.message("Skip");
+                return AppVariables.message("Skip");
             }
             sourceInformation.setFile(srcFile);
             logger.debug(srcFile);
@@ -68,7 +68,7 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
             if (autoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
-                    return AppVaribles.message("Failed");
+                    return AppVariables.message("Failed");
                 }
 
             }
@@ -78,13 +78,13 @@ public class TextLineBreakBatchController extends TextEncodingBatchController {
             if (TextTools.convertLineBreak(sourceInformation, targetInformation)) {
                 actualParameters.finalTargetName = target.getAbsolutePath();
                 targetFiles.add(target);
-                return AppVaribles.message("Successful");
+                return AppVariables.message("Successful");
             } else {
-                return AppVaribles.message("Failed");
+                return AppVariables.message("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         }
     }
 

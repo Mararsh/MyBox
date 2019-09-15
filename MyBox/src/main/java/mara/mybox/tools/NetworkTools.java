@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.web.WebEngine;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -49,10 +49,10 @@ public class NetworkTools {
                     + "/.mara.mybox.MainApp/webview/localstorage/https_passport.weibo.com_0.localstorage";
 
         } else if (os.contains("mac")) {
-            return AppVaribles.getUserConfigBoolean("WeiboPassportChecked", false);
+            return AppVariables.getUserConfigBoolean("WeiboPassportChecked", false);
 
         } else {
-            return AppVaribles.getUserConfigBoolean("WeiboPassportChecked", false);
+            return AppVariables.getUserConfigBoolean("WeiboPassportChecked", false);
         }
         return new File(passport).exists();
     }

@@ -20,7 +20,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import mara.mybox.controller.base.BaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlStage;
@@ -31,9 +30,10 @@ import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.IntTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.CommonValues;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 
 /**
  * @Author Mara
@@ -75,12 +75,12 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     protected TextField thresholdInput;
 
     public RecordImagesInSystemClipboardController() {
-        baseTitle = AppVaribles.message("RecordImagesInSystemClipBoard");
+        baseTitle = AppVariables.message("RecordImagesInSystemClipBoard");
 
-        targetPathKey = "SnapshotsTargetPath";
+        targetPathKey = "ImageFilePath";
         TipsLabelKey = "RecordImagesTips";
 
-        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -91,9 +91,19 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov,
                         Toggle old_toggle, Toggle new_toggle) {
+                    RadioButton selected = (RadioButton) recordTypeGroup.getSelectedToggle();
+                    AppVariables.setUserConfigValue("RecordSystemClipboardType", selected.getText());
                     checkRecordType();
                 }
             });
+            String savedType = AppVariables.getUserConfigValue("RecordSystemClipboardType", message("Save"));
+            if (message("View").equals(savedType)) {
+                viewRadio.fire();
+            } else if (message("Save").equals(savedType)) {
+                saveRadio.fire();
+            } else if (message("SaveAndView").equals(savedType)) {
+                saveAndViewRadio.fire();
+            }
             checkRecordType();
 
             imageTypeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -139,16 +149,16 @@ public class RecordImagesInSystemClipboardController extends BaseController {
         targetPathInput.setStyle(null);
         startButton.setDisable(false);
         RadioButton selected = (RadioButton) recordTypeGroup.getSelectedToggle();
-        if (AppVaribles.message("View").equals(selected.getText())) {
+        if (AppVariables.message("View").equals(selected.getText())) {
             recordType = RecordType.View;
             targetPane.setDisable(true);
             openTargetButton.setDisable(true);
 
         } else {
 
-            if (AppVaribles.message("Save").equals(selected.getText())) {
+            if (AppVariables.message("Save").equals(selected.getText())) {
                 recordType = RecordType.Save;
-            } else if (AppVaribles.message("SaveAndView").equals(selected.getText())) {
+            } else if (AppVariables.message("SaveAndView").equals(selected.getText())) {
                 recordType = RecordType.SaveAndView;
             }
 
@@ -159,7 +169,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                 openTargetButton.setDisable(true);
                 startButton.setDisable(true);
             } else {
-                AppVaribles.setUserConfigValue(targetPathKey, file.getPath());
+                AppVariables.setUserConfigValue(targetPathKey, file.getPath());
                 targetPath = file;
                 openTargetButton.setDisable(false);
             }
@@ -172,12 +182,12 @@ public class RecordImagesInSystemClipboardController extends BaseController {
         thresholdInput.setDisable(true);
 
         RadioButton selected = (RadioButton) imageTypeGroup.getSelectedToggle();
-        if (AppVaribles.message("PNG").equals(selected.getText())) {
+        if (AppVariables.message("PNG").equals(selected.getText())) {
             imageType = ImageType.PNG;
-        } else if (AppVaribles.message("CCITT4").equals(selected.getText())) {
+        } else if (AppVariables.message("CCITT4").equals(selected.getText())) {
             imageType = ImageType.TIFF;
             thresholdInput.setDisable(false);
-        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVariables.message("JpegQuailty").equals(selected.getText())) {
             imageType = ImageType.JPG;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -228,13 +238,13 @@ public class RecordImagesInSystemClipboardController extends BaseController {
     public void startAction() {
         try {
             isHandling = false;
-            if (AppVaribles.message("StartRecording").equals(startButton.getText())) {
+            if (AppVariables.message("StartRecording").equals(startButton.getText())) {
                 targetPane.setDisable(true);
                 optionsPane.setDisable(true);
-                startButton.setText(AppVaribles.message("StopRecording"));
+                startButton.setText(AppVariables.message("StopRecording"));
                 getMyStage().setIconified(true);
                 recordedNumber = 0;
-                recordLabel.setText(MessageFormat.format(AppVaribles.message("RecordingImages"), 0));
+                recordLabel.setText(MessageFormat.format(AppVariables.message("RecordingImages"), 0));
                 final boolean saveImages
                         = (recordType == RecordType.Save || recordType == RecordType.SaveAndView);
                 final boolean viewImages
@@ -272,7 +282,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
                                     saveImage(image);
                                 }
                                 recordedNumber++;
-                                recordLabel.setText(MessageFormat.format(AppVaribles.message("RecordingImages"), recordedNumber));
+                                recordLabel.setText(MessageFormat.format(AppVariables.message("RecordingImages"), recordedNumber));
                                 if (viewImages) {
                                     ImageViewerController controller = FxmlStage.openImageViewer(null);
                                     controller.loadImage(image);
@@ -286,7 +296,7 @@ public class RecordImagesInSystemClipboardController extends BaseController {
             } else {
                 targetPane.setDisable(false);
                 optionsPane.setDisable(false);
-                startButton.setText(AppVaribles.message("StartRecording"));
+                startButton.setText(AppVariables.message("StartRecording"));
                 recordLabel.setText("");
                 if (timer != null) {
                     timer.cancel();

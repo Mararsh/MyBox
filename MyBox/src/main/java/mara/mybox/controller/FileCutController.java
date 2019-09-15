@@ -17,8 +17,8 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -42,7 +42,7 @@ public class FileCutController extends FilesBatchController {
     }
 
     public FileCutController() {
-        baseTitle = AppVaribles.message("FileCut");
+        baseTitle = AppVariables.message("FileCut");
 
     }
 
@@ -91,17 +91,17 @@ public class FileCutController extends FilesBatchController {
         listInput.setStyle(null);
 
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVaribles.message("SplitByFilesNumber").equals(selected.getText())) {
+        if (AppVariables.message("SplitByFilesNumber").equals(selected.getText())) {
             splitType = FileSplitType.FilesNumber;
             filesNumberInput.setDisable(false);
             checkFilesNumber();
 
-        } else if (AppVaribles.message("SplitByBytesNumber").equals(selected.getText())) {
+        } else if (AppVariables.message("SplitByBytesNumber").equals(selected.getText())) {
             splitType = FileSplitType.BytesNumber;
             bytesNumberInput.setDisable(false);
             checkBytesNumber();
 
-        } else if (AppVaribles.message("CutByStartEndByteList").equals(selected.getText())) {
+        } else if (AppVariables.message("CutByStartEndByteList").equals(selected.getText())) {
             splitType = FileSplitType.StartEndList;
             listInput.setDisable(false);
             checkStartEndList();
@@ -186,7 +186,7 @@ public class FileCutController extends FilesBatchController {
     public String handleFile(File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
-            return AppVaribles.message("Skip");
+            return AppVariables.message("Skip");
         }
         String targetName = target.getAbsolutePath();
         List<File> files = null;
@@ -202,11 +202,11 @@ public class FileCutController extends FilesBatchController {
                 break;
         }
         if (files == null || files.isEmpty()) {
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         } else {
             currentParameters.finalTargetName = files.get(0).getAbsolutePath();
             targetFiles.addAll(files);
-            return MessageFormat.format(AppVaribles.message("FilesGenerated"), files.size());
+            return MessageFormat.format(AppVariables.message("FilesGenerated"), files.size());
         }
     }
 

@@ -19,10 +19,10 @@ import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import mara.mybox.value.CommonValues;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 
 /**
  * @Author Mara
@@ -43,10 +43,10 @@ public class TextEncodingBatchController extends FilesBatchController {
     protected CheckBox targetBomCheck;
 
     public TextEncodingBatchController() {
-        baseTitle = AppVaribles.message("TextEncodingBatch");
+        baseTitle = AppVariables.message("TextEncodingBatch");
 
-        sourcePathKey = "TextFilePathKey";
-        sourceExtensionFilter = CommonValues.TextExtensionFilter;
+        sourcePathKey = "TextFilePath";
+        sourceExtensionFilter = CommonImageValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -112,7 +112,7 @@ public class TextEncodingBatchController extends FilesBatchController {
             });
             targetBox.getSelectionModel().select(Charset.defaultCharset().name());
 
-            Tooltip tips = new Tooltip(AppVaribles.message("BOMcomments"));
+            Tooltip tips = new Tooltip(AppVariables.message("BOMcomments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(targetBomCheck, tips);
         }
@@ -135,13 +135,13 @@ public class TextEncodingBatchController extends FilesBatchController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return AppVaribles.message("Skip");
+                return AppVariables.message("Skip");
             }
             sourceInformation.setFile(srcFile);
             if (autoDetermine) {
                 boolean ok = TextTools.checkCharset(sourceInformation);
                 if (!ok || sourceInformation == null) {
-                    return AppVaribles.message("Failed");
+                    return AppVariables.message("Failed");
                 }
             }
             targetInformation.setFile(target);
@@ -149,13 +149,13 @@ public class TextEncodingBatchController extends FilesBatchController {
             if (TextTools.convertCharset(sourceInformation, targetInformation)) {
                 actualParameters.finalTargetName = target.getAbsolutePath();
                 targetFiles.add(target);
-                return AppVaribles.message("Successful");
+                return AppVariables.message("Successful");
             } else {
-                return AppVaribles.message("Failed");
+                return AppVariables.message("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         }
     }
 

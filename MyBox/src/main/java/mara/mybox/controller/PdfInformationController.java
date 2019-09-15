@@ -1,14 +1,13 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.io.File;
 import mara.mybox.data.PdfInformation;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.tools.FileTools.showFileSize;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -46,7 +45,7 @@ public class PdfInformationController extends BaseController {
     private TextField firstPageSize, firstPageSize2;
 
     public PdfInformationController() {
-        baseTitle = AppVaribles.message("PdfInformation");
+        baseTitle = AppVariables.message("PdfInformation");
 
     }
 

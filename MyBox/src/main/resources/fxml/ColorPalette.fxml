@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.collections.*?>
 <?import javafx.scene.text.*?>
@@ -14,43 +15,111 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorPaletteController">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorPaletteController">
     <children>
-        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ColorPalette" textAlignment="CENTER">
-            <font>
-                <Font name="System Bold" size="24.0" />
-            </font>
-            <VBox.margin>
-                <Insets bottom="20.0" />
-            </VBox.margin>
-        </Label>
-        <HBox fx:id="paletteBox">
+        <VBox fx:id="headerBox" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <ColorPicker fx:id="colorPicker" onAction="#colorAction" />
+                <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%ColorPalette" textAlignment="CENTER" VBox.vgrow="NEVER">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </Label>
+                <Label fx:id="titleLabel" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" textAlignment="CENTER" VBox.vgrow="NEVER">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="5.0" />
+                    </VBox.margin>
+                </Label>
+                <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Rectangle fx:id="selectedRect" fill="TRANSPARENT" height="15.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="15.0" />
+                        <TextArea fx:id="selectedArea" editable="false" prefRowCount="3" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconDelete.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <ScrollPane fx:id="colorsPane" fitToHeight="true" fitToWidth="true" maxHeight="400.0" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" prefViewportWidth="400.0">
+            <content>
+                <FlowPane fx:id="colorsBox" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" VBox.vgrow="NEVER" />
+            </content>
+        </ScrollPane>
+        <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="sizeLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <ToggleButton fx:id="pickColorButton" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconPickColor.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </ToggleButton>
+                <Button fx:id="commonColorsButton" layoutX="160.0" layoutY="10.0" mnemonicParsing="false" onAction="#commonColorsAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconColor.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="htmlButton" layoutX="222.0" layoutY="10.0" mnemonicParsing="false" onAction="#htmlAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconHtml.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <ColorPicker fx:id="colorPicker" />
             </children>
         </HBox>
-        <GridPane prefHeight="129.0" prefWidth="659.0">
-            <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="146.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="572.0" minWidth="10.0" prefWidth="513.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            </rowConstraints>
+        <HBox fx:id="closeBox" alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Label text="RGB" />
-                <Label text="HSB" GridPane.rowIndex="1" />
-                <Label text="%Hexadecimal" GridPane.rowIndex="2" />
-                <TextField fx:id="rgbValue" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" />
-                <TextField fx:id="hsbValue" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <TextField fx:id="hexValue" editable="false" focusTraversable="false" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            </children>
-        </GridPane>
-        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0">
-            <children>
-                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#close">
+            <CheckBox fx:id="saveCloseCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconFlower.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+                <CheckBox fx:id="topCheck" mnemonicParsing="false" selected="true" VBox.vgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTop.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -61,8 +130,10 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
+        <Label fx:id="promptLabel" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+
     </children>
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>

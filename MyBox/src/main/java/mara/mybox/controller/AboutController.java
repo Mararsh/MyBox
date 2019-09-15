@@ -1,12 +1,11 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlControl;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.CommonValues;
 
 /**
  * @Author Mara
@@ -22,7 +21,7 @@ public class AboutController extends BaseController {
     private Hyperlink userGuideLink;
 
     public AboutController() {
-        baseTitle = AppVaribles.message("About");
+        baseTitle = AppVariables.message("About");
     }
 
     @Override
@@ -31,7 +30,7 @@ public class AboutController extends BaseController {
         date.setText(CommonValues.AppVersionDate);
         userGuideLink.setText("https://github.com/Mararsh/MyBox/releases/download/v"
                 + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                + "-Overview-" + AppVaribles.getLanguage() + ".pdf");
+                + "-Overview-" + AppVariables.getLanguage() + ".pdf");
 
         FxmlControl.miao8();
 

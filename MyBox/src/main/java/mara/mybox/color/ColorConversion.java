@@ -5,7 +5,7 @@ import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -24,31 +24,7 @@ public class ColorConversion {
         Normalized, RGB, Hundred
     }
 
-//    public static double[] rgb2xyz(String sourceColorSpace, String sourceWhite,
-//            String targetColorSpace, String targetWhite, String gamma,
-//            ChromaticAdaptationAlgorithm algorithm, int scale,
-//            double red, double green, double blue) {
-//        double[] converted = new double[3];
-//        if ("2.2".equals(gamma)) {
-//            red = gamma22(red);
-//            green = gamma22(green);
-//            blue = gamma22(blue);
-//        } else if ("1.8".equals(gamma)) {
-//            red = gamma18(red);
-//            green = gamma18(green);
-//            blue = gamma18(blue);
-//        } else if ("sRGB".equals(gamma)) {
-//            red = gammaSRGB(red);
-//            green = gammaSRGB(green);
-//            blue = gammaSRGB(blue);
-//        } else if ("L*".equals(gamma)) {
-//            red = gamma22(red);
-//            green = gamma22(green);
-//            blue = gamma22(blue);
-//        }
-//    }
     public static BufferedImage sRGB(BufferedImage source, int colorSpace) {
-        ICC_Profile profile = ICC_Profile.getInstance(ColorSpace.CS_sRGB);
         ICC_ColorSpace iccColorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(ColorSpace.CS_sRGB));
         ColorConvertOp converter = new ColorConvertOp(iccColorSpace, null);
         BufferedImage target = converter.filter(source, null);

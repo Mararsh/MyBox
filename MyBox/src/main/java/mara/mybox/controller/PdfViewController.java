@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -41,9 +41,10 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
@@ -63,23 +64,21 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  */
 public class PdfViewController extends ImageViewerController {
 
-    private PdfInformation pdfInformation;
-    private int currentPage, currentPageTmp, percent, dpi;
+    protected PdfInformation pdfInformation;
+    protected int currentPage, currentPageTmp, percent, dpi;
     protected SimpleBooleanProperty infoLoaded;
-    private boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
-    private Task outlineTask, thumbTask;
-    private String password;
+    protected boolean isTransparent, scrollEnd, scrollStart, scrolledSet;
+    protected Task outlineTask, thumbTask;
+    protected String password;
 
     @FXML
     protected Label pageLabel;
     @FXML
     protected TextField pageInput;
     @FXML
-    protected ComboBox<String> sizeBox, dpiBox;
+    protected ComboBox<String> percentBox, dpiBox;
     @FXML
-    protected CheckBox transCheck, outlineCheck, thumbCheck;
-    @FXML
-    protected HBox pageNavBox;
+    protected CheckBox transparentBackgroundCheck, bookmarksCheck, thumbCheck;
     @FXML
     protected SplitPane viewPane;
     @FXML
@@ -90,43 +89,29 @@ public class PdfViewController extends ImageViewerController {
     protected TreeView outlineTree;
 
     public PdfViewController() {
-        baseTitle = AppVaribles.message("PdfView");
+        baseTitle = AppVariables.message("PdfView");
 
         SourceFileType = VisitHistory.FileType.PDF;
         SourcePathType = VisitHistory.FileType.PDF;
         TargetFileType = VisitHistory.FileType.Image;
         TargetPathType = VisitHistory.FileType.Image;
 
-        sourcePathKey = "PdfSourcePath";
+        sourcePathKey = "PdfFilePath";
         TipsLabelKey = "PdfViewTips";
-        ImageSelectKey = "PdfViewSelectKey";
-        ImageRulerXKey = "PdfViewRulerXKey";
-        ImageRulerYKey = "PdfViewRulerYKey";
-        ImagePopCooridnateKey = "PdfViewPopCooridnateKey";
 
-        sourceExtensionFilter = CommonValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.PdfExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
+            super.initControls();
+
             infoLoaded = new SimpleBooleanProperty(false);
 
-            operation1Box.disableProperty().bind(Bindings.not(infoLoaded));
-            pageNavBox.disableProperty().bind(Bindings.not(infoLoaded));
-
-            transCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    isTransparent = transCheck.isSelected();
-                    loadPage();
-                }
-            });
-            FxmlControl.setTooltip(transCheck, new Tooltip(AppVaribles.message("OnlyForTexts")));
-
-            sizeBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
-            sizeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            percentBox.getItems().addAll(Arrays.asList("100", "75", "50", "125", "150", "200", "80", "25", "30", "15"));
+            percentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (isSettingValues) {
@@ -136,17 +121,84 @@ public class PdfViewController extends ImageViewerController {
                         int v = Integer.valueOf(newValue);
                         if (v > 0) {
                             percent = v;
-                            setSize(percent);
-                            FxmlControl.setEditorNormal(sizeBox);
+                            setPrecent(percent);
+                            FxmlControl.setEditorNormal(percentBox);
                         } else {
-                            FxmlControl.setEditorBadStyle(sizeBox);
+                            FxmlControl.setEditorBadStyle(percentBox);
                         }
 
                     } catch (Exception e) {
-                        FxmlControl.setEditorBadStyle(sizeBox);
+                        FxmlControl.setEditorBadStyle(percentBox);
                     }
                 }
             });
+
+            pageInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    try {
+                        int v = Integer.valueOf(pageInput.getText()) - 1;
+                        if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
+                            currentPageTmp = v;
+                            pageInput.setStyle(null);
+                            goButton.setDisable(false);
+                        } else {
+                            pageInput.setStyle(badStyle);
+                            goButton.setDisable(true);
+                        }
+                    } catch (Exception e) {
+                        pageInput.setStyle(badStyle);
+                        goButton.setDisable(true);
+                    }
+                }
+            });
+
+            bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkOutline();
+                    AppVariables.setUserConfigValue("PDFBookmarks", bookmarksCheck.isSelected());
+                }
+            });
+            bookmarksCheck.setSelected(AppVariables.getUserConfigBoolean("PDFBookmarks", true));
+
+            thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    checkThumbs();
+                    AppVariables.setUserConfigValue("PDFThumbnails", thumbCheck.isSelected());
+                }
+            });
+            thumbCheck.setSelected(AppVariables.getUserConfigBoolean("PDFThumbnails", false));
+
+            thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    loadThumbs();
+                }
+            });
+
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initializeNext2() {
+        try {
+            operation1Box.disableProperty().bind(Bindings.not(infoLoaded));
+
+            transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    isTransparent = transparentBackgroundCheck.isSelected();
+                    loadPage();
+                }
+            });
+            FxmlControl.setTooltip(transparentBackgroundCheck, new Tooltip(AppVariables.message("OnlyForTexts")));
 
             dpiBox.getItems().addAll(Arrays.asList("96", "72", "120", "160", "240", "300", "400", "600"));
             dpiBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -171,34 +223,6 @@ public class PdfViewController extends ImageViewerController {
                 }
             });
             dpiBox.getSelectionModel().select(0);
-
-            pageInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    if (pageNavBox.isDisabled()) {
-                        currentPageTmp = 0;
-                        pageInput.setStyle(null);
-                        return;
-                    }
-                    try {
-                        int v = Integer.valueOf(pageInput.getText()) - 1;
-                        if (v >= 0 && v < pdfInformation.getNumberOfPages()) {
-                            currentPageTmp = v;
-                            pageInput.setStyle(null);
-                            goButton.setDisable(false);
-                        } else {
-                            pageInput.setStyle(badStyle);
-                            goButton.setDisable(true);
-                        }
-                    } catch (Exception e) {
-                        pageInput.setStyle(badStyle);
-                        goButton.setDisable(true);
-                    }
-                }
-            });
 
             scrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
                 @Override
@@ -235,15 +259,9 @@ public class PdfViewController extends ImageViewerController {
                 }
             });
 
-            operation3Box.disableProperty().bind(
-                    Bindings.isNull(imageView.imageProperty())
-            );
-
             viewPane.disableProperty().bind(
                     Bindings.isNull(imageView.imageProperty())
             );
-
-            initViewPane();
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -251,42 +269,29 @@ public class PdfViewController extends ImageViewerController {
     }
 
     @Override
-    protected void initOperation2Box() {
+    public void moreAction() {
+        if (moreButton == null || contentBox == null) {
+            return;
+        }
+        if (moreButton.isSelected()) {
+            if (!contentBox.getChildren().contains(operation2Box)) {
+                contentBox.getChildren().add(1, operation2Box);
+            }
 
-        operation2Box.disableProperty().bind(
-                Bindings.isNull(imageView.imageProperty())
-        );
+        } else {
+            if (contentBox.getChildren().contains(operation2Box)) {
+                contentBox.getChildren().remove(operation2Box);
+            }
 
+        }
+        FxmlControl.refreshStyle(contentBox);
     }
 
-    protected void initViewPane() {
-        outlineCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                checkOutline();
-            }
-        });
-        outlineCheck.setSelected(true);
-
-        thumbCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                checkThumbs();
-            }
-        });
-        thumbCheck.setSelected(false);
-
-        thumbScrollPane.vvalueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                loadThumbs();
-            }
-        });
-
-    }
-
-    private void checkOutline() {
-        if (outlineCheck.isSelected()) {
+    protected void checkOutline() {
+        if (!infoLoaded.get()) {
+            return;
+        }
+        if (bookmarksCheck.isSelected()) {
             if (!viewPane.getItems().contains(outlineScrollPane)) {
                 viewPane.getItems().add(viewPane.getItems().size() - 1, outlineScrollPane);
             }
@@ -301,7 +306,10 @@ public class PdfViewController extends ImageViewerController {
 
     }
 
-    private void checkThumbs() {
+    protected void checkThumbs() {
+        if (!infoLoaded.get()) {
+            return;
+        }
         if (thumbCheck.isSelected()) {
             if (!viewPane.getItems().contains(thumbScrollPane)) {
                 viewPane.getItems().add(0, thumbScrollPane);
@@ -339,16 +347,7 @@ public class PdfViewController extends ImageViewerController {
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        FxmlControl.setTooltip(nextButton, new Tooltip(message("NextPage") + "\nENTER / PAGE DOWN"));
-        FxmlControl.setTooltip(previousButton, new Tooltip(message("PreviousPage") + "\nPAGE UP"));
-        FxmlControl.setTooltip(firstButton, new Tooltip(message("FirstPage") + "\nCTRL+HOME"));
-        FxmlControl.setTooltip(lastButton, new Tooltip(message("LastPage") + "\nCTRL+END"));
-    }
-
-    private void setSize(int percent) {
+    protected void setPrecent(int percent) {
         if (imageView.getImage() == null) {
             return;
         }
@@ -373,7 +372,7 @@ public class PdfViewController extends ImageViewerController {
             imageView.setTranslateX(0);
             pdfInformation = null;
             currentPage = page;
-            infoLoaded.set(false);
+            infoLoaded.set(pdfInfo != null);
             pageInput.setText("1");
             pageLabel.setText("");
             percent = 0;
@@ -401,181 +400,186 @@ public class PdfViewController extends ImageViewerController {
         if (pdfInformation == null) {
             return;
         }
-//        bottomLabel.setText(AppVaribles.getMessage("CountingTotalNumber"));
-        backgroundTask = new Task<Void>() {
-            private boolean ok, pop;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                protected boolean pop;
 
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    try (PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVaribles.pdfMemUsage)) {
-                        password = inPassword;
-                        pdfInformation.setUserPassword(inPassword);
-                        pdfInformation.readInfo(doc);
-                        infoLoaded.set(true);
-                        doc.close();
-                        ok = true;
-                    }
-                } catch (InvalidPasswordException e) {
-                    pop = true;
-                } catch (IOException e) {
-                }
-                if (pop) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextInputDialog dialog = new TextInputDialog();
-                            dialog.setContentText(AppVaribles.message("Password"));
-                            Optional<String> result = dialog.showAndWait();
-                            if (result.isPresent()) {
-                                loadInformation(result.get());
-                            }
+                @Override
+                protected boolean handle() {
+                    try {
+                        try (PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
+                            password = inPassword;
+                            pdfInformation.setUserPassword(inPassword);
+                            pdfInformation.readInfo(doc);
+                            infoLoaded.set(true);
+                            doc.close();
+                            ok = true;
                         }
-                    });
-                }
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (!ok) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        bottomLabel.setText("");
-                        pageLabel.setText("/" + pdfInformation.getNumberOfPages());
-                        loadPage();
-                        checkOutline();
-                        checkThumbs();
+                    } catch (InvalidPasswordException e) {
+                        pop = true;
+                    } catch (IOException e) {
                     }
-                });
-            }
-        };
-        Thread thread = new Thread(backgroundTask);
-        thread.setDaemon(true);
-        thread.start();
+                    if (pop) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextInputDialog dialog = new TextInputDialog();
+                                dialog.setContentText(AppVariables.message("Password"));
+                                Optional<String> result = dialog.showAndWait();
+                                if (result.isPresent()) {
+                                    loadInformation(result.get());
+                                }
+                            }
+                        });
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    bottomLabel.setText("");
+                    pageLabel.setText("/" + pdfInformation.getNumberOfPages());
+                    loadPage();
+                    checkOutline();
+                    checkThumbs();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL, message("LoadingFileInfo"));
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
-    private void loadPage(int pageNumber) {
+    protected void loadPage(int pageNumber) {
         currentPage = pageNumber;
         loadPage();
     }
 
-    private void loadPage() {
+    protected void loadPage() {
         if (pdfInformation == null) {
             return;
         }
-        if (currentPage < 0) {
-            currentPage = 0;
-        } else if (infoLoaded.get() && currentPage >= pdfInformation.getNumberOfPages()) {
-            currentPage = pdfInformation.getNumberOfPages() - 1;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            if (currentPage < 0) {
+                currentPage = 0;
+            } else if (infoLoaded.get() && currentPage >= pdfInformation.getNumberOfPages()) {
+                currentPage = pdfInformation.getNumberOfPages() - 1;
+            }
+            pageInput.setText((currentPage + 1) + "");
+            previousButton.setDisable(currentPage <= 0);
+            nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
+            bottomLabel.setText("");
+            task = new SingletonTask<Void>() {
+
+                @Override
+                protected boolean handle() {
+                    ImageType type = ImageType.RGB;
+                    if (isTransparent) {
+                        type = ImageType.ARGB;
+                    }
+                    BufferedImage bufferedImage = PdfTools.page2image(sourceFile, password, currentPage, dpi, type);
+                    image = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return image != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    imageView.setPreserveRatio(true);
+                    imageView.setImage(image);
+                    if (percent == 0) {
+                        paneSize();
+                    } else {
+                        setPrecent(percent);
+                    }
+                    refinePane();
+                    setMaskStroke();
+                    checkSelect();
+                    setImageChanged(false);
+                    imageView.requestFocus();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL, MessageFormat.format(message("LoadingPageNumber"), (currentPage + 1) + ""));
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        pageInput.setText((currentPage + 1) + "");
-        previousButton.setDisable(currentPage <= 0);
-        nextButton.setDisable(!infoLoaded.get() || currentPage >= (pdfInformation.getNumberOfPages() - 1));
-        bottomLabel.setText("");
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ImageType type = ImageType.RGB;
-                if (isTransparent) {
-                    type = ImageType.ARGB;
-                }
-                BufferedImage bufferedImage = PdfTools.page2image(sourceFile, password, currentPage, dpi, type);
-                image = SwingFXUtils.toFXImage(bufferedImage, null);
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageView.setPreserveRatio(true);
-                            imageView.setImage(image);
-                            if (percent == 0) {
-                                paneSize();
-                            } else {
-                                setSize(percent);
-                            }
-                            refinePane();
-                            setMaskStroke();
-                            checkSelect();
-                            if (!infoLoaded.get()) {
-                                loadInformation(null);
-                            }
-                            setImageChanged(false);
-                            imageView.requestFocus();
-                        }
-                    });
-                }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
-    private void loadOutline() {
+    protected void loadOutline() {
         if (!infoLoaded.get() || outlineTree.getRoot() != null) {
             return;
         }
-        outlineTask = new Task<Void>() {
-            private PDDocument doc;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    doc = PDDocument.load(sourceFile, password, AppVaribles.pdfMemUsage);
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
+        synchronized (this) {
+            if (outlineTask != null) {
+                outlineTask.cancel();
             }
+            outlineTask = new Task<Void>() {
+                protected PDDocument doc;
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (doc != null) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                                TreeItem outlineRoot = new TreeItem<>(AppVaribles.message("PDFOutline"));
-                                outlineRoot.setExpanded(true);
-                                outlineTree.setRoot(outlineRoot);
-                                if (outline != null) {
-                                    loadOutlineItem(outline, outlineRoot);
+                @Override
+                protected Void call() {
+                    try {
+                        doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    outlineTask = null;
+                    if (doc != null) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
+                                    TreeItem outlineRoot = new TreeItem<>(AppVariables.message("Bookmarks"));
+                                    outlineRoot.setExpanded(true);
+                                    outlineTree.setRoot(outlineRoot);
+                                    if (outline != null) {
+                                        loadOutlineItem(outline, outlineRoot);
+                                    }
+                                    doc.close();
+                                } catch (Exception e) {
+                                    logger.debug(e.toString());
                                 }
-                                doc.close();
-                            } catch (Exception e) {
-                                logger.debug(e.toString());
                             }
-
-                        }
-                    });
+                        });
+                    } else {
+                        popFailed();
+                    }
                 }
-            }
-        };
-        openHandlingStage(outlineTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(outlineTask);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void failed() {
+                    super.failed();
+                    outlineTask = null;
+                }
+
+                @Override
+                protected void cancelled() {
+                    super.cancelled();
+                    outlineTask = null;
+                }
+            };
+            openHandlingStage(outlineTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(outlineTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
-    private void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
+    protected void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
@@ -611,7 +615,7 @@ public class PdfViewController extends ImageViewerController {
 
     }
 
-    private void loadThumbs() {
+    protected void loadThumbs() {
         if (!infoLoaded.get()
                 || (thumbTask != null && thumbTask.isRunning())) {
             return;
@@ -631,73 +635,96 @@ public class PdfViewController extends ImageViewerController {
         if (view.getImage() != null) {
             return;
         }
-        thumbTask = new Task<Void>() {
-            private boolean ok;
-            private Map<Integer, Image> images;
-            private int end;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVaribles.pdfMemUsage)) {
-                        PDFRenderer renderer = new PDFRenderer(doc);
-                        images = new HashMap();
-                        end = Math.min(pos + 20, pdfInformation.getNumberOfPages());
-                        for (int i = pos; i < end; i++) {
-                            ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
-                            if (view.getImage() != null) {
-                                continue;
-                            }
-                            BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 20, ImageType.RGB);
-                            if (bufferedImage.getWidth() > 200) {
-                                bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, 200);
-                            }
-                            Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
-                            images.put(i, thumb);
-                        }
-                        doc.close();
-                    }
-                    ok = true;
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                return null;
+        synchronized (this) {
+            if (thumbTask != null) {
+                thumbTask.cancel();
             }
+            thumbTask = new Task<Void>() {
+                protected boolean ok;
+                protected Map<Integer, Image> images;
+                protected int end;
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok && images != null) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
+                @Override
+                protected Void call() {
+                    try {
+                        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                            PDFRenderer renderer = new PDFRenderer(doc);
+                            images = new HashMap<>();
+                            end = Math.min(pos + 20, pdfInformation.getNumberOfPages());
                             for (int i = pos; i < end; i++) {
                                 ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
                                 if (view.getImage() != null) {
                                     continue;
                                 }
-                                view.setImage(images.get(i));
-                                view.setFitHeight(view.getImage().getHeight());
-                                final int p = i;
-                                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                    @Override
-                                    public void handle(MouseEvent event) {
-                                        loadPage(p);
+                                try {
+                                    BufferedImage bufferedImage = renderer.renderImageWithDPI(i, 20, ImageType.RGB);
+                                    if (bufferedImage.getWidth() > 200) {
+                                        bufferedImage = ImageManufacture.scaleImageWidthKeep(bufferedImage, 200);
                                     }
-                                });
+                                    Image thumb = SwingFXUtils.toFXImage(bufferedImage, null);
+                                    images.put(i, thumb);
+                                } catch (Exception e) {
+                                    logger.debug(e.toString());
+                                }
                             }
-                            thumbBox.layout();
-                            adjustSplitPane();
+                            doc.close();
                         }
-                    });
+                        ok = true;
+                    } catch (Exception e) {
+                        logger.debug(e.toString());
+                    }
+                    return null;
                 }
-            }
-        };
-        openHandlingStage(thumbTask, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(thumbTask);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    thumbTask = null;
+                    if (ok && images != null) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (int i = pos; i < end; i++) {
+                                    ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+                                    if (view.getImage() != null) {
+                                        continue;
+                                    }
+                                    view.setImage(images.get(i));
+                                    view.setFitHeight(view.getImage().getHeight());
+                                    final int p = i;
+                                    view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                        @Override
+                                        public void handle(MouseEvent event) {
+                                            loadPage(p);
+                                        }
+                                    });
+                                }
+                                thumbBox.layout();
+                                adjustSplitPane();
+                            }
+                        });
+                    } else {
+                        popFailed();
+                    }
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    thumbTask = null;
+                }
+
+                @Override
+                protected void cancelled() {
+                    super.cancelled();
+                    thumbTask = null;
+                }
+            };
+            openHandlingStage(thumbTask, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(thumbTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @Override
@@ -799,7 +826,7 @@ public class PdfViewController extends ImageViewerController {
         scrolledSet = true;
         percent = (int) (imageView.getFitHeight() * 100 / imageView.getImage().getHeight());
         isSettingValues = true;
-        sizeBox.getSelectionModel().select(percent + "");
+        percentBox.getSelectionModel().select(percent + "");
         isSettingValues = false;
     }
 

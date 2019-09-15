@@ -17,7 +17,7 @@ public class CMYKColorSpace {
     }
 
     public static List<String> names() {
-        List<String> names = new ArrayList();
+        List<String> names = new ArrayList<>();
         for (ColorSpaceType cs : ColorSpaceType.values()) {
             names.add(cs + "");
         }

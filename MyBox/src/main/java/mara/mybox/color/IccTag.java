@@ -5,25 +5,25 @@ import java.util.List;
 import java.util.Map;
 import static mara.mybox.color.IccTagType.XYZ;
 import static mara.mybox.color.IccTagType.XYZDoubles;
+import static mara.mybox.color.IccTagType.XYZNumber;
 import static mara.mybox.color.IccTagType.XYZNumberDoubles;
 import static mara.mybox.color.IccTagType.curve;
 import static mara.mybox.color.IccTagType.curveDoubles;
-import static mara.mybox.color.IccTagType.lut;
-import static mara.mybox.color.IccTagType.signature;
-import static mara.mybox.color.IccTagType.text;
-import static mara.mybox.color.IccTagType.viewingConditions;
-import static mara.mybox.color.IccTagType.measurement;
-import static mara.mybox.color.IccTagType.s15Fixed16Array;
-import static mara.mybox.value.CommonValues.Indent;
 import static mara.mybox.color.IccTagType.dateTime;
 import static mara.mybox.color.IccTagType.geometryType;
 import static mara.mybox.color.IccTagType.illuminantType;
-import static mara.mybox.color.IccTagType.observerType;
-import static mara.mybox.color.IccTagType.s15Fixed16ArrayDoubles;
-import static mara.mybox.color.IccTagType.u16Fixed16Number;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.color.IccTagType.XYZNumber;
+import static mara.mybox.color.IccTagType.lut;
+import static mara.mybox.color.IccTagType.measurement;
 import static mara.mybox.color.IccTagType.multiLocalizedUnicode;
+import static mara.mybox.color.IccTagType.observerType;
+import static mara.mybox.color.IccTagType.s15Fixed16Array;
+import static mara.mybox.color.IccTagType.s15Fixed16ArrayDoubles;
+import static mara.mybox.color.IccTagType.signature;
+import static mara.mybox.color.IccTagType.text;
+import static mara.mybox.color.IccTagType.u16Fixed16Number;
+import static mara.mybox.color.IccTagType.viewingConditions;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.CommonValues.Indent;
 
 /**
  * @Author Mara
@@ -714,7 +714,7 @@ public class IccTag {
     }
 
     public static List<String> technologyTypes() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : Technology) {
             types.add(item[0] + Indent + item[1]);
         }
@@ -764,6 +764,7 @@ public class IccTag {
         this.bytes = bytes;
     }
 
+    @SuppressWarnings("unchecked")
     public Object getValue() {
         return value;
     }

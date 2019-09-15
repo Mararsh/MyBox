@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -16,14 +15,14 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageScope;
 import mara.mybox.image.PixelsOperation;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -50,7 +49,7 @@ public class ImageManufactureBatchReplaceColorController extends ImageManufactur
     private CheckBox excludeCheck;
 
     public ImageManufactureBatchReplaceColorController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchReplaceColor");
+        baseTitle = AppVariables.message("ImageManufactureBatchReplaceColor");
 
     }
 

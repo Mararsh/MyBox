@@ -8,7 +8,7 @@ import static mara.mybox.color.IccXML.iccTagsXml;
 import static mara.mybox.tools.ByteTools.bytesToInt;
 import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -67,7 +67,7 @@ public class IccTags {
     }
 
     public static List<IccTag> iccTagsValues(byte[] data, boolean normalizedLut) {
-        List<IccTag> tags = new ArrayList();
+        List<IccTag> tags = new ArrayList<>();
         try {
             if (data == null || data.length < 132) {
                 return tags;

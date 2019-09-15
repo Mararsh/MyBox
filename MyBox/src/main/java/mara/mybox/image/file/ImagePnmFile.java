@@ -16,7 +16,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -67,25 +68,26 @@ public class ImagePnmFile {
     public static boolean writePnmImageFile(BufferedImage image,
             ImageAttributes attributes, String outFile) {
         try {
-            File file = new File(outFile);
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
+            try {
+                File file = new File(outFile);
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
+
             return true;
         } catch (Exception e) {
             logger.error(e.toString());

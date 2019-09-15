@@ -1,98 +1,84 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureController;
 import java.util.Arrays;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
+import mara.mybox.controller.ImageManufactureController.ImageOperation;
+import mara.mybox.fxml.FxmlColor;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.value.CommonValues;
 import mara.mybox.fxml.FxmlImageManufacture;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
- * @CreateDate 2018-10-11
- * @Description
+ * @CreateDate 2019-9-5
  * @License Apache License Version 2.0
  */
-public class ImageManufactureArcController extends ImageManufactureController {
+public class ImageManufactureArcController extends ImageManufactureOperationController {
 
-    final protected String ImageArcKey;
     protected int arc;
 
     @FXML
     protected ComboBox arcBox;
+    @FXML
+    protected Rectangle bgRect;
+    @FXML
+    protected Button paletteButton;
 
     public ImageManufactureArcController() {
-
-        ImageArcKey = "ImageArcKey";
+        baseTitle = AppVariables.message("ImageManufactureArc");
+        operation = ImageOperation.Arc;
     }
 
     @Override
-    public void initializeNext2() {
+    public void initControls() {
         try {
-            initCommon();
-            initArcTab();
+            super.initControls();
+            myPane = arcPane;
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
+
     }
 
     @Override
-    protected void initInterface() {
+    public void initPane(ImageManufactureController parent) {
         try {
-            if (values == null || values.getImage() == null) {
+            super.initPane(parent);
+            if (parent == null) {
                 return;
             }
-            super.initInterface();
 
-            isSettingValues = true;
-            tabPane.getSelectionModel().select(arcTab);
-
-            if (values.getImageInfo() != null
-                    && CommonValues.NoAlphaImages.contains(values.getImageInfo().getImageFormat())) {
-                transparentButton.setDisable(true);
-                colorPicker.setValue(Color.WHITE);
-            } else {
-                transparentButton.setDisable(false);
-                colorPicker.setValue(Color.TRANSPARENT);
-            }
+            String c = AppVariables.getUserConfigValue("ImageArcBackground", Color.TRANSPARENT.toString());
+            bgRect.setFill(Color.web(c));
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay((Color) bgRect.getFill()));
 
             arcBox.getItems().clear();
-            arcBox.getItems().addAll(Arrays.asList((int) values.getImage().getWidth() / 6 + "",
-                    (int) values.getImage().getWidth() / 8 + "",
-                    (int) values.getImage().getWidth() / 4 + "",
-                    (int) values.getImage().getWidth() / 10 + "",
+            int width = (int) imageView.getImage().getWidth();
+            arcBox.getItems().addAll(Arrays.asList(
+                    width / 6 + "", width / 8 + "", width / 4 + "", width / 10 + "",
                     "0", "15", "30", "50", "150", "300", "10", "3"));
-            arcBox.getSelectionModel().select(0);
-
-            pickColorButton.setSelected(false);
-
-            isSettingValues = false;
-        } catch (Exception e) {
-            logger.debug(e.toString());
-        }
-
-    }
-
-    protected void initArcTab() {
-        try {
             arcBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        arc = Integer.valueOf(newValue);
-                        if (arc >= 0) {
+                        int v = Integer.valueOf(newValue);
+                        if (v >= 0) {
+                            arc = v;
                             FxmlControl.setEditorNormal(arcBox);
-                            AppVaribles.setUserConfigValue(ImageArcKey, newValue);
+                            AppVariables.setUserConfigValue("ImageArcSize", newValue);
                         } else {
                             arc = 0;
                             FxmlControl.setEditorBadStyle(arcBox);
@@ -103,69 +89,66 @@ public class ImageManufactureArcController extends ImageManufactureController {
                     }
                 }
             });
-
-            colorPicker.setValue(Color.TRANSPARENT);
+            arcBox.getSelectionModel().select(AppVariables.getUserConfigInt("ImageArcSize", 20) + "");
 
         } catch (Exception e) {
             logger.error(e.toString());
         }
+
+    }
+
+    @Override
+    public boolean setColor(Control control, Color color) {
+        if (control == null || color == null) {
+            return false;
+        }
+        if (paletteButton.equals(control)) {
+            bgRect.setFill(color);
+            FxmlControl.setTooltip(bgRect, FxmlColor.colorDisplay(color));
+            AppVariables.setUserConfigValue("ImageArcBackground", color.toString());
+        }
+        return true;
     }
 
     @FXML
-    public void setTransparentAction() {
-        colorPicker.setValue(Color.TRANSPARENT);
-    }
-
-    @FXML
-    public void setWhiteAction() {
-        colorPicker.setValue(Color.WHITE);
-    }
-
-    @FXML
-    public void setBlackAction() {
-        colorPicker.setValue(Color.BLACK);
+    @Override
+    public void showPalette(ActionEvent event) {
+        showPalette(paletteButton, message("Arc"), true);
     }
 
     @FXML
     @Override
     public void okAction() {
-        task = new Task<Void>() {
-            private Image newImage;
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                newImage = FxmlImageManufacture.addArc(imageView.getImage(), arc, colorPicker.getValue());
-                if (task == null || task.isCancelled()) {
-                    return null;
-                }
-                recordImageHistory(ImageOperationType.Arc, newImage);
-                ok = true;
-                return null;
+        if (arc <= 0) {
+            return;
+        }
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            values.setUndoImage(imageView.getImage());
-                            values.setCurrentImage(newImage);
-                            imageView.setImage(newImage);
-                            setImageChanged(true);
-                            updateLabelTitle();
-                        }
-                    });
+                private Image newImage;
+
+                @Override
+                protected boolean handle() {
+                    newImage = FxmlImageManufacture.addArc(imageView.getImage(), arc, (Color) bgRect.getFill());
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return newImage != null;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void whenSucceeded() {
+                    parent.updateImage(ImageOperation.Arc, arc + "", null, newImage);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
-
 }

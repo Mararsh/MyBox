@@ -10,10 +10,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -34,17 +33,19 @@ public class LoadingController extends BaseController {
     private TextArea text;
 
     public LoadingController() {
-        baseTitle = AppVaribles.message("LoadingPage");
+        baseTitle = AppVariables.message("LoadingPage");
     }
 
     public void init(final Task<?> task) {
         try {
-            progressIndicator.setProgress(-1F);
-//            progressIndicator.progressProperty().bind(task.progressProperty());
             loadingTask = task;
-            if (timeLabel != null) {
-                showTimer();
+            if (task != null) {
+                progressIndicator.setProgress(-1F);
+                if (timeLabel != null) {
+                    showTimer();
+                }
             }
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -56,9 +57,9 @@ public class LoadingController extends BaseController {
                 timer.cancel();
             }
             final long startTime = new Date().getTime();
-            final String prefix = AppVaribles.message("StartTime") + ": " + DateTools.nowString()
-                    + "   " + AppVaribles.message("ElapsedTime") + ": ";
-            final String suffix = " " + AppVaribles.message("Seconds");
+            final String prefix = AppVariables.message("StartTime") + ": " + DateTools.nowString()
+                    + "   " + AppVariables.message("ElapsedTime") + ": ";
+            final String suffix = " " + AppVariables.message("Seconds");
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -66,6 +67,10 @@ public class LoadingController extends BaseController {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if (loadingTask != null && loadingTask.isCancelled()) {
+                                cancelAction();
+                                return;
+                            }
                             long d = (new Date().getTime() - startTime) / 1000;
                             timeLabel.setText(prefix + d + suffix);
                         }
@@ -83,7 +88,8 @@ public class LoadingController extends BaseController {
     }
 
     @FXML
-    private void cancelAction() {
+    @Override
+    public void cancelAction() {
         if (loadingTask != null) {
             if (parentController != null) {
                 parentController.taskCanceled(loadingTask);
@@ -99,9 +105,9 @@ public class LoadingController extends BaseController {
     }
 
     public void setInfo(String info) {
-        if (loadingTask == null || !loadingTask.isRunning()) {
-            return;
-        }
+//        if (loadingTask == null || !loadingTask.isRunning()) {
+//            return;
+//        }
         infoLabel.setText(info);
     }
 

@@ -17,15 +17,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.base.PdfBatchController;
+import javafx.stage.Stage;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
@@ -59,7 +59,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
     protected Button nowCreateButton, nowModifyButton;
 
     public PdfAttributesBatchController() {
-        baseTitle = AppVaribles.message("PDFAttributesBatch");
+        baseTitle = AppVariables.message("PDFAttributesBatch");
         needUserPassword = false;
         needOwnerPassword = true;
     }
@@ -117,10 +117,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
             authorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    AppVaribles.setUserConfigValue("AuthorKey", newValue);
+                    AppVariables.setUserConfigValue("AuthorKey", newValue);
                 }
             });
-            authorInput.setText(AppVaribles.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
+            authorInput.setText(AppVariables.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
 
             versionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -325,6 +325,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
             alert.setTitle(myStage.getTitle());
             alert.setContentText(message("SureSetPasswords"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK) {
                 return false;
@@ -334,6 +338,10 @@ public class PdfAttributesBatchController extends PdfBatchController {
             alert.setTitle(myStage.getTitle());
             alert.setContentText(message("SureUnsetPasswords"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() != ButtonType.OK) {
                 return false;
@@ -351,7 +359,7 @@ public class PdfAttributesBatchController extends PdfBatchController {
         try {
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getOwnerPassword();
-            try (PDDocument pd = PDDocument.load(srcFile, filePassword, AppVaribles.pdfMemUsage)) {
+            try (PDDocument pd = PDDocument.load(srcFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());
@@ -372,17 +380,17 @@ public class PdfAttributesBatchController extends PdfBatchController {
                     docInfo.setKeywords(keywordInput.getText());
                 }
                 Calendar c = Calendar.getInstance();
-                if (createTimeCheck.isSelected()) {
+                if (createTimeCheck.isSelected() && createTime != null) {
                     c.setTimeInMillis​(createTime.getTime());
                     docInfo.setCreationDate(c);
                 }
-                if (modifyTimeCheck.isSelected()) {
+                if (modifyTimeCheck.isSelected() && modifyTime != null) {
                     c.setTimeInMillis​(modifyTime.getTime());
                     docInfo.setModificationDate(c);
                 }
                 pd.setDocumentInformation(docInfo);
 
-                if (versionCheck.isSelected()) {
+                if (versionCheck.isSelected() && version > 0) {
                     pd.setVersion(version);
                 }
 

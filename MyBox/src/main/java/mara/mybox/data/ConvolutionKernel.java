@@ -10,7 +10,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -89,7 +89,7 @@ public class ConvolutionKernel {
     public static ConvolutionKernel makeAverageBlur(int radius) {
         int size = 2 * radius + 1;
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("AverageBlur") + " " + size + "*" + size);
+        kernel.setName(AppVariables.message("AverageBlur") + " " + size + "*" + size);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(size);
@@ -109,7 +109,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeGaussianBlur3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("GaussianBlur") + " 3*3");
+        kernel.setName(AppVariables.message("GaussianBlur") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -127,7 +127,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeGaussianBlur5() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("GaussianBlur") + " 5*5");
+        kernel.setName(AppVariables.message("GaussianBlur") + " 5*5");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(5);
@@ -147,7 +147,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeSharpen3a() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Sharpen") + " 3*3 a");
+        kernel.setName(AppVariables.message("Sharpen") + " 3*3 a");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -167,7 +167,7 @@ public class ConvolutionKernel {
     // https://en.wikipedia.org/wiki/Kernel_(image_processing)
     public static ConvolutionKernel makeSharpen3b() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Sharpen") + " 3*3 b");
+        kernel.setName(AppVariables.message("Sharpen") + " 3*3 b");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -185,7 +185,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeSharpen3c() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Sharpen") + " 3*3 b");
+        kernel.setName(AppVariables.message("Sharpen") + " 3*3 b");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -203,7 +203,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEdgeDetection3a() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("EdgeDetection") + " 3*3 a");
+        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 a");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -222,7 +222,7 @@ public class ConvolutionKernel {
     // https://www.javaworld.com/article/2076764/java-se/image-processing-with-java-2d.html
     public static ConvolutionKernel makeEdgeDetection3b() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("EdgeDetection") + " 3*3 b");
+        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 b");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -240,7 +240,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEdgeDetection3c() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("EdgeDetection") + " 3*3 c");
+        kernel.setName(AppVariables.message("EdgeDetection") + " 3*3 c");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -258,7 +258,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeUnsharpMasking5() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("UnsharpMasking") + " 5*5");
+        kernel.setName(AppVariables.message("UnsharpMasking") + " 5*5");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(5);
@@ -278,7 +278,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeMotionBlur3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("MotionBlur") + " 3*3");
+        kernel.setName(AppVariables.message("MotionBlur") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(5);
@@ -297,7 +297,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeMotionBlur5() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("MotionBlur") + " 5*5");
+        kernel.setName(AppVariables.message("MotionBlur") + " 5*5");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(5);
@@ -318,7 +318,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeMotionBlur9() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("MotionBlur") + " 9*9");
+        kernel.setName(AppVariables.message("MotionBlur") + " 9*9");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(9);
@@ -344,7 +344,7 @@ public class ConvolutionKernel {
     // https://en.wikipedia.org/wiki/Image_embossing
     public static ConvolutionKernel makeEmbossTop3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("Top") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("Top") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -363,7 +363,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossBottom3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("Bottom") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("Bottom") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -382,7 +382,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossLeft3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("Left") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("Left") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -401,7 +401,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossRight3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("Right") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("Right") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -420,7 +420,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossLeftTop3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("LeftTop") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("LeftTop") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -439,7 +439,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossRightBottom3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("RightBottom") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("RightBottom") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -458,7 +458,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossLeftBottom3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("LeftBottom") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("LeftBottom") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -477,7 +477,7 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossRightTop3() {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " " + AppVaribles.message("RightTop") + " 3*3");
+        kernel.setName(AppVariables.message("Emboss") + " " + AppVariables.message("RightTop") + " 3*3");
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(3);
@@ -497,7 +497,7 @@ public class ConvolutionKernel {
     public static ConvolutionKernel makeGaussKernel(int radius) {
         ConvolutionKernel kernel = new ConvolutionKernel();
         int width = radius * 2 + 1;
-        kernel.setName(AppVaribles.message("GaussianBlur") + " " + width + "*" + width);
+        kernel.setName(AppVariables.message("GaussianBlur") + " " + width + "*" + width);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(width);
@@ -699,9 +699,9 @@ public class ConvolutionKernel {
 
     public static ConvolutionKernel makeEmbossKernel(int direction, int size, boolean gray) {
         ConvolutionKernel kernel = new ConvolutionKernel();
-        kernel.setName(AppVaribles.message("Emboss") + " "
-                + AppVaribles.message("Direction") + ":" + direction + " "
-                + AppVaribles.message("Size") + ":" + size);
+        kernel.setName(AppVariables.message("Emboss") + " "
+                + AppVariables.message("Direction") + ":" + direction + " "
+                + AppVariables.message("Size") + ":" + size);
         kernel.setCreateTime(DateTools.datetimeToString(new Date()));
         kernel.setModifyTime(DateTools.datetimeToString(new Date()));
         kernel.setWidth(size);

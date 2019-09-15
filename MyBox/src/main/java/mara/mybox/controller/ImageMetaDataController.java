@@ -11,11 +11,10 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -31,7 +30,7 @@ public class ImageMetaDataController extends BaseController {
     private TextArea metaDataInput;
 
     public ImageMetaDataController() {
-        baseTitle = AppVaribles.message("ImageMetaData");
+        baseTitle = AppVariables.message("ImageMetaData");
 
     }
 

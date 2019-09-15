@@ -21,10 +21,10 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTools.FileSortMode;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.setUserConfigValue;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
 
 /**
  * @Author Mara
@@ -51,11 +51,10 @@ public class FilesRenameController extends FilesBatchController {
     protected ToggleGroup sortGroup;
 
     public FilesRenameController() {
-        baseTitle = AppVaribles.message("FilesRename");
+        baseTitle = AppVariables.message("FilesRename");
 
-        targetPathKey = "FileTargetPath";
-        sourcePathKey = "FileSourcePath";
-
+//        targetPathKey = "FileTargetPath";
+//        sourcePathKey = "FileSourcePath";
         FileNameFillZeroKey = "FileNameFillZeroKey";
     }
 
@@ -72,7 +71,7 @@ public class FilesRenameController extends FilesBatchController {
                     setUserConfigValue(FileNameFillZeroKey, fillZeroCheck.isSelected());
                 }
             });
-            fillZeroCheck.setSelected(AppVaribles.getUserConfigBoolean(FileNameFillZeroKey));
+            fillZeroCheck.setSelected(AppVariables.getUserConfigBoolean(FileNameFillZeroKey));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -121,7 +120,7 @@ public class FilesRenameController extends FilesBatchController {
             currentAccum = 0;
         }
 
-        newNames = new HashMap();
+        newNames = new HashMap<>();
         return super.makeBatchParameters();
 
     }
@@ -185,10 +184,10 @@ public class FilesRenameController extends FilesBatchController {
         String newName = renameFile(srcFile);
         if (newName != null) {
             d.setNewName(new File(newName).getAbsolutePath());
-            return AppVaribles.message("Successful");
+            return AppVariables.message("Successful");
         } else {
             d.setNewName("");
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         }
     }
 
@@ -216,7 +215,7 @@ public class FilesRenameController extends FilesBatchController {
 
     @Override
     public String handleDirectory(File dir) {
-        currentNewNames = new HashMap();
+        currentNewNames = new HashMap<>();
         String result = super.handleDirectory(dir);
         newNames.put(dir.getAbsolutePath(), currentNewNames);
         return result;
@@ -319,10 +318,10 @@ public class FilesRenameController extends FilesBatchController {
                 File newFile = new File(newName);
                 if (newFile.exists()) {
                     if (newFile.renameTo(new File(originalName))) {
-                        f.setHandled(AppVaribles.message("Recovered"));
+                        f.setHandled(AppVariables.message("Recovered"));
                         f.setFileName(originalName);
                     } else {
-                        f.setHandled(AppVaribles.message("FailRecovered"));
+                        f.setHandled(AppVariables.message("FailRecovered"));
                     }
                 }
                 f.setNewName("");
@@ -342,7 +341,7 @@ public class FilesRenameController extends FilesBatchController {
                         recovered++;
                     }
                 }
-                f.setHandled(MessageFormat.format(AppVaribles.message("DirRecoverSummary"),
+                f.setHandled(MessageFormat.format(AppVariables.message("DirRecoverSummary"),
                         currentNewNames.size(), recovered));
                 newNames.remove(originalName);
             }
@@ -365,10 +364,10 @@ public class FilesRenameController extends FilesBatchController {
                 File newFile = new File(newName);
                 if (newFile.exists()) {
                     if (newFile.renameTo(new File(originalName))) {
-                        f.setHandled(AppVaribles.message("Recovered"));
+                        f.setHandled(AppVariables.message("Recovered"));
                         f.setFileName(originalName);
                     } else {
-                        f.setHandled(AppVaribles.message("FailRecovered"));
+                        f.setHandled(AppVariables.message("FailRecovered"));
                     }
                 }
                 f.setNewName("");
@@ -388,7 +387,7 @@ public class FilesRenameController extends FilesBatchController {
                         recovered++;
                     }
                 }
-                f.setHandled(MessageFormat.format(AppVaribles.message("DirRecoverSummary"),
+                f.setHandled(MessageFormat.format(AppVariables.message("DirRecoverSummary"),
                         currentNewNames.size(), recovered));
                 newNames.remove(originalName);
             }

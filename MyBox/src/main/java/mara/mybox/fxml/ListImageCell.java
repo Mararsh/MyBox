@@ -35,11 +35,12 @@ public class ListImageCell extends ListCell<Image> {
     @Override
     protected void updateItem(Image item, boolean empty) {
         super.updateItem(item, empty);
-        if (item != null) {
+        if (!empty && item != null) {
             view.setImage(item);
             setGraphic(view);
         } else {
             setGraphic(null);
+            setText(null);
         }
     }
 }

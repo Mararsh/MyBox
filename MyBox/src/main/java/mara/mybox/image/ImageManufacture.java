@@ -20,10 +20,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
-import mara.mybox.data.DoublePenLines;
+import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
@@ -31,10 +33,10 @@ import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageCombine.CombineSizeType;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageMosaic.MosaicType;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.value.CommonValues.TRANSPARENT;
 
 /**
  * @Author Mara
@@ -68,23 +70,23 @@ public class ImageManufacture {
     }
 
     public static boolean hasAlpha(BufferedImage source) {
-        try {
-            return source.getColorModel().hasAlpha();
-        } catch (Exception e) {
-            switch (source.getType()) {
-                case BufferedImage.TYPE_3BYTE_BGR:
-                case BufferedImage.TYPE_BYTE_BINARY:
-                case BufferedImage.TYPE_BYTE_GRAY:
-                case BufferedImage.TYPE_BYTE_INDEXED:
-                case BufferedImage.TYPE_INT_BGR:
-                case BufferedImage.TYPE_INT_RGB:
-                case BufferedImage.TYPE_USHORT_555_RGB:
-                case BufferedImage.TYPE_USHORT_565_RGB:
-                case BufferedImage.TYPE_USHORT_GRAY:
-                    return false;
-                default:
+        switch (source.getType()) {
+            case BufferedImage.TYPE_3BYTE_BGR:
+            case BufferedImage.TYPE_BYTE_BINARY:
+            case BufferedImage.TYPE_BYTE_GRAY:
+            case BufferedImage.TYPE_BYTE_INDEXED:
+            case BufferedImage.TYPE_INT_BGR:
+            case BufferedImage.TYPE_INT_RGB:
+            case BufferedImage.TYPE_USHORT_555_RGB:
+            case BufferedImage.TYPE_USHORT_565_RGB:
+            case BufferedImage.TYPE_USHORT_GRAY:
+                return false;
+            default:
+                if (source.getColorModel() != null) {
+                    return source.getColorModel().hasAlpha();
+                } else {
                     return true;
-            }
+                }
         }
     }
 
@@ -104,11 +106,7 @@ public class ImageManufacture {
         if (!hasAlpha(source)) {
             return source;
         }
-        if (AppVaribles.isAlphaAsWhite()) {
-            return ImageManufacture.removeAlpha(source, Color.WHITE);
-        } else {
-            return ImageManufacture.removeAlpha(source, Color.BLACK);
-        }
+        return ImageManufacture.removeAlpha(source, ImageColor.getAlphaColor());
     }
 
     public static BufferedImage removeAlpha(BufferedImage source, Color color) {
@@ -128,11 +126,7 @@ public class ImageManufacture {
                     }
                 }
             }
-//            Graphics2D g2d = target.createGraphics();
-//            g2d.setColor(color);
-//            g2d.fillRect(0, 0, width, height);
-//            g2d.drawImage(source, 0, 0, null);
-//            g2d.dispose();
+
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -176,7 +170,9 @@ public class ImageManufacture {
         }
         BufferedImage target = new BufferedImage(width, height, imageType);
         Graphics2D g = target.createGraphics();
-        g.setBackground(TRANSPARENT);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setBackground(CommonImageValues.TRANSPARENT);
         g.drawImage(source, 0, 0, width, height, null);
         g.dispose();
         return target;
@@ -198,39 +194,52 @@ public class ImageManufacture {
         return scaleImage(source, width, height);
     }
 
-    public static BufferedImage scaleImage(BufferedImage source,
-            int targetW, int targetH,
-            boolean keepRatio, int keepType) {
-
-        int finalW = targetW;
-        int finalH = targetH;
-        double ratioW = (double) targetW / source.getWidth();
-        double ratioH = (double) targetH / source.getHeight();
-        if (keepRatio && ratioW != ratioH) {
-            switch (keepType) {
+    public static int[] scale(int sourceX, int sourceY, int newWidth, int newHeight, int keepRatioType) {
+        int finalW = newWidth;
+        int finalH = newHeight;
+        double ratioW = (double) newWidth / sourceX;
+        double ratioH = (double) newHeight / sourceY;
+        if (ratioW != ratioH) {
+            switch (keepRatioType) {
                 case KeepRatioType.BaseOnWidth:
-                    finalH = (int) (ratioW * source.getHeight());
+                    finalH = (int) (ratioW * sourceY);
                     break;
                 case KeepRatioType.BaseOnHeight:
-                    finalW = (int) (ratioH * source.getWidth());
+                    finalW = (int) (ratioH * sourceX);
                     break;
                 case KeepRatioType.BaseOnLarger:
                     if (ratioW > ratioH) {
-                        finalH = (int) (ratioW * source.getHeight());
+                        finalH = (int) (ratioW * sourceY);
                     } else {
-                        finalW = (int) (ratioH * source.getWidth());
+                        finalW = (int) (ratioH * sourceX);
                     }
                     break;
                 case KeepRatioType.BaseOnSmaller:
                     if (ratioW < ratioH) {
-                        finalH = (int) (ratioW * source.getHeight());
+                        finalH = (int) (ratioW * sourceY);
                     } else {
-                        finalW = (int) (ratioH * source.getWidth());
+                        finalW = (int) (ratioH * sourceX);
                     }
                     break;
             }
         }
+        int[] d = new int[2];
+        d[0] = finalW;
+        d[1] = finalH;
+        return d;
+    }
 
+    public static BufferedImage scaleImage(BufferedImage source,
+            int targetW, int targetH,
+            boolean keepRatio, int keepType) {
+        int finalW = targetW;
+        int finalH = targetH;
+        if (keepRatio) {
+            int[] wh = ImageManufacture.scale(source.getWidth(), source.getHeight(),
+                    targetW, targetH, keepType);
+            finalW = wh[0];
+            finalH = wh[1];
+        }
         return scaleImage(source, finalW, finalH);
     }
 
@@ -251,6 +260,7 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             if (isVertical) {
                 int ay = y;
                 for (int i = 0; i < text.length(); i++) {
@@ -377,7 +387,7 @@ public class ImageManufacture {
         if (imageType == BufferedImage.TYPE_CUSTOM) {
             imageType = BufferedImage.TYPE_INT_ARGB;
         }
-        if (bgColor.getRGB() == TRANSPARENT.getRGB()) {
+        if (bgColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()) {
             imageType = BufferedImage.TYPE_INT_ARGB;
         }
         BufferedImage target = new BufferedImage(width, height, imageType);
@@ -416,6 +426,11 @@ public class ImageManufacture {
             float iOpocity, jOpacity, opocity;
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
+                    int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        shadowImage.setRGB(i, j, 0);
+                        continue;
+                    }
                     iOpocity = jOpacity = 1.0f;
                     if (i < shadowWidth) {
                         iOpocity = 1.0f * i / shadowWidth;
@@ -440,7 +455,7 @@ public class ImageManufacture {
 
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
-            Color bgColor = TRANSPARENT;
+            Color bgColor = CommonImageValues.TRANSPARENT;
             g.setColor(bgColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -468,14 +483,14 @@ public class ImageManufacture {
             BufferedImage shadowImage = new BufferedImage(width, height, imageType);
             float iOpocity, jOpacity, opocity;
             Color newColor;
-            Color bgColor;
-            if (AppVaribles.isAlphaAsWhite()) {
-                bgColor = Color.WHITE;
-            } else {
-                bgColor = Color.BLACK;
-            }
+            Color alphaColor = ImageColor.getAlphaColor();
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
+                    int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        shadowImage.setRGB(i, j, alphaColor.getRGB());
+                        continue;
+                    }
                     iOpocity = jOpacity = 1.0f;
                     if (i < shadowWidth) {
                         iOpocity = 1.0f * i / shadowWidth;
@@ -491,7 +506,7 @@ public class ImageManufacture {
                     if (opocity == 1.0f) {
                         newColor = shadowColor;
                     } else {
-                        newColor = ImageColor.blendAlpha(shadowColor, opocity, bgColor);
+                        newColor = ImageColor.blendAlpha(shadowColor, opocity, alphaColor);
                     }
                     shadowImage.setRGB(i, j, newColor.getRGB());
                 }
@@ -499,7 +514,7 @@ public class ImageManufacture {
 
             BufferedImage target = new BufferedImage(width + shadowWidth, height + shadowWidth, imageType);
             Graphics2D g = target.createGraphics();
-            g.setColor(bgColor);
+            g.setColor(alphaColor);
             g.fillRect(0, 0, width + shadowWidth, height + shadowWidth);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
@@ -517,7 +532,7 @@ public class ImageManufacture {
     public static BufferedImage cutMargins(BufferedImage source, Color cutColor,
             boolean cutTop, boolean cutBottom, boolean cutLeft, boolean cutRight) {
         try {
-            if (cutColor.getRGB() == TRANSPARENT.getRGB()
+            if (cutColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()
                     && !hasAlpha(source)) {
                 return source;
             }
@@ -663,7 +678,7 @@ public class ImageManufacture {
                 totalHegiht += MarginWidth;
             }
             int imageType = source.getType();
-            if (addColor.getRGB() == TRANSPARENT.getRGB()) {
+            if (addColor.getRGB() == CommonImageValues.TRANSPARENT.getRGB()) {
                 imageType = BufferedImage.TYPE_INT_ARGB;
             }
             BufferedImage target = new BufferedImage(totalWidth, totalHegiht, imageType);
@@ -691,6 +706,10 @@ public class ImageManufacture {
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        target.setRGB(i, j, 0);
+                        continue;
+                    }
                     iOpocity = jOpacity = 1.0f;
                     if (i < blurWidth) {
                         if (blurLeft) {
@@ -737,15 +756,14 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_RGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             float iOpocity, jOpacity, opocity;
-            Color bgColor;
-            if (AppVaribles.isAlphaAsWhite()) {
-                bgColor = Color.WHITE;
-            } else {
-                bgColor = Color.BLACK;
-            }
+            Color alphaColor = ImageColor.getAlphaColor();
             for (int j = 0; j < height; j++) {
                 for (int i = 0; i < width; i++) {
                     int pixel = source.getRGB(i, j);
+                    if (pixel == 0) {
+                        target.setRGB(i, j, alphaColor.getRGB());
+                        continue;
+                    }
                     iOpocity = jOpacity = 1.0f;
                     if (i < blurWidth) {
                         if (blurLeft) {
@@ -769,7 +787,7 @@ public class ImageManufacture {
                     if (opocity == 1.0f) {
                         target.setRGB(i, j, pixel);
                     } else {
-                        Color color = ImageColor.blendAlpha(new Color(pixel), opocity, bgColor);
+                        Color color = ImageColor.blendAlpha(new Color(pixel), opocity, alphaColor);
                         target.setRGB(i, j, color.getRGB());
                     }
                 }
@@ -809,7 +827,7 @@ public class ImageManufacture {
         int imageType = BufferedImage.TYPE_INT_ARGB;
         BufferedImage target = new BufferedImage(newWidth, newHeight, imageType);
         Graphics2D g = target.createGraphics();
-        Color bgColor = TRANSPARENT;
+        Color bgColor = CommonImageValues.TRANSPARENT;
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.setBackground(bgColor);
         if (!isSkew) {
@@ -893,7 +911,7 @@ public class ImageManufacture {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
-            Color bgColor = TRANSPARENT;
+            Color bgColor = CommonImageValues.TRANSPARENT;
             g.setBackground(bgColor);
             if (shearX < 0) {
                 g.translate(width / 2, 0);
@@ -1076,10 +1094,10 @@ public class ImageManufacture {
                     }
                 }
             }
-            List<Integer> xs = new ArrayList();
-            List<Integer> ys = new ArrayList();
-            List<Integer> widths = new ArrayList();
-            List<Integer> heights = new ArrayList();
+            List<Integer> xs = new ArrayList<>();
+            List<Integer> ys = new ArrayList<>();
+            List<Integer> widths = new ArrayList<>();
+            List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
                 ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
@@ -1166,10 +1184,10 @@ public class ImageManufacture {
                     }
                 }
             }
-            List<Integer> xs = new ArrayList();
-            List<Integer> ys = new ArrayList();
-            List<Integer> widths = new ArrayList();
-            List<Integer> heights = new ArrayList();
+            List<Integer> xs = new ArrayList<>();
+            List<Integer> ys = new ArrayList<>();
+            List<Integer> widths = new ArrayList<>();
+            List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
                 ImageInformation imageInfo = images.get(i);
                 javafx.scene.image.Image image = imageInfo.getImage();
@@ -1263,7 +1281,8 @@ public class ImageManufacture {
 
     public static BufferedImage drawRectangle(BufferedImage source,
             DoubleRectangle rect, Color strokeColor, int strokeWidth,
-            int arcWidth, boolean dotted, boolean isFill, Color fillColor) {
+            int arcWidth, boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         try {
             if (rect == null || strokeColor == null || !rect.isValid()) {
                 return source;
@@ -1281,10 +1300,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
             if (strokeWidth > 0) {
-                g.setColor(strokeColor);
+                if (strokeColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(strokeColor);
+                }
                 BasicStroke stroke;
                 if (dotted) {
                     stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1301,7 +1324,11 @@ public class ImageManufacture {
                 }
             }
             if (isFill) {
-                g.setColor(fillColor);
+                if (fillColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(fillColor);
+                }
                 if (arcWidth > 0) {
                     int a = Math.max(0, Math.min(height - 1, Math.round(arcWidth)));
                     g.fillRoundRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1, a, a);
@@ -1319,7 +1346,8 @@ public class ImageManufacture {
 
     public static BufferedImage drawCircle(BufferedImage source,
             DoubleCircle circle, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         try {
             if (circle == null || strokeColor == null || !circle.isValid()) {
                 return source;
@@ -1336,11 +1364,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
             if (strokeWidth > 0) {
-                g.setColor(strokeColor);
-
+                if (strokeColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(strokeColor);
+                }
                 BasicStroke stroke;
                 if (dotted) {
                     stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1353,7 +1384,11 @@ public class ImageManufacture {
                 g.drawOval(x - r, y - r, 2 * r, 2 * r);
             }
             if (isFill) {
-                g.setColor(fillColor);
+                if (fillColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(fillColor);
+                }
                 g.fillOval(x - r, y - r, 2 * r, 2 * r);
             }
             g.dispose();
@@ -1366,7 +1401,8 @@ public class ImageManufacture {
 
     public static BufferedImage drawEllipse(BufferedImage source,
             DoubleEllipse ellipse, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         try {
             if (ellipse == null || strokeColor == null || !ellipse.isValid()) {
                 return source;
@@ -1384,10 +1420,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC, opacity);
             g.setComposite(ac);
             if (strokeWidth > 0) {
-                g.setColor(strokeColor);
+                if (strokeColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(strokeColor);
+                }
                 BasicStroke stroke;
                 if (dotted) {
                     stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1400,7 +1440,11 @@ public class ImageManufacture {
                 g.drawOval(x - rx, y - ry, 2 * rx, 2 * ry);
             }
             if (isFill) {
-                g.setColor(fillColor);
+                if (fillColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(fillColor);
+                }
                 g.fillOval(x - rx, y - ry, 2 * rx, 2 * ry);
             }
             g.dispose();
@@ -1413,7 +1457,8 @@ public class ImageManufacture {
 
     public static BufferedImage drawPolygon(BufferedImage source,
             DoublePolygon polygonData, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         try {
             if (polygonData == null || strokeColor == null || polygonData.getSize() < 3) {
                 return source;
@@ -1428,10 +1473,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
             if (strokeWidth > 0) {
-                g.setColor(strokeColor);
+                if (strokeColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(strokeColor);
+                }
                 BasicStroke stroke;
                 if (dotted) {
                     stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1443,7 +1492,11 @@ public class ImageManufacture {
                 g.drawPolygon(xy.get("x"), xy.get("y"), polygonData.getSize());
             }
             if (isFill) {
-                g.setColor(fillColor);
+                if (fillColor.getRGB() == 0) {
+                    g.setColor(null);
+                } else {
+                    g.setColor(fillColor);
+                }
                 g.fillPolygon(xy.get("x"), xy.get("y"), polygonData.getSize());
             }
             g.dispose();
@@ -1456,7 +1509,7 @@ public class ImageManufacture {
 
     public static BufferedImage drawPolyline(BufferedImage source,
             DoublePolyline polylineData, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            boolean dotted, float opacity) {
         try {
             if (polylineData == null || strokeColor == null
                     || polylineData.getSize() < 2 || strokeWidth < 1) {
@@ -1472,9 +1525,13 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
-            g.setColor(strokeColor);
+            if (strokeColor.getRGB() == 0) {
+                g.setColor(null);
+            } else {
+                g.setColor(strokeColor);
+            }
             BasicStroke stroke;
             if (dotted) {
                 stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1495,7 +1552,7 @@ public class ImageManufacture {
 
     public static BufferedImage drawLines(BufferedImage source,
             DoublePolyline polylineData, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            boolean dotted, float opacity) {
         try {
             if (polylineData == null || strokeColor == null
                     || polylineData.getSize() < 2 || strokeWidth < 1) {
@@ -1510,10 +1567,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
 
-            g.setColor(strokeColor);
+            if (strokeColor.getRGB() == 0) {
+                g.setColor(null);
+            } else {
+                g.setColor(strokeColor);
+            }
             BasicStroke stroke;
             if (dotted) {
                 stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1541,8 +1602,8 @@ public class ImageManufacture {
     }
 
     public static BufferedImage drawLines(BufferedImage source,
-            DoublePenLines penData, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            DoubleLines penData, Color strokeColor, int strokeWidth,
+            boolean dotted, float opacity) {
         try {
             if (penData == null || strokeColor == null
                     || penData.getPointsSize() == 0 || strokeWidth < 1) {
@@ -1557,10 +1618,14 @@ public class ImageManufacture {
             BufferedImage target = new BufferedImage(width, height, imageType);
             Graphics2D g = target.createGraphics();
             g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity);
             g.setComposite(ac);
 
-            g.setColor(strokeColor);
+            if (strokeColor.getRGB() == 0) {
+                g.setColor(null);
+            } else {
+                g.setColor(strokeColor);
+            }
             BasicStroke stroke;
             if (dotted) {
                 stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
@@ -1583,6 +1648,146 @@ public class ImageManufacture {
                 }
             }
             g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    protected static int mosaic(BufferedImage source, int imageWidth, int imageHeight,
+            int x, int y, MosaicType type, int intensity) {
+        int newColor;
+        if (type == MosaicType.Mosaic) {
+            int mx = Math.max(0, Math.min(imageWidth - 1, x - x % intensity));
+            int my = Math.max(0, Math.min(imageHeight - 1, y - y % intensity));
+            newColor = source.getRGB(mx, my);
+        } else {
+            int fx = Math.max(0, Math.min(imageWidth - 1, x - new Random().nextInt(intensity)));
+            int fy = Math.max(0, Math.min(imageHeight - 1, y - new Random().nextInt(intensity)));
+            newColor = source.getRGB(fx, fy);
+        }
+        return newColor;
+    }
+
+    public static boolean inLine(Line line, int x, int y) {
+        double d = (x - line.getStartX()) * (line.getStartY() - line.getEndY())
+                - ((line.getStartX() - line.getEndX()) * (y - line.getStartY()));
+        return Math.abs(d) < 0.0001
+                && (x >= Math.min(line.getStartX(), line.getEndX())
+                && x <= Math.max(line.getStartX(), line.getEndX()))
+                && (y >= Math.min(line.getStartY(), line.getEndY()))
+                && (y <= Math.max(line.getStartY(), line.getEndY()));
+    }
+
+    public static BufferedImage drawMosaic(BufferedImage source,
+            DoubleLines penData, MosaicType mosaicType, int strokeWidth) {
+        try {
+            if (penData == null || mosaicType == null
+                    || penData.getPointsSize() == 0 || strokeWidth < 1) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+//            BufferedImage mask = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//            Graphics2D g = mask.createGraphics();
+//            g.setColor(CommonImageValues.TRANSPARENT);
+//            g.fillRect(0, 0, width, height);
+//            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+//            g.setComposite(ac);
+//            g.setColor(Color.BLACK);
+//            g.setStroke(new BasicStroke(strokeWidth));
+//            int lastx, lasty = -1, thisx, thisy;
+//            for (List<DoublePoint> lineData : penData.getLines()) {
+//                lastx = -1;
+//                for (DoublePoint p : lineData) {
+//                    thisx = (int) Math.round(p.getX());
+//                    thisy = (int) Math.round(p.getY());
+//                    if (lastx >= 0) {
+//                        g.drawLine(lastx, lasty, thisx, thisy);
+//                    }
+//                    lastx = thisx;
+//                    lasty = thisy;
+//                }
+//            }
+//            g.dispose();
+
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D gt = target.createGraphics();
+            gt.drawImage(source, 0, 0, width, height, null);
+            gt.dispose();
+            List<Line> dlines = penData.directLines();
+            logger.debug(dlines.size());
+            int pixel;
+            for (Line line : dlines) {
+                int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
+                int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
+                int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
+                int y2 = Math.min(height, Math.max(0, (int) line.getEndY()));
+//                logger.debug(x1 + "," + y1 + "    " + x2 + "," + y2);
+                if (x1 == x2) {
+                    if (y2 > y1) {
+//                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
+                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
+
+                            for (int y = y1; y <= y2; y++) {
+
+                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
+                                target.setRGB(x, y, pixel);
+                            }
+                        }
+                    } else {
+//                        logger.debug(Math.max(0, x1 - strokeWidth) + "," + Math.min(width, x1 + strokeWidth));
+                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
+                            for (int y = y2; y <= y1; y++) {
+                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
+                                target.setRGB(x, y, pixel);
+                            }
+                        }
+                    }
+
+                } else if (x2 > x1) {
+//                    logger.debug(x1 + "," + x2);
+                    for (int x = x1; x <= x2; x++) {
+                        int y0 = (x - x1) * (y2 - y1) / (x2 - x1) + y1;
+                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
+//                        logger.debug(y0 + "," + offset);
+                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
+                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
+                            target.setRGB(x, y, pixel);
+                        }
+                    }
+
+                } else {
+//                    logger.debug(x2 + "," + x1);
+                    for (int x = x2; x <= x1; x++) {
+                        int y0 = (x - x2) * (y1 - y2) / (x1 - x2) + y2;
+                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
+//                        logger.debug(y0 + "," + offset);
+                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
+                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
+                            target.setRGB(x, y, pixel);
+                        }
+                    }
+                }
+
+            }
+
+//            int pixel, white = Color.BLACK.getRGB();
+//            for (int j = 0; j < height; j++) {
+//                for (int i = 0; i < width; i++) {
+//                    pixel = source.getRGB(i, j);
+//                    if (pixel == 0 || mask.getRGB(i, j) == 0) {
+//                        continue;
+//                    }
+////                    pixel = mosaic(source, width, height, i, j, mosaicType, strokeWidth);
+//                    target.setRGB(i, j, pixel);
+//                }
+//            }
             return target;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1618,6 +1823,90 @@ public class ImageManufacture {
             bfs[0] = noAlphaImage;
             bfs[1] = alphaImage;
             return bfs;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage extractAlphaOnly(BufferedImage source) {
+        try {
+            if (source == null) {
+                return null;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            BufferedImage alphaImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Color color, newColor;
+            int pixel;
+            for (int j = 0; j < height; j++) {
+                for (int i = 0; i < width; i++) {
+                    pixel = source.getRGB(i, j);
+                    color = new Color(pixel, true);
+                    newColor = new Color(0, 0, 0, color.getAlpha());
+                    alphaImage.setRGB(i, j, newColor.getRGB());
+                }
+            }
+            return alphaImage;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BufferedImage[] outline(BufferedImage srcImage,
+            DoubleRectangle rect, int targetWidth, int targetHeight, boolean keepRatio,
+            Color bgColor, boolean exclude) {
+        try {
+            if (srcImage == null) {
+                return null;
+            }
+            BufferedImage scaledImage = scaleImage(srcImage, (int) rect.getWidth(), (int) rect.getHeight(),
+                    keepRatio, ImageManufacture.KeepRatioType.BaseOnWidth);
+            int offsetX = (int) rect.getSmallX();
+            int offsetY = (int) rect.getSmallY();
+            int scaledWidth = scaledImage.getWidth();
+            int scaledHeight = scaledImage.getHeight();
+            int width = offsetX >= 0
+                    ? Math.max(targetWidth, scaledWidth + offsetX)
+                    : Math.max(targetWidth - offsetX, scaledWidth);
+            int height = offsetY >= 0
+                    ? Math.max(targetHeight, scaledHeight + offsetY)
+                    : Math.max(targetHeight - offsetY, scaledHeight);
+            int startX = offsetX >= 0 ? offsetX : 0;
+            int startY = offsetY >= 0 ? offsetY : 0;
+            BufferedImage target = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = target.createGraphics();
+            if (!exclude) {
+                g.setColor(bgColor);
+            } else {
+                g.setColor(CommonImageValues.TRANSPARENT);
+            }
+            g.fillRect(0, 0, width, height);
+            int pixel, bgPixel = bgColor.getRGB();
+            for (int j = 0; j < scaledHeight; j++) {
+                for (int i = 0; i < scaledWidth; i++) {
+                    pixel = scaledImage.getRGB(i, j);
+                    if (!exclude) {
+                        if (pixel == 0) {
+                            target.setRGB(i + startX, j + startY, bgPixel);
+                        } else {
+                            target.setRGB(i + startX, j + startY, 0);
+                        }
+                    } else {
+                        if (pixel == 0) {
+                            target.setRGB(i + startX, j + startY, 0);
+                        } else {
+                            target.setRGB(i + startX, j + startY, bgPixel);
+                        }
+                    }
+                }
+            }
+            g.dispose();
+            BufferedImage[] ret = new BufferedImage[2];
+            ret[0] = scaledImage;
+            ret[1] = target;
+            return ret;
         } catch (Exception e) {
             logger.error(e.toString());
             return null;
@@ -1710,12 +1999,7 @@ public class ImageManufacture {
                 imageType = BufferedImage.TYPE_INT_ARGB_PRE;
             }
             BufferedImage target = new BufferedImage(sourceWidth, sourceHeight, imageType);
-            Color sourceColor, newColor, bkColor;
-            if (AppVaribles.isAlphaAsWhite()) {
-                bkColor = Color.WHITE;
-            } else {
-                bkColor = Color.BLACK;
-            }
+            Color sourceColor, newColor, bkColor = ImageColor.getAlphaColor();
             int bkPixel = bkColor.getRGB();
             for (int j = 0; j < sourceHeight; j++) {
                 for (int i = 0; i < sourceWidth; i++) {
@@ -1751,6 +2035,134 @@ public class ImageManufacture {
         } catch (Exception e) {
             logger.error(e.toString());
             return source;
+        }
+    }
+
+    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
+            int rotate, int margin) {
+        try {
+            if (html == null || backImage == null || bkRect == null) {
+                return backImage;
+            }
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+            g.drawImage(backImage, 0, 0, null);
+
+            g.rotate(Math.toRadians(rotate),
+                    bkRect.getSmallX() + bkRect.getWidth() / 2,
+                    bkRect.getSmallY() + bkRect.getHeight() / 2);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, bkOpacity));
+            g.setColor(bkColor);
+            g.fillRoundRect((int) bkRect.getSmallX(), (int) bkRect.getSmallY(),
+                    (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
+
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            g.setColor(CommonImageValues.TRANSPARENT);
+            g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
+                    (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
+                    null);
+
+            g.dispose();
+
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return backImage;
+        }
+    }
+
+    public static BufferedImage drawHTML2(BufferedImage backImage, BufferedImage html,
+            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
+            int rotate, int margin) {
+        try {
+            if (html == null || backImage == null || bkRect == null) {
+                return backImage;
+            }
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+            g.drawImage(backImage, 0, 0, null);
+
+            g.rotate(Math.toRadians(rotate),
+                    bkRect.getSmallX() + bkRect.getWidth() / 2,
+                    bkRect.getSmallY() + bkRect.getHeight() / 2);
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, bkOpacity));
+//            g.setColor(bkColor);
+//            g.fillRoundRect((int) bkRect.getSmallX(), (int) bkRect.getSmallY(),
+//                    (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
+//
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            g.setColor(CommonImageValues.TRANSPARENT);
+//            g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
+//                    (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
+//                    null);
+
+            g.drawImage(html, (int) bkRect.getSmallX(), (int) bkRect.getSmallY(),
+                    (int) bkRect.getWidth(), (int) bkRect.getHeight(),
+                    null);
+
+            g.dispose();
+
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return backImage;
+        }
+    }
+
+    public static BufferedImage drawHTML(BufferedImage backImage, BufferedImage html,
+            int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
+        try {
+            if (html == null || backImage == null) {
+                return backImage;
+            }
+            int width = backImage.getWidth();
+            int height = backImage.getHeight();
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.setBackground(CommonImageValues.TRANSPARENT);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+            g.drawImage(backImage, 0, 0, null);
+
+//            g.rotate(Math.toRadians(rotate),
+//                    bkRect.getSmallX() + bkRect.getWidth() / 2,
+//                    bkRect.getSmallY() + bkRect.getHeight() / 2);
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, bkOpacity));
+//            g.setColor(bkColor);
+//            g.fillRoundRect((int) bkRect.getSmallX(), (int) bkRect.getSmallY(),
+//                    (int) bkRect.getWidth(), (int) bkRect.getHeight(), bkarc, bkarc);
+//
+//            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            g.setColor(CommonImageValues.TRANSPARENT);
+//            g.drawImage(html, (int) bkRect.getSmallX() + margin, (int) bkRect.getSmallY() + margin,
+//                    (int) bkRect.getWidth() - 2 * margin, (int) bkRect.getHeight() - 2 * margin,
+//                    null);
+
+            g.drawImage(html, htmlX, htmlY, htmlWdith, htmlHeight, null);
+
+            g.dispose();
+
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return backImage;
         }
     }
 

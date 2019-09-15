@@ -16,16 +16,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.CMYKColorSpace;
-import mara.mybox.color.Illuminant;
-import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.ColorConversion.RangeType;
 import mara.mybox.color.ColorConversion.SpaceType;
-import mara.mybox.controller.base.BaseController;
+import mara.mybox.color.Illuminant;
+import mara.mybox.color.RGBColorSpace;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -34,26 +33,26 @@ import static mara.mybox.value.AppVaribles.message;
  */
 public class ColorController extends BaseController {
 
-    public double d1, d2, d3, d4;
-    public SpaceType spaceType;
-    public RangeType rangeType;
-    public String spaceName, white, gamma, adaptation;
-    public int scale = 8;
+    protected double d1, d2, d3, d4;
+    protected SpaceType spaceType;
+    protected RangeType rangeType;
+    protected String spaceName, white, gamma, adaptation;
+    protected int scale = 8;
 
     @FXML
-    public ToggleGroup rangeGroup, gammaGroup;
+    protected ToggleGroup rangeGroup, gammaGroup;
     @FXML
-    public RadioButton rangeRatio1, rangeRatio2, gammaRadio1, gammaRadio2;
+    protected RadioButton rangeRatio1, rangeRatio2, gammaRadio1, gammaRadio2;
     @FXML
-    public ComboBox<String> rgbSelector, cieSelector, cmykSelector, whiteSelector, othersSelector;
+    protected ComboBox<String> rgbSelector, cieSelector, cmykSelector, whiteSelector, othersSelector;
     @FXML
-    public Label vLabel1, vLabel2, vLabel3, vLabel4;
+    protected Label vLabel1, vLabel2, vLabel3, vLabel4;
     @FXML
-    public TextField vInput1, vInput2, vInput3, vInput4;
+    protected TextField vInput1, vInput2, vInput3, vInput4;
     @FXML
-    public ColorPicker colorPicker;
+    protected ColorPicker colorPicker;
     @FXML
-    public HBox paraBox1, paraBox2, paraBox3, gammaBox, rangeBox;
+    protected HBox paraBox1, paraBox2, paraBox3, gammaBox, rangeBox;
 
     public ColorController() {
     }
@@ -195,12 +194,14 @@ public class ColorController extends BaseController {
         }
         if (!paraBox2.getChildren().contains(gammaBox)) {
             paraBox2.getChildren().add(gammaBox);
+            FxmlControl.refreshStyle(paraBox2);
         }
         gammaRadio1.setText(gamma);
         gammaRadio1.setSelected(true);
 
         if (!paraBox3.getChildren().contains(rangeBox)) {
             paraBox3.getChildren().add(rangeBox);
+            FxmlControl.refreshStyle(paraBox3);
         }
         rangeRatio2.setText("0~255");
         rangeRatio2.setSelected(true);
@@ -237,6 +238,7 @@ public class ColorController extends BaseController {
         if ("CIEXYZ".equals(spaceName) || "CIExyY".equals(spaceName)) {
             if (!paraBox3.getChildren().contains(rangeBox)) {
                 paraBox3.getChildren().add(rangeBox);
+                FxmlControl.refreshStyle(paraBox3);
             }
             rangeRatio2.setText("0~100");
             checkRange();
@@ -305,6 +307,7 @@ public class ColorController extends BaseController {
 
         if (!paraBox3.getChildren().contains(rangeBox)) {
             paraBox3.getChildren().add(rangeBox);
+            FxmlControl.refreshStyle(paraBox3);
         }
         rangeRatio2.setText("0~100");
         checkRange();

@@ -22,8 +22,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.db.TableConvolutionKernel;
 import mara.mybox.fxml.FxmlControl;
@@ -37,9 +35,9 @@ import mara.mybox.image.ImageQuantization;
 import mara.mybox.image.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.image.PixelsOperation;
 import mara.mybox.image.PixelsOperation.OperationType;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -60,7 +58,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private TextField intInput, intInput2, intInput3, intInput4;
     private RadioButton radio1, radio2, radio3, radio4;
     private ToggleGroup radioGroup;
-    private Button setButton;
+    private Button settingButton;
     private QuantizationAlgorithm quantizationAlgorithm;
     private ImageContrast.ContrastAlgorithm contrastAlgorithm;
 
@@ -75,7 +73,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     protected ImageView effectTipsView, ditherTipsView;
 
     public ImageManufactureBatchEffectsController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchEffects");
+        baseTitle = AppVariables.message("ImageManufactureBatchEffects");
 
     }
 
@@ -206,7 +204,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         try {
             intPara1 = 10;
             intLabel = new Label(message("Radius"));
-            intBox = new ComboBox();
+            intBox = new ComboBox<>();
             intBox.setEditable(true);
             intBox.setPrefWidth(80);
             intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -228,7 +226,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             intBox.getItems().addAll(Arrays.asList("10", "5", "3", "2", "1", "8", "15", "20", "30"));
             intBox.getSelectionModel().select(0);
             stringLabel = new Label(message("Algorithm"));
-            stringBox = new ComboBox();
+            stringBox = new ComboBox<>();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -263,7 +261,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         try {
             intPara1 = ImageManufacture.Direction.Top;
             stringLabel = new Label(message("Direction"));
-            stringBox = new ComboBox();
+            stringBox = new ComboBox<>();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -298,7 +296,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             stringBox.getSelectionModel().select(message("Top"));
             intPara2 = 3;
             intLabel = new Label(message("Radius"));
-            intBox = new ComboBox();
+            intBox = new ComboBox<>();
             intBox.setEditable(false);
             intBox.setPrefWidth(80);
             intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -340,7 +338,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
 
             quantizationAlgorithm = QuantizationAlgorithm.RGB_Uniform;
             stringLabel = new Label(message("Algorithm"));
-            stringBox = new ComboBox();
+            stringBox = new ComboBox<>();
             stringBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
@@ -356,7 +354,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             stringBox.getSelectionModel().select(message("RGBUniformQuantization"));
             intPara1 = 64;
             intLabel = new Label(message("ColorsNumber"));
-            intBox = new ComboBox();
+            intBox = new ComboBox<>();
             intBox.setEditable(false);
             intBox.setPrefWidth(120);
             intBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -505,6 +503,11 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     try {
+                        if (newValue == null || newValue.trim().isEmpty()) {
+                            intPara2 = -1;
+                            intInput.setStyle(null);
+                            return;
+                        }
                         int v = Integer.valueOf(intInput.getText());
                         if (v >= 0 && v <= 255) {
                             intPara2 = v;
@@ -603,7 +606,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
     private void makeConvolutionBox() {
         try {
             stringLabel = new Label(message("ConvolutionKernel"));
-            stringBox = new ComboBox();
+            stringBox = new ComboBox<>();
             kernel = null;
             if (kernels == null) {
                 kernels = TableConvolutionKernel.read();
@@ -622,9 +625,9 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     FxmlControl.setEditorNormal(stringBox);
                 }
             });
-            FxmlControl.setTooltip(stringBox, new Tooltip(message("CTRL+k")));
-            setButton = new Button(message("ManageDot"));
-            setButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            settingButton.setText(message("ManageDot"));
+            settingButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     BaseController c = openStage(CommonValues.ConvolutionKernelManagerFxml);
@@ -632,7 +635,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
                     c.setParentFxml(myFxml);
                 }
             });
-            setBox.getChildren().addAll(stringLabel, stringBox, setButton);
+
+            setBox.getChildren().addAll(stringLabel, stringBox, settingButton);
             startButton.disableProperty().bind(
                     stringBox.getEditor().styleProperty().isEqualTo(badStyle)
                             .or(Bindings.isEmpty(targetPathInput.textProperty()))
@@ -649,7 +653,7 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
         try {
             contrastAlgorithm = ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization;
             stringLabel = new Label(message("Algorithm"));
-            stringBox = new ComboBox();
+            stringBox = new ComboBox<>();
             stringBox.getItems().addAll(Arrays.asList(message("HSBHistogramEqualization"),
                     message("GrayHistogramEqualization"),
                     message("GrayHistogramStretching"),
@@ -783,6 +787,8 @@ public class ImageManufactureBatchEffectsController extends ImageManufactureBatc
             stringBox.getSelectionModel().select(0);
 
             setBox.getChildren().addAll(stringLabel, stringBox);
+            FxmlControl.refreshStyle(setBox);
+
         } catch (Exception e) {
             logger.error(e.toString());
         }

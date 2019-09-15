@@ -14,16 +14,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import mara.mybox.controller.base.PdfBatchController;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -43,7 +42,6 @@ public class PdfSplitBatchController extends PdfBatchController {
     private int pagesNumber, filesNumber;
     private List<Integer> startEndList;
     private PdfSplitType splitType;
-    private Splitter splitter;
 
     @FXML
     private ToggleGroup splitGroup;
@@ -55,7 +53,7 @@ public class PdfSplitBatchController extends PdfBatchController {
     }
 
     public PdfSplitBatchController() {
-        baseTitle = AppVaribles.message("PdfSplitBatch");
+        baseTitle = AppVariables.message("PdfSplitBatch");
 
     }
 
@@ -129,17 +127,17 @@ public class PdfSplitBatchController extends PdfBatchController {
         ListInput.setStyle(null);
 
         RadioButton selected = (RadioButton) splitGroup.getSelectedToggle();
-        if (AppVaribles.message("PagesNumberOfEachFile").equals(selected.getText())) {
+        if (AppVariables.message("PagesNumberOfEachFile").equals(selected.getText())) {
             splitType = PdfSplitType.PagesNumber;
             PagesNumberInput.setDisable(false);
             checkPagesNumber();
 
-        } else if (AppVaribles.message("NumberOfFilesDividedEqually").equals(selected.getText())) {
+        } else if (AppVariables.message("NumberOfFilesDividedEqually").equals(selected.getText())) {
             splitType = PdfSplitType.FilesNumber;
             FilesNumberInput.setDisable(false);
             checkFilesNumber();
 
-        } else if (AppVaribles.message("StartEndList").equals(selected.getText())) {
+        } else if (AppVariables.message("StartEndList").equals(selected.getText())) {
             splitType = PdfSplitType.StartEndList;
             ListInput.setDisable(false);
             checkStartEndList();
@@ -205,11 +203,9 @@ public class PdfSplitBatchController extends PdfBatchController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        if (splitter == null) {
-            splitter = new Splitter();
-        }
+
         doc = null;
-        targetFiles = new ArrayList();
+        targetFiles = new ArrayList<>();
         if (PdfTools.isPDF(srcFile)) {
             try {
                 currentParameters.currentSourceFile = srcFile;
@@ -224,7 +220,7 @@ public class PdfSplitBatchController extends PdfBatchController {
                 }
 
                 try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVaribles.pdfMemUsage)) {
+                        currentParameters.password, AppVariables.pdfMemUsage)) {
                     doc = pd;
                     if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                         currentParameters.toPage = doc.getNumberOfPages();
@@ -255,20 +251,21 @@ public class PdfSplitBatchController extends PdfBatchController {
                     }
                     doc.close();
                 }
-                updateInterface("CompleteFile");
             } catch (Exception e) {
                 logger.error(e.toString());
             }
         }
-        return MessageFormat.format(AppVaribles.message("HandlePagesGenerateNumber"),
+        updateInterface("CompleteFile");
+        return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.toPage - currentParameters.fromPage, targetFiles.size());
     }
 
     private int splitByPagesSize(PDDocument source) {
         try {
+            Splitter splitter = new Splitter();
             splitter.setStartPage(currentParameters.fromPage);  // 1-based
             splitter.setEndPage(currentParameters.toPage);
-            splitter.setMemoryUsageSetting(AppVaribles.pdfMemUsage);
+            splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
             splitter.setSplitAtPage(pagesNumber);
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
@@ -287,9 +284,10 @@ public class PdfSplitBatchController extends PdfBatchController {
             } else {
                 len = total / filesNumber + 1;
             }
+            Splitter splitter = new Splitter();
             splitter.setStartPage(currentParameters.fromPage);  // 1-based
             splitter.setEndPage(currentParameters.toPage);  // 1-based
-            splitter.setMemoryUsageSetting(AppVaribles.pdfMemUsage);
+            splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
             splitter.setSplitAtPage(len);
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
@@ -309,9 +307,10 @@ public class PdfSplitBatchController extends PdfBatchController {
                         || end > currentParameters.toPage) {
                     continue;
                 }
+                Splitter splitter = new Splitter();
                 splitter.setStartPage(start);  // 1-based start
                 splitter.setEndPage(end);
-                splitter.setMemoryUsageSetting(AppVaribles.pdfMemUsage);
+                splitter.setMemoryUsageSetting(AppVariables.pdfMemUsage);
                 splitter.setSplitAtPage(end - start + 1);
                 docs.add(splitter.split(source).get(0));
             }
@@ -332,7 +331,7 @@ public class PdfSplitBatchController extends PdfBatchController {
             info.setCreationDate(Calendar.getInstance());
             info.setModificationDate(Calendar.getInstance());
             info.setProducer("MyBox v" + CommonValues.AppVersion);
-            info.setAuthor(AppVaribles.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
+            info.setAuthor(AppVariables.getUserConfigValue("AuthorKey", System.getProperty("user.name")));
             String targetPrefix = FileTools.getFilePrefix(currentParameters.currentSourceFile.getName());
             int total = docs.size();
             for (PDDocument pd : docs) {

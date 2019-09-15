@@ -9,11 +9,10 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -34,7 +33,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
     private TextField centerWidthInput, centerHeightInput, leftXInput, leftYInput, rightXInput, rightYInput;
 
     public ImageManufactureBatchCropController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchCrop");
+        baseTitle = AppVariables.message("ImageManufactureBatchCrop");
 
     }
 
@@ -259,7 +258,7 @@ public class ImageManufactureBatchCropController extends ImageManufactureBatchCo
                     || x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0
                     || x1 > width - 1 || y1 > height - 1
                     || x2 > width - 1 || y2 > height - 1) {
-                errorString = AppVaribles.message("BeyondSize");
+                errorString = AppVariables.message("BeyondSize");
                 return null;
             }
             return ImageManufacture.cropOutside(source, x1, y1, x2, y2);

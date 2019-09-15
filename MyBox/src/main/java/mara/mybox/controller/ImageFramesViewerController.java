@@ -4,16 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.ImagesListController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
@@ -21,9 +18,10 @@ import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -38,7 +36,7 @@ public class ImageFramesViewerController extends ImagesListController {
     protected Button extractButton, editButton;
 
     public ImageFramesViewerController() {
-        baseTitle = AppVaribles.message("ImageFramesViewer");
+        baseTitle = AppVariables.message("ImageFramesViewer");
         SourceFileType = VisitHistory.FileType.MultipleFrames;
         SourcePathType = VisitHistory.FileType.MultipleFrames;
         TargetFileType = VisitHistory.FileType.MultipleFrames;
@@ -46,7 +44,7 @@ public class ImageFramesViewerController extends ImagesListController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourceExtensionFilter = new ArrayList() {
+        sourceExtensionFilter = new ArrayList<>() {
             {
                 add(new FileChooser.ExtensionFilter("tif/tiff/gif", "*.tif", "*.tiff", "*.gif"));
                 add(new FileChooser.ExtensionFilter("tif", "*.tif", "*.tiff"));
@@ -79,73 +77,62 @@ public class ImageFramesViewerController extends ImagesListController {
         editButton.setDisable(false);
         recordFileOpened(file);
 
-        task = new Task<Void>() {
-            private List<ImageInformation> infos;
-            private String ret;
-            private boolean hasSampled;
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                infos = new ArrayList<>();
-                ret = "";
-                hasSampled = false;
-                final String fileName = file.getPath();
-                ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
-                imageInformation = finfo.getImageInformation();
-                String format = finfo.getImageFormat();
-                if ("raw".equals(format)) {
-                    return null;
-                }
-                List<BufferedImage> bufferImages = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
-                if (bufferImages == null || bufferImages.isEmpty()) {
-                    ret = "FailedReadFile";
-                    return null;
-                }
-                for (int i = 0; i < bufferImages.size(); i++) {
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    ImageInformation minfo = finfo.getImagesInformation().get(i);
-                    if (minfo.isIsSampled()) {
-                        hasSampled = true;
-                    }
-                    Image image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
-                    minfo.setImage(image);
-                    infos.add(minfo);
-                }
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ret.isEmpty()) {
-                                if (hasSampled) {
-                                    alertWarning(AppVaribles.message("ImageSampled"));
-                                    bottomLabel.setText(AppVaribles.message("ImageSampled"));
-                                }
-                                tableData.addAll(infos);
-                                tableView.refresh();
-                            } else {
-                                popError(AppVaribles.message(ret));
-                            }
+                private List<ImageInformation> infos;
+                private boolean hasSampled;
 
+                @Override
+                protected boolean handle() {
+                    infos = new ArrayList<>();
+                    hasSampled = false;
+                    final String fileName = file.getPath();
+                    ImageFileInformation finfo = ImageFileReaders.readImageFileMetaData(fileName);
+                    imageInformation = finfo.getImageInformation();
+                    String format = finfo.getImageFormat();
+                    if ("raw".equals(format)) {
+                        return false;
+                    }
+                    List<BufferedImage> bufferImages = ImageFileReaders.readFrames(format, fileName, finfo.getImagesInformation());
+                    if (bufferImages == null || bufferImages.isEmpty()) {
+                        error = "FailedReadFile";
+                        return false;
+                    }
+                    for (int i = 0; i < bufferImages.size(); i++) {
+                        if (task == null || isCancelled()) {
+                            return false;
                         }
-                    });
+                        ImageInformation minfo = finfo.getImagesInformation().get(i);
+                        if (minfo.isIsSampled()) {
+                            hasSampled = true;
+                        }
+                        Image image = SwingFXUtils.toFXImage(bufferImages.get(i), null);
+                        minfo.setImage(image);
+                        infos.add(minfo);
+                    }
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+
+                @Override
+                protected void whenSucceeded() {
+                    if (hasSampled) {
+                        alertWarning(AppVariables.message("ImageSampled"));
+                        bottomLabel.setText(AppVariables.message("ImageSampled"));
+                    }
+                    tableData.addAll(infos);
+                    tableView.refresh();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -186,59 +173,54 @@ public class ImageFramesViewerController extends ImagesListController {
             }
 
             final File tFile = chooseSaveFile(message("FilePrefixInput"),
-                    AppVaribles.getUserConfigPath(targetPathKey),
+                    AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonValues.ImageExtensionFilter, true);
+                    CommonImageValues.ImageExtensionFilter, true);
             if (tFile == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(targetPathKey, tFile.getParent());
+            recordFileWritten(tFile);
 
-            task = new Task<Void>() {
-                private List<String> filenames;
-                private boolean ok;
-
-                @Override
-                protected Void call() throws Exception {
-                    String format = FileTools.getFileSuffix(tFile.getAbsolutePath()).toLowerCase();
-                    String filePrefix = FileTools.getFilePrefix(tFile.getAbsolutePath());
-                    String filename;
-                    int digit = (selectedImages.size() + "").length();
-                    filenames = new ArrayList<>();
-                    for (int i = 0; i < selectedImages.size(); i++) {
-                        if (task == null || task.isCancelled()) {
-                            return null;
-                        }
-                        filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
-                        BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
-                        if (bufferedImage == null) {
-                            continue;
-                        }
-                        ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                        filenames.add(filename);
-                    }
-                    ok = true;
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    if (ok) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                multipleFilesGenerated(filenames);
+                    private List<String> filenames;
+
+                    @Override
+                    protected boolean handle() {
+                        String format = FileTools.getFileSuffix(tFile.getAbsolutePath()).toLowerCase();
+                        String filePrefix = FileTools.getFilePrefix(tFile.getAbsolutePath());
+                        String filename;
+                        int digit = (selectedImages.size() + "").length();
+                        filenames = new ArrayList<>();
+                        for (int i = 0; i < selectedImages.size(); i++) {
+                            if (task == null || isCancelled()) {
+                                return false;
                             }
-                        });
+                            filename = filePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + format;
+                            BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(selectedImages.get(i));
+                            if (bufferedImage == null) {
+                                continue;
+                            }
+                            ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                            filenames.add(filename);
+                        }
+                        return true;
                     }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
 
+                    @Override
+                    protected void whenSucceeded() {
+                        multipleFilesGenerated(filenames);
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }

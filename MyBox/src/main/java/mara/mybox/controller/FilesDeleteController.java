@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -34,11 +34,7 @@ public class FilesDeleteController extends FilesBatchController {
     protected TextArea logsTextArea;
 
     public FilesDeleteController() {
-        baseTitle = AppVaribles.message("FilesDelete");
-
-        targetPathKey = "FileTargetPath";
-        sourcePathKey = "FileSourcePath";
-
+        baseTitle = AppVariables.message("FilesDelete");
     }
 
     @FXML

@@ -13,7 +13,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.image.ImageAttributes;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -32,21 +33,22 @@ public class ImagePcxFile {
     public static boolean writePcxImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, null), null);
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());

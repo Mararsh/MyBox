@@ -4,17 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,9 +20,9 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -39,21 +35,18 @@ public class ImageSampleController extends ImageViewerController {
 
     private double scale;
     private int sampleWidth, sampleHeight;
+
     @FXML
-    private ToolBar opBar;
-    @FXML
-    private HBox sampleBox;
+    private HBox opBox, sampleBox;
     @FXML
     private VBox showBox;
-    @FXML
-    private CheckBox viewCheck;
     @FXML
     private ComboBox<String> widthBox, heightBox;
     @FXML
     private Label sampleLabel;
 
     public ImageSampleController() {
-        baseTitle = AppVaribles.message("ImageSample");
+        baseTitle = AppVariables.message("ImageSample");
         handleLoadedSize = false;
 
     }
@@ -61,10 +54,9 @@ public class ImageSampleController extends ImageViewerController {
     @Override
     public void initializeNext2() {
         try {
-            scrollPane.setDisable(true);
-            sampleBox.setDisable(true);
-            showBox.setDisable(true);
-            opBar.setDisable(true);
+            opBox.disableProperty().bind(imageView.imageProperty().isNull());
+            sampleBox.disableProperty().bind(imageView.imageProperty().isNull());
+            showBox.disableProperty().bind(imageView.imageProperty().isNull());
 
             List<String> values = Arrays.asList("1", "2", "3", "4", "5", "6", "8", "9", "10", "15", "20",
                     "25", "30", "50", "80", "100", "200", "500", "800", "1000");
@@ -163,11 +155,6 @@ public class ImageSampleController extends ImageViewerController {
                 return;
             }
 
-            scrollPane.setDisable(false);
-            sampleBox.setDisable(false);
-            showBox.setDisable(false);
-            opBar.setDisable(false);
-
             if (imageInformation.isIsSampled()) {
                 scale = imageInformation.getWidth() / image.getWidth();
             } else {
@@ -188,7 +175,7 @@ public class ImageSampleController extends ImageViewerController {
     protected void loadSampledImage() {
 
         if (sampledTips != null) {
-            final String msg = getSmapledInfo() + "\n\n" + AppVaribles.message("ImagePartComments");
+            final String msg = getSmapledInfo() + "\n\n" + AppVariables.message("ImagePartComments");
             sampledTips.setOnMouseMoved(null);
             sampledTips.setOnMouseMoved(new EventHandler<MouseEvent>() {
                 @Override
@@ -206,60 +193,50 @@ public class ImageSampleController extends ImageViewerController {
         if (image == null || sampleWidth < 1 || sampleHeight < 1) {
             return;
         }
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
-        AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+        recordFileWritten(file);
 
-        task = new Task<Void>() {
-            private boolean ok;
-            private String filename;
-
-            @Override
-            protected Void call() throws Exception {
-                filename = file.getAbsolutePath();
-                String format = FileTools.getFileSuffix(filename);
-                BufferedImage bufferedImage;
-                bufferedImage = ImageFileReaders.readFileBySample(imageInformation.getImageFormat(),
-                        sourceFile.getAbsolutePath(),
-                        maskRectangleData, sampleWidth, sampleHeight);
-                if (task == null || task.isCancelled()) {
-                    return null;
-                }
-                ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok && file.exists()) {
-                            popInformation(AppVaribles.message("Successful"));
-                            if (viewCheck.isSelected()) {
-                                try {
-                                    final ImageViewerController controller
-                                            = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
-                                    controller.loadImage(filename);
-                                } catch (Exception e) {
-                                    logger.error(e.toString());
-                                }
-                            }
-                        } else {
-                            popError(AppVaribles.message("Failed"));
-                        }
+                private String filename;
+
+                @Override
+                protected boolean handle() {
+                    filename = file.getAbsolutePath();
+                    String format = FileTools.getFileSuffix(filename);
+                    BufferedImage bufferedImage;
+                    bufferedImage = ImageFileReaders.readFileBySample(imageInformation.getImageFormat(),
+                            sourceFile.getAbsolutePath(),
+                            maskRectangleData, sampleWidth, sampleHeight);
+                    if (task == null || isCancelled()) {
+                        return false;
                     }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                    return ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    if (openSaveCheck.isSelected()) {
+                        final ImageViewerController controller
+                                = (ImageViewerController) openStage(CommonValues.ImageViewerFxml);
+                        controller.loadImage(filename);
+                    }
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 }

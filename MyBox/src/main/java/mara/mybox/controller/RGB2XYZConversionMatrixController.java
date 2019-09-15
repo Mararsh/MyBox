@@ -1,13 +1,11 @@
 package mara.mybox.controller;
 
 import java.util.Map;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,18 +15,16 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
+import mara.mybox.color.RGB2XYZConversionMatrix;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import mara.mybox.color.RGB2XYZConversionMatrix;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -57,7 +53,7 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
     protected Button calculateButton, calculateAllButton, exportButton;
 
     public RGB2XYZConversionMatrixController() {
-        baseTitle = AppVaribles.message("LinearRGB2XYZMatrix");
+        baseTitle = AppVariables.message("LinearRGB2XYZMatrix");
         exportName = "LinearRGB2XYZMatrix";
     }
 
@@ -126,12 +122,12 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
     }
 
     private void initMatrices() {
-        rgbColumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("rgb"));
-        rgbWhiteColumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("rgbWhite"));
-        xyzWhiteColumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("xyzWhite"));
-        algorithmColumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("algorithm"));
-        rgb2xyzColumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("rgb2xyz"));
-        xyz2rgbCloumn.setCellValueFactory(new PropertyValueFactory<RGB2XYZConversionMatrix, String>("xyz2rgb"));
+        rgbColumn.setCellValueFactory(new PropertyValueFactory<>("rgb"));
+        rgbWhiteColumn.setCellValueFactory(new PropertyValueFactory<>("rgbWhite"));
+        xyzWhiteColumn.setCellValueFactory(new PropertyValueFactory<>("xyzWhite"));
+        algorithmColumn.setCellValueFactory(new PropertyValueFactory<>("algorithm"));
+        rgb2xyzColumn.setCellValueFactory(new PropertyValueFactory<>("rgb2xyz"));
+        xyz2rgbCloumn.setCellValueFactory(new PropertyValueFactory<>("xyz2rgb"));
 
         scaleMatricesInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -143,14 +139,14 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
                     } else {
                         scale = p;
                         scaleMatricesInput.setStyle(null);
-                        AppVaribles.setUserConfigInt("MatrixDecimalScale", scale);
+                        AppVariables.setUserConfigInt("MatrixDecimalScale", scale);
                     }
                 } catch (Exception e) {
                     scaleMatricesInput.setStyle(badStyle);
                 }
             }
         });
-        int p = AppVaribles.getUserConfigInt("MatrixDecimalScale", 8);
+        int p = AppVariables.getUserConfigInt("MatrixDecimalScale", 8);
         scaleMatricesInput.setText(p + "");
 
         calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
@@ -215,40 +211,35 @@ public class RGB2XYZConversionMatrixController extends ChromaticityBaseControlle
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String allTexts;
+
+                @Override
+                protected boolean handle() {
+                    allData = FXCollections.observableArrayList();
+                    allData.addAll(RGB2XYZConversionMatrix.all(scale));
+                    allTexts = RGB2XYZConversionMatrix.allTexts(scale);
+                    return allTexts != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    matrixTableView.setItems(allData);
+                    textsArea.setText(allTexts);
+                    textsArea.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String allTexts;
-
-            @Override
-            protected Void call() throws Exception {
-                allData = FXCollections.observableArrayList();
-                allData.addAll(RGB2XYZConversionMatrix.all(scale));
-                allTexts = RGB2XYZConversionMatrix.allTexts(scale);
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        matrixTableView.setItems(allData);
-                        textsArea.setText(allTexts);
-                        textsArea.home();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
     @Override

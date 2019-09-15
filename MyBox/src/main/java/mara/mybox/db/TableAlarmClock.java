@@ -8,9 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.data.AlarmClock;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.CommonValues;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -23,7 +22,7 @@ public class TableAlarmClock extends DerbyBase {
 
     public TableAlarmClock() {
         Table_Name = "Alarm_Clock";
-        Keys = new ArrayList() {
+        Keys = new ArrayList<>() {
             {
                 add("key_value");
             }
@@ -70,20 +69,20 @@ public class TableAlarmClock extends DerbyBase {
                     statement.executeUpdate(sql);
                 }
                 try {
-                    new File(CommonValues.AlarmClocksFile).delete();
+                    new File(AppVariables.AlarmClocksFile).delete();
                 } catch (Exception e) {
                 }
             }
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static List<AlarmClock> read() {
-        List<AlarmClock> alarms = new ArrayList();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        List<AlarmClock> alarms = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM Alarm_Clock";
             ResultSet results = statement.executeQuery(sql);
@@ -105,7 +104,7 @@ public class TableAlarmClock extends DerbyBase {
                 alarms.add(a);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
         }
         return alarms;
     }
@@ -114,7 +113,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (AlarmClock a : alarms) {
@@ -149,7 +148,7 @@ public class TableAlarmClock extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }
@@ -158,7 +157,7 @@ public class TableAlarmClock extends DerbyBase {
         if (alarms == null || alarms.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql;
             for (AlarmClock a : alarms) {
@@ -168,7 +167,7 @@ public class TableAlarmClock extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }

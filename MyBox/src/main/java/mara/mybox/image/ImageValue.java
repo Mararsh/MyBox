@@ -11,6 +11,7 @@ import com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +22,8 @@ import javax.imageio.spi.IIORegistry;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.image.file.ImageJpgFile.getJpegCompressionTypes;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import org.apache.pdfbox.rendering.ImageType;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.pdfbox.rendering.ImageType;
  */
 public class ImageValue {
 
-    public static List<String> RGBColorSpaces = new ArrayList() {
+    public static List<String> RGBColorSpaces = new ArrayList<>() {
         {
             addAll(Arrays.asList(
                     "sRGB", "Linear sRGB", "Apple RGB", "Adobe RGB", "Color Match RGB", "ECI RGB"
@@ -41,7 +42,7 @@ public class ImageValue {
         }
     };
 
-    public static List<String> CMYKColorSpaces = new ArrayList() {
+    public static List<String> CMYKColorSpaces = new ArrayList<>() {
         {
             addAll(Arrays.asList(
                     "ECI CMYK", "Adobe CMYK - CoatedFOGRA27", "Adobe CMYK - CoatedFOGRA39",
@@ -54,7 +55,7 @@ public class ImageValue {
         }
     };
 
-    public static List<String> OtherColorSpaces = new ArrayList() {
+    public static List<String> OtherColorSpaces = new ArrayList<>() {
         {
             addAll(Arrays.asList(
                     "Gray", "BlackOrWhite"
@@ -202,6 +203,38 @@ public class ImageValue {
 
     public static boolean canImageCompressed(String imageFormat) {
         return getCompressionTypes(imageFormat) != null;
+    }
+
+    public static String imageType(int type) {
+        switch (type) {
+            case BufferedImage.TYPE_3BYTE_BGR:
+                return "3BYTE_BGR";
+            case BufferedImage.TYPE_4BYTE_ABGR:
+                return "4BYTE_ABGR";
+            case BufferedImage.TYPE_4BYTE_ABGR_PRE:
+                return "4BYTE_ABGR_PRE";
+            case BufferedImage.TYPE_BYTE_BINARY:
+                return "BYTE_BINARY";
+            case BufferedImage.TYPE_BYTE_GRAY:
+                return "BYTE_GRAY";
+            case BufferedImage.TYPE_BYTE_INDEXED:
+                return "BYTE_INDEXED";
+            case BufferedImage.TYPE_CUSTOM:
+                return "CUSTOM";
+            case BufferedImage.TYPE_INT_ARGB:
+                return "INT_ARGB";
+            case BufferedImage.TYPE_INT_ARGB_PRE:
+                return "INT_ARGB_PRE";
+            case BufferedImage.TYPE_INT_BGR:
+                return "INT_BGR";
+            case BufferedImage.TYPE_INT_RGB:
+                return "INT_RGB";
+            case BufferedImage.TYPE_USHORT_555_RGB:
+                return "USHORT_555_RGB";
+            case BufferedImage.TYPE_USHORT_565_RGB:
+                return "USHORT_565_RGB";
+        }
+        return type + "";
     }
 
     public static ColorSpace srgbColorSpace() {

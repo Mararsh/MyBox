@@ -6,15 +6,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.controller.base.ImagesBatchController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.setUserConfigValue;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
 
 /**
  * @Author Mara
@@ -33,7 +32,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck;
 
     public ImageConverterBatchController() {
-        baseTitle = AppVaribles.message("ImageConverterBatch");
+        baseTitle = AppVariables.message("ImageConverterBatch");
         browseTargets = true;
 
         ImageConverterAppendColorKey = "ImageConverterDitherKey";
@@ -76,7 +75,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                     setUserConfigValue(ImageConverterAppendColorKey, appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageConverterAppendColorKey));
+            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendColorKey));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -84,7 +83,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                     setUserConfigValue(ImageConverterAppendCompressionKey, appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageConverterAppendCompressionKey));
+            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendCompressionKey));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -92,7 +91,7 @@ public class ImageConverterBatchController extends ImagesBatchController {
                     setUserConfigValue(ImageConverterAppendQualityKey, appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(AppVaribles.getUserConfigBoolean(ImageConverterAppendQualityKey));
+            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean(ImageConverterAppendQualityKey));
 
         } catch (Exception e) {
             logger.debug(e.toString());
@@ -115,18 +114,18 @@ public class ImageConverterBatchController extends ImagesBatchController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return AppVaribles.message("Skip");
+                return AppVariables.message("Skip");
             }
             if (ImageConvert.convertColorSpace(srcFile, attributes, target)) {
                 actualParameters.finalTargetName = target.getAbsolutePath();
                 targetFiles.add(target);
-                return AppVaribles.message("Successful");
+                return AppVariables.message("Successful");
             } else {
-                return AppVaribles.message("Failed");
+                return AppVariables.message("Failed");
             }
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         }
     }
 

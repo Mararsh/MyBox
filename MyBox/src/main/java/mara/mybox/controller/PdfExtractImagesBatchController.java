@@ -2,12 +2,11 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.util.Iterator;
-import mara.mybox.controller.base.PdfBatchController;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.image.file.ImageJpeg2000File;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -22,7 +21,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 public class PdfExtractImagesBatchController extends PdfBatchController {
 
     public PdfExtractImagesBatchController() {
-        baseTitle = AppVaribles.message("PdfExtractImagesBatch");
+        baseTitle = AppVariables.message("PdfExtractImagesBatch");
         browseTargets = true;
     }
 

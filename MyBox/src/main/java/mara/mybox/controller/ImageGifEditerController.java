@@ -3,11 +3,9 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -16,14 +14,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.ImagesListController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.file.ImageGifFile;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -47,7 +45,7 @@ public class ImageGifEditerController extends ImagesListController {
     private CheckBox loopCheck;
 
     public ImageGifEditerController() {
-        baseTitle = AppVaribles.message("ImageGifEditer");
+        baseTitle = AppVariables.message("ImageGifEditer");
 
         SourceFileType = VisitHistory.FileType.Gif;
         SourcePathType = VisitHistory.FileType.Gif;
@@ -56,7 +54,7 @@ public class ImageGifEditerController extends ImagesListController {
         AddFileType = VisitHistory.FileType.Image;
         AddPathType = VisitHistory.FileType.Image;
 
-        sourceExtensionFilter = CommonValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.GifExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -169,51 +167,50 @@ public class ImageGifEditerController extends ImagesListController {
 
     @Override
     public void saveFileDo(final File outFile) {
-        try {
-            task = new Task<Void>() {
+
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
                 private String ret;
 
                 @Override
-                protected Void call() throws Exception {
+                protected boolean handle() {
                     ret = ImageGifFile.writeImages(tableData, outFile,
                             interval, loopCheck.isSelected(), keepSize, width, height);
-
-                    return null;
+                    if (ret.isEmpty()) {
+                        return true;
+                    } else {
+                        error = ret;
+                        return false;
+                    }
                 }
 
                 @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ret.isEmpty()) {
-                                popInformation(AppVaribles.message("Successful"));
-                                if (outFile.equals(sourceFile)) {
-                                    setImageChanged(false);
-                                } else if (viewCheck.isSelected()) {
-                                    try {
-                                        final ImageGifViewerController controller
-                                                = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
-                                        controller.loadImage(outFile.getAbsolutePath());
-                                    } catch (Exception e) {
-                                        logger.error(e.toString());
-                                    }
-                                }
-                            } else {
-                                popError(AppVaribles.message(ret));
-                            }
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    if (outFile.equals(sourceFile)) {
+                        setImageChanged(false);
+                    } else if (viewCheck.isSelected()) {
+                        try {
+                            final ImageGifViewerController controller
+                                    = (ImageGifViewerController) openStage(CommonValues.ImageGifViewerFxml);
+                            controller.loadImage(outFile.getAbsolutePath());
+                        } catch (Exception e) {
+                            logger.error(e.toString());
                         }
-                    });
+                    }
                 }
+
             };
             openHandlingStage(task, Modality.WINDOW_MODAL);
             Thread thread = new Thread(task);
             thread.setDaemon(true);
             thread.start();
-        } catch (Exception e) {
-            logger.error(e.toString());
         }
+
     }
 
 }

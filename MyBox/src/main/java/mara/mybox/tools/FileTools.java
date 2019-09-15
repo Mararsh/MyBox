@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -18,9 +19,9 @@ import java.util.Date;
 import java.util.List;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileSynchronizeAttributes;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.MyBoxTempPath;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.value.CommonValues.AppTempPath;
 
 /**
  * @Author mara
@@ -112,7 +113,7 @@ public class FileTools {
     }
 
     public static String getTempFileName() {
-        return AppTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
+        return MyBoxTempPath + File.separator + new Date().getTime() + IntTools.getRandomInt(100);
     }
 
     public static File getTempFile() {
@@ -123,7 +124,15 @@ public class FileTools {
         return file;
     }
 
-    public static String insertFileName(String filename, String inStr) {
+    public static File getTempFile(String suffix) {
+        File file = new File(getTempFileName() + suffix);
+        while (file.exists()) {
+            file = new File(getTempFileName() + suffix);
+        }
+        return file;
+    }
+
+    public static String appendName(String filename, String inStr) {
         if (filename == null) {
             return null;
         }
@@ -407,7 +416,13 @@ public class FileTools {
         return attr;
     }
 
-    public static boolean copyWholeDirectory(File sourcePath, File targetPath, FileSynchronizeAttributes attr) {
+    public static boolean copyWholeDirectory(File sourcePath, File targetPath,
+            FileSynchronizeAttributes attr) {
+        return copyWholeDirectory(sourcePath, targetPath, attr, true);
+    }
+
+    public static boolean copyWholeDirectory(File sourcePath, File targetPath,
+            FileSynchronizeAttributes attr, boolean clearTarget) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
                 return false;
@@ -416,11 +431,12 @@ public class FileTools {
                 attr = new FileSynchronizeAttributes();
             }
             if (targetPath.exists()) {
-                if (!deleteDir(targetPath)) {
+                if (clearTarget && !deleteDir(targetPath)) {
                     return false;
                 }
+            } else {
+                targetPath.mkdirs();
             }
-            targetPath.mkdirs();
             File[] files = sourcePath.listFiles();
             for (File file : files) {
                 File targetFile = new File(targetPath + File.separator + file.getName());
@@ -431,7 +447,7 @@ public class FileTools {
                         return false;
                     }
                 } else if (file.isDirectory()) {
-                    if (copyWholeDirectory(file, targetFile, attr)) {
+                    if (copyWholeDirectory(file, targetFile, attr, clearTarget)) {
                         attr.setCopiedDirectoriesNumber(attr.getCopiedDirectoriesNumber() + 1);
                     } else if (!attr.isContinueWhenError()) {
                         return false;
@@ -450,6 +466,20 @@ public class FileTools {
             attr = new FileSynchronizeAttributes();
         }
         return copyFile(sourceFile, targetFile, attr.isCanReplace(), attr.isCopyAttrinutes());
+    }
+
+    public static boolean clearDir(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                } else if (file.isDirectory()) {
+                    deleteDir(file);
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean deleteDir(File dir) {
@@ -497,7 +527,7 @@ public class FileTools {
         if (file == null) {
             return null;
         }
-        List<File> files = new ArrayList();
+        List<File> files = new ArrayList<>();
         if (file.isFile()) {
             files.add(file);
         } else if (file.isDirectory()) {
@@ -757,20 +787,24 @@ public class FileTools {
         }
     }
 
-    public static boolean writeFile(File file, String data) {
+    public static File writeFile(File file, String data) {
         try {
             if (file == null || data == null) {
-                return false;
+                return null;
             }
-            try (FileWriter writer = new FileWriter(file)) {
+            try (FileWriter writer = new FileWriter(file, Charset.forName("utf-8"))) {
                 writer.write(data);
                 writer.flush();
             }
-            return true;
+            return file;
         } catch (Exception e) {
             logger.error(e.toString());
-            return false;
+            return null;
         }
+    }
+
+    public static File writeFile(String data) {
+        return writeFile(getTempFile(), data);
     }
 
     public static boolean writeFile(File file, byte[] data) {

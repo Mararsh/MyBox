@@ -5,11 +5,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -22,16 +20,17 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.ImagesListController;
+import javafx.stage.Stage;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -62,12 +61,12 @@ public class ImagesCombinePdfController extends ImagesListController {
     protected HBox sizeBox, targetBox;
 
     public ImagesCombinePdfController() {
-        baseTitle = AppVaribles.message("ImagesCombinePdf");
+        baseTitle = AppVariables.message("ImagesCombinePdf");
 
         ImageCombineMarginsKey = "ImageCombineMarginsKey";
         AuthorKey = "AuthorKey";
-        sourceExtensionFilter = CommonValues.ImageExtensionFilter;
-        targetExtensionFilter = CommonValues.PdfExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.ImageExtensionFilter;
+        targetExtensionFilter = CommonImageValues.PdfExtensionFilter;
     }
 
     @Override
@@ -187,7 +186,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                 try {
                     marginSize = Integer.valueOf(newValue);
                     if (marginSize >= 0) {
-                        AppVaribles.setUserConfigValue(ImageCombineMarginsKey, newValue);
+                        AppVariables.setUserConfigValue(ImageCombineMarginsKey, newValue);
                         FxmlControl.setEditorNormal(MarginsBox);
                     } else {
                         marginSize = 0;
@@ -200,7 +199,7 @@ public class ImagesCombinePdfController extends ImagesListController {
                 }
             }
         });
-        MarginsBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageCombineMarginsKey, "20"));
+        MarginsBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageCombineMarginsKey, "20"));
 
         if (fontBox != null) {
             fontBox.getItems().addAll(Arrays.asList(
@@ -224,10 +223,10 @@ public class ImagesCombinePdfController extends ImagesListController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setUserConfigValue(AuthorKey, newValue);
+                AppVariables.setUserConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -253,20 +252,20 @@ public class ImagesCombinePdfController extends ImagesListController {
         isImageSize = false;
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (AppVaribles.message("ImagesSize").equals(selected.getText())) {
+        if (AppVariables.message("ImagesSize").equals(selected.getText())) {
             isImageSize = true;
-        } else if (AppVaribles.message("StandardSize").equals(selected.getText())) {
+        } else if (AppVariables.message("StandardSize").equals(selected.getText())) {
             standardSizeBox.setDisable(false);
             standardDpiBox.setDisable(false);
             checkStandardValues();
 
-        } else if (AppVaribles.message("Custom").equals(selected.getText())) {
+        } else if (AppVariables.message("Custom").equals(selected.getText())) {
             customWidthInput.setDisable(false);
             customHeightInput.setDisable(false);
             checkCustomValues();
         }
 
-//        AppVaribles.setUserConfigValue(ImageCombineSizeKey, selected.getText());
+//        AppVariables.setUserConfigValue(ImageCombineSizeKey, selected.getText());
     }
 
     private int calculateCmPixels(float cm, int dpi) {
@@ -348,7 +347,7 @@ public class ImagesCombinePdfController extends ImagesListController {
     private void checkCustomValues() {
 
         RadioButton selected = (RadioButton) sizeGroup.getSelectedToggle();
-        if (!AppVaribles.message("Custom").equals(selected.getText())) {
+        if (!AppVariables.message("Custom").equals(selected.getText())) {
             return;
         }
         try {
@@ -385,12 +384,12 @@ public class ImagesCombinePdfController extends ImagesListController {
         thresholdInput.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.message("PNG").equals(selected.getText())) {
+        if (AppVariables.message("PNG").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Original;
-        } else if (AppVaribles.message("CCITT4").equals(selected.getText())) {
+        } else if (AppVariables.message("CCITT4").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
-        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVariables.message("JpegQuailty").equals(selected.getText())) {
             pdfFormat = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -446,11 +445,14 @@ public class ImagesCombinePdfController extends ImagesListController {
         if (tableController.hasSampled()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.message("SureSampled"));
+            alert.setContentText(AppVariables.message("SureSampled"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonCancel) {
@@ -458,79 +460,70 @@ public class ImagesCombinePdfController extends ImagesListController {
             }
         }
 
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath("PdfTargetPath"),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath("PdfFilePath"),
                 null, targetExtensionFilter, true);
         if (file == null) {
             return;
         }
-        AppVaribles.setUserConfigValue("PdfTargetPath", file.getParent());
-        task = new Task<Void>() {
-            private boolean ok;
+        AppVariables.setUserConfigValue("PdfFilePath", file.getParent());
+        recordFileWritten(file);
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    try ( PDDocument document = new PDDocument(AppVaribles.pdfMemUsage)) {
-                        PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + CommonValues.AppVersion);
-                        info.setAuthor(authorInput.getText());
-                        document.setDocumentInformation(info);
-                        int count = 0;
-                        int total = tableData.size();
-                        for (ImageInformation source : tableData) {
-                            if (task == null || task.isCancelled()) {
-                                document.close();
-                                return null;
+                @Override
+                protected boolean handle() {
+                    try {
+                        try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                            PDFont font = PdfTools.getFont(document, fontBox.getSelectionModel().getSelectedItem());
+                            PDDocumentInformation info = new PDDocumentInformation();
+                            info.setCreationDate(Calendar.getInstance());
+                            info.setModificationDate(Calendar.getInstance());
+                            info.setProducer("MyBox v" + CommonValues.AppVersion);
+                            info.setAuthor(authorInput.getText());
+                            document.setDocumentInformation(info);
+                            int count = 0;
+                            int total = tableData.size();
+                            for (ImageInformation source : tableData) {
+                                if (task == null || isCancelled()) {
+                                    document.close();
+                                    return false;
+                                }
+                                BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(source);
+                                if (bufferedImage != null) {
+                                    PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,
+                                            ++count, total, pdfFormat,
+                                            threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
+                                            pageWidth, pageHeight, marginSize, headerInput.getText(), ditherCheck.isSelected());
+                                }
                             }
-                            BufferedImage bufferedImage = ImageFileReaders.getBufferedImage(source);
-                            if (bufferedImage != null) {
-                                PdfTools.writePage(document, font, source.getImageFormat(), bufferedImage,
-                                        ++count, total, pdfFormat,
-                                        threshold, jpegQuality, isImageSize, pageNumberCheck.isSelected(),
-                                        pageWidth, pageHeight, marginSize, headerInput.getText(), ditherCheck.isSelected());
-                            }
+                            document.save(file);
+                            document.close();
                         }
-                        document.save(file);
-                        document.close();
-                    }
-                    ok = true;
+                        return file.exists();
 
-                } catch (Exception e) {
-                    logger.error(e.toString());
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                 }
 
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (ok && file.exists()) {
-                                popInformation(AppVaribles.message("Successful"));
-                                if (viewCheck.isSelected()) {
-                                    view(file);
-                                }
-                            } else {
-                                popError(AppVaribles.message("ImageCombinePdfFail"));
-                            }
-                        } catch (Exception e) {
-                            logger.error(e.toString());
-                        }
+                @Override
+                protected void whenSucceeded() {
+                    popSuccessul();
+                    if (viewCheck.isSelected()) {
+                        view(file);
                     }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
 }

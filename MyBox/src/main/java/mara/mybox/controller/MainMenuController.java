@@ -25,15 +25,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.ControlStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getUserConfigValue;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -57,12 +53,12 @@ public class MainMenuController extends BaseController {
     private Pane mainMenuPane;
     @FXML
     private RadioMenuItem chineseMenuItem, englishMenuItem,
-            pdf500mbRadio, pdf1gbRadio, pdf2gbRadio, pdfUnlimitRadio,
             font12MenuItem, font15MenuItem, font17MenuItem,
-            defaultColorMenuItem, pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem;
+            normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem;
     @FXML
-    private CheckMenuItem stopAlarmCheck, monitorMemroyCheck, monitorCpuCheck,
-            newWindowCheck, replaceWhiteMenu, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
+    private CheckMenuItem monitorMemroyCheck, monitorCpuCheck,
+            newWindowCheck, restoreStagesSizeCheck, popRecentCheck, controlTextCheck;
     @FXML
     private Menu settingsMenu, recentMenu;
     @FXML
@@ -79,7 +75,13 @@ public class MainMenuController extends BaseController {
             });
             checkSettings();
 
-            checkRecent();
+            recentMenu.setOnShowing(new EventHandler<Event>() {
+                @Override
+                public void handle(Event e) {
+                    recentMenu.getItems().clear();
+                    recentMenu.getItems().addAll(getRecentMenu());
+                }
+            });
         } catch (Exception e) {
             logger.debug(e.toString());
         }
@@ -87,44 +89,22 @@ public class MainMenuController extends BaseController {
 
     private void checkSettings() {
         checkLanguage();
-        checkPdfMem();
         checkFontSize();
-        stopAlarmCheck.setSelected(AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit"));
-        monitorMemroyCheck.setSelected(AppVaribles.getUserConfigBoolean("MonitorMemroy", false));
-        monitorCpuCheck.setSelected(AppVaribles.getUserConfigBoolean("MonitorCpu", false));
-        controlTextCheck.setSelected(AppVaribles.getUserConfigBoolean("ControlDisplayText", false));
-        replaceWhiteMenu.setSelected(AppVaribles.isAlphaAsWhite());
-        newWindowCheck.setSelected(AppVaribles.openStageInNewWindow);
-        restoreStagesSizeCheck.setSelected(AppVaribles.restoreStagesSize);
-        popRecentCheck.setSelected(AppVaribles.fileRecentNumber > 0);
+        checkIconSize();
+        monitorMemroyCheck.setSelected(AppVariables.getUserConfigBoolean("MonitorMemroy", false));
+        monitorCpuCheck.setSelected(AppVariables.getUserConfigBoolean("MonitorCpu", false));
+        controlTextCheck.setSelected(AppVariables.getUserConfigBoolean("ControlDisplayText", false));
+        newWindowCheck.setSelected(AppVariables.openStageInNewWindow);
+        restoreStagesSizeCheck.setSelected(AppVariables.restoreStagesSize);
+        popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         checkMemroyMonitor();
         checkCpuMonitor();
         checkControlColor();
 
     }
 
-    private void checkRecent() {
-        recentMenu.getItems().clear();
-        List<VisitHistory> his = VisitHistory.getRecentMenu();
-        if (his == null || his.isEmpty()) {
-            return;
-        }
-        for (VisitHistory h : his) {
-            final String fname = h.getResourceValue();
-            final String fxml = h.getDataMore();
-            MenuItem menu = new MenuItem(message(fname));
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    loadScene(fxml);
-                }
-            });
-            recentMenu.getItems().add(menu);
-        }
-    }
-
     protected void checkLanguage() {
-        if (AppVaribles.currentBundle == CommonValues.BundleZhCN) {
+        if (AppVariables.currentBundle == CommonValues.BundleZhCN) {
             chineseMenuItem.setSelected(true);
         } else {
             englishMenuItem.setSelected(true);
@@ -132,7 +112,7 @@ public class MainMenuController extends BaseController {
     }
 
     protected void checkFontSize() {
-        switch (AppVaribles.sceneFontSize) {
+        switch (AppVariables.sceneFontSize) {
             case 12:
                 font12MenuItem.setSelected(true);
                 break;
@@ -150,29 +130,28 @@ public class MainMenuController extends BaseController {
         }
     }
 
-    protected void checkPdfMem() {
-        String pm = getUserConfigValue("PdfMemDefault", "1GB");
-        switch (pm) {
-            case "1GB":
-                pdf1gbRadio.setSelected(true);
+    protected void checkIconSize() {
+        switch (AppVariables.iconSize) {
+            case 20:
+                normalIconMenuItem.setSelected(true);
                 break;
-            case "2GB":
-                pdf2gbRadio.setSelected(true);
+            case 15:
+                smallIconMenuItem.setSelected(true);
                 break;
-            case "Unlimit":
-                pdfUnlimitRadio.setSelected(true);
+            case 30:
+                bigIconMenuItem.setSelected(true);
                 break;
-            case "500MB":
             default:
-                pdf500mbRadio.setSelected(true);
+                normalIconMenuItem.setSelected(false);
+                smallIconMenuItem.setSelected(false);
+                bigIconMenuItem.setSelected(false);
+                break;
         }
     }
 
     protected void checkControlColor() {
-        switch (AppVaribles.ControlColor) {
+        switch (AppVariables.ControlColor) {
             case Default:
-                defaultColorMenuItem.setSelected(true);
-                break;
             case Red:
                 redMenuItem.setSelected(true);
                 break;
@@ -188,9 +167,6 @@ public class MainMenuController extends BaseController {
             case Orange:
                 orangeMenuItem.setSelected(true);
                 break;
-            default:
-                defaultColorMenuItem.setSelected(true);
-                break;
         }
     }
 
@@ -201,7 +177,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void resetWindows(ActionEvent event) {
-        AppVaribles.resetWindows();
+        AppVariables.resetWindows();
         refresh();
     }
 
@@ -212,7 +188,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void closeOtherWindows(ActionEvent event) {
-        List<Window> windows = new ArrayList();
+        List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             if (parentController != null) {
@@ -228,8 +204,13 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void jvmProperties(ActionEvent event) {
-        openStage(CommonValues.JvmPropertiesFxml);
+    protected void MyBoxProperties(ActionEvent event) {
+        openStage(CommonValues.MyBoxPropertiesFxml);
+    }
+
+    @FXML
+    protected void Shortcuts(ActionEvent event) {
+        openStage(CommonValues.ShortcutsFxml);
     }
 
     private void makeMemoryMonitorBox() {
@@ -278,8 +259,8 @@ public class MainMenuController extends BaseController {
                             long physicalTotal = osmxb.getTotalPhysicalMemorySize() / mb;
                             long physicalUse = physicalTotal - physicalFree;
                             String sysInfo = System.getProperty("os.name")
-                                    + " " + AppVaribles.message("PhysicalMemory") + ":" + physicalTotal + "MB"
-                                    + " " + AppVaribles.message("Used") + ":"
+                                    + " " + AppVariables.message("PhysicalMemory") + ":" + physicalTotal + "MB"
+                                    + " " + AppVariables.message("Used") + ":"
                                     + physicalUse + "MB (" + FloatTools.roundFloat2(physicalUse * 100.0f / physicalTotal) + "%)";
                             sysMemLabel.setText(sysInfo);
                             sysMemBar.setProgress(physicalUse * 1.0f / physicalTotal);
@@ -289,11 +270,11 @@ public class MainMenuController extends BaseController {
                             long maxMemory = r.maxMemory() / mb;
                             long usedMemory = totalMemory - freeMemory;
                             String myboxInfo = "MyBox"
-                                    //                    + "  " + AppVaribles.getMessage("AvailableProcessors") + ":" + availableProcessors
-                                    + " " + AppVaribles.message("AvaliableMemory") + ":" + maxMemory + "MB"
-                                    + " " + AppVaribles.message("Required") + ":"
+                                    //                    + "  " + AppVariables.getMessage("AvailableProcessors") + ":" + availableProcessors
+                                    + " " + AppVariables.message("AvaliableMemory") + ":" + maxMemory + "MB"
+                                    + " " + AppVariables.message("Required") + ":"
                                     + totalMemory + "MB(" + FloatTools.roundFloat2(totalMemory * 100.0f / maxMemory) + "%)"
-                                    + " " + AppVaribles.message("Used") + ":"
+                                    + " " + AppVariables.message("Used") + ":"
                                     + usedMemory + "MB(" + FloatTools.roundFloat2(usedMemory * 100.0f / maxMemory) + "%)";
                             myboxMemLabel.setText(myboxInfo);
                             myboxMemBar.setProgress(usedMemory * 1.0f / maxMemory);
@@ -316,7 +297,7 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void checkMemroyMonitor() {
         boolean v = monitorMemroyCheck.isSelected();
-        AppVaribles.setUserConfigValue("MonitorMemroy", v);
+        AppVariables.setUserConfigValue("MonitorMemroy", v);
         if (v) {
             if (memoryBox == null) {
                 makeMemoryMonitorBox();
@@ -375,8 +356,8 @@ public class MainMenuController extends BaseController {
                             float load = (float) osmxb.getSystemCpuLoad();
                             long s = (long) (osmxb.getSystemLoadAverage() / 1000000000);
                             String sysInfo = System.getProperty("os.name")
-                                    + " " + AppVaribles.message("SystemLoadAverage") + ":" + s + "s"
-                                    + " " + AppVaribles.message("SystemCpuUsage") + ":"
+                                    + " " + AppVariables.message("SystemLoadAverage") + ":" + s + "s"
+                                    + " " + AppVariables.message("SystemCpuUsage") + ":"
                                     + FloatTools.roundFloat2(load * 100) + "%";
                             sysCpuLabel.setText(sysInfo);
                             sysCpuBar.setProgress(load);
@@ -384,8 +365,8 @@ public class MainMenuController extends BaseController {
                             load = (float) osmxb.getProcessCpuLoad();
                             s = osmxb.getProcessCpuTime() / 1000000000;
                             String myboxInfo = "MyBox"
-                                    + " " + AppVaribles.message("RecentCpuTime") + ":" + s + "s"
-                                    + " " + AppVaribles.message("RecentCpuUsage") + ":"
+                                    + " " + AppVariables.message("RecentCpuTime") + ":" + s + "s"
+                                    + " " + AppVariables.message("RecentCpuUsage") + ":"
                                     + FloatTools.roundFloat2(load * 100) + "%";
                             myboxCpuLabel.setText(myboxInfo);
                             myboxCpuBar.setProgress(load);
@@ -409,7 +390,7 @@ public class MainMenuController extends BaseController {
     @FXML
     protected void checkCpuMonitor() {
         boolean v = monitorCpuCheck.isSelected();
-        AppVaribles.setUserConfigValue("MonitorCpu", v);
+        AppVariables.setUserConfigValue("MonitorCpu", v);
         if (v) {
             if (cpuBox == null) {
                 makeCpuMonitorBox();
@@ -428,31 +409,49 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void setChinese(ActionEvent event) {
-        AppVaribles.setLanguage("zh");
+        AppVariables.setLanguage("zh");
         refresh();
     }
 
     @FXML
     protected void setEnglish(ActionEvent event) {
-        AppVaribles.setLanguage("en");
+        AppVariables.setLanguage("en");
         refresh();
     }
 
     @FXML
     protected void setFont12(ActionEvent event) {
-        AppVaribles.setSceneFontSize(12);
+        AppVariables.setSceneFontSize(12);
         refresh();
     }
 
     @FXML
     protected void setFont15(ActionEvent event) {
-        AppVaribles.setSceneFontSize(15);
+        AppVariables.setSceneFontSize(15);
         refresh();
     }
 
     @FXML
     protected void setFont17(ActionEvent event) {
-        AppVaribles.setSceneFontSize(17);
+        AppVariables.setSceneFontSize(17);
+        refresh();
+    }
+
+    @FXML
+    protected void normalIcon(ActionEvent event) {
+        AppVariables.setIconSize(20);
+        refresh();
+    }
+
+    @FXML
+    protected void bigIcon(ActionEvent event) {
+        AppVariables.setIconSize(30);
+        refresh();
+    }
+
+    @FXML
+    protected void smallIcon(ActionEvent event) {
+        AppVariables.setIconSize(15);
         refresh();
     }
 
@@ -494,8 +493,8 @@ public class MainMenuController extends BaseController {
 
     @FXML
     protected void setControlDisplayText(ActionEvent event) {
-        AppVaribles.controlDisplayText = controlTextCheck.isSelected();
-        AppVaribles.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
+        AppVariables.controlDisplayText = controlTextCheck.isSelected();
+        AppVariables.setUserConfigValue("ControlDisplayText", controlTextCheck.isSelected());
         refresh();
     }
 
@@ -506,54 +505,44 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    protected void setStopAlarm(ActionEvent event) {
-        AppVaribles.setUserConfigValue("StopAlarmsWhenExit", stopAlarmCheck.isSelected());
-    }
-
-    @FXML
     protected void newWindowAction() {
-        AppVaribles.setOpenStageInNewWindow(newWindowCheck.isSelected());
+        AppVariables.setOpenStageInNewWindow(newWindowCheck.isSelected());
     }
 
     @FXML
     protected void restoreStagesSizeAction() {
-        AppVaribles.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
+        AppVariables.setRestoreStagesSize(restoreStagesSizeCheck.isSelected());
     }
 
     @FXML
     protected void popRecentAction() {
         if (popRecentCheck.isSelected()) {
-            AppVaribles.fileRecentNumber = 15;
+            AppVariables.fileRecentNumber = 15;
         } else {
-            AppVaribles.fileRecentNumber = 0;
+            AppVariables.fileRecentNumber = 0;
         }
-        AppVaribles.setUserConfigInt("FileRecentNumber", AppVaribles.fileRecentNumber);
+        AppVariables.setUserConfigInt("FileRecentNumber", AppVariables.fileRecentNumber);
 
-    }
-
-    @FXML
-    protected void replaceWhiteAction(ActionEvent event) {
-        AppVaribles.setUserConfigValue("AlphaAsWhite", replaceWhiteMenu.isSelected());
     }
 
     @FXML
     protected void PdfMem500MB(ActionEvent event) {
-        AppVaribles.setPdfMem("500MB");
+        AppVariables.setPdfMem("500MB");
     }
 
     @FXML
     protected void PdfMem1GB(ActionEvent event) {
-        AppVaribles.setPdfMem("1GB");
+        AppVariables.setPdfMem("1GB");
     }
 
     @FXML
     protected void PdfMem2GB(ActionEvent event) {
-        AppVaribles.setPdfMem("2GB");
+        AppVariables.setPdfMem("2GB");
     }
 
     @FXML
     protected void pdfMemUnlimit(ActionEvent event) {
-        AppVaribles.setPdfMem("Unlimit");
+        AppVariables.setPdfMem("Unlimit");
     }
 
     @FXML
@@ -609,7 +598,7 @@ public class MainMenuController extends BaseController {
     @Override
     public void setInterfaceStyle(String style) {
         try {
-            AppVaribles.setUserConfigValue("InterfaceStyle", style);
+            AppVariables.setUserConfigValue("InterfaceStyle", style);
             if (parentController != null) {
                 parentController.setInterfaceStyle(style);
             }
@@ -619,16 +608,14 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
-    @Override
     public void clearSettings(ActionEvent event) {
-        super.clearSettings(event);
-        String f = parentController.getMyFxml();
-        if (f.contains("ImageManufacture") && !f.contains("ImageManufactureBatch")) {
-            f = CommonValues.ImageManufactureFileFxml;
+        if (!super.clearSettings()) {
+            return;
         }
+        String f = parentController.getMyFxml();
         BaseController c = loadScene(f);
         c.getMyStage().setTitle(parentController.getMyStage().getTitle());
-        popInformation(AppVaribles.message("Successful"));
+        popSuccessul();
     }
 
     @FXML
@@ -639,7 +626,7 @@ public class MainMenuController extends BaseController {
     @Override
     public BaseController loadScene(String newFxml) {
         try {
-            if (AppVaribles.openStageInNewWindow) {
+            if (AppVariables.openStageInNewWindow) {
                 return parentController.openStage(newFxml);
             } else {
                 return parentController.loadScene(newFxml);
@@ -661,6 +648,11 @@ public class MainMenuController extends BaseController {
     }
 
     @FXML
+    private void openPdfHtmlViewer(ActionEvent event) {
+        loadScene(CommonValues.PdfHtmlViewerFxml);
+    }
+
+    @FXML
     private void openPDFAttributes(ActionEvent event) {
         loadScene(CommonValues.PdfAttributesFxml);
     }
@@ -673,6 +665,11 @@ public class MainMenuController extends BaseController {
     @FXML
     private void openPdfConvertImagesBatch(ActionEvent event) {
         loadScene(CommonValues.PdfConvertImagesBatchFxml);
+    }
+
+    @FXML
+    private void openPdfConvertHtmlsBatch(ActionEvent event) {
+        loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
     }
 
     @FXML
@@ -722,66 +719,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openImageManufacture(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureFileFxml);
-    }
-
-    @FXML
-    private void openImageManufactureSize(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureSizeFxml);
-    }
-
-    @FXML
-    private void openImageManufactureCrop(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureCropFxml);
-
-    }
-
-    @FXML
-    private void openImageManufactureColor(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureColorFxml);
-    }
-
-    @FXML
-    private void openImageManufactureEffects(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureEffectsFxml);
-    }
-
-    @FXML
-    private void openImageManufactureText(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureTextFxml);
-    }
-
-    @FXML
-    private void openImageManufactureDoodle(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureDoodleFxml);
-
-    }
-
-    @FXML
-    private void openImageManufactureMosaic(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureMosaicFxml);
-
-    }
-
-    @FXML
-    private void openImageManufactureArc(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureArcFxml);
-    }
-
-    @FXML
-    private void openImageManufactureShadow(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureShadowFxml);
-    }
-
-    @FXML
-    private void openImageManufactureTransform(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureTransformFxml);
-
-    }
-
-    @FXML
-    private void openImageManufactureMargins(ActionEvent event) {
-        loadScene(CommonValues.ImageManufactureMarginsFxml);
+        loadScene(CommonValues.ImageManufactureFxml);
     }
 
     @FXML
@@ -896,7 +834,7 @@ public class MainMenuController extends BaseController {
 
     @FXML
     private void openColorPalette(ActionEvent event) {
-        openStage(CommonValues.ColorPaletteFxml);
+        paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
     }
 
     @FXML
@@ -1046,7 +984,7 @@ public class MainMenuController extends BaseController {
     public void developerGuide(ActionEvent event) {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-UserGuide-1.0"
-                    + "-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1059,7 +997,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-Overview-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-Overview-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1071,7 +1009,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-PdfTools-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-PdfTools-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1083,7 +1021,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-ImageTools-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-ImageTools-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1095,7 +1033,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-DesktopTools-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-DesktopTools-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1107,7 +1045,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-NetworkTools-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-NetworkTools-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());
@@ -1119,7 +1057,7 @@ public class MainMenuController extends BaseController {
         try {
             String link = "https://github.com/Mararsh/MyBox/releases/download/v"
                     + CommonValues.AppDocVersion + "/MyBox-UserGuide-" + CommonValues.AppDocVersion
-                    + "-DeveloperGuide-" + AppVaribles.getLanguage() + ".pdf";
+                    + "-DeveloperGuide-" + AppVariables.getLanguage() + ".pdf";
             browseURI(new URI(link));
         } catch (Exception e) {
             logger.error(e.toString());

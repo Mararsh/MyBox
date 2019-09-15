@@ -30,36 +30,94 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                          <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                              <graphic>
+                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconOpen.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+
+                          <Label fx:id="sampledTips" maxWidth="1.7976931348623157E308" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" HBox.hgrow="ALWAYS" />
+                  <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
+                     <children>
+                                <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" fx:id="xyLabel" />
+                                <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconOpen.png" />
+                                                <Image url="@../buttons/iconLocation.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
+                                <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconXRuler.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
+                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconYRuler.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
+                                <CheckBox fx:id="openSaveCheck" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconOpen2.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconZoomOut.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
 
-                                <Label fx:id="sampledTips" styleClass="darkRed-label" stylesheets="@../styles/MyBox.css" text="%Sampled" visible="false" />
-                                <Button mnemonicParsing="false" styleClass="main-button" stylesheets="@../styles/MyBox.css" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar fx:id="opBar" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="NEVER">
-                            <items>
-                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
-                                <CheckBox fx:id="viewCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ViewAfterSave" />
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction" >
+                                <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconInfo.png" />
+                                                <Image url="@../buttons/iconZoomIn.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData" >
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicSmall.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPicBig.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -68,100 +126,59 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <HBox fx:id="sampleBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="NEVER">
-                    <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Label fx:id="sampleLabel" styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
-                                <Button mnemonicParsing="false" prefWidth="2.0" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar>
-                            <items>
-                                <Label text="%SubsampleWidth" />
-                                <Label text="1:">
-                                    <padding>
-                                        <Insets left="10.0" />
-                                    </padding>
-                                </Label>
-                                <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
-                                <Label text="%SubsampleHeight">
-                                    <padding>
-                                        <Insets left="20.0" />
-                                    </padding>
-                                </Label>
-                                <Label text="1:">
-                                    <padding>
-                                        <Insets left="10.0" />
-                                    </padding>
-                                </Label>
-                                <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
-                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction" >
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconSelectAll.png" />
+                                                <Image url="@../buttons/iconInfo.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                            </items>
-                        </ToolBar>
+                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Save" />
+                     </children>
+                  </HBox>
                     </children>
+                </HBox>
+                <HBox fx:id="sampleBox" alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                          <Label fx:id="sampleLabel" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
+                          <Label text="%SubsampleWidth" />
+                          <Label text="1:">
+                              <padding>
+                                  <Insets left="10.0" />
+                              </padding>
+                          </Label>
+                          <ComboBox fx:id="widthBox" editable="true" prefWidth="100.0" />
+                          <Label text="%SubsampleHeight">
+                              <padding>
+                                  <Insets left="20.0" />
+                              </padding>
+                          </Label>
+                          <Label text="1:">
+                              <padding>
+                                  <Insets left="10.0" />
+                              </padding>
+                          </Label>
+                          <ComboBox fx:id="heightBox" editable="true" prefWidth="100.0" />
+                          <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconSelectAll.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                    </children>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
                 </HBox>
                 <SplitPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <items>
                         <VBox fx:id="showBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                             <children>
-                                <HBox fx:id="imageLabelBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                    <children>
-                                        <Label alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" fx:id="xyLabel" />
-                                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
-                                        <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
-                                        <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" HBox.hgrow="NEVER" />
-                                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" >
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconZoomOut.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-
-                                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" >
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconZoomIn.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconPicSmall.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="paneSizeButton"  mnemonicParsing="false" onAction="#paneSize" >
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconPicBig.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </children>
-                                </HBox>
                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                                     <content>
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">

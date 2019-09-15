@@ -7,7 +7,6 @@
         </packagings>
         <goals>
             <goal>clean</goal>
-            <!--<goal>package</goal>-->
             <goal>javafx:run</goal>
         </goals>
     </action>
@@ -27,7 +26,7 @@
         <actionName>build-with-dependencies</actionName>
         <goals>
             <goal>clean</goal>
-            <goal>package</goal>
+            <goal>javafx:jlink</goal>
         </goals>
     </action>
 

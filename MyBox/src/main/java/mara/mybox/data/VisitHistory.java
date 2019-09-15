@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.db.TableVisitHistory;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -90,7 +90,7 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentPath(int fileType) {
-        return getRecentPath(fileType, AppVaribles.fileRecentNumber);
+        return getRecentPath(fileType, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getRecentPath(int fileType, int number) {
@@ -111,17 +111,17 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentPathRead(int fileType) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return null;
         }
-        return TableVisitHistory.find(ResourceType.Path, fileType, OperationType.Read, AppVaribles.fileRecentNumber);
+        return TableVisitHistory.find(ResourceType.Path, fileType, OperationType.Read, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getRecentPathWritten(int fileType) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return null;
         }
-        return TableVisitHistory.find(ResourceType.Path, fileType, OperationType.Write, AppVaribles.fileRecentNumber);
+        return TableVisitHistory.find(ResourceType.Path, fileType, OperationType.Write, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getLastPath(int fileType) {
@@ -165,7 +165,7 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentFile(int fileType) {
-        return getRecentFile(fileType, AppVaribles.fileRecentNumber);
+        return getRecentFile(fileType, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getRecentFile(int fileType, int number) {
@@ -197,8 +197,8 @@ public class VisitHistory {
         if (records == null || records.isEmpty()) {
             return records;
         }
-        List<VisitHistory> valid = new ArrayList();
-        List<String> names = new ArrayList();
+        List<VisitHistory> valid = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         for (VisitHistory r : records) {
             String fname = r.getResourceValue();
             if (!new File(fname).exists()) {
@@ -212,11 +212,11 @@ public class VisitHistory {
     }
 
     public static List<VisitHistory> getRecentFileRead(int fileType) {
-        return TableVisitHistory.find(ResourceType.File, fileType, OperationType.Read, AppVaribles.fileRecentNumber);
+        return TableVisitHistory.find(ResourceType.File, fileType, OperationType.Read, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getRecentFileWritten(int fileType) {
-        return TableVisitHistory.find(ResourceType.File, fileType, OperationType.Write, AppVaribles.fileRecentNumber);
+        return TableVisitHistory.find(ResourceType.File, fileType, OperationType.Write, AppVariables.fileRecentNumber);
     }
 
     public static List<VisitHistory> getLastFile(int fileType) {

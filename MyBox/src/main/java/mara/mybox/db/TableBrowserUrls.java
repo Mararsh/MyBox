@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -23,7 +23,7 @@ public class TableBrowserUrls extends DerbyBase {
 
     public TableBrowserUrls() {
         Table_Name = "Browser_URLs";
-        Keys = new ArrayList() {
+        Keys = new ArrayList<>() {
             {
                 add("address");
             }
@@ -58,14 +58,14 @@ public class TableBrowserUrls extends DerbyBase {
             }
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static List<String> read() {
-        List<String> urls = new ArrayList();
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        List<String> urls = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql = "SELECT address FROM Browser_URLs ORDER BY last_visit DESC";
             ResultSet results = statement.executeQuery(sql);
@@ -80,7 +80,7 @@ public class TableBrowserUrls extends DerbyBase {
                 return urls.subList(0, Max_Browser_URLs);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            // logger.debug(e.toString());
         }
         return urls;
     }
@@ -95,7 +95,7 @@ public class TableBrowserUrls extends DerbyBase {
             if (!d.toLowerCase().startsWith("http")) {
                 return urls;
             }
-            try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+            try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                     Statement statement = conn.createStatement()) {
                 String sql;
                 if (urls.contains(d)) {
@@ -109,11 +109,11 @@ public class TableBrowserUrls extends DerbyBase {
                 }
                 urls = read();
             } catch (Exception e) {
-                logger.debug(e.toString());
+                // logger.debug(e.toString());
             }
 
         } catch (Exception e) {
-            logger.debug(e.toString());
+            // logger.debug(e.toString());
         }
 
         return urls;

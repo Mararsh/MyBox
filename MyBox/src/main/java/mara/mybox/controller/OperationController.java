@@ -13,8 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * FXML Controller class
@@ -24,13 +23,13 @@ import mara.mybox.value.AppVaribles;
 public class OperationController extends BaseController {
 
     @FXML
-    public Button pauseButton, openTargetButton;
+    protected Button pauseButton, openTargetButton;
     @FXML
-    public ProgressBar progressBar, fileProgressBar;
+    protected ProgressBar progressBar, fileProgressBar;
     @FXML
-    public Label progressValue, fileProgressValue;
+    protected Label progressValue, fileProgressValue;
     @FXML
-    public CheckBox miaoCheck, openCheck;
+    protected CheckBox miaoCheck, openCheck;
 
     @Override
     public void initializeNext() {
@@ -39,22 +38,22 @@ public class OperationController extends BaseController {
             miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue("Miao", newValue);
+                    AppVariables.setUserConfigValue("Miao", newValue);
 
                 }
             });
-            miaoCheck.setSelected(AppVaribles.getUserConfigBoolean("Miao"));
+            miaoCheck.setSelected(AppVariables.getUserConfigBoolean("Miao"));
         }
 
         if (openCheck != null) {
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue("OpenWhenComplete", newValue);
+                    AppVariables.setUserConfigValue("OpenWhenComplete", newValue);
 
                 }
             });
-            openCheck.setSelected(AppVaribles.getUserConfigBoolean("OpenWhenComplete"));
+            openCheck.setSelected(AppVariables.getUserConfigBoolean("OpenWhenComplete"));
         }
 
     }

@@ -26,18 +26,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
-import mara.mybox.data.DoublePenLines;
+import mara.mybox.data.DoubleLines;
+import mara.mybox.data.DoubleOutline;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.image.ImageBlend;
-import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.ImageBlend.ImagesRelativeLocation;
-import mara.mybox.image.ImageScope;
+import mara.mybox.image.ImageColor;
 import mara.mybox.image.ImageCombine;
 import mara.mybox.image.ImageInformation;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.image.ImageManufacture;
+import mara.mybox.image.ImageMosaic;
+import mara.mybox.image.ImageScope;
+import mara.mybox.image.ImageScope.ScopeType;
+import mara.mybox.image.PixelBlend.ImagesBlendMode;
+import mara.mybox.image.PixelsOperation;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -138,6 +144,9 @@ public class FxmlImageManufacture {
     }
 
     public static Image scaleImage(Image image, int width, int height) {
+        if (width == image.getWidth() && height == image.getHeight()) {
+            return image;
+        }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.scaleImage(source, width, height);
         Image newImage = SwingFXUtils.toFXImage(target, null);
@@ -430,6 +439,69 @@ public class FxmlImageManufacture {
         return newImage;
     }
 
+    public static Image crop(Image srcImage, ImageScope scope, Color bgColor, boolean cropOutside) {
+        try {
+            Image newImage;
+            PixelsOperation pixelsOperation;
+            switch (scope.getScopeType()) {
+                case Matting:
+                case Color:
+                case RectangleColor:
+                case CircleColor:
+                case EllipseColor:
+                case PolygonColor:
+                    pixelsOperation = PixelsOperation.newPixelsOperation(srcImage,
+                            scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
+                    pixelsOperation.setColorPara1(ImageColor.converColor(bgColor));
+                    newImage = pixelsOperation.operateFxImage();
+                    break;
+                case Rectangle:
+                    if (cropOutside) {
+                        newImage = cropOutsideFx(srcImage, scope.getRectangle(), bgColor);
+                    } else {
+                        newImage = cropInsideFx(srcImage, scope.getRectangle(), bgColor);
+                    }
+                    break;
+                case Circle:
+                    if (cropOutside) {
+                        newImage = cropOutsideFx(srcImage, scope.getCircle(), bgColor);
+                    } else {
+                        newImage = cropInsideFx(srcImage, scope.getCircle(), bgColor);
+                    }
+                    break;
+                case Ellipse:
+                    if (cropOutside) {
+                        newImage = cropOutsideFx(srcImage, scope.getEllipse(), bgColor);
+                    } else {
+                        newImage = cropInsideFx(srcImage, scope.getEllipse(), bgColor);
+                    }
+                    break;
+                case Polygon:
+                    if (cropOutside) {
+                        newImage = cropOutsideFx(srcImage, scope.getPolygon(), bgColor);
+                    } else {
+                        newImage = cropInsideFx(srcImage, scope.getPolygon(), bgColor);
+                    }
+                    break;
+                case Outline:
+                    DoubleOutline outline = new DoubleOutline(scope);
+                    if (cropOutside) {
+                        newImage = cropOutsideFx(srcImage, outline, bgColor);
+                    } else {
+                        newImage = cropInsideFx(srcImage, outline, bgColor);
+                    }
+                    break;
+                default:
+                    newImage = null;
+                    break;
+            }
+            return newImage;
+        } catch (Exception e) {
+            logger.debug(e.toString());
+            return null;
+        }
+    }
+
     public static Image indicateSplit(Image image,
             List<Integer> rows, List<Integer> cols,
             Color lineColor, int lineWidth, boolean showSize, double scale) {
@@ -446,95 +518,111 @@ public class FxmlImageManufacture {
 
     public static Image drawRectangle(Image image,
             DoubleRectangle rect, Color strokeColor, int strokeWidth,
-            int arcWidth, boolean dotted, boolean isFill, Color fillColor) {
+            int arcWidth, boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         if (rect == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawRectangle(source, rect,
                 FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, arcWidth, dotted,
-                isFill, FxmlImageManufacture.toAwtColor(fillColor));
+                isFill, FxmlImageManufacture.toAwtColor(fillColor), opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawCircle(Image image,
             DoubleCircle circle, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         if (circle == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawCircle(source, circle,
                 FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, FxmlImageManufacture.toAwtColor(fillColor));
+                isFill, FxmlImageManufacture.toAwtColor(fillColor), opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawEllipse(Image image,
             DoubleEllipse ellipse, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         if (ellipse == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawEllipse(source, ellipse,
                 FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, FxmlImageManufacture.toAwtColor(fillColor));
+                isFill, FxmlImageManufacture.toAwtColor(fillColor), opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawPolygon(Image image,
             DoublePolygon polygon, Color strokeColor, int strokeWidth,
-            boolean dotted, boolean isFill, Color fillColor) {
+            boolean dotted, boolean isFill, Color fillColor,
+            float opacity) {
         if (polygon == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawPolygon(source, polygon,
                 FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted,
-                isFill, FxmlImageManufacture.toAwtColor(fillColor));
+                isFill, FxmlImageManufacture.toAwtColor(fillColor), opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawPolyline(Image image,
             DoublePolyline polyline, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            boolean dotted, float opacity) {
         if (polyline == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawPolyline(source, polyline,
-                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted);
+                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted, opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawLines(Image image,
             DoublePolyline polyline, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            boolean dotted, float opacity) {
         if (polyline == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawLines(source, polyline,
-                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted);
+                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted, opacity);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
 
     public static Image drawLines(Image image,
-            DoublePenLines penData, Color strokeColor, int strokeWidth,
-            boolean dotted) {
+            DoubleLines penData, Color strokeColor, int strokeWidth,
+            boolean dotted, float opacity) {
         if (penData == null || strokeColor == null) {
             return image;
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.drawLines(source, penData,
-                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted);
+                FxmlImageManufacture.toAwtColor(strokeColor), strokeWidth, dotted, opacity);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawMosaic(Image image,
+            DoubleLines penData, ImageMosaic.MosaicType mosaicType, int strokeWidth) {
+        if (penData == null || mosaicType == null || strokeWidth < 1) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.image.ImageManufacture.drawMosaic(source, penData,
+                mosaicType, strokeWidth);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }
@@ -672,7 +760,7 @@ public class FxmlImageManufacture {
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation image : images) {
-                    imageWidth = (int) image.getWidth();
+                    imageWidth = image.getWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
@@ -680,7 +768,7 @@ public class FxmlImageManufacture {
             }
             if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation image : images) {
-                    imageWidth = (int) image.getWidth();
+                    imageWidth = image.getWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
@@ -929,6 +1017,7 @@ public class FxmlImageManufacture {
             return false;
         }
         return calculateColorDistance2(color1, color2) <= distance2;
+
     }
 
     public static Image indicateRectangle(Image image,
@@ -1002,7 +1091,6 @@ public class FxmlImageManufacture {
                     boolean notMatch = false;
                     for (int i = 0; i < width; i++) {
                         if (!FxmlImageManufacture.isColorMatch2(pixelReader.getColor(i, j), mColor, distance2)) {
-//                            logger.debug("notMatch: " + i + " " + j + " " + pixelReader.getColor(i, j));
                             notMatch = true;
                             break;
                         }
@@ -1360,6 +1448,53 @@ public class FxmlImageManufacture {
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage pic = SwingFXUtils.fromFXImage(picture, null);
         BufferedImage target = mara.mybox.image.ImageManufacture.addPicture(source, pic, x, y, w, h, keepRatio, transparent);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image replaceColor(Image image, Color oldColor, Color newColor, int distance) {
+        if (image == null || oldColor == null || newColor == null || distance < 0) {
+            return image;
+        }
+        try {
+            ImageScope scope = new ImageScope(image);
+            scope.setScopeType(ScopeType.Color);
+            scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+            scope.getColors().add(ImageColor.converColor(oldColor));
+            scope.setColorDistance(distance);
+            PixelsOperation pixelsOperation = PixelsOperation.newPixelsOperation(image,
+                    scope, PixelsOperation.OperationType.Color, PixelsOperation.ColorActionType.Set);
+            pixelsOperation.setColorPara1(ImageColor.converColor(newColor));
+            Image newImage = pixelsOperation.operateFxImage();
+            return newImage;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Image drawHTML(Image backImage, Image html,
+            DoubleRectangle bkRect, Color bkColor, float bkOpacity, int bkarc,
+            int rotate, int margin) {
+        if (html == null || backImage == null || bkRect == null) {
+            return backImage;
+        }
+        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
+        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
+        BufferedImage target = ImageManufacture.drawHTML(backBfImage, htmlBfImage,
+                bkRect, ImageColor.converColor(bkColor), bkOpacity, bkarc, rotate, margin);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawHTML(Image backImage, BufferedImage html,
+            int htmlX, int htmlY, int htmlWdith, int htmlHeight) {
+        if (html == null || backImage == null) {
+            return backImage;
+        }
+        BufferedImage backBfImage = SwingFXUtils.fromFXImage(backImage, null);
+//        BufferedImage htmlBfImage = SwingFXUtils.fromFXImage(html, null);
+        BufferedImage target = ImageManufacture.drawHTML(backBfImage, html,
+                htmlX, htmlY, htmlWdith, htmlHeight);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

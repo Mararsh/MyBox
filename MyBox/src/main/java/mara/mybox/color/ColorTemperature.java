@@ -56,7 +56,7 @@ public class ColorTemperature {
     };
 
     // xyz are tristimulus values
-    public static double xyz2corColorTemp(double[] xyz) {
+    public static double xyz2ColorTemp(double[] xyz) {
         if ((xyz[0] < 1.0e-20) && (xyz[1] < 1.0e-20) && (xyz[2] < 1.0e-20)) {
             return (-1);
             /* protect against possible divide-by-zero failure */
@@ -85,7 +85,7 @@ public class ColorTemperature {
         return temp;
     }
 
-    public static double[] corColorTemp2xy(double temp) {
+    public static double[] colorTemp2xy(double temp) {
         if (temp < 4000 || temp > 25000) {
             return null;
         }

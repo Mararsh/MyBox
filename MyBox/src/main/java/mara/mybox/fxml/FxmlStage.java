@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,9 +20,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BytesEditerController;
 import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.ImageInformationController;
+import mara.mybox.controller.ImageManufactureController;
 import mara.mybox.controller.ImageMetaDataController;
 import mara.mybox.controller.ImageStatisticController;
 import mara.mybox.controller.ImageViewerController;
@@ -29,14 +32,13 @@ import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.controller.LoadingController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.TextEditerController;
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.controller.base.ImageManufactureController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -54,9 +56,9 @@ public class FxmlStage {
             if (stage == null) {
                 return null;
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVaribles.currentBundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(FxmlStage.class.getResource(newFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
-            pane.getStylesheets().add(FxmlStage.class.getResource(AppVaribles.getStyle()).toExternalForm());
+            pane.getStylesheets().add(FxmlStage.class.getResource(AppVariables.getStyle()).toExternalForm());
             Scene scene = new Scene(pane);
 
             final BaseController controller = (BaseController) fxmlLoader.getController();
@@ -65,7 +67,7 @@ public class FxmlStage {
             controller.setLoadFxml(newFxml);
 
 //            stage.setUserData(controller);
-            stage.getIcons().add(CommonValues.AppIcon);
+            stage.getIcons().add(CommonImageValues.AppIcon);
             stage.setTitle(controller.getBaseTitle());
             if (stageStyle != null) {
                 stage.initStyle(stageStyle);
@@ -95,7 +97,7 @@ public class FxmlStage {
                 VisitHistory.visitMenu(controller.getBaseTitle(), newFxml);
             }
 
-            Platform.setImplicitExit(AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty());
+            Platform.setImplicitExit(AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty());
 
             return controller;
         } catch (Exception e) {
@@ -177,36 +179,36 @@ public class FxmlStage {
     public static void appExit() {
         try {
             if (Window.getWindows() != null) {
-                List<Window> windows = new ArrayList();
+                List<Window> windows = new ArrayList<>();
                 windows.addAll(Window.getWindows());
                 for (Window window : windows) {
                     window.hide();
                 }
             }
-            if (AppVaribles.scheduledTasks != null && !AppVaribles.scheduledTasks.isEmpty()) {
-                if (AppVaribles.getUserConfigBoolean("StopAlarmsWhenExit")) {
-                    for (Long key : AppVaribles.scheduledTasks.keySet()) {
-                        ScheduledFuture future = AppVaribles.scheduledTasks.get(key);
+            if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
+                if (AppVariables.getUserConfigBoolean("StopAlarmsWhenExit")) {
+                    for (Long key : AppVariables.scheduledTasks.keySet()) {
+                        ScheduledFuture future = AppVariables.scheduledTasks.get(key);
                         future.cancel(true);
                     }
-                    AppVaribles.scheduledTasks = null;
-                    if (AppVaribles.executorService != null) {
-                        AppVaribles.executorService.shutdownNow();
-                        AppVaribles.executorService = null;
+                    AppVariables.scheduledTasks = null;
+                    if (AppVariables.executorService != null) {
+                        AppVariables.executorService.shutdownNow();
+                        AppVariables.executorService = null;
                     }
                 }
 
             } else {
-                if (AppVaribles.scheduledTasks != null) {
-                    AppVaribles.scheduledTasks = null;
+                if (AppVariables.scheduledTasks != null) {
+                    AppVariables.scheduledTasks = null;
                 }
-                if (AppVaribles.executorService != null) {
-                    AppVaribles.executorService.shutdownNow();
-                    AppVaribles.executorService = null;
+                if (AppVariables.executorService != null) {
+                    AppVariables.executorService.shutdownNow();
+                    AppVariables.executorService = null;
                 }
             }
 
-            if (AppVaribles.scheduledTasks == null || AppVaribles.scheduledTasks.isEmpty()) {
+            if (AppVariables.scheduledTasks == null || AppVariables.scheduledTasks.isEmpty()) {
                 Platform.exit(); // Some thread may still be alive after this
                 System.exit(0);  // Go
             }
@@ -253,7 +255,7 @@ public class FxmlStage {
     public static ImageManufactureController openImageManufacture(Stage stage, File file) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFileFxml);
+                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(file.getAbsolutePath());
             return controller;
         } catch (Exception e) {
@@ -266,7 +268,7 @@ public class FxmlStage {
             File file, Image image, ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFileFxml);
+                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(file, image, imageInfo);
             return controller;
         } catch (Exception e) {
@@ -279,7 +281,7 @@ public class FxmlStage {
             ImageInformation imageInfo) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFileFxml);
+                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(imageInfo);
             return controller;
         } catch (Exception e) {
@@ -292,7 +294,7 @@ public class FxmlStage {
             Image image) {
         try {
             final ImageManufactureController controller
-                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFileFxml);
+                    = (ImageManufactureController) openScene(stage, CommonValues.ImageManufactureFxml);
             controller.loadImage(image);
             return controller;
         } catch (Exception e) {
@@ -412,10 +414,15 @@ public class FxmlStage {
     }
 
     public static LoadingController openLoadingStage(Stage stage, Modality block, String info) {
+        return openLoadingStage(stage, block, null, info);
+    }
+
+    public static LoadingController openLoadingStage(Stage stage, Modality block, Task task, String info) {
         try {
             final LoadingController controller
                     = (LoadingController) FxmlStage.openStage(stage, CommonValues.LoadingFxml,
                             true, block, StageStyle.TRANSPARENT);
+            controller.init(task);
             if (info != null) {
                 controller.setInfo(info);
             }
@@ -481,6 +488,11 @@ public class FxmlStage {
             alert.setHeaderText(null);
             alert.setContentText(information);
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            // https://stackoverflow.com/questions/38799220/javafx-how-to-bring-dialog-alert-to-the-front-of-the-screen?r=SearchResults
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -494,6 +506,10 @@ public class FxmlStage {
             alert.setHeaderText(null);
             alert.setContentText(information);
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
             alert.showAndWait();
         } catch (Exception e) {
             logger.error(e.toString());
@@ -508,6 +524,9 @@ public class FxmlStage {
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             alert.getDialogPane().setContent(new Label(information));
 //            alert.setContentText(information);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
             alert.showAndWait();
         } catch (Exception e) {

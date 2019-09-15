@@ -1,7 +1,8 @@
 package mara.mybox.image;
 
 import java.awt.Color;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -45,6 +46,10 @@ public class ImageColor {
     /*
         Static methods
      */
+    public static Color getAlphaColor() {
+        return ImageColor.converColor(AppVariables.getAlphaColor());
+    }
+
     public static int RGB2Pixel(int r, int g, int b, int a) {
         return RGB2Pixel(new Color(r, g, b, a));
     }

@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import mara.mybox.controller.base.BaseController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -12,8 +11,7 @@ import javafx.scene.control.ToggleGroup;
 import mara.mybox.color.CIEData;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -22,10 +20,10 @@ import static mara.mybox.value.AppVaribles.message;
  */
 public class XYZController extends BaseController {
 
-    public double x, y, z;
-    public double[] relative;
-    public ValueType valueType;
-    public int scale = 8;
+    protected double x, y, z;
+    protected double[] relative;
+    protected ValueType valueType;
+    protected int scale = 8;
 
     public enum ValueType {
         Relative, Normalized, Tristimulus

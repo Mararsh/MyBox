@@ -64,25 +64,33 @@ License:    Apache License Version 2.0
                 </HBox>
                 <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
                     <content>
-                        <VBox fx:id="optionsBox" spacing="10.0">
+                        <VBox fx:id="optionsBox" spacing="5.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                                     <children>
                                         <Label text="%IntervalMilliseconds" />
                                         <ComboBox fx:id="intervalCBox" editable="true" prefWidth="100.0" />
                                         <CheckBox fx:id="loopCheck" mnemonicParsing="false" selected="true" text="%Loop" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
                                         <RadioButton mnemonicParsing="false" selected="true" text="%KeepImagesSize">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="sizeGroup" />
                                             </toggleGroup>
+                                 <HBox.margin>
+                                    <Insets left="60.0" />
+                                 </HBox.margin>
                                         </RadioButton>
-                                        <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup" />
-                                        <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width" />
-                                        <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height" />
+                                        <RadioButton mnemonicParsing="false" text="%AllSetAs" toggleGroup="$sizeGroup">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></RadioButton>
+                                        <TextField fx:id="widthInput" prefWidth="100.0" promptText="%Width">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></TextField>
+                                        <TextField fx:id="heightInput" prefWidth="100.0" promptText="%Height">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></TextField>
                                     </children>
                                 </HBox>
                             </children>

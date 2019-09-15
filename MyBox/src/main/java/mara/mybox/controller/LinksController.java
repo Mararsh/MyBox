@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -12,7 +11,7 @@ import mara.mybox.value.AppVaribles;
 public class LinksController extends BaseController {
 
     public LinksController() {
-        baseTitle = AppVaribles.message("Links");
+        baseTitle = AppVariables.message("Links");
     }
 
     @Override

@@ -1,13 +1,11 @@
 package mara.mybox.controller;
 
 import java.util.Map;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,13 +16,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import mara.mybox.color.ChromaticAdaptation;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -52,7 +48,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             bradfordColumn, xyzColumn, vonCloumn;
 
     public ChromaticAdaptationMatrixController() {
-        baseTitle = AppVaribles.message("ChromaticAdaptationMatrix");
+        baseTitle = AppVariables.message("ChromaticAdaptationMatrix");
         exportName = "ChromaticAdaptationMatrices";
     }
 
@@ -95,13 +91,13 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
 
     public void initAll() {
         try {
-            sourceColumn.setCellValueFactory(new PropertyValueFactory<ChromaticAdaptation, String>("source"));
-            targetColumn.setCellValueFactory(new PropertyValueFactory<ChromaticAdaptation, String>("target"));
-            bradfordColumn.setCellValueFactory(new PropertyValueFactory<ChromaticAdaptation, String>("BradfordMethod"));
+            sourceColumn.setCellValueFactory(new PropertyValueFactory<>("source"));
+            targetColumn.setCellValueFactory(new PropertyValueFactory<>("target"));
+            bradfordColumn.setCellValueFactory(new PropertyValueFactory<>("BradfordMethod"));
 //            bradfordColumn.setCellFactory(TextFieldTableCell.<ChromaticAdaptation>forTableColumn());
-            xyzColumn.setCellValueFactory(new PropertyValueFactory<ChromaticAdaptation, String>("XYZScalingMethod"));
+            xyzColumn.setCellValueFactory(new PropertyValueFactory<>("XYZScalingMethod"));
 //            xyzColumn.setCellFactory(TextFieldTableCell.<ChromaticAdaptation>forTableColumn());
-            vonCloumn.setCellValueFactory(new PropertyValueFactory<ChromaticAdaptation, String>("VonKriesMethod"));
+            vonCloumn.setCellValueFactory(new PropertyValueFactory<>("VonKriesMethod"));
 //            vonCloumn.setCellFactory(TextFieldTableCell.<ChromaticAdaptation>forTableColumn());
 
             scaleMatricesInput.textProperty().addListener(new ChangeListener<String>() {
@@ -114,14 +110,14 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
                         } else {
                             scale = p;
                             scaleMatricesInput.setStyle(null);
-                            AppVaribles.setUserConfigInt("MatrixDecimalScale", scale);
+                            AppVariables.setUserConfigInt("MatrixDecimalScale", scale);
                         }
                     } catch (Exception e) {
                         scaleMatricesInput.setStyle(badStyle);
                     }
                 }
             });
-            int p = AppVaribles.getUserConfigInt("MatrixDecimalScale", 8);
+            int p = AppVariables.getUserConfigInt("MatrixDecimalScale", 8);
             scaleMatricesInput.setText(p + "");
 
             calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
@@ -161,40 +157,34 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private String allTexts;
+
+                @Override
+                protected boolean handle() {
+                    allData = FXCollections.observableArrayList();
+                    allData.addAll(ChromaticAdaptation.all(scale));
+                    allTexts = ChromaticAdaptation.allTexts(scale);
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    allTableView.setItems(allData);
+                    allArea.setText(allTexts);
+                    allArea.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String allTexts;
-
-            @Override
-            protected Void call() throws Exception {
-                allData = FXCollections.observableArrayList();
-                allData.addAll(ChromaticAdaptation.all(scale));
-                allTexts = ChromaticAdaptation.allTexts(scale);
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        allTableView.setItems(allData);
-                        allArea.setText(allTexts);
-                        allArea.home();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
     @Override

@@ -32,6 +32,11 @@ public class DoubleCircle implements DoubleShape {
         return radius > 0;
     }
 
+    public boolean same(DoubleCircle circle) {
+        return centerX == circle.getCenterX() && centerY == circle.getCenterY()
+                && radius == circle.getRadius();
+    }
+
     @Override
     public boolean include(double x, double y) {
         double distanceX = centerX - x;

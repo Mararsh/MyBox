@@ -12,9 +12,9 @@ import static mara.mybox.tools.ByteTools.intToBytes;
 import static mara.mybox.tools.ByteTools.shortToBytes;
 import static mara.mybox.tools.ByteTools.subBytes;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import static mara.mybox.value.CommonValues.Indent;
 
 /**
@@ -119,7 +119,7 @@ public class IccTagType {
     }
 
     public static List<String> illuminantTypes() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : IlluminantTypes) {
             types.add(item[1]);
         }
@@ -140,7 +140,7 @@ public class IccTagType {
     }
 
     public static List<String> observerTypes() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : ObserverTypes) {
             types.add(item[1]);
         }
@@ -161,7 +161,7 @@ public class IccTagType {
     }
 
     public static List<String> geometryTypes() {
-        List<String> types = new ArrayList();
+        List<String> types = new ArrayList<>();
         for (String[] item : GeometryTypes) {
             types.add(item[1]);
         }
@@ -242,7 +242,7 @@ public class IccTagType {
         if (bytes == null || !"desc".equals(new String(subBytes(bytes, 0, 4)))) {
             return null;
         }
-        Map<String, Object> values = new HashMap();
+        Map<String, Object> values = new HashMap<>();
 
         int AsciiLength = (int) uInt32Number(subBytes(bytes, 8, 4));
         values.put("AsciiLength", AsciiLength);
@@ -281,7 +281,7 @@ public class IccTagType {
         if (bytes == null || !"mluc".equals(new String(subBytes(bytes, 0, 4)))) {
             return null;
         }
-        Map<String, Object> values = new HashMap();
+        Map<String, Object> values = new HashMap<>();
 
         int num = (int) uInt32Number(subBytes(bytes, 8, 4));
         int size = (int) uInt32Number(subBytes(bytes, 12, 4));
@@ -357,7 +357,7 @@ public class IccTagType {
         if (bytes == null || !"view".equals(new String(subBytes(bytes, 0, 4)))) {
             return null;
         }
-        Map<String, Object> values = new HashMap();
+        Map<String, Object> values = new HashMap<>();
         values.put("illuminant", XYZNumber(subBytes(bytes, 8, 12)));
         values.put("surround", XYZNumber(subBytes(bytes, 20, 12)));
         values.put("illuminantType", illuminantType(subBytes(bytes, 32, 4)));
@@ -368,7 +368,7 @@ public class IccTagType {
         if (bytes == null || !"meas".equals(new String(subBytes(bytes, 0, 4)))) {
             return null;
         }
-        Map<String, Object> values = new HashMap();
+        Map<String, Object> values = new HashMap<>();
         values.put("observer", observerType(subBytes(bytes, 8, 4)));
         values.put("tristimulus", XYZNumber(subBytes(bytes, 12, 12)));
         values.put("geometry", geometryType(subBytes(bytes, 24, 4)));
@@ -413,7 +413,7 @@ public class IccTagType {
             if (bytes == null || !"mft1".equals(new String(subBytes(bytes, 0, 4)))) {
                 return null;
             }
-            Map<String, Object> values = new HashMap();
+            Map<String, Object> values = new HashMap<>();
             values.put("type", "lut8");
             int InputChannelsNumber = uInt8Number(bytes[8]);
             values.put("InputChannelsNumber", InputChannelsNumber);
@@ -440,10 +440,10 @@ public class IccTagType {
             double e9 = IccTagType.s15Fixed16Number(subBytes(bytes, 44, 4));
             values.put("e9", e9);
             int offset = 48;
-            int maxItems = AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500);
-            List<List<Double>> InputTables = new ArrayList();
+            int maxItems = AppVariables.getUserConfigInt("ICCMaxDecodeNumber", 500);
+            List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < 256; n++) {
-                List<Double> InputTable = new ArrayList();
+                List<Double> InputTable = new ArrayList<>();
                 for (int i = 0; i < InputChannelsNumber; i++) {
                     double v = uInt8Number(bytes[offset++]);
                     if (normalizedLut) {
@@ -459,10 +459,10 @@ public class IccTagType {
                 }
             }
             values.put("InputTables", InputTables);
-            List<List<Double>> CLUTTables = new ArrayList();
+            List<List<Double>> CLUTTables = new ArrayList<>();
             double dimensionSize = Math.pow(GridPointsNumber, InputChannelsNumber);
             for (int i = 0; i < dimensionSize; i++) {
-                List<Double> GridPoint = new ArrayList();
+                List<Double> GridPoint = new ArrayList<>();
                 for (int o = 0; o < OutputChannelsNumber; o++) {
                     double v = uInt8Number(bytes[offset++]);
                     if (normalizedLut) {
@@ -478,9 +478,9 @@ public class IccTagType {
                 }
             }
             values.put("CLUTTables", CLUTTables);
-            List<List<Double>> OutputTables = new ArrayList();
+            List<List<Double>> OutputTables = new ArrayList<>();
             for (int m = 0; m < 256; m++) {
-                List<Double> OutputTable = new ArrayList();
+                List<Double> OutputTable = new ArrayList<>();
                 for (int i = 0; i < OutputChannelsNumber; i++) {
                     double v = uInt8Number(bytes[offset++]);
                     if (normalizedLut) {
@@ -508,7 +508,7 @@ public class IccTagType {
             if (bytes == null || !"mft2".equals(new String(subBytes(bytes, 0, 4)))) {
                 return null;
             }
-            Map<String, Object> values = new HashMap();
+            Map<String, Object> values = new HashMap<>();
             values.put("type", "lut16");
             int InputChannelsNumber = uInt8Number(bytes[8]);
             values.put("InputChannelsNumber", InputChannelsNumber);
@@ -540,10 +540,10 @@ public class IccTagType {
             values.put("OutputTablesNumber", OutputTablesNumber);
 
             int offset = 52;
-            int maxItems = AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500);
-            List<List<Double>> InputTables = new ArrayList();
+            int maxItems = AppVariables.getUserConfigInt("ICCMaxDecodeNumber", 500);
+            List<List<Double>> InputTables = new ArrayList<>();
             for (int n = 0; n < InputTablesNumber; n++) {
-                List<Double> InputTable = new ArrayList();
+                List<Double> InputTable = new ArrayList<>();
                 for (int i = 0; i < InputChannelsNumber; i++) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
                     if (normalizedLut) {
@@ -560,10 +560,10 @@ public class IccTagType {
                 }
             }
             values.put("InputTables", InputTables);
-            List<List<Double>> CLUTTables = new ArrayList();
+            List<List<Double>> CLUTTables = new ArrayList<>();
             double dimensionSize = Math.pow(GridPointsNumber, InputChannelsNumber);
             for (int i = 0; i < dimensionSize; i++) {
-                List<Double> GridPoint = new ArrayList();
+                List<Double> GridPoint = new ArrayList<>();
                 for (int o = 0; o < OutputChannelsNumber; o++) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
                     if (normalizedLut) {
@@ -580,9 +580,9 @@ public class IccTagType {
                 }
             }
             values.put("CLUTTables", CLUTTables);
-            List<List<Double>> OutputTables = new ArrayList();
+            List<List<Double>> OutputTables = new ArrayList<>();
             for (int m = 0; m < OutputTablesNumber; m++) {
-                List<Double> OutputTable = new ArrayList();
+                List<Double> OutputTable = new ArrayList<>();
                 for (int i = 0; i < OutputChannelsNumber; i++) {
                     double v = uInt16Number(subBytes(bytes, offset, 2));
                     if (normalizedLut) {
@@ -611,7 +611,7 @@ public class IccTagType {
             if (bytes == null || !"mAB ".equals(new String(subBytes(bytes, 0, 4)))) {
                 return null;
             }
-            Map<String, Object> values = new HashMap();
+            Map<String, Object> values = new HashMap<>();
             values.put("lutAToB", "lutAToB");
             int InputChannelsNumber = uInt8Number(bytes[8]);
             values.put("InputChannelsNumber", InputChannelsNumber);
@@ -1059,6 +1059,7 @@ public class IccTagType {
     /*
         Display of Tag Type
      */
+    @SuppressWarnings("unchecked")
     public static String textDescriptionDisplay(Map<String, Object> values) {
         return (String) values.get("Ascii");
     }
@@ -1127,6 +1128,7 @@ public class IccTagType {
         return viewingConditionsDisplay(values);
     }
 
+    @SuppressWarnings("unchecked")
     public static String viewingConditionsDisplay(Map<String, Object> values) {
         String s = "";
         double[] illuminant = (double[]) values.get("illuminant");
@@ -1182,6 +1184,7 @@ public class IccTagType {
         return lutDisplay(values);
     }
 
+    @SuppressWarnings("unchecked")
     public static String lutDisplay(Map<String, Object> values) {
         String s = "";
         s += message("InputChannelsNumber") + ": " + values.get("InputChannelsNumber") + "  ";

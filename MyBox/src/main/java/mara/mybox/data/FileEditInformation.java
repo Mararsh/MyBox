@@ -1,13 +1,13 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
 import static mara.mybox.tools.TextTools.checkCharsetByBom;
@@ -309,13 +309,13 @@ public abstract class FileEditInformation extends FileInformation {
     public String filterTypeName() {
         switch (filterType) {
             case IncludeOne:
-                return AppVaribles.message("IncludeOne");
+                return AppVariables.message("IncludeOne");
             case IncludeAll:
-                return AppVaribles.message("IncludeAll");
+                return AppVariables.message("IncludeAll");
             case NotIncludeAny:
-                return AppVaribles.message("NotIncludeAny");
+                return AppVariables.message("NotIncludeAny");
             case NotIncludeAll:
-                return AppVaribles.message("NotIncludeAll");
+                return AppVariables.message("NotIncludeAll");
             default:
                 return "";
         }

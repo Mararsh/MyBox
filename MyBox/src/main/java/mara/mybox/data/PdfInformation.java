@@ -3,8 +3,8 @@ package mara.mybox.data;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -45,7 +45,7 @@ public class PdfInformation extends FileInformation {
         try {
             this.userPassword = password;
             if (doc == null) {
-                doc = PDDocument.load(file, password, AppVaribles.pdfMemUsage);
+                doc = PDDocument.load(file, password, AppVariables.pdfMemUsage);
             }
             infoLoaded = false;
         } catch (Exception e) {

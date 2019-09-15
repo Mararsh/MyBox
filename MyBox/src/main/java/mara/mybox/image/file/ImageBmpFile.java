@@ -23,7 +23,8 @@ import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import static mara.mybox.image.ImageConvert.dpi2dpm;
 import mara.mybox.image.ImageInformation;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -93,23 +94,26 @@ public class ImageBmpFile {
     public static boolean writeBmpImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
+
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
         } catch (Exception e) {
             try {

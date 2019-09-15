@@ -19,7 +19,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -28,12 +27,13 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageValue;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.getUserConfigBoolean;
-import static mara.mybox.value.AppVaribles.getUserConfigValue;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.setUserConfigValue;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.getUserConfigBoolean;
+import static mara.mybox.value.AppVariables.getUserConfigValue;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -69,7 +69,7 @@ public class ImageConverterOptionsController extends BaseController {
     protected Label formatCommentsLabel;
 
     public ImageConverterOptionsController() {
-        baseTitle = AppVaribles.message("ImageConverterBatch");
+        baseTitle = AppVariables.message("ImageConverterBatch");
 
         ImageConverterFormatKey = "ImageConverterFormatKey";
         ImageConverterColorKey = "ImageConverterColorKey";
@@ -92,9 +92,7 @@ public class ImageConverterOptionsController extends BaseController {
         try {
             super.initializeNext();
 
-            formatSelector.getItems().addAll(Arrays.asList(
-                    "png", "jpg", "jpeg2000", "tif", "gif", "bmp", "pcx", "pnm", "wbmp", "raw"
-            ));
+            formatSelector.getItems().addAll(CommonValues.SupportedImages);
             formatSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
@@ -220,7 +218,7 @@ public class ImageConverterOptionsController extends BaseController {
             formatCommentsLabel.setStyle(null);
         }
 
-        List<String> csList = new ArrayList();
+        List<String> csList = new ArrayList<>();
         if ("wbmp".equals(format)) {
             csList.add(message("BlackOrWhite"));
         } else {
@@ -281,6 +279,7 @@ public class ImageConverterOptionsController extends BaseController {
         if (message("IccProfile").equals(colorSpace)) {
             if (!attrBox1.getChildren().contains(profileBox)) {
                 attrBox1.getChildren().add(profileBox);
+                FxmlControl.refreshStyle(profileBox);
             }
             checkProfile();
         } else {
@@ -292,6 +291,7 @@ public class ImageConverterOptionsController extends BaseController {
         if (message("BlackOrWhite").equals(colorSpace)) {
             if (!thisPane.getChildren().contains(binBox)) {
                 thisPane.getChildren().add(binBox);
+                FxmlControl.refreshStyle(binBox);
             }
             if (attrBox1.getChildren().contains(embedProfileCheck)) {
                 attrBox1.getChildren().remove(embedProfileCheck);
@@ -309,10 +309,15 @@ public class ImageConverterOptionsController extends BaseController {
 
         isSettingValues = true;
         alphaSelector.getItems().clear();
-        if (CommonValues.AlphaImages.contains(attributes.getImageFormat())
+        if (CommonValues.PremultiplyAlphaImages.contains(attributes.getImageFormat())
                 && !message("BlackOrWhite").equals(colorSpace)) {
             alphaSelector.getItems().addAll(Arrays.asList(
                     message("Keep"), message("Remove"), message("PremultipliedAndKeep"), message("PremultipliedAndRemove")
+            ));
+        } else if (CommonValues.AlphaImages.contains(attributes.getImageFormat())
+                && !message("BlackOrWhite").equals(colorSpace)) {
+            alphaSelector.getItems().addAll(Arrays.asList(
+                    message("Keep"), message("Remove"), message("PremultipliedAndRemove")
             ));
         } else {
             alphaSelector.getItems().addAll(Arrays.asList(
@@ -478,7 +483,7 @@ public class ImageConverterOptionsController extends BaseController {
             if (inputValue >= 0 && inputValue <= 255) {
                 attributes.setThreshold(inputValue);
                 thresholdInput.setStyle(null);
-                AppVaribles.setUserConfigValue(ImageConverterThreasholdKey, inputValue + "");
+                AppVariables.setUserConfigValue(ImageConverterThreasholdKey, inputValue + "");
             } else {
                 thresholdInput.setStyle(badStyle);
             }
@@ -515,19 +520,19 @@ public class ImageConverterOptionsController extends BaseController {
 
     @FXML
     public void popIccFile(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
                 return VisitHistory.getRecentFile(VisitHistory.FileType.Icc, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 return VisitHistory.getRecentPath(VisitHistory.FileType.Icc, pathNumber);
             }
 
@@ -556,7 +561,7 @@ public class ImageConverterOptionsController extends BaseController {
 
     @FXML
     public void selectIccAction() {
-        selectIccFile(AppVaribles.getUserConfigPath(sourcePathKey));
+        selectIccFile(AppVariables.getUserConfigPath(sourcePathKey));
     }
 
     public void selectIccFile(File path) {
@@ -565,7 +570,7 @@ public class ImageConverterOptionsController extends BaseController {
             if (path != null && path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
-            fileChooser.getExtensionFilters().addAll(CommonValues.IccProfileExtensionFilter);
+            fileChooser.getExtensionFilters().addAll(CommonImageValues.IccProfileExtensionFilter);
             File file = fileChooser.showOpenDialog(myStage);
             if (file == null || !file.exists()) {
                 return;

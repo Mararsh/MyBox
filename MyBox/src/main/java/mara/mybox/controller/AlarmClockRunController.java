@@ -6,13 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javax.sound.sampled.Clip;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.AlarmClock;
 import static mara.mybox.data.AlarmClock.getTypeString;
 import mara.mybox.fxml.FxmlControl;
 import mara.mybox.tools.SoundTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -31,7 +30,7 @@ public class AlarmClockRunController extends BaseController {
     private Label descLabel, soundLabel, timeLabel;
 
     public AlarmClockRunController() {
-        baseTitle = AppVaribles.message("AlarmClock");
+        baseTitle = AppVariables.message("AlarmClock");
 
     }
 
@@ -66,15 +65,15 @@ public class AlarmClockRunController extends BaseController {
         String soundString = alarm.getSound() + "   ";
         if (alarm.isIsSoundLoop()) {
             if (alarm.isIsSoundContinully()) {
-                soundString += AppVaribles.message("Continually");
+                soundString += AppVariables.message("Continually");
             } else {
-                soundString += AppVaribles.message("LoopTimes") + " " + alarm.getSoundLoopTimes();
+                soundString += AppVariables.message("LoopTimes") + " " + alarm.getSoundLoopTimes();
             }
         }
         soundLabel.setText(soundString);
         String typeString = getTypeString(alarm);
         if (alarm.getNext() != null) {
-            typeString += "     " + AppVaribles.message("NextTime") + " " + alarm.getNext();
+            typeString += "     " + AppVariables.message("NextTime") + " " + alarm.getNext();
         }
         timeLabel.setText(typeString);
         playTask = new Task<Void>() {
@@ -82,7 +81,7 @@ public class AlarmClockRunController extends BaseController {
             protected Void call() {
                 try {
                     String sound = alarm.getSound();
-                    if (AppVaribles.message("meow").equals(sound)) {
+                    if (AppVariables.message("meow").equals(sound)) {
                         File miao = FxmlControl.getUserFile("/sound/miao4.mp3", "miao4.mp3");
                         sound = miao.getAbsolutePath();
                     }

@@ -99,7 +99,7 @@ License:    Apache License Version 2.0
                                         <Label prefWidth="160.0" text="%Author" />
                                         <TextField fx:id="authorInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <Label text="%Version" />
-                                        <TextField fx:id="versionInput" maxHeight="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                        <TextField fx:id="versionInput" maxHeight="1.7976931348623157E308" promptText="%PdfVersionComments" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="5.0">

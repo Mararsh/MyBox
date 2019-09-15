@@ -24,10 +24,13 @@ public class TableTimeCell<T, Long> extends TableCell<T, Long>
             @Override
             protected void updateItem(final Long item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item != null && (long) item > 0) {
-                    text.setText(DateTools.datetimeToString((long) item));
-                    setGraphic(text);
+                if (empty || item == null || (long) item <= 0) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
                 }
+                text.setText(DateTools.datetimeToString((long) item));
+                setGraphic(text);
             }
         };
         return cell;

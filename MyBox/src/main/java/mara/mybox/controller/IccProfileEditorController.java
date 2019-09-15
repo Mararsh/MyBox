@@ -12,7 +12,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -42,7 +41,6 @@ import mara.mybox.color.IccTag;
 import mara.mybox.color.IccTagType;
 import mara.mybox.color.IccTags;
 import mara.mybox.color.IccXML;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -52,9 +50,10 @@ import static mara.mybox.tools.ByteTools.bytesToHexFormat;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 import static mara.mybox.value.CommonValues.Indent;
 
@@ -117,7 +116,7 @@ public class IccProfileEditorController extends BaseController {
     };
 
     public IccProfileEditorController() {
-        baseTitle = AppVaribles.message("IccProfileEditor");
+        baseTitle = AppVariables.message("IccProfileEditor");
 
         TipsLabelKey = "IccProfileTips";
 
@@ -130,7 +129,7 @@ public class IccProfileEditorController extends BaseController {
 
         defaultPathKey = SystemTools.IccProfilePath();
 
-        sourceExtensionFilter = CommonValues.IccProfileExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.IccProfileExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -175,10 +174,10 @@ public class IccProfileEditorController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue("IccEditerConfirmSave", newValue);
+                    AppVariables.setUserConfigValue("IccEditerConfirmSave", newValue);
                 }
             });
-            saveConfirmCheck.setSelected(AppVaribles.getUserConfigBoolean("IccEditerConfirmSave", true));
+            saveConfirmCheck.setSelected(AppVariables.getUserConfigBoolean("IccEditerConfirmSave", true));
 
 //            saveButton.disableProperty().bind(profileVersionInput.styleProperty().isEqualTo(badStyle)
 //                    .or(createTimeInput.styleProperty().isEqualTo(badStyle))
@@ -195,7 +194,7 @@ public class IccProfileEditorController extends BaseController {
 
     protected void initHeaderControls() {
         try {
-            List<String> manuList = new ArrayList();
+            List<String> manuList = new ArrayList<>();
             for (String[] item : IccHeader.DeviceManufacturers) {
                 manuList.add(item[0] + Indent + item[1]);
             }
@@ -227,7 +226,7 @@ public class IccProfileEditorController extends BaseController {
                 }
             });
 
-            List<String> classList = new ArrayList();
+            List<String> classList = new ArrayList<>();
             for (String[] item : IccHeader.ProfileDeviceClasses) {
                 classList.add(item[0] + Indent + message(item[1]));
             }
@@ -300,7 +299,7 @@ public class IccProfileEditorController extends BaseController {
                 }
             });
 
-            List<String> platformsList = new ArrayList();
+            List<String> platformsList = new ArrayList<>();
             for (String[] item : IccHeader.PrimaryPlatforms) {
                 platformsList.add(item[0] + Indent + item[1]);
             }
@@ -465,7 +464,7 @@ public class IccProfileEditorController extends BaseController {
                 }
             });
 
-            List<String> intents = new ArrayList();
+            List<String> intents = new ArrayList<>();
             for (String item : IccHeader.RenderingIntents) {
                 intents.add(message(item));
             }
@@ -577,16 +576,16 @@ public class IccProfileEditorController extends BaseController {
                 checkMaxDecode();
             }
         });
-        maxDecodeInput.setText(AppVaribles.getUserConfigInt("ICCMaxDecodeNumber", 500) + "");
+        maxDecodeInput.setText(AppVariables.getUserConfigInt("ICCMaxDecodeNumber", 500) + "");
         FxmlControl.setTooltip(maxDecodeInput, new Tooltip(message("MaxDecodeComments")));
 
         lutNormalizeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                AppVaribles.setUserConfigValue("LutNormalize", newValue);
+                AppVariables.setUserConfigValue("LutNormalize", newValue);
             }
         });
-        lutNormalizeCheck.setSelected(AppVaribles.getUserConfigBoolean("LutNormalize", true));
+        lutNormalizeCheck.setSelected(AppVariables.getUserConfigBoolean("LutNormalize", true));
     }
 
     private void checkMaxDecode() {
@@ -594,12 +593,12 @@ public class IccProfileEditorController extends BaseController {
             String s = maxDecodeInput.getText().trim();
             if (s.isEmpty()) {
                 xInput.setStyle(null);
-                AppVaribles.setUserConfigInt("ICCMaxDecodeNumber", Integer.MAX_VALUE);
+                AppVariables.setUserConfigInt("ICCMaxDecodeNumber", Integer.MAX_VALUE);
                 return;
             }
             int v = Integer.parseInt(s);
             if (v > 0) {
-                AppVaribles.setUserConfigInt("ICCMaxDecodeNumber", v);
+                AppVariables.setUserConfigInt("ICCMaxDecodeNumber", v);
                 xInput.setStyle(null);
             } else {
                 xInput.setStyle(badStyle);
@@ -706,78 +705,79 @@ public class IccProfileEditorController extends BaseController {
             } else {
                 inputName = message("File") + ": " + name;
             }
-            if (task != null && task.isRunning()) {
-                task.cancel();
-            }
-            task = new Task<Void>() {
-                private boolean ok;
-                private String error;
-                private File file;
-                private IccProfile p;
-
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        switch (sourceType) {
-                            case Embed:
-                                p = new IccProfile(name);
-                                break;
-                            case Internal_File:
-                                file = FxmlControl.getUserFile("/data/ICC/" + name, name);
-                                p = new IccProfile(file);
-                                break;
-                            case External_File:
-                                file = new File(name);
-                                p = new IccProfile(file);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    ok = p != null && p.getHeader() != null;
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                isIccFile = sourceType != SourceType.Embed;
-                                if (isIccFile) {
-                                    sourceFile = file;
-                                    isSettingValues = true;
-                                    embedICCName = null;
-                                    isSettingValues = false;
-                                } else {
-                                    embedICCName = name;
-                                    sourceFile = null;
-                                }
-                                if (sourceType == SourceType.External_File) {
-                                    embedBox.getSelectionModel().clearSelection();
-                                }
-                                profile = p;
-                                displayProfileData();
-                            } else {
-                                if (error == null) {
-                                    if (p != null && p.getError() != null) {
-                                        error = p.getError();
-                                    } else {
-                                        error = AppVaribles.message("Invalid");
-                                    }
-                                }
-                                popError(inputName + " " + error);
+                    private String error;
+                    private File file;
+                    private IccProfile p;
+
+                    @Override
+                    protected boolean handle() {
+                        try {
+                            switch (sourceType) {
+                                case Embed:
+                                    p = new IccProfile(name);
+                                    break;
+                                case Internal_File:
+                                    file = FxmlControl.getUserFile("/data/ICC/" + name, name);
+                                    p = new IccProfile(file);
+                                    break;
+                                case External_File:
+                                    file = new File(name);
+                                    p = new IccProfile(file);
                             }
+                        } catch (Exception e) {
+                            error = e.toString();
                         }
-                    });
+                        return p != null && p.getHeader() != null;
+                    }
 
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                    @Override
+                    protected void succeeded() {
+                        super.succeeded();
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (ok) {
+                                    isIccFile = sourceType != SourceType.Embed;
+                                    if (isIccFile) {
+                                        sourceFile = file;
+                                        isSettingValues = true;
+                                        embedICCName = null;
+                                        isSettingValues = false;
+                                    } else {
+                                        embedICCName = name;
+                                        sourceFile = null;
+                                    }
+                                    if (sourceType == SourceType.External_File) {
+                                        embedBox.getSelectionModel().clearSelection();
+                                    }
+                                    profile = p;
+                                    displayProfileData();
+                                } else {
+                                    if (error == null) {
+                                        if (p != null && p.getError() != null) {
+                                            error = p.getError();
+                                        } else {
+                                            error = AppVariables.message("Invalid");
+                                        }
+                                    }
+                                    popError(inputName + " " + error);
+                                }
+                            }
+                        });
+
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL, inputName + " " + message("Loading..."));
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -785,59 +785,55 @@ public class IccProfileEditorController extends BaseController {
 
     private void displayProfileData() {
         if (profile == null || !profile.isIsValid()) {
-            popError(AppVaribles.message("IccInvalid"), 3000);
+            popError(AppVariables.message("IccInvalid"), 3000);
             return;
         }
-        profile.setNormalizeLut(lutNormalizeCheck.isSelected());
-        bottomLabel.setStyle(null);
-        bottomLabel.setText(getCurrentName());
-        if (myStage != null) {
-            myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
-        }
-        resetMarkLabel(headerBox);
-        inputsValid = true;
-
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String xml;
-
-            @Override
-            protected Void call() throws Exception {
-                header = profile.getHeader();
-                header.readFields();
-                tags = profile.getTags();
-                tags.readTags();
-                xml = IccXML.iccXML(header, tags);
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            profile.setNormalizeLut(lutNormalizeCheck.isSelected());
+            bottomLabel.setStyle(null);
+            bottomLabel.setText(getCurrentName());
+            if (myStage != null) {
+                myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
+            }
+            resetMarkLabel(headerBox);
+            inputsValid = true;
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            displaySummary();
-                            initHeaderInputs();
-                            makeTagsInputs();
-                            displayTagsTable();
-                            displayXML(xml);
-                        } else {
-                            popError(AppVaribles.message("IccInvalid"), 3000);
-                        }
+                private String xml;
+
+                @Override
+                protected boolean handle() {
+                    header = profile.getHeader();
+                    header.readFields();
+                    tags = profile.getTags();
+                    tags.readTags();
+                    xml = IccXML.iccXML(header, tags);
+                    if (xml == null) {
+                        error = AppVariables.message("IccInvalid");
+                        return false;
+                    } else {
+                        return true;
                     }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL, message("Loading..."));
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    displaySummary();
+                    initHeaderInputs();
+                    makeTagsInputs();
+                    displayTagsTable();
+                    displayXML(xml);
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL, message("Loading..."));
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     private void displaySummary() {
@@ -994,6 +990,7 @@ public class IccProfileEditorController extends BaseController {
             if (tags == null) {
                 return;
             }
+            isSettingValues = true;
             for (IccTag tag : tags.getTags()) {
                 if (tag.getType() == null) {
                     continue;
@@ -1054,6 +1051,8 @@ public class IccProfileEditorController extends BaseController {
 
                 tagDataBox.getChildren().add(tagBox);
             }
+            FxmlControl.refreshStyle(tagDataBox);
+            isSettingValues = false;
         } catch (Exception e) {
             logger.debug(e.toString());
 
@@ -1068,52 +1067,51 @@ public class IccProfileEditorController extends BaseController {
         if (isSettingValues || tag.getType() == null) {
             return true;
         }
-        final String name;
-        if (key != null) {
-            name = tag.getTag() + key;
-        } else {
-            name = tag.getTag();
-        }
-        try {
-            Label label = (Label) FxmlControl.findNode(thisPane, name + "MarkLabel");
-            label.setText("*");
-            label.setStyle("-fx-text-fill: blue; -fx-font-weight: bolder;");
-            profileChanged();
-        } catch (Exception e) {
-        }
-
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = tag.update(key, value);
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return true;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            FxmlControl.setStyle(thisPane, name + "Input", null);
-                        } else {
-                            FxmlControl.setStyle(thisPane, name + "Input", badStyle);
+                @Override
+                protected boolean handle() {
+                    return tag.update(key, value);
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            String name;
+                            if (key != null) {
+                                name = tag.getTag() + key;
+                            } else {
+                                name = tag.getTag();
+                            }
+                            if (ok) {
+                                try {
+                                    Label label = (Label) FxmlControl.findNode(thisPane, name + "MarkLabel");
+                                    label.setText("*");
+                                    label.setStyle("-fx-text-fill: blue; -fx-font-weight: bolder;");
+                                    profileChanged();
+                                } catch (Exception e) {
+                                }
+                                FxmlControl.setStyle(thisPane, name + "Input", null);
+                            } else {
+                                FxmlControl.setStyle(thisPane, name + "Input", badStyle);
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
         return true;
     }
 
@@ -1124,7 +1122,7 @@ public class IccProfileEditorController extends BaseController {
     private void makeTagTextInput(Pane parent, final IccTag tag) {
         try {
             if (tag.getValueSelection() != null) {
-                final ComboBox<String> valuesListbox = new ComboBox();
+                final ComboBox<String> valuesListbox = new ComboBox<>();
                 valuesListbox.setId(tag.getTag() + "Input");
                 valuesListbox.getItems().addAll(tag.getValueSelection());
                 if (tag.getValue() != null) {
@@ -1383,7 +1381,7 @@ public class IccProfileEditorController extends BaseController {
             Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
-            final ComboBox<String> typeListbox = new ComboBox();
+            final ComboBox<String> typeListbox = new ComboBox<>();
             typeListbox.setId(tag.getTag() + "IlluminantTypeInput");
             typeListbox.getItems().addAll(IccTagType.illuminantTypes());
             typeListbox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1432,7 +1430,7 @@ public class IccProfileEditorController extends BaseController {
             Label observerLabel = new Label(message("StandardObserver"));
             observerLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             observerLabel.wrapTextProperty().setValue(true);
-            final ComboBox<String> observerListbox = new ComboBox();
+            final ComboBox<String> observerListbox = new ComboBox<>();
             observerListbox.setId(tag.getTag() + "ObserverInput");
             observerListbox.getItems().addAll(IccTagType.observerTypes());
             observerListbox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1493,7 +1491,7 @@ public class IccProfileEditorController extends BaseController {
             Label geometryLabel = new Label(message("Geometry"));
             geometryLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             geometryLabel.wrapTextProperty().setValue(true);
-            final ComboBox<String> geometryListbox = new ComboBox();
+            final ComboBox<String> geometryListbox = new ComboBox<>();
             geometryListbox.setId(tag.getTag() + "GeometryInput");
             geometryListbox.getItems().addAll(IccTagType.geometryTypes());
             geometryListbox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1553,7 +1551,7 @@ public class IccProfileEditorController extends BaseController {
             Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
-            final ComboBox<String> typeListbox = new ComboBox();
+            final ComboBox<String> typeListbox = new ComboBox<>();
             typeListbox.setId(tag.getTag() + "IlluminantTypeInput");
             typeListbox.getItems().addAll(IccTagType.illuminantTypes());
             typeListbox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1665,55 +1663,48 @@ public class IccProfileEditorController extends BaseController {
         tagSizeDisplay.setText(tag.getBytes().length + "");
         tagDescDisplay.setText(tag.getDescription());
 
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String display, bytes;
-
-            @Override
-            protected Void call() throws Exception {
-                bytes = bytesToHexFormat(tag.getBytes());
-                if (tag.getType() == null || tag.getValue() == null) {
-                    return null;
-                }
-                if (tag.getType() == IccTag.TagType.MultiLocalizedUnicode) {
-                    display = IccTagType.textDescriptionFullDisplay(tag);
-                } else {
-                    display = tag.display();
-                }
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (tag.getType() == null) {
-                            tagTypeDisplay.setText(AppVaribles.message("NotDecoded"));
-                            tagDataDisplay.setText(AppVaribles.message("NotDecoded"));
-                        } else {
-                            tagTypeDisplay.setText(tag.getType() + "");
-                            if (display != null) {
-                                tagDataDisplay.setText(display);
-                            }
-                        }
-                        tagBytesDisplay.setText(bytes);
+                private String display, bytes;
+
+                @Override
+                protected boolean handle() {
+                    bytes = bytesToHexFormat(tag.getBytes());
+                    if (tag.getType() == null || tag.getValue() == null) {
+                        return false;
                     }
-                });
+                    if (tag.getType() == IccTag.TagType.MultiLocalizedUnicode) {
+                        display = IccTagType.textDescriptionFullDisplay(tag);
+                    } else {
+                        display = tag.display();
+                    }
+                    return true;
+                }
 
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                @Override
+                protected void whenSucceeded() {
+                    if (tag.getType() == null) {
+                        tagTypeDisplay.setText(AppVariables.message("NotDecoded"));
+                        tagDataDisplay.setText(AppVariables.message("NotDecoded"));
+                    } else {
+                        tagTypeDisplay.setText(tag.getType() + "");
+                        if (display != null) {
+                            tagDataDisplay.setText(display);
+                        }
+                    }
+                    tagBytesDisplay.setText(bytes);
+                }
 
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1806,56 +1797,46 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
 
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-
-                ok = profile.update(newHeaderData);
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            displayProfileData();
-                            popInformation(AppVaribles.message("Successful"));
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
-                        }
-                    }
-                });
-            }
+                @Override
+                protected boolean handle() {
+                    return profile.update(newHeaderData);
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                @Override
+                protected void whenSucceeded() {
+                    displayProfileData();
+                    popSuccessul();
+                }
 
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
     public void popXmlPath(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
                 return VisitHistory.getRecentFile(VisitHistory.FileType.Xml, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
                 return VisitHistory.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
             }
 
@@ -1889,46 +1870,39 @@ public class IccProfileEditorController extends BaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
-                name, CommonValues.XmlExtensionFilter, true);
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                name, CommonImageValues.XmlExtensionFilter, true);
         if (file == null) {
             return;
         }
         recordFileWritten(file, targetPathKey,
                 VisitHistory.FileType.Xml, VisitHistory.FileType.Xml);
 
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, xmlArea.getText());
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            if (openExportCheck.isSelected()) {
-                                browseURI(file.toURI());
-                            }
-                            popInformation(AppVaribles.message("Successful"));
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
-                        }
+                @Override
+                protected boolean handle() {
+                    return FileTools.writeFile(file, xmlArea.getText()) != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (openExportCheck.isSelected()) {
+                        browseURI(file.toURI());
                     }
-                });
-            }
+                    popSuccessul();
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     private byte[] encodeHeaderUpdate() {
@@ -2022,41 +1996,31 @@ public class IccProfileEditorController extends BaseController {
             return;
         }
 
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-
-                ok = profile.write(file, newHeaderData);
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            sourceFile = file;
-                            sourceType = SourceType.External_File;
-                            openProfile(file.getAbsolutePath());
-                            popInformation(AppVaribles.message("Successful"));
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
-                        }
-                    }
-                });
-            }
+                @Override
+                protected boolean handle() {
+                    return profile.write(file, newHeaderData);
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                @Override
+                protected void whenSucceeded() {
+                    sourceFile = file;
+                    sourceType = SourceType.External_File;
+                    openProfile(file.getAbsolutePath());
+                    popSuccessul();
+                }
 
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -2087,7 +2051,7 @@ public class IccProfileEditorController extends BaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 name, targetExtensionFilter, true);
         if (file == null) {
             return;

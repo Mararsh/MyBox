@@ -63,7 +63,7 @@ public class DoublePolyline implements DoubleShape {
         if (x < 0 || y < 0 || points == null || points.isEmpty()) {
             return false;
         }
-        List<Double> d = new ArrayList();
+        List<Double> d = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             DoublePoint p = points.get(i);
             if (p.getX() == x && p.getY() == y) {
@@ -111,7 +111,28 @@ public class DoublePolyline implements DoubleShape {
             return false;
         }
         for (DoublePoint p : points) {
-            if (p.getX() != x || p.getY() != y) {
+            if (p.getX() == x && p.getY() == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean same(DoublePolyline polyline) {
+        if (polyline == null) {
+            return false;
+        }
+        if (points == null || points.isEmpty()) {
+            return polyline.getPoints() == null || polyline.getPoints().isEmpty();
+        } else {
+            if (polyline.getPoints() == null || points.size() != polyline.getPoints().size()) {
+                return false;
+            }
+        }
+        List<DoublePoint> bPoints = polyline.getPoints();
+        for (int i = 0; i < points.size(); i++) {
+            DoublePoint point = points.get(i);
+            if (!point.same(bPoints.get(i))) {
                 return false;
             }
         }
@@ -147,7 +168,7 @@ public class DoublePolyline implements DoubleShape {
     }
 
     public List<Double> getData() {
-        List<Double> d = new ArrayList();
+        List<Double> d = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             d.add(points.get(i).getX());
             d.add(points.get(i).getY());

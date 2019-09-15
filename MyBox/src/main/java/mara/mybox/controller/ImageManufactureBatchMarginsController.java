@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -17,13 +16,13 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVaribles.logger;
-import mara.mybox.value.AppVaribles;
-import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
+import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -44,7 +43,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     protected ColorPicker marginsColorPicker;
     @FXML
     protected CheckBox marginsTopCheck, marginsBottomCheck, marginsLeftCheck, marginsRightCheck,
-            preAlphaCheck, alphaWhiteCheck;
+            preAlphaCheck;
     @FXML
     private HBox colorBox, distanceBox, widthBox, setBox;
     @FXML
@@ -55,7 +54,7 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
     protected ImageView preAlphaTipsView;
 
     public ImageManufactureBatchMarginsController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchMargins");
+        baseTitle = AppVariables.message("ImageManufactureBatchMargins");
     }
 
     @Override
@@ -116,15 +115,6 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
                 }
             });
 
-            alphaWhiteCheck.setSelected(AppVaribles.isAlphaAsWhite());
-            alphaWhiteCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    AppVaribles.setUserConfigValue("AlphaAsWhite", new_toggle);
-                }
-            });
-
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -154,11 +144,13 @@ public class ImageManufactureBatchMarginsController extends ImageManufactureBatc
 
         } else if (message("BlurMargins").equals(selected.getText())) {
             opType = ImageManufactureMarginsController.OperationType.BlurMargins;
-            setBox.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck, alphaWhiteCheck);
+            setBox.getChildren().addAll(widthBox, preAlphaTipsView, preAlphaCheck);
             checkMarginWidth();
             distanceInput.setStyle(null);
 
         }
+        FxmlControl.refreshStyle(setBox);
+
     }
 
     private void checkMarginWidth() {

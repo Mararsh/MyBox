@@ -3,7 +3,7 @@ package mara.mybox.color;
 import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -198,7 +198,7 @@ public class Illuminant extends CIEData {
         Static methods
      */
     public static List<Illuminant> all() {
-        List<Illuminant> data = new ArrayList();
+        List<Illuminant> data = new ArrayList<>();
         for (IlluminantType type : IlluminantType.values()) {
             data.add(new Illuminant(type, Observer.CIE1931));
             data.add(new Illuminant(type, Observer.CIE1964));
@@ -215,7 +215,7 @@ public class Illuminant extends CIEData {
     }
 
     public static List<String> names() {
-        List<String> data = new ArrayList();
+        List<String> data = new ArrayList<>();
         for (IlluminantType type : IlluminantType.values()) {
             data.add(type + " - " + Observer.CIE1931);
             data.add(type + " - " + Observer.CIE1964);

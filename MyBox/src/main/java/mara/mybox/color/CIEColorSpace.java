@@ -5,8 +5,8 @@ import java.util.List;
 import static mara.mybox.color.AdobeRGB.gammaAdobeRGB;
 import static mara.mybox.color.AppleRGB.gammaAppleRGB;
 import static mara.mybox.color.ColorBase.clipRGB;
-import mara.mybox.tools.MatrixTools;
 import static mara.mybox.color.SRGB.gammaSRGB;
+import mara.mybox.tools.MatrixTools;
 
 /**
  * @Author Mara
@@ -22,7 +22,7 @@ public class CIEColorSpace {
     }
 
     public static List<String> names() {
-        List<String> names = new ArrayList();
+        List<String> names = new ArrayList<>();
         for (ColorSpaceType cs : ColorSpaceType.values()) {
             names.add(cs + "");
         }
@@ -30,7 +30,7 @@ public class CIEColorSpace {
     }
 
     public static List<ColorValue> XYZd50toAll(double[] xyzD50) {
-        List<ColorValue> colors = new ArrayList();
+        List<ColorValue> colors = new ArrayList<>();
 
         return colors;
     }

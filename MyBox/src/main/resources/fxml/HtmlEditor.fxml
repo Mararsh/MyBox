@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="750.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.HtmlEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -73,7 +73,7 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </items>
                                         </ToolBar>
-                                        <HTMLEditor fx:id="htmlEdior" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                        <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>
@@ -103,7 +103,7 @@ License:    Apache License Version 2.0
                                                 <ToolBar fx:id="browserToolbar" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                                                     <items>
                                                         <Label text="%WebAddress" />
-                                                        <ComboBox fx:id="urlBox" editable="true" maxWidth="1.7976931348623157E308"  HBox.hgrow="ALWAYS"/>
+                                                        <ComboBox fx:id="urlBox" editable="true" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                         <Button fx:id="loadButton" mnemonicParsing="false" onAction="#loadAction">
                                                             <graphic>
                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

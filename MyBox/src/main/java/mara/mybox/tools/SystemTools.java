@@ -9,7 +9,7 @@ import java.security.MessageDigest;
 import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

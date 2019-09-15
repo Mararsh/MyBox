@@ -13,7 +13,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -45,7 +44,6 @@ import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticityDiagram;
 import mara.mybox.color.ChromaticityDiagram.DataType;
 import mara.mybox.color.ColorValue;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -55,9 +53,10 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.file.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -130,7 +129,7 @@ public class ChromaticityDiagramController extends BaseController {
     private ColorPicker colorPicker;
 
     public ChromaticityDiagramController() {
-        baseTitle = AppVaribles.message("DrawChromaticityDiagram");
+        baseTitle = AppVariables.message("DrawChromaticityDiagram");
 
         TipsLabelKey = "ChromaticityDiagramTips";
 
@@ -141,21 +140,8 @@ public class ChromaticityDiagramController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourceExtensionFilter = CommonValues.TxtExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.TxtExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
-    }
-
-    @Override
-    public void initializeNext() {
-        try {
-            super.initializeNext();
-
-            initCIEData();
-
-        } catch (Exception e) {
-            logger.error(e.toString());
-        }
-
     }
 
     @Override
@@ -173,6 +159,19 @@ public class ChromaticityDiagramController extends BaseController {
             dotTypeBox.getSelectionModel().select(0);
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
+        } catch (Exception e) {
+            logger.error(e.toString());
+        }
+
+    }
+
+    @Override
+    public void initializeNext() {
+        try {
+            super.initializeNext();
+
+            initCIEData();
+
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -432,10 +431,6 @@ public class ChromaticityDiagramController extends BaseController {
                 }
             });
 
-            xInput.setText("0.48");
-            yInput.setText("0.35");
-            calculateXYAction();
-
             colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
                 @Override
                 public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
@@ -509,7 +504,7 @@ public class ChromaticityDiagramController extends BaseController {
         if (data != null) {
             sourceDataArea.setText(data);
         } else {
-            popError(AppVaribles.message("NoData"));
+            popError(AppVariables.message("NoData"));
             sourceDataArea.clear();
         }
     }
@@ -672,68 +667,64 @@ public class ChromaticityDiagramController extends BaseController {
     }
 
     private void initCIEData() {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private String degree2nm1String, degree10nm1String,
+                        degree2nm5String, degree10nm5String;
+
+                @Override
+                protected boolean handle() {
+                    CIEData cieData = new CIEData();
+                    ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+
+                    degree2nm1Data = FXCollections.observableArrayList();
+                    degree2nm1Data.addAll(cieData.cie1931Observer2Degree1nmData(cs));
+                    degree2nm1String = cieData.cie1931Observer2Degree1nmString(cs);
+
+                    degree10nm1Data = FXCollections.observableArrayList();
+                    degree10nm1Data.addAll(cieData.cie1964Observer10Degree1nmData(cs));
+                    degree10nm1String = cieData.cie1964Observer10Degree1nmString(cs);
+
+                    degree2nm5Data = FXCollections.observableArrayList();
+                    degree2nm5Data.addAll(cieData.cie1931Observer2Degree5nmData(cs));
+                    degree2nm5String = cieData.cie1931Observer2Degree5nmString(cs);
+
+                    degree10nm5Data = FXCollections.observableArrayList();
+                    degree10nm5Data.addAll(cieData.cie1964Observer10Degree5nmData(cs));
+                    degree10nm5String = cieData.cie1964Observer10Degree5nmString(cs);
+
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    d2n1TableView.setItems(degree2nm1Data);
+                    d2n1Area.setText(degree2nm1String);
+
+                    d10n1TableView.setItems(degree10nm1Data);
+                    d10n1Area.setText(degree10nm1String);
+
+                    d2n5TableView.setItems(degree2nm5Data);
+                    d2n5Area.setText(degree2nm5String);
+
+                    d10n5TableView.setItems(degree10nm5Data);
+                    d10n5Area.setText(degree10nm5String);
+
+                    xInput.setText("0.48");
+                    yInput.setText("0.35");
+                    calculateXYAction();
+                    loadTableData();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String degree2nm1String, degree10nm1String,
-                    degree2nm5String, degree10nm5String;
-
-            @Override
-            protected Void call() throws Exception {
-                CIEData cieData = new CIEData();
-                ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-
-                degree2nm1Data = FXCollections.observableArrayList();
-                degree2nm1Data.addAll(cieData.cie1931Observer2Degree1nmData(cs));
-                degree2nm1String = cieData.cie1931Observer2Degree1nmString(cs);
-
-                degree10nm1Data = FXCollections.observableArrayList();
-                degree10nm1Data.addAll(cieData.cie1964Observer10Degree1nmData(cs));
-                degree10nm1String = cieData.cie1964Observer10Degree1nmString(cs);
-
-                degree2nm5Data = FXCollections.observableArrayList();
-                degree2nm5Data.addAll(cieData.cie1931Observer2Degree5nmData(cs));
-                degree2nm5String = cieData.cie1931Observer2Degree5nmString(cs);
-
-                degree10nm5Data = FXCollections.observableArrayList();
-                degree10nm5Data.addAll(cieData.cie1964Observer10Degree5nmData(cs));
-                degree10nm5String = cieData.cie1964Observer10Degree5nmString(cs);
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        d2n1TableView.setItems(degree2nm1Data);
-                        d2n1Area.setText(degree2nm1String);
-
-                        d10n1TableView.setItems(degree10nm1Data);
-                        d10n1Area.setText(degree10nm1String);
-
-                        d2n5TableView.setItems(degree2nm5Data);
-                        d2n5Area.setText(degree2nm5String);
-
-                        d10n5TableView.setItems(degree10nm5Data);
-                        d10n5Area.setText(degree10nm5String);
-
-                        displayChromaticityDiagram();
-                        loadTableData();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
 
     }
 
@@ -741,80 +732,80 @@ public class ChromaticityDiagramController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-            private Image image;
-
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
-                    selections.put(DataType.CIE2Degree, degree2Check.isSelected());
-                    selections.put(DataType.CIE10Degree, degree10Check.isSelected());
-                    selections.put(DataType.CIEDataSource, inputCheck.isSelected());
-                    selections.put(DataType.Calculate, calculateCheck.isSelected());
-                    selections.put(DataType.Wave, waveCheck.isSelected());
-                    selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
-                    selections.put(DataType.Grid, gridCheck.isSelected());
-                    selections.put(DataType.CIELines, cdCIECheck.isSelected());
-                    selections.put(DataType.ECILines, cdECICheck.isSelected());
-                    selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
-                    selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
-                    selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
-                    selections.put(DataType.PALLines, cdPALCheck.isSelected());
-                    selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
-                    selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
-                    selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
-                    selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
-
-                    ChromaticityDiagram cd = new ChromaticityDiagram();
-                    cd.setIsLine(isLine);
-                    cd.setDotSize(dotSize);
-                    cd.setBgColor(bgColor);
-                    cd.setFontSize(fontSize);
-                    cd.setDataSourceTexts(sourceDataArea.getText());
-                    if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
-                        cd.setCalculateX(x);
-                        cd.setCalculateY(y);
-                        cd.setCalculateColor(calculateColor);
-                    }
-                    image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
-
-                } catch (Exception e) {
-                    logger.debug(e.toString());
-                }
-                ok = image != null;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
+                private Image image;
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            cieDiagram.setImage(image);
-                            FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
-                            d2n1Area.home();
-                            d2n5Area.home();
-                            d10n1Area.home();
-                            d10n5Area.home();
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
+                @Override
+                protected boolean handle() {
+                    try {
+                        LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
+                        selections.put(DataType.CIE2Degree, degree2Check.isSelected());
+                        selections.put(DataType.CIE10Degree, degree10Check.isSelected());
+                        selections.put(DataType.CIEDataSource, inputCheck.isSelected());
+                        selections.put(DataType.Calculate, calculateCheck.isSelected());
+                        selections.put(DataType.Wave, waveCheck.isSelected());
+                        selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
+                        selections.put(DataType.Grid, gridCheck.isSelected());
+                        selections.put(DataType.CIELines, cdCIECheck.isSelected());
+                        selections.put(DataType.ECILines, cdECICheck.isSelected());
+                        selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
+                        selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
+                        selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
+                        selections.put(DataType.PALLines, cdPALCheck.isSelected());
+                        selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
+                        selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
+                        selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
+                        selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
+
+                        ChromaticityDiagram cd = new ChromaticityDiagram();
+                        cd.setIsLine(isLine);
+                        cd.setDotSize(dotSize);
+                        cd.setBgColor(bgColor);
+                        cd.setFontSize(fontSize);
+                        cd.setDataSourceTexts(sourceDataArea.getText());
+                        if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
+                            cd.setCalculateX(x);
+                            cd.setCalculateY(y);
+                            cd.setCalculateColor(calculateColor);
                         }
-                    }
-                });
-            }
+                        image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                    return image != null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                cieDiagram.setImage(image);
+                                FxmlControl.paneSize(cieDiagramScroll, cieDiagram);
+                                d2n1Area.home();
+                                d2n5Area.home();
+                                d10n1Area.home();
+                                d10n5Area.home();
+                            } else {
+                                popFailed();
+                            }
+                        }
+                    });
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
 
     }
 
@@ -831,6 +822,8 @@ public class ChromaticityDiagramController extends BaseController {
                 tableBox.getChildren().addAll(dataToolbar, inputBox);
 
             }
+
+            FxmlControl.refreshStyle(tableBox);
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -864,49 +857,49 @@ public class ChromaticityDiagramController extends BaseController {
         if (file == null) {
             return;
         }
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String texts;
-
-            @Override
-            protected Void call() throws Exception {
-                texts = FileTools.readTexts(file);
-                ok = texts != null;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
+                private String texts;
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            sourceInputArea.setStyle(null);
-                            inputInit = false;
-//                            bottomLabel.setText(file.getAbsolutePath() + "\t" + AppVaribles.getMessage("ChromaticityDiagramComments"));
-                            isSettingValues = true;
-                            sourceInputArea.setText(texts);
-                            sourceInputArea.home();
-                            isSettingValues = false;
-                            checkInputs();
-                        } else {
-                            popError(AppVaribles.message("NoData"));
-                            sourceDataArea.clear();
+                @Override
+                protected boolean handle() {
+                    texts = FileTools.readTexts(file);
+                    return texts != null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                sourceInputArea.setStyle(null);
+                                inputInit = false;
+//                            bottomLabel.setText(file.getAbsolutePath() + "\t" + AppVariables.getMessage("ChromaticityDiagramComments"));
+                                isSettingValues = true;
+                                sourceInputArea.setText(texts);
+                                sourceInputArea.home();
+                                isSettingValues = false;
+                                checkInputs();
+                            } else {
+                                popError(AppVariables.message("NoData"));
+                                sourceDataArea.clear();
 //                            bottomLabel.setText("");
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -922,7 +915,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void popDiagramPath(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -956,7 +949,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void pop21Path(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -990,7 +983,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void pop25Path(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -1024,7 +1017,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void pop101Path(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -1058,7 +1051,7 @@ public class ChromaticityDiagramController extends BaseController {
 
     @FXML
     public void pop105Path(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -1166,7 +1159,7 @@ public class ChromaticityDiagramController extends BaseController {
             Color pColor = colorPicker.getValue();
             calculateColor = new java.awt.Color((float) pColor.getRed(), (float) pColor.getGreen(), (float) pColor.getBlue());
 
-            List<ColorValue> values = new ArrayList();
+            List<ColorValue> values = new ArrayList<>();
             double[] cieLab = CIEColorSpace.XYZd50toCIELab(X, Y, Z);
             values.add(new ColorValue("CIE-L*ab", "D50", cieLab));
 
@@ -1216,88 +1209,94 @@ public class ChromaticityDiagramController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
-                "ChromaticityDiagram", CommonValues.ImageExtensionFilter, true);
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                "ChromaticityDiagram", CommonImageValues.ImageExtensionFilter, true);
         if (file == null) {
             return;
         }
         recordFileWritten(file, targetPathKey, VisitHistory.FileType.Image, VisitHistory.FileType.Image);
 
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                String format = FileTools.getFileSuffix(file.getName());
-                final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(cieDiagram.getImage());
-                if (task == null || task.isCancelled()) {
-                    return null;
-                }
-                ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            FxmlStage.openImageViewer(null, file);
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
-                        }
+                @Override
+                protected boolean handle() {
+                    String format = FileTools.getFileSuffix(file.getName());
+                    final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(cieDiagram.getImage());
+                    if (this == null || this.isCancelled()) {
+                        return false;
                     }
-                });
-            }
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                    return true;
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                FxmlStage.openImageViewer(null, file);
+                            } else {
+                                popFailed();
+                            }
+                        }
+                    });
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public void exportAction(String filename, TextArea textArea) {
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
-                filename, CommonValues.TxtExtensionFilter, true);
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
+                filename, CommonImageValues.TxtExtensionFilter, true);
         if (file == null) {
             return;
         }
         recordFileWritten(file, targetPathKey, VisitHistory.FileType.Text, VisitHistory.FileType.Text);
 
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = FileTools.writeFile(file, textArea.getText());
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            view(file);
-                            popInformation(AppVaribles.message("Successful"));
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
+                @Override
+                protected boolean handle() {
+                    return FileTools.writeFile(file, textArea.getText()) != null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                view(file);
+                                popSuccessul();
+                            } else {
+                                popFailed();
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML

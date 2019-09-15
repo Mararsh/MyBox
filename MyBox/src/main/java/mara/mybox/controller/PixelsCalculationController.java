@@ -5,7 +5,6 @@
  */
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
@@ -23,15 +22,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.image.ImageManufacture.KeepRatioType;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -76,7 +75,7 @@ public class PixelsCalculationController extends BaseController {
     private TabPane tabPane;
 
     public PixelsCalculationController() {
-        baseTitle = AppVaribles.message("PixelsCalculator");
+        baseTitle = AppVariables.message("PixelsCalculator");
 
     }
 
@@ -108,13 +107,13 @@ public class PixelsCalculationController extends BaseController {
 
     private void recalculate() {
         String tab = tabPane.getSelectionModel().getSelectedItem().getText();
-        if (AppVaribles.message("PredefinedPixelsNumber").equals(tab)) {
+        if (AppVariables.message("PredefinedPixelsNumber").equals(tab)) {
             predefined_determineValues();
-        } else if (AppVaribles.message("CalculatePixelsNumber").equals(tab)) {
+        } else if (AppVariables.message("CalculatePixelsNumber").equals(tab)) {
             cp_calculateValues();
-        } else if (AppVaribles.message("CalculateOutputSize").equals(tab)) {
+        } else if (AppVariables.message("CalculateOutputSize").equals(tab)) {
             cs_calculateValues();
-        } else if (AppVaribles.message("CalculateOutputDensity").equals(tab)) {
+        } else if (AppVariables.message("CalculateOutputDensity").equals(tab)) {
             cd_calculateValues();
         }
     }
@@ -170,7 +169,7 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedDisplayValues() {
-        predefinedDiaplayValues = new ArrayList();
+        predefinedDiaplayValues = new ArrayList<>();
         predefinedDiaplayValues.add("960x540    qHD    16:9");
         predefinedDiaplayValues.add("1280x720   720p   16:9");
         predefinedDiaplayValues.add("1366x768   WXGA   16:9");
@@ -195,14 +194,14 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedPhotoValues() {
-        String inch = AppVaribles.message("inches");
-        String cm = AppVaribles.message("cm");
-        predeinfedPhotoValues = new ArrayList();
-        predeinfedPhotoValues.add("416x277    " + AppVaribles.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
-        predeinfedPhotoValues.add("416x605    " + AppVaribles.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
+        String inch = AppVariables.message("inches");
+        String cm = AppVariables.message("cm");
+        predeinfedPhotoValues = new ArrayList<>();
+        predeinfedPhotoValues.add("416x277    " + AppVariables.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    320dpi");
+        predeinfedPhotoValues.add("416x605    " + AppVariables.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    320dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
-        predeinfedPhotoValues.add("208x140    " + AppVaribles.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
-        predeinfedPhotoValues.add("208x304    " + AppVaribles.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x140    " + AppVariables.message("ChineseIDCard") + "           3.3" + cm + "x2.2" + cm + "    160dpi");
+        predeinfedPhotoValues.add("208x304    " + AppVariables.message("ChinesePassport") + "            3.3" + cm + "x4.8" + cm + "    160dpi");
         predeinfedPhotoValues.add("---------------------------------------------------------");
         predeinfedPhotoValues.add("320x480       1" + inch + "x1.5" + inch + "   2.5" + cm + "x3.5" + cm + "    320dpi");
         predeinfedPhotoValues.add("480x640    1.5" + inch + "x2" + inch + "   3.5" + cm + "x4.9" + cm + "    320dpi");
@@ -229,7 +228,7 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedIconValues() {
-        predeinfedIconValues = new ArrayList();
+        predeinfedIconValues = new ArrayList<>();
 
         predeinfedIconValues.add("--------- Android Icons Size ----------");
         predeinfedIconValues.add("36x36      Low           120dpi");
@@ -264,7 +263,7 @@ public class PixelsCalculationController extends BaseController {
     }
 
     private void definePredefinedPrintValues() {
-        predeinfedPrintValues = new ArrayList();
+        predeinfedPrintValues = new ArrayList<>();
 
         predeinfedPrintValues.add("--------- 300dpi ----------");
         predeinfedPrintValues.add("2480x3508      A4 (16k)  21.0cm x 29.7cm     300dpi");
@@ -320,7 +319,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceX = Integer.valueOf(newValue);
                     if (sourceY > 0) {
-                        ratioLabel.setText(AppVaribles.message("AspectRatio") + ": "
+                        ratioLabel.setText(AppVariables.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -339,7 +338,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     sourceY = Integer.valueOf(newValue);
                     if (sourceX > 0) {
-                        ratioLabel.setText(AppVaribles.message("AspectRatio") + ": "
+                        ratioLabel.setText(AppVariables.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
                     }
                     recalculate();
@@ -361,7 +360,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_checkDensity();
             }
         });
-//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getUserConfigValue("density", null));
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVariables.getUserConfigValue("density", null));
         cp_checkDensity();
         cp_densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -370,7 +369,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_checkDensity();
             }
         });
-//        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
+//        cp_densityInput.setText(AppVariables.getUserConfigValue("densityInput", null));
         FxmlControl.setNonnegativeValidation(cp_densityInput);
 
         cp_sizeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -378,7 +377,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cp_sizeGroup.getSelectedToggle();
-                cp_useInch = selected.getText().equals(AppVaribles.message("Inches"));
+                cp_useInch = selected.getText().equals(AppVariables.message("Inches"));
                 if (cp_useInch) {
                     if (cp_inchX > 0) {
                         cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
@@ -409,7 +408,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_inchX = Float.valueOf(newValue);
                     cp_widthInches.setStyle(null);
-                    AppVaribles.setUserConfigValue("widthInches", cp_inchX + "");
+                    AppVariables.setUserConfigValue("widthInches", cp_inchX + "");
                     if (cp_useInch) {
                         cp_widthCM.setText(Math.round(cp_inchX * 254.0f) / 100.0f + "");
                         cp_widthCM.setStyle(null);
@@ -421,7 +420,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_widthInches.setText(AppVaribles.getUserConfigValue("widthInches", "1"));
+//        cp_widthInches.setText(AppVariables.getUserConfigValue("widthInches", "1"));
 
         cp_heightInches.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -430,7 +429,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_inchY = Float.valueOf(newValue);
                     cp_heightInches.setStyle(null);
-                    AppVaribles.setUserConfigValue("heightInches", cp_inchY + "");
+                    AppVariables.setUserConfigValue("heightInches", cp_inchY + "");
                     if (cp_useInch) {
                         cp_heightCM.setText(Math.round(cp_inchY * 254.0f) / 100.0f + "");
                         cp_heightCM.setStyle(null);
@@ -442,7 +441,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_heightInches.setText(AppVaribles.getUserConfigValue("heightInches", "1.5"));
+//        cp_heightInches.setText(AppVariables.getUserConfigValue("heightInches", "1.5"));
 
         cp_widthCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -451,7 +450,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_cmX = Float.valueOf(newValue);
                     cp_widthCM.setStyle(null);
-                    AppVaribles.setUserConfigValue("widthCM", cp_cmX + "");
+                    AppVariables.setUserConfigValue("widthCM", cp_cmX + "");
                     if (!cp_useInch) {
                         cp_widthInches.setText(Math.round(cp_cmX * 100 / 2.54f) / 100.0f + "");
                         cp_widthInches.setStyle(null);
@@ -463,7 +462,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_widthCM.setText(AppVaribles.getUserConfigValue("widthCM", "21.0"));
+//        cp_widthCM.setText(AppVariables.getUserConfigValue("widthCM", "21.0"));
 
         cp_heightCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -472,7 +471,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cp_cmY = Float.valueOf(newValue);
                     cp_heightCM.setStyle(null);
-                    AppVaribles.setUserConfigValue("heightCM", cp_cmY + "");
+                    AppVariables.setUserConfigValue("heightCM", cp_cmY + "");
                     if (!cp_useInch) {
                         cp_heightInches.setText(Math.round(cp_cmY * 100 / 2.54f) / 100.0f + "");
                         cp_heightInches.setStyle(null);
@@ -484,7 +483,7 @@ public class PixelsCalculationController extends BaseController {
                 cp_calculateValues();
             }
         });
-//        cp_heightCM.setText(AppVaribles.getUserConfigValue("heightCM", "29.7"));
+//        cp_heightCM.setText(AppVariables.getUserConfigValue("heightCM", "29.7"));
     }
 
     private void init_cs() {
@@ -523,7 +522,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_checkDensity();
             }
         });
-//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVaribles.getUserConfigValue("density", null));
+//        FxmlTools.setRadioSelected(cp_DensityGroup, AppVariables.getUserConfigValue("density", null));
         cs_checkDensity();
         cs_densityInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -532,7 +531,7 @@ public class PixelsCalculationController extends BaseController {
                 cs_checkDensity();
             }
         });
-//        cp_densityInput.setText(AppVaribles.getUserConfigValue("densityInput", null));
+//        cp_densityInput.setText(AppVariables.getUserConfigValue("densityInput", null));
         FxmlControl.setNonnegativeValidation(cs_densityInput);
 
     }
@@ -571,7 +570,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends Toggle> ov,
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) cd_sizeGroup.getSelectedToggle();
-                cd_useInch = selected.getText().equals(AppVaribles.message("Inches"));
+                cd_useInch = selected.getText().equals(AppVariables.message("Inches"));
                 if (cd_useInch) {
                     if (cd_inchX > 0) {
                         cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
@@ -602,7 +601,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_inchX = Float.valueOf(newValue);
                     cd_widthInches.setStyle(null);
-                    AppVaribles.setUserConfigValue("widthInches", cd_inchX + "");
+                    AppVariables.setUserConfigValue("widthInches", cd_inchX + "");
                     if (cd_useInch) {
                         cd_widthCM.setText(Math.round(cd_inchX * 254.0f) / 100.0f + "");
                         cd_widthCM.setStyle(null);
@@ -614,7 +613,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_widthInches.setText(AppVaribles.getUserConfigValue("widthInches", "1"));
+//        cd_widthInches.setText(AppVariables.getUserConfigValue("widthInches", "1"));
 
         cd_heightInches.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -623,7 +622,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_inchY = Float.valueOf(newValue);
                     cd_heightInches.setStyle(null);
-                    AppVaribles.setUserConfigValue("heightInches", cd_inchY + "");
+                    AppVariables.setUserConfigValue("heightInches", cd_inchY + "");
                     if (cd_useInch) {
                         cd_heightCM.setText(Math.round(cd_inchY * 254.0f) / 100.0f + "");
                         cd_heightCM.setStyle(null);
@@ -635,7 +634,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_heightInches.setText(AppVaribles.getUserConfigValue("heightInches", "1.5"));
+//        cd_heightInches.setText(AppVariables.getUserConfigValue("heightInches", "1.5"));
 
         cd_widthCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -644,7 +643,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_cmX = Float.valueOf(newValue);
                     cd_widthCM.setStyle(null);
-                    AppVaribles.setUserConfigValue("widthCM", cd_cmX + "");
+                    AppVariables.setUserConfigValue("widthCM", cd_cmX + "");
                     if (!cd_useInch) {
                         cd_widthInches.setText(Math.round(cd_cmX * 100 / 2.54f) / 100.0f + "");
                         cd_widthInches.setStyle(null);
@@ -656,7 +655,7 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_widthCM.setText(AppVaribles.getUserConfigValue("widthCM", "21.0"));
+//        cd_widthCM.setText(AppVariables.getUserConfigValue("widthCM", "21.0"));
 
         cd_heightCM.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -665,7 +664,7 @@ public class PixelsCalculationController extends BaseController {
                 try {
                     cd_cmY = Float.valueOf(newValue);
                     cd_heightCM.setStyle(null);
-                    AppVaribles.setUserConfigValue("heightCM", cd_cmY + "");
+                    AppVariables.setUserConfigValue("heightCM", cd_cmY + "");
                     if (!cd_useInch) {
                         cd_heightInches.setText(Math.round(cd_cmY * 100 / 2.54f) / 100.0f + "");
                         cd_heightInches.setStyle(null);
@@ -677,14 +676,14 @@ public class PixelsCalculationController extends BaseController {
                 cd_calculateValues();
             }
         });
-//        cd_heightCM.setText(AppVaribles.getUserConfigValue("heightCM", "29.7"));
+//        cd_heightCM.setText(AppVariables.getUserConfigValue("heightCM", "29.7"));
 
     }
 
     @FXML
     private void useResult(ActionEvent event) {
         if (finalX <= 0 || finalY <= 0) {
-            alertInformation(AppVaribles.message("Invalid"));
+            alertInformation(AppVariables.message("Invalid"));
             return;
         }
         if (parentXInput != null) {
@@ -718,16 +717,16 @@ public class PixelsCalculationController extends BaseController {
                     int rd = parentAttributes.getRatioAdjustion();
                     switch (rd) {
                         case KeepRatioType.BaseOnWidth:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnWidth"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVariables.message("BaseOnWidth"));
                             break;
                         case KeepRatioType.BaseOnHeight:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnHeight"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVariables.message("BaseOnHeight"));
                             break;
                         case KeepRatioType.BaseOnLarger:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnLarger"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVariables.message("BaseOnLarger"));
                             break;
                         case KeepRatioType.BaseOnSmaller:
-                            FxmlControl.setRadioSelected(ratioGroup, AppVaribles.message("BaseOnSamller"));
+                            FxmlControl.setRadioSelected(ratioGroup, AppVariables.message("BaseOnSamller"));
                             break;
                         default:
                             break;
@@ -760,13 +759,13 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
         String v = null;
-        if (selected.getText().equals(AppVaribles.message("Photo"))) {
+        if (selected.getText().equals(AppVariables.message("Photo"))) {
             v = predeinfedPhotoList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.message("Display"))) {
+        } else if (selected.getText().equals(AppVariables.message("Display"))) {
             v = predeinfedDisplayList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.message("Print"))) {
+        } else if (selected.getText().equals(AppVariables.message("Print"))) {
             v = predeinfedPrintList.getSelectionModel().getSelectedItem();
-        } else if (selected.getText().equals(AppVaribles.message("Icon"))) {
+        } else if (selected.getText().equals(AppVariables.message("Icon"))) {
             v = predeinfedIconList.getSelectionModel().getSelectedItem();
         }
 
@@ -780,8 +779,8 @@ public class PixelsCalculationController extends BaseController {
         }
         selectX = Integer.valueOf(vs[0]);
         selectY = Integer.valueOf(vs[1]);
-        String label = AppVaribles.message("SelectedPixelsNumber") + ": " + v + "  "
-                + AppVaribles.message("AspectRatio") + ": "
+        String label = AppVariables.message("SelectedPixelsNumber") + ": " + v + "  "
+                + AppVariables.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         useButton.setDisable(false);
@@ -797,7 +796,7 @@ public class PixelsCalculationController extends BaseController {
             try {
                 inputValue = Integer.parseInt(cp_densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setUserConfigValue("densityInput", inputValue + "");
+                    AppVariables.setUserConfigValue("densityInput", inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -807,7 +806,7 @@ public class PixelsCalculationController extends BaseController {
             if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cp_density = inputValue;
-                    AppVaribles.setUserConfigValue("density", s);
+                    AppVariables.setUserConfigValue("density", s);
                 } else {
                     cp_density = 0;
                     cp_densityInput.setStyle(FxmlControl.badStyle);
@@ -815,7 +814,7 @@ public class PixelsCalculationController extends BaseController {
 
             } else {
                 cp_density = Integer.parseInt(s.substring(0, s.length() - 3));
-                AppVaribles.setUserConfigValue("density", s);
+                AppVariables.setUserConfigValue("density", s);
             }
             cp_calculateValues();
 
@@ -834,10 +833,10 @@ public class PixelsCalculationController extends BaseController {
             adjustLabel.setText("");
             return;
         }
-        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
+        String label = AppVariables.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cp_cmX + "cm x " + cp_cmY + " cm   "
                 + cp_density + "dpi" + "   "
-                + AppVaribles.message("AspectRatio") + ": "
+                + AppVariables.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -852,7 +851,7 @@ public class PixelsCalculationController extends BaseController {
             try {
                 inputValue = Integer.parseInt(cs_densityInput.getText());
                 if (inputValue > 0) {
-                    AppVaribles.setUserConfigValue("densityInput", inputValue + "");
+                    AppVariables.setUserConfigValue("densityInput", inputValue + "");
                 } else {
                     inputValue = -1;
                 }
@@ -862,7 +861,7 @@ public class PixelsCalculationController extends BaseController {
             if (message("InputValue").equals(s)) {
                 if (inputValue > 0) {
                     cs_density = inputValue;
-                    AppVaribles.setUserConfigValue("density", s);
+                    AppVariables.setUserConfigValue("density", s);
                 } else {
                     cs_density = 0;
                     cs_densityInput.setStyle(FxmlControl.badStyle);
@@ -870,7 +869,7 @@ public class PixelsCalculationController extends BaseController {
 
             } else {
                 cs_density = Integer.parseInt(s.substring(0, s.length() - 3));
-                AppVaribles.setUserConfigValue("density", s);
+                AppVariables.setUserConfigValue("density", s);
             }
             cs_calculateValues();
 
@@ -891,10 +890,10 @@ public class PixelsCalculationController extends BaseController {
         }
         double cmX = DoubleTools.scale2(selectX * 2.54f / cs_density);
         double cmY = DoubleTools.scale2(selectY * 2.54f / cs_density);
-        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
+        String label = AppVariables.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cmX + "cm x " + cmY + " cm   "
                 + cs_density + "dpi" + "   "
-                + AppVaribles.message("AspectRatio") + ": "
+                + AppVariables.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -917,10 +916,10 @@ public class PixelsCalculationController extends BaseController {
         }
         int densityX = Math.round(cd_X / cd_inchX);
         int densityY = Math.round(cd_Y / cd_inchY);
-        String label = AppVaribles.message("CalculatedPixelsNumber") + ": "
+        String label = AppVariables.message("CalculatedPixelsNumber") + ": "
                 + selectX + "x" + selectY + "       " + cd_cmX + "cm x " + cd_cmY + " cm   "
                 + densityX + "dpi x " + densityY + "dpi   "
-                + AppVaribles.message("AspectRatio") + ": "
+                + AppVariables.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);
         targetLabel.setText(label);
         adjustValues();
@@ -971,9 +970,9 @@ public class PixelsCalculationController extends BaseController {
             return;
         }
 
-        String label = AppVaribles.message("AdjustedPixelsNumber") + ": "
+        String label = AppVariables.message("AdjustedPixelsNumber") + ": "
                 + finalX + "x" + finalY + "   "
-                + AppVaribles.message("AspectRatio") + ": "
+                + AppVariables.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * finalX / finalY);
         adjustLabel.setText(label);
     }

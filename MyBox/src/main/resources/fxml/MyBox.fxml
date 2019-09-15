@@ -20,9 +20,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="650.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
     <top>
-        <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenus" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
+        <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenu" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
                 <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                     <image>
@@ -37,19 +37,11 @@ License:    Apache License Version 2.0
                         <Font size="24.0" />
                     </font>
                 </Label>
-                <Label fx:id="langLabel" onMouseEntered="#showLanguageMenu" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="Language/语言" underline="true">
-                    <font>
-                        <Font size="18.0" />
-                    </font>
-                </Label>
-                <Label onMouseClicked="#showAbout" onMouseEntered="#hideMenus" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%About" underline="true">
-                    <font>
-                        <Font size="18.0" />
-                    </font>
-                    <HBox.margin>
-                        <Insets left="20.0" right="40.0" />
-                    </HBox.margin>
-                </Label>
+            <CheckBox fx:id="imageCheck" mnemonicParsing="false" text="%ViewImage">
+               <HBox.margin>
+                  <Insets right="30.0" />
+               </HBox.margin>
+            </CheckBox>
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -63,24 +55,15 @@ License:    Apache License Version 2.0
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
     <center>
-        <VBox BorderPane.alignment="CENTER">
+        <VBox spacing="30.0" BorderPane.alignment="CENTER">
             <children>
-                <GridPane alignment="CENTER" hgap="10.0" prefHeight="537.0" prefWidth="843.0" vgap="10.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                <HBox alignment="CENTER" spacing="20.0">
                     <children>
-                        <VBox fx:id="pdfBox" alignment="CENTER" onMouseEntered="#showPdfMenu" prefHeight="200.0" prefWidth="100.0">
+                        <VBox fx:id="pdfBox" alignment="CENTER" onMouseEntered="#showPdfMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
-                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0">
                                     <children>
-                                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../img/PdfTools.png" />
                                             </image>
@@ -94,11 +77,11 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="imageBox" alignment="CENTER" onMouseEntered="#showImageMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                        <VBox fx:id="imageBox" alignment="CENTER" onMouseEntered="#showImageMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
-                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../img/ImageTools.png" />
                                             </image>
@@ -112,43 +95,33 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="desktopBox" alignment="CENTER" onMouseEntered="#showDesktopMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2">
+                        <VBox fx:id="fileBox" alignment="CENTER" onMouseEntered="#showFileMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
-                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="NEVER">
+                                <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
                                     <children>
-                                        <ImageView fitHeight="171.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../img/FileTools.png" />
                                             </image>
                                         </ImageView>
                                     </children>
                                 </HBox>
-                                <Label text="%DesktopTools">
+                                <Label text="%FileTools">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="dataBox" alignment="CENTER" onMouseEntered="#showDataMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER" spacing="20.0">
+                    <children>
+                        <VBox fx:id="networkBox" alignment="CENTER" onMouseEntered="#showNetworkMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
-                                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/language.png" />
-                                    </image>
-                                </ImageView>
-                                <Label text="%DataTools">
-                                    <font>
-                                        <Font size="18.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                        </VBox>
-                        <VBox fx:id="networkBox" alignment="CENTER" onMouseEntered="#showNetworkMenu" prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
-                            <children>
-                                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/DesktopTools.png" />
+                                        <Image url="@../img/NetworkTools.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%NetworkTools">
@@ -158,14 +131,36 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="recentBox" alignment="CENTER" onMouseEntered="#showRecentMenu" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <VBox fx:id="dataBox" alignment="CENTER" onMouseEntered="#showDataMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
-                                <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../img/About.png" />
-                                    </image>
-                                </ImageView>
-                                <Label onMouseClicked="#showAbout" text="%RecentAccessed">
+                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                    <children>
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/DataTools.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <Label text="%DataTools">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="mediaBox" alignment="CENTER" onMouseEntered="#showMediaMenu" prefHeight="150.0" prefWidth="250.0">
+                            <children>
+                                <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                    <children>
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/MediaTools.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                                <Label text="%MediaTools">
                                     <font>
                                         <Font size="18.0" />
                                     </font>
@@ -173,7 +168,53 @@ License:    Apache License Version 2.0
                             </children>
                         </VBox>
                     </children>
-                </GridPane>
+                </HBox>
+                <HBox alignment="CENTER" spacing="20.0">
+                    <children>
+                        <VBox fx:id="recentBox" alignment="CENTER" onMouseEntered="#showRecentMenu" prefHeight="150.0" prefWidth="250.0">
+                            <children>
+                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/RecentAccess.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="%RecentAccessed">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="settingsBox" alignment="CENTER" onMouseEntered="#showSettingsMenu" prefHeight="150.0" prefWidth="250.0">
+                            <children>
+                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/Settings.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="Settings/设置">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onKeyPressed="#hideMenu" onMouseClicked="#showAbout" onMouseEntered="#showAboutImage" prefHeight="150.0" prefWidth="250.0">
+                            <children>
+                                <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/About54.png" />
+                                    </image>
+                                </ImageView>
+                                <Label text="%About">
+                                    <font>
+                                        <Font size="18.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" textFill="#942c2c" VBox.vgrow="NEVER" />
             </children>
         </VBox>

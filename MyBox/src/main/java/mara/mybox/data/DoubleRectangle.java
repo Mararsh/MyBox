@@ -9,8 +9,8 @@ package mara.mybox.data;
  */
 public class DoubleRectangle implements DoubleShape {
 
-    private double smallX, smallY, bigX, bigY, width, height;
-    private double maxX, maxY;
+    protected double smallX, smallY, bigX, bigY, width, height;
+    protected double maxX, maxY;
 
     public DoubleRectangle() {
         maxX = Integer.MAX_VALUE;
@@ -49,6 +49,14 @@ public class DoubleRectangle implements DoubleShape {
     public boolean isValid(double maxX, double maxY) {
         return bigX > smallX && bigY > smallY
                 && bigX < maxX && bigY < maxY;
+    }
+
+    public boolean same(DoubleRectangle rect) {
+//        logger.debug(smallX + " " + smallY + " " + bigX + " " + bigY);
+//        logger.debug(rect.getSmallX() + " " + rect.getSmallY() + " " + rect.getBigX() + " " + rect.getBigY());
+        return rect != null
+                && smallX == rect.getSmallX() && smallY == rect.getSmallY()
+                && bigX == rect.getBigX() && bigY == rect.getBigY();
     }
 
     @Override

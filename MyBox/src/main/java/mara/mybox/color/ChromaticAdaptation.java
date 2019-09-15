@@ -7,8 +7,8 @@ import java.util.Map;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -44,7 +44,7 @@ public class ChromaticAdaptation {
         Generation of Chromatic Adaptation matrices
      */
     public static List<ChromaticAdaptation> all(int scale) {
-        List<ChromaticAdaptation> data = new ArrayList();
+        List<ChromaticAdaptation> data = new ArrayList<>();
         for (IlluminantType sourceIlluminant : IlluminantType.values()) {
             for (IlluminantType targetIlluminant : IlluminantType.values()) {
                 for (Observer sourceObserver : Observer.values()) {
@@ -176,7 +176,7 @@ public class ChromaticAdaptation {
             if (MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 double[] result = {x, y, z};
                 if (isDemo) {
-                    Map<String, Object> ret = new HashMap();
+                    Map<String, Object> ret = new HashMap<>();
                     ret.put("procedure", message("NeedNotAdaptChromatic"));
                     ret.put("matrix", MatrixTools.identityDouble(3));
                     ret.put("adaptedColor", result);
@@ -210,7 +210,7 @@ public class ChromaticAdaptation {
                 s += "\nAdaptedColor = M * SourceColor = \n";
                 s += MatrixTools.print(adaptedColor, 20, scale);
 
-                Map<String, Object> ret = new HashMap();
+                Map<String, Object> ret = new HashMap<>();
 
                 ret.put("matrix", adaptMatrix);
                 ret.put("procedure", s);
@@ -276,7 +276,7 @@ public class ChromaticAdaptation {
         try {
             if (targetWhitePoint == null || MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
-                    Map<String, Object> ret = new HashMap();
+                    Map<String, Object> ret = new HashMap<>();
                     ret.put("procedure", message("NeedNotAdaptChromatic"));
                     ret.put("adpatMatrix", MatrixTools.identityDouble(3));
                     return ret;
@@ -341,7 +341,7 @@ public class ChromaticAdaptation {
 
                 s += "\n" + "Adaptation_Matrix = MA_Inversed * RatioMatrix * MA =\n";
                 s += MatrixTools.print(M, 20, scale);
-                Map<String, Object> ret = new HashMap();
+                Map<String, Object> ret = new HashMap<>();
 
                 ret.put("procedure", s);
                 ret.put("adpatMatrix", M);
@@ -467,7 +467,7 @@ public class ChromaticAdaptation {
     }
 
     public static List<String> names() {
-        List<String> names = new ArrayList();
+        List<String> names = new ArrayList<>();
         for (ChromaticAdaptationAlgorithm c : ChromaticAdaptationAlgorithm.values()) {
             names.add(c + "");
         }

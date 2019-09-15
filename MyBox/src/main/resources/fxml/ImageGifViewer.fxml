@@ -46,46 +46,6 @@ License:    Apache License Version 2.0
                           <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                   <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0">
                      <children>
-                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconInfo.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconMeta.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconEdit.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Label text="%From" />
-                                <TextField fx:id="fromInput" prefWidth="80.0" />
-                                <Label text="%To" />
-                                <TextField fx:id="toInput" prefWidth="80.0" />
-                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Extract" />
-                     </children>
-                  </HBox>
-                      </items>
-                  </ToolBar>
-                  <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="NEVER">
-               <items>
-                      <HBox fx:id="operation2Box" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0">
-                          <children>
                                 <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -195,9 +155,41 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                          </children>
-                      </HBox>
-               </items>
+                                <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconInfo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="metaButton" mnemonicParsing="false" onAction="#popMetaData">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconMeta.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconEdit.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Label text="%From" />
+                                <TextField fx:id="fromInput" prefWidth="60.0" />
+                                <Label text="%To" />
+                                <TextField fx:id="toInput" prefWidth="60.0" />
+                                <Button fx:id="extractButton" mnemonicParsing="false" onAction="#extractAction" onMouseEntered="#popSaveAs" styleClass="main-button" stylesheets="@../styles/MyBox.css" text="%Extract" />
+                     </children>
+                  </HBox>
+                      </items>
                   </ToolBar>
                 <HBox fx:id="operation3Box" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
                     <children>

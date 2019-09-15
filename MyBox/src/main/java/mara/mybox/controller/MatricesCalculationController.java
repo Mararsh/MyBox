@@ -12,11 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.base.BaseController;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -43,7 +43,7 @@ public class MatricesCalculationController extends BaseController {
     private SplitPane dataPane;
 
     public MatricesCalculationController() {
-        baseTitle = AppVaribles.message("MatricesCalculation");
+        baseTitle = AppVariables.message("MatricesCalculation");
 
     }
 
@@ -79,7 +79,7 @@ public class MatricesCalculationController extends BaseController {
                         matrixBController.scale = scale;
                         matrixResultController.scale = scale;
                         scaleInput.setStyle(null);
-                        AppVaribles.setUserConfigInt("MatrixDecimalScale", scale);
+                        AppVariables.setUserConfigInt("MatrixDecimalScale", scale);
                         popInformation(message("Successful"), 1000);
                     }
                 } catch (Exception e) {
@@ -87,7 +87,7 @@ public class MatricesCalculationController extends BaseController {
                 }
             }
         });
-        int p = AppVaribles.getUserConfigInt("MatrixDecimalScale", 6);
+        int p = AppVariables.getUserConfigInt("MatrixDecimalScale", 6);
         scaleInput.setText(p + "");
 
         matrixPlusButton.disableProperty().bind(Bindings.isEmpty(matrixAController.valueArea.textProperty())
@@ -109,7 +109,7 @@ public class MatricesCalculationController extends BaseController {
             dataPane.getItems().removeAll(bpBox, cpBox);
         } else if (message("BinaryCalculation").equals(selected.getText())) {
             dataPane.getItems().addAll(bpBox, cpBox);
-            refreshStyle(dataPane);
+            FxmlControl.refreshStyle(dataPane);
             dataPane.setDividerPositions(0.333f, 0.666f);
         }
     }
@@ -139,7 +139,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":"
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
                 + message("VerticalMerge") + "  " + message("Cost") + ":" + cost + " ms");
     }
 
@@ -156,7 +156,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":"
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":"
                 + message("HorizontalMerge") + "  " + message("Cost") + ":" + cost + " ms");
     }
 
@@ -173,7 +173,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Plus") + "  "
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Plus") + "  "
                 + message("Cost") + ":" + cost + " ms");
     }
 
@@ -190,7 +190,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Minus") + "  "
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Minus") + "  "
                 + message("Cost") + ":" + cost + " ms");
 
     }
@@ -208,7 +208,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("Multiply") + "  "
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("Multiply") + "  "
                 + message("Cost") + ":" + cost + " ms");
     }
 
@@ -225,7 +225,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("HadamardProduct") + "  "
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("HadamardProduct") + "  "
                 + message("Cost") + ":" + cost + " ms");
     }
 
@@ -242,7 +242,7 @@ public class MatricesCalculationController extends BaseController {
         matrixResultController.matrix = result;
         matrixResultController.setMatrix();
         long cost = new Date().getTime() - startTime;
-        matrixResultController.getBottomLabel().setText(AppVaribles.message("Successful") + ":" + message("KroneckerProduct") + "  "
+        matrixResultController.getBottomLabel().setText(AppVariables.message("Successful") + ":" + message("KroneckerProduct") + "  "
                 + message("Cost") + ":" + cost + " ms");
     }
 

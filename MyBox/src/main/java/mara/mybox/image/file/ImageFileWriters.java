@@ -15,7 +15,7 @@ import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -102,15 +102,6 @@ public class ImageFileWriters {
         if (image == null || attributes == null || outFile == null) {
             return false;
         }
-        File file = new File(outFile);
-        try {
-            if (file.exists()) {
-                file.delete();
-            }
-        } catch (Exception e) {
-            logger.debug(e.toString());
-            return false;
-        }
 
         try {
             String targetFormat = attributes.getImageFormat().toLowerCase();
@@ -118,12 +109,25 @@ public class ImageFileWriters {
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
             IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, image, writer, param);
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(checked, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
+
+            try {
+                File file = new File(outFile);
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                logger.debug(e.toString());
+                tmpFile.delete();
+                return false;
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());

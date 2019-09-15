@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javafx.scene.paint.Color;
-import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 
 /**
@@ -72,7 +71,7 @@ public class ColorStatistic {
             sum += s.getNumber();
         }
         statistic.put("sum", new ColorStatistic("Sum", null, sum, 100.0f));
-        statistic.put("average", new ColorStatistic("Average", null, (int) (sum / values.size()),
+        statistic.put("average", new ColorStatistic("Average", null, sum / values.size(),
                 FloatTools.roundFloat5(100.0f / values.size())));
         List<ColorStatistic> newList = ColorStatistic.newSort(values);
         ColorStatistic s = newList.get(0);

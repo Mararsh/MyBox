@@ -9,7 +9,7 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterOutputStream;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation.Line_Break;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara

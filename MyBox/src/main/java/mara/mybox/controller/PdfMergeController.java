@@ -7,12 +7,11 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.controller.base.PdfBatchController;
 import mara.mybox.data.PdfInformation;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -33,7 +32,7 @@ public class PdfMergeController extends PdfBatchController {
     private CheckBox deleteCheck;
 
     public PdfMergeController() {
-        baseTitle = AppVaribles.message("MergePdf");
+        baseTitle = AppVariables.message("MergePdf");
     }
 
     @Override
@@ -81,7 +80,7 @@ public class PdfMergeController extends PdfBatchController {
                 actualParameters.toPage = info.getToPage();
                 actualParameters.password = info.getUserPassword();
                 try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
-                        currentParameters.password, AppVaribles.pdfMemUsage)) {
+                        currentParameters.password, AppVariables.pdfMemUsage)) {
                     doc = pd;
                     if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {
                         currentParameters.toPage = doc.getNumberOfPages();
@@ -102,7 +101,7 @@ public class PdfMergeController extends PdfBatchController {
                 logger.error(e.toString());
             }
         }
-        return MessageFormat.format(AppVaribles.message("HandlePagesGenerateNumber"),
+        return MessageFormat.format(AppVariables.message("HandlePagesGenerateNumber"),
                 currentParameters.toPage - currentParameters.fromPage, generated);
     }
 
@@ -116,7 +115,7 @@ public class PdfMergeController extends PdfBatchController {
                 targetFiles.add(targetFile);
 
                 if (deleteCheck.isSelected()) {
-                    List<PdfInformation> sources = new ArrayList();
+                    List<PdfInformation> sources = new ArrayList<>();
                     sources.addAll(tableData);
                     for (int i = sources.size() - 1; i >= 0; i--) {
                         try {

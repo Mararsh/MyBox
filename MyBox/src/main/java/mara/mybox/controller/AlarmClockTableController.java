@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,10 +19,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import mara.mybox.data.AlarmClock;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -50,13 +50,13 @@ public class AlarmClockTableController extends BaseController {
     @Override
     public void initializeNext() {
         try {
-            statusColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("status"));
-            descriptionColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("description"));
-            repeatColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("repeat"));
-            nextTimeColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("next"));
-            soundColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("sound"));
-            lastTimeColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("last"));
-            startTimeColumn.setCellValueFactory(new PropertyValueFactory<AlarmClock, String>("start"));
+            statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+            descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+            repeatColumn.setCellValueFactory(new PropertyValueFactory<>("repeat"));
+            nextTimeColumn.setCellValueFactory(new PropertyValueFactory<>("next"));
+            soundColumn.setCellValueFactory(new PropertyValueFactory<>("sound"));
+            lastTimeColumn.setCellValueFactory(new PropertyValueFactory<>("last"));
+            startTimeColumn.setCellValueFactory(new PropertyValueFactory<>("start"));
 
             alarmClocksView.setItems(tableData);
             alarmClocksView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -125,8 +125,12 @@ public class AlarmClockTableController extends BaseController {
     private void clearAction(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getBaseTitle());
-        alert.setContentText(AppVaribles.message("SureClearAlarmClocks"));
+        alert.setContentText(AppVariables.message("SureClearAlarmClocks"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() != ButtonType.OK) {
             return;
@@ -168,7 +172,7 @@ public class AlarmClockTableController extends BaseController {
         }
         for (AlarmClock alarm : selected) {
             alarm.setIsActive(true);
-            alarm.setStatus(AppVaribles.message("Active"));
+            alarm.setStatus(AppVariables.message("Active"));
             AlarmClock.calculateNextTime(alarm);
             alarm.setNext(DateTools.datetimeToString(alarm.getNextTime()));
             AlarmClock.scehduleAlarmClock(alarm);
@@ -189,7 +193,7 @@ public class AlarmClockTableController extends BaseController {
         }
         for (AlarmClock alarm : selected) {
             alarm.setIsActive(false);
-            alarm.setStatus(AppVaribles.message("Inactive"));
+            alarm.setStatus(AppVariables.message("Inactive"));
             alarm.setNextTime(-1);
             alarm.setNext("");
             AlarmClock.scehduleAlarmClock(alarm);

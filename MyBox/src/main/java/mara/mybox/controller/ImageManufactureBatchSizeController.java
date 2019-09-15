@@ -12,13 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlStage;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -51,7 +50,7 @@ public class ImageManufactureBatchSizeController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchSizeController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchSize");
+        baseTitle = AppVariables.message("ImageManufactureBatchSize");
     }
 
     @Override

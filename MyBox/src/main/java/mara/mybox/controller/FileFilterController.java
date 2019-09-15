@@ -3,14 +3,13 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.Arrays;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.fxml.FxmlStage;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -24,7 +23,7 @@ public class FileFilterController extends FileEditerController {
     private TextField filterConditionsLabel;
 
     public FileFilterController() {
-        baseTitle = AppVaribles.message("FileFilter");
+        baseTitle = AppVariables.message("FileFilter");
 
         setTextType();
     }
@@ -60,52 +59,57 @@ public class FileFilterController extends FileEditerController {
         String conditions = " (" + sourceInformation.filterTypeName() + ":"
                 + Arrays.asList(sourceInformation.getFilterStrings()) + ") ";
         if (!initConditions.isEmpty()) {
-            filterConditions = initConditions + AppVaribles.message("And") + conditions;
+            filterConditions = initConditions + AppVariables.message("And") + conditions;
         } else {
             filterConditions = conditions;
         }
         filterConditionsLabel.setText(filterConditions);
 
-        task = new Task<Void>() {
-            private File file;
-
-            @Override
-            protected Void call() throws Exception {
-                file = sourceInformation.filter(recordLineNumber);
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (file != null) {
-                            if (file.length() == 0) {
-                                popInformation(AppVaribles.message("NoData"));
+                private File file;
+
+                @Override
+                protected boolean handle() {
+                    file = sourceInformation.filter(recordLineNumber);
+                    return file != null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (file != null) {
+                                if (file.length() == 0) {
+                                    popInformation(AppVariables.message("NoData"));
+                                } else {
+                                    openTextFile(file);
+                                    saveButton.setDisable(true);
+                                }
                             } else {
-                                openTextFile(file);
-                                saveButton.setDisable(true);
+                                popFailed();
                             }
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
                         }
-                    }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
     @Override
     public void saveAction() {
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 null, targetExtensionFilter, true);
         if (file == null) {
             return;
@@ -118,38 +122,32 @@ public class FileFilterController extends FileEditerController {
         targetInformation.setLineBreak(sourceInformation.getLineBreak());
         targetInformation.setLineBreakValue(sourceInformation.getLineBreakValue());
         targetInformation.setLineBreakWidth(sourceInformation.getLineBreakWidth());
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            FileEditerController controller = openNewStage();
-                            controller.openFile(file);
-                            popInformation(AppVaribles.message("Successful"));
-                            FxmlStage.closeStage(getMyStage());
+                @Override
+                protected boolean handle() {
+                    return targetInformation.writePage(sourceInformation, mainArea.getText());
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    FileEditerController controller = openNewStage();
+                    controller.openFile(file);
+                    popSuccessul();
+                    FxmlStage.closeStage(getMyStage());
 //                            sourceInformation.getFile().delete();
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
-                        }
-                    }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
 }

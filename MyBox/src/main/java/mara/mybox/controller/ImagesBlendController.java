@@ -4,10 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import static mara.mybox.controller.BaseController.openImageViewer;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
@@ -39,8 +38,8 @@ import mara.mybox.image.PixelBlend.ImagesBlendMode;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -81,7 +80,7 @@ public class ImagesBlendController extends ImageViewerController {
     private CheckBox intersectOnlyCheck;
 
     public ImagesBlendController() {
-        baseTitle = AppVaribles.message("ImagesBlend");
+        baseTitle = AppVariables.message("ImagesBlend");
 
         ImageBlendFileTypeKey = "ImageBlendFileType";
         needNotRulers = true;
@@ -121,7 +120,7 @@ public class ImagesBlendController extends ImageViewerController {
                 }
             });
             location = ImagesRelativeLocation.Foreground_In_Background;
-            pointLabel.setText(AppVaribles.message("ClickOnBackgournd"));
+            pointLabel.setText(AppVariables.message("ClickOnBackgournd"));
 
             blendModeBox.getItems().addAll(PixelBlend.allBlendModes());
             blendModeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -193,16 +192,16 @@ public class ImagesBlendController extends ImageViewerController {
         }
         isSettingValues = true;
         RadioButton selected = (RadioButton) locationGroup.getSelectedToggle();
-        if (AppVaribles.message("FinB").equals(selected.getText())) {
+        if (AppVariables.message("FinB").equals(selected.getText())) {
             location = ImagesRelativeLocation.Foreground_In_Background;
-            pointLabel.setText(AppVaribles.message("ClickOnBackgournd"));
-            bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
+            pointLabel.setText(AppVariables.message("ClickOnBackgournd"));
+            bottomLabel.setText(AppVariables.message("BlendedSize") + ": "
                     + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
 
-        } else if (AppVaribles.message("BinF").equals(selected.getText())) {
+        } else if (AppVariables.message("BinF").equals(selected.getText())) {
             location = ImagesRelativeLocation.Background_In_Foreground;
-            pointLabel.setText(AppVaribles.message("ClickOnForegournd"));
-            bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
+            pointLabel.setText(AppVariables.message("ClickOnForegournd"));
+            bottomLabel.setText(AppVariables.message("BlendedSize") + ": "
                     + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
 
         } else {
@@ -281,7 +280,7 @@ public class ImagesBlendController extends ImageViewerController {
     public void selectForegroundImage() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            File path = AppVariables.getUserConfigPath(sourcePathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
@@ -306,58 +305,51 @@ public class ImagesBlendController extends ImageViewerController {
             recordFileOpened(file);
 
             final String fileName = file.getPath();
-            task = new Task<Void>() {
-                private boolean ok;
-
-                @Override
-                protected Void call() throws Exception {
-
-                    BufferedImage bufferImage = ImageFileReaders.readImage(file);
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    foreImage = SwingFXUtils.toFXImage(bufferImage, null);
-                    foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    foreInfo.setImage(foreImage);
-
-                    ok = true;
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    if (ok) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                foreView.setPreserveRatio(true);
-                                foreView.setImage(foreImage);
-                                if (foreScroll.getHeight() < foreImage.getHeight()) {
-                                    foreView.setFitWidth(foreScroll.getWidth() - 1);
-                                    foreView.setFitHeight(foreScroll.getHeight() - 5);
-                                } else {
-                                    foreView.setFitWidth(foreView.getImage().getWidth());
-                                    foreView.setFitHeight(foreView.getImage().getHeight());
-                                }
-                                foreTitle.setText(AppVaribles.message("ForegroundImage") + " "
-                                        + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
-                                foreLabel.setText(fileName);
-                                foreBox.setDisable(false);
-                                afterImagesOpened();
-                            }
-                        });
+                    @Override
+                    protected boolean handle() {
+
+                        BufferedImage bufferImage = ImageFileReaders.readImage(file);
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        foreImage = SwingFXUtils.toFXImage(bufferImage, null);
+                        foreInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        foreInfo.setImage(foreImage);
+                        return foreImage != null;
                     }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
 
+                    @Override
+                    protected void whenSucceeded() {
+                        foreView.setPreserveRatio(true);
+                        foreView.setImage(foreImage);
+                        if (foreScroll.getHeight() < foreImage.getHeight()) {
+                            foreView.setFitWidth(foreScroll.getWidth() - 1);
+                            foreView.setFitHeight(foreScroll.getHeight() - 5);
+                        } else {
+                            foreView.setFitWidth(foreView.getImage().getWidth());
+                            foreView.setFitHeight(foreView.getImage().getHeight());
+                        }
+                        foreTitle.setText(AppVariables.message("ForegroundImage") + " "
+                                + (int) foreImage.getWidth() + "*" + (int) foreImage.getHeight());
+                        foreLabel.setText(fileName);
+                        foreBox.setDisable(false);
+                        afterImagesOpened();
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -365,7 +357,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     protected void popForeground(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -425,7 +417,7 @@ public class ImagesBlendController extends ImageViewerController {
     public void selectBackgroundImage() {
         try {
             final FileChooser fileChooser = new FileChooser();
-            File path = AppVaribles.getUserConfigPath(sourcePathKey);
+            File path = AppVariables.getUserConfigPath(sourcePathKey);
             if (path.exists()) {
                 fileChooser.setInitialDirectory(path);
             }
@@ -450,58 +442,52 @@ public class ImagesBlendController extends ImageViewerController {
             recordFileOpened(backFile);
 
             final String fileName = file.getPath();
-            task = new Task<Void>() {
-                private boolean ok;
-
-                @Override
-                protected Void call() throws Exception {
-
-                    BufferedImage bufferImage = ImageFileReaders.readImage(file);
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    backImage = SwingFXUtils.toFXImage(bufferImage, null);
-                    backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    backInfo.setImage(backImage);
-
-                    ok = true;
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    if (ok) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                backView.setPreserveRatio(true);
-                                backView.setImage(backImage);
-                                if (backScroll.getHeight() < backImage.getHeight()) {
-                                    backView.setFitWidth(backScroll.getWidth() - 1);
-                                    backView.setFitHeight(backScroll.getHeight() - 5);
-                                } else {
-                                    backView.setFitWidth(backView.getImage().getWidth());
-                                    backView.setFitHeight(backView.getImage().getHeight());
-                                }
-                                backTitle.setText(AppVaribles.message("BackgroundImage") + " "
-                                        + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
-                                backLabel.setText(fileName);
-                                backBox.setDisable(false);
-                                afterImagesOpened();
-                            }
-                        });
+                    @Override
+                    protected boolean handle() {
+
+                        BufferedImage bufferImage = ImageFileReaders.readImage(file);
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        backImage = SwingFXUtils.toFXImage(bufferImage, null);
+                        backInfo = ImageFileReaders.readImageFileMetaData(fileName).getImageInformation();
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        backInfo.setImage(backImage);
+                        return backImage != null;
                     }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
 
+                    @Override
+                    protected void whenSucceeded() {
+                        backView.setPreserveRatio(true);
+                        backView.setImage(backImage);
+                        if (backScroll.getHeight() < backImage.getHeight()) {
+                            backView.setFitWidth(backScroll.getWidth() - 1);
+                            backView.setFitHeight(backScroll.getHeight() - 5);
+                        } else {
+                            backView.setFitWidth(backView.getImage().getWidth());
+                            backView.setFitHeight(backView.getImage().getHeight());
+                        }
+                        backTitle.setText(AppVariables.message("BackgroundImage") + " "
+                                + (int) backImage.getWidth() + "*" + (int) backImage.getHeight());
+                        backLabel.setText(fileName);
+                        backBox.setDisable(false);
+                        afterImagesOpened();
+
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -509,7 +495,7 @@ public class ImagesBlendController extends ImageViewerController {
 
     @FXML
     protected void popBackground(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -587,54 +573,49 @@ public class ImagesBlendController extends ImageViewerController {
             return;
         }
         try {
-            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                     null, targetExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+            recordFileWritten(file);
+
             targetFile = file;
 
-            task = new Task<Void>() {
-                private boolean ok;
-
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        String filename = targetFile.getAbsolutePath();
-                        String format = FileTools.getFileSuffix(filename);
-                        final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
-                        if (task == null || task.isCancelled()) {
-                            return null;
-                        }
-                        ok = ImageFileWriters.writeImageFile(bufferedImage, format, filename);
-                    } catch (Exception e) {
-                        logger.error(e.toString());
-                    }
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ok) {
-                                popInformation(AppVaribles.message("Saved"));
-                                openImageViewer(file);
-
-                            } else {
-                                popInformation(AppVaribles.message("Failed"));
+                    @Override
+                    protected boolean handle() {
+                        try {
+                            String filename = targetFile.getAbsolutePath();
+                            String format = FileTools.getFileSuffix(filename);
+                            final BufferedImage bufferedImage = FxmlImageManufacture.getBufferedImage(image);
+                            if (task == null || isCancelled()) {
+                                return false;
                             }
+                            return ImageFileWriters.writeImageFile(bufferedImage, format, filename);
+                        } catch (Exception e) {
+                            error = e.toString();
+                            return false;
                         }
-                    });
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                    }
+
+                    @Override
+                    protected void whenSucceeded() {
+                        popInformation(AppVariables.message("Saved"));
+                        openImageViewer(file);
+                    }
+
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -708,7 +689,7 @@ public class ImagesBlendController extends ImageViewerController {
             return;
         }
 
-        bottomLabel.setText(AppVaribles.message("Loading..."));
+        bottomLabel.setText(AppVariables.message("Loading..."));
 
         image = FxmlImageManufacture.blendImages(foreImage, backImage,
                 location, x, y, intersectOnlyCheck.isSelected(), blendMode, opacity);
@@ -718,7 +699,7 @@ public class ImagesBlendController extends ImageViewerController {
         }
         imageView.setImage(image);
         fitSize();
-        bottomLabel.setText(AppVaribles.message("BlendedSize") + ": "
+        bottomLabel.setText(AppVariables.message("BlendedSize") + ": "
                 + (int) image.getWidth() + "*" + (int) image.getHeight());
     }
 

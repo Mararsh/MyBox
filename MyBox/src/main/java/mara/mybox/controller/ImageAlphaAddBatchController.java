@@ -13,16 +13,16 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.data.VisitHistory;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -52,9 +52,9 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
     private ComboBox<String> opacityBox;
 
     public ImageAlphaAddBatchController() {
-        baseTitle = AppVaribles.message("ImageAlphaAdd");
+        baseTitle = AppVariables.message("ImageAlphaAdd");
 
-        sourceExtensionFilter = CommonValues.AlphaImageExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -157,13 +157,13 @@ public class ImageAlphaAddBatchController extends ImageManufactureBatchControlle
 
     @FXML
     public void popAlphaFile(MouseEvent event) {
-        if (AppVaribles.fileRecentNumber <= 0) {
+        if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+                int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
                 return VisitHistory.getRecentAlphaImages(fileNumber);
             }
 

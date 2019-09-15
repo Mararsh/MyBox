@@ -1,11 +1,9 @@
 package mara.mybox.controller;
 
 import java.util.Map;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,13 +15,11 @@ import javafx.stage.Modality;
 import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.color.Illuminant;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -55,7 +51,7 @@ public class IlluminantsController extends ChromaticityBaseController {
     private TableColumn<Illuminant, Integer> illuminautTemperatureColumn;
 
     public IlluminantsController() {
-        baseTitle = AppVaribles.message("Illuminants");
+        baseTitle = AppVariables.message("Illuminants");
         exportName = "StandardIlluminants";
     }
 
@@ -100,16 +96,16 @@ public class IlluminantsController extends ChromaticityBaseController {
     }
 
     private void initStandardIlluminants() {
-        illumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, String>("name"));
-        observerColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, String>("observer"));
-        nxillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("normalizedX"));
-        nyillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("normalizedY"));
-        nzillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("normalizedZ"));
-        rxillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("relativeX"));
-        ryillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("relativeY"));
-        rzillumColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Double>("relativeZ"));
-        illuminautTemperatureColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, Integer>("temperature"));
-        illumCommentsColumn.setCellValueFactory(new PropertyValueFactory<Illuminant, String>("comments"));
+        illumColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        observerColumn.setCellValueFactory(new PropertyValueFactory<>("observer"));
+        nxillumColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        nyillumColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nzillumColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rxillumColumn.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        ryillumColumn.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rzillumColumn.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
+        illuminautTemperatureColumn.setCellValueFactory(new PropertyValueFactory<>("temperature"));
+        illumCommentsColumn.setCellValueFactory(new PropertyValueFactory<>("comments"));
 
     }
 
@@ -126,42 +122,35 @@ public class IlluminantsController extends ChromaticityBaseController {
     }
 
     private void initData() {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String illuminantString;
+
+                @Override
+                protected boolean handle() {
+                    illuminants = FXCollections.observableArrayList();
+                    illuminants.addAll(Illuminant.all(8));
+                    illuminantString = Illuminant.string();
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    illuminantsTableView.setItems(illuminants);
+                    illuminantsArea.setText(illuminantString);
+                    illuminantsArea.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String illuminantString;
-
-            @Override
-            protected Void call() throws Exception {
-                illuminants = FXCollections.observableArrayList();
-                illuminants.addAll(Illuminant.all(8));
-                illuminantString = Illuminant.string();
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        illuminantsTableView.setItems(illuminants);
-                        illuminantsArea.setText(illuminantString);
-                        illuminantsArea.home();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
     }
 
     @FXML

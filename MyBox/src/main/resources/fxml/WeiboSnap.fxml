@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 Author:     Mara
 License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
+
 <?import javafx.scene.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.web.*?>
@@ -18,18 +20,18 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
+<BorderPane fx:id="thisPane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.WeiboSnapController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
         <VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
             <children>
-                <TitledPane text="%Options" VBox.vgrow="NEVER">
+                <TitledPane minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0">
                             <children>
-                                <TabPane tabClosingPolicy="UNAVAILABLE">
+                                <TabPane minHeight="-Infinity" tabClosingPolicy="UNAVAILABLE">
                                     <tabs>
                                         <Tab text="%WebPageOptions">
                                             <content>
@@ -38,7 +40,7 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                             <children>
                                                                 <Label text="%WeiboAddress" />
-                                                                <TextField fx:id="addressInput" prefWidth="295.0" />
+                                                <ComboBox fx:id="addressBox" editable="true" maxWidth="1.7976931348623157E308" visibleRowCount="15" HBox.hgrow="ALWAYS" />
                                                                 <ImageView fx:id="weiboTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
                                                                         <Image url="@../buttons/iconTips.png" />
@@ -76,16 +78,6 @@ License:    Apache License Version 2.0
                                                                 <CheckBox fx:id="expandPicturesCheck" mnemonicParsing="false" selected="true" text="%ExpandPictures" />
                                                             </children>
                                                         </HBox>
-                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="140.0" spacing="10.0">
-                                                            <children>
-                                                                <Label text="%FailedRetryTimes">
-                                                                    <HBox.margin>
-                                                                        <Insets />
-                                                                    </HBox.margin>
-                                                                </Label>
-                                                                <ComboBox fx:id="retryBox" prefWidth="80.0" />
-                                                            </children>
-                                                        </HBox>
                                                         <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="171.0" spacing="10.0">
                                                             <children>
                                                                 <CheckBox fx:id="closeWindowCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%CloseWindowAfterSnap" />
@@ -99,6 +91,23 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </CheckBox>
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="140.0" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%FailedRetryTimes">
+                                                                    <HBox.margin>
+                                                                        <Insets />
+                                                                    </HBox.margin>
+                                                                </Label>
+                                                                <ComboBox fx:id="retryBox" prefWidth="80.0" />
+                                                <Label text="%MinAccessInterval">
+                                                   <HBox.margin>
+                                                      <Insets left="30.0" />
+                                                   </HBox.margin>
+                                                </Label>
+                                                <TextField fx:id="intervalInput" prefWidth="80.0" />
+                                                <Label text="%MinAccessIntervalComments" />
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -187,7 +196,7 @@ License:    Apache License Version 2.0
                                                                 <Label text="%UnitPixels" />
                                                             </children>
                                                         </HBox>
-                                                        <HBox  alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
+                                                        <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" spacing="10.0">
                                                             <children>
                                                                 <Label text="%PageSize" visible="false">
                                                                     <HBox.margin>
@@ -272,9 +281,9 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane text="%TargetFiles" VBox.vgrow="NEVER">
+                <TitledPane minHeight="-Infinity" text="%TargetFiles" VBox.vgrow="NEVER">
                     <content>
-                        <VBox spacing="10.0">
+                        <VBox minHeight="-Infinity" spacing="10.0">
                             <children>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
                                     <children>

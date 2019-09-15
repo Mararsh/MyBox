@@ -7,16 +7,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.controller.base.PdfBatchController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.setUserConfigValue;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.setUserConfigValue;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -39,7 +38,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
     protected CheckBox appendColorCheck, appendCompressionCheck, appendQualityCheck, appendDensityCheck;
 
     public PdfConvertImagesBatchController() {
-        baseTitle = AppVaribles.message("PdfConvertImagesBatch");
+        baseTitle = AppVariables.message("PdfConvertImagesBatch");
         browseTargets = true;
 
         PdfConverterAppendColorKey = "PdfConverterDitherKey";
@@ -82,7 +81,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                     setUserConfigValue(PdfConverterAppendColorKey, appendColorCheck.isSelected());
                 }
             });
-            appendColorCheck.setSelected(AppVaribles.getUserConfigBoolean(PdfConverterAppendColorKey));
+            appendColorCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendColorKey));
 
             appendCompressionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -90,7 +89,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                     setUserConfigValue(PdfConverterAppendCompressionKey, appendCompressionCheck.isSelected());
                 }
             });
-            appendCompressionCheck.setSelected(AppVaribles.getUserConfigBoolean(PdfConverterAppendCompressionKey));
+            appendCompressionCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendCompressionKey));
 
             appendQualityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -98,7 +97,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                     setUserConfigValue(PdfConverterAppendQualityKey, appendQualityCheck.isSelected());
                 }
             });
-            appendQualityCheck.setSelected(AppVaribles.getUserConfigBoolean(PdfConverterAppendQualityKey));
+            appendQualityCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendQualityKey));
 
             appendDensityCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -106,7 +105,7 @@ public class PdfConvertImagesBatchController extends PdfBatchController {
                     setUserConfigValue(PdfConverterAppendDensityKey, appendDensityCheck.isSelected());
                 }
             });
-            appendDensityCheck.setSelected(AppVaribles.getUserConfigBoolean(PdfConverterAppendDensityKey));
+            appendDensityCheck.setSelected(AppVariables.getUserConfigBoolean(PdfConverterAppendDensityKey));
 
         } catch (Exception e) {
             logger.debug(e.toString());

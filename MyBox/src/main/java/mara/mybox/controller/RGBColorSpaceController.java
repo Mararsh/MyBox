@@ -16,11 +16,10 @@ import mara.mybox.color.CIEData;
 import mara.mybox.color.ChromaticAdaptation.ChromaticAdaptationAlgorithm;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.Illuminant;
-import mara.mybox.controller.base.BaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara

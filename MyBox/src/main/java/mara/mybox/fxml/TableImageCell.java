@@ -25,11 +25,14 @@ public class TableImageCell<T, Image> extends TableCell<T, Image>
             @Override
             public void updateItem(Image item, boolean empty) {
                 super.updateItem(item, empty);
-                if (item != null) {
-                    javafx.scene.image.Image image = (javafx.scene.image.Image) item;
-                    imageview.setImage(image);
-                    setGraphic(imageview);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
                 }
+                javafx.scene.image.Image image = (javafx.scene.image.Image) item;
+                imageview.setImage(image);
+                setGraphic(imageview);
             }
         };
         return cell;

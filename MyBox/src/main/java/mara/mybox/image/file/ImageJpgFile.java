@@ -25,8 +25,9 @@ import mara.mybox.image.ImageAttributes;
 import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageValue;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -162,23 +163,24 @@ public class ImageJpgFile {
     public static boolean writeJPEGImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());

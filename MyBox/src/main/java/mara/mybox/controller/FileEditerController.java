@@ -36,7 +36,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.BaseController;
+import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FileEditInformation.Filter_Type;
@@ -47,9 +47,10 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -115,13 +116,13 @@ public abstract class FileEditerController extends BaseController {
     protected TabPane tabPane;
 
     public FileEditerController() {
-        baseTitle = AppVaribles.message("FileEditer");
+        baseTitle = AppVariables.message("FileEditer");
 //        setTextType();
 //        logger.debug(editType);
     }
 
     public FileEditerController(Edit_Type editType) {
-        baseTitle = AppVaribles.message("FileEditer");
+        baseTitle = AppVariables.message("FileEditer");
         if (editType == Edit_Type.Text) {
             setTextType();
         } else if (editType == Edit_Type.Bytes) {
@@ -139,11 +140,11 @@ public abstract class FileEditerController extends BaseController {
         AddFileType = VisitHistory.FileType.Text;
         AddPathType = VisitHistory.FileType.Text;
 
-        sourcePathKey = "TextsourcePathKey";
+        sourcePathKey = "TextFilePath";
         DisplayKey = "TextEditerDisplayHex";
         PageSizeKey = "TextPageSize";
 
-        sourceExtensionFilter = CommonValues.TextExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.TextExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -158,7 +159,7 @@ public abstract class FileEditerController extends BaseController {
         AddFileType = VisitHistory.FileType.Bytes;
         AddPathType = VisitHistory.FileType.Bytes;
 
-        sourcePathKey = "BytessourcePathKey";
+        sourcePathKey = "ByteFilePath";
         DisplayKey = "BytesEditerDisplayText";
         PageSizeKey = "BytesPageSize";
 
@@ -167,7 +168,7 @@ public abstract class FileEditerController extends BaseController {
         LineBreakValueKey = "LineBreakValueKey";
         BytesCharsetKey = "BytesCharsetKey";
 
-        sourceExtensionFilter = CommonValues.AllExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.AllExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -213,7 +214,32 @@ public abstract class FileEditerController extends BaseController {
     @Override
     public void keyEventsHandler(KeyEvent event) {
         super.keyEventsHandler(event);
+        switch (event.getCode()) {
+            case PAGE_UP:
+                if (!findPreviousButton.isDisabled()) {
+                    findPreviousAction();
+                }
+                return;
+            case PAGE_DOWN:
+                if (!findNextButton.isDisabled()) {
+                    findNextAction();
+                }
+                return;
+        }
+
         if (event.isControlDown()) {
+            switch (event.getCode()) {
+                case HOME:
+                    if (!findFirstButton.isDisabled()) {
+                        findFirstAction();
+                    }
+                    return;
+                case END:
+                    if (!findLastButton.isDisabled()) {
+                        findLastAction();
+                    }
+                    return;
+            }
             String key = event.getText();
             if (key == null || key.isEmpty()) {
                 return;
@@ -225,36 +251,12 @@ public abstract class FileEditerController extends BaseController {
                         recoverAction();
                     }
                     break;
-                case "f":
-                case "F":
-                    if (!findFirstButton.isDisabled()) {
-                        findFirstAction();
-                    }
-                    break;
-                case "l":
-                case "L":
-                    if (!findLastButton.isDisabled()) {
-                        findLastAction();
-                    }
-                    break;
-                case "n":
-                case "N":
-                    if (!findNextButton.isDisabled()) {
-                        findNextAction();
-                    }
-                    break;
-                case "p":
-                case "P":
-                    if (!findPreviousButton.isDisabled()) {
-                        findPreviousAction();
-                    }
-                    break;
-                case "e":
-                case "E":
-                    if (!replaceButton.isDisabled()) {
-                        replaceAction();
-                    }
-                    break;
+//                case "e":
+//                case "E":
+//                    if (!replaceButton.isDisabled()) {
+//                        replaceAction();
+//                    }
+//                    break;
                 default:
                     break;
             }
@@ -265,9 +267,11 @@ public abstract class FileEditerController extends BaseController {
         try {
             if (task != null && task.isRunning()) {
                 task.cancel();
+                task = null;
             }
             if (backgroundTask != null && backgroundTask.isRunning()) {
                 backgroundTask.cancel();
+                backgroundTask = null;
             }
 
             isSettingValues = true;
@@ -285,7 +289,7 @@ public abstract class FileEditerController extends BaseController {
 
             sourceFile = file;
             sourceInformation = FileEditInformation.newEditInformation(editType, file);
-            sourceInformation.setPageSize(AppVaribles.getUserConfigInt(PageSizeKey, 100000));
+            sourceInformation.setPageSize(AppVariables.getUserConfigInt(PageSizeKey, 100000));
             sourceInformation.setCurrentPage(currentPage);
             if (fileCurrentFound >= 0) {
                 sourceInformation.setCurrentFound(fileCurrentFound);
@@ -384,10 +388,10 @@ public abstract class FileEditerController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
                         Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue("TextEditerConfirmSave", newValue);
+                    AppVariables.setUserConfigValue("TextEditerConfirmSave", newValue);
                 }
             });
-            confirmCheck.setSelected(AppVaribles.getUserConfigBoolean("TextEditerConfirmSave", true));
+            confirmCheck.setSelected(AppVariables.getUserConfigBoolean("TextEditerConfirmSave", true));
 
             saveAsGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -407,11 +411,11 @@ public abstract class FileEditerController extends BaseController {
     protected void checkSaveAsType() {
         try {
             RadioButton selected = (RadioButton) saveAsGroup.getSelectedToggle();
-            if (AppVaribles.message("LoadAfterSaveAs").equals(selected.getText())) {
+            if (AppVariables.message("LoadAfterSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.Load;
-            } else if (AppVaribles.message("OpenAfterSaveAs").equals(selected.getText())) {
+            } else if (AppVariables.message("OpenAfterSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.Open;
-            } else if (AppVaribles.message("JustSaveAs").equals(selected.getText())) {
+            } else if (AppVariables.message("JustSaveAs").equals(selected.getText())) {
                 saveAsType = SaveAsType.None;
             }
         } catch (Exception e) {
@@ -436,11 +440,11 @@ public abstract class FileEditerController extends BaseController {
                 }
             });
             isSettingValues = true;
-            displayCheck.setSelected(AppVaribles.getUserConfigBoolean(DisplayKey, true));
+            displayCheck.setSelected(AppVariables.getUserConfigBoolean(DisplayKey, true));
             isSettingValues = false;
             checkDisplay();
 
-            Tooltip tips = new Tooltip(AppVaribles.message("EncodeComments"));
+            Tooltip tips = new Tooltip(AppVariables.message("EncodeComments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(currentBox, tips);
 
@@ -476,17 +480,17 @@ public abstract class FileEditerController extends BaseController {
     protected void checkDisplay() {
         setDisplayPane();
 //        scrollCheck.setDisable(!displayCheck.isSelected());
-        AppVaribles.setUserConfigValue(DisplayKey, displayCheck.isSelected());
+        AppVariables.setUserConfigValue(DisplayKey, displayCheck.isSelected());
     }
 
     protected void initFilterTab() {
         try {
 
-            Tooltip tips = new Tooltip(AppVaribles.message("SeparateByCommaBlanksInvolved"));
+            Tooltip tips = new Tooltip(AppVariables.message("SeparateByCommaBlanksInvolved"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(filterInput, tips);
 
-            tips = new Tooltip(AppVaribles.message("FilterTypesComments"));
+            tips = new Tooltip(AppVariables.message("FilterTypesComments"));
             tips.setFont(new Font(16));
             FxmlControl.setTooltip(filterTypesBox, tips);
 
@@ -512,10 +516,10 @@ public abstract class FileEditerController extends BaseController {
             filterLineNumberCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    AppVaribles.setUserConfigValue("FilterRecordLineNumber", filterLineNumberCheck.isSelected());
+                    AppVariables.setUserConfigValue("FilterRecordLineNumber", filterLineNumberCheck.isSelected());
                 }
             });
-            filterLineNumberCheck.setSelected(AppVaribles.getUserConfigBoolean("FilterRecordLineNumber", true));
+            filterLineNumberCheck.setSelected(AppVariables.getUserConfigBoolean("FilterRecordLineNumber", true));
 
         } catch (Exception e) {
             logger.error(e.toString());
@@ -574,13 +578,13 @@ public abstract class FileEditerController extends BaseController {
 
     protected void checkFilterType() {
         RadioButton selected = (RadioButton) filterGroup.getSelectedToggle();
-        if (AppVaribles.message("IncludeOne").equals(selected.getText())) {
+        if (AppVariables.message("IncludeOne").equals(selected.getText())) {
             filterType = Filter_Type.IncludeOne;
-        } else if (AppVaribles.message("IncludeAll").equals(selected.getText())) {
+        } else if (AppVariables.message("IncludeAll").equals(selected.getText())) {
             filterType = Filter_Type.IncludeAll;
-        } else if (AppVaribles.message("NotIncludeAll").equals(selected.getText())) {
+        } else if (AppVariables.message("NotIncludeAll").equals(selected.getText())) {
             filterType = Filter_Type.NotIncludeAll;
-        } else if (AppVaribles.message("NotIncludeAny").equals(selected.getText())) {
+        } else if (AppVariables.message("NotIncludeAny").equals(selected.getText())) {
             filterType = Filter_Type.NotIncludeAny;
         }
     }
@@ -598,7 +602,7 @@ public abstract class FileEditerController extends BaseController {
         boolean invalid = f.isEmpty() || sourceFile == null || mainArea.getText().isEmpty();
         if (!invalid) {
             if (f.length() >= sourceInformation.getPageSize()) {
-                popError(AppVaribles.message("FindStringLimitation"));
+                popError(AppVariables.message("FindStringLimitation"));
                 invalid = true;
             } else {
                 filterStrings = StringTools.splitByComma(filterInput.getText());
@@ -653,7 +657,7 @@ public abstract class FileEditerController extends BaseController {
             return;
         }
         RadioButton selected = (RadioButton) findGroup.getSelectedToggle();
-        findWhole = AppVaribles.message("WholeFile").equals(selected.getText());
+        findWhole = AppVariables.message("WholeFile").equals(selected.getText());
         checkFindInput();
     }
 
@@ -693,7 +697,7 @@ public abstract class FileEditerController extends BaseController {
                     checkPageSize();
                 }
             });
-            pageSize = AppVaribles.getUserConfigInt(PageSizeKey, 100000);
+            pageSize = AppVariables.getUserConfigInt(PageSizeKey, 100000);
             if (pageSize <= 0) {
                 pageSize = 100000;
             }
@@ -760,7 +764,7 @@ public abstract class FileEditerController extends BaseController {
                         if (sourceInformation != null && sourceInformation.getCurrentPage() > 1) {
                             start += (sourceInformation.getCurrentPage() - 1) * sourceInformation.getPageSize();
                         }
-                        selectionLabel.setText(AppVaribles.message("Selection") + ": " + start + "-" + (start + len));
+                        selectionLabel.setText(AppVariables.message("Selection") + ": " + start + "-" + (start + len));
 
                     }
                 }
@@ -917,8 +921,8 @@ public abstract class FileEditerController extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        AppVaribles.setUserConfigInt(PageSizeKey, (int) pageSize);
-        popInformation(AppVaribles.message("Saved"), 3000);
+        AppVariables.setUserConfigInt(PageSizeKey, (int) pageSize);
+        popInformation(AppVariables.message("Saved"), 3000);
         sourceInformation.setPageSize(pageSize);
         sourceInformation.setCurrentPage(1);
         if (sourceInformation.getLineBreak() == Line_Break.Width) {
@@ -947,70 +951,66 @@ public abstract class FileEditerController extends BaseController {
         }
         sourceInformation.setFindString(findString);
         currentFound = -1;
-        task = new Task<Void>() {
-            private String text;
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    text = sourceInformation.findFirst();
-                } else if (areaText != null) {
-                    text = areaText;
-                    currentFound = text.indexOf(findString);
+                private String text;
+
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        text = sourceInformation.findFirst();
+                    } else if (areaText != null) {
+                        text = areaText;
+                        currentFound = text.indexOf(findString);
+                    }
+                    return true;
                 }
 
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (text == null || text.isEmpty()) {
-                                findFirstButton.setDisable(true);
-                            } else {
-                                if (whole) {
-                                    currentPage = sourceInformation.getCurrentPage();
-                                    isSettingValues = true;
-                                    mainArea.setText(text);
-                                    isSettingValues = false;
-                                    updateInterface(false);
-                                }
-                            }
-                            if (currentFound >= 0) {
-                                mainArea.requestFocus();
-                                mainArea.deselect();
-                                mainArea.selectRange((int) currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
-                                findPreviousButton.setDisable(true);
-                                findNextButton.setDisable(false);
-                                findLastButton.setDisable(false);
-                                countButton.setDisable(false);
-                                replaceButton.setDisable(false);
-                                replaceAllButton.setDisable(false);
-                            } else {
-                                popInformation(AppVaribles.message("NotFound"));
-                                findPreviousButton.setDisable(true);
-                                findNextButton.setDisable(true);
-                                findLastButton.setDisable(true);
-                                countButton.setDisable(true);
-                                replaceButton.setDisable(true);
-                                replaceAllButton.setDisable(true);
-                            }
+                @Override
+                protected void whenSucceeded() {
+                    if (text == null || text.isEmpty()) {
+                        findFirstButton.setDisable(true);
+                    } else {
+                        if (whole) {
+                            currentPage = sourceInformation.getCurrentPage();
+                            isSettingValues = true;
+                            mainArea.setText(text);
+                            isSettingValues = false;
+                            updateInterface(false);
                         }
-                    });
-                }
-            }
+                    }
+                    if (currentFound >= 0) {
+                        mainArea.requestFocus();
+                        mainArea.deselect();
+                        mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
+                        findPreviousButton.setDisable(true);
+                        findNextButton.setDisable(false);
+                        findLastButton.setDisable(false);
+                        countButton.setDisable(false);
+                        replaceButton.setDisable(false);
+                        replaceAllButton.setDisable(false);
+                    } else {
+                        popInformation(AppVariables.message("NotFound"));
+                        findPreviousButton.setDisable(true);
+                        findNextButton.setDisable(true);
+                        findLastButton.setDisable(true);
+                        countButton.setDisable(true);
+                        replaceButton.setDisable(true);
+                        replaceAllButton.setDisable(true);
+                    }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1039,58 +1039,54 @@ public abstract class FileEditerController extends BaseController {
                 return;
             }
         }
-        task = new Task<Void>() {
-            private String text;
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    text = sourceInformation.findNext();
-                } else if (areaText != null) {
-                    text = areaText;
-                    currentFound = text.indexOf(findString, currentFound + 1);
-                }
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (text == null || text.isEmpty()) {
-                                findNextButton.setDisable(true);
-                            } else {
-                                if (whole) {
-                                    isSettingValues = true;
-                                    mainArea.setText(text);
-                                    isSettingValues = false;
-                                    currentPage = sourceInformation.getCurrentPage();
-                                    updateInterface(false);
-                                }
-                            }
-                            if (currentFound >= 0) {
-                                findPreviousButton.setDisable(false);
-                                mainArea.deselect();
-                                mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
-                                replaceButton.setDisable(false);
-                                replaceAllButton.setDisable(false);
-                            } else {
-                                findNextButton.setDisable(true);
-                            }
+                private String text;
+
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        text = sourceInformation.findNext();
+                    } else if (areaText != null) {
+                        text = areaText;
+                        currentFound = text.indexOf(findString, currentFound + 1);
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (text == null || text.isEmpty()) {
+                        findNextButton.setDisable(true);
+                    } else {
+                        if (whole) {
+                            isSettingValues = true;
+                            mainArea.setText(text);
+                            isSettingValues = false;
+                            currentPage = sourceInformation.getCurrentPage();
+                            updateInterface(false);
                         }
-                    });
+                    }
+                    if (currentFound >= 0) {
+                        findPreviousButton.setDisable(false);
+                        mainArea.deselect();
+                        mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
+                        replaceButton.setDisable(false);
+                        replaceAllButton.setDisable(false);
+                    } else {
+                        findNextButton.setDisable(true);
+                    }
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1119,60 +1115,56 @@ public abstract class FileEditerController extends BaseController {
             }
         }
         sourceInformation.setFindString(findString);
-        task = new Task<Void>() {
-            private String text;
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+                private String text;
 
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    text = sourceInformation.findPrevious();
-                } else if (areaText != null) {
-                    text = areaText;
-                    text = text.substring(0, currentFound + findString.length() - 1);
-                    currentFound = text.lastIndexOf(findString);
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        text = sourceInformation.findPrevious();
+                    } else if (areaText != null) {
+                        text = areaText;
+                        text = text.substring(0, currentFound + findString.length() - 1);
+                        currentFound = text.lastIndexOf(findString);
+                    }
+
+                    return true;
                 }
 
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (text == null || text.isEmpty()) {
-                                findPreviousButton.setDisable(true);
-                            } else {
-                                if (whole) {
-                                    isSettingValues = true;
-                                    mainArea.setText(text);
-                                    isSettingValues = false;
-                                    currentPage = sourceInformation.getCurrentPage();
-                                    updateInterface(false);
-                                }
-                            }
-                            if (currentFound >= 0) {
-                                findNextButton.setDisable(false);
-                                mainArea.deselect();
-                                mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
-                                replaceButton.setDisable(false);
-                                replaceAllButton.setDisable(false);
-                            } else {
-                                findPreviousButton.setDisable(true);
-                            }
+                @Override
+                protected void whenSucceeded() {
+                    if (text == null || text.isEmpty()) {
+                        findPreviousButton.setDisable(true);
+                    } else {
+                        if (whole) {
+                            isSettingValues = true;
+                            mainArea.setText(text);
+                            isSettingValues = false;
+                            currentPage = sourceInformation.getCurrentPage();
+                            updateInterface(false);
                         }
-                    });
+                    }
+                    if (currentFound >= 0) {
+                        findNextButton.setDisable(false);
+                        mainArea.deselect();
+                        mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
+                        replaceButton.setDisable(false);
+                        replaceAllButton.setDisable(false);
+                    } else {
+                        findPreviousButton.setDisable(true);
+                    }
+
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1192,69 +1184,66 @@ public abstract class FileEditerController extends BaseController {
             }
         }
         sourceInformation.setFindString(findString);
-        task = new Task<Void>() {
-            private String text;
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    text = sourceInformation.findLast();
-                } else if (areaText != null) {
-                    text = areaText;
-                    currentFound = text.lastIndexOf(findString);
+                private String text;
+
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        text = sourceInformation.findLast();
+                    } else if (areaText != null) {
+                        text = areaText;
+                        currentFound = text.lastIndexOf(findString);
+                    }
+
+                    return true;
                 }
 
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (text == null || text.isEmpty()) {
-                                findLastButton.setDisable(true);
-                            } else {
-                                if (whole) {
-                                    isSettingValues = true;
-                                    mainArea.setText(text);
-                                    isSettingValues = false;
-                                    currentPage = sourceInformation.getCurrentPage();
-                                    updateInterface(false);
-                                }
-                            }
-                            if (currentFound >= 0) {
-                                findPreviousButton.setDisable(false);
-                                findNextButton.setDisable(true);
-                                findFirstButton.setDisable(false);
-                                countButton.setDisable(false);
-                                mainArea.deselect();
-                                mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
-                                replaceButton.setDisable(false);
-                                replaceAllButton.setDisable(false);
-                            } else {
-                                popInformation(AppVaribles.message("NotFound"));
-                                findPreviousButton.setDisable(true);
-                                findNextButton.setDisable(true);
-                                findFirstButton.setDisable(true);
-                                countButton.setDisable(true);
-                                findLastButton.setDisable(true);
-                                replaceButton.setDisable(true);
-                                replaceAllButton.setDisable(true);
-                            }
+                @Override
+                protected void whenSucceeded() {
+                    if (text == null || text.isEmpty()) {
+                        findLastButton.setDisable(true);
+                    } else {
+                        if (whole) {
+                            isSettingValues = true;
+                            mainArea.setText(text);
+                            isSettingValues = false;
+                            currentPage = sourceInformation.getCurrentPage();
+                            updateInterface(false);
                         }
-                    });
+                    }
+                    if (currentFound >= 0) {
+                        findPreviousButton.setDisable(false);
+                        findNextButton.setDisable(true);
+                        findFirstButton.setDisable(false);
+                        countButton.setDisable(false);
+                        mainArea.deselect();
+                        mainArea.selectRange(currentFound, Math.min(mainArea.getText().length(), currentFound + findString.length()));
+                        replaceButton.setDisable(false);
+                        replaceAllButton.setDisable(false);
+                    } else {
+                        popInformation(AppVariables.message("NotFound"));
+                        findPreviousButton.setDisable(true);
+                        findNextButton.setDisable(true);
+                        findFirstButton.setDisable(true);
+                        countButton.setDisable(true);
+                        findLastButton.setDisable(true);
+                        replaceButton.setDisable(true);
+                        replaceAllButton.setDisable(true);
+                    }
+
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1274,53 +1263,50 @@ public abstract class FileEditerController extends BaseController {
             }
         }
         sourceInformation.setFindString(findString);
-        task = new Task<Void>() {
-            private int count = 0;
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    count = sourceInformation.count();
-                } else if (areaText != null) {
-                    count = TextTools.countNumber(areaText, findString);
+                private int count = 0;
+
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        count = sourceInformation.count();
+                    } else if (areaText != null) {
+                        count = TextTools.countNumber(areaText, findString);
+                    }
+
+                    return true;
                 }
 
-                ok = true;
-                return null;
-            }
+                @Override
+                protected void whenSucceeded() {
+                    if (count > 0) {
+                        popInformation(MessageFormat.format(AppVariables.message("CountNumber"), count));
+                        findFirstButton.setDisable(false);
+                        replaceButton.setDisable(false);
+                        replaceAllButton.setDisable(false);
+                    } else {
+                        popInformation(AppVariables.message("NotFound"));
+                        findFirstButton.setDisable(true);
+                        findPreviousButton.setDisable(true);
+                        findNextButton.setDisable(true);
+                        findLastButton.setDisable(true);
+                        countButton.setDisable(true);
+                        replaceButton.setDisable(true);
+                        replaceAllButton.setDisable(true);
+                    }
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (count > 0) {
-                                popInformation(MessageFormat.format(AppVaribles.message("CountNumber"), count));
-                                findFirstButton.setDisable(false);
-                                replaceButton.setDisable(false);
-                                replaceAllButton.setDisable(false);
-                            } else {
-                                popInformation(AppVaribles.message("NotFound"));
-                                findFirstButton.setDisable(true);
-                                findPreviousButton.setDisable(true);
-                                findNextButton.setDisable(true);
-                                findLastButton.setDisable(true);
-                                countButton.setDisable(true);
-                                replaceButton.setDisable(true);
-                                replaceAllButton.setDisable(true);
-                            }
-                        }
-                    });
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1337,44 +1323,39 @@ public abstract class FileEditerController extends BaseController {
         final String replaceString = replaceInput.getText();
         sourceInformation.setFindString(findString);
         sourceInformation.setReplaceString(replaceString);
-        task = new Task<Void>() {
-            private String replaced;
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                String bstr = text.substring(0, currentFound);
-                String astr = text.substring(currentFound + findString.length(), text.length());
-                replaced = bstr + replaceString + astr;
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            isSettingValues = true;
-                            mainArea.setText(replaced);
-                            isSettingValues = false;
-                            updateInterface(true);
-                            mainArea.deselect();
-                            mainArea.selectRange(currentFound, currentFound + replaceString.length());
-                            replaceButton.setDisable(true);
-                        }
-                    });
+                private String replaced;
+
+                @Override
+                protected boolean handle() {
+                    String bstr = text.substring(0, currentFound);
+                    String astr = text.substring(currentFound + findString.length(), text.length());
+                    replaced = bstr + replaceString + astr;
+
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void whenSucceeded() {
+                    isSettingValues = true;
+                    mainArea.setText(replaced);
+                    isSettingValues = false;
+                    updateInterface(true);
+                    mainArea.deselect();
+                    mainArea.selectRange(currentFound, currentFound + replaceString.length());
+                    replaceButton.setDisable(true);
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1397,73 +1378,73 @@ public abstract class FileEditerController extends BaseController {
             }
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.message("SureReplaceAll"));
+            alert.setContentText(AppVariables.message("SureReplaceAll"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+            ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonCancel) {
                 return;
             }
         }
-        task = new Task<Void>() {
-            private String replaced;
-            private int num;
-            private boolean ok;
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected Void call() throws Exception {
-                if (whole) {
-                    num = sourceInformation.replaceAll();
-                } else {
-                    num = TextTools.countNumber(text, findString);
+                private String replaced;
+                private int num;
+
+                @Override
+                protected boolean handle() {
+                    if (whole) {
+                        num = sourceInformation.replaceAll();
+                    } else {
+                        num = TextTools.countNumber(text, findString);
+                        if (num > 0) {
+                            replaced = text.replaceAll(findString, replaceString);
+                        }
+                    }
+
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
                     if (num > 0) {
-                        replaced = text.replaceAll(findString, replaceString);
+                        sourceInformation.setCurrentFound(-1);
+                        currentFound = -1;
+                        if (whole) {
+                            openFile(sourceFile);
+                        } else {
+                            isSettingValues = true;
+                            mainArea.setText(replaced);
+                            isSettingValues = false;
+                            updateInterface(true);
+                        }
+                        popInformation(MessageFormat.format(AppVariables.message("ReplaceAllOk"), num));
+                    } else {
+                        popInformation(AppVariables.message("NotFound"));
+                        findPreviousButton.setDisable(true);
+                        findNextButton.setDisable(true);
+                        findLastButton.setDisable(true);
+                        replaceButton.setDisable(true);
+                        replaceAllButton.setDisable(true);
+                        currentFound = -1;
                     }
                 }
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (num > 0) {
-                                sourceInformation.setCurrentFound(-1);
-                                currentFound = -1;
-                                if (whole) {
-                                    openFile(sourceFile);
-                                } else {
-                                    isSettingValues = true;
-                                    mainArea.setText(replaced);
-                                    isSettingValues = false;
-                                    updateInterface(true);
-                                }
-                                popInformation(MessageFormat.format(AppVaribles.message("ReplaceAllOk"), num));
-                            } else {
-                                popInformation(AppVaribles.message("NotFound"));
-                                findPreviousButton.setDisable(true);
-                                findNextButton.setDisable(true);
-                                findLastButton.setDisable(true);
-                                replaceButton.setDisable(true);
-                                replaceAllButton.setDisable(true);
-                                currentFound = -1;
-                            }
-                        }
-                    });
-                }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -1611,49 +1592,44 @@ public abstract class FileEditerController extends BaseController {
             } else {
                 sourceInformation.setCurrentLine(lineLocation);
                 checkFindType();
-                task = new Task<Void>() {
-                    private String text;
-                    private boolean ok;
-
-                    @Override
-                    protected Void call() throws Exception {
-                        text = sourceInformation.locateLine();
-                        if (task == null || task.isCancelled()) {
-                            return null;
-                        }
-                        currentPage = sourceInformation.getCurrentPage();
-
-                        ok = true;
-                        return null;
+                synchronized (this) {
+                    if (task != null) {
+                        return;
                     }
+                    task = new SingletonTask<Void>() {
 
-                    @Override
-                    protected void succeeded() {
-                        super.succeeded();
-                        if (ok) {
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (text != null) {
-                                        isSettingValues = true;
-                                        mainArea.setText(text);
-                                        isSettingValues = false;
+                        private String text;
 
-                                        sourceInformation.setCurrentLine(lineLocation);
-                                        updateInterface(false);
-                                    } else {
-                                        popInformation(AppVaribles.message("failed"));
-                                    }
-                                }
-                            });
+                        @Override
+                        protected boolean handle() {
+                            text = sourceInformation.locateLine();
+                            if (this == null || isCancelled()) {
+                                return false;
+                            }
+                            currentPage = sourceInformation.getCurrentPage();
+
+                            return true;
                         }
-                    }
-                };
-                openHandlingStage(task, Modality.WINDOW_MODAL);
-                Thread thread = new Thread(task);
-                thread.setDaemon(true);
-                thread.start();
 
+                        @Override
+                        protected void whenSucceeded() {
+                            if (text != null) {
+                                isSettingValues = true;
+                                mainArea.setText(text);
+                                isSettingValues = false;
+
+                                sourceInformation.setCurrentLine(lineLocation);
+                                updateInterface(false);
+                            } else {
+                                popFailed();
+                            }
+                        }
+                    };
+                    openHandlingStage(task, Modality.WINDOW_MODAL);
+                    Thread thread = new Thread(task);
+                    thread.setDaemon(true);
+                    thread.start();
+                }
             }
 
         }
@@ -1710,9 +1686,6 @@ public abstract class FileEditerController extends BaseController {
     }
 
     public void openFile(File file) {
-//        if (task != null && task.isRunning()) {
-//            return;
-//        }
         if (editType == Edit_Type.Text) {
             openTextFile(file);
         } else if (editType == Edit_Type.Bytes) {
@@ -1726,87 +1699,86 @@ public abstract class FileEditerController extends BaseController {
         }
 
         initPage(file);
-        bottomLabel.setText(AppVaribles.message("CheckingEncoding"));
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
-                sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
-                if (charsetByUser) {
-                    ok = true;
-                } else {
-                    ok = sourceInformation.checkCharset();
-                }
-                if (task == null || task.isCancelled()) {
-                    return null;
-                }
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            bottomLabel.setText(AppVariables.message("CheckingEncoding"));
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        bottomLabel.setText("");
-                        if (!ok || sourceInformation == null) {
-                            popError(AppVaribles.message("Failed"));
-                            return;
-                        }
-                        isSettingValues = true;
-                        if (currentLineBreak != null) {
-                            currentLineBreak.setText(sourceInformation.getLineBreak().toString());
-                            switch (sourceInformation.getLineBreak()) {
-                                case CRLF:
-                                    crlfRadio.fire();
-                                    break;
-                                case CR:
-                                    crRadio.fire();
-                                    break;
-                                default:
-                                    lfRadio.fire();
-                                    break;
-                            }
-                        }
-                        if (currentBox != null) {
-                            currentBox.getSelectionModel().select(sourceInformation.getCharset().name());
-                            if (targetBox != null) {
-                                targetBox.getSelectionModel().select(sourceInformation.getCharset().name());
-                            } else {
-                                targetInformation.setCharset(sourceInformation.getCharset());
-                            }
-                            if (sourceInformation.isWithBom()) {
-                                currentBox.setDisable(true);
-                                bomLabel.setText(AppVaribles.message("WithBom"));
-                                if (targetBomCheck != null) {
-                                    targetBomCheck.setSelected(true);
-                                }
-                            } else {
-                                currentBox.setDisable(false);
-                                bomLabel.setText("");
-                                if (targetBomCheck != null) {
-                                    targetBomCheck.setSelected(false);
-                                }
-                            }
-                        }
-                        if (infoButton != null) {
-                            infoButton.setDisable(false);
-                        }
-                        isSettingValues = false;
-
-                        loadPage();
+                @Override
+                protected boolean handle() {
+                    sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
+                    sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
+                    if (charsetByUser) {
+                        return true;
+                    } else {
+                        return sourceInformation.checkCharset();
                     }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            bottomLabel.setText("");
+                            if (!ok || sourceInformation == null) {
+                                popFailed();
+                                return;
+                            }
+                            isSettingValues = true;
+                            if (currentLineBreak != null) {
+                                currentLineBreak.setText(sourceInformation.getLineBreak().toString());
+                                switch (sourceInformation.getLineBreak()) {
+                                    case CRLF:
+                                        crlfRadio.fire();
+                                        break;
+                                    case CR:
+                                        crRadio.fire();
+                                        break;
+                                    default:
+                                        lfRadio.fire();
+                                        break;
+                                }
+                            }
+                            if (currentBox != null) {
+                                currentBox.getSelectionModel().select(sourceInformation.getCharset().name());
+                                if (targetBox != null) {
+                                    targetBox.getSelectionModel().select(sourceInformation.getCharset().name());
+                                } else {
+                                    targetInformation.setCharset(sourceInformation.getCharset());
+                                }
+                                if (sourceInformation.isWithBom()) {
+                                    currentBox.setDisable(true);
+                                    bomLabel.setText(AppVariables.message("WithBom"));
+                                    if (targetBomCheck != null) {
+                                        targetBomCheck.setSelected(true);
+                                    }
+                                } else {
+                                    currentBox.setDisable(false);
+                                    bomLabel.setText("");
+                                    if (targetBomCheck != null) {
+                                        targetBomCheck.setSelected(false);
+                                    }
+                                }
+                            }
+                            if (infoButton != null) {
+                                infoButton.setDisable(false);
+                            }
+                            isSettingValues = false;
+
+                            loadPage();
+                        }
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public void openBytesFile(File file) {
@@ -1815,7 +1787,7 @@ public abstract class FileEditerController extends BaseController {
         }
         if (lineBreak == Line_Break.Value && lineBreakValue == null
                 || lineBreak == Line_Break.Width && lineBreakWidth <= 0) {
-            popError(AppVaribles.message("WrongLineBreak"));
+            popError(AppVariables.message("WrongLineBreak"));
             tabPane.getSelectionModel().select(lbTab);
             return;
         }
@@ -1832,87 +1804,89 @@ public abstract class FileEditerController extends BaseController {
                 || sourceInformation.isTotalNumberRead()) {
             return;
         }
-        backgroundTask = new Task<Void>() {
-            private boolean ok;
 
-            @Override
-            protected Void call() throws Exception {
-                ok = sourceInformation.readTotalNumbers();
-                return null;
+        synchronized (this) {
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
             }
+            backgroundTask = new Task<Void>() {
+                private boolean ok;
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateInterface(false);
-                        }
-                    });
+                @Override
+                protected Void call() {
+                    ok = sourceInformation.readTotalNumbers();
+                    return null;
                 }
-            }
-        };
-        Thread thread = new Thread(backgroundTask);
-        thread.setDaemon(true);
-        thread.start();
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    if (ok) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateInterface(false);
+                            }
+                        });
+                    }
+                }
+            };
+            Thread thread = new Thread(backgroundTask);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     protected void loadPage() {
         if (sourceInformation == null || sourceFile == null) {
             return;
         }
-        bottomLabel.setText(AppVaribles.message("ReadingFile"));
-        checkFindType();
-        task = new Task<Void>() {
-            private String text;
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                text = sourceInformation.readPage();
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            bottomLabel.setText(AppVariables.message("ReadingFile"));
+            checkFindType();
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (text != null) {
-                                isSettingValues = true;
-                                mainArea.setText(text);
-                                isSettingValues = false;
+                private String text;
 
-                                updateInterface(false);
-                                if (!sourceInformation.isTotalNumberRead()) {
-                                    loadTotalNumbers();
-                                }
-                            } else {
-                                popInformation(AppVaribles.message("failed"));
-                            }
-                        }
-                    });
+                @Override
+                protected boolean handle() {
+                    text = sourceInformation.readPage();
+
+                    return true;
                 }
-            }
 
-            @Override
-            protected void cancelled() {
-                super.cancelled();
-                taskCanceled();
-            }
+                @Override
+                protected void whenSucceeded() {
+                    if (text != null) {
+                        isSettingValues = true;
+                        mainArea.setText(text);
+                        isSettingValues = false;
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                        updateInterface(false);
+                        if (!sourceInformation.isTotalNumberRead()) {
+                            loadTotalNumbers();
+                        }
+                    } else {
+                        popFailed();
+                    }
 
+                }
+
+                @Override
+                protected void cancelled() {
+                    super.cancelled();
+                    taskCanceled();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     protected void updateInterface(boolean changed) {
@@ -1931,7 +1905,7 @@ public abstract class FileEditerController extends BaseController {
         }
         if (!formatMainArea()) {
             if (editLabel != null) {
-                editLabel.setText(AppVaribles.message("InvalidData"));
+                editLabel.setText(AppVariables.message("InvalidData"));
             }
             mainArea.setStyle(badStyle);
             return;
@@ -1947,12 +1921,12 @@ public abstract class FileEditerController extends BaseController {
             if (sourceInformation.getLineBreak().equals(Line_Break.CRLF)) {
                 objectsNumber += linesNumber - 1;
             }
-            objectName = AppVaribles.message("Characters");
-            objectNumberName = AppVaribles.message("CharactersNumber");
+            objectName = AppVariables.message("Characters");
+            objectNumberName = AppVariables.message("CharactersNumber");
         } else if (editType == Edit_Type.Bytes) {
             objectsNumber = text.length() / 3;
-            objectName = AppVaribles.message("Bytes");
-            objectNumberName = AppVaribles.message("BytesNumber");
+            objectName = AppVariables.message("Bytes");
+            objectNumberName = AppVariables.message("BytesNumber");
         }
         saveButton.setDisable(false);
         if (saveAsBox != null) {
@@ -1965,7 +1939,7 @@ public abstract class FileEditerController extends BaseController {
             sourceInformation.setObjectsNumber(objectsNumber);
             sourceInformation.setLinesNumber(linesNumber);
             bottomLabel.setText(objectNumberName + ": " + sourceInformation.getObjectsNumber() + "  "
-                    + AppVaribles.message("LinesNumber") + ": " + sourceInformation.getLinesNumber());
+                    + AppVariables.message("LinesNumber") + ": " + sourceInformation.getLinesNumber());
         } else {
             if (!sourceInformation.isTotalNumberRead()) {
                 pageBar.setDisable(true);
@@ -1976,7 +1950,7 @@ public abstract class FileEditerController extends BaseController {
                 setLines(sourceInformation.getCurrentPageLineStart(), sourceInformation.getCurrentPageLineEnd());
                 bottomLabel.setText(objectName + ": "
                         + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + " "
-                        + AppVaribles.message("CountingTotalNumber"));
+                        + AppVariables.message("CountingTotalNumber"));
 
                 locateObjectButton.setDisable(true);
                 locateLineButton.setDisable(true);
@@ -2018,7 +1992,7 @@ public abstract class FileEditerController extends BaseController {
                     bottomLabel.setText(objectName + ": "
                             + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + sourceInformation.getCurrentPageObjectEnd() + "/"
                             + sourceInformation.getObjectsNumber() + " "
-                            + AppVaribles.message("Lines") + ": "
+                            + AppVariables.message("Lines") + ": "
                             + sourceInformation.getCurrentPageLineStart() + "-" + sourceInformation.getCurrentPageLineEnd() + "/"
                             + sourceInformation.getLinesNumber());
                 } else {
@@ -2032,7 +2006,7 @@ public abstract class FileEditerController extends BaseController {
                     bottomLabel.setText(objectName + ": "
                             + (sourceInformation.getCurrentPageObjectStart() + 1) + "-" + charsTo + "/"
                             + charsTotal + " "
-                            + AppVaribles.message("Lines") + ": "
+                            + AppVariables.message("Lines") + ": "
                             + sourceInformation.getCurrentPageLineStart() + "-" + linesTo + "/"
                             + linesTotal);
                 }
@@ -2102,7 +2076,7 @@ public abstract class FileEditerController extends BaseController {
     }
 
     protected void saveNew() {
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 null, targetExtensionFilter, true);
         if (file == null) {
             return;
@@ -2112,49 +2086,56 @@ public abstract class FileEditerController extends BaseController {
         if (targetBomCheck != null) {
             targetInformation.setWithBom(targetBomCheck.isSelected());
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = targetInformation.writeObject(mainArea.getText());
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            popInformation(AppVaribles.message("Successful"));
-                            charsetByUser = false;
-                            openFile(file);
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
+                @Override
+                protected boolean handle() {
+                    ok = targetInformation.writeObject(mainArea.getText());
+
+                    return true;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                popSuccessul();
+                                charsetByUser = false;
+                                openFile(file);
+                            } else {
+                                popFailed();
+                            }
                         }
-                    }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     protected void saveExisted() {
         if (confirmCheck.isSelected()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.message("SureOverrideFile"));
+            alert.setContentText(AppVariables.message("SureOverrideFile"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
-            ButtonType buttonSaveAs = new ButtonType(AppVaribles.message("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVariables.message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(AppVariables.message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonCancel) {
@@ -2168,38 +2149,41 @@ public abstract class FileEditerController extends BaseController {
         if (targetBomCheck != null) {
             targetInformation.setWithBom(targetBomCheck.isSelected());
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            popInformation(AppVaribles.message("Successful"));
-                            openFile(sourceFile);
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
+                @Override
+                protected boolean handle() {
+                    ok = targetInformation.writePage(sourceInformation, mainArea.getText());
+
+                    return true;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                popSuccessul();
+                                openFile(sourceFile);
+                            } else {
+                                popFailed();
+                            }
+                            updateInterface(false);
                         }
-                        updateInterface(false);
-                    }
-                });
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
+                    });
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -2209,7 +2193,7 @@ public abstract class FileEditerController extends BaseController {
         if (sourceFile != null) {
             name = FileTools.getFilePrefix(sourceFile.getName());
         }
-        final File file = chooseSaveFile(AppVaribles.getUserConfigPath(sourcePathKey),
+        final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                 name, targetExtensionFilter, true);
         if (file == null) {
             return;
@@ -2222,42 +2206,45 @@ public abstract class FileEditerController extends BaseController {
         } else {
             targetInformation.setWithBom(sourceInformation.isWithBom());
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = targetInformation.writePage(sourceInformation, mainArea.getText());
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (ok) {
-                            if (saveAsType == SaveAsType.Load) {
-                                openFile(file);
-                            } else if (saveAsType == SaveAsType.Open) {
-                                FileEditerController controller = openNewStage();
-                                controller.openFile(file);
+                @Override
+                protected boolean handle() {
+                    ok = targetInformation.writePage(sourceInformation, mainArea.getText());
+                    return true;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ok) {
+                                if (saveAsType == SaveAsType.Load) {
+                                    openFile(file);
+                                } else if (saveAsType == SaveAsType.Open) {
+                                    FileEditerController controller = openNewStage();
+                                    controller.openFile(file);
+                                }
+                                popSuccessul();
+                            } else {
+                                popFailed();
                             }
-                            popInformation(AppVaribles.message("Successful"));
-                        } else {
-                            popInformation(AppVaribles.message("failed"));
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     public FileEditerController openNewStage() {
@@ -2297,21 +2284,22 @@ public abstract class FileEditerController extends BaseController {
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(AppVaribles.message("NeedSaveBeforeAction"));
+            alert.setContentText(AppVariables.message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(AppVaribles.message("Save"));
-            ButtonType buttonNotSave = new ButtonType(AppVaribles.message("NotSave"));
-            ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+            ButtonType buttonSave = new ButtonType(AppVariables.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(AppVariables.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
             alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
-            } else if (result.get() == buttonNotSave) {
-                return true;
             } else {
-                return false;
+                return result.get() == buttonNotSave;
             }
         }
     }
@@ -2325,6 +2313,7 @@ public abstract class FileEditerController extends BaseController {
         bottomLabel.setText("");
         if (backgroundTask != null && backgroundTask.isRunning()) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
     }
 

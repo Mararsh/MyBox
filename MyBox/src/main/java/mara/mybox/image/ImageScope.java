@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javafx.scene.image.Image;
 import mara.mybox.data.DoubleCircle;
@@ -15,9 +16,8 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.IntPoint;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -27,9 +27,11 @@ import static mara.mybox.value.AppVaribles.message;
  */
 public class ImageScope {
 
+    protected String file, name;
     protected ScopeType scopeType;
     protected ColorScopeType colorScopeType;
     protected List<Color> colors;
+    protected Color color;
     protected List<IntPoint> points;
     protected DoubleRectangle rectangle;
     protected DoubleCircle circle;
@@ -38,12 +40,14 @@ public class ImageScope {
     protected int colorDistance, colorDistance2;
     protected float hsbDistance;
     protected boolean areaExcluded, colorExcluded;
-    protected Image image;
+    protected Image image, clip;
     protected double opacity;
+    protected Date createTime, modifyTime;
+    protected BufferedImage outlineSource, outline;
 
     public enum ScopeType {
-        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon,
-        Color, RectangleColor, CircleColor, EllipseColor, PolygonColor
+        Invalid, All, Matting, Rectangle, Circle, Ellipse, Polygon, Color, RectangleColor,
+        CircleColor, EllipseColor, PolygonColor, Outline, Operate
     }
 
     public enum ColorScopeType {
@@ -68,8 +72,8 @@ public class ImageScope {
     private void init() {
         scopeType = ScopeType.All;
         colorScopeType = ColorScopeType.AllColor;
-        colors = new ArrayList();
-        points = new ArrayList();
+        colors = new ArrayList<>();
+        points = new ArrayList<>();
         colorDistance = 50;
         colorDistance2 = colorDistance * colorDistance;
         hsbDistance = 0.5f;
@@ -86,11 +90,324 @@ public class ImageScope {
             ellipse = new DoubleEllipse();
         }
         polygon = new DoublePolygon();
+        createTime = new Date();
 
     }
 
     public ImageScope cloneValues() {
         return ImageScope.cloneAll(this);
+    }
+
+    public void addPoint(IntPoint point) {
+        if (point == null) {
+            return;
+        }
+        if (points == null) {
+            points = new ArrayList<>();
+        }
+        if (!points.contains(point)) {
+            points.add(point);
+        }
+    }
+
+    public void addPoint(int x, int y) {
+        if (x < 0 || y < 0) {
+            return;
+        }
+        IntPoint point = new IntPoint(x, y);
+        addPoint(point);
+    }
+
+    public void clearPoints() {
+        points = new ArrayList<>();
+    }
+
+    public boolean addColor(Color color) {
+        if (color == null) {
+            return false;
+        }
+        if (colors == null) {
+            colors = new ArrayList<>();
+        }
+        if (!colors.contains(color)) {
+            colors.add(color);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void clearColors() {
+        colors = new ArrayList<>();
+    }
+
+    public void setCircleCenter(int x, int y) {
+        if (circle == null) {
+            circle = new DoubleCircle();
+        }
+        circle.setCenterX(x);
+        circle.setCenterY(y);
+    }
+
+    public void setCircleRadius(int r) {
+        if (circle == null) {
+            circle = new DoubleCircle();
+        }
+        circle.setRadius(r);
+    }
+
+    public String getScopeText() {
+        String s = "";
+        if (null != scopeType) {
+            switch (scopeType) {
+                case All:
+                    s = message("WholeImage");
+                    break;
+                case Matting:
+                    String pointsString = "";
+                    if (points.isEmpty()) {
+                        pointsString += message("None");
+                    } else {
+                        for (IntPoint p : points) {
+                            pointsString += "(" + p.getX() + "," + p.getY() + ") ";
+                        }
+                    }
+                    s = message("Points") + ":" + pointsString;
+                    s += " " + message("ColorDistance") + ":" + colorDistance;
+                    break;
+                case Color:
+                    s = getScopeColorText();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return s;
+    }
+
+    public String getScopeColorText() {
+        String s = "";
+        String colorString = "";
+        if (colors.isEmpty()) {
+            colorString += message("None") + " ";
+        } else {
+            for (Color c : colors) {
+                colorString += c.toString() + " ";
+            }
+        }
+        switch (colorScopeType) {
+            case AllColor:
+                s += " " + message("AllColors");
+                break;
+            case Color:
+            case Red:
+            case Green:
+            case Blue:
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("ColorDistance") + ":" + colorDistance;
+                if (colorExcluded) {
+                    s += " " + message("Excluded");
+                }
+                break;
+            case Brightness:
+            case Saturation:
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("ColorDistance") + ":" + (int) (hsbDistance * 100);
+                if (colorExcluded) {
+                    s += " " + message("Excluded");
+                }
+                break;
+            case Hue:
+                s += " " + message("SelectedColors") + ":" + colorString;
+                s += message("HueDistance") + ":" + (int) (hsbDistance * 360);
+                if (colorExcluded) {
+                    s += " " + message("Excluded");
+                }
+                break;
+            default:
+                break;
+        }
+        return s;
+    }
+
+    /*
+        SubClass should implement this
+     */
+    protected boolean inScope(int x, int y, Color color) {
+        return true;
+    }
+
+    public boolean inColorMatch(Color color1, Color color2) {
+        return true;
+    }
+
+
+    /*
+        Static methods
+     */
+    public static BufferedImage indicateRectangle(BufferedImage source,
+            Color color, int lineWidth, DoubleRectangle rect) {
+        try {
+
+            int width = source.getWidth();
+            int height = source.getHeight();
+            if (!rect.isValid(width, height)) {
+                return source;
+            }
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateCircle(BufferedImage source,
+            Color color, int lineWidth, DoubleCircle circle) {
+        try {
+            if (!circle.isValid()) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            g.drawOval((int) circle.getCenterX() - (int) circle.getRadius(), (int) circle.getCenterY() - (int) circle.getRadius(),
+                    2 * (int) circle.getRadius(), 2 * (int) circle.getRadius());
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateEllipse(BufferedImage source,
+            Color color, int lineWidth, DoubleEllipse ellipse) {
+        try {
+            if (!ellipse.isValid()) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(color);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+            g.setStroke(stroke);
+            DoubleRectangle rect = ellipse.getRectangle();
+            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
+                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
+    }
+
+    public static BufferedImage indicateSplit(BufferedImage source,
+            List<Integer> rows, List<Integer> cols,
+            Color lineColor, int lineWidth, boolean showSize, double scale) {
+        try {
+            if (rows == null || cols == null) {
+                return source;
+            }
+            int width = source.getWidth();
+            int height = source.getHeight();
+
+            int imageType = source.getType();
+            if (imageType == BufferedImage.TYPE_CUSTOM) {
+                imageType = BufferedImage.TYPE_INT_ARGB;
+            }
+            BufferedImage target = new BufferedImage(width, height, imageType);
+            Graphics2D g = target.createGraphics();
+            g.drawImage(source, 0, 0, width, height, null);
+            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+            g.setComposite(ac);
+            g.setColor(lineColor);
+            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+                    1f, new float[]{lineWidth, lineWidth}, 0f);
+//            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+            g.setStroke(stroke);
+
+            for (int i = 0; i < rows.size(); i++) {
+                int row = (int) (rows.get(i) / scale);
+                if (row <= 0 || row >= height - 1) {
+                    continue;
+                }
+                g.drawLine(0, row, width, row);
+            }
+            for (int i = 0; i < cols.size(); i++) {
+                int col = (int) (cols.get(i) / scale);
+                if (col <= 0 || col >= width - 1) {
+                    continue;
+                }
+                g.drawLine(col, 0, col, height);
+            }
+
+            if (showSize) {
+                List<String> texts = new ArrayList<>();
+                List<Integer> xs = new ArrayList<>();
+                List<Integer> ys = new ArrayList<>();
+                for (int i = 0; i < rows.size() - 1; i++) {
+                    int h = rows.get(i + 1) - rows.get(i) + 1;
+                    for (int j = 0; j < cols.size() - 1; j++) {
+                        int w = cols.get(j + 1) - cols.get(j) + 1;
+                        texts.add(w + "x" + h);
+                        xs.add(cols.get(j) + w / 3);
+                        ys.add(rows.get(i) + h / 3);
+//                    logger.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
+                    }
+                }
+
+                int fontSize = width / (cols.size() * 10);
+                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
+                g.setFont(font);
+                for (int i = 0; i < texts.size(); i++) {
+                    g.drawString(texts.get(i), xs.get(i), ys.get(i));
+                }
+            }
+
+            g.dispose();
+            return target;
+        } catch (Exception e) {
+            logger.error(e.toString());
+            return source;
+        }
     }
 
     public static ImageScope cloneAll(ImageScope sourceScope) {
@@ -124,6 +441,8 @@ public class ImageScope {
             targetScope.setColorExcluded(sourceScope.isColorExcluded());
             targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
             targetScope.setOpacity(sourceScope.getOpacity());
+            targetScope.setCreateTime(sourceScope.getCreateTime());
+            targetScope.setOutline(sourceScope.getOutline());
 
         } catch (Exception e) {
         }
@@ -151,7 +470,8 @@ public class ImageScope {
             targetScope.setColorExcluded(sourceScope.isColorExcluded());
             targetScope.setAreaExcluded(sourceScope.isAreaExcluded());
             targetScope.setOpacity(sourceScope.getOpacity());
-
+            targetScope.setCreateTime(sourceScope.getCreateTime());
+            targetScope.setOutline(sourceScope.getOutline());
         } catch (Exception e) {
         }
     }
@@ -306,11 +626,162 @@ public class ImageScope {
                     default:
                         return new Matting(image);
                 }
+            case Outline:
+                return new Outline(image);
             default:
                 return new ImageScope(image, scopeType);
         }
     }
 
+    public static ScopeType type(String type) {
+        return ScopeType.valueOf(type);
+    }
+
+    public static boolean inShape(DoubleShape shape, boolean areaExcluded,
+            int x, int y) {
+        if (areaExcluded) {
+            return !shape.include(x, y);
+        } else {
+            return shape.include(x, y);
+        }
+    }
+
+    public static boolean isColorMatch2(List<Color> colors, boolean colorExcluded,
+            int colorDistance2, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isRedMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isGreenMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isBlueMatch(List<Color> colors, boolean colorExcluded,
+            int colorDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isBrightnessMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isSaturationMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static boolean isHueMatch(List<Color> colors, boolean colorExcluded,
+            float hsbDistance, Color color) {
+        if (colorExcluded) {
+            for (Color oColor : colors) {
+                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for (Color oColor : colors) {
+                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /*
+        SubClass
+     */
     static class All extends ImageScope {
 
         public All(Image image) {
@@ -1340,6 +1811,22 @@ public class ImageScope {
         }
     }
 
+    static class Outline extends ImageScope {
+
+        public Outline(Image image) {
+            this.image = image;
+            this.scopeType = ScopeType.Outline;
+        }
+
+        @Override
+        protected boolean inScope(int x, int y, Color color) {
+            if (outline == null) {
+                return false;
+            }
+            return outline.getRGB(x, y) == 0;
+        }
+    }
+
     static class Matting extends ImageScope {
 
         public Matting(Image image) {
@@ -1452,454 +1939,9 @@ public class ImageScope {
         }
     }
 
-    public static boolean inShape(DoubleShape shape, boolean areaExcluded,
-            int x, int y) {
-        if (areaExcluded) {
-            return !shape.include(x, y);
-        } else {
-            return shape.include(x, y);
-        }
-    }
-
-    public static boolean isColorMatch2(List<Color> colors, boolean colorExcluded,
-            int colorDistance2, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isColorMatch2(color, oColor, colorDistance2)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isRedMatch(List<Color> colors, boolean colorExcluded,
-            int colorDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isRedMatch(color, oColor, colorDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isGreenMatch(List<Color> colors, boolean colorExcluded,
-            int colorDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isGreenMatch(color, oColor, colorDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isBlueMatch(List<Color> colors, boolean colorExcluded,
-            int colorDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isBlueMatch(color, oColor, colorDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isBrightnessMatch(List<Color> colors, boolean colorExcluded,
-            float hsbDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isBrightnessMatch(color, oColor, hsbDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isSaturationMatch(List<Color> colors, boolean colorExcluded,
-            float hsbDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isSaturationMatch(color, oColor, hsbDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public static boolean isHueMatch(List<Color> colors, boolean colorExcluded,
-            float hsbDistance, Color color) {
-        if (colorExcluded) {
-            for (Color oColor : colors) {
-                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            for (Color oColor : colors) {
-                if (ImageColor.isHueMatch(color, oColor, hsbDistance)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    // SubClass should implement this
-    protected boolean inScope(int x, int y, Color color) {
-        return true;
-    }
-
-    public boolean inColorMatch(Color color1, Color color2) {
-        return true;
-    }
-
-    public void addPoints(IntPoint point) {
-        if (point == null) {
-            return;
-        }
-        if (points == null) {
-            points = new ArrayList<>();
-        }
-        if (!points.contains(point)) {
-            points.add(point);
-        }
-    }
-
-    public void addPoints(int x, int y) {
-        if (x < 0 || y < 0) {
-            return;
-        }
-        IntPoint point = new IntPoint(x, y);
-        addPoints(point);
-    }
-
-    public void clearPoints() {
-        points = new ArrayList<>();
-    }
-
-    public boolean addColor(Color color) {
-        if (color == null) {
-            return false;
-        }
-        if (colors == null) {
-            colors = new ArrayList<>();
-        }
-        if (!colors.contains(color)) {
-            colors.add(color);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void clearColors() {
-        colors = new ArrayList<>();
-    }
-
-    public void setCircleCenter(int x, int y) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-    }
-
-    public void setCircleRadius(int r) {
-        if (circle == null) {
-            circle = new DoubleCircle();
-        }
-        circle.setRadius(r);
-    }
-
-    public String getScopeText() {
-        String s = "";
-        if (null != scopeType) {
-            switch (scopeType) {
-                case All:
-                    s = message("WholeImage");
-                    break;
-                case Matting:
-                    String pointsString = "";
-                    if (points.isEmpty()) {
-                        pointsString += message("None");
-                    } else {
-                        for (IntPoint p : points) {
-                            pointsString += "(" + p.getX() + "," + p.getY() + ") ";
-                        }
-                    }
-                    s = message("Points") + ":" + pointsString;
-                    s += " " + message("ColorDistance") + ":" + colorDistance;
-                    break;
-                case Color:
-                    s = getScopeColorText();
-                    break;
-                default:
-                    break;
-            }
-        }
-        return s;
-    }
-
-    public String getScopeColorText() {
-        String s = "";
-        String colorString = "";
-        if (colors.isEmpty()) {
-            colorString += message("None") + " ";
-        } else {
-            for (Color c : colors) {
-                colorString += c.toString() + " ";
-            }
-        }
-        switch (colorScopeType) {
-            case AllColor:
-                s += " " + message("AllColors");
-                break;
-            case Color:
-            case Red:
-            case Green:
-            case Blue:
-                s += " " + message("SelectedColors") + ":" + colorString;
-                s += message("ColorDistance") + ":" + colorDistance;
-                if (colorExcluded) {
-                    s += " " + message("Excluded");
-                }
-                break;
-            case Brightness:
-            case Saturation:
-                s += " " + message("SelectedColors") + ":" + colorString;
-                s += message("ColorDistance") + ":" + (int) (hsbDistance * 100);
-                if (colorExcluded) {
-                    s += " " + message("Excluded");
-                }
-                break;
-            case Hue:
-                s += " " + message("SelectedColors") + ":" + colorString;
-                s += message("HueDistance") + ":" + (int) (hsbDistance * 360);
-                if (colorExcluded) {
-                    s += " " + message("Excluded");
-                }
-                break;
-            default:
-                break;
-        }
-        return s;
-    }
-
-    public static BufferedImage indicateRectangle(BufferedImage source,
-            Color color, int lineWidth, DoubleRectangle rect) {
-        try {
-
-            int width = source.getWidth();
-            int height = source.getHeight();
-            if (!rect.isValid(width, height)) {
-                return source;
-            }
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            g.setComposite(ac);
-            g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1f, new float[]{lineWidth, lineWidth}, 0f);
-            g.setStroke(stroke);
-            g.drawRect((int) rect.getSmallX(), (int) rect.getSmallY(), (int) rect.getWidth(), (int) rect.getHeight());
-            g.dispose();
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
-    public static BufferedImage indicateCircle(BufferedImage source,
-            Color color, int lineWidth, DoubleCircle circle) {
-        try {
-            if (!circle.isValid()) {
-                return source;
-            }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            g.setComposite(ac);
-            g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1f, new float[]{lineWidth, lineWidth}, 0f);
-            g.setStroke(stroke);
-            g.drawOval((int) circle.getCenterX() - (int) circle.getRadius(), (int) circle.getCenterY() - (int) circle.getRadius(),
-                    2 * (int) circle.getRadius(), 2 * (int) circle.getRadius());
-            g.dispose();
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
-    public static BufferedImage indicateEllipse(BufferedImage source,
-            Color color, int lineWidth, DoubleEllipse ellipse) {
-        try {
-            if (!ellipse.isValid()) {
-                return source;
-            }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            g.setComposite(ac);
-            g.setColor(color);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1f, new float[]{lineWidth, lineWidth}, 0f);
-            g.setStroke(stroke);
-            DoubleRectangle rect = ellipse.getRectangle();
-            g.drawOval((int) Math.round(rect.getSmallX()), (int) Math.round(rect.getSmallY()),
-                    (int) Math.round(rect.getWidth()), (int) Math.round(rect.getHeight()));
-            g.dispose();
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
-    public static BufferedImage indicateSplit(BufferedImage source,
-            List<Integer> rows, List<Integer> cols,
-            Color lineColor, int lineWidth, boolean showSize, double scale) {
-        try {
-            if (rows == null || cols == null) {
-                return source;
-            }
-            int width = source.getWidth();
-            int height = source.getHeight();
-
-            int imageType = source.getType();
-            if (imageType == BufferedImage.TYPE_CUSTOM) {
-                imageType = BufferedImage.TYPE_INT_ARGB;
-            }
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D g = target.createGraphics();
-            g.drawImage(source, 0, 0, width, height, null);
-            AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
-            g.setComposite(ac);
-            g.setColor(lineColor);
-            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                    1f, new float[]{lineWidth, lineWidth}, 0f);
-//            BasicStroke stroke = new BasicStroke(lineWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
-            g.setStroke(stroke);
-
-            for (int i = 0; i < rows.size(); i++) {
-                int row = (int) (rows.get(i) / scale);
-                if (row <= 0 || row >= height - 1) {
-                    continue;
-                }
-                g.drawLine(0, row, width, row);
-            }
-            for (int i = 0; i < cols.size(); i++) {
-                int col = (int) (cols.get(i) / scale);
-                if (col <= 0 || col >= width - 1) {
-                    continue;
-                }
-                g.drawLine(col, 0, col, height);
-            }
-
-            if (showSize) {
-                List<String> texts = new ArrayList<>();
-                List<Integer> xs = new ArrayList<>();
-                List<Integer> ys = new ArrayList<>();
-                for (int i = 0; i < rows.size() - 1; i++) {
-                    int h = rows.get(i + 1) - rows.get(i) + 1;
-                    for (int j = 0; j < cols.size() - 1; j++) {
-                        int w = cols.get(j + 1) - cols.get(j) + 1;
-                        texts.add(w + "x" + h);
-                        xs.add(cols.get(j) + w / 3);
-                        ys.add(rows.get(i) + h / 3);
-//                    logger.debug(w / 2 + ", " + h / 2 + "  " + w + "x" + h);
-                    }
-                }
-
-                int fontSize = width / (cols.size() * 10);
-                Font font = new Font(Font.MONOSPACED, Font.BOLD, fontSize);
-                g.setFont(font);
-                for (int i = 0; i < texts.size(); i++) {
-                    g.drawString(texts.get(i), xs.get(i), ys.get(i));
-                }
-            }
-
-            g.dispose();
-            return target;
-        } catch (Exception e) {
-            logger.error(e.toString());
-            return source;
-        }
-    }
-
+    /*
+        get/set
+     */
     public List<Color> getColors() {
         return colors;
     }
@@ -2019,6 +2061,70 @@ public class ImageScope {
 
     public void setPolygon(DoublePolygon polygon) {
         this.polygon = polygon;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
+    }
+
+    public BufferedImage getOutline() {
+        return outline;
+    }
+
+    public void setOutline(BufferedImage outline) {
+        this.outline = outline;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public BufferedImage getOutlineSource() {
+        return outlineSource;
+    }
+
+    public void setOutlineSource(BufferedImage outlineSource) {
+        this.outlineSource = outlineSource;
+    }
+
+    public Image getClip() {
+        return clip;
+    }
+
+    public void setClip(Image clip) {
+        this.clip = clip;
     }
 
 }

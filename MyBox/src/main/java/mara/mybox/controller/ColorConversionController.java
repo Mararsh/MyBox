@@ -5,13 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.color.ColorConversion.SpaceType;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -29,7 +28,7 @@ public class ColorConversionController extends ChromaticityBaseController {
     protected TextArea calculateArea;
 
     public ColorConversionController() {
-        baseTitle = AppVaribles.message("ColorConversion");
+        baseTitle = AppVariables.message("ColorConversion");
     }
 
     @Override

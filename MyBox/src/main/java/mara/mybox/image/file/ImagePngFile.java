@@ -19,7 +19,8 @@ import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageInformationPng;
 import mara.mybox.tools.ByteTools;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NodeList;
 
 /**
@@ -128,23 +129,24 @@ public class ImagePngFile {
     public static boolean writePNGImageFile(BufferedImage image,
             ImageAttributes attributes, File file) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
             ImageWriter writer = getWriter();
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
-
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -192,7 +194,7 @@ public class ImagePngFile {
             if (javax_imageio_png.containsKey("PLTEEntry")) {
                 List<Map<String, Object>> PaletteEntryList = javax_imageio_png.get("PLTEEntry");
                 pngInfo.setPngPaletteSize(PaletteEntryList.size());
-//                List<ImageColor> Palette = new ArrayList();
+//                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : PaletteEntryList) {
 //                    int index = Integer.valueOf(PaletteEntry.get("index"));
 //                    int red = Integer.valueOf(PaletteEntry.get("red"));
@@ -303,7 +305,7 @@ public class ImagePngFile {
             if (javax_imageio_png.containsKey("sPLTEntry")) {
                 List<Map<String, Object>> sPLTEntryList = javax_imageio_png.get("sPLTEntry");
                 pngInfo.setSuggestedPaletteSize(sPLTEntryList.size());
-//                List<ImageColor> Palette = new ArrayList();
+//                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : sPLTEntryList) {
 //                    int index = Integer.valueOf(PaletteEntry.get("index"));
 //                    int red = Integer.valueOf(PaletteEntry.get("red"));

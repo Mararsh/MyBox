@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import javafx.beans.binding.Bindings;
@@ -15,13 +14,13 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -45,7 +44,7 @@ public class ImageManufactureBatchArcController extends ImageManufactureBatchCon
     private ToggleGroup arcGroup;
 
     public ImageManufactureBatchArcController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchArc");
+        baseTitle = AppVariables.message("ImageManufactureBatchArc");
 
         ImageArcKey = "ImageArcKey";
         ImageArcPerKey = "ImageArcPerKey";

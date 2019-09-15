@@ -26,8 +26,8 @@ import static mara.mybox.image.ImageConvert.pixelSizeMm2dpi;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -294,7 +294,7 @@ public class ImageFileReaders {
         long maxSize = availableMem * 1014 * 1024 / (6 * framesNumber);
         double ratio = imageInfo.getHeight() * 1.0 / imageInfo.getWidth();
         long sampledWidth = (long) Math.sqrt(maxSize / (ratio * imageInfo.getColorChannels()));
-        int max = AppVaribles.getUserConfigInt("MaxImageSampleWidth", 4096);
+        int max = AppVariables.getUserConfigInt("MaxImageSampleWidth", 4096);
         if (sampledWidth > max) {
             sampledWidth = max;
         }
@@ -567,7 +567,10 @@ public class ImageFileReaders {
         Meta data
      */
     public static ImageFileInformation readImageFileMetaData(String fileName) {
-        File file = new File(fileName);
+        return readImageFileMetaData(new File(fileName));
+    }
+
+    public static ImageFileInformation readImageFileMetaData(File file) {
         if (!file.exists() || !file.isFile()) {
             return null;
         }
@@ -664,9 +667,9 @@ public class ImageFileReaders {
             }
             StringBuilder metaDataXml = new StringBuilder();
             String[] formatNames = iioMetaData.getMetadataFormatNames();
-            Map<String, Map<String, List<Map<String, Object>>>> metaData = new HashMap();
+            Map<String, Map<String, List<Map<String, Object>>>> metaData = new HashMap<>();
             for (String formatName : formatNames) {
-                Map<String, List<Map<String, Object>>> formatMetaData = new HashMap();
+                Map<String, List<Map<String, Object>>> formatMetaData = new HashMap<>();
                 IIOMetadataNode tree = (IIOMetadataNode) iioMetaData.getAsTree(formatName);
                 readImageMetaData(formatMetaData, metaDataXml, tree, 2);
                 metaData.put(formatName, formatMetaData);
@@ -708,7 +711,7 @@ public class ImageFileReaders {
                 metaDataXml.append("    ");
             }
             metaDataXml.append("<").append(node.getNodeName());
-            Map<String, Object> nodeAttrs = new HashMap();
+            Map<String, Object> nodeAttrs = new HashMap<>();
             NamedNodeMap map = node.getAttributes();
             boolean isTiff = "TIFFField".equals(node.getNodeName());
             if (map != null && map.getLength() > 0) {
@@ -737,7 +740,7 @@ public class ImageFileReaders {
             if (!isTiff && !nodeAttrs.isEmpty()) {
                 List<Map<String, Object>> nodeAttrsList = formatMetaData.get(node.getNodeName());
                 if (nodeAttrsList == null) {
-                    nodeAttrsList = new ArrayList();
+                    nodeAttrsList = new ArrayList<>();
                 }
                 nodeAttrsList.add(nodeAttrs);
                 formatMetaData.put(node.getNodeName(), nodeAttrsList);
@@ -799,7 +802,7 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("PaletteEntry")) {
                 List<Map<String, Object>> PaletteEntryList = javax_imageio.get("PaletteEntry");
                 imageInfo.setStandardAttribute("PaletteSize", PaletteEntryList.size());
-//                List<ImageColor> Palette = new ArrayList();
+//                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : PaletteEntryList) {
 //                    int index = Integer.valueOf(PaletteEntry.get("index"));
 //                    int red = Integer.valueOf(PaletteEntry.get("red"));

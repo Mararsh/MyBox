@@ -2,7 +2,7 @@ package mara.mybox.data;
 
 import java.io.File;
 import mara.mybox.tools.FileTools;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara

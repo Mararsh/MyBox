@@ -5,13 +5,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -42,7 +40,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.BaseController;
+import javafx.stage.Stage;
 import mara.mybox.data.ConvolutionKernel;
 import mara.mybox.data.ConvolutionKernel.Convolution_Type;
 import mara.mybox.db.TableConvolutionKernel;
@@ -51,9 +49,9 @@ import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FloatTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -101,7 +99,7 @@ public class ConvolutionKernelManagerController extends BaseController {
     private RadioButton zeroRadio, keepRadio;
 
     public ConvolutionKernelManagerController() {
-        baseTitle = AppVaribles.message("ConvolutionKernelManager");
+        baseTitle = AppVariables.message("ConvolutionKernelManager");
     }
 
     @Override
@@ -116,12 +114,12 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     protected void initList() {
         try {
-            nameColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, String>("name"));
-            widthColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, Integer>("width"));
-            heightColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, Integer>("height"));
-            modifyColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, String>("modifyTime"));
-            createColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, String>("createTime"));
-            desColumn.setCellValueFactory(new PropertyValueFactory<ConvolutionKernel, String>("description"));
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            widthColumn.setCellValueFactory(new PropertyValueFactory<>("width"));
+            heightColumn.setCellValueFactory(new PropertyValueFactory<>("height"));
+            modifyColumn.setCellValueFactory(new PropertyValueFactory<>("modifyTime"));
+            createColumn.setCellValueFactory(new PropertyValueFactory<>("createTime"));
+            desColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
             tableData.addListener(new ListChangeListener() {
                 @Override
@@ -366,11 +364,9 @@ public class ConvolutionKernelManagerController extends BaseController {
             float[][] old = matrixValues;
             matrixValues = new float[height][width];
             for (int j = 0; j < Math.min(height, old.length); j++) {
-                for (int i = 0; i < Math.min(width, old[0].length); i++) {
-                    matrixValues[j][i] = old[j][i];
-                }
+                System.arraycopy(old[j], 0, matrixValues[j], 0, Math.min(width, old[0].length));
             }
-            old = null;
+
         }
 
         double colWidth = Math.max(60, scrollPane.getWidth() / width - 6);
@@ -508,48 +504,46 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVaribles.message("SureDelete"));
+        alert.setContentText(AppVariables.message("SureDelete"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonCancel) {
             return;
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                ok = false;
-                List<String> names = new ArrayList<>();
-                for (ConvolutionKernel k : selected) {
-                    names.add(k.getName());
-                }
-                TableConvolutionKernel.delete(names);
-                TableFloatMatrix.delete(names);
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadList();
-                        }
-                    });
+                @Override
+                protected boolean handle() {
+                    List<String> names = new ArrayList<>();
+                    for (ConvolutionKernel k : selected) {
+                        names.add(k.getName());
+                    }
+                    TableConvolutionKernel.delete(names);
+                    TableFloatMatrix.delete(names);
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+
+                @Override
+                protected void whenSucceeded() {
+                    loadList();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -559,43 +553,42 @@ public class ConvolutionKernelManagerController extends BaseController {
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(getMyStage().getTitle());
-        alert.setContentText(AppVaribles.message("SureDelete"));
+        alert.setContentText(AppVariables.message("SureDelete"));
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        ButtonType buttonSure = new ButtonType(AppVaribles.message("Sure"));
-        ButtonType buttonCancel = new ButtonType(AppVaribles.message("Cancel"));
+        ButtonType buttonSure = new ButtonType(AppVariables.message("Sure"));
+        ButtonType buttonCancel = new ButtonType(AppVariables.message("Cancel"));
         alert.getButtonTypes().setAll(buttonSure, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonCancel) {
             return;
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                new TableConvolutionKernel().clear();
-                new TableFloatMatrix().clear();
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadList();
-                        }
-                    });
+                @Override
+                protected boolean handle() {
+                    new TableConvolutionKernel().clear();
+                    new TableFloatMatrix().clear();
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+
+                @Override
+                protected void whenSucceeded() {
+                    loadList();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML
@@ -669,36 +662,29 @@ public class ConvolutionKernelManagerController extends BaseController {
 
     @FXML
     private void examplesAction(ActionEvent event) {
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-                TableConvolutionKernel.writeExamples();
-                TableFloatMatrix.writeExamples();
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadList();
-                        }
-                    });
+                @Override
+                protected boolean handle() {
+                    TableConvolutionKernel.writeExamples();
+                    TableFloatMatrix.writeExamples();
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void whenSucceeded() {
+                    loadList();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     private boolean pickKernel() {
@@ -725,14 +711,10 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (!pickKernel()) {
             return;
         }
-        ImageManufactureEffectsController c
-                = (ImageManufactureEffectsController) openStage(CommonValues.ImageManufactureEffectsFxml);
-        c.setParentController(myController);
-        c.setParentFxml(myFxml);
+        ImageManufactureController c
+                = (ImageManufactureController) openStage(CommonValues.ImageManufactureFxml);
         c.loadImage(new Image("img/p3.png"));
-        c.setTab("effects");
-        c.showRef();
-        c.applyKernel(kernel);
+        c.operationController.applyKernel(kernel);
     }
 
     @FXML
@@ -741,37 +723,29 @@ public class ConvolutionKernelManagerController extends BaseController {
         if (!pickKernel() || name == null || name.isEmpty()) {
             return;
         }
-        task = new Task<Void>() {
-            private boolean ok;
-
-            @Override
-            protected Void call() throws Exception {
-
-                TableConvolutionKernel.write(kernel);
-                TableFloatMatrix.write(name, matrixValues);
-
-                ok = true;
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (ok) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadList();
-                        }
-                    });
+                @Override
+                protected boolean handle() {
+                    TableConvolutionKernel.write(kernel);
+                    TableFloatMatrix.write(name, matrixValues);
+                    return true;
                 }
-            }
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
 
+                @Override
+                protected void whenSucceeded() {
+                    loadList();
+                }
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
 }

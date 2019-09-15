@@ -13,10 +13,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import mara.mybox.controller.base.BaseController;
+import mara.mybox.controller.BaseController;
 import mara.mybox.data.VisitHistory;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  *
@@ -122,7 +122,7 @@ public abstract class RecentVisitMenu {
 
     public List<String> paths() {
         List<VisitHistory> his = recentPaths();
-        List<String> paths = new ArrayList();
+        List<String> paths = new ArrayList<>();
         if (his != null) {
             for (VisitHistory h : his) {
                 String pathname = h.getResourceValue();
@@ -133,7 +133,7 @@ public abstract class RecentVisitMenu {
                 && !paths.contains(controller.getDefaultPathKey())) {
             paths.add(controller.getDefaultPathKey());
         }
-        File lastPath = AppVaribles.getUserConfigPath(controller.getLastPathKey());
+        File lastPath = AppVariables.getUserConfigPath(controller.getLastPathKey());
         if (lastPath != null) {
             String lastPathString = lastPath.getAbsolutePath();
             if (!paths.contains(lastPathString)) {
@@ -144,12 +144,12 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentSourceFiles() {
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
         return VisitHistory.getRecentFile(controller.getSourceFileType(), fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
-        int fileNumber = AppVaribles.fileRecentNumber * 2 / 3 + 1;
+        int fileNumber = AppVariables.fileRecentNumber * 2 / 3 + 1;
         if (controller.getAddFileType() <= 0) {
             controller.setAddFileType(controller.getSourceFileType());
         }
@@ -157,7 +157,7 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
-        int pathNumber = AppVaribles.fileRecentNumber / 3 + 1;
+        int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
         return VisitHistory.getRecentPath(controller.getSourcePathType(), pathNumber);
     }
 
@@ -175,7 +175,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        AppVaribles.setUserConfigValue(controller.getSourcePathKey(), fname);
+        AppVariables.setUserConfigValue(controller.getSourcePathKey(), fname);
         handleSelect();
     }
 
@@ -185,7 +185,7 @@ public abstract class RecentVisitMenu {
             handleSelect();
             return;
         }
-        AppVaribles.setUserConfigValue(controller.getTargetPathKey(), fname);
+        AppVariables.setUserConfigValue(controller.getTargetPathKey(), fname);
         handleSelect();
     }
 

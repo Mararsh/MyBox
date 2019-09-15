@@ -1,6 +1,6 @@
 package mara.mybox.data;
 
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
 import java.util.Date;
 import java.util.TimerTask;
@@ -10,8 +10,8 @@ import javafx.application.Platform;
 import mara.mybox.controller.AlarmClockRunController;
 import mara.mybox.data.AlarmClock.AlarmType;
 import mara.mybox.fxml.FxmlStage;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.scheduledTasks;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.tools.DateTools;
 
 /**
@@ -50,9 +50,9 @@ public class AlarmClockTask extends TimerTask {
                                 null, CommonValues.AlarmClockRunFxml, false);
                         controller.runAlarm(alarm);
 
-                        if (AppVaribles.alarmClockController != null
-                                && AppVaribles.alarmClockController.getAlertClockTableController() != null) {
-                            AppVaribles.alarmClockController.getAlertClockTableController().refreshAction();
+                        if (AppVariables.alarmClockController != null
+                                && AppVariables.alarmClockController.getAlertClockTableController() != null) {
+                            AppVariables.alarmClockController.getAlertClockTableController().refreshAction();
                         }
                     } catch (Exception e) {
                         logger.error(e.toString());

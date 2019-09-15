@@ -3,7 +3,7 @@
  * @License Apache License Version 2.0
  */
 .root{
-    -fx-font-size: 1.1em;
+    -fx-font-size: 1.0em;
 }
 
 /*
@@ -14,6 +14,10 @@ Hue increase 171 -> Orange
 Saturation increase 50% -> Blue
 Red increase 151 -> pink
 */
+
+/*.label {
+    -fx-text-overrun: leading-ellipsis ;
+}*/
 
 .copyable-label, .copyable-label:focused {
     -fx-background-color: transparent ;
@@ -80,9 +84,17 @@ Red increase 151 -> pink
     -fx-text-fill: gray;
 }
 
+.focusBox, .focusBox:focused {
+    -fx-background-color: #E8E8E8;
+    -fx-background-radius: 12;
+    -fx-padding: 5 5 5 5;
+}
+
+
 .table-row-cell:empty, .table-cell {
     -fx-border-width: 0px;
 }
+
 
 
 .open-button {

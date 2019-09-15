@@ -9,37 +9,47 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
+import javafx.scene.web.WebView;
+import javafx.stage.Popup;
 import javafx.stage.PopupWindow;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import mara.mybox.tools.FileTools;
 import static mara.mybox.tools.FileTools.getFileSuffix;
 import mara.mybox.tools.SoundTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.CommonValues.AppDataRoot;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.MyboxDataPath;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -50,6 +60,9 @@ import static mara.mybox.value.CommonValues.AppDataRoot;
 public class FxmlControl {
 
     public static String blueText = "-fx-text-fill: #2e598a;";
+    public static String darkBlueText = "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
+    public static String redText = "-fx-text-fill: #961c1c;";
+    public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
     public static String badStyle = "-fx-text-box-border: red;   -fx-text-fill: red;";
     public static String warnStyle = "-fx-text-box-border: orange;   -fx-text-fill: orange;";
     public static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -94,6 +107,24 @@ public class FxmlControl {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public static void refreshStyle(Parent node) {
+        node.applyCss();
+        node.layout();
+        applyStyle(node);
+    }
+
+    public static void applyStyle(Node node) {
+        if (node == null) {
+            return;
+        }
+        ControlStyle.setStyle(node);
+        if (node instanceof Parent) {
+            for (Node c : ((Parent) node).getChildrenUnmodifiable()) {
+                applyStyle(c);
+            }
         }
     }
 
@@ -169,8 +200,15 @@ public class FxmlControl {
         return false;
     }
 
+    public static void setTooltip(final Node node, String tips) {
+        setTooltip(node, new Tooltip(tips));
+    }
+
     public static void setTooltip(final Node node, final Tooltip tooltip) {
-        tooltip.setFont(new Font(AppVaribles.sceneFontSize));
+        if (node instanceof Control) {
+            removeTooltip((Control) node);
+        }
+        tooltip.setFont(new Font(AppVariables.sceneFontSize));
         tooltip.setShowDelay(Duration.millis(10));
         tooltip.setShowDuration(Duration.millis(360000));
         tooltip.setHideDelay(Duration.millis(10));
@@ -354,25 +392,26 @@ public class FxmlControl {
             return null;
         }
         try {
-            File file = new File(AppDataRoot + "/" + userFile);
-            if (file.exists()) {
-                if (deleteExisted) {
-                    file.delete();
-                } else {
-                    return file;
-                }
+            File file = new File(MyboxDataPath + File.separator + userFile);
+            if (file.exists() && !deleteExisted) {
+                return file;
             }
-
             URL url = FxmlControl.class.getResource(resourceFile);
             if (url.toString().startsWith("jar:")) {
                 try {
-                    try ( InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);  OutputStream out = new FileOutputStream(file)) {
+                    File tmpFile = FileTools.getTempFile();
+                    try (InputStream input = FxmlControl.class.getResourceAsStream(resourceFile);
+                            OutputStream out = new FileOutputStream(tmpFile)) {
                         int read;
                         byte[] bytes = new byte[1024];
                         while ((read = input.read(bytes)) != -1) {
                             out.write(bytes, 0, read);
                         }
                     }
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    tmpFile.renameTo(file);
                 } catch (Exception e) {
                     logger.error(e.toString());
                 }
@@ -441,6 +480,24 @@ public class FxmlControl {
         setEditorStyle(box, null);
     }
 
+    public static double getX(Control control) {
+        return control.getScene().getWindow().getX() + control.getScene().getX()
+                + control.localToScene(0, 0).getX();
+    }
+
+    public static double getY(Control control) {
+        return control.getScene().getWindow().getY() + control.getScene().getY()
+                + control.localToScene(0, 0).getY();
+    }
+
+    public static double getWidth(Control control) {
+        return control.getBoundsInParent().getWidth();
+    }
+
+    public static double getHeight(Control control) {
+        return control.getBoundsInParent().getHeight();
+    }
+
     public static void moveXCenter(Region pNnode, Node node) {
         try {
             if (node == null || pNnode == null) {
@@ -507,9 +564,10 @@ public class FxmlControl {
                     || sPane == null) {
                 return;
             }
-            iView.setFitWidth(sPane.getWidth() - 1);
-            iView.setFitHeight(sPane.getHeight() - 5);
+            iView.setFitWidth(sPane.getWidth() - 20);
+            iView.setFitHeight(sPane.getHeight() - 20);
             FxmlControl.moveXCenter(sPane, iView);
+            iView.setLayoutY(10);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -524,6 +582,7 @@ public class FxmlControl {
             iView.setFitWidth(iView.getImage().getWidth());
             iView.setFitHeight(iView.getImage().getHeight());
             FxmlControl.moveXCenter(sPane, iView);
+            iView.setLayoutY(10);
         } catch (Exception e) {
 //            logger.error(e.toString());
         }
@@ -567,7 +626,7 @@ public class FxmlControl {
     public static void setMaximized(Stage stage, boolean max) {
         stage.setMaximized(max);
         if (max) {
-            Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+            Rectangle2D primaryScreenBounds = getScreen();
             stage.setX(primaryScreenBounds.getMinX());
             stage.setY(primaryScreenBounds.getMinY());
             stage.setWidth(primaryScreenBounds.getWidth());
@@ -575,9 +634,18 @@ public class FxmlControl {
         }
     }
 
+    public static Rectangle2D getScreen() {
+        return Screen.getPrimary().getVisualBounds();
+    }
+
     public static void locateCenter(Region region, PopupWindow window) {
         Bounds bounds = region.localToScreen(region.getBoundsInLocal());
         window.show(region, bounds.getMinX() + bounds.getWidth() / 2, bounds.getMinY() + bounds.getHeight() / 2);
+    }
+
+    public static void locateBelow(Node node, PopupWindow window) {
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        window.show(node, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight() + 5);
     }
 
     public static void locateBelow(Region region, PopupWindow window) {
@@ -585,12 +653,27 @@ public class FxmlControl {
         window.show(region, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight() + 5);
     }
 
+    public static void locateRightTop(Region region, PopupWindow window) {
+        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
+        window.show(region, bounds.getMaxX() - window.getWidth() - 20, bounds.getMinY() + 50);
+    }
+
+    public static void locateUp(Region region, PopupWindow window) {
+        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
+        window.show(region, bounds.getMinX() + 2, bounds.getMinY() - 50);
+    }
+
+    public static void locateRight(Stage stage) {
+        Rectangle2D screen = getScreen();
+        stage.setX(screen.getWidth() - stage.getWidth());
+    }
+
     public static List<Node> traverseNode(Node node, List<Node> children) {
         if (node == null) {
             return children;
         }
         if (children == null) {
-            children = new ArrayList();
+            children = new ArrayList<>();
         }
         children.add(node);
         if (node instanceof Parent) {
@@ -599,6 +682,54 @@ public class FxmlControl {
             }
         }
         return children;
+    }
+
+    // https://stackoverflow.com/questions/11552176/generating-a-mouseevent-in-javafx/11567122?r=SearchResults#11567122
+    public static void fireMouseClicked(Node node) {
+        try {
+            Event.fireEvent(node, new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
+                    0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
+                    true, true, true, true, true, true, null));
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+    }
+
+    public static void popText(String text, String color, String size, Stage stage) {
+        try {
+            Popup popup = new Popup();
+            popup.setAutoHide(true);
+            popup.setAutoFix(true);
+            Label popupLabel = new Label(text);
+            popupLabel.setStyle("-fx-background-color:black;"
+                    + " -fx-text-fill: " + color + ";"
+                    + " -fx-font-size: " + size + ";"
+                    + " -fx-padding: 10px;"
+                    + " -fx-background-radius: 6;");
+            popup.getContent().add(popupLabel);
+
+            popup.show(stage);
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    // https://stackoverflow.com/questions/31264847/how-to-set-remember-scrollbar-thumb-position-in-javafx-8-webview?r=SearchResults
+    public static ScrollBar getVScrollBar(WebView webView) {
+        try {
+            Set<Node> scrolls = webView.lookupAll(".scroll-bar");
+            for (Node scrollNode : scrolls) {
+                if (ScrollBar.class.isInstance(scrollNode)) {
+                    ScrollBar scroll = (ScrollBar) scrollNode;
+                    if (scroll.getOrientation() == Orientation.VERTICAL) {
+                        return scroll;
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
 }

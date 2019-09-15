@@ -25,7 +25,7 @@ import mara.mybox.image.ImageManufacture;
 import static mara.mybox.image.file.ImageFileReaders.needSampled;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 
@@ -44,7 +44,7 @@ public class ImageGifFile {
 //            GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
 
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                 reader.setInput(iis, false);
                 GIFImageMetadata metadata = (GIFImageMetadata) reader.getImageMetadata(0);
                 reader.dispose();
@@ -62,7 +62,7 @@ public class ImageGifFile {
             List<BufferedImage> images = new ArrayList<>();
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             boolean broken = false;
-            try ( ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(src))) {
+            try (ImageInputStream in = ImageIO.createImageInputStream(new FileInputStream(src))) {
                 reader.setInput(in, false);
                 int count = 0;
                 while (true) {
@@ -101,7 +101,7 @@ public class ImageGifFile {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; i++) {
@@ -119,7 +119,7 @@ public class ImageGifFile {
     public static BufferedImage readBrokenGifFile(String src, int index) {
         BufferedImage image = null;
         try {
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
 //                logger.error(gif.getFrameCount());
                 image = gif.getFrame(index);
@@ -133,7 +133,7 @@ public class ImageGifFile {
     public static BufferedImage readBrokenGifFile(String src, int index, int xscale, int yscale) {
         BufferedImage image = null;
         try {
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
 //                logger.error(gif.getFrameCount());
                 image = gif.getFrame(index);
@@ -151,7 +151,7 @@ public class ImageGifFile {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; i++) {
@@ -172,7 +172,7 @@ public class ImageGifFile {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; i++) {
@@ -191,7 +191,7 @@ public class ImageGifFile {
         try {
 //            logger.debug("readBrokenGifFile");
             List<BufferedImage> images = new ArrayList<>();
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 final int frameCount = gif.getFrameCount();
                 for (int i = 0; i < frameCount; i++) {
@@ -219,7 +219,7 @@ public class ImageGifFile {
     public static BufferedImage readBrokenGifFile(String src, ImageInformation imageInfo) {
         try {
             BufferedImage bufferedImage;
-            try ( FileInputStream in = new FileInputStream(src)) {
+            try (FileInputStream in = new FileInputStream(src)) {
                 final GifImage gif = GifDecoder.read(in);
                 boolean needSampled = needSampled(imageInfo, 1);
                 bufferedImage = gif.getFrame(0);
@@ -327,7 +327,7 @@ public class ImageGifFile {
             ImageWriteParam param = getPara(attributes, writer);
             IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
 
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(new File(outFile))) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(image, null, metaData), param);
                 out.flush();
@@ -390,15 +390,7 @@ public class ImageGifFile {
     public static boolean writeImages(List<BufferedImage> images,
             File outFile, int interval, boolean loop) {
         try {
-
             if (images == null || outFile == null || images.isEmpty()) {
-                return false;
-            }
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-            } catch (Exception e) {
                 return false;
             }
             GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
@@ -406,8 +398,8 @@ public class ImageGifFile {
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(outFile)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 getParaMeta(interval, loop, gifWriter, param, metaData);
                 gifWriter.prepareWriteSequence(null);
@@ -418,7 +410,14 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
-
+            try {
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                tmpFile.renameTo(outFile);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
 
         } catch (Exception e) {
@@ -433,20 +432,13 @@ public class ImageGifFile {
             if (imagesInfo == null || imagesInfo.isEmpty() || outFile == null) {
                 return "InvalidParameters";
             }
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-            } catch (Exception e) {
-                return e.toString();
-            }
             GIFImageWriterSpi gifspi = new GIFImageWriterSpi();
             GIFImageWriter gifWriter = new GIFImageWriter(gifspi);
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-
-            try ( ImageOutputStream out = ImageIO.createImageOutputStream(outFile)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 getParaMeta(interval, loop, gifWriter, param, metaData);
                 gifWriter.prepareWriteSequence(null);
@@ -463,6 +455,16 @@ public class ImageGifFile {
                 out.flush();
             }
             gifWriter.dispose();
+
+            try {
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                tmpFile.renameTo(outFile);
+            } catch (Exception e) {
+                return e.toString();
+            }
+
             return "";
 
         } catch (Exception e) {

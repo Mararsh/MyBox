@@ -32,26 +32,6 @@ License:    Apache License Version 2.0
                         <fx:include fx:id="sourceTable" source="FilesTable.fxml" />
                     </content>
                 </TitledPane>
-                <TitledPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options" VBox.vgrow="NEVER">
-                    <content>
-                        <VBox spacing="10.0">
-                            <children>
-                                <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                    <children>
-                                        <CheckBox fx:id="subdirCheck" mnemonicParsing="false" selected="true" text="%HandleSubDirectories" />
-                                    </children>
-                                </HBox>
-                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                    <children>
-                                        <CheckBox fx:id="filesNameCheck" mnemonicParsing="false" text="%OnlyFilenameInclude" />
-                                        <TextField fx:id="filesNameInput" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
-                                        <Label text="%SeparateBySpace" />
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-                    </content>
-                </TitledPane>
                 <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="10.0" text="%Logs" VBox.vgrow="ALWAYS">
                     <content>
                         <VBox fx:id="logsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">

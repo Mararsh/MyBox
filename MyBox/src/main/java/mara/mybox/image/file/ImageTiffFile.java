@@ -31,7 +31,8 @@ import mara.mybox.image.ImageConvert;
 import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.ImageInformation;
 import mara.mybox.image.ImageManufacture;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -172,23 +173,25 @@ public class ImageTiffFile {
 
     public static boolean writeTiffImage(BufferedImage image, ImageAttributes attributes, File file) {
         try {
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 IIOMetadata metaData = getWriterMeta(attributes, image, writer, param);
                 writer.write(null, new IIOImage(image, null, metaData), param);
                 out.flush();
-                writer.dispose();
             }
+            writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
+
             return true;
         } catch (Exception e) {
             logger.error(e.toString());
@@ -202,15 +205,9 @@ public class ImageTiffFile {
             if (images == null || file == null || images.isEmpty()) {
                 return false;
             }
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -223,6 +220,14 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
 
         } catch (Exception e) {
@@ -237,15 +242,9 @@ public class ImageTiffFile {
             if (imagesInfo == null || imagesInfo.isEmpty() || file == null) {
                 return "InvalidParameters";
             }
-            try {
-                if (file.exists()) {
-                    file.delete();
-                }
-            } catch (Exception e) {
-                return e.toString();
-            }
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -261,6 +260,14 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (file.exists()) {
+                    file.delete();
+                }
+                tmpFile.renameTo(file);
+            } catch (Exception e) {
+                return e.toString();
+            }
             return "";
 
         } catch (Exception e) {
@@ -275,16 +282,9 @@ public class ImageTiffFile {
             if (files == null || outFile == null || files.isEmpty()) {
                 return false;
             }
-            try {
-                if (outFile.exists()) {
-                    outFile.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
-
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(outFile)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -318,8 +318,17 @@ public class ImageTiffFile {
                 }
                 writer.endWriteSequence();
                 out.flush();
-                writer.dispose();
             }
+            writer.dispose();
+            try {
+                if (outFile.exists()) {
+                    outFile.delete();
+                }
+                tmpFile.renameTo(outFile);
+            } catch (Exception e) {
+                return false;
+            }
+
             return true;
 
         } catch (Exception e) {
@@ -337,15 +346,9 @@ public class ImageTiffFile {
                     || cols == null || cols.isEmpty() || targetFile == null) {
                 return false;
             }
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
             ImageWriter writer = getWriter();
-            try (ImageOutputStream out = ImageIO.createImageOutputStream(targetFile)) {
+            File tmpFile = FileTools.getTempFile();
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 ImageWriteParam param = getPara(attributes, writer);
                 writer.prepareWriteSequence(null);
@@ -375,6 +378,14 @@ public class ImageTiffFile {
                 out.flush();
             }
             writer.dispose();
+            try {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+                tmpFile.renameTo(targetFile);
+            } catch (Exception e) {
+                return false;
+            }
             return true;
 
         } catch (Exception e) {
@@ -404,7 +415,7 @@ public class ImageTiffFile {
                         des = node.getFirstChild().getFirstChild().getAttributes().item(1).getNodeValue();
                     } catch (Exception e) {
                     }
-                    List<String> values = new ArrayList();
+                    List<String> values = new ArrayList<>();
                     for (int j = 0; j < field.getCount(); j++) {
                         values.add(field.getValueAsString(j));
                     }

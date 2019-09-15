@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.BaseController;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,9 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.CommonValues;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -33,7 +32,7 @@ public class WeiboSnapingInfoController extends BaseController {
     private Button stopButton, reloadButton;
 
     public WeiboSnapingInfoController() {
-        baseTitle = AppVaribles.message("WeiboSnap");
+        baseTitle = AppVariables.message("WeiboSnap");
 
     }
 

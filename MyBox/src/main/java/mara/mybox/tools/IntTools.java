@@ -26,7 +26,7 @@ public class IntTools {
     }
 
     public static int zipInt(int value, int zipStep) {
-        return (int) (Math.round((value + zipStep / 2) / zipStep)) * zipStep;
+        return Math.round((value + zipStep / 2) / zipStep) * zipStep;
     }
 
     public static int getRandomInt(int max) {

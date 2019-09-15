@@ -9,13 +9,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.color.ColorBase.array;
 import static mara.mybox.color.ColorBase.arrayDouble;
 import static mara.mybox.color.ColorBase.clipRGB;
+import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.tools.DoubleTools.scale;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -267,6 +267,7 @@ public class CIEData {
             List<CIEData> data = cie1931Observer2Degree1nmData();
             for (CIEData d : data) {
                 d.convert(cs);
+                d.scaleValues();
             }
             return data;
         } catch (Exception e) {
@@ -284,6 +285,7 @@ public class CIEData {
             List<CIEData> data = cie1964Observer10Degree1nmData();
             for (CIEData d : data) {
                 d.convert(cs);
+                d.scaleValues();
             }
             return data;
         } catch (Exception e) {
@@ -301,6 +303,7 @@ public class CIEData {
             List<CIEData> data = cie1931Observer2Degree5nmData();
             for (CIEData d : data) {
                 d.convert(cs);
+                d.scaleValues();
             }
             return data;
         } catch (Exception e) {
@@ -318,6 +321,7 @@ public class CIEData {
             List<CIEData> data = cie1964Observer10Degree5nmData();
             for (CIEData d : data) {
                 d.convert(cs);
+                d.scaleValues();
             }
             return data;
         } catch (Exception e) {
@@ -441,7 +445,7 @@ public class CIEData {
             String DataIgnoreChars = "\t|,|，|\\||\\{|\\}|\\[|\\]|\\\"|\\\'";
             line = line.replaceAll(DataIgnoreChars, " ");
             String[] values = line.split("\\s+");
-            List<Double> dList = new ArrayList();
+            List<Double> dList = new ArrayList<>();
             for (String v : values) {
                 try {
                     double d = Double.parseDouble(v);
@@ -465,7 +469,7 @@ public class CIEData {
     public static List<CIEData> read(String texts) {
         try {
             String[] lines = texts.split("\n");
-            List<CIEData> data = new ArrayList();
+            List<CIEData> data = new ArrayList<>();
             for (String line : lines) {
                 CIEData d = readLine(line);
                 if (d != null) {
@@ -481,7 +485,7 @@ public class CIEData {
 
     public static List<CIEData> read(File file) {
         try {
-            List<CIEData> data = new ArrayList();
+            List<CIEData> data = new ArrayList<>();
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {

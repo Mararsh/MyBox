@@ -26,48 +26,49 @@ public class IntStatisticColorCell extends TableCell<IntStatistic, Integer> {
     @Override
     protected void updateItem(final Integer item, boolean empty) {
         super.updateItem(item, empty);
-        if (item == null || item < 0 || empty) {
+        if (empty || item == null || item < 0) {
             setGraphic(null);
-        } else {
-            IntStatistic row = getTableView().getItems().get(getTableRow().getIndex());
-
-            switch (row.getName()) {
-                case "Red":
-                    color = new Color(item / 255.0, 0, 0, 1);
-                    break;
-                case "Green":
-                    color = new Color(0, item / 255.0, 0, 1);
-                    break;
-                case "Blue":
-                    color = new Color(0, 0, item / 255.0, 1);
-                    break;
-                case "Alpha":
-                    color = new Color(1, 1, 1, item / 255.0);
-                    break;
-                case "Grey":
-                case "Gray":
-                    double c = item / 255.0;
-                    color = new Color(c, c, c, 1);
-                    break;
-                case "Hue":
-                    color = Color.hsb(item, 1, 1);
-                    break;
-                case "Saturation":
-                    color = Color.hsb(66, item / 100.0, 1);
-                    break;
-                case "Brightness":
-                    color = Color.hsb(66, 1, item / 100.0);
-                    break;
-                default:
-                    color = null;
-                    break;
-            }
-            if (color != null) {
-                rectangle.setFill(color);
-                setGraphic(rectangle);
-            }
-            setText(item + "");
-
+            setText(null);
+            return;
         }
+
+        IntStatistic row = getTableView().getItems().get(getTableRow().getIndex());
+        switch (row.getName()) {
+            case "Red":
+                color = new Color(item / 255.0, 0, 0, 1);
+                break;
+            case "Green":
+                color = new Color(0, item / 255.0, 0, 1);
+                break;
+            case "Blue":
+                color = new Color(0, 0, item / 255.0, 1);
+                break;
+            case "Alpha":
+                color = new Color(1, 1, 1, item / 255.0);
+                break;
+            case "Grey":
+            case "Gray":
+                double c = item / 255.0;
+                color = new Color(c, c, c, 1);
+                break;
+            case "Hue":
+                color = Color.hsb(item, 1, 1);
+                break;
+            case "Saturation":
+                color = Color.hsb(66, item / 100.0, 1);
+                break;
+            case "Brightness":
+                color = Color.hsb(66, 1, item / 100.0);
+                break;
+            default:
+                color = null;
+                break;
+        }
+        if (color != null) {
+            rectangle.setFill(color);
+            setGraphic(rectangle);
+        }
+        setText(item + "");
+
     }
 }

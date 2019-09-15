@@ -24,7 +24,7 @@ public class PDFOutline {
     public List<PDFOutline> addChild(String title, int pageNumber) {
         PDFOutline child = new PDFOutline(title, pageNumber);
         if (children == null) {
-            children = new ArrayList();
+            children = new ArrayList<>();
         }
         children.add(child);
         return children;

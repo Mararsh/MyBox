@@ -1,11 +1,9 @@
 package mara.mybox.controller;
 
 import java.util.Map;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,13 +17,11 @@ import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -54,7 +50,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     protected Button calculateButton, exportButton;
 
     public RGBColorSpacesController() {
-        baseTitle = AppVaribles.message("RGBColorSpaces");
+        baseTitle = AppVariables.message("RGBColorSpaces");
         exportName = "RGBColorSpaces";
     }
 
@@ -111,19 +107,19 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     }
 
     private void initPrimaries() {
-        csColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, String>("colorSpaceName"));
-        whiteColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, String>("illuminantName"));
-        algorithmColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, String>("adaptAlgorithm"));
-        colorColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, String>("colorName"));
-        txcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("X"));
-        tycsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("Y"));
-        tzcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("Z"));
-        nxcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("normalizedX"));
-        nycsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("normalizedY"));
-        nzcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("normalizedZ"));
-        rxcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("relativeX"));
-        rycsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("relativeY"));
-        rzcsColumn.setCellValueFactory(new PropertyValueFactory<RGBColorSpace, Double>("relativeZ"));
+        csColumn.setCellValueFactory(new PropertyValueFactory<>("colorSpaceName"));
+        whiteColumn.setCellValueFactory(new PropertyValueFactory<>("illuminantName"));
+        algorithmColumn.setCellValueFactory(new PropertyValueFactory<>("adaptAlgorithm"));
+        colorColumn.setCellValueFactory(new PropertyValueFactory<>("colorName"));
+        txcsColumn.setCellValueFactory(new PropertyValueFactory<>("X"));
+        tycsColumn.setCellValueFactory(new PropertyValueFactory<>("Y"));
+        tzcsColumn.setCellValueFactory(new PropertyValueFactory<>("Z"));
+        nxcsColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedX"));
+        nycsColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedY"));
+        nzcsColumn.setCellValueFactory(new PropertyValueFactory<>("normalizedZ"));
+        rxcsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeX"));
+        rycsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeY"));
+        rzcsColumn.setCellValueFactory(new PropertyValueFactory<>("relativeZ"));
 
     }
 
@@ -141,42 +137,35 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     }
 
     private void initData() {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String colorSpacesString;
+
+                @Override
+                protected boolean handle() {
+                    colorSpaces = FXCollections.observableArrayList();
+                    colorSpaces.addAll(RGBColorSpace.all(8));
+                    colorSpacesString = RGBColorSpace.allTexts();
+                    return colorSpacesString != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    primariesTableView.setItems(colorSpaces);
+                    primariesArea.setText(colorSpacesString);
+                    primariesArea.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String colorSpacesString;
-
-            @Override
-            protected Void call() throws Exception {
-                colorSpaces = FXCollections.observableArrayList();
-                colorSpaces.addAll(RGBColorSpace.all(8));
-                colorSpacesString = RGBColorSpace.allTexts();
-
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        primariesTableView.setItems(colorSpaces);
-                        primariesArea.setText(colorSpacesString);
-                        primariesArea.home();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
     }
 
     @Override

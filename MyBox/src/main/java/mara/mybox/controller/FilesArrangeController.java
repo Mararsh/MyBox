@@ -10,7 +10,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,9 +26,9 @@ import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -81,7 +80,7 @@ public class FilesArrangeController extends FilesBatchController {
     private CheckBox verboseCheck, handleSubdirCheck;
 
     public FilesArrangeController() {
-        baseTitle = AppVaribles.message("FilesArrangement");
+        baseTitle = AppVariables.message("FilesArrangement");
 
         targetPathKey = "FilesArrageTargetPath";
         sourcePathKey = "FilesArrageSourcePath";
@@ -126,10 +125,10 @@ public class FilesArrangeController extends FilesBatchController {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov,
                     Boolean old_toggle, Boolean new_toggle) {
-                AppVaribles.setUserConfigValue(FileArrangeSubdirKey, isCopy);
+                AppVariables.setUserConfigValue(FileArrangeSubdirKey, isCopy);
             }
         });
-        handleSubdirCheck.setSelected(AppVaribles.getUserConfigBoolean(FileArrangeSubdirKey, true));
+        handleSubdirCheck.setSelected(AppVariables.getUserConfigBoolean(FileArrangeSubdirKey, true));
 
         filesGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
@@ -137,10 +136,10 @@ public class FilesArrangeController extends FilesBatchController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) filesGroup.getSelectedToggle();
                 isCopy = message("Copy").equals(selected.getText());
-                AppVaribles.setUserConfigValue(FileArrangeCopyKey, isCopy);
+                AppVariables.setUserConfigValue(FileArrangeCopyKey, isCopy);
             }
         });
-        if (AppVaribles.getUserConfigBoolean(FileArrangeCopyKey, true)) {
+        if (AppVariables.getUserConfigBoolean(FileArrangeCopyKey, true)) {
             copyRadio.setSelected(true);
             isCopy = true;
         } else {
@@ -155,7 +154,7 @@ public class FilesArrangeController extends FilesBatchController {
                 checkReplaceType();
             }
         });
-        String replaceSelect = AppVaribles.getUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
+        String replaceSelect = AppVariables.getUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         switch (replaceSelect) {
             case "ReplaceModified":
                 replaceModifiedRadio.setSelected(true);
@@ -178,10 +177,10 @@ public class FilesArrangeController extends FilesBatchController {
                     Toggle old_toggle, Toggle new_toggle) {
                 RadioButton selected = (RadioButton) byGroup.getSelectedToggle();
                 byModifyTime = message("ModifyTime").equals(selected.getText());
-                AppVaribles.setUserConfigValue(FileArrangeModifyTimeKey, byModifyTime);
+                AppVariables.setUserConfigValue(FileArrangeModifyTimeKey, byModifyTime);
             }
         });
-        if (AppVaribles.getUserConfigBoolean(FileArrangeModifyTimeKey, true)) {
+        if (AppVariables.getUserConfigBoolean(FileArrangeModifyTimeKey, true)) {
             modifiyTimeRadio.setSelected(true);
             byModifyTime = true;
         } else {
@@ -196,7 +195,7 @@ public class FilesArrangeController extends FilesBatchController {
                 checkDirType();
             }
         });
-        String dirSelect = AppVaribles.getUserConfigValue(FileArrangeCategoryKey, "Month");
+        String dirSelect = AppVariables.getUserConfigValue(FileArrangeCategoryKey, "Month");
         switch (dirSelect) {
             case "Year":
                 yearRadio.setSelected(true);
@@ -216,19 +215,19 @@ public class FilesArrangeController extends FilesBatchController {
         RadioButton selected = (RadioButton) replaceGroup.getSelectedToggle();
         if (message("ReplaceModified").equals(selected.getText())) {
             replaceType = ReplaceType.ReplaceModified;
-            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
+            AppVariables.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         } else if (message("NotCopy").equals(selected.getText())) {
             replaceType = ReplaceType.NotCopy;
-            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "NotCopy");
+            AppVariables.setUserConfigValue(FileArrangeExistedKey, "NotCopy");
         } else if (message("Replace").equals(selected.getText())) {
             replaceType = ReplaceType.Replace;
-            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "Replace");
+            AppVariables.setUserConfigValue(FileArrangeExistedKey, "Replace");
         } else if (message("Rename").equals(selected.getText())) {
             replaceType = ReplaceType.Rename;
-            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "Rename");
+            AppVariables.setUserConfigValue(FileArrangeExistedKey, "Rename");
         } else {
             replaceType = ReplaceType.ReplaceModified;
-            AppVaribles.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
+            AppVariables.setUserConfigValue(FileArrangeExistedKey, "ReplaceModified");
         }
 
     }
@@ -237,16 +236,16 @@ public class FilesArrangeController extends FilesBatchController {
         RadioButton selected = (RadioButton) dirGroup.getSelectedToggle();
         if (message("Year").equals(selected.getText())) {
             dirType = DirType.Year;
-            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Year");
+            AppVariables.setUserConfigValue(FileArrangeCategoryKey, "Year");
         } else if (message("Month").equals(selected.getText())) {
             dirType = DirType.Month;
-            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Month");
+            AppVariables.setUserConfigValue(FileArrangeCategoryKey, "Month");
         } else if (message("Day").equals(selected.getText())) {
             dirType = DirType.Day;
-            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Day");
+            AppVariables.setUserConfigValue(FileArrangeCategoryKey, "Day");
         } else {
             dirType = DirType.Month;
-            AppVaribles.setUserConfigValue(FileArrangeCategoryKey, "Month");
+            AppVariables.setUserConfigValue(FileArrangeCategoryKey, "Month");
         }
     }
 
@@ -256,8 +255,8 @@ public class FilesArrangeController extends FilesBatchController {
             if (!paused || lastFileName == null) {
                 copyAttr = new FileSynchronizeAttributes();
 
-                logsTextArea.setText(AppVaribles.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
-                logsTextArea.appendText(AppVaribles.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
+                logsTextArea.setText(AppVariables.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
+                logsTextArea.appendText(AppVariables.message("TargetPath") + ": " + targetPathInput.getText() + "\n");
                 newLogs = new StringBuffer();
                 newlines = 0;
                 totalLines = 0;
@@ -268,11 +267,11 @@ public class FilesArrangeController extends FilesBatchController {
                     maxLines = 5000;
                 }
 
-                strFailedCopy = AppVaribles.message("FailedCopy") + ": ";
-                strCreatedSuccessfully = AppVaribles.message("CreatedSuccessfully") + ": ";
-                strCopySuccessfully = AppVaribles.message("CopySuccessfully") + ": ";
-                strDeleteSuccessfully = AppVaribles.message("DeletedSuccessfully") + ": ";
-                strFailedDelete = AppVaribles.message("FailedDelete") + ": ";
+                strFailedCopy = AppVariables.message("FailedCopy") + ": ";
+                strCreatedSuccessfully = AppVariables.message("CreatedSuccessfully") + ": ";
+                strCopySuccessfully = AppVariables.message("CopySuccessfully") + ": ";
+                strDeleteSuccessfully = AppVariables.message("DeletedSuccessfully") + ": ";
+                strFailedDelete = AppVariables.message("FailedDelete") + ": ";
 
                 targetPath = new File(targetPathInput.getText());
                 if (!targetPath.exists()) {
@@ -310,36 +309,40 @@ public class FilesArrangeController extends FilesBatchController {
             }
 
             updateInterface("Started");
-            task = new Task<Void>() {
-
-                @Override
-                protected Void call() {
-                    arrangeFiles(sourcePath);
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    updateInterface("Done");
-                }
+                    @Override
+                    protected Void call() {
+                        arrangeFiles(sourcePath);
+                        return null;
+                    }
 
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    updateInterface("Canceled");
-                }
+                    @Override
+                    protected void succeeded() {
+                        super.succeeded();
+                        updateInterface("Done");
+                    }
 
-                @Override
-                protected void failed() {
-                    super.failed();
-                    updateInterface("Failed");
-                }
-            };
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+                    @Override
+                    protected void cancelled() {
+                        super.cancelled();
+                        updateInterface("Canceled");
+                    }
 
+                    @Override
+                    protected void failed() {
+                        super.failed();
+                        updateInterface("Failed");
+                    }
+                };
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             updateInterface("Failed");
             logger.error(e.toString());
@@ -355,16 +358,16 @@ public class FilesArrangeController extends FilesBatchController {
             public void run() {
                 try {
                     if (paused) {
-                        updateLogs(AppVaribles.message("Paused"), true);
+                        updateLogs(AppVariables.message("Paused"), true);
                     } else {
-                        updateLogs(AppVaribles.message(newStatus), true);
+                        updateLogs(AppVariables.message(newStatus), true);
                     }
                     switch (newStatus) {
                         case "Started":
                             operationBarController.getStatusLabel().setText(message("Handling...") + " "
                                     + message("StartTime")
                                     + ": " + DateTools.datetimeToString(startTime));
-                            startButton.setText(AppVaribles.message("Cancel"));
+                            startButton.setText(AppVariables.message("Cancel"));
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -373,7 +376,7 @@ public class FilesArrangeController extends FilesBatchController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            operationBarController.pauseButton.setText(AppVaribles.message("Pause"));
+                            operationBarController.pauseButton.setText(AppVariables.message("Pause"));
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
                                 public void handle(ActionEvent event) {
@@ -388,7 +391,7 @@ public class FilesArrangeController extends FilesBatchController {
                         case "Done":
                         default:
                             if (paused) {
-                                startButton.setText(AppVaribles.message("Cancel"));
+                                startButton.setText(AppVariables.message("Cancel"));
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
@@ -397,7 +400,7 @@ public class FilesArrangeController extends FilesBatchController {
                                 });
                                 operationBarController.pauseButton.setVisible(true);
                                 operationBarController.pauseButton.setDisable(false);
-                                operationBarController.pauseButton.setText(AppVaribles.message("Continue"));
+                                operationBarController.pauseButton.setText(AppVariables.message("Continue"));
                                 operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
@@ -406,7 +409,7 @@ public class FilesArrangeController extends FilesBatchController {
                                 });
 
                             } else {
-                                startButton.setText(AppVaribles.message("Start"));
+                                startButton.setText(AppVariables.message("Start"));
                                 startButton.setOnAction(new EventHandler<ActionEvent>() {
                                     @Override
                                     public void handle(ActionEvent event) {
@@ -458,17 +461,17 @@ public class FilesArrangeController extends FilesBatchController {
     public void donePost() {
         showCost();
         updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(startTime) + "   "
-                + AppVaribles.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
-        updateLogs(AppVaribles.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
-                + AppVaribles.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                + AppVaribles.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
-        updateLogs(AppVaribles.message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
-                + AppVaribles.message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                + AppVaribles.message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
+                + AppVariables.message("Cost") + ": " + DateTools.showTime(new Date().getTime() - startTime.getTime()), false, true);
+        updateLogs(AppVariables.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                + AppVariables.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                + AppVariables.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
+        updateLogs(AppVariables.message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                + AppVariables.message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                + AppVariables.message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
         if (!isCopy) {
-            updateLogs(AppVaribles.message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
-                    + AppVaribles.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                    + AppVaribles.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+            updateLogs(AppVariables.message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                    + AppVariables.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                    + AppVariables.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
 
         if (operationBarController.miaoCheck.isSelected()) {

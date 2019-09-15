@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.scene.control.IndexRange;
 import mara.mybox.data.FileEditInformation;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import mara.mybox.data.FileEditInformation.Line_Break;
 
 import thridparty.EncodingDetect;
@@ -52,7 +52,7 @@ public class TextTools {
     public static List<String> getCharsetNames() {
         try {
             List<Charset> sets = getCharsets();
-            List<String> setNames = new ArrayList();
+            List<String> setNames = new ArrayList<>();
             for (Charset set : sets) {
                 setNames.add(set.name());
             }

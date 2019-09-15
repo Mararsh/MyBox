@@ -27,97 +27,55 @@ License:    Apache License Version 2.0
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
     <center>
-        <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" BorderPane.alignment="CENTER">
+        <VBox fx:id="contentBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                                    <graphic>
-                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconOpen.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <Button fx:id="selectSourceButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconTips.png" />
+                                        <Image url="@../buttons/iconOpen.png" />
                                     </image>
                                 </ImageView>
-                            </items>
-                        </ToolBar>
-                        <HBox fx:id="operation1Box" alignment="CENTER_LEFT">
+                            </graphic>
+                        </Button>
+                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/iconTips.png" />
+                            </image>
+                        </ImageView>
+                        <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                          <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
+                        <CheckBox fx:id="bookmarksCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconTree.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconBrowse.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <HBox fx:id="operation1Box" alignment="CENTER_LEFT" spacing="5.0">
                             <children>
-                                <ToolBar HBox.hgrow="NEVER">
-                                    <items>
-                                        <CheckBox fx:id="openSaveCheck" mnemonicParsing="false" text="%OpenAfterSave" />
-                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconInfo.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconSelectAll.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconSaveAs.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/iconCopy.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                    </items>
-                                </ToolBar>
-                            </children>
-                        </HBox>
-                    </children>
-                </HBox>
-                <HBox fx:id="operation2Box" alignment="CENTER_LEFT">
-                    <children>
-                        <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" HBox.hgrow="ALWAYS">
-                            <items>
+                                <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                 <Label text="dpi" />
-                                <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                 <Label text="\%" />
-                                <ComboBox fx:id="sizeBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
+                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconPicSmall.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconPicBig.png" />
+                                                <Image url="@../buttons/iconZoomOut.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -131,143 +89,24 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
+                                <Button fx:id="paneSizeButton" mnemonicParsing="false" onAction="#paneSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconZoomOut.png" />
+                                                <Image url="@../buttons/iconPicBig.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-
-                                <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
+                                <Button fx:id="imageSizeButton" mnemonicParsing="false" onAction="#loadedSize">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/iconRotateRight.png" />
+                                                <Image url="@../buttons/iconPicSmall.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconRotateLeft.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                                <Button fx:id="turnOverButton" mnemonicParsing="false" onAction="#turnOver">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/iconTurnOver.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-                <HBox fx:id="operation3Box" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308">
-                    <children>
-                        <ToolBar HBox.hgrow="ALWAYS">
-                            <items>
-                                <CheckBox mnemonicParsing="false" text=" " visible="false" />
-                            </items>
-                        </ToolBar>
-                        <ToolBar HBox.hgrow="NEVER">
-                            <items>
-                                <Label styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " fx:id="xyLabel" />
-                                <CheckBox fx:id="transCheck" mnemonicParsing="false" text="%TransparentBackground" />
-                                <CheckBox fx:id="coordinateCheck" mnemonicParsing="false" text="%Coordinate" />
-                                <CheckBox fx:id="rulerXCheck" mnemonicParsing="false" text="%RulerX" HBox.hgrow="NEVER" />
-                                <CheckBox fx:id="rulerYCheck" mnemonicParsing="false" text="%RulerY" />
-                                <CheckBox fx:id="selectCheck" mnemonicParsing="false" text="%Select" />
-                        <CheckBox fx:id="thumbCheck" mnemonicParsing="false" selected="true" text="%Thumbnails" />
-                        <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%PDFOutline" />
-                            </items>
-                        </ToolBar>
-                    </children>
-                </HBox>
-            <SplitPane fx:id="viewPane" dividerPositions="0.18218623481781376, 0.37044534412955465" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-               <items>
-                  <ScrollPane fx:id="thumbScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <VBox fx:id="thumbBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
-                     </content>
-                  </ScrollPane>
-                  <ScrollPane fx:id="outlineScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
-                     <content>
-                        <TreeView fx:id="outlineTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
-                     </content>
-                  </ScrollPane>
-                      <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                          <content>
-                              <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
-                                  <children>
-                                      <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
-                                </ImageView>
-                                      <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
-                                          <cursor>
-                                              <Cursor fx:constant="MOVE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="W_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="NE_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="N_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="E_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="SE_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="N_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="SW_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                          <cursor>
-                                              <Cursor fx:constant="NW_RESIZE" />
-                                          </cursor>
-                                      </Rectangle>
-                                      <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
-                                  </children>
-                              </AnchorPane>
-                          </content>
-                      </ScrollPane>
-               </items>
-            </SplitPane>
-                <HBox fx:id="pageNavBox" alignment="CENTER_LEFT" disable="true" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                  <ToolBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                     <items>
-                        <Label maxWidth="1.7976931348623157E308" text=" " visible="false" HBox.hgrow="ALWAYS" />
                                 <Label text="%Page" />
                                 <TextField fx:id="pageInput" prefWidth="60.0" text="1" />
                                 <Label fx:id="pageLabel" />
@@ -316,11 +155,216 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                     </items>
-                  </ToolBar>
+                                <ToggleButton fx:id="moreButton" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconMore.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </ToggleButton>
+                            </children>
+                        </HBox>
                     </children>
                 </HBox>
+                <HBox fx:id="operation2Box" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label maxWidth="1.7976931348623157E308" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text=" " HBox.hgrow="ALWAYS" fx:id="xyLabel" />
+                        <CheckBox fx:id="openSaveCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOpen2.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="transparentBackgroundCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconOpacity.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="rulerYCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconYRuler.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconXRuler.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconLocation.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                          <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                              <graphic>
+                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconTarget.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </CheckBox>
+                          <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconSelectAll.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="copyButton" mnemonicParsing="false" onAction="#copyAction">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconCopy.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                              <graphic>
+                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconSaveAs.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="turnOverButton" mnemonicParsing="false" onAction="#turnOver">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconTurnOver.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+
+                          <Button fx:id="rotateRightButton" mnemonicParsing="false" onAction="#rotateRight">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconRotateRight.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
+                              <graphic>
+                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconRotateLeft.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                          <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                              <graphic>
+                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/iconInfo.png" />
+                                      </image>
+                                  </ImageView>
+                              </graphic>
+                          </Button>
+                    </children>
+                </HBox>
+                <SplitPane fx:id="viewPane" dividerPositions="0.18218623481781376, 0.37044534412955465" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                    <items>
+                        <ScrollPane fx:id="thumbScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
+                            <content>
+                                <VBox fx:id="thumbBox" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" />
+                            </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="outlineScrollPane" fitToHeight="true" fitToWidth="true" pannable="true" prefHeight="200.0" prefWidth="200.0">
+                            <content>
+                                <TreeView fx:id="outlineTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                            </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#showXY" onMouseMoved="#showXY" onMousePressed="#showXY" onMouseReleased="#showXY" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <ImageView fx:id="imageView" cache="true" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                                        </ImageView>
+                                        <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="241.0" layoutX="163.0" layoutY="77.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="334.0">
+                                            <cursor>
+                                                <Cursor fx:constant="MOVE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="W_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="NE_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="N_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="193.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="E_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="492.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="SE_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="325.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="N_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="313.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="SW_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="158.0" layoutY="72.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                                            <cursor>
+                                                <Cursor fx:constant="NW_RESIZE" />
+                                            </cursor>
+                                        </Rectangle>
+                                        <Text strokeType="OUTSIDE" strokeWidth="0.0" x="200.0" y="200.0" fx:id="xyText" />
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
             </children>
+            <BorderPane.margin>
+                <Insets top="5.0" />
+            </BorderPane.margin>
         </VBox>
     </center>
     <padding>

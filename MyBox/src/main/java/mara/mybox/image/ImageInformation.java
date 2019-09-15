@@ -21,7 +21,7 @@ import mara.mybox.tools.FileTools;
 public class ImageInformation extends ImageFileInformation {
 
     protected ImageFileInformation imageFileInformation;
-    protected int index = -1, width, height;
+    protected int index = -1, width, height, imageType;
     protected String colorSpace, pixelsString, loadSizeString, fileSizeString, profileName, profileCompressionMethod;
     protected boolean isMultipleFrames, isSampled, isScaled;
     protected List<ImageTypeSpecifier> imageTypes;
@@ -135,6 +135,7 @@ public class ImageInformation extends ImageFileInformation {
         }
         Image theImage = SwingFXUtils.toFXImage(bufferImage, null);
         imageInfo.setImage(theImage);
+        imageInfo.setImageType(bufferImage.getType());
         imageInfo.setIsSampled(needSampled);
         imageInfo.setIsScaled(needScale);
 //        imageInfo.setIsMultipleFrames(imageFileInformation.getNumberOfImages() > 1);
@@ -158,6 +159,14 @@ public class ImageInformation extends ImageFileInformation {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public int getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(int imageType) {
+        this.imageType = imageType;
     }
 
     public int getWidth() {

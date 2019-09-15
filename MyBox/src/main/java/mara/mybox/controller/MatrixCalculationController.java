@@ -9,7 +9,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -21,14 +20,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import mara.mybox.controller.base.BaseController;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.MatrixTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -62,7 +60,7 @@ public class MatrixCalculationController extends BaseController {
     public TitledPane editPane, valuePane;
 
     public MatrixCalculationController() {
-        baseTitle = AppVaribles.message("MatricesCalculation");
+        baseTitle = AppVariables.message("MatricesCalculation");
 
     }
 
@@ -96,6 +94,7 @@ public class MatrixCalculationController extends BaseController {
                 if (editPane.isExpanded()) {
                     if (!editPBox.getChildren().contains(editVBox)) {
                         editPBox.getChildren().add(editVBox);
+                        FxmlControl.refreshStyle(editVBox);
                     }
                     VBox.setVgrow(editVBox, Priority.ALWAYS);
                     editPBox.setPrefHeight(thisPane.getHeight());
@@ -124,7 +123,7 @@ public class MatrixCalculationController extends BaseController {
         // Have not found way to set line breaks in PromptText of TextArea. All metheds in stackoverflow do not work :(
         init = true;
         editArea.setStyle(" -fx-text-fill: gray;");
-        editArea.setText(AppVaribles.message("MatrixInputComments"));
+        editArea.setText(AppVariables.message("MatrixInputComments"));
         editArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -159,7 +158,7 @@ public class MatrixCalculationController extends BaseController {
         popInformation(message("InputDataParametersAndOk"));
 
         currentEdit = editBox.getSelectionModel().getSelectedItem();
-        if (AppVaribles.message("IdentifyMatrix").equals(currentEdit)
+        if (AppVariables.message("IdentifyMatrix").equals(currentEdit)
                 || message("RandomSquareMatrix").equals(currentEdit)) {
             editOkButton.disableProperty().bind(editInput1.styleProperty().isEqualTo(badStyle));
 
@@ -175,46 +174,46 @@ public class MatrixCalculationController extends BaseController {
             );
         }
 
-        if (AppVaribles.message("SetAsColumnVector").equals(currentEdit)) {
+        if (AppVariables.message("SetAsColumnVector").equals(currentEdit)) {
             columnVector();
 
-        } else if (AppVaribles.message("SetAsRowVector").equals(currentEdit)) {
+        } else if (AppVariables.message("SetAsRowVector").equals(currentEdit)) {
             rowVector();
 
-        } else if (AppVaribles.message("RandomMatrix").equals(currentEdit)) {
+        } else if (AppVariables.message("RandomMatrix").equals(currentEdit)) {
             editOpBox.getChildren().add(1, editInput1);
             editInput1.setPrefWidth(100);
             editInput1.clear();
-            editInput1.setPromptText(AppVaribles.message("RowsNumber"));
-            FxmlControl.setTooltip(editInput1, new Tooltip(AppVaribles.message("RowsNumber")));
+            editInput1.setPromptText(AppVariables.message("RowsNumber"));
+            FxmlControl.setTooltip(editInput1, new Tooltip(AppVariables.message("RowsNumber")));
             int m = makeNumber(9);
             editInput1.setText(m + "");
 
             editOpBox.getChildren().add(2, editInput2);
             editInput2.setPrefWidth(100);
             editInput2.clear();
-            editInput2.setPromptText(AppVaribles.message("ColumnsNumber"));
-            FxmlControl.setTooltip(editInput1, new Tooltip(AppVaribles.message("ColumnsNumber")));
+            editInput2.setPromptText(AppVariables.message("ColumnsNumber"));
+            FxmlControl.setTooltip(editInput1, new Tooltip(AppVariables.message("ColumnsNumber")));
             int n = makeNumber(9);
             editInput2.setText(n + "");
 
-        } else if (AppVaribles.message("RandomSquareMatrix").equals(currentEdit)) {
+        } else if (AppVariables.message("RandomSquareMatrix").equals(currentEdit)) {
             editOpBox.getChildren().add(1, editInput1);
             editInput1.setPrefWidth(100);
             editInput1.clear();
-            editInput1.setPromptText(AppVaribles.message("PositiveInteger"));
-            FxmlControl.setTooltip(editInput1, new Tooltip(AppVaribles.message("PositiveInteger")));
+            editInput1.setPromptText(AppVariables.message("PositiveInteger"));
+            FxmlControl.setTooltip(editInput1, new Tooltip(AppVariables.message("PositiveInteger")));
 
             int n = makeNumber(9);
             editInput1.setText(n + "");
 
-        } else if (AppVaribles.message("SetColumnsNumber").equals(currentEdit)
+        } else if (AppVariables.message("SetColumnsNumber").equals(currentEdit)
                 || message("IdentifyMatrix").equals(currentEdit)) {
             editOpBox.getChildren().add(1, editInput1);
             editInput1.setPrefWidth(100);
             editInput1.clear();
-            editInput1.setPromptText(AppVaribles.message("PositiveInteger"));
-            FxmlControl.setTooltip(editInput1, new Tooltip(AppVaribles.message("PositiveInteger")));
+            editInput1.setPromptText(AppVariables.message("PositiveInteger"));
+            FxmlControl.setTooltip(editInput1, new Tooltip(AppVariables.message("PositiveInteger")));
 
             editInput1.setStyle(badStyle);
 
@@ -245,7 +244,7 @@ public class MatrixCalculationController extends BaseController {
             return null;
         }
         String[] values = s.split("\\s+");
-        List<Double> dList = new ArrayList();
+        List<Double> dList = new ArrayList<>();
         for (String v : values) {
             try {
                 double d = Double.parseDouble(v);
@@ -283,7 +282,7 @@ public class MatrixCalculationController extends BaseController {
             if (currentEdit == null || !editOpBox.getChildren().contains(editInput1)) {
                 return;
             }
-            if (AppVaribles.message("RandomMatrix").equals(currentEdit)) {
+            if (AppVariables.message("RandomMatrix").equals(currentEdit)) {
                 random();
             }
             int intValue;
@@ -299,11 +298,11 @@ public class MatrixCalculationController extends BaseController {
                 editInput1.setStyle(badStyle);
                 return;
             }
-            if (AppVaribles.message("SetColumnsNumber").equals(currentEdit)) {
+            if (AppVariables.message("SetColumnsNumber").equals(currentEdit)) {
                 columnsNumber(intValue);
-            } else if (AppVaribles.message("IdentifyMatrix").equals(currentEdit)) {
+            } else if (AppVariables.message("IdentifyMatrix").equals(currentEdit)) {
                 identify(intValue);
-            } else if (AppVaribles.message("RandomSquareMatrix").equals(currentEdit)) {
+            } else if (AppVariables.message("RandomSquareMatrix").equals(currentEdit)) {
                 random(intValue);
             }
         }
@@ -317,7 +316,7 @@ public class MatrixCalculationController extends BaseController {
             if (currentEdit == null || !editOpBox.getChildren().contains(editInput2)) {
                 return;
             }
-            if (AppVaribles.message("RandomMatrix").equals(currentEdit)) {
+            if (AppVariables.message("RandomMatrix").equals(currentEdit)) {
                 random();
             }
         }
@@ -523,7 +522,7 @@ public class MatrixCalculationController extends BaseController {
         editArea.clear();
         init = true;
         editArea.setStyle(" -fx-text-fill: gray;");
-        editArea.setText(AppVaribles.message("MatrixInputComments"));
+        editArea.setText(AppVariables.message("MatrixInputComments"));
         isSettingValues = false;
     }
 
@@ -540,7 +539,7 @@ public class MatrixCalculationController extends BaseController {
         String s = area.getText();
         String[] lines = s.split("\n");
         int col = 0;
-        List< List<Double>> m = new ArrayList();
+        List< List<Double>> m = new ArrayList<>();
         for (String line : lines) {
             line = line.replaceAll(matrixIgnoreChars, " ");
             line = line.trim();
@@ -548,7 +547,7 @@ public class MatrixCalculationController extends BaseController {
                 continue;
             }
             String[] values = line.split("\\s+");
-            List<Double> ds = new ArrayList();
+            List<Double> ds = new ArrayList<>();
             for (String v : values) {
                 try {
                     double d = Double.parseDouble(v);
@@ -599,6 +598,7 @@ public class MatrixCalculationController extends BaseController {
                     if (valuePane.isExpanded()) {
                         if (!valuePBox.getChildren().contains(valueVBox)) {
                             valuePBox.getChildren().add(valueVBox);
+                            FxmlControl.refreshStyle(valueVBox);
                         }
                         VBox.setVgrow(valueVBox, Priority.ALWAYS);
                         valueVBox.setPrefHeight(thisPane.getHeight());
@@ -658,7 +658,7 @@ public class MatrixCalculationController extends BaseController {
 
         currentCalculation = valueBox.getSelectionModel().getSelectedItem();
 
-        if (AppVaribles.message("SetDecimalScale").equals(currentCalculation)
+        if (AppVariables.message("SetDecimalScale").equals(currentCalculation)
                 || message("MultiplyNumber").equals(currentCalculation)
                 || message("DivideNumber").equals(currentCalculation)
                 || message("Power").equals(currentCalculation)
@@ -671,14 +671,14 @@ public class MatrixCalculationController extends BaseController {
             valueInput1.setStyle(badStyle);
 
             String m = null;
-            if (AppVaribles.message("SetDecimalScale").equals(currentCalculation)
+            if (AppVariables.message("SetDecimalScale").equals(currentCalculation)
                     || message("Power").equals(currentCalculation)) {
                 m = message("PositiveInteger");
 
-            } else if (AppVaribles.message("DivideNumber").equals(currentCalculation)) {
+            } else if (AppVariables.message("DivideNumber").equals(currentCalculation)) {
                 m = message("Nonzero");
 
-            } else if (AppVaribles.message("ComplementMinor").equals(currentCalculation)) {
+            } else if (AppVariables.message("ComplementMinor").equals(currentCalculation)) {
                 m = message("Row");
 
             }
@@ -688,13 +688,13 @@ public class MatrixCalculationController extends BaseController {
             }
         }
 
-        if (AppVaribles.message("ComplementMinor").equals(currentCalculation)) {
+        if (AppVariables.message("ComplementMinor").equals(currentCalculation)) {
             valueOpBox.getChildren().add(2, valueInput2);
             valueInput2.setPrefWidth(100);
             valueInput2.clear();
             valueInput2.setStyle(badStyle);
-            valueInput2.setPromptText(AppVaribles.message("Column"));
-            FxmlControl.setTooltip(valueInput2, new Tooltip(AppVaribles.message("Column")));
+            valueInput2.setPromptText(AppVariables.message("Column"));
+            FxmlControl.setTooltip(valueInput2, new Tooltip(AppVariables.message("Column")));
         }
 
     }
@@ -707,15 +707,15 @@ public class MatrixCalculationController extends BaseController {
             if (currentCalculation == null) {
                 return;
             }
-            if (AppVaribles.message("SetDecimalScale").equals(currentCalculation)) {
+            if (AppVariables.message("SetDecimalScale").equals(currentCalculation)) {
                 checkScale();
-            } else if (AppVaribles.message("Power").equals(currentCalculation)) {
+            } else if (AppVariables.message("Power").equals(currentCalculation)) {
                 checkPower();
-            } else if (AppVaribles.message("DivideNumber").equals(currentCalculation)) {
+            } else if (AppVariables.message("DivideNumber").equals(currentCalculation)) {
                 checkDivide();
-            } else if (AppVaribles.message("MultiplyNumber").equals(currentCalculation)) {
+            } else if (AppVariables.message("MultiplyNumber").equals(currentCalculation)) {
                 checkmultiply();
-            } else if (AppVaribles.message("ComplementMinor").equals(currentCalculation)) {
+            } else if (AppVariables.message("ComplementMinor").equals(currentCalculation)) {
                 checkComplementMinor1();
             }
         }
@@ -730,7 +730,7 @@ public class MatrixCalculationController extends BaseController {
             if (currentCalculation == null) {
                 return;
             }
-            if (AppVaribles.message("ComplementMinor").equals(currentCalculation)) {
+            if (AppVariables.message("ComplementMinor").equals(currentCalculation)) {
                 checkComplementMinor2();
             }
         }
@@ -752,8 +752,8 @@ public class MatrixCalculationController extends BaseController {
             @Override
             public void run() {
                 if (matrix == null) {
-                    popError(AppVaribles.message("InvalidData"));
-                    bottomLabel.setText(AppVaribles.message("Failed") + ":" + currentCalculation + "  "
+                    popError(AppVariables.message("InvalidData"));
+                    bottomLabel.setText(AppVariables.message("Failed") + ":" + currentCalculation + "  "
                             + message("InvalidData"));
                     startTime = -1;
                     return;
@@ -775,7 +775,7 @@ public class MatrixCalculationController extends BaseController {
                 valueArea.setText(s);
                 if (startTime > 0) {
                     long cost = new Date().getTime() - startTime;
-                    bottomLabel.setText(AppVaribles.message("Successful") + ":" + currentCalculation + "  "
+                    bottomLabel.setText(AppVariables.message("Successful") + ":" + currentCalculation + "  "
                             + message("Cost") + ":" + cost + " ms");
                     startTime = -1;
                 }
@@ -1038,8 +1038,8 @@ public class MatrixCalculationController extends BaseController {
         if (matrix == null) {
             makeMatrix(valueArea);
             if (matrix == null) {
-                popError(AppVaribles.message("InvalidData"));
-                bottomLabel.setText(AppVaribles.message("Failed") + ":" + currentCalculation + "  "
+                popError(AppVariables.message("InvalidData"));
+                bottomLabel.setText(AppVariables.message("Failed") + ":" + currentCalculation + "  "
                         + message("InvalidData"));
                 startTime = -1;
                 return;
@@ -1047,71 +1047,72 @@ public class MatrixCalculationController extends BaseController {
         }
         startTime = new Date().getTime();
         currentCalculation = valueBox.getSelectionModel().getSelectedItem();
-        if (task != null && task.isRunning()) {
-            task.cancel();
-        }
-        task = new Task<Void>() {
-            private boolean ok;
 
-            @Override
-            protected Void call() throws Exception {
-                if (AppVaribles.message("Transpose").equals(currentCalculation)) {
-                    transpose();
-
-                } else if (AppVaribles.message("SetAsInteger").equals(currentCalculation)) {
-                    integer();
-
-                } else if (AppVaribles.message("SetDecimalScale").equals(currentCalculation)) {
-                    scale();
-
-                } else if (AppVaribles.message("Normalize").equals(currentCalculation)) {
-                    normalize();
-
-                } else if (AppVaribles.message("MultiplyNumber").equals(currentCalculation)) {
-                    multiply();
-
-                } else if (AppVaribles.message("DivideNumber").equals(currentCalculation)) {
-                    divide();
-
-                } else if (AppVaribles.message("Power").equals(currentCalculation)) {
-                    power();
-
-                } else if (AppVaribles.message("AdjointMatrix").equals(currentCalculation)) {
-                    adjoint();
-
-                } else if (AppVaribles.message("DeterminantByComplementMinor").equals(currentCalculation)) {
-                    determinantByComplementMinor();
-
-                } else if (AppVaribles.message("DeterminantByElimination").equals(currentCalculation)) {
-                    determinantByElimination();
-
-                } else if (AppVaribles.message("InverseMatrixByAdjoint").equals(currentCalculation)) {
-                    inverseByAdjoint();
-
-                } else if (AppVaribles.message("InverseMatrixByElimination").equals(currentCalculation)) {
-                    inverseByElimination();
-
-                } else if (AppVaribles.message("ComplementMinor").equals(currentCalculation)) {
-                    complementMinor();
-
-                } else if (AppVaribles.message("RowEchelonForm").equals(currentCalculation)) {
-                    rowEchelonForm();
-
-                } else if (AppVaribles.message("ReducedRowEchelonForm").equals(currentCalculation)) {
-                    reducedRowEchelonForm();
-
-                } else if (AppVaribles.message("MatrixRank").equals(currentCalculation)) {
-                    rank();
-                }
-                return null;
+        synchronized (this) {
+            if (task != null) {
+                return;
             }
+            task = new SingletonTask<Void>() {
 
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+                @Override
+                protected boolean handle() {
+                    if (AppVariables.message("Transpose").equals(currentCalculation)) {
+                        transpose();
 
+                    } else if (AppVariables.message("SetAsInteger").equals(currentCalculation)) {
+                        integer();
+
+                    } else if (AppVariables.message("SetDecimalScale").equals(currentCalculation)) {
+                        scale();
+
+                    } else if (AppVariables.message("Normalize").equals(currentCalculation)) {
+                        normalize();
+
+                    } else if (AppVariables.message("MultiplyNumber").equals(currentCalculation)) {
+                        multiply();
+
+                    } else if (AppVariables.message("DivideNumber").equals(currentCalculation)) {
+                        divide();
+
+                    } else if (AppVariables.message("Power").equals(currentCalculation)) {
+                        power();
+
+                    } else if (AppVariables.message("AdjointMatrix").equals(currentCalculation)) {
+                        adjoint();
+
+                    } else if (AppVariables.message("DeterminantByComplementMinor").equals(currentCalculation)) {
+                        determinantByComplementMinor();
+
+                    } else if (AppVariables.message("DeterminantByElimination").equals(currentCalculation)) {
+                        determinantByElimination();
+
+                    } else if (AppVariables.message("InverseMatrixByAdjoint").equals(currentCalculation)) {
+                        inverseByAdjoint();
+
+                    } else if (AppVariables.message("InverseMatrixByElimination").equals(currentCalculation)) {
+                        inverseByElimination();
+
+                    } else if (AppVariables.message("ComplementMinor").equals(currentCalculation)) {
+                        complementMinor();
+
+                    } else if (AppVariables.message("RowEchelonForm").equals(currentCalculation)) {
+                        rowEchelonForm();
+
+                    } else if (AppVariables.message("ReducedRowEchelonForm").equals(currentCalculation)) {
+                        reducedRowEchelonForm();
+
+                    } else if (AppVariables.message("MatrixRank").equals(currentCalculation)) {
+                        rank();
+                    }
+                    return true;
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        }
     }
 
     @FXML

@@ -19,14 +19,13 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.controller.base.PdfBatchController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageBinary;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -47,6 +46,7 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     protected int jpegQuality, threshold;
     protected PdfImageFormat format;
     protected PDDocument targetDoc;
+    protected File tmpFile;
 
     @FXML
     protected ToggleGroup formatGroup;
@@ -58,7 +58,7 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     protected CheckBox ditherCheck, copyAllCheck;
 
     public PdfCompressImagesBatchController() {
-        baseTitle = AppVaribles.message("PdfCompressImagesBatch");
+        baseTitle = AppVariables.message("PdfCompressImagesBatch");
         AuthorKey = "AuthorKey";
     }
 
@@ -98,10 +98,10 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
         authorInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                AppVaribles.setUserConfigValue(AuthorKey, newValue);
+                AppVariables.setUserConfigValue(AuthorKey, newValue);
             }
         });
-        authorInput.setText(AppVaribles.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
+        authorInput.setText(AppVariables.getUserConfigValue(AuthorKey, System.getProperty("user.name")));
 
     }
 
@@ -111,10 +111,10 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
         thresholdInput.setDisable(true);
 
         RadioButton selected = (RadioButton) formatGroup.getSelectedToggle();
-        if (AppVaribles.message("CCITT4").equals(selected.getText())) {
+        if (AppVariables.message("CCITT4").equals(selected.getText())) {
             format = PdfImageFormat.Tiff;
             thresholdInput.setDisable(false);
-        } else if (AppVaribles.message("JpegQuailty").equals(selected.getText())) {
+        } else if (AppVariables.message("JpegQuailty").equals(selected.getText())) {
             format = PdfImageFormat.Jpeg;
             jpegBox.setDisable(false);
             checkJpegQuality();
@@ -180,14 +180,12 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
             File tFile = makeTargetFile(FileTools.getFilePrefix(currentParameters.currentSourceFile.getName()),
                     ".pdf", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
-            if (tFile.exists()) {
-                tFile.delete();
-            }
+            tmpFile = FileTools.getTempFile();
             if (copyAllCheck.isSelected()) {
 //                doc.save(tFile);
                 targetDoc = doc;
             } else {
-                targetDoc = PdfTools.createPDF(tFile, authorInput.getText());
+                targetDoc = PdfTools.createPDF(tmpFile, authorInput.getText());
             }
 
         } catch (Exception e) {
@@ -254,8 +252,13 @@ public class PdfCompressImagesBatchController extends PdfBatchController {
     public void postHandlePages() {
         try {
             if (targetDoc != null) {
-                targetDoc.save(currentTargetFile);
+                targetDoc.save(tmpFile);
                 targetDoc.close();
+                File tFile = new File(currentTargetFile);
+                if (tFile.exists()) {
+                    tFile.delete();
+                }
+                tmpFile.renameTo(tFile);
                 currentParameters.finalTargetName = currentTargetFile;
                 targetFiles.add(new File(currentTargetFile));
             }

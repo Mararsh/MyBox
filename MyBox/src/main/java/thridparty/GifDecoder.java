@@ -186,7 +186,7 @@ public final class GifDecoder {
         public int bgColIndex; // Background color index, 1 Byte
         public int pxAspectRatio; // Pixel aspect ratio, 1 Byte
         public int[] globalColTbl; // Global color table
-        private final List<GifFrame> frames = new ArrayList<GifFrame>(64);
+        private final List<GifFrame> frames = new ArrayList<>(64);
         public String appId = ""; // 8 Bytes at in[i+3], usually "NETSCAPE"
         public String appAuthCode = ""; // 3 Bytes at in[i+11], usually "2.0"
         public int repetitions = 0; // 0: infinite loop, N: number of loops

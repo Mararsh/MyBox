@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,8 +27,9 @@ import mara.mybox.image.ImageFileInformation;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageGifFile;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -48,14 +48,14 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     protected Button pauseButton, extractButton;
     @FXML
-    protected HBox operation4Box;
+    protected HBox operation3Box;
     @FXML
     protected Label promptLabel, commentsLabel;
     @FXML
     protected TextField fromInput, toInput;
 
     public ImageGifViewerController() {
-        baseTitle = AppVaribles.message("ImageGifViewer");
+        baseTitle = AppVariables.message("ImageGifViewer");
 
         SourceFileType = VisitHistory.FileType.Gif;
         SourcePathType = VisitHistory.FileType.Gif;
@@ -68,7 +68,7 @@ public class ImageGifViewerController extends ImageViewerController {
         needNotRulers = true;
         needNotCoordinates = true;
 
-        sourceExtensionFilter = CommonValues.GifExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.GifExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
     }
 
@@ -171,61 +171,55 @@ public class ImageGifViewerController extends ImageViewerController {
             }
             sourceFile = file;
             final String fileName = file.getPath();
-            task = new Task<Void>() {
-                private boolean ok;
+            synchronized (this) {
+                if (task != null) {
+                    return;
+                }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected Void call() throws Exception {
-                    ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
-                    imageInformation = imageFileInformation.getImageInformation();
-                    if (onlyInformation) {
-                        return null;
-                    }
-                    List<BufferedImage> bimages = ImageFileReaders.readFrames("gif", fileName);
-                    if (bimages == null) {
-                        return null;
-                    }
-                    totalNumber = bimages.size();
-                    images = new Image[totalNumber];
-                    for (int i = 0; i < totalNumber; i++) {
-                        if (task == null || task.isCancelled()) {
-                            return null;
+                    @Override
+                    protected boolean handle() {
+                        ImageFileInformation imageFileInformation = ImageFileReaders.readImageFileMetaData(fileName);
+                        imageInformation = imageFileInformation.getImageInformation();
+                        if (onlyInformation) {
+                            return true;
                         }
-                        Image m = SwingFXUtils.toFXImage(bimages.get(i), null);
-                        images[i] = m;
-                    }
-                    if (task == null || task.isCancelled()) {
-                        return null;
-                    }
-                    if (totalNumber > 0) {
-                        image = images[0];
-                    }
-
-                    ok = true;
-                    return null;
-                }
-
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    if (ok) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                afterImageLoaded();
-                                isSettingValues = true;
-                                fromInput.setText("0");
-                                toInput.setText((totalNumber - 1) + "");
-                                isSettingValues = false;
+                        List<BufferedImage> bimages = ImageFileReaders.readFrames("gif", fileName);
+                        if (bimages == null) {
+                            return false;
+                        }
+                        totalNumber = bimages.size();
+                        images = new Image[totalNumber];
+                        for (int i = 0; i < totalNumber; i++) {
+                            if (task == null || isCancelled()) {
+                                return false;
                             }
-                        });
+                            Image m = SwingFXUtils.toFXImage(bimages.get(i), null);
+                            images[i] = m;
+                        }
+                        if (task == null || isCancelled()) {
+                            return false;
+                        }
+                        if (totalNumber > 0) {
+                            image = images[0];
+                        }
+                        return image != null;
                     }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
+
+                    @Override
+                    protected void whenSucceeded() {
+                        afterImageLoaded();
+                        isSettingValues = true;
+                        fromInput.setText("0");
+                        toInput.setText((totalNumber - 1) + "");
+                        isSettingValues = false;
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -254,7 +248,7 @@ public class ImageGifViewerController extends ImageViewerController {
     @FXML
     public void pauseAction() {
         try {
-            if (pauseButton.getText().equals(AppVaribles.message("Pause"))) {
+            if (pauseButton.getText().equals(AppVariables.message("Pause"))) {
                 logger.debug("here");
                 if (timer != null) {
                     logger.debug("here");
@@ -262,12 +256,12 @@ public class ImageGifViewerController extends ImageViewerController {
                 }
                 previousButton.setDisable(false);
                 nextButton.setDisable(false);
-                pauseButton.setText(AppVaribles.message("Continue"));
-            } else if (pauseButton.getText().equals(AppVaribles.message("Continue"))) {
+                pauseButton.setText(AppVariables.message("Continue"));
+            } else if (pauseButton.getText().equals(AppVariables.message("Continue"))) {
                 showGifImage(currentIndex);
                 previousButton.setDisable(true);
                 nextButton.setDisable(true);
-                pauseButton.setText(AppVaribles.message("Pause"));
+                pauseButton.setText(AppVariables.message("Pause"));
             }
 
         } catch (Exception e) {
@@ -308,44 +302,38 @@ public class ImageGifViewerController extends ImageViewerController {
                     || totalNumber <= 0 || fromIndex > toIndex) {
                 return;
             }
-            final File file = chooseSaveFile(AppVaribles.getUserConfigPath(targetPathKey),
+            final File file = chooseSaveFile(AppVariables.getUserConfigPath(targetPathKey),
                     FileTools.getFilePrefix(sourceFile.getName()),
-                    CommonValues.ImageExtensionFilter, true);
+                    CommonImageValues.ImageExtensionFilter, true);
             if (file == null) {
                 return;
             }
-            AppVaribles.setUserConfigValue(targetPathKey, file.getParent());
+            recordFileWritten(file);
 
-            task = new Task<Void>() {
-                private List<String> filenames;
-                private boolean ok;
-
-                @Override
-                protected Void call() throws Exception {
-                    filenames = ImageGifFile.extractGifImages(sourceFile, file, fromIndex, toIndex);
-
-                    ok = true;
-                    return null;
+            synchronized (this) {
+                if (task != null) {
+                    return;
                 }
+                task = new SingletonTask<Void>() {
 
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    if (ok) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                multipleFilesGenerated(filenames);
-                            }
-                        });
+                    private List<String> filenames;
+
+                    @Override
+                    protected boolean handle() {
+                        filenames = ImageGifFile.extractGifImages(sourceFile, file, fromIndex, toIndex);
+                        return filenames != null;
                     }
-                }
-            };
-            openHandlingStage(task, Modality.WINDOW_MODAL);
-            Thread thread = new Thread(task);
-            thread.setDaemon(true);
-            thread.start();
 
+                    @Override
+                    protected void whenSucceeded() {
+                        multipleFilesGenerated(filenames);
+                    }
+                };
+                openHandlingStage(task, Modality.WINDOW_MODAL);
+                Thread thread = new Thread(task);
+                thread.setDaemon(true);
+                thread.start();
+            }
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -402,7 +390,7 @@ public class ImageGifViewerController extends ImageViewerController {
             setCurrentFrame();
             previousButton.setDisable(false);
             nextButton.setDisable(false);
-            pauseButton.setText(AppVaribles.message("Continue"));
+            pauseButton.setText(AppVariables.message("Continue"));
         } catch (Exception e) {
             logger.error(e.toString());
         }
@@ -416,9 +404,9 @@ public class ImageGifViewerController extends ImageViewerController {
         }
         imageView.setImage(images[currentIndex]);
         refinePane();
-        promptLabel.setText(AppVaribles.message("TotalFrames") + ": " + images.length + "  "
-                + AppVaribles.message("CurrentFrame") + ": " + currentIndex + "  "
-                + AppVaribles.message("Size") + ": " + (int) images[currentIndex].getWidth()
+        promptLabel.setText(AppVariables.message("TotalFrames") + ": " + images.length + "  "
+                + AppVariables.message("CurrentFrame") + ": " + currentIndex + "  "
+                + AppVariables.message("Size") + ": " + (int) images[currentIndex].getWidth()
                 + "*" + (int) images[currentIndex].getHeight());
         currentIndex++;
     }

@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
@@ -14,11 +13,11 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.fxml.FxmlControl;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -47,7 +46,7 @@ public class ImageManufactureBatchTransformController extends ImageManufactureBa
     }
 
     public ImageManufactureBatchTransformController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchTransform");
+        baseTitle = AppVariables.message("ImageManufactureBatchTransform");
 
     }
 

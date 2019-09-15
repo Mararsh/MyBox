@@ -12,8 +12,8 @@ import mara.mybox.color.Illuminant;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara

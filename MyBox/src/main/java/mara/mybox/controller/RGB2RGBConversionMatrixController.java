@@ -1,13 +1,11 @@
 package mara.mybox.controller;
 
 import java.util.Map;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -22,13 +20,11 @@ import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
-import mara.mybox.controller.base.ChromaticityBaseController;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.tools.MatrixTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -55,7 +51,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     protected Button calculateButton, calculateAllButton, exportButton;
 
     public RGB2RGBConversionMatrixController() {
-        baseTitle = AppVaribles.message("LinearRGB2RGBMatrix");
+        baseTitle = AppVariables.message("LinearRGB2RGBMatrix");
         exportName = "LinearRGB2RGBMatrix";
     }
 
@@ -144,12 +140,12 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
     }
 
     private void initMatrices() {
-        sourceCSColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("source"));
-        sourceWhiteColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("sourceWhite"));
-        targetCSColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("target"));
-        targetWhiteColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("targetWhite"));
-        algorithmColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("algorithm"));
-        source2targetColumn.setCellValueFactory(new PropertyValueFactory<RGB2RGBConversionMatrix, String>("source2target"));
+        sourceCSColumn.setCellValueFactory(new PropertyValueFactory<>("source"));
+        sourceWhiteColumn.setCellValueFactory(new PropertyValueFactory<>("sourceWhite"));
+        targetCSColumn.setCellValueFactory(new PropertyValueFactory<>("target"));
+        targetWhiteColumn.setCellValueFactory(new PropertyValueFactory<>("targetWhite"));
+        algorithmColumn.setCellValueFactory(new PropertyValueFactory<>("algorithm"));
+        source2targetColumn.setCellValueFactory(new PropertyValueFactory<>("source2target"));
 
         scaleMatricesInput.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -161,14 +157,14 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     } else {
                         scale = p;
                         scaleMatricesInput.setStyle(null);
-                        AppVaribles.setUserConfigInt("MatrixDecimalScale", scale);
+                        AppVariables.setUserConfigInt("MatrixDecimalScale", scale);
                     }
                 } catch (Exception e) {
                     scaleMatricesInput.setStyle(badStyle);
                 }
             }
         });
-        int p = AppVaribles.getUserConfigInt("MatrixDecimalScale", 8);
+        int p = AppVariables.getUserConfigInt("MatrixDecimalScale", 8);
         scaleMatricesInput.setText(p + "");
 
         calculateAllButton.disableProperty().bind(scaleMatricesInput.textProperty().isEmpty()
@@ -241,40 +237,35 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
-        if (task != null && task.isRunning()) {
-            task.cancel();
+        synchronized (this) {
+            if (task != null) {
+                return;
+            }
+            task = new SingletonTask<Void>() {
+
+                private String allTexts;
+
+                @Override
+                protected boolean handle() {
+                    allData = FXCollections.observableArrayList();
+                    allData.addAll(RGB2RGBConversionMatrix.all(scale));
+                    allTexts = RGB2RGBConversionMatrix.allTexts(scale);
+                    return allTexts != null;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    matrixTableView.setItems(allData);
+                    textsArea.setText(allTexts);
+                    textsArea.home();
+                }
+
+            };
+            openHandlingStage(task, Modality.WINDOW_MODAL);
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
         }
-        task = new Task<Void>() {
-            private boolean ok;
-            private String allTexts;
-
-            @Override
-            protected Void call() throws Exception {
-                allData = FXCollections.observableArrayList();
-                allData.addAll(RGB2RGBConversionMatrix.all(scale));
-                allTexts = RGB2RGBConversionMatrix.allTexts(scale);
-                ok = true;
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        matrixTableView.setItems(allData);
-                        textsArea.setText(allTexts);
-                        textsArea.home();
-                    }
-                });
-            }
-
-        };
-        openHandlingStage(task, Modality.WINDOW_MODAL);
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
     @Override

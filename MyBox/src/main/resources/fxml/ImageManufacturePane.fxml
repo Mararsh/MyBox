@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufacturePaneController">
+    <children>
+        <VBox fx:id="scopePane" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+            <children>
+                <VBox fx:id="scopeManageBox" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <HBox fx:id="scopesBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label text="%SavedScopes" />
+                                <ComboBox fx:id="scopeSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="scopeUseButton" mnemonicParsing="false" onAction="#useScope">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconOK2.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="scopeDeleteButton" mnemonicParsing="false" onAction="#deleteScope">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconDelete.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="scopeClearButton" mnemonicParsing="false" onAction="#clearScopes">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconClear.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="scopeCreateButton" mnemonicParsing="false" onAction="#createScope">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconEdit.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <HBox fx:id="scopeNameBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label text="%ScopeName" />
+                                <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                <Button fx:id="scopeSaveButton" mnemonicParsing="false" onAction="#saveScope">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSave.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox fx:id="scopeEditBox" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <FlowPane fx:id="scopeTypeBox" hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <Label text="%ScopeType" />
+                                <RadioButton fx:id="scopeRectangleRadio" mnemonicParsing="false">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="typeGroup" />
+                                    </toggleGroup>
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconRectangle.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeMattingRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconColorFill.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeCircleRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconCircle.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeEllipseRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconEllipse.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopePolygonRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconStar.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeColorRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconColorWheel.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeRectangleColorRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconRectangleFilled.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeCircleColorRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconCircleFilled.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeEllipseColorRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconEllipseFilled.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopePolygonColorRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconStarFilled.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                                <RadioButton fx:id="scopeOutlineRadio" layoutX="181.0" layoutY="40.0" mnemonicParsing="false" toggleGroup="$typeGroup">
+                                    <graphic>
+                                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/IconButterfly.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </RadioButton>
+                            </children>
+                        </FlowPane>
+                        <FlowPane fx:id="scopeValuesBox" hgap="5.0" layoutX="10.0" layoutY="140.0" minHeight="-Infinity" vgap="5.0" VBox.vgrow="NEVER">
+                            <children>
+                                <HBox fx:id="pointsSetBox" alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Label fx:id="scopePointsLabel" text="%Points" />
+                                        <ComboBox fx:id="scopePointsList" prefWidth="240.0" />
+                                        <Button fx:id="scopeDeletePointButton" mnemonicParsing="false" onAction="#deletePoint">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDelete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="scopeClearPointsButton" mnemonicParsing="false" onAction="#clearPoints">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Label fx:id="pointsSizeLabel" text=" " />
+                                    </children>
+                                </HBox>
+                                <CheckBox fx:id="areaExcludedCheck" mnemonicParsing="false" text="%AreaExclude" />
+                                <FlowPane fx:id="scopeColorBox" hgap="5.0" minHeight="-Infinity" prefWrapLength="500.0" vgap="5.0">
+                                    <children>
+                                        <Label fx:id="scopeColorsLabel" text="%Colors" />
+                                        <ComboBox fx:id="scopeColorsList" prefWidth="240.0" />
+                                        <Button fx:id="scopeDeleteColorButton" mnemonicParsing="false" onAction="#deleteColor">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconDelete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="scopeClearColorsButton" mnemonicParsing="false" onAction="#clearColors">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Label fx:id="colorsSizeLabel" text=" " />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane fx:id="scopeMatchBox" hgap="5.0" minHeight="-Infinity" prefWrapLength="550.0" vgap="5.0">
+                                    <children>
+                                        <Label fx:id="scopeMatchLabel" text="%Match" />
+                                        <ComboBox fx:id="scopeMatchList" prefWidth="130.0" />
+                                        <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconTips.png" />
+                                            </image>
+                                        </ImageView>
+                                        <Label fx:id="scopeDistanceLabel" text="%Distance" />
+                                        <ComboBox fx:id="scopeDistanceList" editable="true" prefWidth="100.0" />
+                                        <CheckBox fx:id="colorExcludedCheck" mnemonicParsing="false" text="%ColorExclude" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane fx:id="scopeOutlineBox" hgap="5.0" minHeight="-Infinity" prefWrapLength="350.0" vgap="5.0">
+                                    <children>
+                                        <Label text="%Picture" />
+                                        <Button fx:id="scopeOutlineFileButton" mnemonicParsing="false" onAction="#selectOutlineFile" onMouseEntered="#popOutlineFile">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconOpen.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <ComboBox fx:id="pixBox" prefWidth="120.0" />
+                                        <CheckBox fx:id="scopeOutlineKeepRatioCheck" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/iconAspectRatio.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
+                                    </children>
+                                </FlowPane>
+                            </children>
+                        </FlowPane>
+                    </children>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+                </VBox>
+            </children>
+            <VBox.margin>
+                <Insets />
+            </VBox.margin>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </VBox>
+        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
+            <children>
+                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                <HBox fx:id="scopeCommonBox" alignment="CENTER_LEFT" spacing="5.0">
+                    <children>
+                        <HBox fx:id="opacityBox" alignment="CENTER_LEFT" spacing="5.0" HBox.hgrow="NEVER">
+                            <children>
+                                <ComboBox fx:id="opacitySelector" prefWidth="120.0" />
+                            </children>
+                        </HBox>
+                        <CheckBox fx:id="scopeManageCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconData.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <CheckBox fx:id="scopeSetCheck" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconTarget.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#showPalette">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/iconPalette.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </HBox>
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefViewportHeight="310.0" prefViewportWidth="448.0" VBox.vgrow="ALWAYS">
+            <content>
+                <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">
+                    <children>
+                        <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="maskView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" visible="false" />
+                        <Rectangle fx:id="maskRectangleLine" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="200.0" layoutX="20.0" layoutY="64.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="RED" strokeType="INSIDE" width="200.0">
+                            <cursor>
+                                <Cursor fx:constant="MOVE" />
+                            </cursor>
+                        </Rectangle>
+                        <Circle fx:id="maskCircleLine" fill="#ffffff00" layoutX="210.0" layoutY="141.0" onMousePressed="#handlerPressed" onMouseReleased="#circleReleased" radius="139.0" stroke="RED" strokeType="INSIDE">
+                            <cursor>
+                                <Cursor fx:constant="MOVE" />
+                            </cursor>
+                        </Circle>
+                        <Ellipse fx:id="maskEllipseLine" fill="#ffffff00" layoutX="130.0" layoutY="181.0" onMousePressed="#handlerPressed" onMouseReleased="#ellipseReleased" radiusX="100.0" radiusY="80.0" stroke="RED" strokeType="INSIDE">
+                            <cursor>
+                                <Cursor fx:constant="MOVE" />
+                            </cursor>
+                        </Ellipse>
+                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" stroke="RED" strokeType="INSIDE">
+                            <points>
+                                <Double fx:value="-50.0" />
+                                <Double fx:value="40.0" />
+                                <Double fx:value="50.0" />
+                                <Double fx:value="40.0" />
+                                <Double fx:value="0.0" />
+                                <Double fx:value="-60.0" />
+                            </points>
+                            <cursor>
+                                <Cursor fx:constant="DEFAULT" />
+                            </cursor>
+                        </Polygon>
+                        <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NONE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="polygonP2" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NONE" />
+                            </cursor>
+                        </Rectangle>
+                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
+                            <points>
+                                <Double fx:value="-50.0" />
+                                <Double fx:value="-40.0" />
+                                <Double fx:value="50.0" />
+                                <Double fx:value="-40.0" />
+                                <Double fx:value="0.0" />
+                                <Double fx:value="60.0" />
+                                <Double fx:value="-50.0" />
+                                <Double fx:value="-40.0" />
+                            </points>
+                        </Polyline>
+                        <Text layoutX="10.0" layoutY="-7.0" strokeType="OUTSIDE" strokeWidth="0.0" x="20.0" y="120.0" fx:id="xyText" />
+                        <Rectangle fx:id="topLeftHandler" fill="#ffffff00" height="10.0" layoutX="70.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NW_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomRightHandler" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="SE_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomCenterHandler" fill="#ffffff00" height="10.0" layoutX="130.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="N_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="topCenterHandler" fill="#ffffff00" height="10.0" layoutX="110.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="N_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="bottomLeftHandler" fill="#ffffff00" height="10.0" layoutX="150.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#bottomLeftHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="SW_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="topRightHandler" fill="#ffffff00" height="10.0" layoutX="90.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#topRightHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="NE_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="leftCenterHandler" fill="#ffffff00" height="10.0" layoutX="110.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#leftCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="W_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                        <Rectangle fx:id="rightCenterHandler" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="41.0" onMousePressed="#handlerPressed" onMouseReleased="#rightCenterHandlerReleased" stroke="BLUE" strokeType="INSIDE" width="10.0">
+                            <cursor>
+                                <Cursor fx:constant="E_RESIZE" />
+                            </cursor>
+                        </Rectangle>
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+    </children>
+    <BorderPane.margin>
+        <Insets />
+    </BorderPane.margin>
+</VBox>

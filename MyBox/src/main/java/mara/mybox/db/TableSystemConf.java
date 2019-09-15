@@ -1,15 +1,13 @@
 package mara.mybox.db;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
-import mara.mybox.value.CommonValues;
 import mara.mybox.tools.ConfigTools;
-import static mara.mybox.value.AppVaribles.logger;
+import static mara.mybox.value.AppVariables.logger;
 
 /**
  * @Author Mara
@@ -22,18 +20,18 @@ public class TableSystemConf extends DerbyBase {
 
     public TableSystemConf() {
         Table_Name = "System_Conf";
-        Keys = new ArrayList() {
+        Keys = new ArrayList<>() {
             {
                 add("key_Name");
             }
         };
         Create_Table_Statement
                 = " CREATE TABLE System_Conf ( "
-                + "  key_Name  VARCHAR(100) NOT NULL PRIMARY KEY, "
+                + "  key_Name  VARCHAR(1024) NOT NULL PRIMARY KEY, "
                 + "  int_Value INTEGER, "
                 + "  default_int_Value INTEGER, "
-                + "  string_Value VARCHAR(1024), "
-                + "  default_string_Value VARCHAR(1024) "
+                + "  string_Value VARCHAR(32672), "
+                + "  default_string_Value VARCHAR(32672) "
                 + " )";
     }
 
@@ -44,7 +42,7 @@ public class TableSystemConf extends DerbyBase {
                 return false;
             }
             statement.executeUpdate(Create_Table_Statement);
-            Map<String, String> values = ConfigTools.readConfigValuesFromFile();
+            Map<String, String> values = ConfigTools.readConfigValues();
             if (values != null && !values.isEmpty()) {
                 for (String key : values.keySet()) {
                     String value = values.get(key);
@@ -65,20 +63,16 @@ public class TableSystemConf extends DerbyBase {
                             break;
                     }
                 }
-                try {
-                    new File(CommonValues.UserConfigFile).delete();
-                } catch (Exception e) {
-                }
             }
             return true;
         } catch (Exception e) {
-//            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }
 
     public static int write(String keyName, String stringValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT string_Value FROM System_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -100,13 +94,13 @@ public class TableSystemConf extends DerbyBase {
                 return statement.executeUpdate(sql);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return -1;
         }
     }
 
     public static int write(String keyName, int intValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql = " SELECT int_Value FROM System_Conf WHERE key_Name='" + keyName + "'";
             ResultSet results = statement.executeQuery(sql);
@@ -124,7 +118,7 @@ public class TableSystemConf extends DerbyBase {
                 return statement.executeUpdate(sql);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            // logger.debug(e.toString());
             return -1;
         }
     }
@@ -134,7 +128,7 @@ public class TableSystemConf extends DerbyBase {
     }
 
     public static String read(String keyName, String defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT string_Value FROM System_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
@@ -148,13 +142,13 @@ public class TableSystemConf extends DerbyBase {
                 return defaultValue;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return defaultValue;
         }
     }
 
     public static int readInt(String keyName, int defaultValue) {
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT int_Value FROM System_Conf WHERE key_Name='" + keyName + "'");
             if (resultSet.next()) {
@@ -166,7 +160,7 @@ public class TableSystemConf extends DerbyBase {
                 return defaultValue;
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return defaultValue;
         }
     }
@@ -180,13 +174,13 @@ public class TableSystemConf extends DerbyBase {
         if (keyName == null || keyName.isEmpty()) {
             return false;
         }
-        try (Connection conn = DriverManager.getConnection(protocol + dbName + login);
+        try (Connection conn = DriverManager.getConnection(protocol + dbName() + login);
                 Statement statement = conn.createStatement()) {
             String sql = "DELETE FROM System_Conf WHERE key_Name='" + keyName + "'";
             statement.executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            logger.debug(e.toString());
+//            // logger.debug(e.toString());
             return false;
         }
     }

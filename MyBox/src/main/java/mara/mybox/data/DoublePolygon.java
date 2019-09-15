@@ -56,7 +56,7 @@ public class DoublePolygon implements DoubleShape {
         if (x < 0 || y < 0 || points == null || points.isEmpty()) {
             return false;
         }
-        List<Double> d = new ArrayList();
+        List<Double> d = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             DoublePoint p = points.get(i);
             if (p.getX() == x && p.getY() == y) {
@@ -89,6 +89,27 @@ public class DoublePolygon implements DoubleShape {
     @Override
     public boolean isValid() {
         return points != null && points.size() > 2;
+    }
+
+    public boolean same(DoublePolygon polygon) {
+        if (polygon == null) {
+            return false;
+        }
+        if (points == null || points.isEmpty()) {
+            return polygon.getPoints() == null || polygon.getPoints().isEmpty();
+        } else {
+            if (polygon.getPoints() == null || points.size() != polygon.getPoints().size()) {
+                return false;
+            }
+        }
+        List<DoublePoint> bPoints = polygon.getPoints();
+        for (int i = 0; i < points.size(); i++) {
+            DoublePoint point = points.get(i);
+            if (!point.same(bPoints.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -132,7 +153,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public List<Double> getData() {
-        List<Double> d = new ArrayList();
+        List<Double> d = new ArrayList<>();
         for (int i = 0; i < points.size(); i++) {
             d.add(points.get(i).getX());
             d.add(points.get(i).getY());

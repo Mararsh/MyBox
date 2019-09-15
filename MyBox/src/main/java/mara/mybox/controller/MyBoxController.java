@@ -2,23 +2,37 @@ package mara.mybox.controller;
 
 import java.text.MessageFormat;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import mara.mybox.controller.base.BaseController;
+import javafx.scene.text.Text;
+import javafx.stage.Popup;
+import mara.mybox.MyBox;
 import mara.mybox.data.AlarmClock;
 import mara.mybox.fxml.FxmlControl;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.scheduledTasks;
+import mara.mybox.tools.ConfigTools;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
+import static mara.mybox.value.AppVariables.scheduledTasks;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -29,30 +43,63 @@ import mara.mybox.value.CommonValues;
  */
 public class MyBoxController extends BaseController {
 
-    private ContextMenu pdfMenu, imageMenu, fileMenu, desktopMenu, languageMenu,
-            networkMenu, recentMenu, dataMenu;
+    private Popup imagePop;
+    private ImageView view;
+    private Text text;
 
     @FXML
-    private VBox imageBox, pdfBox, fileBox, desktopBox, recentBox, networkBox, dataBox;
+    private VBox imageBox, pdfBox, fileBox, recentBox, networkBox, dataBox,
+            settingsBox, aboutBox, mediaBox;
     @FXML
-    private Label langLabel;
+    private CheckBox imageCheck;
 
     public MyBoxController() {
-        baseTitle = AppVaribles.message("AppTitle");
+        baseTitle = AppVariables.message("AppTitle");
 
     }
 
     @Override
     public void initializeNext() {
         try {
-            initPdfToolsMenu();
-            initImageToolsMenu();
-            initDesktopToolsMenu();
-            initFileToolsMenu();
-            initNetworkToolsMenu();
-            initDataToolsMenu();
-            initLanguageMenu();
+            makeImagePopup();
+            initAlocks();
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
 
+    }
+
+    private void makeImagePopup() {
+        try {
+            imagePop = new Popup();
+            imagePop.setWidth(510);
+            imagePop.setHeight(560);
+
+            VBox vbox = new VBox();
+            VBox.setVgrow(vbox, Priority.ALWAYS);
+            HBox.setHgrow(vbox, Priority.ALWAYS);
+            vbox.setMaxWidth(Double.MAX_VALUE);
+            vbox.setMaxHeight(Double.MAX_VALUE);
+            vbox.setStyle("-fx-background-color: white;");
+            imagePop.getContent().add(vbox);
+
+            view = new ImageView();
+            view.setFitWidth(500);
+            view.setFitHeight(500);
+            vbox.getChildren().add(view);
+
+            text = new Text();
+            text.setStyle("-fx-font-size: 1.5em;");
+            vbox.getChildren().add(text);
+
+        } catch (Exception e) {
+            logger.debug(e.toString());
+        }
+
+    }
+
+    private void initAlocks() {
+        try {
             List<AlarmClock> alarms = AlarmClock.readAlarmClocks();
             if (alarms != null) {
                 for (AlarmClock alarm : alarms) {
@@ -61,18 +108,55 @@ public class MyBoxController extends BaseController {
                     }
                 }
                 if (scheduledTasks != null && scheduledTasks.size() > 0) {
-                    bottomLabel.setText(MessageFormat.format(AppVaribles.message("AlarmClocksRunning"), scheduledTasks.size()));
+                    bottomLabel.setText(MessageFormat.format(AppVariables.message("AlarmClocksRunning"), scheduledTasks.size()));
                 }
             }
 
         } catch (Exception e) {
             logger.debug(e.toString());
         }
-
     }
 
-    private void initPdfToolsMenu() {
-        MenuItem pdfView = new MenuItem(AppVaribles.message("PdfView"));
+    private void showMenu(Region box, MouseEvent event) {
+        if (popMenu == null || popMenu.isShowing()) {
+            return;
+        }
+        FxmlControl.locateCenter(box, popMenu);
+    }
+
+    public void locateImage(Node region, boolean right) {
+        if (!imageCheck.isSelected()) {
+            imagePop.hide();
+            return;
+        }
+        Bounds bounds = region.localToScreen(region.getBoundsInLocal());
+        double x = right ? (bounds.getMaxX() + 200) : (bounds.getMinX() - 550);
+        imagePop.show(region, x, bounds.getMinY() - 50);
+        FxmlControl.refreshStyle(imagePop.getOwnerNode().getParent());
+    }
+
+    @FXML
+    private void hideMenu(MouseEvent event) {
+        if (popMenu != null) {
+            popMenu.hide();
+            popMenu = null;
+        }
+        imagePop.hide();
+    }
+
+    @FXML
+    private void showPdfMenu(MouseEvent event) {
+        hideMenu(event);
+
+        MenuItem pdfHtmlViewer = new MenuItem(AppVariables.message("PdfHtmlViewer"));
+        pdfHtmlViewer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.PdfHtmlViewerFxml);
+            }
+        });
+
+        MenuItem pdfView = new MenuItem(AppVariables.message("PdfView"));
         pdfView.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -80,7 +164,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem PDFAttributes = new MenuItem(AppVaribles.message("PDFAttributes"));
+        MenuItem PDFAttributes = new MenuItem(AppVariables.message("PDFAttributes"));
         PDFAttributes.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -88,7 +172,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem PDFAttributesBatch = new MenuItem(AppVaribles.message("PDFAttributesBatch"));
+        MenuItem PDFAttributesBatch = new MenuItem(AppVariables.message("PDFAttributesBatch"));
         PDFAttributesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -96,7 +180,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pdfExtractImagesBatch = new MenuItem(AppVaribles.message("PdfExtractImagesBatch"));
+        MenuItem pdfExtractImagesBatch = new MenuItem(AppVariables.message("PdfExtractImagesBatch"));
         pdfExtractImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -104,7 +188,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pdfExtractTextsBatch = new MenuItem(AppVaribles.message("PdfExtractTextsBatch"));
+        MenuItem pdfExtractTextsBatch = new MenuItem(AppVariables.message("PdfExtractTextsBatch"));
         pdfExtractTextsBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -112,7 +196,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pdfConvertImagesBatch = new MenuItem(AppVaribles.message("PdfConvertImagesBatch"));
+        MenuItem pdfConvertImagesBatch = new MenuItem(AppVariables.message("PdfConvertImagesBatch"));
         pdfConvertImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -120,7 +204,15 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imagesCombinePdf = new MenuItem(AppVaribles.message("ImagesCombinePdf"));
+        MenuItem pdfConvertHtmlsBatch = new MenuItem(AppVariables.message("PdfConvertHtmlsBatch"));
+        pdfConvertHtmlsBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.PdfConvertHtmlsBatchFxml);
+            }
+        });
+
+        MenuItem imagesCombinePdf = new MenuItem(AppVariables.message("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -128,7 +220,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pdfCompressImagesBatch = new MenuItem(AppVaribles.message("PdfCompressImagesBatch"));
+        MenuItem pdfCompressImagesBatch = new MenuItem(AppVariables.message("PdfCompressImagesBatch"));
         pdfCompressImagesBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -136,7 +228,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pdfMerge = new MenuItem(AppVaribles.message("MergePdf"));
+        MenuItem pdfMerge = new MenuItem(AppVariables.message("MergePdf"));
         pdfMerge.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -144,7 +236,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem PdfSplitBatch = new MenuItem(AppVaribles.message("PdfSplitBatch"));
+        MenuItem PdfSplitBatch = new MenuItem(AppVariables.message("PdfSplitBatch"));
         PdfSplitBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -152,19 +244,30 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        pdfMenu = new ContextMenu();
-        pdfMenu.setAutoHide(true);
-        pdfMenu.getItems().addAll(
-                pdfView, new SeparatorMenuItem(),
-                PDFAttributes, PDFAttributesBatch, pdfConvertImagesBatch,
-                pdfExtractImagesBatch, pdfExtractTextsBatch, pdfCompressImagesBatch, new SeparatorMenuItem(),
-                PdfSplitBatch, pdfMerge, imagesCombinePdf
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(
+                pdfHtmlViewer, pdfView, new SeparatorMenuItem(),
+                pdfConvertHtmlsBatch, pdfConvertImagesBatch, new SeparatorMenuItem(),
+                pdfExtractImagesBatch, pdfExtractTextsBatch, new SeparatorMenuItem(),
+                PdfSplitBatch, pdfMerge, pdfCompressImagesBatch, imagesCombinePdf, new SeparatorMenuItem(),
+                PDFAttributes, PDFAttributesBatch
         );
+
+        showMenu(pdfBox, event);
+
+        view.setImage(new Image("img/PdfTools.png"));
+        text.setText(message("PDFToolsImageTips"));
+        text.setWrappingWidth(500);
+        locateImage(pdfBox, true);
 
     }
 
-    private void initImageToolsMenu() {
-        MenuItem imageViewer = new MenuItem(AppVaribles.message("ImageViewer"));
+    @FXML
+    private void showImageMenu(MouseEvent event) {
+        hideMenu(event);
+
+        MenuItem imageViewer = new MenuItem(AppVariables.message("ImageViewer"));
         imageViewer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -172,7 +275,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imagesBrowser = new MenuItem(AppVaribles.message("ImagesBrowser"));
+        MenuItem imagesBrowser = new MenuItem(AppVariables.message("ImagesBrowser"));
         imagesBrowser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -180,15 +283,15 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ImageManufacture = new MenuItem(AppVaribles.message("ImageManufacture"));
+        MenuItem ImageManufacture = new MenuItem(AppVariables.message("ImageManufacture"));
         ImageManufacture.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureFileFxml);
+                loadScene(CommonValues.ImageManufactureFxml);
             }
         });
 
-        MenuItem imageConverterBatch = new MenuItem(AppVaribles.message("ImageConverterBatch"));
+        MenuItem imageConverterBatch = new MenuItem(AppVariables.message("ImageConverterBatch"));
         imageConverterBatch.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -196,7 +299,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageStatistic = new MenuItem(AppVaribles.message("ImageStatistic"));
+        MenuItem imageStatistic = new MenuItem(AppVariables.message("ImageStatistic"));
         imageStatistic.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -204,7 +307,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem convolutionKernelManager = new MenuItem(AppVaribles.message("ConvolutionKernelManager"));
+        MenuItem convolutionKernelManager = new MenuItem(AppVariables.message("ConvolutionKernelManager"));
         convolutionKernelManager.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -212,7 +315,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem pixelsCalculator = new MenuItem(AppVaribles.message("PixelsCalculator"));
+        MenuItem pixelsCalculator = new MenuItem(AppVariables.message("PixelsCalculator"));
         pixelsCalculator.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -220,140 +323,44 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem colorPalette = new MenuItem(AppVaribles.message("ColorPalette"));
+        MenuItem colorPalette = new MenuItem(AppVariables.message("ColorPalette"));
         colorPalette.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                openStage(CommonValues.ColorPaletteFxml);
+                paletteController = (ColorPaletteController) openStage(CommonValues.ColorPaletteFxml);
             }
         });
 
-        Menu manufactureSubMenu = initImageSubToolsMenu();
-        Menu manufactureBatchMenu = initImageBatchToolsMenu();
-        Menu framesMenu = initImageFramesMenu();
-        Menu partMenu = initImagePartMenu();
-        Menu mergeMenu = initImageMergeMenu();
-        Menu csMenu = initColorSpaceMenu();
+        Menu manufactureBatchMenu = makeImageBatchToolsMenu();
+        Menu framesMenu = makeImageFramesMenu();
+        Menu partMenu = makeImagePartMenu();
+        Menu mergeMenu = makeImageMergeMenu();
+        Menu csMenu = makeColorSpaceMenu();
 
-        imageMenu = new ContextMenu();
-        imageMenu.setAutoHide(true);
-        imageMenu.getItems().addAll(
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(
                 imageViewer, imagesBrowser, new SeparatorMenuItem(),
-                ImageManufacture, manufactureSubMenu, manufactureBatchMenu, new SeparatorMenuItem(),
+                ImageManufacture, manufactureBatchMenu, new SeparatorMenuItem(),
                 imageConverterBatch, new SeparatorMenuItem(),
                 framesMenu, mergeMenu, partMenu, new SeparatorMenuItem(),
                 //                imageStatistic, new SeparatorMenuItem(),
                 convolutionKernelManager, pixelsCalculator, colorPalette, csMenu);
-    }
 
-    private Menu initImageSubToolsMenu() {
+        showMenu(imageBox, event);
 
-        MenuItem imageSizeMenu = new MenuItem(AppVaribles.message("Size"));
-        imageSizeMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureSizeFxml);
-
-            }
-        });
-
-        MenuItem imageCropMenu = new MenuItem(AppVaribles.message("Crop"));
-        imageCropMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureCropFxml);
-
-            }
-        });
-
-        MenuItem imageColorMenu = new MenuItem(AppVaribles.message("Color"));
-        imageColorMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureColorFxml);
-
-            }
-        });
-
-        MenuItem imageEffectsMenu = new MenuItem(AppVaribles.message("Effects"));
-        imageEffectsMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureEffectsFxml);
-            }
-        });
-
-        MenuItem imageTextMenu = new MenuItem(AppVaribles.message("Text"));
-        imageTextMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureTextFxml);
-
-            }
-        });
-
-        MenuItem imageTransformMenu = new MenuItem(AppVaribles.message("Transform"));
-        imageTransformMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureTransformFxml);
-
-            }
-        });
-
-        MenuItem imageMarginsMenu = new MenuItem(AppVaribles.message("Margins"));
-        imageMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureMarginsFxml);
-
-            }
-        });
-
-        MenuItem imageArcMenu = new MenuItem(AppVaribles.message("Arc"));
-        imageArcMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureArcFxml);
-            }
-        });
-
-        MenuItem imageShadowMenu = new MenuItem(AppVaribles.message("Shadow"));
-        imageShadowMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureShadowFxml);
-            }
-        });
-
-        MenuItem imageMosaicMenu = new MenuItem(AppVaribles.message("Mosaic"));
-        imageMosaicMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureMosaicFxml);
-            }
-        });
-
-        MenuItem imageDoodleMenu = new MenuItem(AppVaribles.message("Doodle"));
-        imageDoodleMenu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImageManufactureDoodleFxml);
-            }
-        });
-
-        Menu manufactureSubMenu = new Menu(AppVaribles.message("ImageManufactureSub"));
-        manufactureSubMenu.getItems().addAll(imageSizeMenu, imageCropMenu,
-                imageColorMenu, imageEffectsMenu,
-                imageTextMenu, imageDoodleMenu, imageMosaicMenu, imageArcMenu, imageShadowMenu,
-                imageTransformMenu, imageMarginsMenu);
-        return manufactureSubMenu;
+        view.setImage(new Image("img/ImageTools.png"));
+        text.setText(message("ImageToolsImageTips"));
+        locateImage(imageBox, true);
 
     }
 
-    private Menu initImageBatchToolsMenu() {
+    private Menu makeImageBatchToolsMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
 
-        MenuItem imageSizeMenu = new MenuItem(AppVaribles.message("Size"));
+        MenuItem imageSizeMenu = new MenuItem(AppVariables.message("Size"));
         imageSizeMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -361,7 +368,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageCropMenu = new MenuItem(AppVaribles.message("Crop"));
+        MenuItem imageCropMenu = new MenuItem(AppVariables.message("Crop"));
         imageCropMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -369,7 +376,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageColorMenu = new MenuItem(AppVaribles.message("Color"));
+        MenuItem imageColorMenu = new MenuItem(AppVariables.message("Color"));
         imageColorMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -377,7 +384,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageEffectsMenu = new MenuItem(AppVaribles.message("Effects"));
+        MenuItem imageEffectsMenu = new MenuItem(AppVariables.message("Effects"));
         imageEffectsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -385,7 +392,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageReplaceColorMenu = new MenuItem(AppVaribles.message("ReplaceColor"));
+        MenuItem imageReplaceColorMenu = new MenuItem(AppVariables.message("ReplaceColor"));
         imageReplaceColorMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -393,7 +400,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageTextMenu = new MenuItem(AppVaribles.message("Text"));
+        MenuItem imageTextMenu = new MenuItem(AppVariables.message("Text"));
         imageTextMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -401,7 +408,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageArcMenu = new MenuItem(AppVaribles.message("Arc"));
+        MenuItem imageArcMenu = new MenuItem(AppVariables.message("Arc"));
         imageArcMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -409,7 +416,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageShadowMenu = new MenuItem(AppVaribles.message("Shadow"));
+        MenuItem imageShadowMenu = new MenuItem(AppVariables.message("Shadow"));
         imageShadowMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -417,7 +424,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageTransformMenu = new MenuItem(AppVaribles.message("Transform"));
+        MenuItem imageTransformMenu = new MenuItem(AppVariables.message("Transform"));
         imageTransformMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -425,7 +432,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageMarginsMenu = new MenuItem(AppVaribles.message("Margins"));
+        MenuItem imageMarginsMenu = new MenuItem(AppVariables.message("Margins"));
         imageMarginsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -433,7 +440,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        Menu manufactureBatchMenu = new Menu(AppVaribles.message("ImageManufactureBatch"));
+        Menu manufactureBatchMenu = new Menu(AppVariables.message("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imageColorMenu, imageEffectsMenu,
                 imageReplaceColorMenu, imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu,
                 imageMarginsMenu);
@@ -441,9 +448,12 @@ public class MyBoxController extends BaseController {
 
     }
 
-    private Menu initImageFramesMenu() {
+    private Menu makeImageFramesMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
 
-        MenuItem imageGifViewer = new MenuItem(AppVaribles.message("ImageGifViewer"));
+        MenuItem imageGifViewer = new MenuItem(AppVariables.message("ImageGifViewer"));
         imageGifViewer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -451,7 +461,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageGifEditer = new MenuItem(AppVaribles.message("ImageGifEditer"));
+        MenuItem imageGifEditer = new MenuItem(AppVariables.message("ImageGifEditer"));
         imageGifEditer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -459,7 +469,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageTiffEditer = new MenuItem(AppVaribles.message("ImageTiffEditer"));
+        MenuItem imageTiffEditer = new MenuItem(AppVariables.message("ImageTiffEditer"));
         imageTiffEditer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -467,7 +477,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageFramesViewer = new MenuItem(AppVaribles.message("ImageFramesViewer"));
+        MenuItem imageFramesViewer = new MenuItem(AppVariables.message("ImageFramesViewer"));
         imageFramesViewer.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -475,15 +485,18 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        Menu manufactureSubMenu = new Menu(AppVaribles.message("MultipleFramesImageFile"));
+        Menu manufactureSubMenu = new Menu(AppVariables.message("MultipleFramesImageFile"));
         manufactureSubMenu.getItems().addAll(imageFramesViewer, imageTiffEditer, imageGifViewer, imageGifEditer);
         return manufactureSubMenu;
 
     }
 
-    private Menu initImagePartMenu() {
+    private Menu makeImagePartMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
 
-        MenuItem ImageSplit = new MenuItem(AppVaribles.message("ImageSplit"));
+        MenuItem ImageSplit = new MenuItem(AppVariables.message("ImageSplit"));
         ImageSplit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -491,7 +504,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ImageSample = new MenuItem(AppVaribles.message("ImageSubsample"));
+        MenuItem ImageSample = new MenuItem(AppVariables.message("ImageSubsample"));
         ImageSample.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -499,7 +512,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageAlphaExtract = new MenuItem(AppVaribles.message("ImageAlphaExtract"));
+        MenuItem imageAlphaExtract = new MenuItem(AppVariables.message("ImageAlphaExtract"));
         imageAlphaExtract.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -507,15 +520,18 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        Menu manufactureSubMenu = new Menu(AppVaribles.message("ImagePart"));
+        Menu manufactureSubMenu = new Menu(AppVariables.message("ImagePart"));
         manufactureSubMenu.getItems().addAll(ImageSplit, ImageSample, imageAlphaExtract);
         return manufactureSubMenu;
 
     }
 
-    private Menu initImageMergeMenu() {
+    private Menu makeImageMergeMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
 
-        MenuItem ImageCombine = new MenuItem(AppVaribles.message("ImagesCombine"));
+        MenuItem ImageCombine = new MenuItem(AppVariables.message("ImagesCombine"));
         ImageCombine.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -523,15 +539,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ImagesBlend = new MenuItem(AppVaribles.message("ImagesBlend"));
-        ImagesBlend.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.ImagesBlendFxml);
-            }
-        });
-
-        MenuItem imagesCombinePdf = new MenuItem(AppVaribles.message("ImagesCombinePdf"));
+        MenuItem imagesCombinePdf = new MenuItem(AppVariables.message("ImagesCombinePdf"));
         imagesCombinePdf.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -539,7 +547,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem imageAlphaAdd = new MenuItem(AppVaribles.message("ImageAlphaAdd"));
+        MenuItem imageAlphaAdd = new MenuItem(AppVariables.message("ImageAlphaAdd"));
         imageAlphaAdd.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -547,14 +555,17 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        Menu manufactureSubMenu = new Menu(AppVaribles.message("MergeImages"));
-        manufactureSubMenu.getItems().addAll(ImagesBlend, ImageCombine, imagesCombinePdf, imageAlphaAdd);
+        Menu manufactureSubMenu = new Menu(AppVariables.message("MergeImages"));
+        manufactureSubMenu.getItems().addAll(ImageCombine, imagesCombinePdf, imageAlphaAdd);
         return manufactureSubMenu;
 
     }
 
-    private Menu initColorSpaceMenu() {
-        MenuItem IccEditor = new MenuItem(AppVaribles.message("IccProfileEditor"));
+    private Menu makeColorSpaceMenu() {
+        if (popMenu != null) {
+            popMenu.hide();
+        }
+        MenuItem IccEditor = new MenuItem(AppVariables.message("IccProfileEditor"));
         IccEditor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -562,7 +573,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ChromaticityDiagram = new MenuItem(AppVaribles.message("DrawChromaticityDiagram"));
+        MenuItem ChromaticityDiagram = new MenuItem(AppVariables.message("DrawChromaticityDiagram"));
         ChromaticityDiagram.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -570,7 +581,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ChromaticAdaptationMatrix = new MenuItem(AppVaribles.message("ChromaticAdaptationMatrix"));
+        MenuItem ChromaticAdaptationMatrix = new MenuItem(AppVariables.message("ChromaticAdaptationMatrix"));
         ChromaticAdaptationMatrix.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -578,7 +589,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ColorPalette = new MenuItem(AppVaribles.message("ColorPalette"));
+        MenuItem ColorPalette = new MenuItem(AppVariables.message("ColorPalette"));
         ColorPalette.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -586,7 +597,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem ColorConversion = new MenuItem(AppVaribles.message("ColorConversion"));
+        MenuItem ColorConversion = new MenuItem(AppVariables.message("ColorConversion"));
         ColorConversion.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -594,7 +605,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem RGBColorSpaces = new MenuItem(AppVaribles.message("RGBColorSpaces"));
+        MenuItem RGBColorSpaces = new MenuItem(AppVariables.message("RGBColorSpaces"));
         RGBColorSpaces.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -602,7 +613,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem RGB2XYZConversionMatrix = new MenuItem(AppVaribles.message("LinearRGB2XYZMatrix"));
+        MenuItem RGB2XYZConversionMatrix = new MenuItem(AppVariables.message("LinearRGB2XYZMatrix"));
         RGB2XYZConversionMatrix.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -610,7 +621,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem RGB2RGBConversionMatrix = new MenuItem(AppVaribles.message("LinearRGB2RGBMatrix"));
+        MenuItem RGB2RGBConversionMatrix = new MenuItem(AppVariables.message("LinearRGB2RGBMatrix"));
         RGB2RGBConversionMatrix.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -618,7 +629,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem Illuminants = new MenuItem(AppVaribles.message("Illuminants"));
+        MenuItem Illuminants = new MenuItem(AppVariables.message("Illuminants"));
         Illuminants.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -626,7 +637,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        Menu csMenu = new Menu(AppVaribles.message("ColorSpace"));
+        Menu csMenu = new Menu(AppVariables.message("ColorSpace"));
         csMenu.getItems().addAll(ChromaticityDiagram, IccEditor,
                 //                ColorConversion,
                 RGBColorSpaces, RGB2XYZConversionMatrix, RGB2RGBConversionMatrix,
@@ -635,120 +646,11 @@ public class MyBoxController extends BaseController {
 
     }
 
-    private void initDesktopToolsMenu() {
-        MenuItem filesRename = new MenuItem(AppVaribles.message("FilesRename"));
-        filesRename.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.FilesRenameFxml);
-            }
-        });
+    @FXML
+    void showNetworkMenu(MouseEvent event) {
+        hideMenu(event);
 
-        MenuItem dirSynchronize = new MenuItem(AppVaribles.message("DirectorySynchronize"));
-        dirSynchronize.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.DirectorySynchronizeFxml);
-            }
-        });
-
-        MenuItem filesArrangement = new MenuItem(AppVaribles.message("FilesArrangement"));
-        filesArrangement.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.FilesArrangementFxml);
-            }
-        });
-
-        MenuItem textEditer = new MenuItem(AppVaribles.message("TextEditer"));
-        textEditer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.TextEditerFxml);
-            }
-        });
-
-        MenuItem textEncodingBatch = new MenuItem(AppVaribles.message("TextEncodingBatch"));
-        textEncodingBatch.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.TextEncodingBatchFxml);
-            }
-        });
-
-        MenuItem textLineBreakBatch = new MenuItem(AppVaribles.message("TextLineBreakBatch"));
-        textLineBreakBatch.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.TextLineBreakBatchFxml);
-            }
-        });
-
-        MenuItem bytesEditer = new MenuItem(AppVaribles.message("BytesEditer"));
-        bytesEditer.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.BytesEditerFxml);
-            }
-        });
-
-        MenuItem fileCut = new MenuItem(AppVaribles.message("FileCut"));
-        fileCut.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.FileCutFxml);
-            }
-        });
-
-        MenuItem filesMerge = new MenuItem(AppVaribles.message("FilesMerge"));
-        filesMerge.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.FilesMergeFxml);
-            }
-        });
-
-        MenuItem filesDelete = new MenuItem(AppVaribles.message("FilesDelete"));
-        filesDelete.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.FilesDeleteFxml);
-            }
-        });
-
-        MenuItem recordImages = new MenuItem(AppVaribles.message("RecordImagesInSystemClipBoard"));
-        recordImages.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
-            }
-        });
-
-        MenuItem alarmClock = new MenuItem(AppVaribles.message("AlarmClock"));
-        alarmClock.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                loadScene(CommonValues.AlarmClockFxml);
-            }
-        });
-
-        desktopMenu = new ContextMenu();
-        desktopMenu.setAutoHide(true);
-        desktopMenu.getItems().addAll(
-                filesRename, filesArrangement, dirSynchronize, filesDelete, new SeparatorMenuItem(),
-                recordImages, new SeparatorMenuItem(),
-                textEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
-                bytesEditer, fileCut, filesMerge, new SeparatorMenuItem(),
-                alarmClock);
-    }
-
-    private void initFileToolsMenu() {
-        fileMenu = new ContextMenu();
-
-    }
-
-    private void initNetworkToolsMenu() {
-        MenuItem htmlEditor = new MenuItem(AppVaribles.message("HtmlEditor"));
+        MenuItem htmlEditor = new MenuItem(AppVariables.message("HtmlEditor"));
         htmlEditor.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -758,7 +660,7 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        MenuItem weiboSnap = new MenuItem(AppVaribles.message("WeiboSnap"));
+        MenuItem weiboSnap = new MenuItem(AppVariables.message("WeiboSnap"));
         weiboSnap.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -767,17 +669,206 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        networkMenu = new ContextMenu();
-        networkMenu.setAutoHide(true);
-        networkMenu.getItems().addAll(weiboSnap, htmlEditor);
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(weiboSnap, htmlEditor);
+        showMenu(networkBox, event);
+
+        view.setImage(new Image("img/NetworkTools.png"));
+        text.setText(message("NetworkToolsImageTips"));
+        locateImage(networkBox, true);
 
     }
 
-    private void initDataToolsMenu() {
+    @FXML
+    void showFileMenu(MouseEvent event) {
+        hideMenu(event);
 
-        Menu csMenu = initColorSpaceMenu();
+        MenuItem filesRename = new MenuItem(AppVariables.message("FilesRename"));
+        filesRename.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesRenameFxml);
+            }
+        });
 
-        MenuItem MatricesCalculation = new MenuItem(AppVaribles.message("MatricesCalculation"));
+        MenuItem dirSynchronize = new MenuItem(AppVariables.message("DirectorySynchronize"));
+        dirSynchronize.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.DirectorySynchronizeFxml);
+            }
+        });
+
+        MenuItem filesArrangement = new MenuItem(AppVariables.message("FilesArrangement"));
+        filesArrangement.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesArrangementFxml);
+            }
+        });
+
+        MenuItem textEditer = new MenuItem(AppVariables.message("TextEditer"));
+        textEditer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.TextEditerFxml);
+            }
+        });
+
+        MenuItem textEncodingBatch = new MenuItem(AppVariables.message("TextEncodingBatch"));
+        textEncodingBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.TextEncodingBatchFxml);
+            }
+        });
+
+        MenuItem textLineBreakBatch = new MenuItem(AppVariables.message("TextLineBreakBatch"));
+        textLineBreakBatch.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.TextLineBreakBatchFxml);
+            }
+        });
+
+        MenuItem bytesEditer = new MenuItem(AppVariables.message("BytesEditer"));
+        bytesEditer.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.BytesEditerFxml);
+            }
+        });
+
+        MenuItem fileCut = new MenuItem(AppVariables.message("FileCut"));
+        fileCut.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FileCutFxml);
+            }
+        });
+
+        MenuItem filesMerge = new MenuItem(AppVariables.message("FilesMerge"));
+        filesMerge.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesMergeFxml);
+            }
+        });
+
+        MenuItem filesDelete = new MenuItem(AppVariables.message("FilesDelete"));
+        filesDelete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                loadScene(CommonValues.FilesDeleteFxml);
+            }
+        });
+
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(
+                filesRename, filesArrangement, dirSynchronize, filesDelete, new SeparatorMenuItem(),
+                textEditer, textEncodingBatch, textLineBreakBatch, new SeparatorMenuItem(),
+                bytesEditer, fileCut, filesMerge);
+
+        showMenu(fileBox, event);
+
+        view.setImage(new Image("img/FileTools.png"));
+        text.setText(message("FileToolsImageTips"));
+        locateImage(fileBox, false);
+    }
+
+    @FXML
+    void showSettingsMenu(MouseEvent event) {
+        hideMenu(event);
+
+        ToggleGroup langGroup = new ToggleGroup();
+        RadioMenuItem English = new RadioMenuItem("English");
+        English.setToggleGroup(langGroup);
+        English.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                AppVariables.setLanguage("en");
+                loadScene(myFxml);
+            }
+        });
+        RadioMenuItem Chinese = new RadioMenuItem("中文");
+        Chinese.setToggleGroup(langGroup);
+        Chinese.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                AppVariables.setLanguage("zh");
+                loadScene(myFxml);
+            }
+        });
+
+        CheckMenuItem disableHidpi = new CheckMenuItem(message("DisableHiDPI"));
+        disableHidpi.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (isSettingValues) {
+                    return;
+                }
+                AppVariables.disableHiDPI = disableHidpi.isSelected();
+                ConfigTools.writeConfigValue("DisableHidpi", AppVariables.disableHiDPI ? "true" : "false");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            MyBox.restart();
+                        } catch (Exception e) {
+                            logger.debug(e.toString());
+                        }
+                    }
+                });
+            }
+        });
+        isSettingValues = true;
+        AppVariables.disableHiDPI = "true".equals(ConfigTools.readConfigValue("DisableHidpi"));
+        disableHidpi.setSelected(AppVariables.disableHiDPI);
+        isSettingValues = false;
+
+        MenuItem settings = new MenuItem(AppVariables.message("SettingsDot"));
+        settings.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                BaseController c = openStage(CommonValues.SettingsFxml);
+            }
+        });
+
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(English, Chinese, new SeparatorMenuItem(), disableHidpi,
+                new SeparatorMenuItem(), settings);
+
+        showMenu(settingsBox, event);
+
+        view.setImage(new Image("img/Settings.png"));
+        text.setText(message("SettingsImageTips"));
+        locateImage(settingsBox, true);
+    }
+
+    @FXML
+    void showRecentMenu(MouseEvent event) {
+        hideMenu(event);
+
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(getRecentMenu());
+        showMenu(recentBox, event);
+
+        view.setImage(new Image("img/RecentAccess.png"));
+        text.setText(message("RecentAccessImageTips"));
+        locateImage(recentBox, true);
+    }
+
+    @FXML
+    void showDataMenu(MouseEvent event) {
+        hideMenu(event);
+
+        Menu csMenu = makeColorSpaceMenu();
+
+        MenuItem MatricesCalculation = new MenuItem(AppVariables.message("MatricesCalculation"));
         MatricesCalculation.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -785,109 +876,64 @@ public class MyBoxController extends BaseController {
             }
         });
 
-        dataMenu = new ContextMenu();
-        dataMenu.setAutoHide(true);
-        dataMenu.getItems().addAll(csMenu,
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(csMenu,
                 new SeparatorMenuItem(), MatricesCalculation);
 
+        showMenu(dataBox, event);
+
+        view.setImage(new Image("img/DataTools.png"));
+        text.setText(message("DataToolsImageTips"));
+        locateImage(dataBox, true);
     }
 
-    private void initLanguageMenu() {
-        MenuItem setEnglish = new MenuItem("English");
-        setEnglish.setOnAction(new EventHandler<ActionEvent>() {
+    @FXML
+    void showMediaMenu(MouseEvent event) {
+        hideMenu(event);
+
+        MenuItem recordImages = new MenuItem(AppVariables.message("RecordImagesInSystemClipBoard"));
+        recordImages.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                AppVaribles.setLanguage("en");
-                loadScene(myFxml);
+                loadScene(CommonValues.RecordImagesInSystemClipboardFxml);
             }
         });
-        MenuItem setChinese = new MenuItem("中文");
-        setChinese.setOnAction(new EventHandler<ActionEvent>() {
+
+        MenuItem alarmClock = new MenuItem(AppVariables.message("AlarmClock"));
+        alarmClock.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                AppVaribles.setLanguage("zh");
-                loadScene(myFxml);
+                loadScene(CommonValues.AlarmClockFxml);
             }
         });
-        languageMenu = new ContextMenu();
-        languageMenu.setAutoHide(true);
-        languageMenu.getItems().addAll(setChinese, setEnglish);
 
-    }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(
+                recordImages, new SeparatorMenuItem(),
+                alarmClock);
 
-    private void showMenu(Region box, ContextMenu menu, MouseEvent event) {
-        if (menu == null || menu.isShowing()) {
-            return;
-        }
-        hideMenus(event);
-        FxmlControl.locateCenter(box, menu);
-    }
+        showMenu(mediaBox, event);
 
-    @FXML
-    void showPdfMenu(MouseEvent event) {
-        showMenu(pdfBox, pdfMenu, event);
-
+        view.setImage(new Image("img/MediaTools.png"));
+        text.setText(message("MediaToolsImageTips"));
+        locateImage(mediaBox, false);
     }
 
     @FXML
-    void showImageMenu(MouseEvent event) {
-        showMenu(imageBox, imageMenu, event);
+    private void showAboutImage(MouseEvent event) {
+        hideMenu(event);
 
-    }
-
-    @FXML
-    void showFileMenu(MouseEvent event) {
-        showMenu(fileBox, fileMenu, event);
-
-    }
-
-    @FXML
-    void showNetworkMenu(MouseEvent event) {
-        showMenu(networkBox, networkMenu, event);
-
-    }
-
-    @FXML
-    void showDesktopMenu(MouseEvent event) {
-        showMenu(desktopBox, desktopMenu, event);
-    }
-
-    @FXML
-    void showLanguageMenu(MouseEvent event) {
-        showMenu(langLabel, languageMenu, event);
-    }
-
-    @FXML
-    void showRecentMenu(MouseEvent event) {
-        hideMenus(event);
-        recentMenu = popMenu = getRecentMenu();
-        recentMenu.setAutoHide(true);
-        showMenu(recentBox, recentMenu, event);
-    }
-
-    @FXML
-    void showDataMenu(MouseEvent event) {
-        showMenu(dataBox, dataMenu, event);
+        view.setImage(new Image("img/About54.png"));
+        text.setText(message("AboutImageTips"));
+        locateImage(aboutBox, false);
     }
 
     @FXML
     private void showAbout(MouseEvent event) {
+        hideMenu(event);
         openStage(CommonValues.AboutFxml);
-        hideMenus(event);
-    }
-
-    @FXML
-    private void hideMenus(MouseEvent event) {
-        imageMenu.hide();
-        fileMenu.hide();
-        desktopMenu.hide();
-        pdfMenu.hide();
-        networkMenu.hide();
-        languageMenu.hide();
-        dataMenu.hide();
-        if (recentMenu != null) {
-            recentMenu.hide();
-        }
     }
 
 }

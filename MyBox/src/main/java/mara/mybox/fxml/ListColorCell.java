@@ -24,8 +24,9 @@ public class ListColorCell extends ListCell<Color> {
     @Override
     protected void updateItem(Color item, boolean empty) {
         super.updateItem(item, empty);
-        if (item == null || empty) {
+        if (empty || item == null) {
             setGraphic(null);
+            setText(null);
         } else {
             rectangle.setFill(item);
             setGraphic(rectangle);

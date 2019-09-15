@@ -1,9 +1,9 @@
 package mara.mybox.data;
 
-import mara.mybox.value.CommonValues;
 import java.io.File;
 import java.util.Date;
 import mara.mybox.tools.PdfTools.PdfImageFormat;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -15,7 +15,7 @@ import mara.mybox.tools.PdfTools.PdfImageFormat;
 public class WeiboSnapParameters {
 
     private File targetPath;
-    private int webWidth, retry, startPage;
+    private int webWidth, retry, startPage, interval;
     private boolean imagePerScreen, isImageSize, addPageNumber, createPDF, createHtml, savePictures, keepPagePdf;
     private boolean miao, expandComments, expandPicture, fullScreen, openPathWhenStop, useTempFiles, dithering;
     private String webAddress, author, title, fontName;
@@ -262,7 +262,7 @@ public class WeiboSnapParameters {
 
     public void setTempdir(File tempdir) {
         if (tempdir == null || !tempdir.exists() || !tempdir.isDirectory()) {
-            this.tempdir = CommonValues.AppTempPath;
+            this.tempdir = AppVariables.MyBoxTempPath;
         } else {
             this.tempdir = tempdir;
         }
@@ -314,6 +314,14 @@ public class WeiboSnapParameters {
 
     public void setStartPage(int startPage) {
         this.startPage = startPage;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 
 }

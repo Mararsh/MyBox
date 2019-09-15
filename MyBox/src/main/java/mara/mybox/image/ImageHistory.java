@@ -1,6 +1,7 @@
 package mara.mybox.image;
 
 import java.util.Date;
+import javafx.scene.image.Image;
 
 /**
  * @Author Mara
@@ -11,9 +12,9 @@ import java.util.Date;
  */
 public class ImageHistory {
 
-    private String image, history_location;
-    private int update_type;
-    private Date operation_time;
+    private String image, historyLocation, updateType, objectType, opType, scopeType, scopeName;
+    private Date operationTime;
+    private Image thumbnail;
 
     public String getImage() {
         return image;
@@ -23,28 +24,68 @@ public class ImageHistory {
         this.image = image;
     }
 
-    public String getHistory_location() {
-        return history_location;
+    public String getHistoryLocation() {
+        return historyLocation;
     }
 
-    public void setHistory_location(String history_location) {
-        this.history_location = history_location;
+    public void setHistoryLocation(String historyLocation) {
+        this.historyLocation = historyLocation;
     }
 
-    public int getUpdate_type() {
-        return update_type;
+    public String getUpdateType() {
+        return updateType;
     }
 
-    public void setUpdate_type(int update_type) {
-        this.update_type = update_type;
+    public void setUpdateType(String updateType) {
+        this.updateType = updateType;
     }
 
-    public Date getOperation_time() {
-        return operation_time;
+    public Date getOperationTime() {
+        return operationTime;
     }
 
-    public void setOperation_time(Date operation_time) {
-        this.operation_time = operation_time;
+    public void setOperationTime(Date operationTime) {
+        this.operationTime = operationTime;
+    }
+
+    public Image getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Image thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
+
+    public String getOpType() {
+        return opType;
+    }
+
+    public void setOpType(String opType) {
+        this.opType = opType;
+    }
+
+    public String getScopeType() {
+        return scopeType;
+    }
+
+    public void setScopeType(String scopeType) {
+        this.scopeType = scopeType;
+    }
+
+    public String getScopeName() {
+        return scopeName;
+    }
+
+    public void setScopeName(String scopeName) {
+        this.scopeName = scopeName;
     }
 
 }

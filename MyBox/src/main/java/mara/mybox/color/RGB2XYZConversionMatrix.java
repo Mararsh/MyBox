@@ -12,7 +12,7 @@ import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -37,7 +37,7 @@ public class RGB2XYZConversionMatrix {
         Generation of Conversion matrices
      */
     public static List<RGB2XYZConversionMatrix> all(int scale) {
-        List<RGB2XYZConversionMatrix> data = new ArrayList();
+        List<RGB2XYZConversionMatrix> data = new ArrayList<>();
         for (ColorSpaceType colorSpace : ColorSpaceType.values()) {
             IlluminantType csWhite = RGBColorSpace.illuminantType(colorSpace);
             double[][] rgb2xyz = rgb2xyz(colorSpace);
@@ -181,7 +181,7 @@ public class RGB2XYZConversionMatrix {
             if (targetWhitePoint == null || MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
                     d = "ccccccccccccc " + message("Step") + " - Linear RGB -> XYZ ccccccccccccc\n\n" + d;
-                    map = new HashMap();
+                    map = new HashMap<>();
                     map.put("procedure", d);
                     map.put("conversionMatrix", conversionMatrix);
                     ret = map;
@@ -221,7 +221,7 @@ public class RGB2XYZConversionMatrix {
                 d += MatrixTools.print(targetWhitePoint, 20, scale);
                 d += "\nRGB_to_XYZ_Matrix_different_WhitePoint = Adaptation_Matrix * RGB_to_XYZ_Matrix_same_WhitePoint\n";
                 d += MatrixTools.print(adaptedConversionMatrix, 20, scale);
-                map = new HashMap();
+                map = new HashMap<>();
                 map.put("procedure", d);
                 map.put("conversionMatrix", adaptedConversionMatrix);
                 ret = map;

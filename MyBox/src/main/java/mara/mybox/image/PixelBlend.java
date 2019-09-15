@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import mara.mybox.value.AppVaribles;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -80,86 +80,86 @@ public abstract class PixelBlend {
     }
 
     public static List<String> allBlendModes() {
-        return Arrays.asList(AppVaribles.message("NormalMode"),
-                AppVaribles.message("DissolveMode"), AppVaribles.message("MultiplyMode"), AppVaribles.message("ScreenMode"),
-                AppVaribles.message("OverlayMode"), AppVaribles.message("HardLightMode"), AppVaribles.message("SoftLightMode"),
-                AppVaribles.message("ColorDodgeMode"), AppVaribles.message("LinearDodgeMode"), AppVaribles.message("DivideMode"),
-                AppVaribles.message("ColorBurnMode"), AppVaribles.message("LinearBurnMode"), AppVaribles.message("VividLightMode"),
-                AppVaribles.message("LinearLightMode"), AppVaribles.message("SubtractMode"), AppVaribles.message("DifferenceMode"),
-                AppVaribles.message("ExclusionMode"), AppVaribles.message("DarkenMode"), AppVaribles.message("LightenMode"),
-                AppVaribles.message("HueMode"), AppVaribles.message("SaturationMode"), AppVaribles.message("ColorMode"),
-                AppVaribles.message("LuminosityMode"));
+        return Arrays.asList(AppVariables.message("NormalMode"),
+                AppVariables.message("DissolveMode"), AppVariables.message("MultiplyMode"), AppVariables.message("ScreenMode"),
+                AppVariables.message("OverlayMode"), AppVariables.message("HardLightMode"), AppVariables.message("SoftLightMode"),
+                AppVariables.message("ColorDodgeMode"), AppVariables.message("LinearDodgeMode"), AppVariables.message("DivideMode"),
+                AppVariables.message("ColorBurnMode"), AppVariables.message("LinearBurnMode"), AppVariables.message("VividLightMode"),
+                AppVariables.message("LinearLightMode"), AppVariables.message("SubtractMode"), AppVariables.message("DifferenceMode"),
+                AppVariables.message("ExclusionMode"), AppVariables.message("DarkenMode"), AppVariables.message("LightenMode"),
+                AppVariables.message("HueMode"), AppVariables.message("SaturationMode"), AppVariables.message("ColorMode"),
+                AppVariables.message("LuminosityMode"));
     }
 
     public static ImagesBlendMode getBlendModeByName(String mode) {
 
-        if (AppVaribles.message("NormalMode").equals(mode)) {
+        if (AppVariables.message("NormalMode").equals(mode)) {
             return ImagesBlendMode.NORMAL;
 
-        } else if (AppVaribles.message("DissolveMode").equals(mode)) {
+        } else if (AppVariables.message("DissolveMode").equals(mode)) {
             return ImagesBlendMode.DISSOLVE;
 
-        } else if (AppVaribles.message("MultiplyMode").equals(mode)) {
+        } else if (AppVariables.message("MultiplyMode").equals(mode)) {
             return ImagesBlendMode.MULTIPLY;
 
-        } else if (AppVaribles.message("ScreenMode").equals(mode)) {
+        } else if (AppVariables.message("ScreenMode").equals(mode)) {
             return ImagesBlendMode.SCREEN;
 
-        } else if (AppVaribles.message("OverlayMode").equals(mode)) {
+        } else if (AppVariables.message("OverlayMode").equals(mode)) {
             return ImagesBlendMode.OVERLAY;
 
-        } else if (AppVaribles.message("HardLightMode").equals(mode)) {
+        } else if (AppVariables.message("HardLightMode").equals(mode)) {
             return ImagesBlendMode.HARD_LIGHT;
 
-        } else if (AppVaribles.message("SoftLightMode").equals(mode)) {
+        } else if (AppVariables.message("SoftLightMode").equals(mode)) {
             return ImagesBlendMode.SOFT_LIGHT;
 
-        } else if (AppVaribles.message("ColorDodgeMode").equals(mode)) {
+        } else if (AppVariables.message("ColorDodgeMode").equals(mode)) {
             return ImagesBlendMode.COLOR_DODGE;
 
-        } else if (AppVaribles.message("LinearDodgeMode").equals(mode)) {
+        } else if (AppVariables.message("LinearDodgeMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_DODGE;
 
-        } else if (AppVaribles.message("DivideMode").equals(mode)) {
+        } else if (AppVariables.message("DivideMode").equals(mode)) {
             return ImagesBlendMode.DIVIDE;
 
-        } else if (AppVaribles.message("ColorBurnMode").equals(mode)) {
+        } else if (AppVariables.message("ColorBurnMode").equals(mode)) {
             return ImagesBlendMode.COLOR_BURN;
 
-        } else if (AppVaribles.message("LinearBurnMode").equals(mode)) {
+        } else if (AppVariables.message("LinearBurnMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_BURN;
 
-        } else if (AppVaribles.message("VividLightMode").equals(mode)) {
+        } else if (AppVariables.message("VividLightMode").equals(mode)) {
             return ImagesBlendMode.VIVID_LIGHT;
 
-        } else if (AppVaribles.message("LinearLightMode").equals(mode)) {
+        } else if (AppVariables.message("LinearLightMode").equals(mode)) {
             return ImagesBlendMode.LINEAR_LIGHT;
 
-        } else if (AppVaribles.message("SubtractMode").equals(mode)) {
+        } else if (AppVariables.message("SubtractMode").equals(mode)) {
             return ImagesBlendMode.SUBTRACT;
 
-        } else if (AppVaribles.message("DifferenceMode").equals(mode)) {
+        } else if (AppVariables.message("DifferenceMode").equals(mode)) {
             return ImagesBlendMode.DIFFERENCE;
 
-        } else if (AppVaribles.message("ExclusionMode").equals(mode)) {
+        } else if (AppVariables.message("ExclusionMode").equals(mode)) {
             return ImagesBlendMode.EXCLUSION;
 
-        } else if (AppVaribles.message("DarkenMode").equals(mode)) {
+        } else if (AppVariables.message("DarkenMode").equals(mode)) {
             return ImagesBlendMode.DARKEN;
 
-        } else if (AppVaribles.message("LightenMode").equals(mode)) {
+        } else if (AppVariables.message("LightenMode").equals(mode)) {
             return ImagesBlendMode.LIGHTEN;
 
-        } else if (AppVaribles.message("HueMode").equals(mode)) {
+        } else if (AppVariables.message("HueMode").equals(mode)) {
             return ImagesBlendMode.HUE;
 
-        } else if (AppVaribles.message("SaturationMode").equals(mode)) {
+        } else if (AppVariables.message("SaturationMode").equals(mode)) {
             return ImagesBlendMode.SATURATION;
 
-        } else if (AppVaribles.message("ColorMode").equals(mode)) {
+        } else if (AppVariables.message("ColorMode").equals(mode)) {
             return ImagesBlendMode.COLOR;
 
-        } else if (AppVaribles.message("LuminosityMode").equals(mode)) {
+        } else if (AppVariables.message("LuminosityMode").equals(mode)) {
             return ImagesBlendMode.LUMINOSITY;
 
         } else {
@@ -637,6 +637,9 @@ public abstract class PixelBlend {
 
         @Override
         protected int blend(int forePixel, int backPixel) {
+            if (forePixel == 0) {                       // Pass transparency
+                return backPixel;
+            }
             float[] hA = ImageColor.pixel2HSB(forePixel);
             float[] hB = ImageColor.pixel2HSB(backPixel);
             Color hColor = Color.getHSBColor(hA[0], hB[1], hB[2]);
@@ -653,6 +656,9 @@ public abstract class PixelBlend {
 
         @Override
         protected int blend(int forePixel, int backPixel) {
+            if (forePixel == 0) {                       // Pass transparency
+                return backPixel;
+            }
             float[] sA = ImageColor.pixel2HSB(forePixel);
             float[] sB = ImageColor.pixel2HSB(backPixel);
             Color sColor = Color.getHSBColor(sB[0], sA[1], sB[2]);
@@ -669,6 +675,9 @@ public abstract class PixelBlend {
 
         @Override
         protected int blend(int forePixel, int backPixel) {
+            if (forePixel == 0) {                       // Pass transparency
+                return backPixel;
+            }
             float[] bA = ImageColor.pixel2HSB(forePixel);
             float[] bB = ImageColor.pixel2HSB(backPixel);
             Color newColor = Color.getHSBColor(bB[0], bB[1], bA[2]);
@@ -685,6 +694,9 @@ public abstract class PixelBlend {
 
         @Override
         protected int blend(int forePixel, int backPixel) {
+            if (forePixel == 0) {                       // Pass transparency
+                return backPixel;
+            }
             float[] cA = ImageColor.pixel2HSB(forePixel);
             float[] cB = ImageColor.pixel2HSB(backPixel);
             Color cColor = Color.getHSBColor(cA[0], cA[1], cB[2]);

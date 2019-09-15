@@ -11,9 +11,22 @@ public class DoublePoint {
 
     private double x, y;
 
+    public DoublePoint() {
+    }
+
     public DoublePoint(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public DoublePoint xy(double x, double y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+    public static DoublePoint create() {
+        return new DoublePoint();
     }
 
     public static double distance2(double x1, double y1, double x2, double y2) {
@@ -23,7 +36,7 @@ public class DoublePoint {
     }
 
     public static double distance(double x1, double y1, double x2, double y2) {
-        return (double) Math.sqrt(distance2(x1, y1, x2, y2));
+        return Math.sqrt(distance2(x1, y1, x2, y2));
     }
 
     public static double distance2(DoublePoint A, DoublePoint B) {
@@ -33,7 +46,11 @@ public class DoublePoint {
     }
 
     public static double distance(DoublePoint A, DoublePoint B) {
-        return (double) Math.sqrt(distance2(A, B));
+        return Math.sqrt(distance2(A, B));
+    }
+
+    public boolean same(DoublePoint p) {
+        return p != null && x == p.getX() && y == p.getY();
     }
 
     public double getX() {

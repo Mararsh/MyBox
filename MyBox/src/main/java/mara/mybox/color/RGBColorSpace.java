@@ -9,8 +9,8 @@ import static mara.mybox.color.ChromaticAdaptation.matrix;
 import mara.mybox.color.Illuminant.IlluminantType;
 import mara.mybox.color.Illuminant.Observer;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -48,7 +48,7 @@ public class RGBColorSpace extends CIEData {
         Static methods
      */
     public static List<RGBColorSpace> standard() {
-        List<RGBColorSpace> data = new ArrayList();
+        List<RGBColorSpace> data = new ArrayList<>();
         for (ColorSpaceType cs : ColorSpaceType.values()) {
             double[][] p = primaries(cs);
             String n = name(cs);
@@ -61,7 +61,7 @@ public class RGBColorSpace extends CIEData {
     }
 
     public static List<RGBColorSpace> adapted() {
-        List<RGBColorSpace> data = new ArrayList();
+        List<RGBColorSpace> data = new ArrayList<>();
         for (ColorSpaceType cs : ColorSpaceType.values()) {
             String name = name(cs);
             double[][] primaries = primariesTristimulus(name);
@@ -89,7 +89,7 @@ public class RGBColorSpace extends CIEData {
     }
 
     public static List<RGBColorSpace> all() {
-        List<RGBColorSpace> data = new ArrayList();
+        List<RGBColorSpace> data = new ArrayList<>();
         data.addAll(standard());
         data.addAll(adapted());
         return data;
@@ -131,7 +131,7 @@ public class RGBColorSpace extends CIEData {
     }
 
     public static List<String> names() {
-        List<String> names = new ArrayList();
+        List<String> names = new ArrayList<>();
         for (ColorSpaceType cs : ColorSpaceType.values()) {
             names.add(name(cs));
         }
@@ -398,7 +398,7 @@ public class RGBColorSpace extends CIEData {
             Map<String, Object> adapt = null;
             if (MatrixTools.same(sourceWhitePoint, targetWhitePoint, scale)) {
                 if (isDemo) {
-                    adapt = new HashMap();
+                    adapt = new HashMap<>();
                     adapt.put("procedure", message("NeedNotAdaptChromatic"));
                     adapt.put("matrix", MatrixTools.identityDouble(3));
                     adapt.put("adaptedPrimaries", primaries);

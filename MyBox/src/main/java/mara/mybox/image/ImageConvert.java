@@ -20,8 +20,9 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import static mara.mybox.image.file.ImageFileReaders.readBrokenImage;
 import mara.mybox.image.file.ImageFileWriters;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.tools.FileTools;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 import mara.mybox.value.CommonValues;
 import org.apache.pdfbox.rendering.ImageType;
 
@@ -177,19 +178,14 @@ public class ImageConvert {
             if (srcFile == null || targetFile == null || attributes == null) {
                 return false;
             }
-            try {
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
-            } catch (Exception e) {
-                return false;
-            }
+
             String targetFormat = attributes.getImageFormat();
             boolean supportMultiFrames = CommonValues.MultiFramesImages.contains(targetFormat);
             ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
+            File tmpFile = FileTools.getTempFile();
             try (ImageInputStream in = ImageIO.createImageInputStream(srcFile);
-                    ImageOutputStream out = ImageIO.createImageOutputStream(targetFile)) {
+                    ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 ImageReader reader = ImageIO.getImageReaders(in).next();
                 reader.setInput(in, false);
                 writer.setOutput(out);
@@ -226,8 +222,16 @@ public class ImageConvert {
                     writer.endWriteSequence();
                 }
                 out.flush();
-                writer.dispose();
                 reader.dispose();
+            }
+            writer.dispose();
+            try {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+                tmpFile.renameTo(targetFile);
+            } catch (Exception e) {
+                return false;
             }
             return true;
 

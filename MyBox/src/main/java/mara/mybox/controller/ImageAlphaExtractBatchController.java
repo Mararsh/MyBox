@@ -3,15 +3,15 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.binding.Bindings;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.data.VisitHistory;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.image.ImageManufacture;
 import mara.mybox.image.file.ImageFileReaders;
 import mara.mybox.image.file.ImageFileWriters;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import mara.mybox.value.CommonImageValues;
 import mara.mybox.value.CommonValues;
 
 /**
@@ -23,12 +23,12 @@ import mara.mybox.value.CommonValues;
 public class ImageAlphaExtractBatchController extends ImageManufactureBatchController {
 
     public ImageAlphaExtractBatchController() {
-        baseTitle = AppVaribles.message("ImageAlphaExtract");
+        baseTitle = AppVariables.message("ImageAlphaExtract");
 
         operationType = VisitHistory.OperationType.Alpha;
         TipsLabelKey = "ImageAlphaExtractTips";
 
-        sourceExtensionFilter = CommonValues.AlphaImageExtensionFilter;
+        sourceExtensionFilter = CommonImageValues.AlphaImageExtensionFilter;
         targetExtensionFilter = sourceExtensionFilter;
 
     }
@@ -52,20 +52,20 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return AppVaribles.message("Skip");
+                return AppVariables.message("Skip");
             }
             actualParameters.finalTargetName = target.getAbsolutePath();
             BufferedImage source = ImageFileReaders.readImage(srcFile);
             BufferedImage[] targets = ImageManufacture.extractAlpha(source);
             if (targets == null) {
-                return AppVaribles.message("Failed");
+                return AppVariables.message("Failed");
             }
             targetFormat = fileType;
             if (targetFormat == null) {
                 targetFormat = FileTools.getFileSuffix(srcFile.getName());
             }
             if (targetFormat == null || !CommonValues.SupportedImages.contains(targetFormat)) {
-                return AppVaribles.message("Failed");
+                return AppVariables.message("Failed");
             }
             String alphaFileName = FileTools.getFilePrefix(actualParameters.finalTargetName)
                     + "_noAlpha." + targetFormat;
@@ -77,10 +77,10 @@ public class ImageAlphaExtractBatchController extends ImageManufactureBatchContr
             ImageFileWriters.writeImageFile(targets[1], "png", noAlphaFileName);
             targetFiles.add(new File(noAlphaFileName));
 
-            return AppVaribles.message("Successful");
+            return AppVariables.message("Successful");
         } catch (Exception e) {
             logger.error(e.toString());
-            return AppVaribles.message("Failed");
+            return AppVariables.message("Failed");
         }
     }
 

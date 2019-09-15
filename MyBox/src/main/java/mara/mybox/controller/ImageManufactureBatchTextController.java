@@ -21,14 +21,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import mara.mybox.controller.base.ImageManufactureBatchController;
 import mara.mybox.fxml.FxmlControl;
 import static mara.mybox.fxml.FxmlControl.badStyle;
 import mara.mybox.fxml.FxmlImageManufacture;
 import mara.mybox.image.ImageManufacture;
-import mara.mybox.value.AppVaribles;
-import static mara.mybox.value.AppVaribles.logger;
-import static mara.mybox.value.AppVaribles.message;
+import mara.mybox.value.AppVariables;
+import static mara.mybox.value.AppVariables.logger;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -68,7 +67,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
     }
 
     public ImageManufactureBatchTextController() {
-        baseTitle = AppVaribles.message("ImageManufactureBatchText");
+        baseTitle = AppVariables.message("ImageManufactureBatchText");
 
         ImageTextShadowKey = "ImageTextShadowKey";
         ImageFontFamilyKey = "ImageFontFamilyKey";
@@ -162,7 +161,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                         int v = Integer.valueOf(newValue);
                         if (v >= 0) {
                             waterShadow = v;
-                            AppVaribles.setUserConfigValue(ImageTextShadowKey, newValue);
+                            AppVariables.setUserConfigValue(ImageTextShadowKey, newValue);
                             FxmlControl.setEditorNormal(waterShadowBox);
                         } else {
                             FxmlControl.setEditorBadStyle(waterShadowBox);
@@ -172,7 +171,7 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                     }
                 }
             });
-            waterShadowBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageTextShadowKey, "0"));
+            waterShadowBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageTextShadowKey, "0"));
 
             List<String> styles = Arrays.asList(message("Regular"), message("Bold"), message("Italic"), message("Bold Italic"));
             waterStyleBox.getItems().addAll(styles);
@@ -181,11 +180,11 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
             GraphicsEnvironment e = GraphicsEnvironment.getLocalGraphicsEnvironment();
             String[] fontNames = e.getAvailableFontFamilyNames();
             waterFamilyBox.getItems().addAll(Arrays.asList(fontNames));
-            waterFamilyBox.getSelectionModel().select(AppVaribles.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
+            waterFamilyBox.getSelectionModel().select(AppVariables.getUserConfigValue(ImageFontFamilyKey, fontNames[0]));
             waterFamilyBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    AppVaribles.setUserConfigValue(ImageFontFamilyKey, newValue);
+                    AppVariables.setUserConfigValue(ImageFontFamilyKey, newValue);
                 }
             });
 
@@ -193,10 +192,10 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
                 @Override
                 public void changed(ObservableValue<? extends Color> observable,
                         Color oldValue, Color newValue) {
-                    AppVaribles.setUserConfigValue(ImageTextColorKey, newValue.toString());
+                    AppVariables.setUserConfigValue(ImageTextColorKey, newValue.toString());
                 }
             });
-            waterColorPicker.setValue(Color.web(AppVaribles.getUserConfigValue(ImageTextColorKey, "#FF0000")));
+            waterColorPicker.setValue(Color.web(AppVariables.getUserConfigValue(ImageTextColorKey, "#FF0000")));
 
             waterAngleBox.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
@@ -326,15 +325,15 @@ public class ImageManufactureBatchTextController extends ImageManufactureBatchCo
         String fontStyle = waterStyleBox.getSelectionModel().getSelectedItem();
 
         Font FxFont;
-        if (AppVaribles.message("Bold").equals(fontStyle)) {
+        if (AppVariables.message("Bold").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.BOLD, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.REGULAR, waterSize);
 
-        } else if (AppVaribles.message("Italic").equals(fontStyle)) {
+        } else if (AppVariables.message("Italic").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.ITALIC, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.NORMAL, FontPosture.ITALIC, waterSize);
 
-        } else if (AppVaribles.message("Bold Italic").equals(fontStyle)) {
+        } else if (AppVariables.message("Bold Italic").equals(fontStyle)) {
             font = new java.awt.Font(fontFamily, java.awt.Font.BOLD + java.awt.Font.ITALIC, waterSize);
             FxFont = Font.font(fontFamily, FontWeight.BOLD, FontPosture.ITALIC, waterSize);
 

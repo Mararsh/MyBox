@@ -9,7 +9,7 @@ import mara.mybox.color.RGBColorSpace.ColorSpaceType;
 import static mara.mybox.color.RGBColorSpace.primariesTristimulus;
 import static mara.mybox.color.RGBColorSpace.whitePointMatrix;
 import mara.mybox.tools.MatrixTools;
-import static mara.mybox.value.AppVaribles.message;
+import static mara.mybox.value.AppVariables.message;
 
 /**
  * @Author Mara
@@ -34,7 +34,7 @@ public class RGB2RGBConversionMatrix {
         Generation of Conversion matrices
      */
     public static List<RGB2RGBConversionMatrix> all(int scale) {
-        List<RGB2RGBConversionMatrix> data = new ArrayList();
+        List<RGB2RGBConversionMatrix> data = new ArrayList<>();
         for (ColorSpaceType source : ColorSpaceType.values()) {
             Illuminant.IlluminantType sourceWhite = RGBColorSpace.illuminantType(source);
             for (ColorSpaceType target : ColorSpaceType.values()) {
@@ -146,7 +146,7 @@ public class RGB2RGBConversionMatrix {
                 s += "\nccccccccccccc " + message("Step") + " -  Source Linear RGB -> target Linear RGB  ccccccccccccc\n";
                 s += "\nRGB_to_RGB_Matrix = XYZ_to_RGB_Matrix * RGB_to_XYZ_Matrix =\n";
                 s += MatrixTools.print(conversionMatrix, 20, scale);
-                map = new HashMap();
+                map = new HashMap<>();
                 map.put("procedure", s);
                 map.put("conversionMatrix", conversionMatrix);
                 ret = map;
