@@ -10,7 +10,7 @@ Following are latest release:
 
 | Platform | Link | Size | Requirements |
 | - | - | -  | -  |
-| win | [MyBox-5.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-exe.zip) | 249MB | 无 |
+| win | [MyBox-5.4-exe.zip](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-exe.zip) | 249MB | None |
 | win | [MyBox-5.4-win.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-win.zip)  | 64MB | Java 12 or higher |
 | linux | [MyBox-5.4-linux.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-linux.zip)  | 68MB | Java 12 or higher |
 | mac | [MyBox-5.4-mac.jar](https://github.com/Mararsh/MyBox/releases/download/v5.4/MyBox-5.4-jar-mac.zip)  | 64MB | Java 12 or higher |
@@ -90,7 +90,7 @@ Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
 | User Guide - Network Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf |
 | Development Guide | 1.0 | https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf |
 | Shortcuts | 1.0 | https://mararsh.github.io/MyBox/mybox_shortcuts_en.html |
-| Development Logs |  | #devLog |
+| Development Logs |  | (#devLog) |
 
 # Implementation
 MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:    
