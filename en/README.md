@@ -653,7 +653,11 @@ This tool might fail to work when weibo would change the accessing channel of pa
 
 ![About](https://mararsh.github.io/MyBox/6-en.jpg)
 
+![About](https://mararsh.github.io/MyBox/7-en.jpg)
 
+![About](https://mararsh.github.io/MyBox/8-en.jpg)
+
+![About](https://mararsh.github.io/MyBox/9-en.jpg)
 
 
 

@@ -345,8 +345,6 @@ public class BaseController implements Initializable {
             final String prefix = "Interface_" + baseName;
 
             int minSize = 200;
-            thisPane.setPrefWidth(Math.max(minSize, thisPane.getPrefWidth()));
-            thisPane.setPrefHeight(Math.max(minSize, thisPane.getPrefHeight()));
             myStage.setMinWidth(minSize);
             myStage.setMinHeight(minSize);
 
