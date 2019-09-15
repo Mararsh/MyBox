@@ -97,21 +97,21 @@ MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:
 https://netbeans.org/    
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
-
-It is based on following open sources softwares or libraries:      
-| Software | Role | Link |     
+It is based on following open sources softwares or libraries:   
+| Software | Role | Link |    
 | - | - | - |   
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
-| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml |   
+| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml | 
 | log4j | Log manufacture | https://logging.apache.org/log4j/2.x/ |      
 | Derby | Database | http://db.apache.org/derby/ |   
-| GifDecoder | Decode broken gif | https://github.com/DhyanB/Open-Imaging/ |   
+| GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
 | EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |   
-| Icons8 | Icon | https://icons8.com/icons/set/home |   
+| Free Icons | Icon | https://icons8.com/icons/set/home |  
   
+ 
 # Current Version
 Current version is 5.4. Its features are mentioned below in summary:
 * [Cross platforms](#cross-platform)
@@ -638,19 +638,19 @@ This tool might fail to work when weibo would change the accessing channel of pa
     
 
 # Main Interface
-![About](https://mararsh.github.io/MyBox/0-en.png)
+![About](https://mararsh.github.io/MyBox/0-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/1-en.png)
+![About](https://mararsh.github.io/MyBox/1-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/2-en.png)
+![About](https://mararsh.github.io/MyBox/2-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/3-en.png)
+![About](https://mararsh.github.io/MyBox/3-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/4-en.png)
+![About](https://mararsh.github.io/MyBox/4-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/5-en.png)
+![About](https://mararsh.github.io/MyBox/5-en.jpg)
 
-![About](https://mararsh.github.io/MyBox/6-en.png)
+![About](https://mararsh.github.io/MyBox/6-en.jpg)
 
 
 

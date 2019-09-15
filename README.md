@@ -647,19 +647,19 @@ PDF工具：标签（目录）和缩略图；可修改PDF文件的属性，如�
 
 
 # 主界面
-![About](https://mararsh.github.io/MyBox/0.png)
+![About](https://mararsh.github.io/MyBox/0.jpg)
 
-![About](https://mararsh.github.io/MyBox/1.png)
+![About](https://mararsh.github.io/MyBox/1.jpg)
 
-![About](https://mararsh.github.io/MyBox/2.png)
+![About](https://mararsh.github.io/MyBox/2.jpg)
 
-![About](https://mararsh.github.io/MyBox/3.png)
+![About](https://mararsh.github.io/MyBox/3.jpg)
 
-![About](https://mararsh.github.io/MyBox/4.png)
+![About](https://mararsh.github.io/MyBox/4.jpg)
 
-![About](https://mararsh.github.io/MyBox/5.png)
+![About](https://mararsh.github.io/MyBox/5.jpg)
 
-![About](https://mararsh.github.io/MyBox/6.png)
+![About](https://mararsh.github.io/MyBox/6.jpg)
 
 
 
