@@ -42,13 +42,14 @@ Example, MyBox-5.4.jar is copied under path A, and is started under path B, whil
 
 ### Initialize MyBox
 Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".   
-MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance:   
+MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance automatically:      
 1. Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.   
 2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".   
 3. Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:  
 <PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
-4. User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.   
-5. User can also change data path by Setting function of MyBox and the tool will copy old data automatically.   
+
+User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.    
+User can also change data path by Setting function of MyBox and the tool will copy old data automatically.     
 
 Another example, copy "MyBox-5.4.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.   
 By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
@@ -104,8 +105,8 @@ https://netbeans.org/
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
 
-It is based on following open sources softwares or libraries:     
-| Software | Role | Link |
+It is based on following open sources softwares or libraries:      
+| Software | Role | Link |   
 | - | - | - |  
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
@@ -440,17 +441,17 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 
 # Development Logs<a name="devLog" />
-2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.
-User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.
-View PDF pages in html mode. Convert PDF files as html files.
-Refine interface of Image Manufacture as "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
-Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.
-Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.
-New scope type "Outline" for image manufacture: extract outline of image which has transparent background as scope of operation. Example outlines are provided.
-Scopes can be saved and managed.
-Uniform shortcuts whose help page is provided. 
-Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.
-Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.
+2019-9-15 v5.4 Use "Execution Path" instead of "User Path" as default "Data Path". Record base parameters in configuration file.   
+User can modify base parameters on line, including maximum JVM memory usage, whether close dpi-aware, data root path, which will cause MyBox reboot itself.   
+View PDF pages in html mode. Convert PDF files as html files.   
+Refine interface of Image Manufacture as "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.   
+Image Clipboard: multiple sources to be pasted; drag pasted image to adjust its size and location; blend mode; rotation angle. Example clips are provided.   
+Color Palette: size of thousands; provide 139 named colors; export as html; pick colors on current image, image history, or reference image.   
+New scope type "Outline" for image manufacture: extract outline of image which has transparent background as scope of operation. Example outlines are provided.   
+Scopes can be saved and managed.   
+Uniform shortcuts whose help page is provided.    
+Improve codes: use public APIs instead of interval classes; make sure singleton task enters exclusively and quits cleanly; write temporary file to avoid destorying original file in case of exception.   
+Fix bugs: 3 tools fail to work in v5.3 due to modification; shadow and 3 blend modes miss special handling of transparent pixels.   
 
 2019-8-8 v5.3  Migrated on Netbeans 11 + Java 12.    
 Improve batch interface: add directories, extend directories, filter file names, handle duplicated file names.     
