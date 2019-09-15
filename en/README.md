@@ -22,7 +22,7 @@ Following are latest release:
 
 EXE package is avaliable for users who have not java env. It need not installation and users can run the EXE directly after unpack it. (Please unpack it under path with pure-English name.)
 
-Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed. 
+Since Java is installed by default in Linux env and Mac env, the installation images are not made for the 2 platfroms. User can download jar file if JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed.    
 Each platform has its jar, and there is cross-platform jar whose size is larger. 
 
 ## Execution
@@ -30,50 +30,48 @@ Each platform has its jar, and there is cross-platform jar whose size is larger.
 ### Launch
 Double click "MyBox.exe" to launch MyBox on Windows. The default "Open Method" of image/text/PDF files can be associated to MyBox.exe and a file can be opened directly by MyBox by double clicking the file's name.
 
-Run following command to launch this program with Jar package: (Please upgrade to Java 12 or higher)
-
-    java   -jar   MyBox-5.4.jar
+Run following command to launch this program with Jar package: (Please upgrade to Java 12 or higher)   
+<PRE><CODE>     java   -jar   MyBox-5.4.jar</CODE></PRE>
 	
-A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:
-
-    java   -jar   MyBox-5.4.jar  /tmp/a1.jpg
+A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:    
+<PRE><CODE>     java   -jar   MyBox-5.4.jar   /tmp/a1.jpg</CODE></PRE>
 	
 ### Installation Path, Execution Path, Data Path
-The directory holding files of MyBox.exe or MyBox-xxx.jar is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".
+The directory holding files of MyBox.exe or MyBox-xxx.jar is called "Installation Path"(Although no installtion is need). The directory under which MyBox is started is called "Execution Path". The path where MyBox read/write values and files is called "Data Path".    
 Example, MyBox-5.4.jar is copied under path A, and is started under path B, while MyBox data path can be assigned as any path C.  
 
 ### Initialize MyBox
-Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".
-MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance:
-1) Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.
-2) If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".
-3) Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:
+Example, unpack package of MyBox.exe under path "D:\tmp\MyBox", double click "MyBox.exe", and MyBox is started internally under "app", so the Execution Path is "D:\tmp\MyBox\app".   
+MyBox checks path "D:\tmp\MyBox\app", and does not find file "MyBox.ini", then it starts to initialize this instance:   
+1. Make "D:\tmp\MyBox\app" as the default data root path, and create subdirectory "mybox" under it.   
+2. If directory "mybox" is found under current user's root, which is the data path of MyBox previous versions, then copy all contents of this path to "D:\tmp\MyBox\app\mybox".   
+3. Create file "MyBox.ini" under "D:\tmp\MyBox\app" and write following line to record the location of data path of current MyBox instance:  
 <PRE><CODE>     MyBoxDataRoot=D\:\\tmp\\MyBox\\app </CODE></PRE>
-4) User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.
-5) User can also change data path by Setting function of MyBox and the tool will copy old data automatically.
+4. User can edit file "MyBox.ini" to change data path, and copy files under previous path to new path manually.   
+5. User can also change data path by Setting function of MyBox and the tool will copy old data automatically.   
 
-Another example, copy "MyBox-5.4.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.
+Another example, copy "MyBox-5.4.jar" under path "d:\tmp\1", and start it from path "d:\tmp\2", then Execution Path is "d:\tmp\2" and MyBox data will be initialized under this path.   
 By this way, MyBox can be executed with different data paths and the instances do not interfere each other. 
 
 ### Configuration File
-Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically： 
-1） Data Path, like:
+Under Execution Path, the configuration file "MyBox.ini" records base parameters referred by MyBox when it starts. Modify these parameters in time will cause MyBox restarts itself automatically：   
+1. Data Path, like:   
 <PRE><CODE>     MyBoxDataRoot=/home/mara/data/ </CODE></PRE>
-2) Maximum memory usage of JVM, like: 
+2. Maximum memory usage of JVM, like:    
 <PRE><CODE>     JVMmemory=-Xms3026m </CODE></PRE>
-3) Whether close "HiDPI", like:
+3. Whether close "HiDPI", like:   
 <PRE><CODE>     DisableHidpi=false </CODE></PRE>
 
 ### Supporting HiDPI
-Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.
-MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.
+Java supports HiDPI since 9 and interface will adapt current screen resolution aotumatically.   
+MyBox supports enable/disable dpi-aware on line, which will cause MyBox reboots itself automatically.   
 
-Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.  
+Developers need notice: JavaFx screen is not same as pysical screen and has different dpi definition which considers X/Y scale ratio too.    
 
 ## Limitation
-MyBox.exe can not be lanuched under path including non-English characters.
+MyBox.exe can not be lanuched under path including non-English characters.   
 
-The embedded Derby is in single-application mode, so only one instance of MyBox can read/write db. That is, multiple instances of MyBox can run at same time but only the first one can save and visit configuration data while others can do most things except for accessing user's data.
+The embedded Derby is in single-application mode, so only one instance of MyBox can read/write db. That is, multiple instances of MyBox can run at same time but only the first one can save and visit configuration data while others can do most things except for accessing user's data.  
 
 
 # Resource Addresses
@@ -106,7 +104,7 @@ https://netbeans.org/
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
 
-It is based on following open sources softwares or libraries:  
+It is based on following open sources softwares or libraries:     
 | Software | Role | Link |
 | - | - | - |  
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
@@ -237,8 +235,8 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 	- Scope can be applied against Copy, Crop, Color, Effect, Convolution. 
 	- Scope can be defined against image history and reference image too. The part in scope can be copied into clipboard.
 	- Scopes can be saved with names. User can manage them: Add, Delete, Clear, Edit, Use selected item in scopes list.	
-16 Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
-17 Option: Whether zoom current image, image history, or reference image synchronously.
+16. Pop: Current image, image history, or reference image can be viewd in a popped window. Option: Whether always on top.
+17. Option: Whether zoom current image, image history, or reference image synchronously.
 18. Edit existed images, or create new image.
 19. Interface in style of "Visible As Need": Left-right areas like curtain, vertical accordion menus, tabs to switch targets, more details of hiding/showing/adjusting in function areas.
 20. Image Manufacture in batch.
