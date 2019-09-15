@@ -105,7 +105,7 @@ It is based on following open sources softwares or libraries:
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
 | PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |   
-| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml | 
+| javazoom | MP3 manufacture | http://www.javazoom.net/index.shtml |    
 | log4j | Log manufacture | https://logging.apache.org/log4j/2.x/ |      
 | Derby | Database | http://db.apache.org/derby/ |   
 | GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |   
