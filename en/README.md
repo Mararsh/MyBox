@@ -97,9 +97,10 @@ MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:
 https://netbeans.org/    
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
-It is based on following open sources softwares or libraries:   
+It is based on following open sources softwares or libraries:    
+
 | Software | Role | Link |    
-| - | - | - |   
+| - | - | - |    
 | JavaFx | GUI | https://docs.oracle.com/javafx/2/ |     
 | jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |   
 | PDFBox | PDF manufacture | https://pdfbox.apache.org/ |   
