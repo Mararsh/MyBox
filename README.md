@@ -91,7 +91,7 @@ Java 9以后已支持HiDPI，控件和字体都会适应当前清晰度配置。
 | 用户手册-网络工具 | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-zh.pdf |
 | 开发指南 | 1.0 | https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-zh.pdf |
 | 快捷键 | 1.0 | https://mararsh.github.io/MyBox/mybox_shortcuts.html |
-| 开发日志 |  | (#devLog) |
+| 开发日志 |  | [devLog](#devLog) |
 
 
 # 实现基础

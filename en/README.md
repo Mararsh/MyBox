@@ -90,7 +90,7 @@ Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
 | User Guide - Network Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf |
 | Development Guide | 1.0 | https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf |
 | Shortcuts | 1.0 | https://mararsh.github.io/MyBox/mybox_shortcuts_en.html |
-| Development Logs |  | (#devLog) |
+| Development Logs |  | [devLog](#devLog) |
 
 # Implementation
 MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:    
