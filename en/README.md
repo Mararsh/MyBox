@@ -83,14 +83,14 @@ Online Helps: https://mararsh.github.io/MyBox/mybox_help_en.html
 # Documents
 | Name | Version | Link |
 | - | - | - |  
-| User Guide - Overview |  5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf |
-| User Guide - Image Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf |
-| User Guide - PDF Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf |
-| User Guide - Desktop Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf |
-| User Guide - Network Tools | 5.0 | https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf |
-| Development Guide | 1.0 | https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf |
-| Shortcuts | 1.0 | https://mararsh.github.io/MyBox/mybox_shortcuts_en.html |
-| Development Logs |  | [devLog](#devLog) |
+| User Guide - Overview |  5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-Overview-en.pdf) |
+| User Guide - Image Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-ImageTools-en.pdf) |
+| User Guide - PDF Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-PdfTools-en.pdf) |
+| User Guide - Desktop Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-DesktopTools-en.pdf) |
+| User Guide - Network Tools | 5.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.0/MyBox-UserGuide-5.0-NetworkTools-en.pdf) |
+| Development Guide | 1.0 | [PDF](https://github.com/Mararsh/MyBox/releases/download/v5.3/MyBox-DevGuide-1.0-en.pdf) |
+| Shortcuts | 1.0 | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html) |
+| Development Logs |  | [html](#devLog) |
 
 # Implementation
 MyBox is developed with Netbeans 11.1 and JavaFX Scene Builder 2.0:    
