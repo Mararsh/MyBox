@@ -244,7 +244,7 @@ Currently MyBox supports Chinese and English. To support a new language is just 
 
 ### Recognize Texts in Image<a name="imageOCR" />
 1. Users can install Tesseract-OCR and set its data path in MyBox, or download its data files without Tesseract-OCR installation.
-2. Language can be selected. For any selected language, tool will append following packages' names: eng(English), osd()（检测方向和脚本）、equ（检测数学/方程式）
+2. Language can be selected. For any selected language, tool will append following packages' names: eng(English), osd(Orientation and script detection), equ(Math / equation detection)
 3. Display image along with recognized texts in same screen. Rectangle can be set to define the area to do OCR.
 4. OCR in batch.
 Only support windows currently.  

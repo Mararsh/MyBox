@@ -7,7 +7,7 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。
 
 ### 自包含程序包   
-自包含的程序包无需java环境、无需安装、解包可用。   
+自包含的程序包无需java环境、无需安装、解包可用。      
 | 平台 | 链接 | 大小 | 运行需要 |    
 | - | - | -  | -  |    
 | win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | 无 |       
@@ -17,12 +17,12 @@
 双击或者用命令行执行包内的启动程序即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
     
 ### Jar包   
-在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。
-| 平台 | 链接 | 大小 | 运行需要 |
-| - | - | -  | -  |
-| win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12或更高版本 |
-| linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12或更高版本 |
-| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12或更高版本 |
+在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
+| 平台 | 链接 | 大小 | 运行需要 |    
+| - | - | -  | -  |    
+| win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12或更高版本 |    
+| linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12或更高版本 |    
+| mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12或更高版本 |    
     
 执行以下命令来启动程序：
 <PRE><CODE>     java   -jar   MyBox-5.5.jar</CODE></PRE>
@@ -122,7 +122,7 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 
 ## 跨平台<a name="cross-platform" />
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 12的平台。（MyBox v5.3以前的版本均基于Java 8）   
-   
+
 以下功能受限于特定平台：   
 | 功能 | 可运行的平台 | 运行需要 |   
 | - | - | -  |   
