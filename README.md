@@ -7,12 +7,13 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。
 
 ### 自包含程序包   
-自包含的程序包无需java环境、无需安装、解包可用。      
-| 平台 | 链接 | 大小 | 运行需要 |    
-| - | - | -  | -  |    
+自包含的程序包无需java环境、无需安装、解包可用。  
+
+| 平台 | 链接 | 大小 | 运行需要 |  
 | win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | 无 |       
 | linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | 无  |     
-| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | 无  |    
+| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | 无  |
+ 
     
 双击或者用命令行执行包内的启动程序即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
     
@@ -67,7 +68,7 @@ MyBox使用NetBeans 11.1和JavaFX Scene Builder 2.0开发：
 https://netbeans.org/   
 https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.html    
 
-基于以下开源软件/开源库：   
+基于以下开源软件/开源库：  
 
 | 软件 | 角色 | 链接 |  
 | - | - | - |  
@@ -123,11 +124,12 @@ https://www.oracle.com/technetwork/java/javafxscenebuilder-1x-archive-2199384.ht
 ## 跨平台<a name="cross-platform" />
 MyBox用纯Java实现且只基于开源库，因此MyBox可运行于所有支持Java 12的平台。（MyBox v5.3以前的版本均基于Java 8）   
 
-以下功能受限于特定平台：   
-| 功能 | 可运行的平台 | 运行需要 |   
-| - | - | -  |   
+以下功能受限于特定平台：  
+
+| 功能 | 可运行的平台 | 运行需要 |  
+| - | - | -  |  
 | 识别图像中的文字 | Windows  | 用户需自行下载数据文件 |    
-| 识别PDF中的文字  | Windows  | 用户需自行下载数据文件 |   
+| 识别PDF中的文字  | Windows  | 用户需自行下载数据文件 |  
 
 ## 国际化<a name="international" />
 所有代码均国际化。可实时切换语言。目前支持中文、英文。扩展语言只需编辑资源文件。
