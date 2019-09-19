@@ -7,20 +7,22 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases?)目录下（点击上面的`releases`页签）。
 
 ### 自包含程序包   
-自包含的程序包无需java环境、无需安装、解包可用。  
+自包含的程序包无需java环境、无需安装、解包可用。    
+
 | 平台 | 链接 | 大小 | 运行需要 |    
-| -- | -- | --  | --  |    
+| - | - | -  | -  |    
 | win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip)  | 208MB | 无 |       
 | linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB  | 无  |     
-| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB  |  无   |
+| mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB  |  无   |   
  
     
 双击或者用命令行执行包内的启动程序即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox.exe，这样双击文件名就直接是用MyBox打开了。
     
 ### Jar包   
-在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。    
+在已安装JRE或者JDK 12或更高版本（`Oracle java`或`Open jdk`均可）的环境下，可以下载jar包。   
+ 
 | 平台 | 链接 | 大小 | 运行需要 |    
-| -- | -- | --  | --  |    
+| - | - | -  | -  |   
 | win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12或更高版本 |    
 | linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB  | Java 12或更高版本 |    
 | mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  |  93MB  | Java 12或更高版本 |    
