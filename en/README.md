@@ -9,7 +9,7 @@ Packages of each version have been uploaded at [Releases](https://github.com/Mar
 ### Self-contain packages 
 Self-contain packages include all files and need not java env and installation.    
 | Platform | Link | Size | Requirements |    
-| - | - | -  | -  |     
+| -- | -- | --  | --  |    
 | win | [MyBox-5.5-win.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win.zip) | 208MB | None |    
 | linux | [MyBox-5.5-linux.tar.gz](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux.tar.gz)  | 163MB | None  |       
 | mac | [MyBox-5.5-mac.dmg](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac.dmg)  | 164MB | None  |    
@@ -21,7 +21,7 @@ User can double click the launcher to start MyBox or run it by command line. The
 ### Jar 
 When JRE or JDK 12 or higher(`Oracle jdk` or `open jdk`) is installed, jar can run:      
 | Platform | Link | Size | Requirements |
-| - | - | -  | -  |
+| -- | -- | --  | --  |    
 | win | [MyBox-5.5-win-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-win-jar.zip)  | 92MB | Java 12 or higher |
 | linux | [MyBox-5.5-linux-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-linux-jar.zip)  | 96MB | Java 12 or higher |
 | mac | [MyBox-5.5-mac-jar.zip](https://github.com/Mararsh/MyBox/releases/download/v5.5/MyBox-5.5-mac-jar.zip)  | 93MB | Java 12 or higher |
@@ -129,7 +129,7 @@ Previous versions are based on Java 8.
 
 Following functions are limited to specific platforms:   
 | Function | Avaliable Platforms | Requirements |   
-| - | - | -  |   
+| -- | -- | --  |   
 | Recognize texts in image | Windows  | Users need download data files by themselves |   
 | Recognize texts in PDF | Windows  | Users need download data files by themselves |   
 
